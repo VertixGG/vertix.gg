@@ -1,4 +1,4 @@
-import { ChannelType, Guild, GuildChannelCreateOptions, VoiceState } from "discord.js";
+import { ChannelType, Guild, VoiceState } from "discord.js";
 
 import PrismaBase from "@internal/bases/prisma-base";
 import Logger from "@internal/modules/logger";
@@ -124,16 +124,7 @@ export default class ChannelManager extends PrismaBase {
                     `isDynamic: '${ isDynamic }'`
         );
 
-        const createArgs = {
-            name,
-            type: ChannelType.GuildVoice,
-        } as GuildChannelCreateOptions;
-
-        if ( args.parent ) {
-            createArgs.parent = args.parent;
-        }
-
-        const channel = await guild.channels.create( createArgs );
+        const channel = await guild.channels.create( args );
 
         const data = {
             name,

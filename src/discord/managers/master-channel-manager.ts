@@ -131,9 +131,12 @@ export default class MasterChannelManager extends PrismaBase {
         this.logger.log( this.createDynamic,
             `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ ownerId }'` );
 
+        const masterChannel = newState.channel as VoiceBasedChannel,
+            masterChannelParent = masterChannel.parent;
+
         // Take overview of the master channel.
-        const inheritedProperties = this.getDefaultInheritedProperties( newState.channel as VoiceBasedChannel ),
-            inheritedPermissions = this.getDefaultInheritedPermissions( newState.channel as VoiceBasedChannel );
+        const inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
+            inheritedPermissions = this.getDefaultInheritedPermissions( masterChannel );
 
         // Create channel for the user.
         const channel = await ChannelManager.getInstance().create( {
@@ -143,6 +146,8 @@ export default class MasterChannelManager extends PrismaBase {
             // ---
             name: dynamicChannelName,
             type: ChannelType.GuildVoice,
+            parent: masterChannelParent,
+            // ---
             permissionOverwrites: [
                 ... inheritedPermissions,
                 {
@@ -150,7 +155,7 @@ export default class MasterChannelManager extends PrismaBase {
                     ... DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
                 }
             ],
-            ... inheritedProperties
+            ... inheritedProperties,
         } );
 
         // Move the user to new created channel.

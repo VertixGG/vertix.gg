@@ -4,6 +4,7 @@ import {
     Colors,
     CommandInteraction,
     EmbedBuilder,
+    PermissionsBitField,
 } from "discord.js";
 
 import { ButtonStyle } from "discord.js/typings";
@@ -20,6 +21,8 @@ export const Setup: ICommand = {
     name: "setup",
     description: "Setting up Dynamico",
     type: ApplicationCommandType.ChatInput,
+
+    defaultMemberPermissions: [ PermissionsBitField.Flags.Administrator ],
 
     run: async ( client: Client, interaction: CommandInteraction ) => {
         const embed = new EmbedBuilder(),

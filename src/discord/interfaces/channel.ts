@@ -1,5 +1,7 @@
 import {
-    CategoryChannel, Channel,
+    CategoryChannel,
+    CategoryCreateChannelOptions,
+    Channel,
     ChannelType,
     Guild,
     VoiceState
@@ -26,10 +28,8 @@ export interface IChannelLeaveGenericArgs {
 
 /* Master channel */
 
-export interface IChannelCreateArgs {
+export interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,
-    name: string;
-    type: ChannelType,
     parent? : CategoryChannel;
     isMaster?: boolean;
     isDynamic?: boolean;

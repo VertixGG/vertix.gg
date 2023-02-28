@@ -3,6 +3,7 @@
  */
 import Prisma from "./prisma";
 import botInitialize from "./discord";
+
 import GlobalLogger from "@internal/discord/global-logger";
 
 function enteryPoint() {

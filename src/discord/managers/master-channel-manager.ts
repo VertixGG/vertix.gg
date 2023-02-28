@@ -21,6 +21,8 @@ const DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
     allow: [
         PermissionsBitField.Flags.ManageChannels,
         PermissionsBitField.Flags.MoveMembers,
+        PermissionsBitField.Flags.ViewChannel,
+        PermissionsBitField.Flags.Connect,
     ],
 };
 

@@ -94,11 +94,14 @@ export default class ChannelManager extends PrismaBase {
     }
 
     public async onEnterGeneric( args: IChannelEnterGenericArgs ) {
-        const { newState } = args;
+        const { oldState, newState } = args;
 
         if ( newState.channelId && await this.masterChannelManager.isMaster( newState.channelId, newState.guild.id ) ) {
             await this.masterChannelManager.onJoinMasterChannel( args );
-        } else {
+        }
+
+        // If the user switched channels.
+        if ( oldState.channelId !== newState.channelId ) {
             await this.onLeaveGeneric( args );
         }
     }

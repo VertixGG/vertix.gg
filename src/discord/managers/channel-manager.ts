@@ -115,34 +115,37 @@ export default class ChannelManager extends PrismaBase {
      * Function create() :: Creates a new channel for a guild.
      */
     public async create( args: IChannelCreateArgs ) {
-        const { name, guild, isMaster = false, isDynamic = false } = args;
+        const { name, guild, ownerId = false, isMaster = false, isDynamic = false } = args;
 
         this.logger.info( this.create,
             `Creating channel for guild '${ guild.name }' with the following properties:\n` +
-                    `With name: '${ name }'\n` +
-                    `isMaster: '${ isMaster }'\n` +
-                    `isDynamic: '${ isDynamic }'`
+                    `With name: '${ name }', ownerId: '${ ownerId }', isMaster: '${ isMaster }, isDynamic: '${ isDynamic }'`
         );
 
-        const channel = await guild.channels.create( args );
-
-        const data = {
-            name,
-            channelId: channel.id,
-            guildId: guild.id,
-            createdAtDiscord: channel.createdTimestamp,
-        } as any;
+        const channel = await guild.channels.create( args ),
+            // Data to be inserted into the database.
+            data:any = {
+                name,
+                channelId: channel.id,
+                guildId: guild.id,
+                createdAtDiscord: channel.createdTimestamp,
+            };
 
         if ( channel.parentId ) {
             data.categoryId = channel.parentId;
         }
 
+        // TODO: Make it dynamic, useless ifs.
         if ( isMaster ) {
             data.isMaster = true;
         }
 
         if ( isDynamic ) {
             data.isDynamic = true;
+        }
+
+        if ( ownerId ) {
+            data.ownerId = args.ownerId;
         }
 
         await this.prisma.channel.create( { data } );

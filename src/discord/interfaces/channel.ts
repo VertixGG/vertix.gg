@@ -7,10 +7,21 @@ import {
     VoiceState
 } from "discord.js";
 
+/* Master channel */
+
 export interface IMasterChannelCreateArgs {
     guild: Guild,
     name?: string
 }
+
+export interface IMasterChanelCreateDynamicArgs {
+    oldState: VoiceState,
+    newState: VoiceState,
+    guild: Guild
+    displayName: string,
+}
+
+/* Generic */
 
 export interface IChannelEnterGenericArgs {
     oldState: VoiceState,
@@ -26,11 +37,12 @@ export interface IChannelLeaveGenericArgs {
     channelName: string
 }
 
-/* Master channel */
+/* Channel */
 
 export interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,
     parent? : CategoryChannel;
+    ownerId?: string,
     isMaster?: boolean;
     isDynamic?: boolean;
 }

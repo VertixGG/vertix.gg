@@ -2,7 +2,8 @@ import { ChannelType, Guild, PermissionsBitField, VoiceBasedChannel } from "disc
 
 import {
     IChannelEnterGenericArgs,
-    IChannelLeaveGenericArgs, IMasterChanelCreateDynamicArgs,
+    IChannelLeaveGenericArgs,
+    IMasterChanelCreateDynamicArgs,
     IMasterChannelCreateArgs
 } from "../interfaces/channel";
 
@@ -16,7 +17,7 @@ const DEFAULT_CATEGORY_NAME = "⚡ Dynamic Channels",
     DEFAULT_CHANNEL_NAME = "➕ New Channel",
     DEFAULT_DYNAMIC_CHANNEL_NAME = "%{userDisplayName}%'s Channel";
 
-const DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS =  {
+const DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
     allow: [
         PermissionsBitField.Flags.ManageChannels,
         PermissionsBitField.Flags.MoveMembers,
@@ -84,13 +85,37 @@ export default class MasterChannelManager extends PrismaBase {
 
     public getDefaultInheritedProperties( masterChannel: VoiceBasedChannel ) {
         const { rtcRegion, bitrate, userLimit } = masterChannel,
-            result:any = { bitrate, userLimit };
+            result: any = { bitrate, userLimit };
 
         if ( rtcRegion !== null ) {
             result.rtcRegion = rtcRegion;
         }
 
         this.logger.debug( this.getDefaultInheritedProperties, JSON.stringify( result ) );
+
+        return result;
+    }
+
+    public getDefaultInheritedPermissions( masterChannel: VoiceBasedChannel ) {
+        const { permissionOverwrites } = masterChannel,
+            result = [];
+
+        for ( const overwrite of permissionOverwrites.cache.values() ) {
+            let { id, allow, deny } = overwrite;
+
+            // Exclude `PermissionsBitField.Flags.SendMessages` for everyone.
+            if ( id === masterChannel.guild.id ) {
+                deny = deny.remove( PermissionsBitField.Flags.SendMessages );
+            }
+
+            this.logger.debug( this.getDefaultInheritedPermissions, JSON.stringify( {
+                id,
+                allow: allow.toArray(),
+                deny: deny.toArray()
+            } ) );
+
+            result.push( { id, allow, deny } );
+        }
 
         return result;
     }
@@ -107,7 +132,8 @@ export default class MasterChannelManager extends PrismaBase {
             `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ ownerId }'` );
 
         // Take overview of the master channel.
-        const inheritedProperties = this.getDefaultInheritedProperties( newState.channel as VoiceBasedChannel );
+        const inheritedProperties = this.getDefaultInheritedProperties( newState.channel as VoiceBasedChannel ),
+            inheritedPermissions = this.getDefaultInheritedPermissions( newState.channel as VoiceBasedChannel );
 
         // Create channel for the user.
         const channel = await ChannelManager.getInstance().create( {
@@ -117,10 +143,13 @@ export default class MasterChannelManager extends PrismaBase {
             // ---
             name: dynamicChannelName,
             type: ChannelType.GuildVoice,
-            permissionOverwrites: [ {
-                id: newState.id,
-                ... DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-            } ],
+            permissionOverwrites: [
+                ... inheritedPermissions,
+                {
+                    id: newState.id,
+                    ... DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+                }
+            ],
             ... inheritedProperties
         } );
 

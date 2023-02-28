@@ -8,8 +8,8 @@ import CategoryManager from "./category-manager";
 import ChannelManager from "./channel-manager";
 import Logger from "@internal/modules/logger";
 
-const DEFAULT_CATEGORY_NAME = "Dynamic Channels ⚡",
-    DEFAULT_CHANNEL_NAME = "New Channel ➕",
+const DEFAULT_CATEGORY_NAME = "⚡ Dynamic Channels",
+    DEFAULT_CHANNEL_NAME = "➕ New Channel",
     DEFAULT_DYNAMIC_CHANNEL_NAME = "%{displayName}%'s Channel";
 
 export default class MasterChannelManager extends PrismaBase {

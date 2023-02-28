@@ -1,14 +1,8 @@
-import {
-    ButtonInteraction,
-    Client,
-    CommandInteraction,
-    Events,
-    Interaction
-} from "discord.js";
+import { ButtonInteraction, Client, CommandInteraction, Events, Interaction } from "discord.js";
 
-import { Commands } from "../commands";
+import { Commands } from "../interactions/commands";
 
-export function interactionHandler ( client: Client ) {
+export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
         if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
             await handleSlashCommand( client, interaction as CommandInteraction );
@@ -19,7 +13,7 @@ export function interactionHandler ( client: Client ) {
 };
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
-    console.log( `Slash command ${ interaction.commandName } was used by ${ interaction.user.username }` );
+    console.log( `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'` );
 
     const slashCommand = Commands.find( c => c.name === interaction.commandName );
 
@@ -28,22 +22,24 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
         return;
     }
 
-    await interaction.deferReply();
+    await interaction.deferReply( {
+        ephemeral: true,
+    } );
 
     slashCommand.run( client, interaction );
 };
 
-const handleButton = async ( client: Client, interaction: ButtonInteraction ): Promise<void> => {
+async function handleButton( client: Client, interaction: ButtonInteraction ) {
     await interaction.deferUpdate();
 
-    console.log( `Button ${ interaction.customId } was used by ${ interaction.user.username }` );
+    console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
     switch ( interaction.customId ) {
-    case "Hello": // Custom ID of the button when it was created.
-        await interaction.followUp( {
-            ephemeral: true,
-            content: `Hello! ${ interaction.user.username }`
-        } );
-        break;
+        case "Hello": // Custom ID of the button when it was created.
+            await interaction.followUp( {
+                ephemeral: true,
+                content: `Hello! ${ interaction.user.username }`
+            } );
+            break;
     }
 };

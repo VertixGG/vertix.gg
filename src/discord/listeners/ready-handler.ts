@@ -4,7 +4,7 @@ import { Client } from "discord.js";
 
 import GlobalLogger from "../global-logger";
 
-import { Commands } from "../commands";
+import { Commands } from "@internal/discord/interactions/commands/";
 
 const logger = GlobalLogger.getInstance();
 

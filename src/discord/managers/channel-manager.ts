@@ -1,4 +1,10 @@
-import { ChannelType, Guild, VoiceState } from "discord.js";
+import {
+    ChannelType,
+    DMChannel,
+    Guild,
+    NonThreadGuildBasedChannel,
+    VoiceState
+} from "discord.js";
 
 import PrismaBase from "@internal/bases/prisma-base";
 import Logger from "@internal/modules/logger";
@@ -114,6 +120,22 @@ export default class ChannelManager extends PrismaBase {
         }
     }
 
+    public async onChannelDelete( channel: DMChannel | NonThreadGuildBasedChannel ) {
+        switch ( channel.type ) {
+            case ChannelType.GuildVoice:
+            case ChannelType.GuildText:
+                const channelId = channel.id,
+                    guildId = channel.guildId;
+
+                this.logger.info( this.onChannelDelete,
+                    `Channel '${ channelId }' was deleted from '${ guildId }'.` );
+
+                if ( await this.masterChannelManager.isMaster( channelId, guildId ) ) {
+                    await this.deleteFromDB( channel.guild, channelId );
+                }
+        }
+    }
+
     /**
      * Function create() :: Creates a new channel for a guild.
      */
@@ -173,16 +195,31 @@ export default class ChannelManager extends PrismaBase {
     }
 
     // TODO: Create a model class for such methods.
-    public async deleteFromDB( guild: Guild ) {
-        if ( await this.isExisting( guild ) ) {
-            this.logger.info( this.deleteFromDB,
-                `Deleting all channels for guild '${ guild.name }'` );
+    public async deleteFromDB( guild: Guild, channelId?: string|null ) {
+        if ( await this.isExisting( guild, channelId ) ) {
+            const where: any = { guildId: guild.id };
 
-            await this.prisma.channel.deleteMany( { where: { guildId: guild.id } } );
+            if ( channelId ) {
+                this.logger.info( this.deleteFromDB,
+                    `Deleting channel '${ channelId }' for guild '${ guild.name }'` );
+
+                where.channelId = channelId;
+            } else {
+                this.logger.info( this.deleteFromDB,
+                    `Deleting all channels for guild '${ guild.name }'` );
+            }
+
+            await this.prisma.channel.deleteMany( { where } );
         }
     }
 
-    public async isExisting( guild: Guild ) {
-        return !! await this.prisma.channel.findFirst( { where: { guildId: guild.id } } );
+    public async isExisting( guild: Guild, channelId?: string|null ) {
+        const where: any =  { guildId: guild.id };
+
+        if ( channelId ) {
+            where.channelId = channelId;
+        }
+
+        return !! await this.prisma.channel.findFirst( { where } );
     }
 }

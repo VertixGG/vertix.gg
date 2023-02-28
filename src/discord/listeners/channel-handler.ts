@@ -1,8 +1,8 @@
-import { Client, Events } from "discord.js";
+import { ChannelType, Client, Events } from "discord.js";
 
 import ChannelManager from "../managers/channel-manager";
 
-export function channelHandler ( client: Client ) {
+export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, async ( oldState, newState ) => {
         const channelManager = ChannelManager.getInstance();
 
@@ -16,5 +16,9 @@ export function channelHandler ( client: Client ) {
             // User switched channels
             await channelManager.onSwitch( oldState, newState );
         }
+    } );
+
+    client.on( Events.ChannelDelete, async ( channel ) => {
+        await ChannelManager.getInstance().onChannelDelete( channel );
     } );
 }

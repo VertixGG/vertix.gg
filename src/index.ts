@@ -5,10 +5,10 @@ import Prisma from "./prisma";
 import botInitialize from "./discord";
 import GlobalLogger from "@internal/discord/global-logger";
 
-function enteryPoint() {
-    GlobalLogger.getInstance().info( enteryPoint, "Database is connected" );
+function entryPoint() {
+    GlobalLogger.getInstance().info( entryPoint, "Database is connected" );
 
     botInitialize();
 }
 
-Prisma.getConnectPromise().then( enteryPoint );
+Prisma.getConnectPromise().then( entryPoint );

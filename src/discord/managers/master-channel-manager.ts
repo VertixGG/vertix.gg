@@ -13,9 +13,10 @@ import CategoryManager from "./category-manager";
 import ChannelManager from "./channel-manager";
 import Logger from "@internal/modules/logger";
 
-const DEFAULT_CATEGORY_NAME = "⚡ Dynamic Channels",
+export const DEFAULT_CATEGORY_NAME = "⚡ Dynamic Channels",
     DEFAULT_CHANNEL_NAME = "➕ New Channel",
-    DEFAULT_DYNAMIC_CHANNEL_NAME = "%{userDisplayName}%'s Channel";
+    DEFAULT_DYNAMIC_CHANNEL_NAME = "%{userDisplayName}%'s Channel",
+    DEFAULT_MAXIMUM_FREE_SUBSCRIPTION_MASTER_CHANNELS = 3;
 
 const DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
     allow: [
@@ -198,6 +199,19 @@ export default class MasterChannelManager extends PrismaBase {
 
         await CategoryManager.getInstance().delete( guild );
         await ChannelManager.getInstance().deleteFromDB( guild );
+    }
+
+    public async getTotalMasterChannels( guildId: string ) {
+        const where: any = {
+            guildId,
+            isMaster: true
+        };
+
+        return this.prisma.channel.count( { where } );
+    }
+
+    public async isReachedMasterChannelLimit( guildId: string ) {
+        return await this.getTotalMasterChannels( guildId ) >= DEFAULT_MAXIMUM_FREE_SUBSCRIPTION_MASTER_CHANNELS;
     }
 
     public async isMaster( channelId: string, guildId: string ) {

@@ -41,8 +41,9 @@ model channel {
   categoryId       String?
   name             String
   // ---
-  isMaster Boolean @default(false)
-  isDynamic Boolean @default(false)
+  ownerId          String?
+  isMaster         Boolean  @default(false)
+  isDynamic        Boolean  @default(false)
   // ---
   createdAtDiscord Int
   // ---

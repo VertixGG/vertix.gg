@@ -1,8 +1,8 @@
-import { ChannelType, Guild, PermissionsBitField, VoiceState } from "discord.js";
+import { ChannelType, Guild, PermissionsBitField, VoiceBasedChannel } from "discord.js";
 
 import {
     IChannelEnterGenericArgs,
-    IChannelLeaveGenericArgs,
+    IChannelLeaveGenericArgs, IMasterChanelCreateDynamicArgs,
     IMasterChannelCreateArgs
 } from "../interfaces/channel";
 
@@ -15,6 +15,18 @@ import Logger from "@internal/modules/logger";
 const DEFAULT_CATEGORY_NAME = "⚡ Dynamic Channels",
     DEFAULT_CHANNEL_NAME = "➕ New Channel",
     DEFAULT_DYNAMIC_CHANNEL_NAME = "%{userDisplayName}%'s Channel";
+
+const DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS =  {
+    allow: [
+        PermissionsBitField.Flags.ManageChannels,
+        PermissionsBitField.Flags.MoveMembers,
+    ],
+};
+
+/* Everyone - Send Messages - False */
+const DEFAULT_EVERYONE_CHANNEL_PERMISSIONS = {
+    deny: [ PermissionsBitField.Flags.SendMessages ],
+};
 
 export default class MasterChannelManager extends PrismaBase {
     private static instance: MasterChannelManager;
@@ -39,22 +51,25 @@ export default class MasterChannelManager extends PrismaBase {
         this.logger = new Logger( this );
     }
 
+    /**
+     * Function onJoinMasterChannel() :: Called when a user joins the master channel(➕ New Channel).
+     */
     public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {
-        const { displayName, channelName } = args,
-            { guild } = args.newState;
+        const { displayName, channelName, oldState, newState } = args,
+            { guild } = newState;
 
         this.logger.info( this.onJoinMasterChannel,
             `User '${ displayName }' joined master channel '${ channelName }'` );
 
         // Create a new dynamic channel for the user.
-        await this.createDynamic( displayName, guild, args.newState );
+        await this.createDynamic( { displayName, guild, oldState, newState, } );
     }
 
     public async onLeaveDynamicChannel( args: IChannelLeaveGenericArgs ) {
         const { oldState, displayName, channelName } = args,
             { guild } = oldState;
 
-        this.logger.info( this.onLeaveDynamicChannel,
+        this.logger.log( this.onLeaveDynamicChannel,
             `User '${ displayName }' left dynamic channel '${ channelName }'` );
 
         // If the channel is empty, delete it.
@@ -67,21 +82,46 @@ export default class MasterChannelManager extends PrismaBase {
         }
     }
 
-    public async createDynamic( userDisplayName: string, guild: Guild, newState: VoiceState ) {
-        const dynamicChannelName = DEFAULT_DYNAMIC_CHANNEL_NAME.replace(
-            "%{userDisplayName}%",
-            userDisplayName
-        );
+    public getDefaultInheritedProperties( masterChannel: VoiceBasedChannel ) {
+        const { rtcRegion, bitrate, userLimit } = masterChannel,
+            result:any = { bitrate, userLimit };
+
+        if ( rtcRegion !== null ) {
+            result.rtcRegion = rtcRegion;
+        }
+
+        this.logger.debug( this.getDefaultInheritedProperties, JSON.stringify( result ) );
+
+        return result;
+    }
+
+    public async createDynamic( args: IMasterChanelCreateDynamicArgs ) {
+        const { displayName, guild, newState } = args,
+            ownerId = newState.id,
+            dynamicChannelName = DEFAULT_DYNAMIC_CHANNEL_NAME.replace(
+                "%{userDisplayName}%",
+                displayName
+            );
 
         this.logger.log( this.createDynamic,
-            `Creating dynamic channel '${ dynamicChannelName }' for user '${ userDisplayName }'` );
+            `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ ownerId }'` );
+
+        // Take overview of the master channel.
+        const inheritedProperties = this.getDefaultInheritedProperties( newState.channel as VoiceBasedChannel );
 
         // Create channel for the user.
         const channel = await ChannelManager.getInstance().create( {
             guild,
+            isDynamic: true,
+            ownerId: newState.id,
+            // ---
             name: dynamicChannelName,
             type: ChannelType.GuildVoice,
-            isDynamic: true,
+            permissionOverwrites: [ {
+                id: newState.id,
+                ... DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+            } ],
+            ... inheritedProperties
         } );
 
         // Move the user to new created channel.
@@ -110,11 +150,10 @@ export default class MasterChannelManager extends PrismaBase {
             name: args.name || DEFAULT_CHANNEL_NAME,
             parent: category,
             type: ChannelType.GuildVoice,
-            /* Everyone - Send Messages - False */
             permissionOverwrites: [ {
                 id: guild.roles.everyone,
-                deny: [ PermissionsBitField.Flags.SendMessages ],
-            } ]
+                ... DEFAULT_EVERYONE_CHANNEL_PERMISSIONS
+            } ],
         } );
     }
 

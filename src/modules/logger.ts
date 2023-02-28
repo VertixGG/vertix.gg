@@ -5,6 +5,7 @@ import ObjectBase from "../bases/object-base";
 
 const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
     DEFAULT_INFO_PREFIX = chalk.blue( "[INFO]"),
+    DEFAULT_DEBUG_PREFIX = chalk.grey( "[DEBUG]" ),
     DEFAULT_WARN_PREFIX = chalk.yellow( "[WARN]" ),
     DEFAULT_ERROR_PREFIX = chalk.red( "[ERROR]" );
 
@@ -23,24 +24,28 @@ export default class Logger extends InitializeBase {
         this.owner = owner;
     }
 
-    public log( caller: ICalleer, message: string, ... params: [] ): void {
+    public log( caller: ICalleer, message: string, ... params: any[] ): void {
         this.output( DEFAULT_LOG_PREFIX, caller, message, ... params );
     }
 
-    public info( caller: ICalleer, message: string, ... params: [] ): void {
+    public info( caller: ICalleer, message: string, ... params: any[] ): void {
         this.output( DEFAULT_INFO_PREFIX, caller, message, ... params );
     }
 
-    public warn( caller: ICalleer, message: string, ... params: [] ): void {
+    public debug( caller: ICalleer, message: string, ... params: any[] ): void {
+        this.output( DEFAULT_DEBUG_PREFIX, caller, message, ... params );
+    }
+
+    public warn( caller: ICalleer, message: string, ... params: any[] ): void {
         this.output( DEFAULT_WARN_PREFIX, caller, message, ... params );
     }
 
-    public error( caller: ICalleer, message: string, ... params: [] ): void {
+    public error( caller: ICalleer, message: string, ... params: any[] ): void {
         this.output( DEFAULT_ERROR_PREFIX, caller, message, ... params );
     }
 
     private getTime(): string {
-        const iso = new Date().toISOString().match( /(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/ );
+        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/ );
 
         if ( ! iso ) {
             throw new Error( "Invalid date" );
@@ -59,9 +64,9 @@ export default class Logger extends InitializeBase {
         }
     }
 
-    private output( prefix: string, caller: ICalleer, message: string, ... params: [] ): void {
+    private output( prefix: string, caller: ICalleer, message: string, ... params: any[] ): void {
         const source = this.owner.getName() + "::" + this.getCallerName( caller );
 
-        console.log( `${ prefix }[${ this.getTime() }][${ source }()]: ${ message }`, params?.length || "" );
+        console.log( `${ prefix }[${ this.getTime() }][${ source }()]: ${ message }`, params?.length ? params : "" );
     }
 }

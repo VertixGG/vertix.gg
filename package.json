@@ -1,0 +1,27 @@
+{
+	"name": "discord-bot",
+	"version": "1.0.0",
+	"license": "GPL-3.0-or-later",
+	"author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+	"main": "index.ts",
+	"scripts": {
+		"eslint": "npx eslint --ext .ts .",
+		"eslint:fix": "npx eslint --fix --ext .ts .",
+		"start": "ts-node src/index.ts"
+	},
+	"dependencies": {
+		"@prisma/client": "^4.10.1",
+		"chalk": "^4.1.2",
+		"discord.js": "^14.7.1"
+	},
+	"devDependencies": {
+		"@types/node": "^18.14.2",
+		"@typescript-eslint/eslint-plugin": "^5.54.0",
+		"@typescript-eslint/parser": "^5.54.0",
+		"eslint": "^8.35.0",
+		"prisma": "^4.10.1",
+		"ts-node": "^10.9.1",
+		"tsconfig-paths": "^3.14.2",
+		"typescript": "^4.9.5"
+	}
+}

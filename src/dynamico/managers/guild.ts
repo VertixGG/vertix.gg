@@ -44,7 +44,7 @@ export default class GuildManager extends InitializeBase {
             await this.guildModel.create( guild );
         }
 
-        return this.masterChannelManager.create( { guild } );
+        return this.masterChannelManager.createCreateChannel( { guild } );
     }
 
     public async onLeave( client: Client, guild: Guild ) {

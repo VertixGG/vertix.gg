@@ -18,8 +18,11 @@ import {
     DEFAULT_MASTER_EVERYONE_CHANNEL_PERMISSIONS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
+
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
+
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
 export default class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -143,6 +146,7 @@ export default class MasterChannelManager extends InitializeBase {
             name: dynamicChannelName,
             type: ChannelType.GuildVoice,
             parent: masterChannelParent,
+            internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
             // ---
             permissionOverwrites: [
                 ... inheritedPermissions,
@@ -159,12 +163,12 @@ export default class MasterChannelManager extends InitializeBase {
     }
 
     /**
-     * Function create() :: Creates a new master channel for a guild.
+     * Function createCreateChannel() :: Creates a new master channel for a guild.
      */
-    public async create( args: IMasterChannelCreateArgs ) {
+    public async createCreateChannel( args: IMasterChannelCreateArgs ) {
         const { guild } = args;
 
-        this.logger.info( this.create,
+        this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' for user: '${ args.guild.ownerId }'` );
 
         // Create master channel category.
@@ -176,7 +180,7 @@ export default class MasterChannelManager extends InitializeBase {
         // Create master channel.
         return ChannelManager.getInstance().create( {
             guild,
-            isMaster: true,
+            internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: args.name || DEFAULT_MASTER_CHANNEL_NAME,
             parent: category,
             type: ChannelType.GuildVoice,

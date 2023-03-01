@@ -35,7 +35,7 @@ export const Setup: ICommand = {
                 .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
                 .setColor( Colors.Red );
         } else if ( interaction.guild ){
-            const result = await masterChannelManager.create( { guild: interaction.guild } );
+            const result = await masterChannelManager.createCreateChannel( { guild: interaction.guild } );
 
             embed
                 .setTitle( "Dynamico has been set up successfully !" )

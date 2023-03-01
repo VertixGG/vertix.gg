@@ -29,6 +29,16 @@ export default class CategoryManager extends InitializeBase {
         this.categoryModel = CategoryModel.getInstance();
     }
 
+    public async onDelete( category: CategoryChannel ) {
+        const { guild, name } = category;
+
+        this.logger.info( this.create,
+            `Deleting category for guild '${ guild.name }' with name '${ name }'` );
+
+        // Delete the channel from the database.
+        await this.categoryModel.delete( guild.id, category.id );
+    }
+
     public async create( args: ICategoryCreateArgs ): Promise<CategoryChannel> {
         const { name, guild } = args;
 

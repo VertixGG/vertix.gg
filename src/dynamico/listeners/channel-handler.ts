@@ -1,6 +1,7 @@
 import { ChannelType, Client, Events } from "discord.js";
 
 import ChannelManager from "../managers/channel";
+import CategoryManager from "@dynamico/managers/category";
 
 export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, async ( oldState, newState ) => {
@@ -19,6 +20,14 @@ export function channelHandler( client: Client ) {
     } );
 
     client.on( Events.ChannelDelete, async ( channel ) => {
-        await ChannelManager.getInstance().onChannelDelete( channel );
+        // If it was handled by the channel manager, return
+        if ( await ChannelManager.getInstance().onChannelDelete( channel ) ) {
+            return;
+        }
+
+        if ( channel.type === ChannelType.GuildCategory ) {
+            await CategoryManager.getInstance().onDelete( channel );
+            return;
+        }
     } );
 }

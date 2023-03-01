@@ -1,9 +1,4 @@
-import {
-    ChannelType,
-    DMChannel,
-    NonThreadGuildBasedChannel,
-    VoiceState
-} from "discord.js";
+import { ChannelType, DMChannel, NonThreadGuildBasedChannel, VoiceState } from "discord.js";
 
 import {
     IChannelCreateArgs,
@@ -17,6 +12,7 @@ import InitializeBase from "@internal/bases/initialize-base";
 import ChannelModel from "@dynamico/models/channel";
 
 import MasterChannelManager from "./master-channel";
+import CategoryModel from "@dynamico/models/category";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
@@ -131,6 +127,21 @@ export default class ChannelManager extends InitializeBase {
 
                 if ( await this.channelModel.isMaster( channelId, guildId ) ) {
                     await this.channelModel.delete( channel.guild, channelId );
+
+                    const categoryModel = CategoryModel.getInstance(),
+                        isMasterCategory = await categoryModel.isExisting( guildId, channel.parentId );
+
+                    // Check if parent category is master category and its empty.
+                    if ( isMasterCategory ) {
+                        const channels = await channel.guild.channels.fetch();
+
+                        if ( channels.filter( c => c?.parentId === channel.parentId ).size === 0 ) {
+                            // If empty, remove the category.
+                            await channel.parent?.delete();
+
+                            await categoryModel.delete( guildId, channel.parentId );
+                        }
+                    }
                 }
 
                 return true;
@@ -147,12 +158,12 @@ export default class ChannelManager extends InitializeBase {
 
         this.logger.info( this.create,
             `Creating channel for guild '${ guild.name }' with the following properties: ` +
-                    `With name: '${ name }', ownerId: '${ ownerId }', isMaster: '${ isMaster }, isDynamic: '${ isDynamic }'`
+            `With name: '${ name }', ownerId: '${ ownerId }', isMaster: '${ isMaster }, isDynamic: '${ isDynamic }'`
         );
 
         const channel = await guild.channels.create( args ),
             // Data to be inserted into the database.
-            data:any = {
+            data: any = {
                 name,
                 channelId: channel.id,
                 guildId: guild.id,

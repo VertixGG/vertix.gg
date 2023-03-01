@@ -46,7 +46,13 @@ export default class CategoryModel extends ModelBase {
         return this.model.deleteMany( { where } );
     }
 
-    public async isExisting( guildId: string ) {
-        return !! await this.model.findFirst( { where: { guildId } } );
+    public async isExisting( guildId: string, guildCategoryId?: string | null ) {
+        const where: any = { guildId };
+
+        if ( guildCategoryId ) {
+            where.categoryId = guildCategoryId;
+        }
+
+        return !! await this.model.findFirst( { where } );
     }
 }

@@ -7,6 +7,13 @@ datasource db {
   url      = env("PRISMA_DATABASE_URL")
 }
 
+enum E_INTERNAL_CHANNEL_TYPES {
+  DEFAULT_CHANNEL
+  DYNAMIC_CHANNEL
+  MASTER_CREATE_CHANNEL
+  MASTER_EDIT_CHANNEL
+}
+
 model guild {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
@@ -34,19 +41,19 @@ model category {
 }
 
 model channel {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  id               String                   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  channelId        String   @unique
+  channelId        String                   @unique
   guildId          String
   categoryId       String?
   name             String
   // ---
   ownerId          String?
-  isMaster         Boolean  @default(false)
-  isDynamic        Boolean  @default(false)
+  // ---
+  internalType     E_INTERNAL_CHANNEL_TYPES @default(DEFAULT_CHANNEL)
   // ---
   createdAtDiscord Int
   // ---
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
 }

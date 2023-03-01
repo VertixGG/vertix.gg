@@ -7,6 +7,8 @@ import {
     VoiceState
 } from "discord.js";
 
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 /* Master channel */
 
 export interface IMasterChannelCreateArgs {
@@ -43,8 +45,7 @@ export interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,
     parent? : CategoryChannel;
     ownerId?: string,
-    isMaster?: boolean;
-    isDynamic?: boolean;
+    internalType: E_INTERNAL_CHANNEL_TYPES,
 }
 
 export interface IChannelDeleteArgs {

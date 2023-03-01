@@ -6,6 +6,8 @@ import ModelBase from "@internal/bases/model-base";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
 
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 export default class ChannelModel extends ModelBase {
     private static instance: ChannelModel;
 
@@ -56,11 +58,11 @@ export default class ChannelModel extends ModelBase {
         }
     }
 
-    public async getMasterTotal( guildId: string ) {
+    public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {
         const total = await this.model.count( {
             where: {
                 guildId,
-                isMaster: true
+                internalType,
             }
         } );
 
@@ -72,15 +74,15 @@ export default class ChannelModel extends ModelBase {
     }
 
     public async isReachedMasterLimit( guildId: string ) {
-        return await this.getMasterTotal( guildId ) >= DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS;
+        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL  ) >= DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS;
     }
 
-    public async isMaster( channelId: string, guildId: string ) {
+    public async isMasterCreate( channelId: string, guildId: string ) {
         return !! await this.prisma.channel.findFirst( {
             where: {
                 channelId,
                 guildId,
-                isMaster: true
+                internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
             }
         } );
     }
@@ -90,7 +92,7 @@ export default class ChannelModel extends ModelBase {
             where: {
                 channelId,
                 guildId,
-                isDynamic: true
+                internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
             }
         } );
     }

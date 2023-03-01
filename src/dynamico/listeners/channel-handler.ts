@@ -1,6 +1,6 @@
 import { ChannelType, Client, Events } from "discord.js";
 
-import ChannelManager from "../managers/channel-manager";
+import ChannelManager from "../managers/channel";
 
 export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, async ( oldState, newState ) => {

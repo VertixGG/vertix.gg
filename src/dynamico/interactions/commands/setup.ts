@@ -9,11 +9,12 @@ import {
 
 import { ButtonStyle } from "discord.js/typings";
 
-import { ICommand } from "@internal/discord/interfaces/command";
+import { ICommand } from "@dynamico/interfaces/command";
 
-import MasterChannelManager, {
-    DEFAULT_MAXIMUM_FREE_SUBSCRIPTION_MASTER_CHANNELS
-} from "@internal/discord/managers/master-channel-manager";
+import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
+
+import MasterChannelManager from "@dynamico/managers/master-channel";
+import ChannelModel from "@dynamico/models/channel";
 
 const masterChannelManager = MasterChannelManager.getInstance();
 
@@ -28,10 +29,10 @@ export const Setup: ICommand = {
         const embed = new EmbedBuilder(),
             guildId = interaction.guildId;
 
-        if ( guildId && await masterChannelManager.isReachedMasterChannelLimit( guildId ) ) {
+        if ( guildId && await ChannelModel.getInstance().isReachedMasterLimit( guildId ) ) {
             embed
                 .setTitle( "You have reached your Master Channels limit" )
-                .setDescription( `You can create up to ${ DEFAULT_MAXIMUM_FREE_SUBSCRIPTION_MASTER_CHANNELS } Master Channels in total.` )
+                .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
                 .setColor( Colors.Red );
         } else if ( interaction.guild ){
             const result = await masterChannelManager.create( { guild: interaction.guild } );

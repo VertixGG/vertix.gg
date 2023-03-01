@@ -3,6 +3,7 @@ import { Client } from "discord.js";
 import GlobalLogger from "./global-logger";
 
 import * as handlers from "./listeners";
+import * as process from "process";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();
@@ -18,8 +19,16 @@ export default function Main() {
         ]
     } );
 
-    // client.on("debug", console.log)
-    //     .on("warn", console.log);
+    // DiscordJS Debug mode.
+    if ( process.env.debug_mode === "discord" ) {
+        const debug = ( ... args: any[] ) => {
+            logger.debug( 'API', args.toString() );
+        };
+
+        client
+            .on( "debug", debug )
+            .on( "warn", debug );
+    }
 
     async function onLogin() {
         logger.log( onLogin, "Bot is authenticated" );

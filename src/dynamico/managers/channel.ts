@@ -1,13 +1,9 @@
 import {
     ChannelType,
     DMChannel,
-    Guild,
     NonThreadGuildBasedChannel,
     VoiceState
 } from "discord.js";
-
-import PrismaBase from "@internal/bases/prisma-base";
-import Logger from "@internal/modules/logger";
 
 import {
     IChannelCreateArgs,
@@ -16,15 +12,18 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-import MasterChannelManager from "./master-channel-manager";
+import InitializeBase from "@internal/bases/initialize-base";
+
+import ChannelModel from "@dynamico/models/channel";
+
+import MasterChannelManager from "./master-channel";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
 
-export default class ChannelManager extends PrismaBase {
+export default class ChannelManager extends InitializeBase {
     private static instance: ChannelManager;
-
-    private logger: Logger;
+    private channelModel: ChannelModel;
 
     private masterChannelManager: MasterChannelManager;
 
@@ -37,13 +36,13 @@ export default class ChannelManager extends PrismaBase {
     }
 
     public static getName(): string {
-        return "Discord/Managers/ChannelManager";
+        return "Discord/Managers/Channel";
     }
 
     constructor() {
         super();
 
-        this.logger = new Logger( this );
+        this.channelModel = ChannelModel.getInstance();
 
         this.masterChannelManager = MasterChannelManager.getInstance();
     }
@@ -102,7 +101,7 @@ export default class ChannelManager extends PrismaBase {
     public async onEnterGeneric( args: IChannelEnterGenericArgs ) {
         const { oldState, newState } = args;
 
-        if ( newState.channelId && await this.masterChannelManager.isMaster( newState.channelId, newState.guild.id ) ) {
+        if ( newState.channelId && await this.channelModel.isMaster( newState.channelId, newState.guild.id ) ) {
             await this.masterChannelManager.onJoinMasterChannel( args );
         }
 
@@ -115,7 +114,7 @@ export default class ChannelManager extends PrismaBase {
     public async onLeaveGeneric( args: IChannelLeaveGenericArgs ) {
         const { oldState, newState } = args;
 
-        if ( oldState.channelId && await this.masterChannelManager.isDynamic( oldState.channelId, newState.guild.id ) ) {
+        if ( oldState.channelId && await this.channelModel.isDynamic( oldState.channelId, newState.guild.id ) ) {
             await this.masterChannelManager.onLeaveDynamicChannel( args );
         }
     }
@@ -130,8 +129,8 @@ export default class ChannelManager extends PrismaBase {
                 this.logger.info( this.onChannelDelete,
                     `Channel '${ channelId }' was deleted from '${ guildId }'.` );
 
-                if ( await this.masterChannelManager.isMaster( channelId, guildId ) ) {
-                    await this.deleteFromDB( channel.guild, channelId );
+                if ( await this.channelModel.isMaster( channelId, guildId ) ) {
+                    await this.channelModel.delete( channel.guild, channelId );
                 }
         }
     }
@@ -143,7 +142,7 @@ export default class ChannelManager extends PrismaBase {
         const { name, guild, ownerId = false, isMaster = false, isDynamic = false } = args;
 
         this.logger.info( this.create,
-            `Creating channel for guild '${ guild.name }' with the following properties:\n` +
+            `Creating channel for guild '${ guild.name }' with the following properties: ` +
                     `With name: '${ name }', ownerId: '${ ownerId }', isMaster: '${ isMaster }, isDynamic: '${ isDynamic }'`
         );
 
@@ -173,7 +172,7 @@ export default class ChannelManager extends PrismaBase {
             data.ownerId = args.ownerId;
         }
 
-        await this.prisma.channel.create( { data } );
+        await this.channelModel.create( { data } );
 
         return channel;
     }
@@ -184,42 +183,8 @@ export default class ChannelManager extends PrismaBase {
         this.logger.info( this.delete,
             `Deleting channel '${ channelName }' for guild '${ guild.name }'` );
 
-        await this.prisma.channel.deleteMany( {
-            where: {
-                channelId: channel.id,
-                guildId: guild.id,
-            }
-        } );
+        await this.channelModel.delete( guild, channel.id );
 
         await channel.delete();
-    }
-
-    // TODO: Create a model class for such methods.
-    public async deleteFromDB( guild: Guild, channelId?: string|null ) {
-        if ( await this.isExisting( guild, channelId ) ) {
-            const where: any = { guildId: guild.id };
-
-            if ( channelId ) {
-                this.logger.info( this.deleteFromDB,
-                    `Deleting channel '${ channelId }' for guild '${ guild.name }'` );
-
-                where.channelId = channelId;
-            } else {
-                this.logger.info( this.deleteFromDB,
-                    `Deleting all channels for guild '${ guild.name }'` );
-            }
-
-            await this.prisma.channel.deleteMany( { where } );
-        }
-    }
-
-    public async isExisting( guild: Guild, channelId?: string|null ) {
-        const where: any =  { guildId: guild.id };
-
-        if ( channelId ) {
-            where.channelId = channelId;
-        }
-
-        return !! await this.prisma.channel.findFirst( { where } );
     }
 }

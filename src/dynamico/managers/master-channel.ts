@@ -7,38 +7,25 @@ import {
     IMasterChannelCreateArgs
 } from "../interfaces/channel";
 
-import PrismaBase from "@internal/bases/prisma-base";
+import InitializeBase from "@internal/bases/initialize-base";
 
-import CategoryManager from "./category-manager";
-import ChannelManager from "./channel-manager";
-import Logger from "@internal/modules/logger";
+import CategoryManager from "./category"
+import ChannelManager from "./channel";
 
-export const DEFAULT_CATEGORY_NAME = "⚡ Dynamic Channels",
-    DEFAULT_CHANNEL_NAME = "➕ New Channel",
-    DEFAULT_DYNAMIC_CHANNEL_NAME = "%{userDisplayName}%'s Channel",
-    DEFAULT_MAXIMUM_FREE_SUBSCRIPTION_MASTER_CHANNELS = 3;
+import {
+    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_NAME,
+    DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT,
+    DEFAULT_MASTER_EVERYONE_CHANNEL_PERMISSIONS,
+    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+} from "@dynamico/constants/master-channel";
+import CategoryModel from "@dynamico/models/category";
+import ChannelModel from "@dynamico/models/channel";
 
-const DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
-    allow: [
-        PermissionsBitField.Flags.ManageChannels,
-        PermissionsBitField.Flags.MoveMembers,
-        PermissionsBitField.Flags.ViewChannel,
-        PermissionsBitField.Flags.Connect,
-    ],
-};
-
-/* Everyone - Send Messages - False */
-const DEFAULT_EVERYONE_CHANNEL_PERMISSIONS = {
-    deny: [ PermissionsBitField.Flags.SendMessages ],
-};
-
-export default class MasterChannelManager extends PrismaBase {
+export default class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
-    private logger: Logger;
-
     public static getName(): string {
-        return "Discord/Managers/MasterChannelManager";
+        return "Discord/Managers/MasterChannel";
     }
 
     public static getInstance(): MasterChannelManager {
@@ -47,12 +34,6 @@ export default class MasterChannelManager extends PrismaBase {
         }
 
         return MasterChannelManager.instance;
-    }
-
-    constructor() {
-        super();
-
-        this.logger = new Logger( this );
     }
 
     /**
@@ -69,6 +50,9 @@ export default class MasterChannelManager extends PrismaBase {
         await this.createDynamic( { displayName, guild, oldState, newState, } );
     }
 
+    /**
+     * onLeaveDynamicChannel() :: Called when a user leaves a dynamic channel.
+     */
     public async onLeaveDynamicChannel( args: IChannelLeaveGenericArgs ) {
         const { oldState, displayName, channelName } = args,
             { guild } = oldState;
@@ -86,6 +70,9 @@ export default class MasterChannelManager extends PrismaBase {
         }
     }
 
+    /**
+     * Function getDefaultInheritedProperties() :: Returns the default inherited properties from the master channel.
+     */
     public getDefaultInheritedProperties( masterChannel: VoiceBasedChannel ) {
         const { rtcRegion, bitrate, userLimit } = masterChannel,
             result: any = { bitrate, userLimit };
@@ -99,6 +86,9 @@ export default class MasterChannelManager extends PrismaBase {
         return result;
     }
 
+    /**
+     * Function getDefaultInheritedPermissions() :: Returns the default inherited permissions from the master channel.
+     */
     public getDefaultInheritedPermissions( masterChannel: VoiceBasedChannel ) {
         const { permissionOverwrites } = masterChannel,
             result = [];
@@ -123,10 +113,13 @@ export default class MasterChannelManager extends PrismaBase {
         return result;
     }
 
+    /**
+     * Function createDynamic() :: Creates a new dynamic channel for a user.
+     */
     public async createDynamic( args: IMasterChanelCreateDynamicArgs ) {
         const { displayName, guild, newState } = args,
             ownerId = newState.id,
-            dynamicChannelName = DEFAULT_DYNAMIC_CHANNEL_NAME.replace(
+            dynamicChannelName = DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT.replace(
                 "%{userDisplayName}%",
                 displayName
             );
@@ -155,7 +148,7 @@ export default class MasterChannelManager extends PrismaBase {
                 ... inheritedPermissions,
                 {
                     id: newState.id,
-                    ... DEFAULT_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+                    ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
                 }
             ],
             ... inheritedProperties,
@@ -177,19 +170,19 @@ export default class MasterChannelManager extends PrismaBase {
         // Create master channel category.
         const category = await CategoryManager.getInstance().create( {
             guild,
-            name: DEFAULT_CATEGORY_NAME,
+            name: DEFAULT_MASTER_CATEGORY_NAME,
         } );
 
         // Create master channel.
         return ChannelManager.getInstance().create( {
             guild,
             isMaster: true,
-            name: args.name || DEFAULT_CHANNEL_NAME,
+            name: args.name || DEFAULT_MASTER_CHANNEL_NAME,
             parent: category,
             type: ChannelType.GuildVoice,
             permissionOverwrites: [ {
                 id: guild.roles.everyone,
-                ... DEFAULT_EVERYONE_CHANNEL_PERMISSIONS
+                ... DEFAULT_MASTER_EVERYONE_CHANNEL_PERMISSIONS
             } ],
         } );
     }
@@ -197,40 +190,8 @@ export default class MasterChannelManager extends PrismaBase {
     public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }'` );
 
-        await CategoryManager.getInstance().delete( guild );
-        await ChannelManager.getInstance().deleteFromDB( guild );
-    }
-
-    public async getTotalMasterChannels( guildId: string ) {
-        const where: any = {
-            guildId,
-            isMaster: true
-        };
-
-        return this.prisma.channel.count( { where } );
-    }
-
-    public async isReachedMasterChannelLimit( guildId: string ) {
-        return await this.getTotalMasterChannels( guildId ) >= DEFAULT_MAXIMUM_FREE_SUBSCRIPTION_MASTER_CHANNELS;
-    }
-
-    public async isMaster( channelId: string, guildId: string ) {
-        return !! await this.prisma.channel.findFirst( {
-            where: {
-                channelId,
-                guildId,
-                isMaster: true
-            }
-        } );
-    }
-
-    public async isDynamic( channelId: string, guildId: string ) {
-        return !! await this.prisma.channel.findFirst( {
-            where: {
-                channelId,
-                guildId,
-                isDynamic: true
-            }
-        } );
+        // TODO Relations are deleted automatically??
+        CategoryModel.getInstance().delete( guild.id );
+        ChannelModel.getInstance().delete( guild );
     }
 }

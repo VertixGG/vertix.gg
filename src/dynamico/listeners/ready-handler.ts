@@ -2,9 +2,9 @@ import * as process from "process";
 
 import { Client } from "discord.js";
 
-import GlobalLogger from "../global-logger";
+import { Commands } from "@dynamico/interactions/commands";
 
-import { Commands } from "@internal/discord/interactions/commands/";
+import GlobalLogger from "../global-logger";
 
 const logger = GlobalLogger.getInstance();
 

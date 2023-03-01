@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 
-import GuildManager from "@internal/discord/managers/guild-manager";
+import GuildManager from "../managers/guild";
 
 export function guildHandler ( client: Client ) {
     const guildManager = GuildManager.getInstance();

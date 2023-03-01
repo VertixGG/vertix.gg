@@ -1,6 +1,5 @@
 import chalk from "chalk";
 
-import InitializeBase from "../bases/initialize-base";
 import ObjectBase from "../bases/object-base";
 
 const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
@@ -9,10 +8,14 @@ const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
     DEFAULT_WARN_PREFIX = chalk.yellow( "[WARN]" ),
     DEFAULT_ERROR_PREFIX = chalk.red( "[ERROR]" );
 
-export type ICalleer = Function | String;
+export type ICaller = Function | String;
 
-export default class Logger extends InitializeBase {
+const registeredNames:any = {};
+
+export default class Logger extends ObjectBase {
     private owner: ObjectBase;
+
+    private messagePrefixes: string[] = [];
 
     public static getName(): string {
         return "Modules/Logger";
@@ -21,26 +24,34 @@ export default class Logger extends InitializeBase {
     public constructor( owner: ObjectBase ) {
         super();
 
+        if ( registeredNames[ owner.getName() ] ) {
+            throw new Error( `Logger for '${ owner.getName() }' already exists` );
+        }
+
         this.owner = owner;
     }
 
-    public log( caller: ICalleer, message: string, ... params: any[] ): void {
+    public addMessagePrefix( prefix: string) {
+        this.messagePrefixes.push( prefix );
+    }
+
+    public log( caller: ICaller, message: string, ... params: any[] ): void {
         this.output( DEFAULT_LOG_PREFIX, caller, message, ... params );
     }
 
-    public info( caller: ICalleer, message: string, ... params: any[] ): void {
+    public info( caller: ICaller, message: string, ... params: any[] ): void {
         this.output( DEFAULT_INFO_PREFIX, caller, message, ... params );
     }
 
-    public debug( caller: ICalleer, message: string, ... params: any[] ): void {
+    public debug( caller: ICaller, message: string, ... params: any[] ): void {
         this.output( DEFAULT_DEBUG_PREFIX, caller, message, ... params );
     }
 
-    public warn( caller: ICalleer, message: string, ... params: any[] ): void {
+    public warn( caller: ICaller, message: string, ... params: any[] ): void {
         this.output( DEFAULT_WARN_PREFIX, caller, message, ... params );
     }
 
-    public error( caller: ICalleer, message: string, ... params: any[] ): void {
+    public error( caller: ICaller, message: string, ... params: any[] ): void {
         this.output( DEFAULT_ERROR_PREFIX, caller, message, ... params );
     }
 
@@ -54,19 +65,27 @@ export default class Logger extends InitializeBase {
         return iso[ 1 ] + " " + iso[ 2 ];
     }
 
-    private getCallerName( caller: ICalleer ): string {
+    private getCallerName( caller: ICaller ): string {
         if ( typeof caller === "string" ) {
             return caller;
         } else if ( typeof caller === "function" ) {
             return caller.name;
-        } else {
-            throw new Error( "Invalid caller" );
         }
+
+        throw new Error( "Invalid caller" );
     }
 
-    private output( prefix: string, caller: ICalleer, message: string, ... params: any[] ): void {
+    private output( prefix: string, caller: ICaller, message: string, ... params: any[] ): void {
         const source = this.owner.getName() + "::" + this.getCallerName( caller );
 
-        console.log( `${ prefix }[${ this.getTime() }][${ source }()]: ${ message }`, params?.length ? params : "" );
+        let messagePrefix = "";
+
+        if ( this.messagePrefixes.length ) {
+            messagePrefix = `[${ this.messagePrefixes.join( "][" ) }]`;
+        }
+
+        const output = `${ prefix }[${ this.getTime() }][${ source }]${ messagePrefix + ": " + message }`;
+
+        console.log( output, params?.length ? params : "" );
     }
 }

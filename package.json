@@ -7,7 +7,8 @@
 	"scripts": {
 		"eslint": "npx eslint --ext .ts .",
 		"eslint:fix": "npx eslint --fix --ext .ts .",
-		"start": "ts-node src/index.ts"
+		"start": "ts-node src/index.ts",
+		"debug-discord": "export debug_mode=discord && ts-node src/index.ts"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.10.1",

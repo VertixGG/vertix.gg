@@ -4,18 +4,23 @@ import {
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs,
     IMasterChanelCreateDynamicArgs,
-    IMasterChannelCreateArgs
+    IMasterChannelCreateArgs,
+    IMasterChannelEditArgs
 } from "../interfaces/channel";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
 import CategoryManager from "./category"
 import ChannelManager from "./channel";
+import GUIManager from "./gui";
 
 import {
-    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_NAME,
+    DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
+    DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+    DEFAULT_MASTER_CHANNEL_EDIT_EVERYONE_PERMISSIONS,
+    DEFAULT_MASTER_CHANNEL_EDIT_NAME,
     DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT,
-    DEFAULT_MASTER_EVERYONE_CHANNEL_PERMISSIONS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
 
@@ -28,7 +33,7 @@ export default class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
     public static getName(): string {
-        return "Discord/Managers/MasterChannel";
+        return "Dynamico/Managers/MasterChannel";
     }
 
     public static getInstance(): MasterChannelManager {
@@ -40,19 +45,24 @@ export default class MasterChannelManager extends InitializeBase {
     }
 
     /**
-     * Function onJoinMasterChannel() :: Called when a user joins the master channel(➕ New Channel).
+     * Function onJoinMasterCreateChannel() :: Called when a user joins the master channel(➕ New Channel).
      */
-    public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {
+    public async onJoinMasterCreateChannel( args: IChannelEnterGenericArgs ) {
         const { displayName, channelName, oldState, newState } = args,
             { guild } = newState;
 
-        this.logger.info( this.onJoinMasterChannel,
+        this.logger.info( this.onJoinMasterCreateChannel,
             `User '${ displayName }' joined master channel '${ channelName }'` );
 
         // Create a new dynamic channel for the user.
-        await this.createDynamic( { displayName, guild, oldState, newState, } );
-    }
+        const channel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
+            message = GUIManager
+                .getInstance()
+                .get( "Dynamico/UI/EditChannel" )
+                .getMessage();
 
+        await channel.send( message );
+    }
     /**
      * onLeaveDynamicChannel() :: Called when a user leaves a dynamic channel.
      */
@@ -160,33 +170,78 @@ export default class MasterChannelManager extends InitializeBase {
 
         // Move the user to new created channel.
         await newState.setChannel( channel.id );
+
+        return channel;
+    }
+
+    public async createDefaultMasters( guild: Guild ) {
+        const masterCategory = await this.createMasterCategory( guild ),
+            args = {
+                guild,
+                parent: masterCategory,
+            },
+            masterCreateChannel = await this.createCreateChannel( args ),
+            masterEditChannel = await this.createEditChannel( args );
+
+        return {
+            masterCategory,
+            masterCreateChannel,
+            masterEditChannel,
+        };
     }
 
     /**
-     * Function createCreateChannel() :: Creates a new master channel for a guild.
+     * Function createMasterCategory() :: Creates a new master category for a master channel(s).
+     */
+    public async createMasterCategory( guild: Guild ) {
+        return await CategoryManager.getInstance().create( {
+            guild,
+            name: DEFAULT_MASTER_CATEGORY_NAME,
+        } );
+    }
+
+    /**
+     * Function createCreateChannel() :: Creates channel master of create.
      */
     public async createCreateChannel( args: IMasterChannelCreateArgs ) {
-        const { guild } = args;
+        const { guild, parent } = args;
 
         this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' for user: '${ args.guild.ownerId }'` );
 
-        // Create master channel category.
-        const category = await CategoryManager.getInstance().create( {
-            guild,
-            name: DEFAULT_MASTER_CATEGORY_NAME,
-        } );
-
         // Create master channel.
         return ChannelManager.getInstance().create( {
+            parent,
             guild,
             internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: args.name || DEFAULT_MASTER_CHANNEL_NAME,
-            parent: category,
+            name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
             permissionOverwrites: [ {
                 id: guild.roles.everyone,
-                ... DEFAULT_MASTER_EVERYONE_CHANNEL_PERMISSIONS
+                ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+            } ],
+        } );
+    }
+
+    /**
+     * Function createEditChannel() :: Creates channel master of edit.
+     */
+    public async createEditChannel( args: IMasterChannelEditArgs ) {
+        const { guild, parent } = args;
+
+        this.logger.info( this.createEditChannel,
+            `Creating master channel for guild '${ guild.name }' for user: '${ args.guild.ownerId }'` );
+
+        // Create master channel.
+        return ChannelManager.getInstance().create( {
+            parent,
+            guild,
+            internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_EDIT_CHANNEL,
+            name: args.name || DEFAULT_MASTER_CHANNEL_EDIT_NAME,
+            type: ChannelType.GuildText,
+            permissionOverwrites: [ {
+                id: guild.roles.everyone,
+                ... DEFAULT_MASTER_CHANNEL_EDIT_EVERYONE_PERMISSIONS
             } ],
         } );
     }

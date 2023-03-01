@@ -14,7 +14,7 @@ export default class GuildManager extends InitializeBase {
     private masterChannelManager: MasterChannelManager;
 
     public static getName(): string {
-        return "Discord/Managers/Guild";
+        return "Dynamico/Managers/Guild";
     }
 
     public static getInstance(): GuildManager {
@@ -44,7 +44,7 @@ export default class GuildManager extends InitializeBase {
             await this.guildModel.create( guild );
         }
 
-        return this.masterChannelManager.createCreateChannel( { guild } );
+        return this.masterChannelManager.createDefaultMasters( guild );
     }
 
     public async onLeave( client: Client, guild: Guild ) {

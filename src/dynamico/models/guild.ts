@@ -9,7 +9,7 @@ export default class GuildModel extends ModelBase {
     private model: Prisma.guildDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
-        return "Discord/Models/Guild";
+        return "Dynamico/Models/Guild";
     }
 
     public static getInstance(): GuildModel {

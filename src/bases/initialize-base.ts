@@ -2,7 +2,7 @@ import ObjectBase from "./object-base";
 
 import Logger from "../modules/logger";
 
-export default class InitializeBase extends ObjectBase {
+export default abstract class InitializeBase extends ObjectBase {
     protected logger: Logger;
 
     constructor() {

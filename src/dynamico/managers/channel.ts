@@ -36,7 +36,7 @@ export default class ChannelManager extends InitializeBase {
     }
 
     public static getName(): string {
-        return "Discord/Managers/Channel";
+        return "Dynamico/Managers/Channel";
     }
 
     constructor() {
@@ -102,7 +102,7 @@ export default class ChannelManager extends InitializeBase {
         const { oldState, newState } = args;
 
         if ( newState.channelId && await this.channelModel.isMasterCreate( newState.channelId, newState.guild.id ) ) {
-            await this.masterChannelManager.onJoinMasterChannel( args );
+            await this.masterChannelManager.onJoinMasterCreateChannel( args );
         }
 
         // If the user switched channels.

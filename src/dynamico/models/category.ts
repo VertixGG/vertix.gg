@@ -15,7 +15,7 @@ export default class CategoryModel extends ModelBase {
     private model: Prisma.categoryDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
-        return "Discord/Models/Category";
+        return "Dynamico/Models/Category";
     }
 
     public static getInstance(): CategoryModel {

@@ -3,10 +3,10 @@ import { PrismaClient } from "@prisma/client";
 import PrismaInstance from "@internal/prisma";
 import InitializeBase from "@internal/bases/initialize-base";
 
-export default class PrismaBase extends InitializeBase {
+export default abstract class PrismaBase extends InitializeBase {
     protected prisma: PrismaClient;
 
-    constructor() {
+    protected constructor() {
         super();
 
         this.prisma = PrismaInstance.getClient();

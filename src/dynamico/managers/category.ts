@@ -12,7 +12,7 @@ export default class CategoryManager extends InitializeBase {
     private categoryModel: CategoryModel;
 
     public static getName(): string {
-        return "Discord/Managers/Category";
+        return "Dynamico/Managers/Category";
     }
 
     public static getInstance(): CategoryManager {
@@ -39,7 +39,7 @@ export default class CategoryManager extends InitializeBase {
         await this.categoryModel.delete( guild.id, category.id );
     }
 
-    public async create( args: ICategoryCreateArgs ): Promise<CategoryChannel> {
+    public async create( args: ICategoryCreateArgs ) {
         const { name, guild } = args;
 
         this.logger.info( this.create,

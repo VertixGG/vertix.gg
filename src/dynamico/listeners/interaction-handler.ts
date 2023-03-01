@@ -2,6 +2,8 @@ import { ButtonInteraction, Client, CommandInteraction, Events, Interaction } fr
 
 import { Commands } from "../interactions/commands";
 
+import GUIManager from "../managers/gui";
+
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
         if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
@@ -34,12 +36,7 @@ async function handleButton( client: Client, interaction: ButtonInteraction ) {
 
     console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-    switch ( interaction.customId ) {
-        case "Hello": // Custom ID of the button when it was created.
-            await interaction.followUp( {
-                ephemeral: true,
-                content: `Hello! ${ interaction.user.username }`
-            } );
-            break;
-    }
+    const callback = GUIManager.getInstance().getCallback( interaction.customId );
+
+    callback( interaction );
 };

@@ -14,7 +14,7 @@ export default class ChannelModel extends ModelBase {
     private model: Prisma.channelDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
-        return "Discord/Models/Channel";
+        return "Dynamico/Models/Channel";
     }
 
     public static getInstance(): ChannelModel {

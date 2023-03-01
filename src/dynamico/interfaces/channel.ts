@@ -12,8 +12,13 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 /* Master channel */
 
 export interface IMasterChannelCreateArgs {
+    parent: CategoryChannel,
     guild: Guild,
     name?: string
+}
+
+export interface IMasterChannelEditArgs extends IMasterChannelCreateArgs {
+
 }
 
 export interface IMasterChanelCreateDynamicArgs {

@@ -4,11 +4,14 @@ import GlobalLogger from "./global-logger";
 
 import * as handlers from "./listeners";
 import * as process from "process";
+import GUIManager from "@dynamico/managers/gui";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();
 
     logger.log( Main, "Bot is starting..." );
+
+    GUIManager.getInstance().register( require( "@dynamico/ui/edit-channel" ).default );
 
     const client = new Client( {
         intents: [

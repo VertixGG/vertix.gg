@@ -7,7 +7,7 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import { ButtonStyle } from "discord.js/typings";
+import { ButtonStyle } from "discord.js";
 
 import { ICommand } from "@dynamico/interfaces/command";
 
@@ -35,11 +35,17 @@ export const Setup: ICommand = {
                 .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
                 .setColor( Colors.Red );
         } else if ( interaction.guild ){
-            const result = await masterChannelManager.createCreateChannel( { guild: interaction.guild } );
+            const { masterCategory, masterCreateChannel, masterEditChannel }
+                = await masterChannelManager.createDefaultMasters( interaction.guild );
+
+            let description = `**Category**: ${ masterCategory.name }\n`;
+
+            description += `**Edit Channel**: <#${ masterEditChannel.id }>\n`;
+            description += `**Create Channel**: <#${ masterCreateChannel.id }>\n`;
 
             embed
                 .setTitle( "Dynamico has been set up successfully !" )
-                .setDescription( `**Category**: ${ result.parent?.name }\n**Master Channel**: <#${ result.id }>` )
+                .setDescription( description )
                 .setColor( Colors.Blue );
         } else {
             embed

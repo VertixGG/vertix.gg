@@ -101,7 +101,7 @@ export default class ChannelManager extends InitializeBase {
     public async onEnterGeneric( args: IChannelEnterGenericArgs ) {
         const { oldState, newState } = args;
 
-        if ( newState.channelId && await this.channelModel.isMaster( newState.channelId, newState.guild.id ) ) {
+        if ( newState.channelId && await this.channelModel.isMasterCreate( newState.channelId, newState.guild.id ) ) {
             await this.masterChannelManager.onJoinMasterChannel( args );
         }
 
@@ -129,7 +129,7 @@ export default class ChannelManager extends InitializeBase {
                 this.logger.info( this.onChannelDelete,
                     `Channel '${ channelId }' was deleted from '${ guildId }'.` );
 
-                if ( await this.channelModel.isMaster( channelId, guildId ) ) {
+                if ( await this.channelModel.isMasterCreate( channelId, guildId ) ) {
                     await this.channelModel.delete( channel.guild, channelId );
                 }
 
@@ -143,17 +143,22 @@ export default class ChannelManager extends InitializeBase {
      * Function create() :: Creates a new channel for a guild.
      */
     public async create( args: IChannelCreateArgs ) {
-        const { name, guild, ownerId = false, isMaster = false, isDynamic = false } = args;
+        const { name, guild, ownerId = false, internalType = false } = args;
+
+        if ( ! internalType ) {
+            throw new Error( "Internal type is required to create a channel." );
+        }
 
         this.logger.info( this.create,
             `Creating channel for guild '${ guild.name }' with the following properties: ` +
-                    `With name: '${ name }', ownerId: '${ ownerId }', isMaster: '${ isMaster }, isDynamic: '${ isDynamic }'`
+                    `With name: '${ name }', ownerId: '${ ownerId }', internalType: '${ internalType }'`
         );
 
         const channel = await guild.channels.create( args ),
             // Data to be inserted into the database.
             data:any = {
                 name,
+                internalType,
                 channelId: channel.id,
                 guildId: guild.id,
                 createdAtDiscord: channel.createdTimestamp,
@@ -161,15 +166,6 @@ export default class ChannelManager extends InitializeBase {
 
         if ( channel.parentId ) {
             data.categoryId = channel.parentId;
-        }
-
-        // TODO: Make it dynamic, useless ifs.
-        if ( isMaster ) {
-            data.isMaster = true;
-        }
-
-        if ( isDynamic ) {
-            data.isDynamic = true;
         }
 
         if ( ownerId ) {

@@ -132,7 +132,11 @@ export default class ChannelManager extends InitializeBase {
                 if ( await this.channelModel.isMaster( channelId, guildId ) ) {
                     await this.channelModel.delete( channel.guild, channelId );
                 }
+
+                return true;
         }
+
+        return false;
     }
 
     /**

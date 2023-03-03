@@ -42,9 +42,7 @@ export default class UIBase extends ObjectBase {
     }
 
     protected initialize( interaction?: Interaction ) {
-        if ( ( this.constructor as typeof UIBase ).getType() === E_UI_TYPES.STATIC ) {
-            this.build( interaction );
-        }
+        this.build( interaction );
     }
 
     protected getButtonBuilder( callback: CallbackUIType ) {

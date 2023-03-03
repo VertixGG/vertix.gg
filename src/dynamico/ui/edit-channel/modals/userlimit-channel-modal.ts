@@ -1,10 +1,15 @@
 import { ChannelType, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 
 import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 export default class UserlimitChannelModalUI extends GenericInputUIModal {
     public static getName() {
         return "Dynamico/UI/EditChannel/Modals/UserlimitChannelModal";
+    }
+
+    public static getType() {
+        return E_UI_TYPES.STATIC;
     }
 
     protected getInputLabel(): string {

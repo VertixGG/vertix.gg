@@ -23,7 +23,9 @@ export default abstract class InputUIBase {
     }
 
     protected getInputFieldValue( interaction: ModalSubmitInteraction ) {
-        return interaction.fields.getTextInputValue( "input" );
+        return interaction.fields.getTextInputValue(
+            this.getInputFieldId()
+        );
     }
 
 }

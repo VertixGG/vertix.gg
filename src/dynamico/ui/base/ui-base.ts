@@ -16,9 +16,11 @@ import ObjectBase from "@internal/bases/object-base";
 
 import GUIManager from "@dynamico/managers/gui";
 
-const guiManager = GUIManager.getInstance();
+import Logger from "@internal/modules/logger";
 
 export default class UIBase extends ObjectBase {
+    private static logger: Logger = new Logger( this );
+
     private builtRows: ActionRowBuilder<any>[] = [];
 
     static getName() {
@@ -40,7 +42,9 @@ export default class UIBase extends ObjectBase {
     }
 
     protected initialize( interaction?: Interaction ) {
-        this.build( interaction );
+        if ( ( this.constructor as typeof UIBase ).getType() === E_UI_TYPES.STATIC ) {
+            this.build( interaction );
+        }
     }
 
     protected getButtonBuilder( callback: CallbackUIType ) {
@@ -82,6 +86,8 @@ export default class UIBase extends ObjectBase {
     }
 
     public build( interaction?: Interaction ) {
+        UIBase.logger.debug( this.build, `Building UI '${ this.getName() }'` );
+
         const builders = this.getBuilders( interaction ),
             builtComponents: ActionRowBuilder<any>[] = [];
 
@@ -113,7 +119,7 @@ export default class UIBase extends ObjectBase {
     }
 
     private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
-        const unique = guiManager.storeCallback( this, callback );
+        const unique = GUIManager.getInstance().storeCallback( this, callback );
 
         context.setCustomId( unique );
     }

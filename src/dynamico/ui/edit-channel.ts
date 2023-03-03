@@ -15,8 +15,10 @@ export default class EditChannelUI extends ComponentUIBase {
     constructor() {
         super();
 
-        GUIManager.getInstance().register( require( "./edit-channel/modals/rename-channel-modal" ).default );
-        GUIManager.getInstance().register( require( "./edit-channel/modals/userlimit-channel-modal" ).default );
+        setTimeout( () => {
+            GUIManager.getInstance().register( require( "./edit-channel/modals/rename-channel-modal" ).default );
+            GUIManager.getInstance().register( require( "./edit-channel/modals/userlimit-channel-modal" ).default );
+        } );
     }
 
     getEmbeds() {

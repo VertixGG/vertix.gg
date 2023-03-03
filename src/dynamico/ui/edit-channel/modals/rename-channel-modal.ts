@@ -7,6 +7,7 @@ import { ChannelType, ModalSubmitInteraction } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 
 import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 export default class RenameChannelModalUI extends GenericInputUIModal {
 
@@ -14,11 +15,19 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
         return "Dynamico/UI/EditChannel/Modals/RenameChannelModal";
     }
 
+    public static getType() {
+        return E_UI_TYPES.DYNAMIC;
+    }
+
     protected getInputLabel(): string {
         return "Which channel do you want to rename?";
     }
 
     protected getInputPlaceholder(): string {
+        if ( this.interaction?.channel?.type === ChannelType.GuildVoice ) {
+            return this.interaction?.channel.name;
+        }
+
         return "Channel name";
     }
 

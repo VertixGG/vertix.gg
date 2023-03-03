@@ -1,10 +1,6 @@
-import {
-    ActionRowBuilder,
-    ComponentBuilder,
-    Interaction,
-    ModalBuilder,
-    ModalSubmitInteraction,
-} from "discord.js";
+import { ActionRowBuilder, ComponentBuilder, Interaction, ModalBuilder, ModalSubmitInteraction, } from "discord.js";
+import UIBase from "@dynamico/ui/base/ui-base";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 /**
  * @extends {UIBase}
@@ -12,12 +8,20 @@ import {
 export default abstract class ModalUIBase {
     protected modalBuilder: ModalBuilder | null = null;
 
+    public interaction?: Interaction;
+
+    private type: E_UI_TYPES = E_UI_TYPES.UNKNOWN;
+
     public static getName() {
         return "Dynamico/UI/Elements/ModalUIBase";
     }
 
     initialize() {
-        this.buildModal();
+        this.type = ( this.constructor as typeof UIBase ).getType();
+
+        if ( this.type === E_UI_TYPES.STATIC ) {
+            this.buildModal();
+        }
     }
 
     protected abstract getModalTitle(): string;
@@ -33,6 +37,10 @@ export default abstract class ModalUIBase {
     protected abstract getBuilders( interaction?: Interaction ): ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[];
 
     protected buildModal( interaction?: Interaction ) {
+        if ( interaction ) {
+            this.interaction = interaction;
+        }
+
         this.modalBuilder = this.getModalBuilder( this.onModalSubmit.bind( this ) );
 
         this.modalBuilder.setTitle( this.getModalTitle() );
@@ -42,7 +50,11 @@ export default abstract class ModalUIBase {
         this.modalBuilder.addComponents( this.getBuiltRows() );
     }
 
-    protected getModal(): ModalBuilder {
+    protected getModal( interaction?: Interaction ): ModalBuilder {
+        if( this.type === E_UI_TYPES.DYNAMIC ) {
+            this.buildModal( interaction );
+        }
+
         if ( ! this.modalBuilder ) {
             throw new Error( "ModalBuilder is invalid" );
         }

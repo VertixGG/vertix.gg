@@ -22,6 +22,10 @@ export default class GUIManager extends InitializeBase {
         return GUIManager.instance;
     }
 
+    public static getLogger() {
+        return GUIManager.getInstance().logger;
+    }
+
     public register( ui: typeof ComponentUIBase ) {
         const uiName = ui.getName();
 
@@ -62,5 +66,9 @@ export default class GUIManager extends InitializeBase {
         }
 
         return result;
+    }
+
+    public getLogger() {
+        return this.logger;
     }
 }

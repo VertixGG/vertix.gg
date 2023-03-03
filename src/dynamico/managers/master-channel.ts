@@ -10,7 +10,7 @@ import {
 
 import InitializeBase from "@internal/bases/initialize-base";
 
-import CategoryManager from "./category"
+import CategoryManager from "./category";
 import ChannelManager from "./channel";
 import GUIManager from "./gui";
 

@@ -1,26 +1,29 @@
-import { APIEmbed, BaseMessageOptions, Interaction } from "discord.js";
+import {
+    ActionRowBuilder,
+    APIEmbed,
+    BaseMessageOptions,
+    Interaction, ModalBuilder,
+} from "discord.js";
+
+import {
+    E_UI_TYPES,
+    EmbedsType,
+    IComponentUIBase,
+} from "@dynamico/interfaces/ui";
 
 import { ForceMethodImplementation } from "@internal/errors";
 
 import ObjectBase from "@internal/bases/object-base";
 
-import StaticUIBase from "@dynamico/ui/base/static-ui-base";
-import DynamicUIBase from "@dynamico/ui/base/dynamic-ui-base";
-
-import {
-    EmbedsType,
-    IComponentUIBase,
-    PossibleUIInternalComponentsTypes,
-    PossibleUIInternalComponentsInstanceTypes
-} from "@dynamico/interfaces/ui";
+import UIBase from "@dynamico/ui/base/ui-base";
 
 export default class ComponentUIBase extends ObjectBase implements IComponentUIBase {
-    protected static staticComponents: typeof StaticUIBase[] = [];
-    protected static dynamicComponents: typeof DynamicUIBase[] = [];
+    protected static staticComponents: typeof UIBase[] = [];
+    protected static dynamicComponents: typeof UIBase[] = [];
 
     protected static embeds: EmbedsType = null;
 
-    protected staticComponents: StaticUIBase[];
+    protected staticComponents: UIBase[];
 
     constructor() {
         super();
@@ -39,15 +42,16 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         }
 
         // Filter static components which are instanceof StaticUIBase.
-        const staticComponents = components?.filter( ( component ) => 'static' === component.getType() ),
-            dynamicComponents = components?.filter( ( component ) => 'dynamic' === component.getType() ),
+        const staticComponents = components?.filter( ( component ) => E_UI_TYPES.STATIC === component.getType() ),
+            dynamicComponents = components?.filter( ( component ) => E_UI_TYPES.DYNAMIC === component.getType() ),
             staticThis = ( this.constructor as typeof ComponentUIBase );
 
         if ( staticComponents?.length ) {
             staticThis.staticComponents = staticComponents;
 
-            staticComponents.forEach( ( component ) =>
-                this.staticComponents.push( new component() ) );
+            staticComponents.forEach( ( component ) => {
+                return this.staticComponents.push( new component() );
+            } );
         }
 
         if ( dynamicComponents?.length ) {
@@ -63,12 +67,12 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         return null;
     }
 
-    getInternalComponents(): PossibleUIInternalComponentsTypes {
+    getInternalComponents(): typeof UIBase[] {
         throw new ForceMethodImplementation( this, this.getInternalComponents.name );
     }
 
-    getMessage( interaction?: Interaction ): BaseMessageOptions {
-        const components: PossibleUIInternalComponentsInstanceTypes = [],
+    getActionRows( interaction?: Interaction ): ActionRowBuilder<any>[] {
+        const components: UIBase[] = [],
             staticThis = ( this.constructor as typeof ComponentUIBase );
 
         if ( this.staticComponents?.length ) {
@@ -84,14 +88,20 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         const builtComponents = [];
 
         for ( const component of components ) {
-            const builtComponent = component.getBuiltComponents();
+            const builtComponent = component.getBuiltRows();
 
             if ( builtComponent ) {
                 builtComponents.push( ... builtComponent );
             }
         }
 
-        const result: any = { components: [ ... builtComponents ] };
+        return builtComponents;
+    }
+    
+    getMessage( interaction?: Interaction ): BaseMessageOptions {
+        const builtComponents = this.getActionRows( interaction ),
+            staticThis = ( this.constructor as typeof ComponentUIBase ),
+            result: any = { components: builtComponents };
 
         if ( staticThis.embeds ) {
             result.embeds = staticThis.embeds;
@@ -99,4 +109,6 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
 
         return result;
     }
+
+    getModal?( interaction?: Interaction ): ModalBuilder; // TODO: Delete.
 }

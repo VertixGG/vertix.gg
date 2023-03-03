@@ -1,13 +1,28 @@
-import { ButtonStyle, Interaction } from "discord.js";
+import {
+    ButtonStyle,
+    ChannelType,
+    Interaction,
+    TextInputStyle
+} from "discord.js";
 
-import StaticUIBase from "../base/static-ui-base";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-export default class EditChannelButtons extends StaticUIBase {
+import UIBase from "../base/ui-base";
+import GUIManager from "@dynamico/managers/gui";
+
+import RenameChannelModalUI from "./modals/rename-channel-modal";
+import UserlimitChannelModalUI from "./modals/userlimit-channel-modal";
+
+export default class EditChannelButtons extends UIBase {
     public static getName() {
         return "Dynamico/UI/EditChannel/Buttons";
     }
 
-    getComponents() {
+    public static getType() {
+        return E_UI_TYPES.STATIC;
+    }
+
+    getBuilders() {
         const renameButton = this.getButtonBuilder( this.renameChannel.bind( this ) ),
             limitButton = this.getButtonBuilder( this.limitChannel.bind( this ) ),
             publicButton = this.getButtonBuilder( this.publicChannel.bind( this ) ),
@@ -41,17 +56,33 @@ export default class EditChannelButtons extends StaticUIBase {
             .setDisabled( true );
 
         return [
-            this.getButtonRow().addComponents( renameButton, limitButton ),
-            this.getButtonRow().addComponents( publicButton, privateButton, specialButton )
+            [ renameButton, limitButton ],
+            [ publicButton, privateButton, specialButton ],
         ];
     }
 
     private async renameChannel( interaction: Interaction ) {
-        await interaction.user.send( "Rename Channel" );
+        if ( interaction.channel && interaction.isButton() ) {
+            const component = GUIManager
+                .getInstance()
+                .get( RenameChannelModalUI.getName() );
+
+            if ( component && component.getModal ) {
+                await interaction.showModal( component.getModal( interaction ) );
+            }
+        }
     }
 
-    private async limitChannel() {
+    private async limitChannel( interaction: Interaction ) {
+        if ( interaction.channel && interaction.isButton() ) {
+            const component = GUIManager
+                .getInstance()
+                .get( UserlimitChannelModalUI.getName() );
 
+            if ( component && component.getModal ) {
+                await interaction.showModal( component.getModal( interaction ) );
+            }
+        }
     }
 
     private async publicChannel() {

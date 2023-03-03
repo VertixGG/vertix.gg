@@ -5,6 +5,7 @@ import GlobalLogger from "./global-logger";
 import * as handlers from "./listeners";
 import * as process from "process";
 import GUIManager from "@dynamico/managers/gui";
+import chalk from "chalk";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();
@@ -25,12 +26,24 @@ export default function Main() {
     // DiscordJS Debug mode.
     if ( process.env.debug_mode === "discord" ) {
         const debug = ( ... args: any[] ) => {
-            logger.debug( 'API', args.toString() );
+            logger.debug( chalk.red( "API" ) , args.toString() );
         };
 
         client
             .on( "debug", debug )
-            .on( "warn", debug );
+            .on( "warn", debug )
+            .on( "error", debug )
+            .on( "shardError", debug );
+
+        client.rest
+            .on( "restDebug", debug )
+            .on( "handlerSweep", debug )
+            .on( "hashSweep", debug )
+            .on( "invalidRequestWarning", debug )
+            .on( "newListener", debug )
+            .on( "rateLimited", debug )
+            .on( "removeListener", debug )
+            .on( "response", debug );
     }
 
     async function onLogin() {

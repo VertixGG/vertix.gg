@@ -45,7 +45,7 @@ export default class GUIManager extends InitializeBase {
     }
 
     public storeCallback( sourceUI: ObjectBase, callback: Function ) {
-        const unique = sourceUI.getName() + '::' + callback.name.replace( 'bound ', '');
+        const unique = sourceUI.getName() + "::" + callback.name.replace( "bound ", "");
 
         this.logger.debug( this.storeCallback, `Storing callback '${ unique }'` );
 

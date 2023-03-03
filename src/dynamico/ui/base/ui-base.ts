@@ -1,12 +1,16 @@
 import {
     ActionRowBuilder,
     APIEmbed,
-    ButtonBuilder, Interaction,
-    StringSelectMenuBuilder
+    ButtonBuilder,
+    ComponentBuilder,
+    Interaction,
+    ModalBuilder, ModalSubmitInteraction,
+    StringSelectMenuBuilder, TextInputBuilder,
 } from "discord.js";
 
 import { ForceMethodImplementation } from "@internal/errors";
-import { UIComponentType } from "@dynamico/interfaces/ui";
+
+import { CallbackUIType, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import ObjectBase from "@internal/bases/object-base";
 
@@ -14,16 +18,32 @@ import GUIManager from "@dynamico/managers/gui";
 
 const guiManager = GUIManager.getInstance();
 
-export type PossibleUIEntities = ( ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder> )[];
-
 export default class UIBase extends ObjectBase {
-    private builtComponents: PossibleUIEntities = [];
+    private builtRows: ActionRowBuilder<any>[] = [];
 
-    static getType(): UIComponentType {
+    static getName() {
+        return "Dynamico/UI/UIBase";
+    }
+
+    static getType(): E_UI_TYPES {
         throw new ForceMethodImplementation( this, this.getType.name );
     }
 
-    protected getButtonBuilder( callback: Function ) {
+    constructor( interaction?: Interaction ) {
+        super();
+
+        if ( this.getName() === UIBase.getName() ) {
+            return;
+        }
+
+        this.initialize( interaction );
+    }
+
+    protected initialize( interaction?: Interaction ) {
+        this.build( interaction );
+    }
+
+    protected getButtonBuilder( callback: CallbackUIType ) {
         const button = new ButtonBuilder();
 
         this.setCallback( button, callback );
@@ -31,7 +51,7 @@ export default class UIBase extends ObjectBase {
         return button;
     }
 
-    protected getMenuBuilder( callback: Function ) {
+    protected getMenuBuilder( callback: CallbackUIType ) {
         const menu = new StringSelectMenuBuilder();
 
         this.setCallback( menu, callback );
@@ -39,31 +59,60 @@ export default class UIBase extends ObjectBase {
         return menu;
     }
 
-    protected getButtonRow() {
-        return new ActionRowBuilder<ButtonBuilder>();
-    }
+    protected getInputBuilder( callback?: CallbackUIType ) {
+        const input = new TextInputBuilder();
 
-    protected getMenuRow() {
-        return new ActionRowBuilder<StringSelectMenuBuilder>();
-    }
-
-    protected getComponents( interaction?: Interaction ): PossibleUIEntities {
-        throw new ForceMethodImplementation( this, this.getComponents.name );
-    }
-
-    public buildComponents( interaction?: Interaction ) {
-        const components = this.getComponents( interaction );
-
-        if ( components.length ) {
-            this.builtComponents = components;
+        if ( callback ) {
+            this.setCallback( input, callback );
         }
+
+        return input;
     }
 
-    public getBuiltComponents() {
-        return this.builtComponents;
+    protected getModalBuilder( callback: ( interaction: ModalSubmitInteraction ) => Promise<void> ) {
+        const modal = new ModalBuilder();
+
+        this.setCallback( modal, callback );
+
+        return modal;
     }
 
-    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder, callback: Function ) {
+    protected getBuilders( interaction?: Interaction ): ComponentBuilder[]| ComponentBuilder[][] | ModalBuilder[] {
+        throw new ForceMethodImplementation( this, this.getBuilders.name );
+    }
+
+    public build( interaction?: Interaction ) {
+        const builders = this.getBuilders( interaction ),
+            builtComponents: ActionRowBuilder<any>[] = [];
+
+        // Loop through the builders and build them.
+        const isMultiRow = Array.isArray( builders[ 0 ] );
+
+        if ( isMultiRow ) {
+            for ( const row of builders ) {
+                const actionRow = new ActionRowBuilder<any>();
+
+               builtComponents.push( actionRow.addComponents( row as ComponentBuilder[] ) );
+            }
+        } else {
+            const actionRow = new ActionRowBuilder<any>();
+
+            builtComponents.push( actionRow.addComponents( builders as ComponentBuilder[] ) );
+        }
+
+        // Set row type according to the type of the component.
+        builtComponents.forEach( ( row ) => {
+            row.data.type = 1;
+        } );
+
+        this.builtRows = builtComponents;
+    }
+
+    public getBuiltRows() {
+        return this.builtRows;
+    }
+
+    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
         const unique = guiManager.storeCallback( this, callback );
 
         context.setCustomId( unique );

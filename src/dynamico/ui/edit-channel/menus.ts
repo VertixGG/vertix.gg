@@ -1,30 +1,36 @@
-import DynamicUIBase from "../base/dynamic-ui-base";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-export default class EditChannelMenus extends DynamicUIBase {
+import UIBase from "../base/ui-base";
+
+export default class EditChannelMenus extends UIBase {
     public static getName() {
         return "Dynamico/UI/EditChannel/Menus";
     }
 
-    getComponents() {
+    public static getType() {
+        return E_UI_TYPES.DYNAMIC;
+    }
+
+    getBuilders() {
         const grantMenu = this.getMenuBuilder( this.grantUser.bind( this ) ),
             removeMenu = this.getMenuBuilder( this.removeUser.bind( this ) );
 
         grantMenu.setPlaceholder( "☝️ Grant User Access" );
         grantMenu.setOptions( [ {
-            label: new Date().toString(),
-            value: new Date().toString(),
+            label: "Hi",
+            value: "Hi",
         } ] );
 
         removeMenu.setPlaceholder( "👇 Remove User From List" );
-        removeMenu.setOptions( [ {
-            label: new Date().toString(),
-            value: new Date().toString(),
+        removeMenu.addOptions( [ {
+            label: "Hi",
+            value: "bye",
         } ] );
 
         return [
-            this.getMenuRow().addComponents( grantMenu ),
-            this.getMenuRow().addComponents( removeMenu ),
-        ]
+            [ removeMenu ],
+            [ grantMenu ],
+        ];
     }
 
     private async grantUser() {

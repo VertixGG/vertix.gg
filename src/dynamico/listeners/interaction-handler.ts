@@ -1,4 +1,6 @@
-import { ButtonInteraction, Client, CommandInteraction, Events, Interaction } from "discord.js";
+import * as process from "process";
+
+import { ButtonInteraction, Client, CommandInteraction, Events, Interaction, ModalSubmitInteraction } from "discord.js";
 
 import { Commands } from "../interactions/commands";
 
@@ -10,6 +12,10 @@ export function interactionHandler( client: Client ) {
             await handleSlashCommand( client, interaction as CommandInteraction );
         } else if ( interaction.isButton() ) {
             await handleButton( client, interaction as ButtonInteraction );
+        } else if ( interaction.isModalSubmit() ) {
+            await handleModalSubmit( client, interaction );
+        } else if ( process.env.debug_mode === "discord" ) {
+            console.log( interaction );
         }
     } );
 };
@@ -32,11 +38,17 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 };
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
-    await interaction.deferUpdate();
+    // await interaction.deferUpdate();
 
     console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-    const callback = GUIManager.getInstance().getCallback( interaction.customId );
-
-    callback( interaction );
+   GUIManager.getInstance().getCallback( interaction.customId )( interaction );
 };
+
+async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
+    // await interaction.deferUpdate();
+
+    console.log( `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
+
+   GUIManager.getInstance().getCallback( interaction.customId )( interaction );
+}

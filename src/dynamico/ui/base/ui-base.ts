@@ -5,7 +5,7 @@ import {
     ComponentBuilder,
     Interaction,
     ModalBuilder, ModalSubmitInteraction,
-    StringSelectMenuBuilder, TextInputBuilder,
+    StringSelectMenuBuilder, TextInputBuilder, UserSelectMenuBuilder,
 } from "discord.js";
 
 import { ForceMethodImplementation } from "@internal/errors";
@@ -67,6 +67,14 @@ export default class UIBase extends ObjectBase {
         return menu;
     }
 
+    protected getUserMenuBuilder( callback: CallbackUIType ) {
+        const menu = new UserSelectMenuBuilder();
+
+        this.setCallback( menu, callback );
+
+        return menu;
+    }
+
     protected getInputBuilder( callback?: CallbackUIType ) {
         const input = new TextInputBuilder();
 
@@ -122,7 +130,7 @@ export default class UIBase extends ObjectBase {
         return this.builtRows;
     }
 
-    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
+    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
         const unique = GUIManager.getInstance().storeCallback( this, callback, this.interaction?.id || "" );
 
         context.setCustomId( unique );

@@ -7,7 +7,11 @@ import { ChannelType, ModalSubmitInteraction } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 
 import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
+
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
+const MIN_INPUT_LENGTH = 1,
+    MAX_INPUT_LENGTH = 100;
 
 export default class RenameChannelModalUI extends GenericInputUIModal {
 
@@ -35,7 +39,22 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
         return "Rename Channel";
     }
 
-    protected async onModalSubmit( interaction: ModalSubmitInteraction ) {
+    protected getMinLength(): number {
+        return MIN_INPUT_LENGTH;
+    }
+
+    protected getMaxLength(): number {
+        return MAX_INPUT_LENGTH;
+    }
+
+    protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
+        await interaction.reply( {
+            content: "The channel name must be between 1 and 100 characters long",
+            ephemeral: true
+        } );
+    }
+
+    protected async onModalSafeSubmit( interaction: ModalSubmitInteraction ) {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
@@ -63,7 +82,7 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
                 if ( result.retry_after ) {
                     const tryAgingIn = moment().add( result.retry_after, "seconds" );
 
-                    interaction.reply( {
+                   await interaction.reply( {
                         content: `You are being rate limited. for ${ result.retry_after.toFixed( 0 ) }` +
                             ` second(s), the limit will released at ${ tryAgingIn.format( "HH:mm:ss" ) } `,
                         ephemeral: true

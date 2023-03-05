@@ -12,14 +12,14 @@ export default class EditChannelMenus extends UIBase {
     }
 
     getBuilders() {
-        const grantMenu = this.getMenuBuilder( this.grantUser.bind( this ) ),
+        const grantMenu = this.getUserMenuBuilder( this.grantUser.bind( this ) ),
             removeMenu = this.getMenuBuilder( this.removeUser.bind( this ) );
 
         grantMenu.setPlaceholder( "☝️ Grant User Access" );
-        grantMenu.setOptions( [ {
-            label: "Hi",
-            value: "Hi",
-        } ] );
+        // grantMenu.setOptions( [ {
+        //     label: "Hi",
+        //     value: "Hi",
+        // } ] );
 
         removeMenu.setPlaceholder( "👇 Remove User From List" );
         removeMenu.addOptions( [ {
@@ -28,8 +28,8 @@ export default class EditChannelMenus extends UIBase {
         } ] );
 
         return [
-            [ removeMenu ],
             [ grantMenu ],
+            [ removeMenu ],
         ];
     }
 

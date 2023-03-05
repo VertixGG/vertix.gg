@@ -27,5 +27,4 @@ export default abstract class InputUIBase {
             this.getInputFieldId()
         );
     }
-
 }

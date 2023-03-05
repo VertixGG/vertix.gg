@@ -48,8 +48,24 @@ export default class GUIManager extends InitializeBase {
         return result;
     }
 
-    public storeCallback( sourceUI: ObjectBase, callback: Function ) {
-        const unique = sourceUI.getName() + "::" + callback.name.replace( "bound ", "");
+    public storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "" ) {
+        let unique = sourceUI.getName() + ":" + callback.name.replace( "bound ", "" );
+
+        if ( suffix ) {
+            unique = unique + ":" + suffix;
+        }
+
+        if ( unique.length > 100 ) {
+            this.logger.warn( this.storeCallback, `Callback '${ unique }' is too long` );
+
+            unique = unique.replace( "Dynamico/", "" );
+
+            if ( unique.length > 100 ) {
+                unique = unique.substring( 0, 100 );
+
+                this.logger.error( this.storeCallback, `Callback '${ unique }' is still too long` );
+            }
+        }
 
         this.logger.debug( this.storeCallback, `Storing callback '${ unique }'` );
 

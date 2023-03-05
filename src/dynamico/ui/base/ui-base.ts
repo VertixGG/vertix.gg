@@ -23,6 +23,8 @@ export default class UIBase extends ObjectBase {
 
     private builtRows: ActionRowBuilder<any>[] = [];
 
+    public interaction?: Interaction;
+
     static getName() {
         return "Dynamico/UI/UIBase";
     }
@@ -36,6 +38,10 @@ export default class UIBase extends ObjectBase {
 
         if ( this.getName() === UIBase.getName() ) {
             return;
+        }
+
+        if ( interaction ) {
+            this.interaction = interaction;
         }
 
         this.initialize( interaction );
@@ -117,7 +123,7 @@ export default class UIBase extends ObjectBase {
     }
 
     private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
-        const unique = GUIManager.getInstance().storeCallback( this, callback );
+        const unique = GUIManager.getInstance().storeCallback( this, callback, this.interaction?.id || "" );
 
         context.setCustomId( unique );
     }

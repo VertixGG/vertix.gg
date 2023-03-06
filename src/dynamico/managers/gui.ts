@@ -1,3 +1,5 @@
+import { ChannelType, InteractionResponse, ModalSubmitInteraction } from "discord.js";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 import ObjectBase from "@internal/bases/object-base";
@@ -9,6 +11,7 @@ export default class GUIManager extends InitializeBase {
 
     private userInterfaces = new Map<string, ComponentUIBase>;
     private callbacks = new Map<string, Function>;
+    private continuesInteractions = new Map<string, InteractionResponse>;
 
     public static getName() {
         return "Dynamico/Managers/GUI";
@@ -20,10 +23,6 @@ export default class GUIManager extends InitializeBase {
         }
 
         return GUIManager.instance;
-    }
-
-    public static getLogger() {
-        return GUIManager.getInstance().logger;
     }
 
     public register( ui: typeof ComponentUIBase ) {
@@ -61,9 +60,9 @@ export default class GUIManager extends InitializeBase {
             unique = unique.replace( "Dynamico/", "" );
 
             if ( unique.length > 100 ) {
-                unique = unique.substring( 0, 100 );
-
                 this.logger.error( this.storeCallback, `Callback '${ unique }' is still too long` );
+
+                unique = unique.substring( 0, 100 );
             }
         }
 
@@ -84,7 +83,33 @@ export default class GUIManager extends InitializeBase {
         return result;
     }
 
-    public getLogger() {
-        return this.logger;
+    public async continuesMessage( interaction: ModalSubmitInteraction, message: string ) {
+        if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type ) {
+            const isInteractionExist = this.continuesInteractions.has( interaction.channel.id );
+
+            if ( ! isInteractionExist ) {
+                const defer = await interaction.reply( {
+                    ephemeral: true,
+                    content: message,
+                } );
+
+                this.continuesInteractions.set( interaction.channel.id, defer );
+
+                return;
+            }
+
+            const defer = this.continuesInteractions.get( interaction.channel.id );
+
+            if ( defer && defer.interaction.isRepliable() ) {
+                defer.interaction.deleteReply();
+
+                const newDefer = await interaction.reply( {
+                    ephemeral: true,
+                    content: message,
+                } );
+
+                this.continuesInteractions.set( interaction.channel.id, newDefer );
+            }
+        }
     }
 }

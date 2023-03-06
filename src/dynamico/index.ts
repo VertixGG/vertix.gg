@@ -1,11 +1,13 @@
 import { Client } from "discord.js";
 
-import GlobalLogger from "./global-logger";
-
 import * as handlers from "./listeners";
 import * as process from "process";
-import GUIManager from "@dynamico/managers/gui";
+
 import chalk from "chalk";
+
+import GlobalLogger from "./global-logger";
+
+import GUIManager from "./managers/gui";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();

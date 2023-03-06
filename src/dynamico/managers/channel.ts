@@ -161,6 +161,7 @@ export default class ChannelManager extends InitializeBase {
                 internalType,
                 channelId: channel.id,
                 guildId: guild.id,
+                masterChannelId: args.parent?.id,
                 createdAtDiscord: channel.createdTimestamp,
             };
 

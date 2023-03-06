@@ -10,6 +10,8 @@ import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
+import GUIManager from "@dynamico/managers/gui";
+
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
 
@@ -48,20 +50,15 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await interaction.reply( {
-            content: "The channel name must be between 1 and 100 characters long",
-            ephemeral: true
-        } );
+        await GUIManager.getInstance()
+            .continuesMessage( interaction, "The channel name must be between 1 and 100 characters long" );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction ) {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
-            interaction.reply( {
-                content: "An error has occurred",
-                ephemeral: true
-            } );
+            await GUIManager.getInstance().continuesMessage( interaction, "An error has occurred" );
             return;
         }
 
@@ -82,18 +79,12 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
                 if ( result.retry_after ) {
                     const tryAgingIn = moment().add( result.retry_after, "seconds" );
 
-                   await interaction.reply( {
-                        content: `You are being rate limited. for ${ result.retry_after.toFixed( 0 ) }` +
-                            ` second(s), the limit will released at ${ tryAgingIn.format( "HH:mm:ss" ) } `,
-                        ephemeral: true
-                    } );
+                    await GUIManager.getInstance().continuesMessage( interaction, `You are being rate limited. for ${ result.retry_after.toFixed( 0 ) }` +
+                        ` second(s), the limit will be released at ${ tryAgingIn.format( "HH:mm:ss" ) } ` );
                     break;
                 }
 
-                await interaction.reply( {
-                    content: `Renamed channel to '${ input }'`,
-                    ephemeral: true
-                } );
+                await GUIManager.getInstance().continuesMessage( interaction, `Renamed channel to '${ input }'` );
         }
     }
 }

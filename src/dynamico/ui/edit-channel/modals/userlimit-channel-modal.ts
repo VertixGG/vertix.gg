@@ -1,7 +1,10 @@
 import { ChannelType, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
 import { GenericInputNumberUIModal } from "@dynamico/ui/generic/generic-input-number-ui-modal";
+
+import GUIManager from "@dynamico/managers/gui";
 
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,
@@ -22,7 +25,7 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
     }
 
     protected getInputPlaceholder(): string {
-        return "Place limit";
+        return "0-99";
     }
 
     protected getModalTitle(): string {
@@ -46,10 +49,8 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await interaction.reply( {
-            content: `User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }`,
-            ephemeral: true,
-        } );
+        await GUIManager.getInstance()
+            .continuesMessage( interaction, `User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }` );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction, input: string ) {
@@ -58,17 +59,9 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
 
             await interaction.channel.setUserLimit( parsedInput );
 
-            if ( parsedInput === 0 ) {
-                await interaction.reply( {
-                    content: "Set user limit to Unlimited",
-                    ephemeral: true,
-                } );
-            } else {
-                await interaction.reply( {
-                    content: `Set user limit to ${ parsedInput }`,
-                    ephemeral: true,
-                } );
-            }
+            const content = parsedInput === 0 ? "Set user limit to Unlimited" : `Set user limit to ${ parsedInput }`;
+
+            await GUIManager.getInstance().continuesMessage( interaction, content );
         }
     }
 }

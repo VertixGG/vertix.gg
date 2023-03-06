@@ -6,13 +6,14 @@ import {
     CommandInteraction,
     Events,
     Interaction,
-    ModalSubmitInteraction, SelectMenuInteraction,
+    ModalSubmitInteraction,
+    SelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
 
 import { Commands } from "../interactions/commands";
 
-import GUIManager from "../managers/gui";
+import guiManager from "../managers/gui";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -50,17 +51,17 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
     console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-   GUIManager.getInstance().getCallback( interaction.customId )( interaction );
+   guiManager.getCallback( interaction.customId )( interaction );
 };
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
     console.log( `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-   GUIManager.getInstance().getCallback( interaction.customId )( interaction );
+   guiManager.getCallback( interaction.customId )( interaction );
 }
 
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction|SelectMenuInteraction ) {
     console.log( `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-   GUIManager.getInstance().getCallback( interaction.customId )( interaction );
+   guiManager.getCallback( interaction.customId )( interaction );
 }

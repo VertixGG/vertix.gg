@@ -1,9 +1,16 @@
-import { APISelectMenuOption, ChannelType, OverwriteType, UserSelectMenuInteraction, VoiceChannel } from "discord.js";
+import {
+    APISelectMenuOption,
+    ChannelType,
+    OverwriteType,
+    UserSelectMenuInteraction,
+    VoiceChannel
+} from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import UIBase from "../base/ui-base";
-import GUIManager from "@dynamico/managers/gui";
+
+import guiManager from "@dynamico/managers/gui";
 
 export default class EditChannelMenus extends UIBase {
     public static getName() {
@@ -65,8 +72,7 @@ export default class EditChannelMenus extends UIBase {
         }
 
         if ( ChannelType.GuildVoice === interaction.channel?.type ) {
-            const guiManager = GUIManager.getInstance(),
-                channel = interaction.channel as VoiceChannel,
+            const channel = interaction.channel as VoiceChannel,
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] );
 
             if ( member ) {

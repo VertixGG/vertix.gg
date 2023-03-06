@@ -1,21 +1,21 @@
-import { Client } from "discord.js";
-
 import * as handlers from "./listeners";
 import * as process from "process";
 
-import chalk from "chalk";
+import { Client } from "discord.js";
 
 import GlobalLogger from "./global-logger";
 
-import GUIManager from "./managers/gui";
+import chalk from "chalk";
+
+import guiManager from "./managers/gui";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();
 
     logger.log( Main, "Bot is starting..." );
 
-    GUIManager.getInstance().register( require( "@dynamico/ui/edit-channel" ).default );
-    GUIManager.getInstance().register( require( "@dynamico/ui/edit-channel/mange-users-component" ).default );
+    guiManager.register( require( "@dynamico/ui/edit-channel" ).default );
+    guiManager.register( require( "@dynamico/ui/edit-channel/mange-users-component" ).default );
 
     const client = new Client( {
         intents: [

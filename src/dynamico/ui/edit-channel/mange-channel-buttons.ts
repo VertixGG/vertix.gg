@@ -16,6 +16,7 @@ import RenameChannelModalUI from "./modals/rename-channel-modal";
 import UserlimitChannelModalUI from "./modals/userlimit-channel-modal";
 
 import Logger from "@internal/modules/logger";
+import guiManager from "@dynamico/managers/gui";
 
 export default class MangeChannelButtons extends UIBase {
     private logger: Logger;
@@ -53,8 +54,7 @@ export default class MangeChannelButtons extends UIBase {
 
     private async renameChannel( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
-            const component = GUIManager
-                .getInstance()
+            const component = guiManager
                 .get( RenameChannelModalUI.getName() );
 
             if ( component && component.getModal ) {
@@ -65,8 +65,7 @@ export default class MangeChannelButtons extends UIBase {
 
     private async limitChannel( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
-            const component = GUIManager
-                .getInstance()
+            const component = guiManager
                 .get( UserlimitChannelModalUI.getName() );
 
             if ( component && component.getModal ) {

@@ -2,9 +2,9 @@ import { EmbedBuilder } from "discord.js";
 
 import ComponentUIBase from "./base/component-ui-base";
 
-import GUIManager from "@dynamico/managers/gui";
 import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
 import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
+import guiManager from "@dynamico/managers/gui";
 
 export default class EditChannelUI extends ComponentUIBase {
     public static getName() {
@@ -16,8 +16,8 @@ export default class EditChannelUI extends ComponentUIBase {
 
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            GUIManager.getInstance().register( require( "./edit-channel/modals/rename-channel-modal" ).default );
-            GUIManager.getInstance().register( require( "./edit-channel/modals/userlimit-channel-modal" ).default );
+            guiManager.register( require( "./edit-channel/modals/rename-channel-modal" ).default );
+            guiManager.register( require( "./edit-channel/modals/userlimit-channel-modal" ).default );
 
             //GUIManager.getInstance().register( require( "./edit-channel/mange-users-menus" ).default );
         } );

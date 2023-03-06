@@ -1,22 +1,27 @@
 import {
     ActionRowBuilder,
-    APIEmbed,
     ButtonBuilder,
     ComponentBuilder,
     Interaction,
-    ModalBuilder, ModalSubmitInteraction, NonThreadGuildBasedChannel, SelectMenuInteraction,
-    StringSelectMenuBuilder, TextInputBuilder, UserSelectMenuBuilder, UserSelectMenuInteraction,
+    ModalBuilder,
+    ModalSubmitInteraction,
+    NonThreadGuildBasedChannel,
+    SelectMenuInteraction,
+    StringSelectMenuBuilder,
+    TextInputBuilder,
+    UserSelectMenuBuilder,
+    UserSelectMenuInteraction,
 } from "discord.js";
-
-import { ForceMethodImplementation } from "@internal/errors";
 
 import { CallbackUIType, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import ObjectBase from "@internal/bases/object-base";
-
-import GUIManager from "@dynamico/managers/gui";
+import { ForceMethodImplementation } from "@internal/errors";
 
 import Logger from "@internal/modules/logger";
+
+import ObjectBase from "@internal/bases/object-base";
+
+import guiManager from "@dynamico/managers/gui";
 
 export default class UIBase extends ObjectBase {
     private static logger: Logger = new Logger( this );
@@ -131,7 +136,7 @@ export default class UIBase extends ObjectBase {
     }
 
     private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
-        const unique = GUIManager.getInstance().storeCallback( this, callback, this.interaction?.id || "" );
+        const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" );
 
         context.setCustomId( unique );
     }

@@ -24,8 +24,6 @@ import {
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
-    DEFAULT_MASTER_CHANNEL_EDIT_EVERYONE_PERMISSIONS,
-    DEFAULT_MASTER_CHANNEL_EDIT_NAME,
     DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
@@ -34,6 +32,7 @@ import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import guiManager from "./gui";
 
 export default class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -62,8 +61,7 @@ export default class MasterChannelManager extends InitializeBase {
 
         // Create a new dynamic channel for the user.
         const channel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
-            message = GUIManager
-                .getInstance()
+            message = guiManager
                 .get( "Dynamico/UI/EditChannel" )
                 .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
@@ -191,13 +189,11 @@ export default class MasterChannelManager extends InitializeBase {
                 userOwnerId,
                 parent: masterCategory,
             },
-            masterCreateChannel = await this.createCreateChannel( args ),
-            masterEditChannel = await this.createEditChannel( args, masterCreateChannel.id );
+            masterCreateChannel = await this.createCreateChannel( args );
 
         return {
             masterCategory,
             masterCreateChannel,
-            masterEditChannel,
         };
     }
 
@@ -235,31 +231,6 @@ export default class MasterChannelManager extends InitializeBase {
         } );
     }
 
-    /**
-     * Function createEditChannel() :: Creates channel master of edit.
-     */
-    public async createEditChannel( args: IMasterChannelCreateArgs, masterChannelID: string ) {
-        const { guild, parent } = args;
-
-        this.logger.info( this.createEditChannel,
-            `Creating master channel for guild '${ guild.name }' for user: '${ args.userOwnerId }'` );
-
-        // Create master channel.
-        return ChannelManager.getInstance().create( {
-            parent,
-            guild,
-            internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_EDIT_CHANNEL,
-            name: args.name || DEFAULT_MASTER_CHANNEL_EDIT_NAME,
-            type: ChannelType.GuildText,
-            ownerChannelId: masterChannelID,
-            userOwnerId: args.userOwnerId,
-            permissionOverwrites: [ {
-                id: guild.roles.everyone,
-                ... DEFAULT_MASTER_CHANNEL_EDIT_EVERYONE_PERMISSIONS
-            } ],
-        } );
-    }
-
     public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }'` );
 
@@ -280,7 +251,7 @@ export default class MasterChannelManager extends InitializeBase {
             this.logger.error( this.getByDynamicChannel,
                 `Could not find channel in database. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
 
-            await GUIManager.getInstance().continuesMessage( interaction, "An error occurred while trying to find the channel in the database." );
+            await guiManager.continuesMessage( interaction, "An error occurred while trying to find the channel in the database." );
 
             return;
         }
@@ -289,7 +260,7 @@ export default class MasterChannelManager extends InitializeBase {
             this.logger.error( this.getByDynamicChannel,
                 `Could not find master channel in database. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
 
-            await GUIManager.getInstance().continuesMessage( interaction, "An error occurred while trying to find the master channel in the database." );
+            await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel in the database." );
 
             return;
         }
@@ -301,7 +272,7 @@ export default class MasterChannelManager extends InitializeBase {
             this.logger.warn( this.getByDynamicChannel,
                 `Could not find master channel. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
 
-            await GUIManager.getInstance().continuesMessage( interaction, "An error occurred while trying to find the master channel." );
+            await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel." );
 
             return;
         };

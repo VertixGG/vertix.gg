@@ -13,6 +13,7 @@ import ChannelModel from "@dynamico/models/channel";
 
 import MasterChannelManager from "./master-channel";
 import GUIManager from "@dynamico/managers/gui";
+import guiManager from "@dynamico/managers/gui";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
@@ -166,8 +167,7 @@ export default class ChannelManager extends InitializeBase {
         const message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
 
         if ( message ) {
-            const newMessage = GUIManager
-                .getInstance()
+            const newMessage = guiManager
                 .get( "Dynamico/UI/EditChannel" )
                 .getMessage( newChannel );
 

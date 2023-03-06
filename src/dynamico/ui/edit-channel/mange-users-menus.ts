@@ -1,6 +1,3 @@
-import UIBase from "@dynamico/ui/base/ui-base";
-
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import {
     ChannelType,
     Interaction,
@@ -9,7 +6,12 @@ import {
     UserSelectMenuInteraction,
     VoiceChannel
 } from "discord.js";
-import GUIManager from "@dynamico/managers/gui";
+
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
+import UIBase from "@dynamico/ui/base/ui-base";
+
+import guiManager from "@dynamico/managers/gui";
 
 export default class ManageUsersMenus extends UIBase {
     public static getName() {
@@ -64,8 +66,7 @@ export default class ManageUsersMenus extends UIBase {
         }
 
         if ( ChannelType.GuildVoice === interaction.channel?.type ) {
-            const guiManager = GUIManager.getInstance(),
-                channel = interaction.channel as VoiceChannel,
+            const channel = interaction.channel as VoiceChannel,
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] );
 
             if ( member ) {
@@ -74,8 +75,12 @@ export default class ManageUsersMenus extends UIBase {
                     Connect: true,
                 } );
 
-                await guiManager.continuesMessage( interaction,
-                    `Granted ${ member.username } access to ${ channel.name }`, );
+                const dynamicChannel = interaction.channel as VoiceChannel;
+
+                const component = guiManager.get( "Dynamico/UI/EditChannel/ManageUsers" );
+                const message = component.getMessage( interaction );
+
+                await guiManager.continuesMessage( interaction, false, [], message.components );
             } else {
                 await guiManager.continuesMessage( interaction,
                     `Could not find user with id '${ interaction.values[ 0 ] }'`, );
@@ -91,15 +96,24 @@ export default class ManageUsersMenus extends UIBase {
         }
 
         if ( ChannelType.GuildVoice === interaction.channel?.type && interaction ) {
-            const guiManager = GUIManager.getInstance(),
-                channel = interaction.channel as VoiceChannel,
+            const channel = interaction.channel as VoiceChannel,
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] );
 
-            if ( member ) {
+            // If user tries to remove himself, then we just ignore it.
+            if ( member?.id === interaction.user.id ) {
+                const component = guiManager.get( "Dynamico/UI/EditChannel/ManageUsers" );
+                const message = component.getMessage( interaction );
+
+                await guiManager.continuesMessage( interaction, false, [], message.components );
+            } else if ( member ) {
                 await channel.permissionOverwrites.delete( member );
 
-                await guiManager.continuesMessage( interaction,
-                    `Granted ${ member.username } access to ${ channel.name }`, );
+                const dynamicChannel = interaction.channel as VoiceChannel;
+
+                const component = guiManager.get( "Dynamico/UI/EditChannel/ManageUsers" );
+                const message = component.getMessage( interaction );
+
+                await guiManager.continuesMessage( interaction, false, [], message.components );
             } else {
                 await guiManager.continuesMessage( interaction,
                     `Could not find user with id '${ interaction.values[ 0 ] }'`, );

@@ -4,7 +4,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import { GenericInputNumberUIModal } from "@dynamico/ui/generic/generic-input-number-ui-modal";
 
-import GUIManager from "@dynamico/managers/gui";
+import guiManager from "@dynamico/managers/gui";
 
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,
@@ -49,7 +49,7 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await GUIManager.getInstance()
+        await guiManager
             .continuesMessage( interaction, `User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }` );
     }
 
@@ -61,7 +61,7 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
 
             const content = parsedInput === 0 ? "Set user limit to Unlimited" : `Set user limit to ${ parsedInput }`;
 
-            await GUIManager.getInstance().continuesMessage( interaction, content );
+            await guiManager.continuesMessage( interaction, content );
         }
     }
 }

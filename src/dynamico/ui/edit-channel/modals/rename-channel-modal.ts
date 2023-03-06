@@ -11,6 +11,7 @@ import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import GUIManager from "@dynamico/managers/gui";
+import guiManager from "@dynamico/managers/gui";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
@@ -50,7 +51,7 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await GUIManager.getInstance()
+        await guiManager
             .continuesMessage( interaction, "The channel name must be between 1 and 100 characters long" );
     }
 
@@ -58,7 +59,7 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
-            await GUIManager.getInstance().continuesMessage( interaction, "An error has occurred" );
+            await guiManager.continuesMessage( interaction, "An error has occurred" );
             return;
         }
 
@@ -79,12 +80,12 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
                 if ( result.retry_after ) {
                     const tryAgingIn = moment().add( result.retry_after, "seconds" );
 
-                    await GUIManager.getInstance().continuesMessage( interaction, `You are being rate limited. for ${ result.retry_after.toFixed( 0 ) }` +
+                    await guiManager.continuesMessage( interaction, `You are being rate limited. for ${ result.retry_after.toFixed( 0 ) }` +
                         ` second(s), the limit will be released at ${ tryAgingIn.format( "HH:mm:ss" ) } ` );
                     break;
                 }
 
-                await GUIManager.getInstance().continuesMessage( interaction, `Renamed channel to '${ input }'` );
+                await guiManager.continuesMessage( interaction, `Renamed channel to '${ input }'` );
         }
     }
 }

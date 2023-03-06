@@ -1,8 +1,15 @@
-import UIBase from "@dynamico/ui/base/ui-base";
+import {
+    ButtonStyle,
+    ChannelType,
+    Interaction,
+    VoiceChannel
+} from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { ButtonStyle, ChannelType, Interaction, UserSelectMenuInteraction, VoiceChannel } from "discord.js";
-import GUIManager from "@dynamico/managers/gui";
+
+import UIBase from "@dynamico/ui/base/ui-base";
+
+import guiManager from "@dynamico/managers/gui";
 
 export default class ManageUsersButtons extends UIBase {
     public static getName() {
@@ -14,11 +21,10 @@ export default class ManageUsersButtons extends UIBase {
     }
 
     protected getBuilders( interaction: Interaction ) {
-        const publicButton = this.getButtonBuilder( this.publicChannel.bind( this ) ),
-            privateButton = this.getButtonBuilder( this.privateChannel.bind( this ) ),
-            usersButton = this.getButtonBuilder( this.manageUsers.bind( this ) ),
-            specialButton = this.getButtonBuilder( async () => {
-            } );
+        const publicButton = this.getButtonBuilder( this.makeChannelPublic.bind( this ) ),
+            privateButton = this.getButtonBuilder( this.makeChannelPrivate.bind( this ) ),
+            usersButton = this.getButtonBuilder( this.displayManageUsers.bind( this ) ),
+            specialButton = this.getButtonBuilder( async () => {} );
 
         publicButton
             .setStyle( ButtonStyle.Secondary )
@@ -47,7 +53,7 @@ export default class ManageUsersButtons extends UIBase {
         ];
     }
 
-    private async publicChannel( interaction: Interaction ) {
+    private async makeChannelPublic( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
@@ -57,11 +63,11 @@ export default class ManageUsersButtons extends UIBase {
                 Connect: true,
             } );
 
-            await GUIManager.getInstance().continuesMessage( interaction, "Channel is public now." );
+            await guiManager.continuesMessage( interaction, "Channel is public now." );
         }
     }
 
-    private async privateChannel( interaction: Interaction ) {
+    private async makeChannelPrivate( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
@@ -71,19 +77,17 @@ export default class ManageUsersButtons extends UIBase {
                 Connect: false,
             } );
 
-            await GUIManager.getInstance().continuesMessage( interaction, "Channel is private now." );
+            await guiManager.continuesMessage( interaction, "Channel is private now." );
         }
     }
 
-    private async manageUsers( interaction: Interaction ) {
+    private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
-            const dynamicChannel = interaction.channel as VoiceChannel;
+            const message = guiManager
+                .get( "Dynamico/UI/EditChannel/ManageUsers" )
+                .getMessage( interaction );
 
-            // @ts-ignore
-            const component = GUIManager.getInstance().get( "Dynamico/UI/EditChannel/ManageUsers" );
-            const message = component.getMessage( interaction );
-
-            await GUIManager.getInstance().continuesMessage( interaction, false, [], message.components );
+            await guiManager.continuesMessage( interaction, false, [], message.components );
         }
     }
 }

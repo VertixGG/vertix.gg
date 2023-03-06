@@ -18,23 +18,13 @@ import ComponentUIBase from "../ui/base/component-ui-base";
 import { JSONEncodable } from "@discordjs/util";
 import { MessageActionRowComponentBuilder } from "@discordjs/builders";
 
-export default class GUIManager extends InitializeBase {
-    private static instance: GUIManager;
-
+export class GUIManager extends InitializeBase {
     private userInterfaces = new Map<string, ComponentUIBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
 
     public static getName() {
         return "Dynamico/Managers/GUI";
-    }
-
-    public static getInstance() {
-        if ( ! GUIManager.instance ) {
-            GUIManager.instance = new GUIManager();
-        }
-
-        return GUIManager.instance;
     }
 
     public register( ui: typeof ComponentUIBase ) {
@@ -139,3 +129,7 @@ export default class GUIManager extends InitializeBase {
         }
     }
 }
+
+const guiManager = new GUIManager();
+
+export default guiManager;

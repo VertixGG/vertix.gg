@@ -1,13 +1,12 @@
 import {
     ApplicationCommandType,
+    ButtonStyle,
     Client,
     Colors,
     CommandInteraction,
     EmbedBuilder,
     PermissionsBitField,
 } from "discord.js";
-
-import { ButtonStyle } from "discord.js";
 
 import { ICommand } from "@dynamico/interfaces/command";
 
@@ -36,7 +35,7 @@ export const Setup: ICommand = {
                 .setColor( Colors.Red );
         } else if ( interaction.guild ){
             const { masterCategory, masterCreateChannel, masterEditChannel }
-                = await masterChannelManager.createDefaultMasters( interaction.guild );
+                = await masterChannelManager.createDefaultMasters( interaction.guild, interaction.user.id );
 
             let description = `**Category**: ${ masterCategory.name }\n`;
 

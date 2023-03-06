@@ -1,11 +1,17 @@
-import { ChannelType, Guild, PermissionsBitField, VoiceBasedChannel } from "discord.js";
+import {
+    ChannelType,
+    Guild,
+    Interaction,
+    NonThreadGuildBasedChannel,
+    PermissionsBitField,
+    VoiceBasedChannel
+} from "discord.js";
 
 import {
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs,
-    IMasterChanelCreateDynamicArgs,
     IMasterChannelCreateArgs,
-    IMasterChannelEditArgs
+    IMasterChannelCreateDynamicArgs
 } from "../interfaces/channel";
 
 import InitializeBase from "@internal/bases/initialize-base";
@@ -59,10 +65,11 @@ export default class MasterChannelManager extends InitializeBase {
             message = GUIManager
                 .getInstance()
                 .get( "Dynamico/UI/EditChannel" )
-                .getMessage();
+                .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
         await channel.send( message );
     }
+
     /**
      * onLeaveDynamicChannel() :: Called when a user leaves a dynamic channel.
      */
@@ -85,6 +92,7 @@ export default class MasterChannelManager extends InitializeBase {
 
     /**
      * Function getDefaultInheritedProperties() :: Returns the default inherited properties from the master channel.
+     * Take overview of the master channel.
      */
     public getDefaultInheritedProperties( masterChannel: VoiceBasedChannel ) {
         const { rtcRegion, bitrate, userLimit } = masterChannel,
@@ -107,7 +115,7 @@ export default class MasterChannelManager extends InitializeBase {
             result = [];
 
         for ( const overwrite of permissionOverwrites.cache.values() ) {
-            let { id, allow, deny } = overwrite;
+            let { id, allow, deny, type } = overwrite;
 
             // Exclude `PermissionsBitField.Flags.SendMessages` for everyone.
             if ( id === masterChannel.guild.id ) {
@@ -117,10 +125,11 @@ export default class MasterChannelManager extends InitializeBase {
             this.logger.debug( this.getDefaultInheritedPermissions, JSON.stringify( {
                 id,
                 allow: allow.toArray(),
-                deny: deny.toArray()
+                deny: deny.toArray(),
+                type,
             } ) );
 
-            result.push( { id, allow, deny } );
+            result.push( { id, allow, deny, type } );
         }
 
         return result;
@@ -129,43 +138,44 @@ export default class MasterChannelManager extends InitializeBase {
     /**
      * Function createDynamic() :: Creates a new dynamic channel for a user.
      */
-    public async createDynamic( args: IMasterChanelCreateDynamicArgs ) {
+    public async createDynamic( args: IMasterChannelCreateDynamicArgs ) {
         const { displayName, guild, newState } = args,
-            ownerId = newState.id,
+            userOwnerId = newState.member?.id,
             dynamicChannelName = DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT.replace(
                 "%{userDisplayName}%",
                 displayName
             );
 
         this.logger.log( this.createDynamic,
-            `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ ownerId }'` );
+            `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
         const masterChannel = newState.channel as VoiceBasedChannel,
-            masterChannelParent = masterChannel.parent;
-
-        // Take overview of the master channel.
-        const inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
-            inheritedPermissions = this.getDefaultInheritedPermissions( masterChannel );
-
-        // Create channel for the user.
-        const channel = await ChannelManager.getInstance().create( {
-            guild,
-            isDynamic: true,
-            ownerId: newState.id,
-            // ---
-            name: dynamicChannelName,
-            type: ChannelType.GuildVoice,
-            parent: masterChannelParent,
-            internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
-            // ---
-            permissionOverwrites: [
+            categoryChannel = masterChannel.parent,
+            inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
+            inheritedPermissions = this.getDefaultInheritedPermissions( masterChannel ),
+            permissionOverwrites = [
                 ... inheritedPermissions,
                 {
                     id: newState.id,
                     ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
                 }
-            ],
+            ];
+
+        // Create channel for the user.
+        const channel = await ChannelManager.getInstance().create( {
+            guild,
+            name: dynamicChannelName,
+            // ---
+            userOwnerId: newState.id,
+            ownerChannelId: masterChannel.id,
+            // ---
+            type: ChannelType.GuildVoice,
+            parent: categoryChannel,
+            internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
+            // ---
             ... inheritedProperties,
+            // ---
+            permissionOverwrites,
         } );
 
         // Move the user to new created channel.
@@ -174,14 +184,15 @@ export default class MasterChannelManager extends InitializeBase {
         return channel;
     }
 
-    public async createDefaultMasters( guild: Guild ) {
+    public async createDefaultMasters( guild: Guild, userOwnerId: string ) {
         const masterCategory = await this.createMasterCategory( guild ),
             args = {
                 guild,
+                userOwnerId,
                 parent: masterCategory,
             },
             masterCreateChannel = await this.createCreateChannel( args ),
-            masterEditChannel = await this.createEditChannel( args );
+            masterEditChannel = await this.createEditChannel( args, masterCreateChannel.id );
 
         return {
             masterCategory,
@@ -213,6 +224,7 @@ export default class MasterChannelManager extends InitializeBase {
         return ChannelManager.getInstance().create( {
             parent,
             guild,
+            userOwnerId: args.userOwnerId,
             internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
@@ -226,11 +238,11 @@ export default class MasterChannelManager extends InitializeBase {
     /**
      * Function createEditChannel() :: Creates channel master of edit.
      */
-    public async createEditChannel( args: IMasterChannelEditArgs ) {
+    public async createEditChannel( args: IMasterChannelCreateArgs, masterChannelID: string ) {
         const { guild, parent } = args;
 
         this.logger.info( this.createEditChannel,
-            `Creating master channel for guild '${ guild.name }' for user: '${ args.guild.ownerId }'` );
+            `Creating master channel for guild '${ guild.name }' for user: '${ args.userOwnerId }'` );
 
         // Create master channel.
         return ChannelManager.getInstance().create( {
@@ -239,6 +251,8 @@ export default class MasterChannelManager extends InitializeBase {
             internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_EDIT_CHANNEL,
             name: args.name || DEFAULT_MASTER_CHANNEL_EDIT_NAME,
             type: ChannelType.GuildText,
+            ownerChannelId: masterChannelID,
+            userOwnerId: args.userOwnerId,
             permissionOverwrites: [ {
                 id: guild.roles.everyone,
                 ... DEFAULT_MASTER_CHANNEL_EDIT_EVERYONE_PERMISSIONS
@@ -252,5 +266,46 @@ export default class MasterChannelManager extends InitializeBase {
         // TODO Relations are deleted automatically??
         CategoryModel.getInstance().delete( guild.id );
         ChannelModel.getInstance().delete( guild );
+    }
+
+    public async getByDynamicChannel( interaction: Interaction ) {
+        if ( ! interaction.isButton() || ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
+            return null;
+        }
+
+        const dynamicChannel = interaction.channel,
+            dynamicChannelDB = await ChannelModel.getInstance().get( interaction.guildId, dynamicChannel.id );
+
+        if ( ! dynamicChannelDB ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Could not find channel in database. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
+
+            await GUIManager.getInstance().continuesMessage( interaction, "An error occurred while trying to find the channel in the database." );
+
+            return;
+        }
+
+        if ( ! dynamicChannelDB.ownerChannelId ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Could not find master channel in database. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
+
+            await GUIManager.getInstance().continuesMessage( interaction, "An error occurred while trying to find the master channel in the database." );
+
+            return;
+        }
+
+        // Get master channel permissions.
+        const masterChannel = await interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
+
+        if ( ! masterChannel ) {
+            this.logger.warn( this.getByDynamicChannel,
+                `Could not find master channel. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
+
+            await GUIManager.getInstance().continuesMessage( interaction, "An error occurred while trying to find the master channel." );
+
+            return;
+        };
+
+        return masterChannel;
     }
 }

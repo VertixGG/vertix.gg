@@ -1,9 +1,4 @@
-import {
-    ChannelType,
-    DMChannel,
-    NonThreadGuildBasedChannel,
-    VoiceState
-} from "discord.js";
+import { ChannelType, DMChannel, NonThreadGuildBasedChannel, VoiceChannel, VoiceState } from "discord.js";
 
 import {
     IChannelCreateArgs,
@@ -17,6 +12,7 @@ import InitializeBase from "@internal/bases/initialize-base";
 import ChannelModel from "@dynamico/models/channel";
 
 import MasterChannelManager from "./master-channel";
+import GUIManager from "@dynamico/managers/gui";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
@@ -139,11 +135,55 @@ export default class ChannelManager extends InitializeBase {
         return false;
     }
 
+    public async onChannelUpdate( oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel ) {
+        this.logger.info( this.onChannelUpdate, `Channel '${ oldChannel.id }' was updated.` );
+
+        if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
+            // If permissions were updated.
+            if ( ( oldChannel as VoiceChannel ).permissionOverwrites !== ( newChannel as VoiceChannel ).permissionOverwrites ) {
+                await this.onVoiceChannelUpdatePermissions( oldChannel as VoiceChannel, newChannel as VoiceChannel );
+            }
+        }
+    }
+
+    public async onVoiceChannelUpdatePermissions( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
+        this.logger.info( this.onVoiceChannelUpdatePermissions,
+            `Channel '${ oldChannel.id }' permissions were updated.` );
+
+        // Print debug new permissions.
+        this.logger.debug( this.onVoiceChannelUpdatePermissions,
+            `New permissions for channel '${ oldChannel.id }':\n` +
+            `${ JSON.stringify( newChannel.permissionOverwrites.cache.map( ( permission ) => {
+                return {
+                    id: permission.id,
+                    type: permission.type,
+                    allow: permission.allow.toArray(),
+                    deny: permission.deny.toArray()
+                };
+            } ) ) }` );
+
+        // Get first message in the channel.
+        const message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
+
+        if ( message ) {
+            const newMessage = GUIManager
+                .getInstance()
+                .get( "Dynamico/UI/EditChannel" )
+                .getMessage( newChannel );
+
+            await message.edit( newMessage );
+        }
+    }
+
+    public async getChannel( guildId: string, channelId: string ) {
+        return this.channelModel.get( guildId, channelId );
+    }
+
     /**
      * Function create() :: Creates a new channel for a guild.
      */
     public async create( args: IChannelCreateArgs ) {
-        const { name, guild, ownerId = false, internalType = false } = args;
+        const { name, guild, userOwnerId, internalType = false, ownerChannelId = null } = args;
 
         if ( ! internalType ) {
             throw new Error( "Internal type is required to create a channel." );
@@ -151,17 +191,18 @@ export default class ChannelManager extends InitializeBase {
 
         this.logger.info( this.create,
             `Creating channel for guild '${ guild.name }' with the following properties: ` +
-                    `With name: '${ name }', ownerId: '${ ownerId }', internalType: '${ internalType }'`
+            `With name: '${ name }', ownerId: '${ userOwnerId }', internalType: '${ internalType }' ` +
+            `ownerChannelId: '${ args.ownerChannelId }'`
         );
 
         const channel = await guild.channels.create( args ),
             // Data to be inserted into the database.
-            data:any = {
+            data: any = {
                 name,
                 internalType,
+                userOwnerId,
                 channelId: channel.id,
                 guildId: guild.id,
-                masterChannelId: args.parent?.id,
                 createdAtDiscord: channel.createdTimestamp,
             };
 
@@ -169,11 +210,12 @@ export default class ChannelManager extends InitializeBase {
             data.categoryId = channel.parentId;
         }
 
-        if ( ownerId ) {
-            data.ownerId = args.ownerId;
+        if ( ownerChannelId ) {
+            data.ownerChannelId = ownerChannelId;
         }
 
         await this.channelModel.create( { data } );
+
 
         return channel;
     }

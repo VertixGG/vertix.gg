@@ -34,7 +34,7 @@ export default class GuildManager extends InitializeBase {
     }
 
     public async onJoin( client: Client, guild: Guild ) {
-        this.logger.info(  this.onJoin, `Dynamico Joined guild '${ guild.name }'` );
+        this.logger.info( this.onJoin, `Dynamico Joined guild '${ guild.name }'` );
 
         // Determine if the guild is already in the database.
         if ( await this.guildModel.isExisting( guild ) ) {
@@ -44,7 +44,9 @@ export default class GuildManager extends InitializeBase {
             await this.guildModel.create( guild );
         }
 
-        return this.masterChannelManager.createDefaultMasters( guild );
+        const owner = await client.users.fetch( guild.ownerId );
+
+        return this.masterChannelManager.createDefaultMasters( guild, owner.id );
     }
 
     public async onLeave( client: Client, guild: Guild ) {

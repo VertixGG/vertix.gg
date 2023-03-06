@@ -2,7 +2,9 @@ import {
     ButtonStyle,
     ChannelType,
     Interaction,
-    TextInputStyle
+    OverwriteType,
+    TextInputStyle,
+    VoiceChannel
 } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
@@ -13,21 +15,28 @@ import GUIManager from "@dynamico/managers/gui";
 import RenameChannelModalUI from "./modals/rename-channel-modal";
 import UserlimitChannelModalUI from "./modals/userlimit-channel-modal";
 
-export default class EditChannelButtons extends UIBase {
+import Logger from "@internal/modules/logger";
+
+export default class MangeChannelButtons extends UIBase {
+    private logger: Logger;
+
     public static getName() {
-        return "Dynamico/UI/EditChannel/Buttons";
+        return "Dynamico/UI/EditChannel/ManageChannelButtons";
     }
 
     public static getType() {
         return E_UI_TYPES.STATIC;
     }
 
+    constructor() {
+        super();
+
+        this.logger = new Logger( this );
+    }
+
     getBuilders() {
         const renameButton = this.getButtonBuilder( this.renameChannel.bind( this ) ),
-            limitButton = this.getButtonBuilder( this.limitChannel.bind( this ) ),
-            publicButton = this.getButtonBuilder( this.publicChannel.bind( this ) ),
-            privateButton = this.getButtonBuilder( this.privateChannel.bind( this ) ),
-            specialButton = this.getButtonBuilder( this.specialChannel.bind( this ) );
+            limitButton = this.getButtonBuilder( this.limitChannel.bind( this ) );
 
         renameButton
             .setStyle( ButtonStyle.Secondary )
@@ -39,26 +48,7 @@ export default class EditChannelButtons extends UIBase {
             .setEmoji( "✋" )
             .setLabel( "User Limit" );
 
-        publicButton
-            .setStyle( ButtonStyle.Secondary )
-            .setEmoji( "🌐" )
-            .setLabel( "Public" );
-
-        privateButton
-            .setStyle( ButtonStyle.Secondary )
-            .setEmoji( "🚫" )
-            .setLabel( "Private" );
-
-        specialButton
-            .setStyle( ButtonStyle.Primary )
-            .setEmoji( "🌟" )
-            .setLabel( "Special Channel" )
-            .setDisabled( true );
-
-        return [
-            [ renameButton, limitButton ],
-            [ publicButton, privateButton, specialButton ],
-        ];
+        return [ renameButton, limitButton ];
     }
 
     private async renameChannel( interaction: Interaction ) {
@@ -83,17 +73,5 @@ export default class EditChannelButtons extends UIBase {
                 await interaction.showModal( component.getModal( interaction ) );
             }
         }
-    }
-
-    private async publicChannel() {
-
-    }
-
-    private async privateChannel() {
-
-    }
-
-    private async specialChannel() {
-
     }
 }

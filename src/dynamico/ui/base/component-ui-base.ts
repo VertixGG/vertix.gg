@@ -2,7 +2,7 @@ import {
     ActionRowBuilder,
     APIEmbed,
     BaseMessageOptions,
-    Interaction, ModalBuilder,
+    Interaction, ModalBuilder, NonThreadGuildBasedChannel,
 } from "discord.js";
 
 import {
@@ -71,7 +71,7 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         throw new ForceMethodImplementation( this, this.getInternalComponents.name );
     }
 
-    getActionRows( interaction?: Interaction ): ActionRowBuilder<any>[] {
+    getActionRows( interaction?: Interaction | NonThreadGuildBasedChannel ): ActionRowBuilder<any>[] {
         const components: UIBase[] = [],
             staticThis = ( this.constructor as typeof ComponentUIBase );
 
@@ -97,8 +97,8 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
 
         return builtComponents;
     }
-    
-    getMessage( interaction?: Interaction ): BaseMessageOptions {
+
+    getMessage( interaction?: Interaction | NonThreadGuildBasedChannel ): BaseMessageOptions {
         const builtComponents = this.getActionRows( interaction ),
             staticThis = ( this.constructor as typeof ComponentUIBase ),
             result: any = { components: builtComponents };

@@ -4,8 +4,8 @@ import {
     ButtonBuilder,
     ComponentBuilder,
     Interaction,
-    ModalBuilder, ModalSubmitInteraction,
-    StringSelectMenuBuilder, TextInputBuilder, UserSelectMenuBuilder,
+    ModalBuilder, ModalSubmitInteraction, NonThreadGuildBasedChannel, SelectMenuInteraction,
+    StringSelectMenuBuilder, TextInputBuilder, UserSelectMenuBuilder, UserSelectMenuInteraction,
 } from "discord.js";
 
 import { ForceMethodImplementation } from "@internal/errors";
@@ -23,7 +23,7 @@ export default class UIBase extends ObjectBase {
 
     private builtRows: ActionRowBuilder<any>[] = [];
 
-    public interaction?: Interaction;
+    public interaction?: Interaction | NonThreadGuildBasedChannel;
 
     static getName() {
         return "Dynamico/UI/UIBase";
@@ -33,7 +33,7 @@ export default class UIBase extends ObjectBase {
         throw new ForceMethodImplementation( this, this.getType.name );
     }
 
-    constructor( interaction?: Interaction ) {
+    constructor( interaction?: Interaction | NonThreadGuildBasedChannel ) {
         super();
 
         if ( this.getName() === UIBase.getName() ) {
@@ -47,7 +47,7 @@ export default class UIBase extends ObjectBase {
         this.initialize( interaction );
     }
 
-    protected initialize( interaction?: Interaction ) {
+    protected initialize( interaction?: Interaction | NonThreadGuildBasedChannel ) {
         this.build( interaction );
     }
 
@@ -59,7 +59,7 @@ export default class UIBase extends ObjectBase {
         return button;
     }
 
-    protected getMenuBuilder( callback: CallbackUIType ) {
+    protected getMenuBuilder( callback: ( interaction: SelectMenuInteraction ) => Promise<void> ) {
         const menu = new StringSelectMenuBuilder();
 
         this.setCallback( menu, callback );
@@ -67,7 +67,7 @@ export default class UIBase extends ObjectBase {
         return menu;
     }
 
-    protected getUserMenuBuilder( callback: CallbackUIType ) {
+    protected getUserMenuBuilder( callback: ( interaction: UserSelectMenuInteraction ) => Promise<void> ) {
         const menu = new UserSelectMenuBuilder();
 
         this.setCallback( menu, callback );
@@ -93,11 +93,11 @@ export default class UIBase extends ObjectBase {
         return modal;
     }
 
-    protected getBuilders( interaction?: Interaction ): ComponentBuilder[]| ComponentBuilder[][] | ModalBuilder[] {
+    protected getBuilders( interaction?: Interaction | NonThreadGuildBasedChannel ): ComponentBuilder[]| ComponentBuilder[][] | ModalBuilder[] {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 
-    public build( interaction?: Interaction ) {
+    public build( interaction?: Interaction | NonThreadGuildBasedChannel ) {
         UIBase.logger.debug( this.build, `Building UI '${ this.getName() }'` );
 
         const builders = this.getBuilders( interaction ),

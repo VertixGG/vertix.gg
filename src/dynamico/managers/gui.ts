@@ -1,10 +1,22 @@
-import { ChannelType, InteractionResponse, ModalSubmitInteraction } from "discord.js";
+import {
+    ActionRowData,
+    APIActionRowComponent,
+    APIEmbed,
+    APIMessageActionRowComponent,
+    ButtonInteraction,
+    ChannelType, Interaction, InteractionReplyOptions,
+    InteractionResponse, MessageActionRowComponentData,
+    ModalSubmitInteraction, SelectMenuInteraction,
+    UserSelectMenuInteraction
+} from "discord.js";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
 import ObjectBase from "@internal/bases/object-base";
 
 import ComponentUIBase from "../ui/base/component-ui-base";
+import { JSONEncodable } from "@discordjs/util";
+import { MessageActionRowComponentBuilder } from "@discordjs/builders";
 
 export default class GUIManager extends InitializeBase {
     private static instance: GUIManager;
@@ -83,15 +95,32 @@ export default class GUIManager extends InitializeBase {
         return result;
     }
 
-    public async continuesMessage( interaction: ModalSubmitInteraction, message: string ) {
+    public async continuesMessage( interaction: ModalSubmitInteraction | ButtonInteraction | UserSelectMenuInteraction | SelectMenuInteraction,
+                                   message: string|false,
+                                   embeds: ( JSONEncodable<APIEmbed> | APIEmbed )[] = [],
+                                   components: (
+                                       | JSONEncodable<APIActionRowComponent<APIMessageActionRowComponent>>
+                                       | ActionRowData<MessageActionRowComponentData | MessageActionRowComponentBuilder>
+                                       | APIActionRowComponent<APIMessageActionRowComponent>
+                                       ) [] = [] ) {
         if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type ) {
+            const args: InteractionReplyOptions = {
+                ephemeral: true,
+                embeds,
+            };
+
+            if ( message ) {
+                args.content = message;
+            }
+
+            if ( components ) {
+                args.components = components;
+            }
+
             const isInteractionExist = this.continuesInteractions.has( interaction.channel.id );
 
             if ( ! isInteractionExist ) {
-                const defer = await interaction.reply( {
-                    ephemeral: true,
-                    content: message,
-                } );
+                const defer = await interaction.reply( args );
 
                 this.continuesInteractions.set( interaction.channel.id, defer );
 
@@ -103,10 +132,7 @@ export default class GUIManager extends InitializeBase {
             if ( defer && defer.interaction.isRepliable() ) {
                 defer.interaction.deleteReply();
 
-                const newDefer = await interaction.reply( {
-                    ephemeral: true,
-                    content: message,
-                } );
+                const newDefer = await interaction.reply( args );
 
                 this.continuesInteractions.set( interaction.channel.id, newDefer );
             }

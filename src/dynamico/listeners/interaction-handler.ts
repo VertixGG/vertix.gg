@@ -1,6 +1,14 @@
 import * as process from "process";
 
-import { ButtonInteraction, Client, CommandInteraction, Events, Interaction, ModalSubmitInteraction } from "discord.js";
+import {
+    ButtonInteraction,
+    Client,
+    CommandInteraction,
+    Events,
+    Interaction,
+    ModalSubmitInteraction, SelectMenuInteraction,
+    UserSelectMenuInteraction
+} from "discord.js";
 
 import { Commands } from "../interactions/commands";
 
@@ -14,6 +22,8 @@ export function interactionHandler( client: Client ) {
             await handleButton( client, interaction as ButtonInteraction );
         } else if ( interaction.isModalSubmit() ) {
             await handleModalSubmit( client, interaction );
+        } else if ( interaction.isUserSelectMenu() || interaction.isSelectMenu() ) {
+            await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction );
         } else if ( process.env.debug_mode === "discord" ) {
             console.log( interaction );
         }
@@ -38,17 +48,19 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 };
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
-    // await interaction.deferUpdate();
-
     console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
    GUIManager.getInstance().getCallback( interaction.customId )( interaction );
 };
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
-    // await interaction.deferUpdate();
-
     console.log( `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
+
+   GUIManager.getInstance().getCallback( interaction.customId )( interaction );
+}
+
+async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction|SelectMenuInteraction ) {
+    console.log( `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
    GUIManager.getInstance().getCallback( interaction.customId )( interaction );
 }

@@ -15,13 +15,10 @@ export interface IMasterChannelCreateArgs {
     parent: CategoryChannel,
     guild: Guild,
     name?: string
+    userOwnerId: string,
 }
 
-export interface IMasterChannelEditArgs extends IMasterChannelCreateArgs {
-
-}
-
-export interface IMasterChanelCreateDynamicArgs {
+export interface IMasterChannelCreateDynamicArgs {
     oldState: VoiceState,
     newState: VoiceState,
     guild: Guild
@@ -49,7 +46,8 @@ export interface IChannelLeaveGenericArgs {
 export interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,
     parent? : CategoryChannel;
-    ownerId?: string,
+    userOwnerId: string,
+    ownerChannelId?: string,
     internalType: E_INTERNAL_CHANNEL_TYPES,
 }
 

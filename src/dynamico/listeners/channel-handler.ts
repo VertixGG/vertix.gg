@@ -30,4 +30,8 @@ export function channelHandler( client: Client ) {
             return;
         }
     } );
+
+    client.on( Events.ChannelUpdate, async ( oldChannel, newChannel ) => {
+        await ChannelManager.getInstance().onChannelUpdate( oldChannel, newChannel );
+    } );
 }

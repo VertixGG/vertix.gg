@@ -35,7 +35,7 @@ export default class ChannelModel extends ModelBase {
         this.logger.info( this.create,
             `Creating channel '${ args.data.channelId }' for guild '${ args.data.guildId }'` );
 
-        this.logger.debug( this.create, '🔽', args.data );
+        this.logger.debug( this.create, "🔽", args.data );
 
         return this.model.create( args );
     }
@@ -56,6 +56,21 @@ export default class ChannelModel extends ModelBase {
 
             return this.prisma.channel.deleteMany( { where } );
         }
+    }
+
+    public async get( guildId: string, channelId: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
+        const args: any = {
+            where: {
+                guildId,
+                channelId,
+            }
+        };
+
+        if ( internalType ) {
+            args.where.internalType = internalType;
+        }
+
+        return this.prisma.channel.findFirst( args );
     }
 
     public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {

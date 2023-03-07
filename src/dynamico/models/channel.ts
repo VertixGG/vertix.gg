@@ -1,9 +1,10 @@
-import ModelBase from "@internal/bases/model-base";
-import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
+
 import { Prisma } from "@prisma/client";
 import { Guild } from "discord.js";
-
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
+import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
+import ModelBase from "@internal/bases/model-base";
 
 export class ChannelModel extends ModelBase {
     private static instance: ChannelModel;

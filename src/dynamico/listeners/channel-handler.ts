@@ -1,7 +1,8 @@
-import CategoryManager from "@dynamico/managers/category";
 import { ChannelType, Client, Events } from "discord.js";
 
 import ChannelManager from "../managers/channel";
+
+import CategoryManager from "@dynamico/managers/category";
 
 export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, async ( oldState, newState ) => {

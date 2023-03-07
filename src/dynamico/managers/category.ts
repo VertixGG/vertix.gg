@@ -1,8 +1,9 @@
-import CategoryModel from "@dynamico/models/category";
-import InitializeBase from "@internal/bases/initialize-base";
 import { CategoryChannel, ChannelType } from "discord.js";
 
 import { ICategoryCreateArgs } from "../interfaces/category";
+
+import CategoryModel from "@dynamico/models/category";
+import InitializeBase from "@internal/bases/initialize-base";
 
 export class CategoryManager extends InitializeBase {
     private static instance: CategoryManager;
@@ -35,6 +36,19 @@ export class CategoryManager extends InitializeBase {
 
         // Delete the channel from the database.
         await this.categoryModel.delete( guild.id, category.id );
+    }
+
+    public async delete( category: CategoryChannel ) {
+        const { guild, name } = category;
+
+        this.logger.info( this.create,
+            `Deleting category for guild '${ guild.name }' with name '${ name }'` );
+
+        // Delete the channel from the database.
+        await this.categoryModel.delete( guild.id, category.id );
+
+        // Delete the channel from discord.
+        await category.delete();
     }
 
     public async create( args: ICategoryCreateArgs ) {

@@ -1,5 +1,6 @@
-import PrismaBase from "@internal/bases/prisma-base";
 import chalk from "chalk";
+
+import PrismaBase from "@internal/bases/prisma-base";
 
 export default abstract class ModelBase extends PrismaBase {
     protected constructor() {

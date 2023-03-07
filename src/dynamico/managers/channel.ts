@@ -1,8 +1,7 @@
-import guiManager from "@dynamico/managers/gui";
-import ChannelModel from "@dynamico/models/channel";
-import InitializeBase from "@internal/bases/initialize-base";
 import { channel } from "@prisma/client";
 import { ChannelType, DMChannel, NonThreadGuildBasedChannel, VoiceChannel, VoiceState } from "discord.js";
+
+import MasterChannelManager from "./master-channel";
 
 import {
     IChannelCreateArgs,
@@ -10,7 +9,10 @@ import {
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
-import MasterChannelManager from "./master-channel";
+
+import guiManager from "@dynamico/managers/gui";
+import ChannelModel from "@dynamico/models/channel";
+import InitializeBase from "@internal/bases/initialize-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
@@ -152,6 +154,7 @@ export class ChannelManager extends InitializeBase {
             `Channel '${ oldChannel.id }' permissions were updated.` );
 
         // Print debug new permissions.
+        // TODO: Utils.debugPermissions()
         this.logger.debug( this.onVoiceChannelUpdatePermissions,
             `New permissions for channel '${ oldChannel.id }':\n` +
             `${ JSON.stringify( newChannel.permissionOverwrites.cache.map( ( permission ) => {
@@ -165,6 +168,7 @@ export class ChannelManager extends InitializeBase {
 
         let message = null;
 
+        // TODO: Try removing this.
         try {
             message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
 
@@ -249,10 +253,10 @@ export class ChannelManager extends InitializeBase {
     }
 
     public async delete( args: IChannelDeleteArgs ) {
-        const { channel, guild, channelName } = args;
+        const { channel, guild } = args;
 
         this.logger.info( this.delete,
-            `Deleting channel '${ channelName }' for guild '${ guild.name }'` );
+            `Deleting channel '${ channel.name }' for guild '${ guild.name }'` );
 
         await this.channelModel.delete( guild, channel.id );
 

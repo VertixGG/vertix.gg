@@ -1,14 +1,16 @@
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import guiManager from "@dynamico/managers/gui";
-import Logger from "@internal/modules/logger";
 import {
     ButtonStyle,
     Interaction,
 } from "discord.js";
 
-import UIBase from "../base/ui-base";
 import RenameChannelModalUI from "./modals/rename-channel-modal";
 import UserlimitChannelModalUI from "./modals/userlimit-channel-modal";
+
+import UIBase from "../base/ui-base";
+
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import guiManager from "@dynamico/managers/gui";
+import Logger from "@internal/modules/logger";
 
 export default class MangeChannelButtons extends UIBase {
     private logger: Logger;

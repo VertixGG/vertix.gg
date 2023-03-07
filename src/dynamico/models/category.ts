@@ -1,5 +1,6 @@
-import ModelBase from "@internal/bases/model-base";
 import { Prisma } from "@prisma/client";
+
+import ModelBase from "@internal/bases/model-base";
 
 interface ICreateData { // TODO: Check if this is needed
     categoryId: string;

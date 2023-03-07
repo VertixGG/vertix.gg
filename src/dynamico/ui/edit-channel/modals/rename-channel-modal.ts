@@ -1,11 +1,13 @@
+import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
+import { Routes } from "discord-api-types/v10";
+
+import MasterChannelManager from "../../../managers/master-channel";
+
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import guiManager from "@dynamico/managers/gui";
 import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
-import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
-import { Routes } from "discord-api-types/v10";
-import process from "process";
 
-import MasterChannelManager from "../../../managers/master-channel";
+import process from "process";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
@@ -21,7 +23,7 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
     }
 
     protected getInputLabel(): string {
-        return "Which channel do you want to rename?";
+        return "Pick a name for your channel";
     }
 
     protected getInputPlaceholder(): string {

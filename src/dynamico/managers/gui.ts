@@ -1,6 +1,3 @@
-import { DiscordComponentTypes } from "@dynamico/interfaces/ui";
-import InitializeBase from "@internal/bases/initialize-base";
-import ObjectBase from "@internal/bases/object-base";
 import {
     APIEmbed,
     ButtonInteraction,
@@ -16,6 +13,10 @@ import {
 } from "discord.js";
 
 import ComponentUIBase from "../ui/base/component-ui-base";
+
+import { DiscordComponentTypes } from "@dynamico/interfaces/ui";
+import InitializeBase from "@internal/bases/initialize-base";
+import ObjectBase from "@internal/bases/object-base";
 
 export class GUIManager extends InitializeBase {
     private userInterfaces = new Map<string, ComponentUIBase>;

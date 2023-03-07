@@ -1,11 +1,9 @@
 import {
     CategoryChannel,
     CategoryCreateChannelOptions,
-    Channel,
-    Guild,
+    Guild, NonThreadGuildBasedChannel,
     VoiceState
 } from "discord.js";
-
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
 /* Master channel */
@@ -52,6 +50,5 @@ export interface IChannelCreateArgs extends CategoryCreateChannelOptions {
 
 export interface IChannelDeleteArgs {
     guild: Guild,
-    channelName: string,
-    channel: Channel,
+    channel: NonThreadGuildBasedChannel,
 }

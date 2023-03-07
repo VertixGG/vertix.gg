@@ -1,7 +1,3 @@
-import { EmbedsType } from "@dynamico/interfaces/ui";
-import guiManager from "@dynamico/managers/gui";
-import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
-import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
 import {
     EmbedBuilder,
     Interaction,
@@ -11,6 +7,11 @@ import {
 } from "discord.js";
 
 import ComponentUIBase from "./base/component-ui-base";
+
+import { EmbedsType } from "@dynamico/interfaces/ui";
+import guiManager from "@dynamico/managers/gui";
+import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
+import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
 
 export default class EditChannelUI extends ComponentUIBase {
     public static getName() {

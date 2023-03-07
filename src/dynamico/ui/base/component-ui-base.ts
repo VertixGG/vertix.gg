@@ -1,4 +1,10 @@
 import {
+    ActionRowBuilder,
+    BaseMessageOptions,
+    Interaction, ModalBuilder, NonThreadGuildBasedChannel,
+} from "discord.js";
+
+import {
     E_UI_TYPES,
     EmbedsType,
     IComponentUIBase,
@@ -6,11 +12,6 @@ import {
 import UIBase from "@dynamico/ui/base/ui-base";
 import ObjectBase from "@internal/bases/object-base";
 import { ForceMethodImplementation } from "@internal/errors";
-import {
-    ActionRowBuilder,
-    BaseMessageOptions,
-    Interaction, ModalBuilder, NonThreadGuildBasedChannel,
-} from "discord.js";
 
 export default class ComponentUIBase extends ObjectBase implements IComponentUIBase {
     protected static staticComponents: typeof UIBase[] = [];

@@ -1,8 +1,3 @@
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { MasterChannelManager } from "@dynamico/managers";
-import guiManager from "@dynamico/managers/gui";
-import { sendManageUsersComponent } from "@dynamico/temp-utils";
-import UIBase from "@dynamico/ui/base/ui-base";
 import {
     ChannelType,
     Interaction,
@@ -11,6 +6,12 @@ import {
     UserSelectMenuInteraction,
     VoiceChannel
 } from "discord.js";
+
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { MasterChannelManager } from "@dynamico/managers";
+import guiManager from "@dynamico/managers/gui";
+import { sendManageUsersComponent } from "@dynamico/temp-utils";
+import UIBase from "@dynamico/ui/base/ui-base";
 
 export default class ManageUsersMenus extends UIBase {
     public static getName() {

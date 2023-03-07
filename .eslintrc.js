@@ -9,15 +9,49 @@ module.exports = {
 		"ecmaVersion": "latest",
 		"sourceType": "module",
 	},
+	extends: [
+		"plugin:import/recommended",
+		"plugin:import/typescript"
+	],
 	plugins: [
 		"@typescript-eslint",
-		"simple-import-sort",
-		"unused-imports"
+		"import"
 	],
+	"settings": {
+		"import/parsers": {
+			"@typescript-eslint/parser": [ ".ts", ".tsx" ]
+		},
+		"import/resolver": {
+			"typescript": {
+				"alwaysTryTypes": true,
+			},
+			"node": true,
+			"project": "./tsconfig.json"
+		},
+	},
 	"rules": {
-		"unused-imports/no-unused-imports": "error",
-		"simple-import-sort/imports": "error",
-		"simple-import-sort/exports": "error",
+		"import/no-named-as-default": "off",
+		"import/first": "error",
+		"import/no-duplicates": "error",
+		"import/no-unresolved": "error",
+		"import/newline-after-import": "error",
+		"import/order": [
+			"error",
+			{
+				"distinctGroup": true,
+				"newlines-between": "always",
+				"groups": [
+					"external",
+					"index",
+					"sibling",
+					"parent",
+					"internal",
+					"builtin",
+					"object",
+					"type"
+				]
+			}
+		],
 		"linebreak-style": [
 			"error",
 			"unix"

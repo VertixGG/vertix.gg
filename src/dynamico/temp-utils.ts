@@ -1,5 +1,3 @@
-import GlobalLogger from "@dynamico/global-logger";
-import { MasterChannelManager } from "@dynamico/managers";
 import {
     ButtonInteraction,
     ChannelType,
@@ -10,6 +8,9 @@ import {
 } from "discord.js";
 
 import guiManager from "./managers/gui";
+
+import GlobalLogger from "@dynamico/global-logger";
+import { MasterChannelManager } from "@dynamico/managers";
 
 const { Flags } = PermissionsBitField;
 

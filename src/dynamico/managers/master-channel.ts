@@ -1,4 +1,23 @@
 import {
+    ChannelType,
+    Guild,
+    Interaction,
+    NonThreadGuildBasedChannel,
+    PermissionsBitField,
+    VoiceBasedChannel
+} from "discord.js";
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
+import guiManager from "./gui";
+
+import {
+    IChannelEnterGenericArgs,
+    IChannelLeaveGenericArgs,
+    IMasterChannelCreateArgs,
+    IMasterChannelCreateDynamicArgs
+} from "../interfaces/channel";
+
+import {
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
@@ -8,23 +27,6 @@ import { CategoryManager, ChannelManager } from "@dynamico/managers";
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 import InitializeBase from "@internal/bases/initialize-base";
-import {
-    ChannelType,
-    Guild,
-    Interaction,
-    NonThreadGuildBasedChannel,
-    PermissionsBitField,
-    VoiceBasedChannel
-} from "discord.js";
-
-import {
-    IChannelEnterGenericArgs,
-    IChannelLeaveGenericArgs,
-    IMasterChannelCreateArgs,
-    IMasterChannelCreateDynamicArgs
-} from "../interfaces/channel";
-import guiManager from "./gui";
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -78,7 +80,6 @@ export class MasterChannelManager extends InitializeBase {
         if ( args.oldState.channel?.members.size === 0 ) {
             await ChannelManager.getInstance().delete( {
                 guild,
-                channelName,
                 channel: args.oldState.channel,
             } );
         }

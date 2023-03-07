@@ -3,6 +3,7 @@ import { CategoryChannel, ChannelType } from "discord.js";
 import { ICategoryCreateArgs } from "../interfaces/category";
 
 import CategoryModel from "@dynamico/models/category";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 export class CategoryManager extends InitializeBase {

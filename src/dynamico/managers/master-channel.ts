@@ -1,3 +1,4 @@
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import {
     ChannelType,
     Guild,
@@ -6,7 +7,6 @@ import {
     PermissionsBitField,
     VoiceBasedChannel
 } from "discord.js";
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
 import guiManager from "./gui";
 
@@ -26,6 +26,7 @@ import {
 import { CategoryManager, ChannelManager } from "@dynamico/managers";
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 export class MasterChannelManager extends InitializeBase {

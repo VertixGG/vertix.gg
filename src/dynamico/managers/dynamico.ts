@@ -1,13 +1,14 @@
-import { ChannelType, Client } from "discord.js";
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { ChannelType, Client } from "discord.js";
+
+import process from "process";
 
 import { Commands } from "@dynamico/interactions/commands";
 import CategoryManager from "@dynamico/managers/category";
 import ChannelManager from "@dynamico/managers/channel";
+
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
-
-import process from "process";
 
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;

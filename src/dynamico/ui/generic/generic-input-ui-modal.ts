@@ -1,6 +1,6 @@
 
-import { Mixin, settings } from "ts-mixer";
 import { ChannelType, Interaction, ModalSubmitInteraction } from "discord.js";
+import { Mixin, settings } from "ts-mixer";
 
 import InputUIBase from "../base/elements/input-ui-base";
 import ModalUIBase from "../base/elements/modal-ui-base";

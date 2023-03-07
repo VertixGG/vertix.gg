@@ -38,18 +38,34 @@ module.exports = {
 		"import/order": [
 			"error",
 			{
-				"distinctGroup": true,
-				"newlines-between": "always",
+				"pathGroups": [
+					{
+						"pattern": "@internal/**",
+						"group": "unknown",
+					},
+					{
+						"pattern": "@dynamico/**",
+						"group": "parent",
+					}
+				],
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true,
+					"orderImportKind": "asc",
+				},
 				"groups": [
 					"external",
 					"index",
 					"sibling",
-					"parent",
-					"internal",
 					"builtin",
+					"parent",
+					"unknown",
+					"internal",
 					"object",
 					"type"
-				]
+				],
+				"newlines-between": "always-and-inside-groups",
+				"distinctGroup": true,
 			}
 		],
 		"linebreak-style": [

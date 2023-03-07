@@ -10,6 +10,7 @@ import {
     IComponentUIBase,
 } from "@dynamico/interfaces/ui";
 import UIBase from "@dynamico/ui/base/ui-base";
+
 import ObjectBase from "@internal/bases/object-base";
 import { ForceMethodImplementation } from "@internal/errors";
 

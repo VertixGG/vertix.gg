@@ -1,4 +1,3 @@
-
 import { PrismaClient } from "@prisma/client";
 
 import ObjectBase from "../bases/object-base";

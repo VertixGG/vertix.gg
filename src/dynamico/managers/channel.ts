@@ -12,6 +12,7 @@ import {
 
 import guiManager from "@dynamico/managers/gui";
 import ChannelModel from "@dynamico/models/channel";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",

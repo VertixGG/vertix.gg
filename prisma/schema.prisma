@@ -30,8 +30,8 @@ model category {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   name             String
-  categoryId       String   @unique
-  guildId          String   @unique
+  categoryId       String
+  guildId          String
   // ---
   createdAtDiscord Int
   // ---

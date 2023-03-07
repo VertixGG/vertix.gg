@@ -37,11 +37,11 @@ module.exports = {
 		],
 		"sort-imports": [
 			"error", {
+				"memberSyntaxSortOrder": [ "none", "all", "multiple", "single" ],
 				"ignoreCase": false,
 				"ignoreDeclarationSort": false,
 				"ignoreMemberSort": false,
-				"memberSyntaxSortOrder": [ "none", "all", "multiple", "single" ],
-				"allowSeparatedGroups": false
+				"allowSeparatedGroups": true
 			} ]
 	},
 };

@@ -1,4 +1,10 @@
-import { ChannelType, DMChannel, NonThreadGuildBasedChannel, VoiceChannel, VoiceState } from "discord.js";
+import {
+    ChannelType,
+    DMChannel,
+    NonThreadGuildBasedChannel,
+    VoiceChannel,
+    VoiceState
+} from "discord.js";
 
 import {
     IChannelCreateArgs,
@@ -7,18 +13,19 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-import InitializeBase from "@internal/bases/initialize-base";
 
 import ChannelModel from "@dynamico/models/channel";
 
+import InitializeBase from "@internal/bases/initialize-base";
+
 import MasterChannelManager from "./master-channel";
-import GUIManager from "@dynamico/managers/gui";
+
 import guiManager from "@dynamico/managers/gui";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
 
-export default class ChannelManager extends InitializeBase {
+export class ChannelManager extends InitializeBase {
     private static instance: ChannelManager;
     private channelModel: ChannelModel;
 
@@ -216,7 +223,6 @@ export default class ChannelManager extends InitializeBase {
 
         await this.channelModel.create( { data } );
 
-
         return channel;
     }
 
@@ -231,3 +237,5 @@ export default class ChannelManager extends InitializeBase {
         await channel.delete();
     }
 }
+
+export default ChannelManager;

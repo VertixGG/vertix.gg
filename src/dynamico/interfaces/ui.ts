@@ -5,7 +5,7 @@ import {
     TextInputStyle
 } from "discord.js";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIBase from "../ui/base/ui-base";
 
 export type EmbedsType = EmbedBuilder[] | null;
 
@@ -25,7 +25,7 @@ export interface IComponentUIBase {
     getMessage( interaction?: Interaction ): BaseMessageOptions;
 }
 
-export interface IInputModalUIBase {
+export interface IInputModalUIBase { // TODO: Use or delete
     getInputStyle(): TextInputStyle;
 
     getInputFieldId(): string;

@@ -2,13 +2,15 @@ import * as process from "process";
 
 import { Client } from "discord.js";
 
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 import { Commands } from "@dynamico/interactions/commands";
+
+import ChannelManager from "@dynamico/managers/channel";
 
 import GlobalLogger from "../global-logger";
 
 import PrismaInstance from "@internal/prisma";
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
-import ChannelManager from "@dynamico/managers/channel";
 
 const logger = GlobalLogger.getInstance();
 

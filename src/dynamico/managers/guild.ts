@@ -6,7 +6,7 @@ import MasterChannelManager from "./master-channel";
 
 import GuildModel from "../models/guild";
 
-export default class GuildManager extends InitializeBase {
+export class GuildManager extends InitializeBase {
     private static instance: GuildManager;
 
     private guildModel: GuildModel;
@@ -59,3 +59,5 @@ export default class GuildManager extends InitializeBase {
         await this.masterChannelManager.removeLeftOvers( guild );
     }
 }
+
+export default GuildManager;

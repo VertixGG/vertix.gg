@@ -4,8 +4,8 @@ import { Mixin, settings } from "ts-mixer";
 
 import UIBase from "../base/ui-base";
 
-import ModalUIBase from "../base/elements/modal-ui-base";
 import InputUIBase from "../base/elements/input-ui-base";
+import ModalUIBase from "../base/elements/modal-ui-base";
 
 settings.initFunction = "initialize";
 

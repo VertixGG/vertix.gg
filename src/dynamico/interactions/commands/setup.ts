@@ -12,8 +12,9 @@ import { ICommand } from "@dynamico/interfaces/command";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
 
-import MasterChannelManager from "@dynamico/managers/master-channel";
 import ChannelModel from "@dynamico/models/channel";
+
+import MasterChannelManager from "@dynamico/managers/master-channel";
 
 const masterChannelManager = MasterChannelManager.getInstance();
 
@@ -34,12 +35,11 @@ export const Setup: ICommand = {
                 .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
                 .setColor( Colors.Red );
         } else if ( interaction.guild ){
-            const { masterCategory, masterCreateChannel, masterEditChannel }
+            const { masterCategory, masterCreateChannel }
                 = await masterChannelManager.createDefaultMasters( interaction.guild, interaction.user.id );
 
             let description = `**Category**: ${ masterCategory.name }\n`;
 
-            description += `**Edit Channel**: <#${ masterEditChannel.id }>\n`;
             description += `**Create Channel**: <#${ masterCreateChannel.id }>\n`;
 
             embed

@@ -2,14 +2,14 @@ import { Prisma } from "@prisma/client";
 
 import ModelBase from "@internal/bases/model-base";
 
-interface ICreateData {
+interface ICreateData { // TODO: Check if this is needed
     categoryId: string;
     guildId: string;
     name: string;
     createdAtDiscord: number;
 }
 
-export default class CategoryModel extends ModelBase {
+export class CategoryModel extends ModelBase {
     private static instance: CategoryModel;
 
     private model: Prisma.categoryDelegate<Prisma.RejectPerOperation>;
@@ -45,8 +45,6 @@ export default class CategoryModel extends ModelBase {
 
         return this.model.deleteMany( { where } );
     }
-
-    public async isExisting( guildId: string ) {
-        return !! await this.model.findFirst( { where: { guildId } } );
-    }
 }
+
+export default CategoryModel;

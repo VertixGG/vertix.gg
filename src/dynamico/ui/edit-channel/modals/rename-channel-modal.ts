@@ -1,17 +1,16 @@
-import process from "process";
-
-import moment from "moment";
-
 import { ChannelType, ModalSubmitInteraction } from "discord.js";
-
-import { Routes } from "discord-api-types/v10";
-
-import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import GUIManager from "@dynamico/managers/gui";
+import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
+
+import { Routes } from "discord-api-types/v10";
+
 import guiManager from "@dynamico/managers/gui";
+
+import moment from "moment";
+
+import process from "process";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;

@@ -8,7 +8,7 @@ import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constan
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
-export default class ChannelModel extends ModelBase {
+export class ChannelModel extends ModelBase {
     private static instance: ChannelModel;
 
     private model: Prisma.channelDelegate<Prisma.RejectPerOperation>;
@@ -122,3 +122,5 @@ export default class ChannelModel extends ModelBase {
         return !! await this.prisma.channel.findFirst( { where } );
     }
 }
+
+export default ChannelModel;

@@ -2,8 +2,9 @@ import * as process from "process";
 
 import {
     ButtonInteraction,
+    ChannelType,
     Client,
-    CommandInteraction,
+    CommandInteraction, EmbedBuilder,
     Events,
     Interaction,
     ModalSubmitInteraction,
@@ -14,6 +15,9 @@ import {
 import { Commands } from "../interactions/commands";
 
 import guiManager from "../managers/gui";
+
+import ChannelManager from "@dynamico/managers/channel";
+import MasterChannelManager from "@dynamico/managers/master-channel";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -48,20 +52,49 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
     slashCommand.run( client, interaction );
 };
 
+async function authMiddleware( interaction: Interaction ) {
+    // Only the channel owner can pass the middleware
+    if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guildId ) {
+        const channel = await ChannelManager.getInstance().getChannel( interaction.guildId, interaction.channel.id );
+
+        if ( channel?.userOwnerId === interaction.user.id ) {
+            return true;
+        }
+
+        if ( interaction.isButton() || interaction.isSelectMenu() || interaction.isModalSubmit() ) {
+            const embed = new EmbedBuilder(),
+                masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+
+            let message = "You should open your own channel and try again";
+
+            if ( masterChannel ) {
+                message = `${message}:\n<#${masterChannel.id}>`;
+            }
+
+            embed.setTitle( "Oops, this is not your channel !" );
+            embed.setDescription( message );
+
+            await guiManager.continuesMessage( interaction, false, [ embed ] );
+        }
+    }
+
+    return false;
+}
+
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
     console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-   guiManager.getCallback( interaction.customId )( interaction );
+    await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
 };
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
     console.log( `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-   guiManager.getCallback( interaction.customId )( interaction );
+    await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
 }
 
-async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction|SelectMenuInteraction ) {
+async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
     console.log( `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
 
-   guiManager.getCallback( interaction.customId )( interaction );
+    await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
 }

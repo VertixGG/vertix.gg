@@ -6,7 +6,7 @@ import InitializeBase from "@internal/bases/initialize-base";
 
 import CategoryModel from "@dynamico/models/category";
 
-export default class CategoryManager extends InitializeBase {
+export class CategoryManager extends InitializeBase {
     private static instance: CategoryManager;
 
     private categoryModel: CategoryModel;
@@ -62,3 +62,5 @@ export default class CategoryManager extends InitializeBase {
         return category;
     }
 }
+
+export default CategoryManager;

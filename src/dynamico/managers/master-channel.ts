@@ -34,7 +34,7 @@ import ChannelModel from "@dynamico/models/channel";
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import guiManager from "./gui";
 
-export default class MasterChannelManager extends InitializeBase {
+export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
     public static getName(): string {
@@ -280,3 +280,5 @@ export default class MasterChannelManager extends InitializeBase {
         return masterChannel;
     }
 }
+
+export default MasterChannelManager;

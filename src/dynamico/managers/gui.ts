@@ -75,14 +75,18 @@ export class GUIManager extends InitializeBase {
         return unique;
     }
 
-    public getCallback( unique: string ) {
+    public getCallback( unique: string, middleware: ( interaction: Interaction ) => Promise<boolean>  ) {
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {
             throw new Error( `Callback '${ unique }' does not exist` );
         }
 
-        return result;
+        return async ( interaction: Interaction ) => {
+            if ( await middleware( interaction ) ) {
+                return result( interaction );
+            }
+        };
     }
 
     public async continuesMessage( interaction: ModalSubmitInteraction | ButtonInteraction | UserSelectMenuInteraction | SelectMenuInteraction,
@@ -130,6 +134,6 @@ export class GUIManager extends InitializeBase {
     }
 }
 
-const guiManager = new GUIManager();
+export const guiManager = new GUIManager();
 
 export default guiManager;

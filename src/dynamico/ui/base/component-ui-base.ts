@@ -67,6 +67,10 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         return null;
     }
 
+    getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel  ): EmbedsType {
+        return null;
+    }
+
     getInternalComponents(): typeof UIBase[] {
         throw new ForceMethodImplementation( this, this.getInternalComponents.name );
     }
@@ -105,6 +109,15 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
 
         if ( staticThis.embeds ) {
             result.embeds = staticThis.embeds;
+        }
+
+        const dynamicEmbeds = this.getDynamicEmbeds( interaction );
+
+        if ( dynamicEmbeds?.length ) {
+            result.embeds = [
+                ... result.embeds || [],
+                ... dynamicEmbeds,
+            ];
         }
 
         return result;

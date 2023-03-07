@@ -1,22 +1,26 @@
 import {
-    ActionRowData,
     APIActionRowComponent,
     APIEmbed,
     APIMessageActionRowComponent,
     ButtonInteraction,
-    ChannelType, Interaction, InteractionReplyOptions,
-    InteractionResponse, MessageActionRowComponentData,
-    ModalSubmitInteraction, SelectMenuInteraction,
+    ChannelType,
+    EmbedBuilder,
+    Interaction,
+    InteractionReplyOptions,
+    InteractionResponse,
+    JSONEncodable,
+    ModalSubmitInteraction,
+    SelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
+
+import { DiscordComponentTypes } from "@dynamico/interfaces/ui";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
 import ObjectBase from "@internal/bases/object-base";
 
 import ComponentUIBase from "../ui/base/component-ui-base";
-import { JSONEncodable } from "@discordjs/util";
-import { MessageActionRowComponentBuilder } from "@discordjs/builders";
 
 export class GUIManager extends InitializeBase {
     private userInterfaces = new Map<string, ComponentUIBase>;
@@ -89,14 +93,21 @@ export class GUIManager extends InitializeBase {
         };
     }
 
+    public createEmbed( title: string, content?: string ) {
+        const embed = new EmbedBuilder()
+            .setTitle( title );
+
+        if ( content ) {
+            embed.setDescription( content );
+        }
+
+        return embed;
+    }
+
     public async continuesMessage( interaction: ModalSubmitInteraction | ButtonInteraction | UserSelectMenuInteraction | SelectMenuInteraction,
                                    message: string|false,
                                    embeds: ( JSONEncodable<APIEmbed> | APIEmbed )[] = [],
-                                   components: (
-                                       | JSONEncodable<APIActionRowComponent<APIMessageActionRowComponent>>
-                                       | ActionRowData<MessageActionRowComponentData | MessageActionRowComponentBuilder>
-                                       | APIActionRowComponent<APIMessageActionRowComponent>
-                                       ) [] = [] ) {
+                                   components: DiscordComponentTypes[] = [] ) {
         if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type ) {
             const args: InteractionReplyOptions = {
                 ephemeral: true,

@@ -1,6 +1,8 @@
-import ComponentUIBase from "@dynamico/ui/base/component-ui-base";
-import ManageUsersMenus from "@dynamico/ui/edit-channel/mange-users-menus";
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
+import ComponentUIBase from "@dynamico/ui/base/component-ui-base";
+
+import ManageUsersMenus from "@dynamico/ui/edit-channel/mange-users-menus";
 
 export default class MangeUsersComponent extends ComponentUIBase {
     public static getName() {

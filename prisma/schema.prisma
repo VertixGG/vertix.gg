@@ -16,8 +16,8 @@ enum E_INTERNAL_CHANNEL_TYPES {
 model guild {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  name           String
   guildId        String   @unique
+  name           String
   // ---
   isInGuild      Boolean
   masterChannels Int[]
@@ -43,7 +43,7 @@ model channel {
   id               String                   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   name             String
-  channelId        String                   @unique
+  channelId        String
   guildId          String
   userOwnerId      String
   categoryId       String?

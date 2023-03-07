@@ -12,6 +12,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import UIBase from "@dynamico/ui/base/ui-base";
 
 import guiManager from "@dynamico/managers/gui";
+import { sendManageUsersComponent } from "@dynamico/temp-utils";
 
 export default class ManageUsersMenus extends UIBase {
     public static getName() {
@@ -69,22 +70,30 @@ export default class ManageUsersMenus extends UIBase {
             const channel = interaction.channel as VoiceChannel,
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] );
 
+            // If user tries to add himself, then we just ignore it.
+            if ( member?.id === interaction.user.id ) {
+                await sendManageUsersComponent( interaction,
+                    "You cannot add your self"
+                );
+
+                return;
+            }
+
             if ( member ) {
                 await channel.permissionOverwrites.create( member, {
                     ViewChannel: true,
                     Connect: true,
                 } );
 
-                const dynamicChannel = interaction.channel as VoiceChannel;
+                await sendManageUsersComponent( interaction,
+                    `${ member.username } can now connect to your channel ☝`
+                );
 
-                const component = guiManager.get( "Dynamico/UI/EditChannel/ManageUsers" );
-                const message = component.getMessage( interaction );
-
-                await guiManager.continuesMessage( interaction, false, [], message.components );
-            } else {
-                await guiManager.continuesMessage( interaction,
-                    `Could not find user with id '${ interaction.values[ 0 ] }'`, );
+                return;
             }
+
+            await guiManager.continuesMessage( interaction,
+                `Could not find user with id '${ interaction.values[ 0 ] }'`, );
         }
     }
 
@@ -101,19 +110,13 @@ export default class ManageUsersMenus extends UIBase {
 
             // If user tries to remove himself, then we just ignore it.
             if ( member?.id === interaction.user.id ) {
-                const component = guiManager.get( "Dynamico/UI/EditChannel/ManageUsers" );
-                const message = component.getMessage( interaction );
-
-                await guiManager.continuesMessage( interaction, false, [], message.components );
-            } else if ( member ) {
+                await sendManageUsersComponent( interaction,
+                    "You cannot remove your self" );
+             } else if ( member ) {
                 await channel.permissionOverwrites.delete( member );
 
-                const dynamicChannel = interaction.channel as VoiceChannel;
-
-                const component = guiManager.get( "Dynamico/UI/EditChannel/ManageUsers" );
-                const message = component.getMessage( interaction );
-
-                await guiManager.continuesMessage( interaction, false, [], message.components );
+                await sendManageUsersComponent( interaction,
+                    `${ member.username } user removed from your list 👇` );
             } else {
                 await guiManager.continuesMessage( interaction,
                     `Could not find user with id '${ interaction.values[ 0 ] }'`, );

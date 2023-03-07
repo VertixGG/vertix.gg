@@ -10,6 +10,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import UIBase from "@dynamico/ui/base/ui-base";
 
 import guiManager from "@dynamico/managers/gui";
+import { sendManageUsersComponent } from "@dynamico/temp-utils";
 
 export default class ManageUsersButtons extends UIBase {
     public static getName() {
@@ -24,7 +25,8 @@ export default class ManageUsersButtons extends UIBase {
         const publicButton = this.getButtonBuilder( this.makeChannelPublic.bind( this ) ),
             privateButton = this.getButtonBuilder( this.makeChannelPrivate.bind( this ) ),
             usersButton = this.getButtonBuilder( this.displayManageUsers.bind( this ) ),
-            specialButton = this.getButtonBuilder( async () => {} );
+            specialButton = this.getButtonBuilder( async () => {
+            } );
 
         publicButton
             .setStyle( ButtonStyle.Secondary )
@@ -63,7 +65,10 @@ export default class ManageUsersButtons extends UIBase {
                 Connect: true,
             } );
 
-            await guiManager.continuesMessage( interaction, "Channel is public now." );
+            // TODO: Can be static.
+            const embed = guiManager.createEmbed( "Your channel is public now!" );
+
+            await guiManager.continuesMessage( interaction, false, [ embed ] );
         }
     }
 
@@ -77,17 +82,13 @@ export default class ManageUsersButtons extends UIBase {
                 Connect: false,
             } );
 
-            await guiManager.continuesMessage( interaction, "Channel is private now." );
+            await sendManageUsersComponent( interaction, "Your channel is private now!" );
         }
     }
 
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
-            const message = guiManager
-                .get( "Dynamico/UI/EditChannel/ManageUsers" )
-                .getMessage( interaction );
-
-            await guiManager.continuesMessage( interaction, false, [], message.components );
+            await sendManageUsersComponent( interaction, "Manage users access for your dynamic channel" );
         }
     }
 }

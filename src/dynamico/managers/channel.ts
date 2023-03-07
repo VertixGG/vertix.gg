@@ -13,13 +13,11 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-
 import ChannelModel from "@dynamico/models/channel";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
 import MasterChannelManager from "./master-channel";
-
 import guiManager from "@dynamico/managers/gui";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
@@ -170,15 +168,26 @@ export class ChannelManager extends InitializeBase {
                 };
             } ) ) }` );
 
-        // Get first message in the channel.
-        const message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
+        let message = null;
 
-        if ( message ) {
+        try {
+            message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
+
+            if ( ! message ) {
+                this.logger.error( this.onVoiceChannelUpdatePermissions,
+                    `Failed to find message in channel '${ newChannel.id }'.` );
+                return;
+            }
+
             const newMessage = guiManager
                 .get( "Dynamico/UI/EditChannel" )
                 .getMessage( newChannel );
 
             await message.edit( newMessage );
+        } catch ( error ) {
+            this.logger.error( this.onVoiceChannelUpdatePermissions,
+                `Failed to edit message in channel '${ newChannel.id }'.` );
+            this.logger.error( this.onVoiceChannelUpdatePermissions, "", error );
         }
     }
 
@@ -190,11 +199,7 @@ export class ChannelManager extends InitializeBase {
      * Function create() :: Creates a new channel for a guild.
      */
     public async create( args: IChannelCreateArgs ) {
-        const { name, guild, userOwnerId, internalType = false, ownerChannelId = null } = args;
-
-        if ( ! internalType ) {
-            throw new Error( "Internal type is required to create a channel." );
-        }
+        const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
         this.logger.info( this.create,
             `Creating channel for guild '${ guild.name }' with the following properties: ` +

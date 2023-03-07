@@ -27,7 +27,7 @@ export function interactionHandler( client: Client ) {
             await handleButton( client, interaction as ButtonInteraction );
         } else if ( interaction.isModalSubmit() ) {
             await handleModalSubmit( client, interaction );
-        } else if ( interaction.isUserSelectMenu() || interaction.isSelectMenu() ) {
+        } else if ( interaction.isUserSelectMenu() || interaction.isStringSelectMenu() ) {
             await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction );
         } else if ( process.env.debug_mode === "discord" ) {
             console.log( interaction );
@@ -53,16 +53,29 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 };
 
 async function authMiddleware( interaction: Interaction ) {
+    // A map that holds all the channel owners.
+    // The key is the channel id and the value is the user id.
+    const channelOwners = new Map<string, string>();
+
     // Only the channel owner can pass the middleware
     if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guildId ) {
-        const channel = await ChannelManager.getInstance().getChannel( interaction.guildId, interaction.channel.id );
+        if ( ! channelOwners.has( interaction.channel.id ) ) {
+            const channel = await ChannelManager.getInstance().getChannel( interaction.guildId, interaction.channel.id );
 
-        if ( channel?.userOwnerId === interaction.user.id ) {
+            if ( channel ) {
+                channelOwners.set( interaction.channel.id, channel.userOwnerId );
+            }
+        }
+
+        const channelOwnerId = channelOwners.get( interaction.channel.id );
+
+        if ( channelOwnerId === interaction.user.id ) {
             return true;
         }
 
-        if ( interaction.isButton() || interaction.isSelectMenu() || interaction.isModalSubmit() ) {
+        if ( interaction.isButton() || interaction.isStringSelectMenu() || interaction.isModalSubmit() ) {
             const embed = new EmbedBuilder(),
+                // TODO: Cache this
                 masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
 
             let message = "You should open your own channel and try again";
@@ -74,7 +87,10 @@ async function authMiddleware( interaction: Interaction ) {
             embed.setTitle( "Oops, this is not your channel !" );
             embed.setDescription( message );
 
-            await guiManager.continuesMessage( interaction, false, [ embed ] );
+            await interaction.reply( {
+                embeds: [ embed ],
+                ephemeral: true,
+            } );
         }
     }
 

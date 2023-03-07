@@ -240,7 +240,11 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public async getByDynamicChannel( interaction: Interaction ) {
-        if ( ! interaction.isButton() || ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
+        if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
+            return null;
+        }
+
+        if ( ! interaction.isButton() && ! interaction.isStringSelectMenu() && ! interaction.isModalSubmit() ) {
             return null;
         }
 

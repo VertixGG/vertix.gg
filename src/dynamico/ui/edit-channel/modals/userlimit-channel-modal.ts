@@ -1,4 +1,4 @@
-import { ChannelType, ModalSubmitInteraction, TextInputStyle } from "discord.js";
+import { ChannelType, EmbedBuilder, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
@@ -49,8 +49,10 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await guiManager
-            .continuesMessage( interaction, `User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }` );
+        const embed = new EmbedBuilder()
+            .setTitle( `User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }`);
+
+        await guiManager.continuesMessage( interaction, false, [ embed ] );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction, input: string ) {
@@ -59,9 +61,11 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
 
             await interaction.channel.setUserLimit( parsedInput );
 
-            const content = parsedInput === 0 ? "Set user limit to Unlimited" : `Set user limit to ${ parsedInput }`;
+            const limitValue = parsedInput === 0 ? "unlimited" : parsedInput,
+                embed = new EmbedBuilder()
+                    .setTitle( `Your channel's user limit has changed to ${ limitValue }` );
 
-            await guiManager.continuesMessage( interaction, content );
+            await guiManager.continuesMessage( interaction, false, [ embed ] );
         }
     }
 }

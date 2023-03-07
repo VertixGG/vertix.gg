@@ -1,4 +1,4 @@
-import { ChannelType, ModalSubmitInteraction } from "discord.js";
+import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
@@ -11,6 +11,7 @@ import guiManager from "@dynamico/managers/gui";
 import moment from "moment";
 
 import process from "process";
+import MasterChannelManager from "../../../managers/master-channel";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
@@ -77,14 +78,37 @@ export default class RenameChannelModalUI extends GenericInputUIModal {
                 } ).then( ( response ) => response.json() );
 
                 if ( result.retry_after ) {
-                    const tryAgingIn = moment().add( result.retry_after, "seconds" );
-
-                    await guiManager.continuesMessage( interaction, `You are being rate limited. for ${ result.retry_after.toFixed( 0 ) }` +
-                        ` second(s), the limit will be released at ${ tryAgingIn.format( "HH:mm:ss" ) } ` );
+                    await this.onBeingRateLimited( interaction, result.retry_after );
                     break;
                 }
 
-                await guiManager.continuesMessage( interaction, `Renamed channel to '${ input }'` );
+                await this.onSuccessfulRename( interaction, input );
         }
+    }
+
+    private async onBeingRateLimited( interaction: ModalSubmitInteraction, retryAfter: number ) {
+        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+
+        let message = ".\n";
+
+        if ( masterChannel ) {
+            message = `:\n\n<#${masterChannel.id}>\n`;
+        }
+
+        const embed = new EmbedBuilder()
+            .setTitle( "You renamed your channel too fast!" )
+            .setDescription(
+                `Please wait ${ retryAfter.toFixed( 0 ) } second(s) until the next rename or open a new channel` +
+                `${ message }`
+            );
+
+        await guiManager.continuesMessage( interaction, false, [ embed ] );
+    }
+
+    private async onSuccessfulRename( interaction: ModalSubmitInteraction, channelName: string ) {
+        const embed = new EmbedBuilder()
+            .setTitle( `Your channel's name has changed to ${ channelName }` );
+
+        await guiManager.continuesMessage( interaction, false, [ embed ] );
     }
 }

@@ -10,9 +10,12 @@ module.exports = {
 		"sourceType": "module",
 	},
 	plugins: [
-		"@typescript-eslint"
+		"@typescript-eslint",
+		"simple-import-sort"
 	],
 	"rules": {
+		"simple-import-sort/imports": "error",
+		"simple-import-sort/exports": "error",
 		"linebreak-style": [
 			"error",
 			"unix"
@@ -35,13 +38,5 @@ module.exports = {
 				max: 1,
 			}
 		],
-		"sort-imports": [
-			"error", {
-				"memberSyntaxSortOrder": [ "none", "all", "multiple", "single" ],
-				"ignoreCase": false,
-				"ignoreDeclarationSort": false,
-				"ignoreMemberSort": false,
-				"allowSeparatedGroups": true
-			} ]
 	},
 };

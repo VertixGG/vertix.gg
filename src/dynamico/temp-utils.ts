@@ -1,6 +1,13 @@
-import { ButtonInteraction, ChannelType, EmbedBuilder, Interaction, PermissionsBitField } from "discord.js";
-
 import GlobalLogger from "@dynamico/global-logger";
+import { MasterChannelManager } from "@dynamico/managers";
+import {
+    ButtonInteraction,
+    ChannelType,
+    EmbedBuilder,
+    Interaction,
+    OverwriteType,
+    PermissionsBitField
+} from "discord.js";
 
 import guiManager from "./managers/gui";
 
@@ -15,14 +22,23 @@ export async function sendManageUsersComponent( interaction: Interaction, title:
 
     let description = "Allowed:\n";
 
-    // Loop through the allowed users and add them to the description.
-    for ( const user of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
-        // Check if user has view channel and connect permissions.
-        if ( user.allow.has( Flags.ViewChannel ) && user.allow.has( Flags.Connect ) ) {
-            // Get username.
+    const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction, true ),
+        masterChannelCache = interaction.client.channels.cache.get( masterChannel.id );
 
-            description += `<@${user.id}>, `;
+    // TODO: Logic repeated in src/dynamico/ui/edit-channel/mange-users-menus.ts
+    // Loop through the allowed users and add them to the description.
+    for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
+        if ( role.type !== OverwriteType.Member ) {
+            continue;
         }
+        
+        // Show only users that are not in the master channel permission overwrites.
+        if ( masterChannelCache?.type === ChannelType.GuildVoice &&
+            masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {
+            continue;
+        }
+
+        description += `<@${role.id}>, `;
     }
 
     // Remove the last comma.

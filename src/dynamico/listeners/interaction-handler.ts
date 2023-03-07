@@ -1,23 +1,26 @@
-import * as process from "process";
-
+import GlobalLogger from "@dynamico/global-logger";
+import {
+    ChannelManager,
+    MasterChannelManager
+} from "@dynamico/managers";
 import {
     ButtonInteraction,
     ChannelType,
     Client,
-    CommandInteraction, EmbedBuilder,
+    CommandInteraction,
+    EmbedBuilder,
     Events,
     Interaction,
     ModalSubmitInteraction,
     SelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
+import * as process from "process";
 
 import { Commands } from "../interactions/commands";
-
 import guiManager from "../managers/gui";
 
-import ChannelManager from "@dynamico/managers/channel";
-import MasterChannelManager from "@dynamico/managers/master-channel";
+const globalLogger = GlobalLogger.getInstance();
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -30,7 +33,7 @@ export function interactionHandler( client: Client ) {
         } else if ( interaction.isUserSelectMenu() || interaction.isStringSelectMenu() ) {
             await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction );
         } else if ( process.env.debug_mode === "discord" ) {
-            console.log( interaction );
+            globalLogger.log( interactionHandler, "", interaction );
         }
     } );
 };
@@ -53,35 +56,22 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 };
 
 async function authMiddleware( interaction: Interaction ) {
-    // A map that holds all the channel owners.
-    // The key is the channel id and the value is the user id.
-    const channelOwners = new Map<string, string>();
-
     // Only the channel owner can pass the middleware
     if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guildId ) {
-        if ( ! channelOwners.has( interaction.channel.id ) ) {
-            const channel = await ChannelManager.getInstance().getChannel( interaction.guildId, interaction.channel.id );
+        const channel = await ChannelManager.getInstance().getChannel( interaction.guildId, interaction.channel.id, true );
 
-            if ( channel ) {
-                channelOwners.set( interaction.channel.id, channel.userOwnerId );
-            }
-        }
-
-        const channelOwnerId = channelOwners.get( interaction.channel.id );
-
-        if ( channelOwnerId === interaction.user.id ) {
+        if ( channel?.userOwnerId === interaction.user.id ) {
             return true;
         }
 
         if ( interaction.isButton() || interaction.isStringSelectMenu() || interaction.isModalSubmit() ) {
             const embed = new EmbedBuilder(),
-                // TODO: Cache this
-                masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+                masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction, true );
 
             let message = "You should open your own channel and try again";
 
             if ( masterChannel ) {
-                message = `${message}:\n<#${masterChannel.id}>`;
+                message = `${ message }:\n<#${ masterChannel.id }>`;
             }
 
             embed.setTitle( "Oops, this is not your channel !" );
@@ -98,19 +88,25 @@ async function authMiddleware( interaction: Interaction ) {
 }
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
-    console.log( `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
+    globalLogger.info( handleButton,
+        `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+    );
 
     await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
 };
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
-    console.log( `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
+    globalLogger.log( handleModalSubmit,
+        `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+    );
 
     await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
 }
 
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
-    console.log( `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'` );
+    globalLogger.log( handleUserSelectMenuInteraction,
+        `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+    );
 
     await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
 }

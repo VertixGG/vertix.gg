@@ -1,3 +1,7 @@
+import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
+import { ICommand } from "@dynamico/interfaces/command";
+import MasterChannelManager from "@dynamico/managers/master-channel";
+import ChannelModel from "@dynamico/models/channel";
 import {
     ApplicationCommandType,
     ButtonStyle,
@@ -7,14 +11,6 @@ import {
     EmbedBuilder,
     PermissionsBitField,
 } from "discord.js";
-
-import { ICommand } from "@dynamico/interfaces/command";
-
-import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
-
-import ChannelModel from "@dynamico/models/channel";
-
-import MasterChannelManager from "@dynamico/managers/master-channel";
 
 const masterChannelManager = MasterChannelManager.getInstance();
 

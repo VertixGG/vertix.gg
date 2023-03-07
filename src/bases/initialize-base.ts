@@ -1,6 +1,5 @@
-import ObjectBase from "./object-base";
-
 import Logger from "../modules/logger";
+import ObjectBase from "./object-base";
 
 export default abstract class InitializeBase extends ObjectBase {
     protected logger: Logger;

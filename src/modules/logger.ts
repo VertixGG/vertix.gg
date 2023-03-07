@@ -1,6 +1,6 @@
-import { ObjectBase } from "../bases/object-base";
-
 import chalk from "chalk";
+
+import { ObjectBase } from "../bases/object-base";
 
 const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
     DEFAULT_INFO_PREFIX = chalk.blue( "[INFO]"),

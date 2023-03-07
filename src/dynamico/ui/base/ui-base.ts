@@ -1,3 +1,8 @@
+import { CallbackUIType, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import guiManager from "@dynamico/managers/gui";
+import ObjectBase from "@internal/bases/object-base";
+import { ForceMethodImplementation } from "@internal/errors";
+import Logger from "@internal/modules/logger";
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -12,16 +17,6 @@ import {
     UserSelectMenuBuilder,
     UserSelectMenuInteraction,
 } from "discord.js";
-
-import { CallbackUIType, E_UI_TYPES } from "@dynamico/interfaces/ui";
-
-import { ForceMethodImplementation } from "@internal/errors";
-
-import Logger from "@internal/modules/logger";
-
-import ObjectBase from "@internal/bases/object-base";
-
-import guiManager from "@dynamico/managers/gui";
 
 export default class UIBase extends ObjectBase {
     private static logger: Logger = new Logger( this );
@@ -98,7 +93,7 @@ export default class UIBase extends ObjectBase {
         return modal;
     }
 
-    protected getBuilders( interaction?: Interaction | NonThreadGuildBasedChannel ): ComponentBuilder[]| ComponentBuilder[][] | ModalBuilder[] {
+    protected getBuilders( interaction?: Interaction | NonThreadGuildBasedChannel ): ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[] {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 

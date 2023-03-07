@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-import Logger from "../modules/logger";
 import ObjectBase from "../bases/object-base";
+import Logger from "../modules/logger";
 
 export default class PrismaInstance extends ObjectBase {
     private static instance: PrismaInstance;

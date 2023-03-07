@@ -1,5 +1,5 @@
-import Logger from "@internal/modules/logger";
 import ObjectBase from "@internal/bases/object-base";
+import Logger from "@internal/modules/logger";
 
 export default class GlobalLogger extends ObjectBase {
     private static instance: Logger;

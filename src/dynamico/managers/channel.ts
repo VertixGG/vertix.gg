@@ -1,10 +1,8 @@
-import {
-    ChannelType,
-    DMChannel,
-    NonThreadGuildBasedChannel,
-    VoiceChannel,
-    VoiceState
-} from "discord.js";
+import guiManager from "@dynamico/managers/gui";
+import ChannelModel from "@dynamico/models/channel";
+import InitializeBase from "@internal/bases/initialize-base";
+import { channel } from "@prisma/client";
+import { ChannelType, DMChannel, NonThreadGuildBasedChannel, VoiceChannel, VoiceState } from "discord.js";
 
 import {
     IChannelCreateArgs,
@@ -12,20 +10,18 @@ import {
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
-
-import ChannelModel from "@dynamico/models/channel";
-
-import InitializeBase from "@internal/bases/initialize-base";
-
 import MasterChannelManager from "./master-channel";
-import guiManager from "@dynamico/managers/gui";
+import { Prisma } from ".prisma/client";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
 
 export class ChannelManager extends InitializeBase {
     private static instance: ChannelManager;
+
     private channelModel: ChannelModel;
+
+    private cache = new Map<string, channel | null>();
 
     private masterChannelManager: MasterChannelManager;
 
@@ -191,8 +187,31 @@ export class ChannelManager extends InitializeBase {
         }
     }
 
-    public async getChannel( guildId: string, channelId: string ) {
-        return this.channelModel.get( guildId, channelId );
+    public async getChannel( guildId: string, channelId: string, cache = false ) {
+        this.logger.debug( this.getChannel,
+            `Getting channel '${ channelId }' from guild '${ guildId }', cache: '${ cache }'`
+        );
+
+        const key = guildId + channelId;
+
+        // If in cache, return it.
+        if ( cache ) {
+            const result = this.cache.get( key );
+
+            if ( result ) {
+                this.logger.debug( this.getChannel,
+                    `Channel '${ channelId }' from guild '${ guildId }' was found in cache.`
+                );
+                return result;
+            }
+        }
+
+        const result = await this.channelModel.get( guildId, channelId );
+
+        // Set cache.
+        this.cache.set( key, result );
+
+        return result;
     }
 
     /**
@@ -210,7 +229,6 @@ export class ChannelManager extends InitializeBase {
         const channel = await guild.channels.create( args ),
             // Data to be inserted into the database.
             data: any = {
-                name,
                 internalType,
                 userOwnerId,
                 channelId: channel.id,

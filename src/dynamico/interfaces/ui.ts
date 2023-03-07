@@ -1,7 +1,7 @@
 import {
+    ActionRowData,
     APIActionRowComponent,
     APIMessageActionRowComponent,
-    ActionRowData,
     BaseMessageOptions,
     EmbedBuilder,
     Interaction,

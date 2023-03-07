@@ -1,10 +1,8 @@
+import InitializeBase from "@internal/bases/initialize-base";
 import { Client, Guild } from "discord.js";
 
-import InitializeBase from "@internal/bases/initialize-base";
-
-import MasterChannelManager from "./master-channel";
-
 import GuildModel from "../models/guild";
+import MasterChannelManager from "./master-channel";
 
 export class GuildManager extends InitializeBase {
     private static instance: GuildManager;

@@ -1,12 +1,9 @@
-import * as handlers from "./listeners";
+import chalk from "chalk";
+import { Client } from "discord.js";
 import * as process from "process";
 
-import { Client } from "discord.js";
-
 import GlobalLogger from "./global-logger";
-
-import chalk from "chalk";
-
+import * as handlers from "./listeners";
 import guiManager from "./managers/gui";
 
 export default function Main() {

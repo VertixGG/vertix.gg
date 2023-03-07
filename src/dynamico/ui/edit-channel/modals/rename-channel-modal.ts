@@ -1,16 +1,11 @@
-import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
-
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-
-import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
-
-import { Routes } from "discord-api-types/v10";
-
 import guiManager from "@dynamico/managers/gui";
-
+import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
+import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
+import { Routes } from "discord-api-types/v10";
 import moment from "moment";
-
 import process from "process";
+
 import MasterChannelManager from "../../../managers/master-channel";
 
 const MIN_INPUT_LENGTH = 1,

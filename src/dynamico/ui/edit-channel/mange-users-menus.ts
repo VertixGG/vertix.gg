@@ -1,3 +1,8 @@
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { MasterChannelManager } from "@dynamico/managers";
+import guiManager from "@dynamico/managers/gui";
+import { sendManageUsersComponent } from "@dynamico/temp-utils";
+import UIBase from "@dynamico/ui/base/ui-base";
 import {
     ChannelType,
     Interaction,
@@ -6,13 +11,6 @@ import {
     UserSelectMenuInteraction,
     VoiceChannel
 } from "discord.js";
-
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-
-import UIBase from "@dynamico/ui/base/ui-base";
-
-import guiManager from "@dynamico/managers/gui";
-import { sendManageUsersComponent } from "@dynamico/temp-utils";
 
 export default class ManageUsersMenus extends UIBase {
     public static getName() {
@@ -35,20 +33,32 @@ export default class ManageUsersMenus extends UIBase {
 
         const members: { label: string; value: string; }[] = [];
 
+        const masterChannel = MasterChannelManager.getInstance().getByDynamicChannelSync( interaction ),
+            masterChannelCache = interaction.client.channels.cache.get( masterChannel.id );
+
         // Add all users in channel to grant menu.
         if ( interaction.channel && ChannelType.GuildVoice === interaction.channel.type ) {
-            interaction.channel.permissionOverwrites.cache.map( ( ( permission ) => {
-                if ( permission.type === OverwriteType.Member ) {
-                    const member = interaction.guild?.members.cache.get( permission.id );
-
-                    if ( member ) {
-                        members.push( {
-                            label: member.displayName,
-                            value: member.id,
-                        } );
-                    }
+            // Loop through the allowed users and add them to the description.
+            for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
+                // Show only users that are not in the master channel permission overwrites.
+                if ( role.type !== OverwriteType.Member ) {
+                    continue;
                 }
-            } ) );
+
+                if ( masterChannelCache?.type === ChannelType.GuildVoice &&
+                    masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {
+                    continue;
+                }
+
+                const member = interaction.guild?.members.cache.get( role.id );
+
+                if ( member ) {
+                    members.push( {
+                        label: member.displayName,
+                        value: member.id,
+                    } );
+                }
+            }
         }
 
         removeMenu.setOptions( members );
@@ -112,11 +122,11 @@ export default class ManageUsersMenus extends UIBase {
             if ( member?.id === interaction.user.id ) {
                 await sendManageUsersComponent( interaction,
                     "You cannot remove your self" );
-             } else if ( member ) {
+            } else if ( member ) {
                 await channel.permissionOverwrites.delete( member );
 
                 await sendManageUsersComponent( interaction,
-                    `${ member.username } user removed from your list 👇` );
+                    `${ member.username } removed from your list 👇` );
             } else {
                 await guiManager.continuesMessage( interaction,
                     `Could not find user with id '${ interaction.values[ 0 ] }'`, );

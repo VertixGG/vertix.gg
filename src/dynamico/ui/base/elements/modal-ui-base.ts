@@ -1,6 +1,6 @@
-import { ActionRowBuilder, ComponentBuilder, Interaction, ModalBuilder, ModalSubmitInteraction, } from "discord.js";
-import UIBase from "@dynamico/ui/base/ui-base";
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import UIBase from "@dynamico/ui/base/ui-base";
+import { ActionRowBuilder, ComponentBuilder, Interaction, ModalBuilder, ModalSubmitInteraction, } from "discord.js";
 
 /**
  * @extends {UIBase}
@@ -34,7 +34,7 @@ export default abstract class ModalUIBase {
 
     protected abstract getBuiltRows(): ActionRowBuilder<any>[];
 
-    protected abstract getBuilders( interaction?: Interaction ): ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[];
+    protected abstract getBuilders( interaction?: Interaction ): ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]
 
     protected buildModal( interaction?: Interaction ) {
         if ( interaction ) {

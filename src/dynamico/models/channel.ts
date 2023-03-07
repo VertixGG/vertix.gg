@@ -1,10 +1,7 @@
-import { Guild } from "discord.js";
-
-import { Prisma } from "@prisma/client";
-
 import ModelBase from "@internal/bases/model-base";
-
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
+import { Prisma } from "@prisma/client";
+import { Guild } from "discord.js";
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
@@ -32,10 +29,16 @@ export class ChannelModel extends ModelBase {
     }
 
     public async create( args: Prisma.channelCreateArgs ) {
+        args.include = {
+            data: true
+        };
+
+        args.data.data = { create: {} };
+
         this.logger.info( this.create,
             `Creating channel '${ args.data.channelId }' for guild '${ args.data.guildId }'` );
 
-        this.logger.debug( this.create, "🔽", args.data );
+        this.logger.debug( this.create, "🔽", args );
 
         return this.model.create( args );
     }
@@ -71,6 +74,24 @@ export class ChannelModel extends ModelBase {
         }
 
         return this.prisma.channel.findFirst( args );
+    }
+
+    public async getMasterChannelDataByChannelId( channelId: string, internalType = E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) {
+        this.logger.debug( this.getMasterChannelDataByChannelId,
+            `Getting master channel data for channel '${ channelId }', internalType '${ internalType }'`
+        );
+
+        const masterChannel = await this.prisma.channel.findFirstOrThrow( {
+            where: {
+                channelId,
+                internalType
+            },
+            include: {
+                data: true
+            }
+        } );
+
+        return masterChannel.data;
     }
 
     public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {

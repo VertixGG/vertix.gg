@@ -1,4 +1,14 @@
 import {
+    DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
+    DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+} from "@dynamico/constants/master-channel";
+import { CategoryManager, ChannelManager } from "@dynamico/managers";
+import CategoryModel from "@dynamico/models/category";
+import ChannelModel from "@dynamico/models/channel";
+import InitializeBase from "@internal/bases/initialize-base";
+import {
     ChannelType,
     Guild,
     Interaction,
@@ -13,29 +23,13 @@ import {
     IMasterChannelCreateArgs,
     IMasterChannelCreateDynamicArgs
 } from "../interfaces/channel";
-
-import InitializeBase from "@internal/bases/initialize-base";
-
-import CategoryManager from "./category";
-import ChannelManager from "./channel";
-import GUIManager from "./gui";
-
-import {
-    DEFAULT_MASTER_CATEGORY_NAME,
-    DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
-    DEFAULT_MASTER_CHANNEL_CREATE_NAME,
-    DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT,
-    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-} from "@dynamico/constants/master-channel";
-
-import CategoryModel from "@dynamico/models/category";
-import ChannelModel from "@dynamico/models/channel";
-
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import guiManager from "./gui";
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
+
+    private cache = new Map<string, any>();
 
     public static getName(): string {
         return "Dynamico/Managers/MasterChannel";
@@ -135,13 +129,41 @@ export class MasterChannelManager extends InitializeBase {
         return result;
     }
 
+    public async getMasterCreateChannelData( masterChannelId: string, cache = false ) {
+        // Try get from cache.
+        if ( cache ) {
+            const cached = this.cache.get( `data-${ masterChannelId }` );
+
+            if ( cached ) {
+                return cached;
+            }
+        }
+
+        // Get from database.
+        const data = ( await ChannelModel.getInstance().getMasterChannelDataByChannelId( masterChannelId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) );
+
+        if ( ! data ) {
+            this.logger.error( this.getMasterCreateChannelData,
+                `Could not find master channel data for channelId: '${ masterChannelId }'`
+            );
+            return;
+        }
+
+        // Set cache.
+        this.cache.set( `data-${ masterChannelId }`, data );
+
+        return data;
+    }
+
     /**
      * Function createDynamic() :: Creates a new dynamic channel for a user.
      */
     public async createDynamic( args: IMasterChannelCreateDynamicArgs ) {
         const { displayName, guild, newState } = args,
+            masterChannel = newState.channel as VoiceBasedChannel,
             userOwnerId = newState.member?.id,
-            dynamicChannelName = DEFAULT_MASTER_DYNAMIC_CHANNEL_NAME_FORMAT.replace(
+            data = await this.getMasterCreateChannelData( masterChannel.id, true ),
+            dynamicChannelName = data.newDynamicChannelTemplateName.replace(
                 "%{userDisplayName}%",
                 displayName
             );
@@ -149,8 +171,7 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.log( this.createDynamic,
             `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
-        const masterChannel = newState.channel as VoiceBasedChannel,
-            categoryChannel = masterChannel.parent,
+        const categoryChannel = masterChannel.parent,
             inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
             inheritedPermissions = this.getDefaultInheritedPermissions( masterChannel ),
             permissionOverwrites = [
@@ -241,7 +262,39 @@ export class MasterChannelManager extends InitializeBase {
         ChannelModel.getInstance().delete( guild );
     }
 
-    public async getByDynamicChannel( interaction: Interaction ) {
+    public getByDynamicChannelSync( interaction: Interaction ) {
+        this.logger.debug( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }'` );
+
+        // If it exists in the cache, then return it.
+        if ( interaction.channelId ) {
+            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
+
+            if ( cached ) {
+                this.logger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
+
+                return cached;
+            }
+        } else {
+            this.logger.warn( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }' has no channelId` );
+        }
+
+        return null;
+    }
+
+    public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
+        this.logger.debug( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
+
+        // If it exists in the cache, then return it.
+        if ( interaction.channelId && cache ) {
+            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
+
+            if ( cached ) {
+                this.logger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
+
+                return cached;
+            }
+        }
+
         if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
             return null;
         }
@@ -281,7 +334,10 @@ export class MasterChannelManager extends InitializeBase {
             await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel." );
 
             return;
-        };
+        }
+
+        // Set cache, anyway.
+        this.cache.set( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
 
         return masterChannel;
     }

@@ -42,7 +42,6 @@ model category {
 model channel {
   id               String                   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  name             String
   channelId        String
   guildId          String
   userOwnerId      String
@@ -51,8 +50,22 @@ model channel {
   // ---
   internalType     E_INTERNAL_CHANNEL_TYPES @default(DEFAULT_CHANNEL)
   // ---
+  data             data?                    @relation(fields: [dataId], references: [id], onDelete: Cascade)
+  dataId           String?                  @unique @db.ObjectId
+  // ---
   createdAtDiscord Int
   // ---
   createdAt        DateTime                 @default(now())
   updatedAt        DateTime                 @updatedAt
+}
+
+model data {
+  id                            String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  newDynamicChannelTemplateName String   @default("%{userDisplayName}%'s Channel")
+  // ---
+  channel                       channel?
+  // ---
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
 }

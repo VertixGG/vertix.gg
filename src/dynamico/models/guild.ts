@@ -1,8 +1,6 @@
-import { Prisma } from "@prisma/client";
-
-import { Guild } from "discord.js";
-
 import ModelBase from "@internal/bases/model-base";
+import { Prisma } from "@prisma/client";
+import { Guild } from "discord.js";
 
 export class GuildModel extends ModelBase {
     private static instance: GuildModel;

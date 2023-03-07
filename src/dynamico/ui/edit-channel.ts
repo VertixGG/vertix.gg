@@ -1,3 +1,7 @@
+import { EmbedsType } from "@dynamico/interfaces/ui";
+import guiManager from "@dynamico/managers/gui";
+import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
+import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
 import {
     ChannelType,
     EmbedBuilder,
@@ -8,11 +12,6 @@ import {
 } from "discord.js";
 
 import ComponentUIBase from "./base/component-ui-base";
-
-import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
-import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
-import guiManager from "@dynamico/managers/gui";
-import { EmbedsType } from "@dynamico/interfaces/ui";
 
 export default class EditChannelUI extends ComponentUIBase {
     public static getName() {
@@ -36,8 +35,8 @@ export default class EditChannelUI extends ComponentUIBase {
 
         const embed = new EmbedBuilder();
 
-        let description = "Here you can manage your voice channel and edit it as you see fit.\n" +
-            "You must be connected to the voice channel in order to edit it.\n\n" +
+        let description = "Take control of your dynamic channel and customize it to as you see fit.\n" +
+            "Keep in mind that only the channel owner has permission to make changes.\n\n" +
             `Current settings:\n\nName: **${ interaction.name }**`;
 
         let limit = interaction.userLimit as any;

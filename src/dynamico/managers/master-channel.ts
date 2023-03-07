@@ -65,6 +65,8 @@ export class MasterChannelManager extends InitializeBase {
                 .get( "Dynamico/UI/EditChannel" )
                 .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
+        message.content = "<@" + newState.member?.id + ">";
+
         await channel.send( message );
     }
 

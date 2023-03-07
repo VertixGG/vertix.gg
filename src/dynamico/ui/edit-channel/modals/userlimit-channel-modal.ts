@@ -25,7 +25,7 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
     }
 
     protected getInputPlaceholder(): string {
-        return "0-99";
+        return "0 - 99";
     }
 
     protected getModalTitle(): string {
@@ -61,7 +61,7 @@ export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
 
             await interaction.channel.setUserLimit( parsedInput );
 
-            const limitValue = parsedInput === 0 ? "unlimited" : parsedInput,
+            const limitValue = parsedInput === 0 ? "Unlimited" : parsedInput,
                 embed = new EmbedBuilder()
                     .setTitle( `Your channel's user limit has changed to ${ limitValue }` );
 

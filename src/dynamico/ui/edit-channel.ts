@@ -38,16 +38,7 @@ export default class EditChannelUI extends ComponentUIBase {
 
         let description = "Here you can manage your voice channel and edit it as you see fit.\n" +
             "You must be connected to the voice channel in order to edit it.\n\n" +
-            `Current settings:\n\nName: **${ interaction.name }**\nState: `;
-
-        // Check if @everyone permissions connect is on or off.
-        const everyoneRole = interaction.permissionOverwrites.cache.get( interaction.guild.roles.everyone.id );
-
-        if ( everyoneRole?.deny.has( PermissionsBitField.Flags.Connect ) ) {
-            description += "🚫 **Private**";
-        } else {
-            description += "🌐 **Public**";
-        }
+            `Current settings:\n\nName: **${ interaction.name }**`;
 
         let limit = interaction.userLimit as any;
 
@@ -57,6 +48,17 @@ export default class EditChannelUI extends ComponentUIBase {
 
         // Get the user limit.
         description += `\nUser Limit: ✋ **${ limit }**`;
+
+        description += "\nState: ";
+
+        // Check if @everyone permissions connect is on or off.
+        const everyoneRole = interaction.permissionOverwrites.cache.get( interaction.guild.roles.everyone.id );
+
+        if ( everyoneRole?.deny.has( PermissionsBitField.Flags.Connect ) ) {
+            description += "🚫 **Private**";
+        } else {
+            description += "🌐 **Public**";
+        }
 
         embed.setTitle( "Manage your Dynamic Channel" );
         embed.setDescription( description );

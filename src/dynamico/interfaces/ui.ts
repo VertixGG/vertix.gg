@@ -7,8 +7,7 @@ import {
     Interaction,
     JSONEncodable,
     MessageActionRowComponentBuilder,
-    MessageActionRowComponentData,
-    TextInputStyle
+    MessageActionRowComponentData
 } from "discord.js";
 
 import UIBase from "../ui/base/ui-base";

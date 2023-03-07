@@ -4,7 +4,6 @@ import MasterChannelManager from "@dynamico/managers/master-channel";
 import ChannelModel from "@dynamico/models/channel";
 import {
     ApplicationCommandType,
-    ButtonStyle,
     Client,
     Colors,
     CommandInteraction,

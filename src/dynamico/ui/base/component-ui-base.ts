@@ -8,7 +8,6 @@ import ObjectBase from "@internal/bases/object-base";
 import { ForceMethodImplementation } from "@internal/errors";
 import {
     ActionRowBuilder,
-    APIEmbed,
     BaseMessageOptions,
     Interaction, ModalBuilder, NonThreadGuildBasedChannel,
 } from "discord.js";

@@ -11,7 +11,6 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 import MasterChannelManager from "./master-channel";
-import { Prisma } from ".prisma/client";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";

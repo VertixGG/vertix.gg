@@ -1,4 +1,3 @@
-import { ChannelType } from "discord.js";
 
 import { GenericInputUIModal } from "./generic-input-ui-modal";
 

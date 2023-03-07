@@ -2,7 +2,6 @@ import {
     CategoryChannel,
     CategoryCreateChannelOptions,
     Channel,
-    ChannelType,
     Guild,
     VoiceState
 } from "discord.js";

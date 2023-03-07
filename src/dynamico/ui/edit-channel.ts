@@ -3,7 +3,6 @@ import guiManager from "@dynamico/managers/gui";
 import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
 import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
 import {
-    ChannelType,
     EmbedBuilder,
     Interaction,
     NonThreadGuildBasedChannel,

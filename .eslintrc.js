@@ -11,9 +11,11 @@ module.exports = {
 	},
 	plugins: [
 		"@typescript-eslint",
-		"simple-import-sort"
+		"simple-import-sort",
+		"unused-imports"
 	],
 	"rules": {
+		"unused-imports/no-unused-imports": "error",
 		"simple-import-sort/imports": "error",
 		"simple-import-sort/exports": "error",
 		"linebreak-style": [

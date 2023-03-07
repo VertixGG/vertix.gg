@@ -2,9 +2,7 @@ import { DiscordComponentTypes } from "@dynamico/interfaces/ui";
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
 import {
-    APIActionRowComponent,
     APIEmbed,
-    APIMessageActionRowComponent,
     ButtonInteraction,
     ChannelType,
     EmbedBuilder,

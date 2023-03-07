@@ -1,7 +1,7 @@
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import guiManager from "@dynamico/managers/gui";
 import { GenericInputNumberUIModal } from "@dynamico/ui/generic/generic-input-number-ui-modal";
-import { ChannelType, EmbedBuilder, ModalSubmitInteraction, TextInputStyle } from "discord.js";
+import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,

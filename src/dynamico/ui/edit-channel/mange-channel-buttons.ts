@@ -3,10 +3,7 @@ import guiManager from "@dynamico/managers/gui";
 import Logger from "@internal/modules/logger";
 import {
     ButtonStyle,
-    ChannelType,
     Interaction,
-    OverwriteType,
-    TextInputStyle,
 } from "discord.js";
 
 import UIBase from "../base/ui-base";

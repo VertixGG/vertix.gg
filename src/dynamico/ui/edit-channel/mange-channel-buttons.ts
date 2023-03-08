@@ -9,6 +9,7 @@ import UserlimitChannelModalUI from "./modals/userlimit-channel-modal";
 import UIBase from "../base/ui-base";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
 import guiManager from "@dynamico/managers/gui";
 
 import Logger from "@internal/modules/logger";
@@ -24,13 +25,13 @@ export default class MangeChannelButtons extends UIBase {
         return E_UI_TYPES.STATIC;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.logger = new Logger( this );
     }
 
-    getBuilders() {
+    public getBuilders() {
         const renameButton = this.getButtonBuilder( this.renameChannel.bind( this ) ),
             limitButton = this.getButtonBuilder( this.limitChannel.bind( this ) );
 

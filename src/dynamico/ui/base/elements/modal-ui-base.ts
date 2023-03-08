@@ -1,6 +1,13 @@
-import { ActionRowBuilder, ComponentBuilder, Interaction, ModalBuilder, ModalSubmitInteraction, } from "discord.js";
+import {
+    ActionRowBuilder,
+    ComponentBuilder,
+    Interaction,
+    ModalBuilder,
+    ModalSubmitInteraction,
+} from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
 import UIBase from "@dynamico/ui/base/ui-base";
 
 /**

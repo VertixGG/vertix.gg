@@ -9,9 +9,12 @@ import {
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import { MasterChannelManager } from "@dynamico/managers";
+
 import guiManager from "@dynamico/managers/gui";
-import { sendManageUsersComponent } from "@dynamico/temp-utils";
+
 import UIBase from "@dynamico/ui/base/ui-base";
+
+import { sendManageUsersComponent } from "@dynamico/temp-utils";
 
 export default class ManageUsersMenus extends UIBase {
     public static getName() {
@@ -22,6 +25,7 @@ export default class ManageUsersMenus extends UIBase {
         return E_UI_TYPES.DYNAMIC;
     }
 
+    // TODO: Determine visibility of this method.
     protected getBuilders( interaction: Interaction ) {
         const grantMenu = this.getUserMenuBuilder( this.grantUser.bind( this ) ),
             removeMenu = this.getMenuBuilder( this.removeUser.bind( this ) );

@@ -1,6 +1,6 @@
+import { Guild } from "discord.js";
 
 import { Prisma } from "@prisma/client";
-import { Guild } from "discord.js";
 
 import ModelBase from "@internal/bases/model-base";
 
@@ -21,7 +21,7 @@ export class GuildModel extends ModelBase {
         return GuildModel.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.model = this.prisma.guild;

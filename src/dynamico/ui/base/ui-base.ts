@@ -14,11 +14,13 @@ import {
 } from "discord.js";
 
 import { CallbackUIType, E_UI_TYPES } from "@dynamico/interfaces/ui";
+
 import guiManager from "@dynamico/managers/gui";
 
 import ObjectBase from "@internal/bases/object-base";
-import { ForceMethodImplementation } from "@internal/errors";
 import Logger from "@internal/modules/logger";
+
+import { ForceMethodImplementation } from "@internal/errors";
 
 export default class UIBase extends ObjectBase {
     private static logger: Logger = new Logger( this );
@@ -27,15 +29,15 @@ export default class UIBase extends ObjectBase {
 
     public interaction?: Interaction | NonThreadGuildBasedChannel;
 
-    static getName() {
+    public static getName() {
         return "Dynamico/UI/UIBase";
     }
 
-    static getType(): E_UI_TYPES {
+    public static getType(): E_UI_TYPES {
         throw new ForceMethodImplementation( this, this.getType.name );
     }
 
-    constructor( interaction?: Interaction | NonThreadGuildBasedChannel ) {
+    public constructor( interaction?: Interaction | NonThreadGuildBasedChannel ) {
         super();
 
         if ( this.getName() === UIBase.getName() ) {

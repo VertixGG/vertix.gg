@@ -6,9 +6,11 @@ import {
 } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import guiManager from "@dynamico/managers/gui";
 import { sendManageUsersComponent } from "@dynamico/temp-utils";
+
 import UIBase from "@dynamico/ui/base/ui-base";
+
+import guiManager from "@dynamico/managers/gui";
 
 export default class ManageUsersButtons extends UIBase {
     public static getName() {

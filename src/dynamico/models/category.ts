@@ -2,13 +2,6 @@ import { Prisma } from "@prisma/client";
 
 import ModelBase from "@internal/bases/model-base";
 
-interface ICreateData { // TODO: Check if this is needed
-    categoryId: string;
-    guildId: string;
-    name: string;
-    createdAtDiscord: number;
-}
-
 export class CategoryModel extends ModelBase {
     private static instance: CategoryModel;
 
@@ -26,14 +19,14 @@ export class CategoryModel extends ModelBase {
         return CategoryModel.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.model = this.prisma.category;
     }
 
-    public async create( data: ICreateData ) {
-        return this.model.create( { data } );
+    public async create( args: Prisma.categoryCreateArgs ) {
+        return this.model.create( args );
     }
 
     public async delete( guildId: string, guildCategoryId?: string | null ) {

@@ -1,5 +1,12 @@
 import { channel } from "@prisma/client";
-import { ChannelType, DMChannel, NonThreadGuildBasedChannel, VoiceChannel, VoiceState } from "discord.js";
+
+import {
+    ChannelType,
+    DMChannel,
+    NonThreadGuildBasedChannel,
+    VoiceChannel,
+    VoiceState
+} from "discord.js";
 
 import MasterChannelManager from "./master-channel";
 
@@ -39,7 +46,7 @@ export class ChannelManager extends InitializeBase {
         return "Dynamico/Managers/Channel";
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.channelModel = ChannelModel.getInstance();

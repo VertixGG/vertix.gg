@@ -1,4 +1,3 @@
-
 import { GenericInputUIModal } from "./generic-input-ui-modal";
 
 export abstract class GenericInputNumberUIModal extends GenericInputUIModal {

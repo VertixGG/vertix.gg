@@ -9,9 +9,11 @@ import {
     EmbedsType,
     IComponentUIBase,
 } from "@dynamico/interfaces/ui";
+
 import UIBase from "@dynamico/ui/base/ui-base";
 
 import ObjectBase from "@internal/bases/object-base";
+
 import { ForceMethodImplementation } from "@internal/errors";
 
 export default class ComponentUIBase extends ObjectBase implements IComponentUIBase {
@@ -22,7 +24,7 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
 
     protected staticComponents: UIBase[];
 
-    constructor() {
+    public constructor() {
         super();
 
         this.staticComponents = [];
@@ -30,7 +32,7 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         this.storeStaticComponents();
     }
 
-    storeStaticComponents() {
+    public storeStaticComponents() {
         const embeds = this.getEmbeds(),
             components = this.getInternalComponents();
 

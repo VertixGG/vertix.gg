@@ -23,7 +23,7 @@ export class CategoryManager extends InitializeBase {
         return CategoryManager.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.categoryModel = CategoryModel.getInstance();
@@ -52,12 +52,12 @@ export class CategoryManager extends InitializeBase {
         } );
 
         // Add the channel to the database.
-        await this.categoryModel.create( {
+        await this.categoryModel.create( { data: {
             categoryId: category.id,
             guildId: guild.id,
             name,
             createdAtDiscord: category.createdTimestamp,
-        } );
+        } } );
 
         return category;
     }

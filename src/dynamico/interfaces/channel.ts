@@ -1,8 +1,10 @@
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 import {
     CategoryChannel,
     CategoryCreateChannelOptions,
-    Guild, NonThreadGuildBasedChannel,
+    Guild,
+    NonThreadGuildBasedChannel,
     VoiceState
 } from "discord.js";
 

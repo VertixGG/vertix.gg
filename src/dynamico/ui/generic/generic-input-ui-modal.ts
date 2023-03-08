@@ -1,4 +1,3 @@
-
 import { ChannelType, Interaction, ModalSubmitInteraction } from "discord.js";
 import { Mixin, settings } from "ts-mixer";
 

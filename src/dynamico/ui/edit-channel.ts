@@ -9,7 +9,9 @@ import {
 import ComponentUIBase from "./base/component-ui-base";
 
 import { EmbedsType } from "@dynamico/interfaces/ui";
+
 import guiManager from "@dynamico/managers/gui";
+
 import ManageUsersButtons from "@dynamico/ui/edit-channel/manage-users-buttons";
 import MangeChannelButtons from "@dynamico/ui/edit-channel/mange-channel-buttons";
 
@@ -18,7 +20,7 @@ export default class EditChannelUI extends ComponentUIBase {
         return "Dynamico/UI/EditChannel";
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         // TODO: This is probably not the best way to do this.

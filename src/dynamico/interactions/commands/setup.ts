@@ -8,8 +8,11 @@ import {
 } from "discord.js";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
+
 import { ICommand } from "@dynamico/interfaces/command";
+
 import MasterChannelManager from "@dynamico/managers/master-channel";
+
 import ChannelModel from "@dynamico/models/channel";
 
 const masterChannelManager = MasterChannelManager.getInstance();

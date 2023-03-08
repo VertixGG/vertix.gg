@@ -39,19 +39,6 @@ export class CategoryManager extends InitializeBase {
         await this.categoryModel.delete( guild.id, category.id );
     }
 
-    public async delete( category: CategoryChannel ) {
-        const { guild, name } = category;
-
-        this.logger.info( this.create,
-            `Deleting category for guild '${ guild.name }' with name '${ name }'` );
-
-        // Delete the channel from the database.
-        await this.categoryModel.delete( guild.id, category.id );
-
-        // Delete the channel from discord.
-        await category.delete();
-    }
-
     public async create( args: ICategoryCreateArgs ) {
         const { name, guild } = args;
 
@@ -73,6 +60,19 @@ export class CategoryManager extends InitializeBase {
         } );
 
         return category;
+    }
+
+    public async delete( category: CategoryChannel ) {
+        const { guild, name } = category;
+
+        this.logger.info( this.create,
+            `Deleting category for guild '${ guild.name }' with name '${ name }'` );
+
+        // Delete the channel from the database.
+        await this.categoryModel.delete( guild.id, category.id );
+
+        // Delete the channel from discord.
+        await category.delete();
     }
 }
 

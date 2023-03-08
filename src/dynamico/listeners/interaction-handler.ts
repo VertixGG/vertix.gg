@@ -42,7 +42,7 @@ export function interactionHandler( client: Client ) {
 };
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
-    console.log( `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'` );
+    globalLogger.log( handleSlashCommand, `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'` );
 
     const slashCommand = Commands.find( c => c.name === interaction.commandName );
 

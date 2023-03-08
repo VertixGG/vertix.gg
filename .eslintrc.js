@@ -30,6 +30,7 @@ module.exports = {
 		},
 	},
 	"rules": {
+		"@typescript-eslint/explicit-member-accessibility": [ "error" ],
 		"import/no-named-as-default": "off",
 		"import/first": "error",
 		"import/no-duplicates": "error",
@@ -50,11 +51,6 @@ module.exports = {
 						"position": "after",
 					}
 				],
-				"alphabetize": {
-					"order": "asc",
-					"caseInsensitive": true,
-					"orderImportKind": "asc",
-				},
 				"groups": [
 					"builtin",
 					"external",

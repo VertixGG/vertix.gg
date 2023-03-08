@@ -4,11 +4,11 @@ import chalk from "chalk";
 
 import { Client } from "discord.js";
 
+import * as handlers from "./listeners/";
+
+import { guiManager } from "./managers/";
+
 import GlobalLogger from "./global-logger";
-
-import * as handlers from "./listeners";
-
-import guiManager from "./managers/gui";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();

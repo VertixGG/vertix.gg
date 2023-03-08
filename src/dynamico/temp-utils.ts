@@ -4,15 +4,14 @@ import {
     EmbedBuilder,
     Interaction,
     OverwriteType,
-    PermissionsBitField
 } from "discord.js";
 
-import guiManager from "./managers/gui";
+import {
+    MasterChannelManager,
+    guiManager
+} from "@dynamico/managers";
 
 import GlobalLogger from "@dynamico/global-logger";
-import { MasterChannelManager } from "@dynamico/managers";
-
-const { Flags } = PermissionsBitField;
 
 export async function sendManageUsersComponent( interaction: Interaction, title: string ) {
     if ( ! interaction.channel || interaction.channel.type !== ChannelType.GuildVoice ) {

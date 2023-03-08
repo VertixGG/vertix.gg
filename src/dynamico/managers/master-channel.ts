@@ -27,12 +27,16 @@ import { CategoryManager, ChannelManager } from "@dynamico/managers";
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 
+import Debugger from "@dynamico/utils/debugger";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
     private cache = new Map<string, any>();
+
+    private debugger: Debugger;
 
     public static getName(): string {
         return "Dynamico/Managers/MasterChannel";
@@ -44,6 +48,12 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         return MasterChannelManager.instance;
+    }
+
+    public constructor() {
+        super();
+
+        this.debugger = new Debugger( this );
     }
 
     /**
@@ -74,7 +84,7 @@ export class MasterChannelManager extends InitializeBase {
         const { oldState, displayName, channelName } = args,
             { guild } = oldState;
 
-        this.logger.log( this.onLeaveDynamicChannel,
+        this.logger.info( this.onLeaveDynamicChannel,
             `User '${ displayName }' left dynamic channel '${ channelName }'` );
 
         // If the channel is empty, delete it.
@@ -98,7 +108,7 @@ export class MasterChannelManager extends InitializeBase {
             result.rtcRegion = rtcRegion;
         }
 
-        this.logger.debug( this.getDefaultInheritedProperties, JSON.stringify( result ) );
+        this.debugger.log( this.getDefaultInheritedProperties, JSON.stringify( result ) );
 
         return result;
     }
@@ -118,12 +128,7 @@ export class MasterChannelManager extends InitializeBase {
                 deny = deny.remove( PermissionsBitField.Flags.SendMessages );
             }
 
-            this.logger.debug( this.getDefaultInheritedPermissions, JSON.stringify( {
-                id,
-                allow: allow.toArray(),
-                deny: deny.toArray(),
-                type,
-            } ) );
+            this.debugger.debugPermission( this.getDefaultInheritedPermissions, overwrite );
 
             result.push( { id, allow, deny, type } );
         }
@@ -132,11 +137,17 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public async getMasterCreateChannelData( masterChannelId: string, cache = false ) {
+        this.logger.info( this.getMasterCreateChannelData,
+            `Getting master channel data for channelId: '${ masterChannelId }'`
+        );
+
         // Try get from cache.
         if ( cache ) {
             const cached = this.cache.get( `data-${ masterChannelId }` );
 
             if ( cached ) {
+                this.debugger.log( this.getMasterCreateChannelData, "Got from cache" );
+
                 return cached;
             }
         }
@@ -170,7 +181,7 @@ export class MasterChannelManager extends InitializeBase {
                 displayName
             );
 
-        this.logger.log( this.createDynamic,
+        this.logger.info( this.createDynamic,
             `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
         const categoryChannel = masterChannel.parent,
@@ -265,14 +276,14 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public getByDynamicChannelSync( interaction: Interaction ) {
-        this.logger.debug( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }'` );
+        this.logger.info( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }'` );
 
         // If it exists in the cache, then return it.
         if ( interaction.channelId ) {
             const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
 
             if ( cached ) {
-                this.logger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
+                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
 
                 return cached;
             }
@@ -284,14 +295,14 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
-        this.logger.debug( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
+        this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
 
         // If it exists in the cache, then return it.
         if ( interaction.channelId && cache ) {
             const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
 
             if ( cached ) {
-                this.logger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
+                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
 
                 return cached;
             }

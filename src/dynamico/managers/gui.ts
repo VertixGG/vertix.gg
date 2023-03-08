@@ -16,6 +16,8 @@ import ComponentUIBase from "../ui/base/component-ui-base";
 
 import { DiscordComponentTypes } from "@dynamico/interfaces/ui";
 
+import Debugger from "@dynamico/utils/debugger";
+
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
 
@@ -23,9 +25,16 @@ export class GUIManager extends InitializeBase {
     private userInterfaces = new Map<string, ComponentUIBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
+    private debugger: Debugger;
 
     public static getName() {
         return "Dynamico/Managers/GUI";
+    }
+
+    public constructor() {
+        super();
+
+        this.debugger = new Debugger( this );
     }
 
     public register( ui: typeof ComponentUIBase ) {
@@ -69,7 +78,7 @@ export class GUIManager extends InitializeBase {
             }
         }
 
-        this.logger.debug( this.storeCallback, `Storing callback '${ unique }'` );
+        this.debugger.log( this.storeCallback, `Storing callback '${ unique }'` );
 
         this.callbacks.set( unique, callback );
 

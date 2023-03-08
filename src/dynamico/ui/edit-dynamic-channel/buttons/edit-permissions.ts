@@ -66,7 +66,8 @@ export default class EditPermissions extends UIBase {
             } );
 
             // TODO: Can be static.
-            const embed = guiManager.createEmbed( "Your channel is public now!" );
+            const embed = guiManager.createEmbed( "🌐 Your channel is public now!" );
+            embed.setColor(0x1E90FF);
 
             await guiManager.continuesMessage( interaction, false, [ embed ] );
         }
@@ -82,13 +83,13 @@ export default class EditPermissions extends UIBase {
                 Connect: false,
             } );
 
-            await sendManageUsersComponent( interaction, "Your channel is private now!" );
+            await sendManageUsersComponent( interaction, "🚫 Your channel is private now!" );
         }
     }
 
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
-            await sendManageUsersComponent( interaction, "Manage users access for your dynamic channel" );
+            await sendManageUsersComponent( interaction, "👥 Manage users access for your dynamic channel" );
         }
     }
 }

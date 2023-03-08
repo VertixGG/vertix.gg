@@ -54,7 +54,8 @@ export default class UserlimitModal extends GenericInputNumberUIModal {
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
         const embed = new EmbedBuilder()
-            .setTitle( `User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }`);
+            .setTitle( `🙅 User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }`)
+            .setColor(0xFF8C00);
 
         await guiManager.continuesMessage( interaction, false, [ embed ] );
     }
@@ -67,7 +68,8 @@ export default class UserlimitModal extends GenericInputNumberUIModal {
 
             const limitValue = parsedInput === 0 ? "Unlimited" : parsedInput,
                 embed = new EmbedBuilder()
-                    .setTitle( `Your channel's user limit has changed to ${ limitValue }` );
+                    .setTitle( `✋ Your channel's user limit has changed to ${ limitValue }` )
+                    .setColor(0x32CD32);
 
             await guiManager.continuesMessage( interaction, false, [ embed ] );
         }

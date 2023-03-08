@@ -116,7 +116,7 @@ export default class UsersMenus extends UIBase {
                 } );
 
                 await sendManageUsersComponent( interaction,
-                    `${ member.username } can now connect to your channel ☝`
+                    `☝ ${ member.username } can now connect to your channel`
                 );
 
                 return;
@@ -146,7 +146,7 @@ export default class UsersMenus extends UIBase {
                 await channel.permissionOverwrites.delete( member );
 
                 await sendManageUsersComponent( interaction,
-                    `${ member.username } removed from your list 👇` );
+                    `👇 ${ member.username } removed from your list` );
             } else {
                 await guiManager.continuesMessage( interaction,
                     `Could not find user with id '${ interaction.values[ 0 ] }'`, );

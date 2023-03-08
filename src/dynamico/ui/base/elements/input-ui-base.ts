@@ -5,7 +5,7 @@ import { ModalSubmitInteraction, TextInputStyle } from "discord.js";
  */
 export default abstract class InputUIBase {
     public static getName() {
-        return "Dynamico/UI/Elements/InputUIBase";
+        return "Dynamico/UI/Base/Elements/Input";
     }
 
     protected abstract getModalTitle(): string;

@@ -3,20 +3,20 @@ import process from "process";
 import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { GenericInputUIModal } from "@dynamico/ui/generic/generic-input-ui-modal";
-
 import MasterChannelManager from "@dynamico/managers/master-channel";
+
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { GenericInputUIModal } from "@dynamico/ui/base/generic/generic-input-ui-modal";
 
 import guiManager from "@dynamico/managers/gui";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
 
-export default class RenameChannelModalUI extends GenericInputUIModal {
+export default class RenameModal extends GenericInputUIModal {
 
     public static getName() {
-        return "Dynamico/UI/EditChannel/Modals/RenameChannelModal";
+        return "Dynamico/UI/EditDynamicChannel/Modal/Rename";
     }
 
     public static getType() {

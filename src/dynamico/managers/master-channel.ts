@@ -1,4 +1,4 @@
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { ChannelData, E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import {
     ChannelType,
     Guild,
@@ -11,6 +11,7 @@ import {
 import guiManager from "./gui";
 
 import {
+    IChannelDataGetArgs,
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs,
     IMasterChannelCreateArgs,
@@ -18,6 +19,7 @@ import {
 } from "../interfaces/channel";
 
 import {
+    DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
@@ -30,6 +32,8 @@ import ChannelModel from "@dynamico/models/channel";
 import Debugger from "@dynamico/utils/debugger";
 
 import InitializeBase from "@internal/bases/initialize-base";
+
+const channelModel = ChannelModel.getInstance();
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -136,36 +140,56 @@ export class MasterChannelManager extends InitializeBase {
         return result;
     }
 
-    public async getMasterCreateChannelData( masterChannelId: string, cache = false ) {
-        this.logger.info( this.getMasterCreateChannelData,
-            `Getting master channel data for channelId: '${ masterChannelId }'`
-        );
+    public async getMasterCreateChannelData( args: IChannelDataGetArgs ) {
+        const { masterChannelId, key, cache } = args,
+            cacheKey = `${ masterChannelId }-${ key }`;
 
-        // Try get from cache.
+        this.logger.info( this.getMasterCreateChannelData,
+            `Getting master channel data for channelId: '${ masterChannelId }', key: '${ key }'` );
+
         if ( cache ) {
-            const cached = this.cache.get( `data-${ masterChannelId }` );
+            const cached = this.cache.get( cacheKey );
 
             if ( cached ) {
-                this.debugger.log( this.getMasterCreateChannelData, "Got from cache" );
-
+                this.debugger.log( this.getMasterCreateChannelData, "Getting cached data", cached );
                 return cached;
             }
         }
 
-        // Get from database.
-        const data = ( await ChannelModel.getInstance().getMasterChannelDataByChannelId( masterChannelId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) );
+        const channel = await channelModel.getChannelDataByChannelId( args );
 
-        if ( ! data ) {
+        if ( ! channel ) {
             this.logger.error( this.getMasterCreateChannelData,
-                `Could not find master channel data for channelId: '${ masterChannelId }'`
+                `Could not find master channel data for channelId: '${ args.masterChannelId }'`
             );
             return;
         }
 
-        // Set cache.
-        this.cache.set( `data-${ masterChannelId }`, data );
+        let data: ChannelData,
+            message: string;
 
-        return data;
+        if ( ! channel?.data.length ) {
+            data = await channelModel.createChannelData( {
+                id: channel.id,
+                key: args.key,
+                value: args.default,
+            } );
+
+            message = "Created new";
+        } else {
+            data = channel.data[ 0 ];
+
+            message = "Getting";
+        }
+
+        message += `channel data for channelId: '${ args.masterChannelId }', key: '${ args.key }' with values:\n`;
+
+        this.debugger.log( this.getMasterCreateChannelData, message, data.values );
+
+        // Set cache.
+        this.cache.set( cacheKey, data.values );
+
+        return data.values;
     }
 
     /**
@@ -175,8 +199,13 @@ export class MasterChannelManager extends InitializeBase {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
             userOwnerId = newState.member?.id,
-            data = await this.getMasterCreateChannelData( masterChannel.id, true ),
-            dynamicChannelName = data.newDynamicChannelTemplateName.replace(
+            dynamicChanelNameTemplate = await this.getMasterCreateChannelData( {
+                cache: true,
+                key: "new_dynamic_channel_name",
+                masterChannelId: masterChannel.id,
+                default: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+            } ),
+            dynamicChannelName = dynamicChanelNameTemplate[ 0 ].replace(
                 "%{userDisplayName}%",
                 displayName
             );

@@ -45,6 +45,11 @@ export default class ManageUsersMenus extends UIBase {
         if ( interaction.channel && ChannelType.GuildVoice === interaction.channel.type ) {
             // Loop through the allowed users and add them to the description.
             for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
+                // Skip self.
+                if ( role.id === interaction.user.id ) {
+                    continue;
+                }
+
                 // Show only users that are not in the master channel permission overwrites.
                 if ( role.type !== OverwriteType.Member ) {
                     continue;
@@ -59,11 +64,19 @@ export default class ManageUsersMenus extends UIBase {
 
                 if ( member ) {
                     members.push( {
-                        label: member.displayName,
+                        label: member.displayName + ` #${ member.user.discriminator }`,
                         value: member.id,
                     } );
                 }
             }
+        }
+
+        if ( ! members.length ) {
+            removeMenu.setDisabled( true );
+            members.push( {
+                label: "No users found",
+                value: "no-users-found",
+            } );
         }
 
         removeMenu.setOptions( members );
@@ -95,9 +108,11 @@ export default class ManageUsersMenus extends UIBase {
             }
 
             if ( member ) {
+                // TODO: Move options to constants.
                 await channel.permissionOverwrites.create( member, {
                     ViewChannel: true,
                     Connect: true,
+                    ReadMessageHistory: true,
                 } );
 
                 await sendManageUsersComponent( interaction,

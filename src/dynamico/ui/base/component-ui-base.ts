@@ -1,7 +1,9 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
-    Interaction, ModalBuilder, NonThreadGuildBasedChannel,
+    Interaction,
+    ModalBuilder,
+    NonThreadGuildBasedChannel,
 } from "discord.js";
 
 import {
@@ -62,19 +64,19 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         }
     }
 
-    getEmbeds(): EmbedsType {
+    public getEmbeds(): EmbedsType {
         return null;
     }
 
-    getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel  ): EmbedsType {
+    public getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel  ): EmbedsType {
         return null;
     }
 
-    getInternalComponents(): typeof UIBase[] {
+    public getInternalComponents(): typeof UIBase[] {
         throw new ForceMethodImplementation( this, this.getInternalComponents.name );
     }
 
-    getActionRows( interaction?: Interaction | NonThreadGuildBasedChannel ): ActionRowBuilder<any>[] {
+    public getActionRows( interaction?: Interaction | NonThreadGuildBasedChannel ): ActionRowBuilder<any>[] {
         const components: UIBase[] = [],
             staticThis = ( this.constructor as typeof ComponentUIBase );
 
@@ -101,7 +103,7 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         return builtComponents;
     }
 
-    getMessage( interaction?: Interaction | NonThreadGuildBasedChannel ): BaseMessageOptions {
+    public getMessage( interaction?: Interaction | NonThreadGuildBasedChannel ): BaseMessageOptions {
         const builtComponents = this.getActionRows( interaction ),
             staticThis = ( this.constructor as typeof ComponentUIBase ),
             result: any = { components: builtComponents };
@@ -122,5 +124,5 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         return result;
     }
 
-    getModal?( interaction?: Interaction ): ModalBuilder; // TODO: Delete.
+    public getModal?( interaction?: Interaction ): ModalBuilder; // TODO: Delete.
 }

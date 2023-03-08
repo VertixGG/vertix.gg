@@ -32,7 +32,7 @@ export default class EditChannelUI extends ComponentUIBase {
         } );
     }
 
-    getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsType {
+    public getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsType {
         interaction = interaction as VoiceChannel;
 
         const embed = new EmbedBuilder();
@@ -67,7 +67,7 @@ export default class EditChannelUI extends ComponentUIBase {
         return [ embed ];
     }
 
-    getInternalComponents() {
+    public getInternalComponents() {
         return [
             MangeChannelButtons,
             ManageUsersButtons,

@@ -25,7 +25,7 @@ export class GuildManager extends InitializeBase {
         return GuildManager.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.guildModel = GuildModel.getInstance();

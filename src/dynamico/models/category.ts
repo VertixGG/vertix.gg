@@ -5,7 +5,7 @@ import ModelBase from "@internal/bases/model-base";
 export class CategoryModel extends ModelBase {
     private static instance: CategoryModel;
 
-    private model: Prisma.categoryDelegate<Prisma.RejectPerOperation>;
+    private model: Prisma.CategoryDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
         return "Dynamico/Models/Category";
@@ -25,7 +25,7 @@ export class CategoryModel extends ModelBase {
         this.model = this.prisma.category;
     }
 
-    public async create( args: Prisma.categoryCreateArgs ) {
+    public async create( args: Prisma.CategoryCreateArgs ) {
         return this.model.create( args );
     }
 

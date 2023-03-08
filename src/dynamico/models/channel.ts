@@ -2,6 +2,8 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import { Prisma } from "@prisma/client";
 import { Guild } from "discord.js";
 
+import { IChannelDataCreateArgs, IChannelDataGetArgs } from "@dynamico/interfaces/channel";
+
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
 
 import ModelBase from "@internal/bases/model-base";
@@ -9,7 +11,7 @@ import ModelBase from "@internal/bases/model-base";
 export class ChannelModel extends ModelBase {
     private static instance: ChannelModel;
 
-    private model: Prisma.channelDelegate<Prisma.RejectPerOperation>;
+    private model: Prisma.ChannelDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
         return "Dynamico/Models/Channel";
@@ -29,13 +31,7 @@ export class ChannelModel extends ModelBase {
         this.model = this.prisma.channel;
     }
 
-    public async create( args: Prisma.channelCreateArgs ) {
-        args.include = {
-            data: true
-        };
-
-        args.data.data = { create: {} };
-
+    public async create( args: Prisma.ChannelCreateArgs ) {
         this.logger.info( this.create,
             `Creating channel '${ args.data.channelId }' for guild '${ args.data.guildId }'` );
 
@@ -44,22 +40,40 @@ export class ChannelModel extends ModelBase {
         return this.model.create( args );
     }
 
-    public async delete( guild: Guild, channelId?: string|null ) {
-        if ( await this.isExisting( guild, channelId ) ) {
-            const where: any = { guildId: guild.id };
+    public async createChannelData( args: IChannelDataCreateArgs ) {
+        const values = Array.isArray( args.value ) ? args.value : [ args.value ],
+            data = {
+                ownerId: args.id,
+                key: args.key,
+                values,
+            } as any;
 
-            if ( channelId ) {
-                this.logger.info( this.delete,
-                    `Deleting channel '${ channelId }' for guild '${ guild.name }'` );
-
-                where.channelId = channelId;
-            } else {
-                this.logger.info( this.delete,
-                    `Deleting all channels for guild '${ guild.name }'` );
-            }
-
-            return this.prisma.channel.deleteMany( { where } );
+        if ( args.type ){
+            data.type = args.type;
         }
+
+        return this.prisma.channelData.create( { data } );
+    }
+
+    public async delete( guild: Guild, channelId?: string|null ) {
+        if ( channelId ) {
+            this.logger.info( this.delete,
+                `Deleting channel '${ channelId }' for guild '${ guild.name }'` );
+
+            return this.model.delete( {
+                where: {
+                    channelId
+                },
+                include: {
+                    data: true
+                }
+            } );
+        }
+
+        this.logger.info( this.delete,
+            `Deleting all channels for guild '${ guild.name }'` );
+
+        return this.prisma.channel.deleteMany( { where: { guildId: guild.id } } );
     }
 
     public async get( guildId: string, channelId: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
@@ -77,22 +91,17 @@ export class ChannelModel extends ModelBase {
         return this.prisma.channel.findFirst( args );
     }
 
-    public async getMasterChannelDataByChannelId( channelId: string, internalType = E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) {
-        this.debugger.log( this.getMasterChannelDataByChannelId,
-            `Getting master channel data for channel '${ channelId }', internalType '${ internalType }'`
-        );
+    public async getChannelDataByChannelId( args: IChannelDataGetArgs ) {
+        this.debugger.log( this.getChannelDataByChannelId, "Getting master channel data for channel", args  );
 
-        const masterChannel = await this.prisma.channel.findFirstOrThrow( {
+        return this.prisma.channel.findUnique( {
             where: {
-                channelId,
-                internalType
+                channelId: args.masterChannelId,
             },
             include: {
-                data: true
+                data: { where: { key: args.key } },
             }
         } );
-
-        return masterChannel.data;
     }
 
     public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {

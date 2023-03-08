@@ -17,6 +17,7 @@ import ChannelModel from "@dynamico/models/channel";
 
 const masterChannelManager = MasterChannelManager.getInstance();
 
+// TODO: Extend common command class.
 export const Setup: ICommand = {
     name: "setup",
     description: "Setting up Dynamico",

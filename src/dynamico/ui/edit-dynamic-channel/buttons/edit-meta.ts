@@ -3,22 +3,22 @@ import {
     Interaction,
 } from "discord.js";
 
-import RenameChannelModalUI from "./modals/rename-channel-modal";
-import UserlimitChannelModalUI from "./modals/userlimit-channel-modal";
-
-import UIBase from "../base/ui-base";
+import RenameModal from "../modals/rename";
+import UserlimitModal from "../modals/userlimit";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import guiManager from "@dynamico/managers/gui";
 
+import UIBase from "@dynamico/ui/base/ui-base";
+
 import Logger from "@internal/modules/logger";
 
-export default class MangeChannelButtons extends UIBase {
+export default class EditMeta extends UIBase {
     private logger: Logger;
 
     public static getName() {
-        return "Dynamico/UI/EditChannel/ManageChannelButtons";
+        return "Dynamico/UI/EditDynamicChannel/Buttons/EditMeta";
     }
 
     public static getType() {
@@ -51,7 +51,7 @@ export default class MangeChannelButtons extends UIBase {
     private async renameChannel( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
             const component = guiManager
-                .get( RenameChannelModalUI.getName() );
+                .get( RenameModal.getName() );
 
             if ( component && component.getModal ) {
                 await interaction.showModal( component.getModal( interaction ) );
@@ -62,7 +62,7 @@ export default class MangeChannelButtons extends UIBase {
     private async limitChannel( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
             const component = guiManager
-                .get( UserlimitChannelModalUI.getName() );
+                .get( UserlimitModal.getName() );
 
             if ( component && component.getModal ) {
                 await interaction.showModal( component.getModal( interaction ) );

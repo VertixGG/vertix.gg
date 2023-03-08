@@ -51,7 +51,7 @@ export async function sendManageUsersComponent( interaction: Interaction, title:
         .setDescription( description );
 
     const message = guiManager
-        .get( "Dynamico/UI/EditChannel/ManageUsers" )
+        .get( "Dynamico/UI/EditUserPermissions" )
         .getMessage( interaction );
 
     await guiManager.continuesMessage(

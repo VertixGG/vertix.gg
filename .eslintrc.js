@@ -41,11 +41,13 @@ module.exports = {
 				"pathGroups": [
 					{
 						"pattern": "@internal/**",
-						"group": "unknown",
+						"group": "internal",
+						"position": "after",
 					},
 					{
 						"pattern": "@dynamico/**",
 						"group": "parent",
+						"position": "after",
 					}
 				],
 				"alphabetize": {
@@ -54,18 +56,18 @@ module.exports = {
 					"orderImportKind": "asc",
 				},
 				"groups": [
+					"builtin",
 					"external",
 					"index",
 					"sibling",
-					"builtin",
 					"parent",
-					"unknown",
 					"internal",
 					"object",
-					"type"
+					"type",
+					"unknown",
 				],
 				"newlines-between": "always-and-inside-groups",
-				"distinctGroup": true,
+				"distinctGroup": false,
 			}
 		],
 		"linebreak-style": [

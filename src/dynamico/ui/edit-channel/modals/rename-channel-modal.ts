@@ -1,7 +1,7 @@
+import process from "process";
+
 import { Routes } from "discord-api-types/v10";
 import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
-
-import process from "process";
 
 import MasterChannelManager from "../../../managers/master-channel";
 

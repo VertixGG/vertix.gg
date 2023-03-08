@@ -1,7 +1,7 @@
+import process from "process";
+
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import { ChannelType, Client } from "discord.js";
-
-import process from "process";
 
 import { Commands } from "@dynamico/interactions/commands";
 import CategoryManager from "@dynamico/managers/category";

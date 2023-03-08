@@ -1,3 +1,5 @@
+import * as process from "process";
+
 import {
     ButtonInteraction,
     ChannelType,
@@ -11,15 +13,14 @@ import {
     UserSelectMenuInteraction
 } from "discord.js";
 
-import * as process from "process";
-
 import { Commands } from "../interactions/commands";
-import guiManager from "../managers/gui";
 
 import GlobalLogger from "@dynamico/global-logger";
+
 import {
     ChannelManager,
-    MasterChannelManager
+    MasterChannelManager,
+    guiManager,
 } from "@dynamico/managers";
 
 const globalLogger = GlobalLogger.getInstance();

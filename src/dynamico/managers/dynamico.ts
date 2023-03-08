@@ -46,7 +46,7 @@ export class DynamicoManager extends InitializeBase {
 
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
-        await this.removeEmptyData();
+        await this.removeEmptyChannelData();
 
         this.logger.log( this.onReady,
             `Ready handle is set, Bot '${ client.user.username }' is online, commands is set.` );
@@ -116,28 +116,27 @@ export class DynamicoManager extends InitializeBase {
         }
     }
 
-    public async removeEmptyData() {
-        // Select all data collection entities.
+    public async removeEmptyChannelData() {
+        // Get all dynamic channels.
         const prisma = await PrismaInstance.getClient(),
-            data = await prisma.data.findMany();
+            channelData = await prisma.channelData.findMany();
 
-        // Remove all data entities which are not connected to any channel.
-        for ( const dataEntity of data ) {
-            const channel = await prisma.channel.findUnique( {
+        for ( const data of channelData ) {
+            const channel = await prisma.channel.findFirst( {
                 where: {
-                    dataId: dataEntity.id
+                    id: data.id
                 }
             } );
 
             if ( ! channel ) {
-                await prisma.data.delete( {
+                await prisma.channelData.delete( {
                     where: {
-                        id: dataEntity.id
+                        id: data.id
                     }
                 } );
 
-                this.logger.info( this.removeEmptyData,
-                    `Data '${ dataEntity.id }' is deleted from db.` );
+                this.logger.info( this.removeEmptyChannelData,
+                    `Channel data '${ data.id }' is deleted from db.` );
             }
         }
     }

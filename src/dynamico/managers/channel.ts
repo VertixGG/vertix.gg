@@ -1,4 +1,4 @@
-import { channel } from "@prisma/client";
+import { Channel } from "@prisma/client";
 
 import {
     ChannelType,
@@ -33,7 +33,7 @@ export class ChannelManager extends InitializeBase {
 
     private channelModel: ChannelModel;
 
-    private cache = new Map<string, channel | null>();
+    private cache = new Map<string, Channel | null>();
 
     private masterChannelManager: MasterChannelManager;
     

@@ -7,8 +7,7 @@ import ModelBase from "@internal/bases/model-base";
 export class GuildModel extends ModelBase {
     private static instance: GuildModel;
 
-    private model: Prisma.guildDelegate<Prisma.RejectPerOperation>;
-
+    private model: Prisma.GuildDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
         return "Dynamico/Models/Guild";

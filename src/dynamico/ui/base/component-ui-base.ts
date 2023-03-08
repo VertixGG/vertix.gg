@@ -1,6 +1,7 @@
 import {
     ActionRowBuilder,
-    BaseMessageOptions, EmbedBuilder,
+    BaseMessageOptions,
+    EmbedBuilder,
     Interaction,
     ModalBuilder,
     NonThreadGuildBasedChannel,

@@ -73,7 +73,7 @@ export class MasterChannelManager extends InitializeBase {
         // Create a new dynamic channel for the user.
         const channel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
             message = guiManager
-                .get( "Dynamico/UI/EditChannel" )
+                .get( "Dynamico/UI/EditDynamicChannel" )
                 .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
         message.content = "<@" + newState.member?.id + ">";
@@ -182,12 +182,16 @@ export class MasterChannelManager extends InitializeBase {
             message = "Getting";
         }
 
-        message += `channel data for channelId: '${ args.masterChannelId }', key: '${ args.key }' with values:\n`;
+        message += ` channel data for channelId: '${ args.masterChannelId }', type: '${ data.type }' key: '${ args.key }' with values:\n`;
 
-        this.debugger.log( this.getMasterCreateChannelData, message, data.values );
+        this.debugger.log( this.getMasterCreateChannelData, message, data.object || data.values );
 
         // Set cache.
         this.cache.set( cacheKey, data.values );
+
+        if ( data.type === "object" ) {
+            return data.object;
+        }
 
         return data.values;
     }
@@ -199,13 +203,15 @@ export class MasterChannelManager extends InitializeBase {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
             userOwnerId = newState.member?.id,
-            dynamicChanelNameTemplate = await this.getMasterCreateChannelData( {
+            data = await this.getMasterCreateChannelData( {
                 cache: true,
-                key: "new_dynamic_channel_name",
+                key: "settings",
                 masterChannelId: masterChannel.id,
-                default: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+                default: {
+                    dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+                },
             } ),
-            dynamicChannelName = dynamicChanelNameTemplate[ 0 ].replace(
+            dynamicChannelName = data.dynamicChannelNameTemplate.replace(
                 "%{userDisplayName}%",
                 displayName
             );

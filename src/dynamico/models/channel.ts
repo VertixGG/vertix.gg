@@ -41,15 +41,30 @@ export class ChannelModel extends ModelBase {
     }
 
     public async createChannelData( args: IChannelDataCreateArgs ) {
-        const values = Array.isArray( args.value ) ? args.value : [ args.value ],
-            data = {
-                ownerId: args.id,
-                key: args.key,
-                values,
-            } as any;
+        const data = {
+            ownerId: args.id,
+            key: args.key,
+        } as any;
 
-        if ( args.type ){
-            data.type = args.type;
+        if ( "string" === typeof args.value ) {
+            data.type = "string";
+        } else if ( Array.isArray( typeof args.value ) ) {
+            data.type = "array";
+        } else if ( "object" === typeof args.value ) {
+            data.type = "object";
+        }
+
+        switch ( data.type ) {
+            case "object":
+                data.values = [];
+                data.object = args.value;
+                break;
+            case "array":
+                data.values = args.value;
+                break;
+            default:
+            case "string":
+                data.values = [ args.value ];
         }
 
         return this.prisma.channelData.create( { data } );

@@ -16,9 +16,9 @@ import UIBase from "@dynamico/ui/base/ui-base";
 
 import { sendManageUsersComponent } from "@dynamico/temp-utils";
 
-export default class ManageUsersMenus extends UIBase {
+export default class UsersMenus extends UIBase {
     public static getName() {
-        return "Dynamico/UI/EditChannel/MangeUsersMenus";
+        return "Dynamico/UI/EditUserPermissions/UsersMenus";
     }
 
     public static getType() {

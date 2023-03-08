@@ -12,9 +12,9 @@ import UIBase from "@dynamico/ui/base/ui-base";
 
 import guiManager from "@dynamico/managers/gui";
 
-export default class ManageUsersButtons extends UIBase {
+export default class EditPermissions extends UIBase {
     public static getName() {
-        return "Dynamico/UI/EditChannel/ManageUsersButtons";
+        return "Dynamico/UI/EditDynamicChannel/Buttons/EditPermissions";
     }
 
     public static getType() {

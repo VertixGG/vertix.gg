@@ -90,7 +90,7 @@ export class DynamicoManager extends InitializeBase {
         }
     }
 
-    async removeEmptyCategories( client: Client ) {
+    public async removeEmptyCategories( client: Client ) {
         // Get all dynamic channels.
         const prisma = await PrismaInstance.getClient(),
             categories = await prisma.category.findMany();
@@ -116,7 +116,7 @@ export class DynamicoManager extends InitializeBase {
         }
     }
 
-    async removeEmptyData() {
+    public async removeEmptyData() {
         // Select all data collection entities.
         const prisma = await PrismaInstance.getClient(),
             data = await prisma.data.findMany();

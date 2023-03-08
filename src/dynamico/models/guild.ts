@@ -9,6 +9,7 @@ export class GuildModel extends ModelBase {
 
     private model: Prisma.guildDelegate<Prisma.RejectPerOperation>;
 
+
     public static getName(): string {
         return "Dynamico/Models/Guild";
     }
@@ -28,13 +29,15 @@ export class GuildModel extends ModelBase {
     }
 
     public async create( guild: Guild ) {
-        return this.prisma.guild.create( {
-            data: {
-                guildId: guild.id,
-                name: guild.name,
-                isInGuild: true,
-            }
-        } );
+        const data = {
+            guildId: guild.id,
+            name: guild.name,
+            isInGuild: true,
+        };
+
+        this.debugger.dumpDown( this.create, data );
+
+        return this.prisma.guild.create( { data } );
     }
 
     public async update( guild: Guild, isInGuild: boolean ) {

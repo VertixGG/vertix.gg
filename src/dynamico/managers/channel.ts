@@ -18,7 +18,10 @@ import {
 } from "../interfaces/channel";
 
 import guiManager from "@dynamico/managers/gui";
+
 import ChannelModel from "@dynamico/models/channel";
+
+import Debugger from "@dynamico/utils/debugger";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -33,6 +36,8 @@ export class ChannelManager extends InitializeBase {
     private cache = new Map<string, channel | null>();
 
     private masterChannelManager: MasterChannelManager;
+    
+    private debugger: Debugger;
 
     public static getInstance(): ChannelManager {
         if ( ! ChannelManager.instance ) {
@@ -52,6 +57,8 @@ export class ChannelManager extends InitializeBase {
         this.channelModel = ChannelModel.getInstance();
 
         this.masterChannelManager = MasterChannelManager.getInstance();
+
+        this.debugger = new Debugger( this );
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {
@@ -127,13 +134,15 @@ export class ChannelManager extends InitializeBase {
     }
 
     public async onChannelDelete( channel: DMChannel | NonThreadGuildBasedChannel ) {
+        this.logger.info( this.onChannelDelete, `Channel '${ channel.id }' was deleted.` );
+
         switch ( channel.type ) {
             case ChannelType.GuildVoice:
             case ChannelType.GuildText:
                 const channelId = channel.id,
                     guildId = channel.guildId;
 
-                this.logger.info( this.onChannelDelete,
+                this.debugger.log( this.onChannelDelete,
                     `Channel '${ channelId }' was deleted from '${ guildId }'.` );
 
                 if ( await this.channelModel.isMasterCreate( channelId, guildId ) ) {
@@ -162,44 +171,26 @@ export class ChannelManager extends InitializeBase {
             `Channel '${ oldChannel.id }' permissions were updated.` );
 
         // Print debug new permissions.
-        // TODO: Utils.debugPermissions()
-        this.logger.debug( this.onVoiceChannelUpdatePermissions,
-            `New permissions for channel '${ oldChannel.id }':\n` +
-            `${ JSON.stringify( newChannel.permissionOverwrites.cache.map( ( permission ) => {
-                return {
-                    id: permission.id,
-                    type: permission.type,
-                    allow: permission.allow.toArray(),
-                    deny: permission.deny.toArray()
-                };
-            } ) ) }` );
+        this.debugger.log( this.onVoiceChannelUpdatePermissions, `New permissions for channel '${ oldChannel.id }'` );
+        this.debugger.debugPermissions( this.onVoiceChannelUpdatePermissions, newChannel.permissionOverwrites );
 
-        let message = null;
+        const message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
 
-        // TODO: Try removing this.
-        try {
-            message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
-
-            if ( ! message ) {
-                this.logger.error( this.onVoiceChannelUpdatePermissions,
-                    `Failed to find message in channel '${ newChannel.id }'.` );
-                return;
-            }
-
-            const newMessage = guiManager
-                .get( "Dynamico/UI/EditChannel" )
-                .getMessage( newChannel );
-
-            await message.edit( newMessage );
-        } catch ( error ) {
+        if ( ! message ) {
             this.logger.error( this.onVoiceChannelUpdatePermissions,
-                `Failed to edit message in channel '${ newChannel.id }'.` );
-            this.logger.error( this.onVoiceChannelUpdatePermissions, "", error );
+                `Failed to find message in channel '${ newChannel.id }'.` );
+            return;
         }
+
+        const newMessage = guiManager
+            .get( "Dynamico/UI/EditChannel" )
+            .getMessage( newChannel );
+
+        await message.edit( newMessage );
     }
 
     public async getChannel( guildId: string, channelId: string, cache = false ) {
-        this.logger.debug( this.getChannel,
+        this.debugger.log( this.getChannel,
             `Getting channel '${ channelId }' from guild '${ guildId }', cache: '${ cache }'`
         );
 
@@ -210,7 +201,7 @@ export class ChannelManager extends InitializeBase {
             const result = this.cache.get( key );
 
             if ( result ) {
-                this.logger.debug( this.getChannel,
+                this.debugger.log( this.getChannel,
                     `Channel '${ channelId }' from guild '${ guildId }' was found in cache.`
                 );
                 return result;

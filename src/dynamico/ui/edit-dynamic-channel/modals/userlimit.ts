@@ -5,18 +5,19 @@ import {
 } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { GenericInputNumberUIModal } from "@dynamico/ui/generic/generic-input-number-ui-modal";
 
 import guiManager from "@dynamico/managers/gui";
+
+import { GenericInputNumberUIModal } from "@dynamico/ui/base/generic/generic-input-number-ui-modal";
 
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,
     MAX_USER_LIMIT_LENGTH = 2,
     MIN_USER_LIMIT_LENGTH = 1;
 
-export default class UserlimitChannelModalUI extends GenericInputNumberUIModal {
+export default class UserlimitModal extends GenericInputNumberUIModal {
     public static getName() {
-        return "Dynamico/UI/EditChannel/Modals/UserlimitChannelModal";
+        return "Dynamico/UI/EditDynamicChannel/Modal/Userlimit";
     }
 
     public static getType() {

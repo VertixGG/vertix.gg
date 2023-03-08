@@ -13,7 +13,7 @@ import {
     UserSelectMenuInteraction
 } from "discord.js";
 
-import { Commands } from "../interactions/commands";
+import { Commands } from "../commands";
 
 import GlobalLogger from "@dynamico/global-logger";
 

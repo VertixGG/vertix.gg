@@ -15,8 +15,8 @@ export default function Main() {
 
     logger.log( Main, "Bot is starting..." );
 
-    guiManager.register( require( "@dynamico/ui/edit-channel" ).default );
-    guiManager.register( require( "@dynamico/ui/edit-channel/mange-users-component" ).default );
+    guiManager.register( require( "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel" ).default );
+    guiManager.register( require( "@dynamico/ui/edit-users-permissions/edit-users-permissions" ).default );
 
     const client = new Client( {
         intents: [

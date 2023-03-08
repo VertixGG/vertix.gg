@@ -1,26 +1,27 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
+    EmbedBuilder,
     Interaction,
     ModalBuilder,
     NonThreadGuildBasedChannel,
 } from "discord.js";
 
-import {
-    E_UI_TYPES,
-    EmbedsType,
-    IComponentUIBase,
-} from "@dynamico/interfaces/ui";
+import { E_UI_TYPES, EmbedsType, IComponentUIBase, } from "@dynamico/interfaces/ui";
 
 import UIBase from "@dynamico/ui/base/ui-base";
+import UITemplate from "@dynamico/ui/base/ui-template";
 
 import ObjectBase from "@internal/bases/object-base";
 
 import { ForceMethodImplementation } from "@internal/errors";
 
+type InternalComponentsTypeOf = /*(typeof ComponentUIBase[])*/|typeof UIBase[];
+
+// TODO: Try abstract class.
 export default class ComponentUIBase extends ObjectBase implements IComponentUIBase {
-    protected static staticComponents: typeof UIBase[] = [];
-    protected static dynamicComponents: typeof UIBase[] = [];
+    protected static staticComponents: InternalComponentsTypeOf = [];
+    protected static dynamicComponents: InternalComponentsTypeOf = [];
 
     protected static embeds: EmbedsType = null;
 
@@ -68,14 +69,6 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         return null;
     }
 
-    public getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel  ): EmbedsType {
-        return null;
-    }
-
-    public getInternalComponents(): typeof UIBase[] {
-        throw new ForceMethodImplementation( this, this.getInternalComponents.name );
-    }
-
     public getActionRows( interaction?: Interaction | NonThreadGuildBasedChannel ): ActionRowBuilder<any>[] {
         const components: UIBase[] = [],
             staticThis = ( this.constructor as typeof ComponentUIBase );
@@ -114,7 +107,25 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
 
         const dynamicEmbeds = this.getDynamicEmbeds( interaction );
 
-        if ( dynamicEmbeds?.length ) {
+        if ( interaction && dynamicEmbeds instanceof UITemplate ) {
+            const template = dynamicEmbeds.compose( interaction );
+
+            switch ( template.type ) {
+                case "embed":
+                    const embed = new EmbedBuilder();
+
+                    embed.setTitle( template.title );
+                    embed.setDescription( template.description );
+
+                    result.embeds = [
+                        ... result.embeds || [],
+                        ... [ embed ],
+                    ];
+                    break;
+                default:
+                    throw new Error( "Not implemented." );
+            }
+        } else if ( Array.isArray( dynamicEmbeds ) && dynamicEmbeds?.length ) {
             result.embeds = [
                 ... result.embeds || [],
                 ... dynamicEmbeds,
@@ -125,4 +136,12 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
     }
 
     public getModal?( interaction?: Interaction ): ModalBuilder; // TODO: Delete.
+
+    protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsType {
+        return null;
+    }
+
+    protected getInternalComponents(): InternalComponentsTypeOf {
+        throw new ForceMethodImplementation( this, this.getInternalComponents.name );
+    }
 }

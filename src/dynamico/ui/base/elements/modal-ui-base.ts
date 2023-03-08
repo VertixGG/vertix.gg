@@ -21,7 +21,7 @@ export default abstract class ModalUIBase {
     private type: E_UI_TYPES = E_UI_TYPES.UNKNOWN;
 
     public static getName() {
-        return "Dynamico/UI/Elements/ModalUIBase";
+        return "Dynamico/UI/Base/Elements/Modal";
     }
 
     initialize() {

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import ObjectBase from "../bases/object-base";
+import { ObjectBase } from "../bases/object-base";
 
 const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
     DEFAULT_INFO_PREFIX = chalk.blue( "[INFO]"),
@@ -13,7 +13,7 @@ export type ICaller = Function | String;
 const registeredNames:any = {};
 
 export default class Logger extends ObjectBase {
-    private owner: ObjectBase;
+    private owner: ObjectBase | typeof ObjectBase;
 
     private messagePrefixes: string[] = [];
 
@@ -21,7 +21,7 @@ export default class Logger extends ObjectBase {
         return "Modules/Logger";
     }
 
-    public constructor( owner: ObjectBase ) {
+    public constructor( owner: ObjectBase | typeof ObjectBase ) {
         super();
 
         if ( registeredNames[ owner.getName() ] ) {

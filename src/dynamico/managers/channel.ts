@@ -1,9 +1,14 @@
+import { channel } from "@prisma/client";
+
 import {
     ChannelType,
     DMChannel,
     NonThreadGuildBasedChannel,
+    VoiceChannel,
     VoiceState
 } from "discord.js";
+
+import MasterChannelManager from "./master-channel";
 
 import {
     IChannelCreateArgs,
@@ -12,18 +17,20 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-import InitializeBase from "@internal/bases/initialize-base";
-
+import guiManager from "@dynamico/managers/gui";
 import ChannelModel from "@dynamico/models/channel";
 
-import MasterChannelManager from "./master-channel";
+import InitializeBase from "@internal/bases/initialize-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
 
-export default class ChannelManager extends InitializeBase {
+export class ChannelManager extends InitializeBase {
     private static instance: ChannelManager;
+
     private channelModel: ChannelModel;
+
+    private cache = new Map<string, channel | null>();
 
     private masterChannelManager: MasterChannelManager;
 
@@ -36,10 +43,10 @@ export default class ChannelManager extends InitializeBase {
     }
 
     public static getName(): string {
-        return "Discord/Managers/Channel";
+        return "Dynamico/Managers/Channel";
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.channelModel = ChannelModel.getInstance();
@@ -102,7 +109,7 @@ export default class ChannelManager extends InitializeBase {
         const { oldState, newState } = args;
 
         if ( newState.channelId && await this.channelModel.isMasterCreate( newState.channelId, newState.guild.id ) ) {
-            await this.masterChannelManager.onJoinMasterChannel( args );
+            await this.masterChannelManager.onJoinMasterCreateChannel( args );
         }
 
         // If the user switched channels.
@@ -139,26 +146,102 @@ export default class ChannelManager extends InitializeBase {
         return false;
     }
 
+    public async onChannelUpdate( oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel ) {
+        this.logger.info( this.onChannelUpdate, `Channel '${ oldChannel.id }' was updated.` );
+
+        if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
+            // If permissions were updated.
+            if ( ( oldChannel as VoiceChannel ).permissionOverwrites !== ( newChannel as VoiceChannel ).permissionOverwrites ) {
+                await this.onVoiceChannelUpdatePermissions( oldChannel as VoiceChannel, newChannel as VoiceChannel );
+            }
+        }
+    }
+
+    public async onVoiceChannelUpdatePermissions( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
+        this.logger.info( this.onVoiceChannelUpdatePermissions,
+            `Channel '${ oldChannel.id }' permissions were updated.` );
+
+        // Print debug new permissions.
+        // TODO: Utils.debugPermissions()
+        this.logger.debug( this.onVoiceChannelUpdatePermissions,
+            `New permissions for channel '${ oldChannel.id }':\n` +
+            `${ JSON.stringify( newChannel.permissionOverwrites.cache.map( ( permission ) => {
+                return {
+                    id: permission.id,
+                    type: permission.type,
+                    allow: permission.allow.toArray(),
+                    deny: permission.deny.toArray()
+                };
+            } ) ) }` );
+
+        let message = null;
+
+        // TODO: Try removing this.
+        try {
+            message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
+
+            if ( ! message ) {
+                this.logger.error( this.onVoiceChannelUpdatePermissions,
+                    `Failed to find message in channel '${ newChannel.id }'.` );
+                return;
+            }
+
+            const newMessage = guiManager
+                .get( "Dynamico/UI/EditChannel" )
+                .getMessage( newChannel );
+
+            await message.edit( newMessage );
+        } catch ( error ) {
+            this.logger.error( this.onVoiceChannelUpdatePermissions,
+                `Failed to edit message in channel '${ newChannel.id }'.` );
+            this.logger.error( this.onVoiceChannelUpdatePermissions, "", error );
+        }
+    }
+
+    public async getChannel( guildId: string, channelId: string, cache = false ) {
+        this.logger.debug( this.getChannel,
+            `Getting channel '${ channelId }' from guild '${ guildId }', cache: '${ cache }'`
+        );
+
+        const key = guildId + channelId;
+
+        // If in cache, return it.
+        if ( cache ) {
+            const result = this.cache.get( key );
+
+            if ( result ) {
+                this.logger.debug( this.getChannel,
+                    `Channel '${ channelId }' from guild '${ guildId }' was found in cache.`
+                );
+                return result;
+            }
+        }
+
+        const result = await this.channelModel.get( guildId, channelId );
+
+        // Set cache.
+        this.cache.set( key, result );
+
+        return result;
+    }
+
     /**
      * Function create() :: Creates a new channel for a guild.
      */
     public async create( args: IChannelCreateArgs ) {
-        const { name, guild, ownerId = false, internalType = false } = args;
-
-        if ( ! internalType ) {
-            throw new Error( "Internal type is required to create a channel." );
-        }
+        const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
         this.logger.info( this.create,
             `Creating channel for guild '${ guild.name }' with the following properties: ` +
-                    `With name: '${ name }', ownerId: '${ ownerId }', internalType: '${ internalType }'`
+            `With name: '${ name }', ownerId: '${ userOwnerId }', internalType: '${ internalType }' ` +
+            `ownerChannelId: '${ args.ownerChannelId }'`
         );
 
         const channel = await guild.channels.create( args ),
             // Data to be inserted into the database.
-            data:any = {
-                name,
+            data: any = {
                 internalType,
+                userOwnerId,
                 channelId: channel.id,
                 guildId: guild.id,
                 createdAtDiscord: channel.createdTimestamp,
@@ -168,8 +251,8 @@ export default class ChannelManager extends InitializeBase {
             data.categoryId = channel.parentId;
         }
 
-        if ( ownerId ) {
-            data.ownerId = args.ownerId;
+        if ( ownerChannelId ) {
+            data.ownerChannelId = ownerChannelId;
         }
 
         await this.channelModel.create( { data } );
@@ -178,13 +261,15 @@ export default class ChannelManager extends InitializeBase {
     }
 
     public async delete( args: IChannelDeleteArgs ) {
-        const { channel, guild, channelName } = args;
+        const { channel, guild } = args;
 
         this.logger.info( this.delete,
-            `Deleting channel '${ channelName }' for guild '${ guild.name }'` );
+            `Deleting channel '${ channel.name }' for guild '${ guild.name }'` );
 
         await this.channelModel.delete( guild, channel.id );
 
         await channel.delete();
     }
 }
+
+export default ChannelManager;

@@ -1,14 +1,22 @@
+import * as process from "process";
+
+import chalk from "chalk";
+
 import { Client } from "discord.js";
 
-import GlobalLogger from "./global-logger";
+import * as handlers from "./listeners/";
 
-import * as handlers from "./listeners";
-import * as process from "process";
+import { guiManager } from "./managers/";
+
+import GlobalLogger from "./global-logger";
 
 export default function Main() {
     const logger = GlobalLogger.getInstance();
 
     logger.log( Main, "Bot is starting..." );
+
+    guiManager.register( require( "@dynamico/ui/edit-channel" ).default );
+    guiManager.register( require( "@dynamico/ui/edit-channel/mange-users-component" ).default );
 
     const client = new Client( {
         intents: [
@@ -22,12 +30,24 @@ export default function Main() {
     // DiscordJS Debug mode.
     if ( process.env.debug_mode === "discord" ) {
         const debug = ( ... args: any[] ) => {
-            logger.debug( 'API', args.toString() );
+            logger.debug( chalk.red( "API" ) , args.toString() );
         };
 
         client
             .on( "debug", debug )
-            .on( "warn", debug );
+            .on( "warn", debug )
+            .on( "error", debug )
+            .on( "shardError", debug );
+
+        client.rest
+            .on( "restDebug", debug )
+            .on( "handlerSweep", debug )
+            .on( "hashSweep", debug )
+            .on( "invalidRequestWarning", debug )
+            .on( "newListener", debug )
+            .on( "rateLimited", debug )
+            .on( "removeListener", debug )
+            .on( "response", debug );
     }
 
     async function onLogin() {

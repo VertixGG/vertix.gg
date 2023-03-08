@@ -7,13 +7,12 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import { ButtonStyle } from "discord.js/typings";
+import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
 
 import { ICommand } from "@dynamico/interfaces/command";
 
-import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
-
 import MasterChannelManager from "@dynamico/managers/master-channel";
+
 import ChannelModel from "@dynamico/models/channel";
 
 const masterChannelManager = MasterChannelManager.getInstance();
@@ -35,11 +34,16 @@ export const Setup: ICommand = {
                 .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
                 .setColor( Colors.Red );
         } else if ( interaction.guild ){
-            const result = await masterChannelManager.createCreateChannel( { guild: interaction.guild } );
+            const { masterCategory, masterCreateChannel }
+                = await masterChannelManager.createDefaultMasters( interaction.guild, interaction.user.id );
+
+            let description = `**Category**: ${ masterCategory.name }\n`;
+
+            description += `**Create Channel**: <#${ masterCreateChannel.id }>\n`;
 
             embed
                 .setTitle( "Dynamico has been set up successfully !" )
-                .setDescription( `**Category**: ${ result.parent?.name }\n**Master Channel**: <#${ result.id }>` )
+                .setDescription( description )
                 .setColor( Colors.Blue );
         } else {
             embed

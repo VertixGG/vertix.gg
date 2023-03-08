@@ -1,11 +1,11 @@
-import Logger from "@internal/modules/logger";
 import ObjectBase from "@internal/bases/object-base";
+import Logger from "@internal/modules/logger";
 
 export default class GlobalLogger extends ObjectBase {
     private static instance: Logger;
 
     public static getName() {
-        return "Discord/GlobalLogger";
+        return "Dynamico/GlobalLogger";
     }
 
     public static getInstance() {

@@ -1,15 +1,16 @@
+import { Guild } from "discord.js";
+
 import { Prisma } from "@prisma/client";
 
 import ModelBase from "@internal/bases/model-base";
-import { Guild } from "discord.js";
 
-export default class GuildModel extends ModelBase {
+export class GuildModel extends ModelBase {
     private static instance: GuildModel;
 
     private model: Prisma.guildDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
-        return "Discord/Models/Guild";
+        return "Dynamico/Models/Guild";
     }
 
     public static getInstance(): GuildModel {
@@ -20,7 +21,7 @@ export default class GuildModel extends ModelBase {
         return GuildModel.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.model = this.prisma.guild;
@@ -61,3 +62,5 @@ export default class GuildModel extends ModelBase {
         } );
     }
 }
+
+export default GuildModel;

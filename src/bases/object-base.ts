@@ -1,6 +1,6 @@
 import { ForceMethodBase } from "../errors/force-method-implementation";
 
-export default abstract class ObjectBase {
+export abstract class ObjectBase {
     protected name: string;
 
     constructor() {
@@ -15,3 +15,5 @@ export default abstract class ObjectBase {
         return ( this.constructor as typeof ObjectBase ).getName();
     }
 }
+
+export default ObjectBase;

@@ -1,12 +1,12 @@
 import { Client, Guild } from "discord.js";
 
-import InitializeBase from "@internal/bases/initialize-base";
-
 import MasterChannelManager from "./master-channel";
 
 import GuildModel from "../models/guild";
 
-export default class GuildManager extends InitializeBase {
+import InitializeBase from "@internal/bases/initialize-base";
+
+export class GuildManager extends InitializeBase {
     private static instance: GuildManager;
 
     private guildModel: GuildModel;
@@ -14,7 +14,7 @@ export default class GuildManager extends InitializeBase {
     private masterChannelManager: MasterChannelManager;
 
     public static getName(): string {
-        return "Discord/Managers/Guild";
+        return "Dynamico/Managers/Guild";
     }
 
     public static getInstance(): GuildManager {
@@ -34,7 +34,7 @@ export default class GuildManager extends InitializeBase {
     }
 
     public async onJoin( client: Client, guild: Guild ) {
-        this.logger.info(  this.onJoin, `Dynamico Joined guild '${ guild.name }'` );
+        this.logger.info( this.onJoin, `Dynamico Joined guild '${ guild.name }'` );
 
         // Determine if the guild is already in the database.
         if ( await this.guildModel.isExisting( guild ) ) {
@@ -44,7 +44,9 @@ export default class GuildManager extends InitializeBase {
             await this.guildModel.create( guild );
         }
 
-        return this.masterChannelManager.createCreateChannel( { guild } );
+        const owner = await client.users.fetch( guild.ownerId );
+
+        return this.masterChannelManager.createDefaultMasters( guild, owner.id );
     }
 
     public async onLeave( client: Client, guild: Guild ) {
@@ -57,3 +59,5 @@ export default class GuildManager extends InitializeBase {
         await this.masterChannelManager.removeLeftOvers( guild );
     }
 }
+
+export default GuildManager;

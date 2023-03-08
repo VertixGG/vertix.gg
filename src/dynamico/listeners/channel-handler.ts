@@ -1,6 +1,7 @@
 import { ChannelType, Client, Events } from "discord.js";
 
 import ChannelManager from "../managers/channel";
+
 import CategoryManager from "@dynamico/managers/category";
 
 export function channelHandler( client: Client ) {
@@ -29,5 +30,9 @@ export function channelHandler( client: Client ) {
             await CategoryManager.getInstance().onDelete( channel );
             return;
         }
+    } );
+
+    client.on( Events.ChannelUpdate, async ( oldChannel, newChannel ) => {
+        await ChannelManager.getInstance().onChannelUpdate( oldChannel, newChannel );
     } );
 }

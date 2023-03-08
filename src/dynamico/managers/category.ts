@@ -2,17 +2,17 @@ import { CategoryChannel, ChannelType } from "discord.js";
 
 import { ICategoryCreateArgs } from "../interfaces/category";
 
-import InitializeBase from "@internal/bases/initialize-base";
-
 import CategoryModel from "@dynamico/models/category";
 
-export default class CategoryManager extends InitializeBase {
+import InitializeBase from "@internal/bases/initialize-base";
+
+export class CategoryManager extends InitializeBase {
     private static instance: CategoryManager;
 
     private categoryModel: CategoryModel;
 
     public static getName(): string {
-        return "Discord/Managers/Category";
+        return "Dynamico/Managers/Category";
     }
 
     public static getInstance(): CategoryManager {
@@ -23,7 +23,7 @@ export default class CategoryManager extends InitializeBase {
         return CategoryManager.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.categoryModel = CategoryModel.getInstance();
@@ -39,7 +39,7 @@ export default class CategoryManager extends InitializeBase {
         await this.categoryModel.delete( guild.id, category.id );
     }
 
-    public async create( args: ICategoryCreateArgs ): Promise<CategoryChannel> {
+    public async create( args: ICategoryCreateArgs ) {
         const { name, guild } = args;
 
         this.logger.info( this.create,
@@ -52,13 +52,28 @@ export default class CategoryManager extends InitializeBase {
         } );
 
         // Add the channel to the database.
-        await this.categoryModel.create( {
+        await this.categoryModel.create( { data: {
             categoryId: category.id,
             guildId: guild.id,
             name,
             createdAtDiscord: category.createdTimestamp,
-        } );
+        } } );
 
         return category;
     }
+
+    public async delete( category: CategoryChannel ) {
+        const { guild, name } = category;
+
+        this.logger.info( this.create,
+            `Deleting category for guild '${ guild.name }' with name '${ name }'` );
+
+        // Delete the channel from the database.
+        await this.categoryModel.delete( guild.id, category.id );
+
+        // Delete the channel from discord.
+        await category.delete();
+    }
 }
+
+export default CategoryManager;

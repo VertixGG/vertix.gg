@@ -2,20 +2,13 @@ import { Prisma } from "@prisma/client";
 
 import ModelBase from "@internal/bases/model-base";
 
-interface ICreateData {
-    categoryId: string;
-    guildId: string;
-    name: string;
-    createdAtDiscord: number;
-}
-
-export default class CategoryModel extends ModelBase {
+export class CategoryModel extends ModelBase {
     private static instance: CategoryModel;
 
     private model: Prisma.categoryDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
-        return "Discord/Models/Category";
+        return "Dynamico/Models/Category";
     }
 
     public static getInstance(): CategoryModel {
@@ -26,14 +19,14 @@ export default class CategoryModel extends ModelBase {
         return CategoryModel.instance;
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.model = this.prisma.category;
     }
 
-    public async create( data: ICreateData ) {
-        return this.model.create( { data } );
+    public async create( args: Prisma.categoryCreateArgs ) {
+        return this.model.create( args );
     }
 
     public async delete( guildId: string, guildCategoryId?: string | null ) {
@@ -45,8 +38,6 @@ export default class CategoryModel extends ModelBase {
 
         return this.model.deleteMany( { where } );
     }
-
-    public async isExisting( guildId: string ) {
-        return !! await this.model.findFirst( { where: { guildId } } );
-    }
 }
+
+export default CategoryModel;

@@ -3,7 +3,7 @@ import { ForceMethodBase } from "../errors/force-method-implementation";
 export abstract class ObjectBase {
     protected name: string;
 
-    protected constructor() {
+    public constructor() {
         this.name = this.getName();
     }
 

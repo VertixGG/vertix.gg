@@ -2,7 +2,7 @@ import {
     Interaction,
     NonThreadGuildBasedChannel,
     PermissionsBitField,
-    VoiceChannel
+    VoiceChannel,
 } from "discord.js";
 
 import UITemplate from "@dynamico/ui/base/ui-template";

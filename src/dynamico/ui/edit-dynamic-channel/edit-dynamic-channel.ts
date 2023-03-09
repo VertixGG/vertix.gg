@@ -29,7 +29,7 @@ export class EditDynamicChannel extends ComponentUIBase {
     }
 
     protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsType {
-        return new Primary;
+        return [ new Primary ];
     }
 
     protected getInternalComponents() {

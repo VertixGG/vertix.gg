@@ -44,7 +44,7 @@ export class ChannelDataManager extends InitializeBase {
             const cached = this.cache.get( cacheKey );
 
             if ( cached ) {
-                this.debugger.log( this.getData, "Getting cached data", cached );
+                this.debugger.log( this.getData, `Getting cached data from key: ${ cacheKey }`, cached );
                 return cached;
             }
         }
@@ -80,13 +80,13 @@ export class ChannelDataManager extends InitializeBase {
         this.debugger.log( this.getData, message, data.object || data.values );
 
         // Set cache.
-        this.cache.set( cacheKey, data.values );
+        this.cache.set( cacheKey, data );
 
         if ( data.type === "object" ) {
-            return data.object;
+            return data;
         }
 
-        return data.values;
+        return data;
     }
 
     public removeFromCache( channelId: string ) {

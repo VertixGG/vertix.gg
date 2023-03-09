@@ -82,6 +82,14 @@ module.exports = {
 			"error",
 			"always"
 		],
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^",
+				"varsIgnorePattern": "^import\\s+.+;$",
+			}
+		],
 		"no-trailing-spaces": [ "error" ],
 		"no-multiple-empty-lines": [
 			"error",

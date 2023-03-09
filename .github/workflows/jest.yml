@@ -1,12 +1,6 @@
-permissions:
-  # All other permissions are set to none
-  checks: write
-  contents: read
-  pull-requests: write
+name: Jest
 
-name: Lint
-
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -15,8 +9,8 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-22.04
-    name: Lint - File Diff
+    runs-on: ubuntu-20.04
+    name: File Diff
     outputs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
@@ -30,25 +24,24 @@ jobs:
             **/*.+(js|ts|json|jsx|tsx)
             package*.json
             .github/**/*.yml
-
-  JS-Lint:
-    runs-on: ubuntu-22.04
+  jest:
+    runs-on: ubuntu-20.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff }}
+    name: Test
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: 18.x
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -62,5 +55,5 @@ jobs:
           else
           npm i
           fi
-      - name: Run Lint
-        run: ./node_modules/eslint/bin/eslint.js .
+      - name: "Run Jest"
+        run: yarn test

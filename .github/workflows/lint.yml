@@ -1,3 +1,9 @@
+permissions:
+  # All other permissions are set to none
+  checks: write
+  contents: read
+  pull-requests: write
+
 name: Lint
 
 on: [push, pull_request]

@@ -64,6 +64,8 @@ model ChannelData {
   // ---
   key       String
   type      String   @default("default")
+  // ---
+  object    Json?
   values    String[]
   // ---
   ownerId   String   @unique @db.ObjectId

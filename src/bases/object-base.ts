@@ -3,15 +3,15 @@ import { ForceMethodBase } from "../errors/force-method-implementation";
 export abstract class ObjectBase {
     protected name: string;
 
-    constructor() {
+    protected constructor() {
         this.name = this.getName();
     }
 
-    static getName(): string {
-        throw new ForceMethodBase( "ObjectBase", "getName" );
+    public static getName(): string {
+        throw new ForceMethodBase( this.name, "getName" );
     }
 
-    getName(): string {
+    public getName(): string {
         return ( this.constructor as typeof ObjectBase ).getName();
     }
 }

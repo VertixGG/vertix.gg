@@ -31,7 +31,7 @@ export async function sendManageUsersComponent( interaction: Interaction, title:
         if ( role.type !== OverwriteType.Member ) {
             continue;
         }
-        
+
         // Show only users that are not in the master channel permission overwrites.
         if ( masterChannelCache?.type === ChannelType.GuildVoice &&
             masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {

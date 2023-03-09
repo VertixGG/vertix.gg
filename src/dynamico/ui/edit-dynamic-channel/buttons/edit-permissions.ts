@@ -67,7 +67,7 @@ export default class EditPermissions extends UIBase {
 
             // TODO: Can be static.
             const embed = guiManager.createEmbed( "🌐 Your channel is public now!" );
-            
+
             embed.setColor(0x1E90FF);
 
             await guiManager.continuesMessage( interaction, false, [ embed ] );

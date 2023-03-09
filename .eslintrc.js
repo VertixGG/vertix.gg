@@ -82,6 +82,7 @@ module.exports = {
 			"error",
 			"always"
 		],
+		"no-trailing-spaces": [ "error" ],
 		"no-multiple-empty-lines": [
 			"error",
 			{

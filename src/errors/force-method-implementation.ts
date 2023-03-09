@@ -17,3 +17,4 @@ export class ForceMethodImplementation extends Error {
 }
 
 export default ForceMethodImplementation;
+

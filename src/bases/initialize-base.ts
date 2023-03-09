@@ -5,7 +5,7 @@ import Logger from "../modules/logger";
 export abstract class InitializeBase extends ObjectBase {
     protected logger: Logger;
 
-    constructor() {
+    protected constructor() {
         super();
 
         this.logger = new Logger( this );

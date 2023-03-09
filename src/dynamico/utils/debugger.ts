@@ -26,7 +26,7 @@ export class Debugger extends ObjectBase {
 
     public log( source: Function, message: string, ... args: any[] ) {
         if ( args && args.length > 0 ) {
-            return this.logger.debug( source, message, args );
+            return this.logger.debug( source, message, ... args );
         }
 
         this.logger.debug( source, message );

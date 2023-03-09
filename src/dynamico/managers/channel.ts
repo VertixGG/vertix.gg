@@ -182,7 +182,7 @@ export class ChannelManager extends InitializeBase {
             return;
         }
 
-        const newMessage = guiManager
+        const newMessage = await guiManager
             .get( "Dynamico/UI/EditDynamicChannel" )
             .getMessage( newChannel );
 

@@ -39,7 +39,7 @@ export default class UsersMenus extends UIBase {
         const members: { label: string; value: string; }[] = [];
 
         const masterChannel = MasterChannelManager.getInstance().getByDynamicChannelSync( interaction ),
-            masterChannelCache = interaction.client.channels.cache.get( masterChannel.id );
+            masterChannelCache = interaction.client.channels.cache.get( masterChannel?.id );
 
         // Add all users in channel to grant menu.
         if ( interaction.channel && ChannelType.GuildVoice === interaction.channel.type ) {

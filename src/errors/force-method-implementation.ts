@@ -1,7 +1,7 @@
 import ObjectBase from "../bases/object-base";
 
 export class ForceMethodBase extends Error {
-    constructor( className: string, methodName: string ) {
+    public constructor( className: string, methodName: string ) {
         super(
             `ForeMethod implementation: at '${ className }' method: '${ methodName }'`
         );
@@ -9,7 +9,7 @@ export class ForceMethodBase extends Error {
 }
 
 export class ForceMethodImplementation extends Error {
-    constructor( context: ObjectBase | typeof ObjectBase, methodName: string ) {
+    public constructor( context: ObjectBase | typeof ObjectBase, methodName: string ) {
         super(
             `ForeMethod implementation: at '${ context.getName() }' method: '${ methodName }'`
         );
@@ -17,3 +17,4 @@ export class ForceMethodImplementation extends Error {
 }
 
 export default ForceMethodImplementation;
+

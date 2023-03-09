@@ -24,7 +24,8 @@ export default abstract class ModalUIBase {
         return "Dynamico/UI/Base/Elements/Modal";
     }
 
-    initialize() {
+    // TODO: Determine the right visibility for this method.
+    public initialize() {
         this.type = ( this.constructor as typeof UIBase ).getType();
 
         if ( this.type === E_UI_TYPES.STATIC ) {

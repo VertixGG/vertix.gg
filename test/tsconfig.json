@@ -1,0 +1,22 @@
+{
+	"extends": "../tsconfig.json",
+	"include": [
+		"**/*.spec.ts",
+	],
+	"ts-node": {
+		"moduleTypes": {
+			"jest.config.ts": "cjs"
+		}
+	},
+	"compilerOptions": {
+		"module": "es2020",
+		"target": "es2020",
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+		"paths": {
+			"@internal/*": ["../src/*"],
+			"@dynamico/*": ["../src/dynamico/*"],
+		}
+	}
+}

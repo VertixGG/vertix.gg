@@ -7,7 +7,7 @@ import {
     NonThreadGuildBasedChannel,
 } from "discord.js";
 
-import { E_UI_TYPES, EmbedsType, IComponentUIBase, } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES, EmbedsType, } from "@dynamico/interfaces/ui";
 
 import UIBase from "@dynamico/ui/base/ui-base";
 import UITemplate from "@dynamico/ui/base/ui-template";
@@ -19,7 +19,7 @@ import { ForceMethodImplementation } from "@internal/errors";
 type InternalComponentsTypeOf = /*(typeof ComponentUIBase[])*/|typeof UIBase[];
 
 // TODO: Try abstract class.
-export default class ComponentUIBase extends ObjectBase implements IComponentUIBase {
+export default class ComponentUIBase extends ObjectBase {
     protected static staticComponents: InternalComponentsTypeOf = [];
     protected static dynamicComponents: InternalComponentsTypeOf = [];
 
@@ -36,7 +36,7 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
     }
 
     public storeStaticComponents() {
-        const embeds = this.getEmbeds(),
+        const embeds = this.getStaticEmbeds(),
             components = this.getInternalComponents();
 
         if ( ! embeds && ! components ) {
@@ -63,10 +63,6 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         if ( embeds ) {
             staticThis.embeds = embeds;
         }
-    }
-
-    public getEmbeds(): EmbedsType {
-        return null;
     }
 
     public getActionRows( interaction?: Interaction | NonThreadGuildBasedChannel ): ActionRowBuilder<any>[] {
@@ -96,46 +92,56 @@ export default class ComponentUIBase extends ObjectBase implements IComponentUIB
         return builtComponents;
     }
 
-    public getMessage( interaction?: Interaction | NonThreadGuildBasedChannel ): BaseMessageOptions {
-        const builtComponents = this.getActionRows( interaction ),
-            staticThis = ( this.constructor as typeof ComponentUIBase ),
-            result: any = { components: builtComponents };
+    public async getEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): Promise<EmbedsType> {
+        const staticThis = ( this.constructor as typeof ComponentUIBase );
+
+        let result: any = [];
 
         if ( staticThis.embeds ) {
-            result.embeds = staticThis.embeds;
+            result = result.push( ... staticThis.embeds );
         }
 
-        const dynamicEmbeds = this.getDynamicEmbeds( interaction );
+        const dynamicEmbeds = this.getDynamicEmbeds( interaction ),
+            isUITemplates = dynamicEmbeds?.length ? dynamicEmbeds[0] instanceof UITemplate : false;
 
-        if ( interaction && dynamicEmbeds instanceof UITemplate ) {
-            const template = dynamicEmbeds.compose( interaction );
+        // TODO UIEmbedTemplate + Validate.
+        if ( interaction && isUITemplates ) {
+            for ( const uiTemplateObject of dynamicEmbeds as UITemplate[] ) {
+                const template = await uiTemplateObject.compose( interaction ),
+                    embed = new EmbedBuilder();
 
-            switch ( template.type ) {
-                case "embed":
-                    const embed = new EmbedBuilder();
-
+                if ( template.title ) {
                     embed.setTitle( template.title );
-                    embed.setDescription( template.description );
+                }
 
-                    result.embeds = [
-                        ... result.embeds || [],
-                        ... [ embed ],
-                    ];
-                    break;
-                default:
-                    throw new Error( "Not implemented." );
+                embed.setDescription( template.description );
+
+                result.push( embed );
             }
         } else if ( Array.isArray( dynamicEmbeds ) && dynamicEmbeds?.length ) {
-            result.embeds = [
-                ... result.embeds || [],
-                ... dynamicEmbeds,
-            ];
+            result.push( ... dynamicEmbeds );
+        }
+
+        return result;
+    }
+
+    public async getMessage( interaction?: Interaction | NonThreadGuildBasedChannel ): Promise<BaseMessageOptions> {
+        const builtComponents = this.getActionRows( interaction ),
+            result: any = { components: builtComponents },
+            embeds = await this.getEmbeds( interaction );
+
+        if ( embeds?.length ) {
+            result.embeds = embeds;
         }
 
         return result;
     }
 
     public getModal?( interaction?: Interaction ): ModalBuilder; // TODO: Delete.
+
+    protected getStaticEmbeds(): EmbedsType {
+        return null;
+    }
 
     protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsType {
         return null;

@@ -71,7 +71,7 @@ export class MasterChannelManager extends InitializeBase {
 
         // Create a new dynamic channel for the user.
         const channel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
-            message = guiManager
+            message = await guiManager
                 .get( "Dynamico/UI/EditDynamicChannel" )
                 .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 

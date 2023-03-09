@@ -88,4 +88,17 @@ export class ChannelDataManager extends InitializeBase {
 
         return data.values;
     }
+
+    public removeFromCache( channelId: string ) {
+        this.logger.info( this.removeFromCache,
+            `Removing channel data from cache for channelId: '${ channelId }'` );
+
+        for ( const [ key ] of this.cache.entries() ) {
+            if ( key.startsWith( channelId ) ) {
+                this.debugger.log( this.removeFromCache, `Removing cache key: '${ key }'` );
+
+                this.cache.delete( key );
+            }
+        }
+    }
 }

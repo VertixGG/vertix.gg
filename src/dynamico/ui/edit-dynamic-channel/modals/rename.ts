@@ -93,18 +93,20 @@ export default class RenameModal extends GenericInputUIModal {
         }
 
         const embed = new EmbedBuilder()
-            .setTitle( "You renamed your channel too fast!" )
+            .setTitle( "🙅 You renamed your channel too fast!" )
             .setDescription(
-                `Please wait ${ retryAfter.toFixed( 0 ) } second(s) until the next rename or open a new channel` +
+                `Please wait ${ retryAfter.toFixed( 0 ) } second(s) until the next rename or open a new channel:` +
                 `${ message }`
-            );
+            )
+            .setColor(0xFF8C00);
 
         await guiManager.continuesMessage( interaction, false, [ embed ] );
     }
 
     private async onSuccessfulRename( interaction: ModalSubmitInteraction, channelName: string ) {
         const embed = new EmbedBuilder()
-            .setTitle( `Your channel's name has changed to ${ channelName }` );
+            .setTitle( `✏️ Your channel's name has changed to '${ channelName }'` )
+            .setColor(0x32CD32);
 
         await guiManager.continuesMessage( interaction, false, [ embed ] );
     }

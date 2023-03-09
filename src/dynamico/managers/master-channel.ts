@@ -11,7 +11,6 @@ import {
 import guiManager from "./gui";
 
 import {
-    IChannelDataGetArgs,
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs,
     IMasterChannelCreateArgs,
@@ -31,9 +30,8 @@ import ChannelModel from "@dynamico/models/channel";
 
 import Debugger from "@dynamico/utils/debugger";
 
+import { ChannelDataManager } from "@dynamico/managers/channel-data";
 import InitializeBase from "@internal/bases/initialize-base";
-
-const channelModel = ChannelModel.getInstance();
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -140,62 +138,6 @@ export class MasterChannelManager extends InitializeBase {
         return result;
     }
 
-    public async getMasterCreateChannelData( args: IChannelDataGetArgs ) {
-        const { masterChannelId, key, cache } = args,
-            cacheKey = `${ masterChannelId }-${ key }`;
-
-        this.logger.info( this.getMasterCreateChannelData,
-            `Getting master channel data for channelId: '${ masterChannelId }', key: '${ key }'` );
-
-        if ( cache ) {
-            const cached = this.cache.get( cacheKey );
-
-            if ( cached ) {
-                this.debugger.log( this.getMasterCreateChannelData, "Getting cached data", cached );
-                return cached;
-            }
-        }
-
-        const channel = await channelModel.getChannelDataByChannelId( args );
-
-        if ( ! channel ) {
-            this.logger.error( this.getMasterCreateChannelData,
-                `Could not find master channel data for channelId: '${ args.masterChannelId }'`
-            );
-            return;
-        }
-
-        let data: ChannelData,
-            message: string;
-
-        if ( ! channel?.data.length ) {
-            data = await channelModel.createChannelData( {
-                id: channel.id,
-                key: args.key,
-                value: args.default,
-            } );
-
-            message = "Created new";
-        } else {
-            data = channel.data[ 0 ];
-
-            message = "Getting";
-        }
-
-        message += ` channel data for channelId: '${ args.masterChannelId }', type: '${ data.type }' key: '${ args.key }' with values:\n`;
-
-        this.debugger.log( this.getMasterCreateChannelData, message, data.object || data.values );
-
-        // Set cache.
-        this.cache.set( cacheKey, data.values );
-
-        if ( data.type === "object" ) {
-            return data.object;
-        }
-
-        return data.values;
-    }
-
     /**
      * Function createDynamic() :: Creates a new dynamic channel for a user.
      */
@@ -203,10 +145,10 @@ export class MasterChannelManager extends InitializeBase {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
             userOwnerId = newState.member?.id,
-            data = await this.getMasterCreateChannelData( {
+            data = await ChannelDataManager.getInstance().getData( {
                 cache: true,
                 key: "settings",
-                masterChannelId: masterChannel.id,
+                channelId: masterChannel.id,
                 default: {
                     dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
                 },

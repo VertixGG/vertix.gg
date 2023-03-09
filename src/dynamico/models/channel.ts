@@ -27,7 +27,7 @@ export class ChannelModel extends ModelBase {
 
     public constructor() {
         super();
-        
+
         this.model = this.prisma.channel;
     }
 
@@ -111,7 +111,7 @@ export class ChannelModel extends ModelBase {
 
         return this.prisma.channel.findUnique( {
             where: {
-                channelId: args.masterChannelId,
+                channelId: args.channelId,
             },
             include: {
                 data: { where: { key: args.key } },

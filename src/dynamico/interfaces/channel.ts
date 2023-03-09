@@ -55,7 +55,6 @@ export interface IChannelDeleteArgs {
     channel: NonThreadGuildBasedChannel,
 }
 
-// TODO: Should be at data-channel-manager.
 /* Channel data */
 
 export interface IChannelDataCreateArgs {
@@ -68,7 +67,7 @@ export interface IChannelDataCreateArgs {
 export interface IChannelDataGetArgs {
     key: string,
 
-    masterChannelId: string,
+    channelId: string,
 
     default: string|string[]|object,
 

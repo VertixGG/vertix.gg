@@ -11,7 +11,7 @@ export class Primary extends UITemplate {
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Embeds/Primary";
     }
-    
+
     protected getTemplateInputs() {
         let description = "Take control of your dynamic channel and customize it to as you see fit.\n" +
             "Keep in mind that only the channel owner has permission to make changes.\n\n" +

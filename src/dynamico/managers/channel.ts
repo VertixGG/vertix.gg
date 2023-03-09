@@ -36,7 +36,7 @@ export class ChannelManager extends InitializeBase {
     private cache = new Map<string, Channel | null>();
 
     private masterChannelManager: MasterChannelManager;
-    
+
     private debugger: Debugger;
 
     public static getInstance(): ChannelManager {

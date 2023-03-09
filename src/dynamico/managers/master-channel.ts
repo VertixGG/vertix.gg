@@ -1,4 +1,4 @@
-import { ChannelData, E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import {
     ChannelType,
     Guild,
@@ -24,7 +24,12 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
-import { CategoryManager, ChannelManager } from "@dynamico/managers";
+
+import {
+    CategoryManager,
+    ChannelManager
+} from "@dynamico/managers";
+
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 

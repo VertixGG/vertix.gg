@@ -15,6 +15,7 @@ export async function sendManageUsersComponent( interaction: Interaction, title:
         .get( "Dynamico/UI/EditUserPermissions" );
 
     const message = await component.getMessage( interaction ),
+
         embed = message.embeds?.at( 0 );
 
     if ( embed && embed instanceof EmbedBuilder ) {

@@ -158,8 +158,9 @@ export class MasterChannelManager extends InitializeBase {
                 default: {
                     dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
                 },
-            } ),
-            dynamicChannelName = data.dynamicChannelNameTemplate.replace(
+            } );
+
+        const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
                 "%{userDisplayName}%",
                 displayName
             );

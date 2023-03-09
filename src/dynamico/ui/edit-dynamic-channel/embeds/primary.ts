@@ -26,7 +26,7 @@ export class Primary extends UITemplate {
             description,
             "%variables%": {
                 limit: {
-                    // Options.
+                    // Options.w
                     "%{value}%": "%{limitValue}%",
                     "%{unlimited}%": "Unlimited",
                 },

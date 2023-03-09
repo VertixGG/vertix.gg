@@ -31,6 +31,7 @@ import ChannelModel from "@dynamico/models/channel";
 import Debugger from "@dynamico/utils/debugger";
 
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 export class MasterChannelManager extends InitializeBase {

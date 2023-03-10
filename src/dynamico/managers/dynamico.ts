@@ -49,7 +49,7 @@ export class DynamicoManager extends InitializeBase {
         await this.removeEmptyChannelData();
 
         this.logger.log( this.onReady,
-            `Ready handle is set, Bot '${ client.user.username }' is online, commands is set.` );
+            `Ready handle is set, bot: '${ client.user.username }' is online, commands is set.` );
     }
 
     private async removeEmptyChannels( client: Client ) {

@@ -104,7 +104,7 @@ export class ChannelManager extends InitializeBase {
             channelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
 
         this.logger.info( this.onLeave,
-            `User '${ displayName }' left channel from guild: '${ oldState.guild.name }'` );
+            `User '${ displayName }' left channel from guild: '${ oldState.guild.name }' id: '${ oldState.guild.id }'` );
 
         await this.onLeaveGeneric( {
             oldState,
@@ -225,8 +225,8 @@ export class ChannelManager extends InitializeBase {
         const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
         this.logger.info( this.create,
-            `Creating channel for guild '${ guild.name }' with the following properties: ` +
-            `With name: '${ name }', ownerId: '${ userOwnerId }', internalType: '${ internalType }' ` +
+            `Creating channel for guild '${ guild.name }' guildId: '${ guild.id }' with the following properties: ` +
+            `With name: '${ name }' ownerId: '${ userOwnerId }' internalType: '${ internalType }' ` +
             `ownerChannelId: '${ args.ownerChannelId }'`
         );
 
@@ -257,7 +257,7 @@ export class ChannelManager extends InitializeBase {
         const { channel, guild } = args;
 
         this.logger.info( this.delete,
-            `Deleting channel '${ channel.name }' for guild '${ guild.name }'` );
+            `Deleting channel '${ channel.name }' for guild '${ guild.name }' guildId: '${ guild.id }'` );
 
         ChannelDataManager.getInstance().removeFromCache( channel.id );
 

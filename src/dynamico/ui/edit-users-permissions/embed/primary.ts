@@ -15,18 +15,32 @@ export class Primary extends UITemplate {
         return "Dynamico/UI/EditUserPermissions/Embeds/Primary";
     }
 
+    protected getTemplateOptions(): any {
+        return {
+            title: {
+                "%{private}%": "🚫 Your channel is private now!",
+                "%{public}%": "🌐 Your channel is public now!",
+                "%{mange}%": "👥 Manage users access for your dynamic channel",
+                "%{cannotAddYourSelf}%": "You cannot add yourself",
+                "%{canNowConnect}%": "☝ %{username}% can now connect to your channel",
+                "%{removedFromYourList}%": "👇 %{username}% removed from your list",
+            }
+        };
+    }
+
     protected getTemplateInputs() {
         let description = "Allowed:\n" + "%{userIds}%" + "\n\nWho should have access to your channel?";
 
         return {
             type: "embed",
+            title: "%{title}%",
             description,
             userWrapper: "<@%{userId}%>",
-            separator: ", " // This is a comma.
+            separator: ", ",
         };
     }
 
-    protected async getTemplateLogic( interaction: Interaction ) {
+    protected async getTemplateLogic( interaction: Interaction, args: any ) {
         const allowed = await this.getAllowedUserIds( interaction ),
             { separator, userWrapper } = this.getTemplateInputs();
 
@@ -46,6 +60,8 @@ export class Primary extends UITemplate {
         }
 
         return {
+            ...args,
+
             userIds
         };
     }
@@ -59,8 +75,16 @@ export class Primary extends UITemplate {
             return [];
         }
 
-        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction, true ),
-            masterChannelCache = interaction.client.channels.cache.get( masterChannel.id ),
+        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+
+        if ( ! masterChannel ) {
+            GlobalLogger.getInstance().warn( this.getName(),
+                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
+
+            return [];
+        }
+
+        const masterChannelCache = interaction.client.channels.cache.get( masterChannel.id ),
             allowed = [];
 
         for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {

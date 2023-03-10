@@ -1,5 +1,8 @@
 import {
+    ActionRowData,
+    APIActionRowComponent,
     APIEmbed,
+    APIMessageActionRowComponent,
     ButtonInteraction,
     ChannelType,
     EmbedBuilder,
@@ -7,22 +10,36 @@ import {
     InteractionReplyOptions,
     InteractionResponse,
     JSONEncodable,
+    MessageActionRowComponentBuilder,
+    MessageActionRowComponentData,
     ModalSubmitInteraction,
     SelectMenuInteraction,
-    UserSelectMenuInteraction
+    UserSelectMenuInteraction,
 } from "discord.js";
 
-import ComponentUIBase from "../ui/base/component-ui-base";
-
-import { DiscordComponentTypes } from "@dynamico/interfaces/ui";
+import { ContinuesInteractionTypes } from "@dynamico/interfaces/ui";
 
 import Debugger from "@dynamico/utils/debugger";
+
+import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
 
+type ComponentTypes = (
+    | JSONEncodable<APIActionRowComponent<APIMessageActionRowComponent>>
+    | ActionRowData<MessageActionRowComponentData | MessageActionRowComponentBuilder>
+    | APIActionRowComponent<APIMessageActionRowComponent>
+    );
+
+interface ContinuesInteractionArgs {
+    message?: string,
+    embeds?: ( JSONEncodable<APIEmbed> | APIEmbed )[],
+    components?: ComponentTypes[]
+}
+
 export class GUIManager extends InitializeBase {
-    private userInterfaces = new Map<string, ComponentUIBase>;
+    private userInterfaces = new Map<string, UIComponentBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
@@ -37,7 +54,7 @@ export class GUIManager extends InitializeBase {
         this.debugger = new Debugger( this );
     }
 
-    public register( ui: typeof ComponentUIBase ) {
+    public register( ui: typeof UIComponentBase ) {
         const uiName = ui.getName();
 
         if ( this.userInterfaces.has( uiName ) ) {
@@ -85,11 +102,15 @@ export class GUIManager extends InitializeBase {
         return unique;
     }
 
-    public getCallback( unique: string, middleware: ( interaction: Interaction ) => Promise<boolean>  ) {
+    public getCallback( unique: string, middleware: ( interaction: Interaction ) => Promise<boolean> ) {
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {
-            throw new Error( `Callback '${ unique }' does not exist` );
+            return () => {
+                this.logger.error(  this.getCallback, `Callback '${ unique }' does not exist` );
+
+                return true;
+            };
         }
 
         return async ( interaction: Interaction ) => {
@@ -110,30 +131,65 @@ export class GUIManager extends InitializeBase {
         return embed;
     }
 
-    public async continuesMessage( interaction: ModalSubmitInteraction | ButtonInteraction | UserSelectMenuInteraction | SelectMenuInteraction,
-                                   message: string|false,
-                                   embeds: ( JSONEncodable<APIEmbed> | APIEmbed )[] = [],
-                                   components: DiscordComponentTypes[] = [] ) {
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, component: UIComponentBase, args?: any ): Promise<void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIComponentBase | string, args?: any ): Promise<void> {
+        // Validate interaction type.
+        const isInstanceTypeOfContinuesInteraction = interaction instanceof ButtonInteraction ||
+            interaction instanceof SelectMenuInteraction ||
+            interaction instanceof UserSelectMenuInteraction ||
+            interaction instanceof ModalSubmitInteraction ||
+            interaction.isStringSelectMenu();
+
+        if ( ! isInstanceTypeOfContinuesInteraction ) {
+            this.logger.error( this.sendContinuesMessage,
+                `Interaction type '${ interaction.constructor.name }' is not supported`
+            );
+            return;
+        }
+
         if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type ) {
-            const args: InteractionReplyOptions = {
-                ephemeral: true,
-                embeds,
-            };
+            let message: string | undefined,
+                embeds: ( JSONEncodable<APIEmbed> | APIEmbed )[] | undefined,
+                components: ComponentTypes[] | undefined,
+                replyArgs: InteractionReplyOptions = {};
+
+            if ( typeof context === "string" ) {
+                message = context;
+            } else if ( context instanceof UIComponentBase ) {
+                replyArgs = await context.getMessage( interaction, args );
+                replyArgs.ephemeral = true;
+            } else {
+                message = context.message;
+                embeds = context.embeds;
+                components = context.components;
+            }
+
+            if ( ! replyArgs.components && ! replyArgs.embeds && ! replyArgs.content ) {
+                replyArgs = {
+                    ephemeral: true,
+                    embeds,
+                };
+            }
 
             if ( message ) {
-                args.content = message;
+                replyArgs.content = message;
             }
 
             if ( components ) {
-                args.components = components;
+                replyArgs.components = components;
             }
 
             const isInteractionExist = this.continuesInteractions.has( interaction.channel.id );
 
             if ( ! isInteractionExist ) {
-                const defer = await interaction.reply( args );
+                // Validate interaction
+                if ( interaction.isRepliable() ) {
+                    const defer = await interaction.reply( replyArgs );
 
-                this.continuesInteractions.set( interaction.channel.id, defer );
+                    this.continuesInteractions.set( interaction.channel.id, defer );
+                }
 
                 return;
             }
@@ -141,11 +197,16 @@ export class GUIManager extends InitializeBase {
             const defer = this.continuesInteractions.get( interaction.channel.id );
 
             if ( defer && defer.interaction.isRepliable() ) {
-                defer.interaction.deleteReply();
-
-                const newDefer = await interaction.reply( args );
-
-                this.continuesInteractions.set( interaction.channel.id, newDefer );
+                const warn = ( e: any ) => this.logger.warn( this.sendContinuesMessage, "", e );
+                defer.interaction.deleteReply().catch( warn ).then( async () => {
+                    interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
+                        if ( interaction.channel && newDefer ) {
+                            this.continuesInteractions.set( interaction.channel.id, newDefer );
+                        } else {
+                            warn( "Interaction channel or defer is undefined" );
+                        }
+                    } );
+                } );
             }
         }
     }

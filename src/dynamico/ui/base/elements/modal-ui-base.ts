@@ -8,10 +8,10 @@ import {
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIElement from "@dynamico/ui/base/ui-element";
 
 /**
- * @extends {UIBase}
+ * @extends {UIElement}
  */
 export default abstract class ModalUIBase {
     protected modalBuilder: ModalBuilder | null = null;
@@ -24,12 +24,11 @@ export default abstract class ModalUIBase {
         return "Dynamico/UI/Base/Elements/Modal";
     }
 
-    // TODO: Determine the right visibility for this method.
-    public initialize() {
-        this.type = ( this.constructor as typeof UIBase ).getType();
+    public async initialize() {
+        this.type = ( this.constructor as typeof UIElement ).getType();
 
         if ( this.type === E_UI_TYPES.STATIC ) {
-            this.buildModal();
+           await this.buildModal();
         }
     }
 
@@ -37,15 +36,15 @@ export default abstract class ModalUIBase {
 
     protected abstract onModalSubmit( interaction: ModalSubmitInteraction ): Promise<void>;
 
-    protected abstract build( interaction?: Interaction ): void;
+    protected abstract build( interaction?: Interaction ): Promise<void>;
 
     protected abstract getModalBuilder( callback: ( interaction: ModalSubmitInteraction ) => Promise<void> ): ModalBuilder;
 
     protected abstract getBuiltRows(): ActionRowBuilder<any>[];
 
-    protected abstract getBuilders( interaction?: Interaction ): ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]
+    protected abstract getBuilders( interaction?: Interaction ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]>
 
-    protected buildModal( interaction?: Interaction ) {
+    protected async buildModal( interaction?: Interaction ) {
         if ( interaction ) {
             this.interaction = interaction;
         }
@@ -54,14 +53,14 @@ export default abstract class ModalUIBase {
 
         this.modalBuilder.setTitle( this.getModalTitle() );
 
-        this.build( interaction );
+        await this.build( interaction );
 
         this.modalBuilder.addComponents( this.getBuiltRows() );
     }
 
-    protected getModal( interaction?: Interaction ): ModalBuilder {
+    protected async getModal( interaction?: Interaction ): Promise<ModalBuilder> {
         if( this.type === E_UI_TYPES.DYNAMIC ) {
-            this.buildModal( interaction );
+            await this.buildModal( interaction );
         }
 
         if ( ! this.modalBuilder ) {

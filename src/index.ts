@@ -1,4 +1,5 @@
 /**
+ * @see https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots
  * @see https://discord.com/api/oauth2/authorize?client_id=1079487067932868608&permissions=8&scope=bot%20applications.commands
  */
 

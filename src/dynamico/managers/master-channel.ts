@@ -5,6 +5,7 @@ import {
     Interaction,
     NonThreadGuildBasedChannel,
     PermissionsBitField,
+    SelectMenuInteraction,
     VoiceBasedChannel
 } from "discord.js";
 
@@ -25,10 +26,7 @@ import {
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
 
-import {
-    CategoryManager,
-    ChannelManager
-} from "@dynamico/managers";
+import { CategoryManager, ChannelManager } from "@dynamico/managers";
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
@@ -161,9 +159,9 @@ export class MasterChannelManager extends InitializeBase {
             } );
 
         const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
-                "%{userDisplayName}%",
-                displayName
-            );
+            "%{userDisplayName}%",
+            displayName
+        );
 
         this.logger.info( this.createDynamic,
             `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
@@ -203,8 +201,19 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public async createDefaultMasters( guild: Guild, userOwnerId: string ) {
-        const masterCategory = await this.createMasterCategory( guild ),
-            args = {
+        let masterCategory;
+
+        try {
+            masterCategory = await this.createMasterCategory( guild );
+        } catch ( e ) {
+            this.logger.warn( this.createDefaultMasters, "", e );
+        }
+
+        if ( ! masterCategory ) {
+            return false;
+        }
+
+        const args = {
                 guild,
                 userOwnerId,
                 parent: masterCategory,
@@ -255,27 +264,8 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
 
         // TODO Relations are deleted automatically??
-        CategoryModel.getInstance().delete( guild.id );
-        ChannelModel.getInstance().delete( guild );
-    }
-
-    public getByDynamicChannelSync( interaction: Interaction ) {
-        this.logger.info( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }'` );
-
-        // If it exists in the cache, then return it.
-        if ( interaction.channelId ) {
-            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
-
-            if ( cached ) {
-                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
-
-                return cached;
-            }
-        } else {
-            this.logger.warn( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }' has no channelId` );
-        }
-
-        return null;
+        await CategoryModel.getInstance().delete( guild.id );
+        await ChannelModel.getInstance().delete( guild );
     }
 
     public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
@@ -293,10 +283,8 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
-            return null;
-        }
-
-        if ( ! interaction.isButton() && ! interaction.isStringSelectMenu() && ! interaction.isModalSubmit() ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Interaction is not a voice channel, interaction: '${ interaction.id }'` );
             return null;
         }
 
@@ -307,7 +295,10 @@ export class MasterChannelManager extends InitializeBase {
             this.logger.error( this.getByDynamicChannel,
                 `Could not find channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
-            await guiManager.continuesMessage( interaction, "An error occurred while trying to find the channel in the database." );
+            await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendContinues( interaction as SelectMenuInteraction, {
+                    globalResponse: "%{masterChannelNotExist}%"
+                } );
 
             return;
         }
@@ -316,19 +307,39 @@ export class MasterChannelManager extends InitializeBase {
             this.logger.error( this.getByDynamicChannel,
                 `Could not find master channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
-            await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel in the database." );
+            await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendContinues( interaction as SelectMenuInteraction, {
+                    globalResponse: "%{masterChannelNotExist}%"
+                } );
 
             return;
         }
 
-        // Get master channel permissions.
-        const masterChannel = await interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
+        let masterChannel,
+            masterChannelPromise = interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
+
+        const promise = new Promise( ( resolve ) => {
+            masterChannelPromise?.catch( ( e ) => {
+                this.logger.error( this.getByDynamicChannel,
+                    `Could not fetch master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                this.logger.error( this.getByDynamicChannel, "", e );
+                resolve( null );
+            } ).then( ( result ) => {
+                masterChannel = result;
+                resolve( result );
+            } );
+        } );
+
+        await promise;
 
         if ( ! masterChannel ) {
             this.logger.warn( this.getByDynamicChannel,
                 `Could not find master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
-            await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel." );
+            await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendContinues( interaction as SelectMenuInteraction, {
+                    globalResponse: "%{masterChannelNotExist}%"
+                } );
 
             return;
         }

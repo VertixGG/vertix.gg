@@ -234,7 +234,7 @@ export class MasterChannelManager extends InitializeBase {
         const { guild, parent } = args;
 
         this.logger.info( this.createCreateChannel,
-            `Creating master channel for guild '${ guild.name }' for user: '${ args.guild.ownerId }'` );
+            `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
 
         // Create master channel.
         return ChannelManager.getInstance().create( {
@@ -252,7 +252,7 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public async removeLeftOvers( guild: Guild ) {
-        this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }'` );
+        this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
 
         // TODO Relations are deleted automatically??
         CategoryModel.getInstance().delete( guild.id );
@@ -305,7 +305,7 @@ export class MasterChannelManager extends InitializeBase {
 
         if ( ! dynamicChannelDB ) {
             this.logger.error( this.getByDynamicChannel,
-                `Could not find channel in database. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
+                `Could not find channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
             await guiManager.continuesMessage( interaction, "An error occurred while trying to find the channel in the database." );
 
@@ -314,7 +314,7 @@ export class MasterChannelManager extends InitializeBase {
 
         if ( ! dynamicChannelDB.ownerChannelId ) {
             this.logger.error( this.getByDynamicChannel,
-                `Could not find master channel in database. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
+                `Could not find master channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
             await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel in the database." );
 
@@ -326,7 +326,7 @@ export class MasterChannelManager extends InitializeBase {
 
         if ( ! masterChannel ) {
             this.logger.warn( this.getByDynamicChannel,
-                `Could not find master channel. Guild ID: ${ interaction.guildId }, Dynamic Channel ID: ${ dynamicChannel.id }` );
+                `Could not find master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
             await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel." );
 

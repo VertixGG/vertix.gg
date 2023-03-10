@@ -34,7 +34,7 @@ export class GuildManager extends InitializeBase {
     }
 
     public async onJoin( client: Client, guild: Guild ) {
-        this.logger.info( this.onJoin, `Dynamico Joined guild '${ guild.name }'` );
+        this.logger.info( this.onJoin, `Dynamico joined guild: '${ guild.name }' guildId: '${ guild.id }'` );
 
         // Determine if the guild is already in the database.
         if ( await this.guildModel.isExisting( guild ) ) {
@@ -50,7 +50,7 @@ export class GuildManager extends InitializeBase {
     }
 
     public async onLeave( client: Client, guild: Guild ) {
-        this.logger.info( this.onLeave, `Dynamico Left guild '${ guild.name }'` );
+        this.logger.info( this.onLeave, `Dynamico Left guild '${ guild.name }' guildId: '${ guild.id }'` );
 
         // Updating that the bot is no longer in the guild.
         await this.guildModel.update( guild, false );

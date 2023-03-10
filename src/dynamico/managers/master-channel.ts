@@ -203,8 +203,20 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     public async createDefaultMasters( guild: Guild, userOwnerId: string ) {
-        const masterCategory = await this.createMasterCategory( guild ),
-            args = {
+        let masterCategory;
+
+        try {
+            masterCategory = await this.createMasterCategory( guild );
+
+        } catch ( e ) {
+            this.logger.warn( this.createDefaultMasters, "", e );
+        }
+
+        if ( ! masterCategory ) {
+            return false;
+        }
+
+        const args = {
                 guild,
                 userOwnerId,
                 parent: masterCategory,

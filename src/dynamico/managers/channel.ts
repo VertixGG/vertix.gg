@@ -4,7 +4,6 @@ import {
     ChannelType,
     DMChannel,
     NonThreadGuildBasedChannel,
-    PermissionsBitField,
     VoiceChannel,
     VoiceState
 } from "discord.js";
@@ -18,6 +17,8 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
+import guiManager from "@dynamico/managers/gui";
+
 import ChannelModel from "@dynamico/models/channel";
 
 import Debugger from "@dynamico/utils/debugger";
@@ -25,6 +26,7 @@ import Debugger from "@dynamico/utils/debugger";
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
 
 import InitializeBase from "@internal/bases/initialize-base";
+import gui from "@dynamico/managers/gui";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
@@ -228,14 +230,6 @@ export class ChannelManager extends InitializeBase {
             `With name: '${ name }' ownerId: '${ userOwnerId }' internalType: '${ internalType }' ` +
             `ownerChannelId: '${ args.ownerChannelId }'`
         );
-
-        // Check if the bot (guild.client.user.id) has permissions to create a channel.
-        if ( ! guild.members.me?.permissions.has( PermissionsBitField.Flags.ManageChannels ) ) {
-            this.logger.warn( this.create,
-                `Failed to create channel for guild '${ guild.name }' guildId: '${ guild.id }' ` +
-                "because the bot does not have permissions to create channels." );
-            return null;
-        }
 
         const channel = await guild.channels.create( args ),
             // Data to be inserted into the database.

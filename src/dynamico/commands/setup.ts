@@ -34,9 +34,19 @@ export const Setup: ICommand = {
                 .setTitle( "You have reached your Master Channels limit" )
                 .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
                 .setColor( Colors.Red );
-        } else if ( interaction.guild ){
-            const { masterCategory, masterCreateChannel }
-                = await masterChannelManager.createDefaultMasters( interaction.guild, interaction.user.id );
+        } else if ( interaction.guild ) {
+            const result = await masterChannelManager.createDefaultMasters( interaction.guild, interaction.user.id );
+
+            if ( ! result ) {
+                embed
+                    .setTitle( "Something went wrong" )
+                    .setDescription( "Please try again later." )
+                    .setColor( Colors.Red );
+
+                return;
+            }
+
+            const { masterCategory, masterCreateChannel } = result;
 
             let description = `**Category**: ${ masterCategory.name }\n`;
 

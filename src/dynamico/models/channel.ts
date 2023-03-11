@@ -73,7 +73,7 @@ export class ChannelModel extends ModelBase {
     public async delete( guild: Guild, channelId?: string|null ) {
         if ( channelId ) {
             this.logger.info( this.delete,
-                `Deleting channel '${ channelId }' for guild '${ guild.name }' guildId: '${ guild.id }'` );
+                `Deleting channel '${ channelId }' for guild '${ guild.name }'` );
 
             return this.model.delete( {
                 where: {
@@ -86,7 +86,7 @@ export class ChannelModel extends ModelBase {
         }
 
         this.logger.info( this.delete,
-            `Deleting all channels for guild '${ guild.name }' guildId: '${ guild.id }'` );
+            `Deleting all channels for guild '${ guild.name }'` );
 
         return this.prisma.channel.deleteMany( { where: { guildId: guild.id } } );
     }

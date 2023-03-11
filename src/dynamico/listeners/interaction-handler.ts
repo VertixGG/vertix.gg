@@ -3,7 +3,7 @@ import * as process from "process";
 import {
     ButtonInteraction,
     ChannelType,
-    Client,
+    Client, Colors,
     CommandInteraction,
     EmbedBuilder,
     Events,
@@ -71,6 +71,19 @@ async function authMiddleware( interaction: Interaction ) {
             const embed = new EmbedBuilder(),
                 masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction, true );
 
+            if ( ! masterChannel ) {
+                embed.setTitle( "🤷 Oops, an issue has occurred" );
+                embed.setDescription( "Master channel does not exist." );
+                embed.setColor(0xFF8C00); // Dark orange.
+
+                await interaction.reply( {
+                    embeds: [ embed ],
+                    ephemeral: true,
+                } );
+
+                return false;
+            }
+
             let message = "You should open your own dynamic channel and try again:";
 
             if ( masterChannel ) {
@@ -79,7 +92,7 @@ async function authMiddleware( interaction: Interaction ) {
 
             embed.setTitle( "🤷 Oops, this is not your channel" );
             embed.setDescription( message );
-            embed.setColor(0xFF8C00);
+            embed.setColor(0xFF8C00); // Dark orange.
 
             await interaction.reply( {
                 embeds: [ embed ],

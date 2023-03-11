@@ -1,5 +1,5 @@
 import {
-    ChannelType,
+    ChannelType, EmbedBuilder,
     Interaction,
     OverwriteType,
     SelectMenuInteraction,
@@ -38,8 +38,24 @@ export default class UsersMenus extends UIBase {
 
         const members: { label: string; value: string; }[] = [];
 
-        const masterChannel = MasterChannelManager.getInstance().getByDynamicChannelSync( interaction ),
-            masterChannelCache = interaction.client.channels.cache.get( masterChannel?.id );
+        const masterChannel = MasterChannelManager.getInstance().getByDynamicChannelSync( interaction );
+
+        if ( ! masterChannel ) {
+            const embed = new EmbedBuilder();
+
+            embed.setTitle( "🤷 Oops, an issue has occurred" );
+            embed.setDescription( "Master channel does not exist." );
+            embed.setColor(0xFF8C00); // Dark orange.
+
+            interaction.isRepliable() && interaction.reply( {
+                embeds: [ embed ],
+                ephemeral: true,
+            } );
+
+            return [];
+        }
+
+        const masterChannelCache = interaction.client.channels.cache.get( masterChannel?.id );
 
         // Add all users in channel to grant menu.
         if ( interaction.channel && ChannelType.GuildVoice === interaction.channel.type ) {

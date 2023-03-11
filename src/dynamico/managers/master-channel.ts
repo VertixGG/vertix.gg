@@ -1,7 +1,7 @@
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import {
     ChannelType,
-    Guild,
+    Guild, GuildChannel,
     Interaction,
     NonThreadGuildBasedChannel,
     PermissionsBitField,
@@ -267,8 +267,8 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
 
         // TODO Relations are deleted automatically??
-        CategoryModel.getInstance().delete( guild.id );
-        ChannelModel.getInstance().delete( guild );
+        await CategoryModel.getInstance().delete( guild.id );
+        await ChannelModel.getInstance().delete( guild );
     }
 
     public getByDynamicChannelSync( interaction: Interaction ) {
@@ -282,10 +282,14 @@ export class MasterChannelManager extends InitializeBase {
                 this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
 
                 return cached;
+            } else {
+                this.debugger.log( this.getByDynamicChannel, `Not found in cache: '${ interaction.channelId }'` );
             }
         } else {
             this.logger.warn( this.getByDynamicChannelSync, `Interaction: '${ interaction.id }' has no channelId` );
         }
+
+        console.trace();
 
         return null;
     }
@@ -333,11 +337,26 @@ export class MasterChannelManager extends InitializeBase {
             return;
         }
 
-        // Get master channel permissions.
-        const masterChannel = await interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
+        let masterChannel,
+            masterChannelPromise = interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
 
+        const promise = new Promise( ( resolve ) => {
+            masterChannelPromise?.catch( ( e ) => {
+                this.logger.error( this.getByDynamicChannel,
+                    `Could not fetch master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                this.logger.error( this.getByDynamicChannel, "", e );
+                resolve( null );
+            } ).then( ( result ) => {
+                masterChannel = result;
+                resolve( result );
+            } );
+        } );
+
+        await promise;
+
+        // Get master channel permissions.
         if ( ! masterChannel ) {
-            this.logger.warn( this.getByDynamicChannel,
+            this.logger.error( this.getByDynamicChannel,
                 `Could not find master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
 
             await guiManager.continuesMessage( interaction, "An error occurred while trying to find the master channel." );
@@ -345,8 +364,15 @@ export class MasterChannelManager extends InitializeBase {
             return;
         }
 
+        masterChannel = masterChannel as GuildChannel;
+
+        this.debugger.log( this.getByDynamicChannel,
+            `Found master channel: '${ masterChannel.id }' for dynamic channel: '${ dynamicChannel.id }' cache will be set` );
+
         // Set cache, anyway.
         this.cache.set( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
+
+        console.trace();
 
         return masterChannel;
     }

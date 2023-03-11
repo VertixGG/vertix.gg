@@ -5,5 +5,5 @@
     debug: true
     directory: ./
     badge: ./output/badge.svg
-    patterns: '*.js'  # Patterns in the format of a '.gitignore' file, separated by pipes.
+    patterns: '*.ts'  # Patterns in the format of a '.gitignore' file, separated by pipes.
     ignore: 'node_modules'

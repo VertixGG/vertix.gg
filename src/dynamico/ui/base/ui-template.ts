@@ -1,16 +1,18 @@
 import { Interaction, NonThreadGuildBasedChannel } from "discord.js";
 
+import { DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
+
 import { ObjectBase } from "@internal/bases/object-base";
 
 export abstract class UITemplate extends ObjectBase {
     public static getName() {
-        return "Dynamico/UI/UITemplate";
+        return DYNAMICO_UI_TEMPLATE;
     }
 
-    public async compose( interaction?: Interaction | NonThreadGuildBasedChannel ): Promise<any> {
+    public async compose( interaction?: Interaction | NonThreadGuildBasedChannel | null, args?: any ): Promise<any> {
         const template = this.getTemplateInputs(),
-            logic = await this.getTemplateLogic( interaction ),
-            logicParsed = { ... logic, ... this.extractVariables( template, logic ) };
+            logic = await this.getTemplateLogic( interaction, args ),
+            logicParsed = { ... logic, ... this.extractVariables( logic, this.getTemplateOptions() ) };
 
         return this.compile( template, logicParsed );
     }
@@ -27,12 +29,16 @@ export abstract class UITemplate extends ObjectBase {
         return result;
     }
 
+    protected getTemplateOptions(): any {
+        return null;
+    };
+
     protected abstract getTemplateInputs(): any;
 
-    protected abstract getTemplateLogic( interaction?: Interaction | NonThreadGuildBasedChannel ): any;
+    protected abstract getTemplateLogic( interaction?: Interaction | NonThreadGuildBasedChannel | null, args?: any ): any;
 
-    private extractVariables( template: any, inputs: any ) {
-        const variables = template[ "%variables%" ],
+    private extractVariables( templateLogic: any, templateOptions: any ) {
+        const variables = templateOptions,
             appliedVariables = {} as any;
 
         // Construct the variables according to template inputs.
@@ -40,13 +46,11 @@ export abstract class UITemplate extends ObjectBase {
             const variableObject = variables[ variableName ];
 
             if ( "object" === typeof variableObject ) {
-                appliedVariables[ variableName ] = variableObject[ inputs[ variableName ] ];
+                appliedVariables[ variableName ] = variableObject[ templateLogic[ variableName ] ];
             } else {
                 throw new Error( "Invalid variable object." );
             }
         }
-
-        delete template[ "%variables%" ];
 
         return appliedVariables;
     }

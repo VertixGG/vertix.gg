@@ -6,13 +6,12 @@ import {
 } from "discord.js";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { sendManageUsersComponent } from "@dynamico/temp-utils";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIElement from "@dynamico/ui/base/ui-element";
 
 import guiManager from "@dynamico/managers/gui";
 
-export default class EditPermissions extends UIBase {
+export default class EditPermissions extends UIElement {
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Buttons/EditPermissions";
     }
@@ -21,7 +20,7 @@ export default class EditPermissions extends UIBase {
         return E_UI_TYPES.STATIC;
     }
 
-    protected getBuilders( interaction: Interaction ) {
+    protected async getBuilders( interaction: Interaction ) {
         const publicButton = this.getButtonBuilder( this.makeChannelPublic.bind( this ) ),
             privateButton = this.getButtonBuilder( this.makeChannelPrivate.bind( this ) ),
             usersButton = this.getButtonBuilder( this.displayManageUsers.bind( this ) ),
@@ -70,7 +69,9 @@ export default class EditPermissions extends UIBase {
 
             embed.setColor(0x1E90FF);
 
-            await guiManager.continuesMessage( interaction, false, [ embed ] );
+            await guiManager.sendContinuesMessage( interaction, {
+                embeds: [ embed ]
+            } );
         }
     }
 
@@ -84,13 +85,17 @@ export default class EditPermissions extends UIBase {
                 Connect: false,
             } );
 
-            await sendManageUsersComponent( interaction, "🚫 Your channel is private now!" );
+            await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
+                title: "%{private}%",
+            } );
         }
     }
 
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
-            await sendManageUsersComponent( interaction, "👥 Manage users access for your dynamic channel" );
+            await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
+                title: "%{mange}%",
+            } );
         }
     }
 }

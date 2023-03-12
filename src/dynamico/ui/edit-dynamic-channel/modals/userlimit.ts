@@ -57,7 +57,9 @@ export default class UserlimitModal extends GenericInputNumberUIModal {
             .setTitle( `🙅 User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }`)
             .setColor(0xFF8C00);
 
-        await guiManager.continuesMessage( interaction, false, [ embed ] );
+        await guiManager.sendContinuesMessage( interaction, {
+            embeds: [ embed ],
+        } );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction, input: string ) {
@@ -71,7 +73,9 @@ export default class UserlimitModal extends GenericInputNumberUIModal {
                     .setTitle( `✋ Your channel's user limit has changed to ${ limitValue }` )
                     .setColor(0x32CD32);
 
-            await guiManager.continuesMessage( interaction, false, [ embed ] );
+            await guiManager.sendContinuesMessage( interaction, {
+                embeds: [ embed ]
+            } );
         }
     }
 }

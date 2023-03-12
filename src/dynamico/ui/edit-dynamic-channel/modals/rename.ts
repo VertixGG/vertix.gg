@@ -49,14 +49,14 @@ export default class RenameModal extends GenericInputUIModal {
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
         await guiManager
-            .continuesMessage( interaction, "The channel name must be between 1 and 100 characters long" );
+            .sendContinuesMessage( interaction, "The channel name must be between 1 and 100 characters long" );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction ) {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
-            await guiManager.continuesMessage( interaction, "An error has occurred" );
+            await guiManager.sendContinuesMessage( interaction, "An error has occurred" );
             return;
         }
 
@@ -100,7 +100,9 @@ export default class RenameModal extends GenericInputUIModal {
             )
             .setColor(0xFF8C00);
 
-        await guiManager.continuesMessage( interaction, false, [ embed ] );
+        await guiManager.sendContinuesMessage( interaction, {
+            embeds: [ embed ]
+        } );
     }
 
     private async onSuccessfulRename( interaction: ModalSubmitInteraction, channelName: string ) {
@@ -108,6 +110,8 @@ export default class RenameModal extends GenericInputUIModal {
             .setTitle( `✏️ Your channel's name has changed to '${ channelName }'` )
             .setColor(0x32CD32);
 
-        await guiManager.continuesMessage( interaction, false, [ embed ] );
+        await guiManager.sendContinuesMessage( interaction, {
+            embeds: [ embed ]
+        } );
     }
 }

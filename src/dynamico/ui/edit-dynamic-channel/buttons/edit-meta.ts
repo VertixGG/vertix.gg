@@ -10,11 +10,11 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import guiManager from "@dynamico/managers/gui";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIElement from "@dynamico/ui/base/ui-element";
 
 import Logger from "@internal/modules/logger";
 
-export default class EditMeta extends UIBase {
+export default class EditMeta extends UIElement {
     private logger: Logger;
 
     public static getName() {
@@ -31,7 +31,7 @@ export default class EditMeta extends UIBase {
         this.logger = new Logger( this );
     }
 
-    public getBuilders() {
+    public async getBuilders() {
         const renameButton = this.getButtonBuilder( this.renameChannel.bind( this ) ),
             limitButton = this.getButtonBuilder( this.limitChannel.bind( this ) );
 
@@ -54,7 +54,7 @@ export default class EditMeta extends UIBase {
                 .get( RenameModal.getName() );
 
             if ( component && component.getModal ) {
-                await interaction.showModal( component.getModal( interaction ) );
+                await interaction.showModal( await component.getModal( interaction ) );
             }
         }
     }
@@ -65,7 +65,7 @@ export default class EditMeta extends UIBase {
                 .get( UserlimitModal.getName() );
 
             if ( component && component.getModal ) {
-                await interaction.showModal( component.getModal( interaction ) );
+                await interaction.showModal( await component.getModal( interaction ) );
             }
         }
     }

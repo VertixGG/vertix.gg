@@ -3,12 +3,12 @@ import { Mixin, settings } from "ts-mixer";
 
 import InputUIBase from "../elements/input-ui-base";
 import ModalUIBase from "../elements/modal-ui-base";
-import UIBase from "../ui-base";
+import UIElement from "../ui-element";
 
 settings.initFunction = "initialize";
 
-export abstract class GenericInputUIModal extends Mixin( UIBase, ModalUIBase, InputUIBase ) {
-    public getBuilders( interaction?: Interaction ) {
+export abstract class GenericInputUIModal extends Mixin( UIElement, ModalUIBase, InputUIBase ) {
+    protected async getBuilders( interaction?: Interaction ) {
         return [ this.createInputBuilder() ];
     }
 

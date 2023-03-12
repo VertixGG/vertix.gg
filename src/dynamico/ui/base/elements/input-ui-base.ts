@@ -8,8 +8,6 @@ export default abstract class InputUIBase {
         return "Dynamico/UI/Base/Elements/Input";
     }
 
-    protected abstract getModalTitle(): string;
-
     protected abstract getInputPlaceholder(): string;
 
     protected abstract getInputLabel(): string;

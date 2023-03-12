@@ -2,16 +2,16 @@ import { Interaction, NonThreadGuildBasedChannel } from "discord.js";
 
 import guiManager from "@dynamico/managers/gui";
 
-import ComponentUIBase from "@dynamico/ui/base/component-ui-base";
+import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
 import EditMeta from "@dynamico/ui/edit-dynamic-channel/buttons/edit-meta";
 import EditPermissions from "@dynamico/ui/edit-dynamic-channel/buttons/edit-permissions";
 
 import Primary from "@dynamico/ui/edit-dynamic-channel/embeds/primary";
 
-import { EmbedsType } from "@dynamico/interfaces/ui";
+import { EmbedsTypes } from "@dynamico/interfaces/ui";
 
-export class EditDynamicChannel extends ComponentUIBase {
+export class EditDynamicChannel extends UIComponentBase {
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel";
     }
@@ -28,7 +28,7 @@ export class EditDynamicChannel extends ComponentUIBase {
         } );
     }
 
-    protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsType {
+    protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsTypes {
         return [ new Primary ];
     }
 

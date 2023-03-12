@@ -188,7 +188,7 @@ export class ChannelManager extends InitializeBase {
             .get( "Dynamico/UI/EditDynamicChannel" )
             .getMessage( newChannel );
 
-        await message.edit( newMessage );
+        message.edit( newMessage ).catch( ( e ) => this.logger.error( this.onVoiceChannelUpdatePermissions,  "", e ) );
     }
 
     public async getChannel( guildId: string, channelId: string, cache = false ) {

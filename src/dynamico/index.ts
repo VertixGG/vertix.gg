@@ -15,6 +15,7 @@ export default function Main() {
 
     logger.log( Main, "Bot is starting..." );
 
+    guiManager.register( require( "@dynamico/ui/global-responses/global-responses" ).default );
     guiManager.register( require( "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel" ).default );
     guiManager.register( require( "@dynamico/ui/edit-users-permissions/edit-users-permissions" ).default );
 

@@ -8,8 +8,21 @@ describe( "Dynamico/UI/UITemplate", () => {
                 return "test-template";
             }
 
+            protected getTemplateOptions() {
+                return {
+                    limit: {
+                        "%{value}%": "%{limitValue}%",
+                        "%{unlimited}%": "Unlimited",
+                    },
+                    state: {
+                        "%{public}%": "🌐 **Public**",
+                        "%{private}%": "🚫 **Private**",
+                    },
+                };
+            }
+
             protected getTemplateInputs() {
-                let description =
+                const description =
                     "Name: '%{name}%'," +
                     "Limit: '%{limit}%'," +
                     "State: '%{state}%'";
@@ -18,18 +31,6 @@ describe( "Dynamico/UI/UITemplate", () => {
                     type: "embed",
                     title: "Manage your Dynamic Channel",
                     description,
-                    "%variables%": {
-                        limit: {
-                            // Options.
-                            "%{value}%": "%{limitValue}%",
-                            "%{unlimited}%": "Unlimited",
-                        },
-                        state: {
-                            // Options.
-                            "%{public}%": "🌐 **Public**",
-                            "%{private}%": "🚫 **Private**",
-                        },
-                    }
                 };
             }
 
@@ -121,7 +122,7 @@ describe( "Dynamico/UI/UITemplate", () => {
                 const array = [ 1, 2, 3 ],
                     arrayLength = array.length;
 
-                for ( let i = 0 ; i < arrayLength ; i++ ) {
+                for ( let i = 0; i < arrayLength; i++ ) {
                     const userId = this.compile( { userWrapper }, { userId: array[ i ] } ).userWrapper;
 
                     userIds += userId;
@@ -143,5 +144,55 @@ describe( "Dynamico/UI/UITemplate", () => {
 
         // Assert.
         expect( result.template ).toEqual( "<#1>, <#2>, <#3>" );
+    } );
+
+    it( "Should be able to support global responses", async function () {
+        const template = new class extends UITemplate {
+
+            public static getName() {
+                return "test-template";
+            }
+
+            protected getTemplateOptions() {
+                return {
+                    descriptions: {
+                        "%{masterChannelNotExist}%": "Master channel does not exist",
+                    },
+                    titles: {
+                        "%{masterChannelNotExist}%": "🤷 Oops, an issue has occurred",
+                    },
+                    colors: {
+                        "%{masterChannelNotExist}%": 0xFF8C00,
+                    },
+                };
+            }
+
+            protected getTemplateInputs() {
+                return {
+                    type: "embed",
+                    title: "%{titles}%",
+                    description: "%{descriptions}%",
+                    color: "%{colors}%",
+                };
+            }
+
+            protected getTemplateLogic( interaction: null, args?: any ) {
+                return {
+                    descriptions: args.globalResponse,
+                    colors: args.globalResponse,
+                    titles: args.globalResponse,
+                };
+            }
+        };
+
+        // Act.
+        const result = await template.compose( null, {
+            globalResponse: "%{masterChannelNotExist}%",
+        } );
+
+        // Assert.
+        expect( result.title ).toBe( "🤷 Oops, an issue has occurred" );
+        expect( result.description ).toBe( "Master channel does not exist" );
+        expect( result.color ).toBe( 0xFF8C00.toString() );
     } );
 } );

@@ -1,15 +1,23 @@
-import {
-    Interaction,
-    NonThreadGuildBasedChannel,
-    PermissionsBitField,
-    VoiceChannel,
-} from "discord.js";
+import { Interaction, NonThreadGuildBasedChannel, PermissionsBitField, VoiceChannel, } from "discord.js";
 
 import UITemplate from "@dynamico/ui/base/ui-template";
 
 export class Primary extends UITemplate {
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Embeds/Primary";
+    }
+
+    protected getTemplateOptions() {
+        return {
+            limit: {
+                "%{value}%": "%{limitValue}%",
+                "%{unlimited}%": "Unlimited",
+            },
+            state: {
+                "%{public}%": "🌐 **Public**",
+                "%{private}%": "🚫 **Private**",
+            },
+        };
     }
 
     protected getTemplateInputs() {
@@ -24,18 +32,6 @@ export class Primary extends UITemplate {
             type: "embed",
             title: "Manage your Dynamic Channel",
             description,
-            "%variables%": {
-                limit: {
-                    // Options.w
-                    "%{value}%": "%{limitValue}%",
-                    "%{unlimited}%": "Unlimited",
-                },
-                state: {
-                    // Options.
-                    "%{public}%": "🌐 **Public**",
-                    "%{private}%": "🚫 **Private**",
-                },
-            }
         };
     }
 

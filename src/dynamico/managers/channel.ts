@@ -196,11 +196,9 @@ export class ChannelManager extends InitializeBase {
             `Getting channel '${ channelId }' from guild '${ guildId }', cache: '${ cache }'`
         );
 
-        const key = guildId + channelId;
-
         // If in cache, return it.
         if ( cache ) {
-            const result = this.cache.get( key );
+            const result = this.cache.get( channelId );
 
             if ( result ) {
                 this.debugger.log( this.getChannel,
@@ -213,7 +211,7 @@ export class ChannelManager extends InitializeBase {
         const result = await this.channelModel.get( guildId, channelId );
 
         // Set cache.
-        this.cache.set( key, result );
+        this.cache.set( channelId, result );
 
         return result;
     }
@@ -264,6 +262,18 @@ export class ChannelManager extends InitializeBase {
         await this.channelModel.delete( guild, channel.id );
 
         await channel.delete();
+
+        this.removeFromCache( channel.id );
+    }
+
+    // TODO: Should be mandatory in the parent class, e: ManagerCacheBase.
+    public removeFromCache( channelId: string ) {
+        this.debugger.log( this.removeFromCache, `Removing channel '${ channelId }' from cache.` );
+
+        // Remove from cache.
+        this.cache.delete( channelId );
+
+        ChannelDataManager.getInstance().removeFromCache( channelId );
     }
 }
 

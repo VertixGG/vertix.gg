@@ -1,3 +1,5 @@
+import { Colors } from "discord.js";
+
 import UITemplate from "@dynamico/ui/base/ui-template";
 
 export default class Embed extends UITemplate {
@@ -5,12 +7,15 @@ export default class Embed extends UITemplate {
         return {
             descriptions: {
                 "%{masterChannelNotExist}%": "Master channel does not exist",
+                "%{somethingWentWrong}%": "Something went wrong",
             },
             titles: {
                 "%{masterChannelNotExist}%": "🤷 Oops, an issue has occurred",
+                "%{somethingWentWrong}%": "🤷 Oops, an issue has occurred",
             },
             colors: {
                 "%{masterChannelNotExist}%": 0xFF8C00,
+                "%{somethingWentWrong}%": Colors.Red,
             },
         };
     }

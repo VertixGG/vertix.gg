@@ -1,5 +1,3 @@
-import { Interaction, NonThreadGuildBasedChannel } from "discord.js";
-
 import guiManager from "@dynamico/managers/gui";
 
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
@@ -9,7 +7,7 @@ import EditPermissions from "@dynamico/ui/edit-dynamic-channel/buttons/edit-perm
 
 import Primary from "@dynamico/ui/edit-dynamic-channel/embeds/primary";
 
-import { EmbedsTypes } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
 
 export class EditDynamicChannel extends UIComponentBase {
     public static getName() {
@@ -23,12 +21,10 @@ export class EditDynamicChannel extends UIComponentBase {
         setTimeout( () => {
             guiManager.register( require( "./modals/rename" ).default );
             guiManager.register( require( "./modals/userlimit" ).default );
-
-            //GUIManager.getInstance().register( require( "./edit-channel/mange-users-menus" ).default );
         } );
     }
 
-    protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsTypes {
+    protected getDynamicEmbeds( interaction?: BaseInteractionTypes ) {
         return [ new Primary ];
     }
 

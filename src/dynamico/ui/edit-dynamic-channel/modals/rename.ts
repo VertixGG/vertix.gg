@@ -1,5 +1,7 @@
 import process from "process";
 
+import fetch from "cross-fetch";
+
 import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 

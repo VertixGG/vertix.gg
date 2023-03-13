@@ -60,7 +60,7 @@ export default class EditPermissions extends UIElement {
 
             // Set connect permissions for @everyone to false.
             // TODO: If user set basic roles, then we apply all the changes for each basicRole, except for @everyone.
-            await dynamicChannel.permissionOverwrites.create( interaction.guildId, {
+            await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
                 Connect: true,
             } );
 
@@ -81,7 +81,7 @@ export default class EditPermissions extends UIElement {
 
             // If user didn't set any basic roles, then we apply the changes on @everyone.
             // TODO: If user set basic roles, then we apply all the changes for each basicRole, except for @everyone.
-            await dynamicChannel.permissionOverwrites.create( interaction.guildId, {
+            await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
                 Connect: false,
             } );
 

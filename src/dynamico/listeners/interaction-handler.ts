@@ -2,10 +2,8 @@ import * as process from "process";
 
 import {
     ButtonInteraction,
-    ChannelType,
     Client,
     CommandInteraction,
-    EmbedBuilder,
     Events,
     Interaction,
     ModalSubmitInteraction,
@@ -17,11 +15,13 @@ import { Commands } from "../commands";
 
 import GlobalLogger from "@dynamico/global-logger";
 
-import {
-    ChannelManager,
-    MasterChannelManager,
-    guiManager,
-} from "@dynamico/managers";
+import authMiddleware from "@dynamico/middlewares/auth";
+
+import permissionsMiddleware from "@dynamico/middlewares/permissions";
+
+import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+
+import { guiManager, } from "@dynamico/managers";
 
 const globalLogger = GlobalLogger.getInstance();
 
@@ -44,6 +44,10 @@ export function interactionHandler( client: Client ) {
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
     globalLogger.log( handleSlashCommand, `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'` );
 
+    if ( ! await permissionsMiddleware( interaction ) ) {
+        return;
+    }
+
     const slashCommand = Commands.find( c => c.name === interaction.commandName );
 
     if ( ! slashCommand ) {
@@ -58,45 +62,21 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
     slashCommand.run( client, interaction );
 };
 
-async function authMiddleware( interaction: Interaction ) {
-    // Only the channel owner can pass the middleware
-    if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guildId ) {
-        const channel = await ChannelManager.getInstance().getChannel( interaction.guildId, interaction.channel.id, true );
+const getCallback = async ( interaction: UIInteractionTypes ) => {
+    const result = await guiManager.getCallback( interaction.customId, [
+        authMiddleware,
+        permissionsMiddleware,
+    ] );
 
-        if ( channel?.userOwnerId === interaction.user.id ) {
-            return true;
-        }
-
-        if ( interaction.isButton() || interaction.isStringSelectMenu() || interaction.isModalSubmit() ) {
-            const embed = new EmbedBuilder(),
-                masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction, true );
-
-            let message = "You should open your own dynamic channel and try again:";
-
-            if ( masterChannel ) {
-                message = `${ message }:\n<#${ masterChannel.id }>`;
-            }
-
-            embed.setTitle( "🤷 Oops, this is not your channel" );
-            embed.setDescription( message );
-            embed.setColor(0xFF8C00);
-
-            await interaction.reply( {
-                embeds: [ embed ],
-                ephemeral: true,
-            } );
-        }
-    }
-
-    return false;
-}
+    result( interaction );
+};
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
     globalLogger.info( handleButton,
         `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
-    await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
+    await getCallback( interaction );
 };
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
@@ -104,7 +84,7 @@ async function handleModalSubmit( client: Client, interaction: ModalSubmitIntera
         `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
-    await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
+    await getCallback( interaction );
 }
 
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
@@ -112,5 +92,5 @@ async function handleUserSelectMenuInteraction( client: Client, interaction: Use
         `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
-    await guiManager.getCallback( interaction.customId, authMiddleware )( interaction );
+    await getCallback( interaction );
 }

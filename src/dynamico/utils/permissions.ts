@@ -35,14 +35,10 @@ export class Permissions extends ObjectBase {
      */
     public static getMissingPermissions( context: Guild, permissions?: bigint[] ): string[];
     public static getMissingPermissions( context: VoiceChannel, permissions?: bigint[] ): string[];
-    public static getMissingPermissions( context: VoiceChannel|Guild, permissions: bigint[] = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow ) {
+    public static getMissingPermissions( context: VoiceChannel|Guild, permissions: bigint[] ) {
         const result: string[] = [];
 
         let guild: Guild;
-
-        if ( ! permissions.length ) {
-            permissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow;
-        }
 
         if ( context instanceof Guild ) {
             guild = context;

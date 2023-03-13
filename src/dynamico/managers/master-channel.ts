@@ -23,6 +23,7 @@ import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
@@ -40,6 +41,7 @@ import { ChannelDataManager } from "@dynamico/managers/channel-data";
 import Permissions from "@dynamico/utils/permissions";
 
 import InitializeBase from "@internal/bases/initialize-base";
+import gui from "./gui";
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -249,18 +251,6 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
 
-        const selfRoleId = Permissions.getSelfRoleId( guild );
-
-        if ( ! selfRoleId ) {
-            this.logger.error( this.createCreateChannel,
-                `Self role id not found for guild '${ guild.name }' guildId: '${ guild.id }'`
-            );
-            return;
-        }
-
-        const allowedPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow;
-            allowedPermissions.shift(); // Remove MANGE_ROLES, Cannot be set without admin permission.
-
         return await ChannelManager.getInstance().create( {
             parent,
             guild,
@@ -269,10 +259,8 @@ export class MasterChannelManager extends InitializeBase {
             name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
             permissionOverwrites: [ {
-                // Add self role id
-                id: selfRoleId,
-                type: OverwriteType.Role,
-                allow: allowedPermissions,
+                id: guild.client.user.id,
+                ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
             }, {
                 id: guild.roles.everyone,
                 ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS

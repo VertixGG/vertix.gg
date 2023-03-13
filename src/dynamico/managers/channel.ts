@@ -6,7 +6,7 @@ import {
     MessageEditOptions,
     NonThreadGuildBasedChannel,
     VoiceChannel,
-    VoiceState
+    VoiceState,
 } from "discord.js";
 
 import MasterChannelManager from "./master-channel";
@@ -25,6 +25,10 @@ import ChannelModel from "@dynamico/models/channel";
 import Debugger from "@dynamico/utils/debugger";
 
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
+
+import {
+    DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS_REQUIREMENTS_FIELDS
+} from "@dynamico/constants/master-channel";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -177,6 +181,21 @@ export class ChannelManager extends InitializeBase {
         this.debugger.log( this.onVoiceChannelUpdatePermissions, `New permissions for channel '${ oldChannel.id }'` );
         this.debugger.debugPermissions( this.onVoiceChannelUpdatePermissions, newChannel.permissionOverwrites );
 
+        const botId = newChannel.client.user.id,
+            isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.has( botId ) &&
+            // TODO: Add cache.
+            await this.channelModel.isDynamic( newChannel.id, newChannel.guildId ) ||
+            await this.channelModel.isMasterCreate( newChannel.id, newChannel.guildId );
+
+        if ( isBotPermissionsRemovedFromChannel ) {
+            this.logger.info( this.onVoiceChannelUpdatePermissions,
+                `Bot permissions were removed from dynamic channel '${ newChannel.id }'` );
+
+            await newChannel.permissionOverwrites.edit( botId,
+                DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS_REQUIREMENTS_FIELDS
+            );
+        }
+
         const newMessage = await guiManager
             .get( "Dynamico/UI/EditDynamicChannel" )
             .getMessage( newChannel );
@@ -274,7 +293,7 @@ export class ChannelManager extends InitializeBase {
         }
 
         return message.edit( newMessage ).catch(
-            ( e ) => this.logger.error( this.editPrimaryMessage, "", e ) );
+            ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
     }
 
     // TODO: Should be mandatory in the parent class, e: ManagerCacheBase.

@@ -1,4 +1,4 @@
-import { PermissionsBitField } from "discord.js";
+import { OverwriteType, PermissionsBitField } from "discord.js";
 
 const { Flags } = PermissionsBitField;
 
@@ -19,11 +19,26 @@ export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
 };
 
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
+    type: OverwriteType.Role,
     allow: [
-        Flags.ManageRoles, // Should be first.
-        Flags.Connect,
         Flags.ManageChannels,
+        Flags.ManageRoles,
         Flags.MoveMembers,
+        Flags.ViewChannel,
+    ],
+};
+
+export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS_REQUIREMENTS_FIELDS = {
+    Connect: true,
+    ReadMessageHistory: true,
+    SendMessages: true,
+    ViewChannel: true,
+};
+
+export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS = {
+    type: OverwriteType.Member,
+    allow: [
+        Flags.Connect,
         Flags.ReadMessageHistory,
         Flags.SendMessages,
         Flags.ViewChannel,

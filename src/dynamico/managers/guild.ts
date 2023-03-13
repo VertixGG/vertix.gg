@@ -40,17 +40,19 @@ export class GuildManager extends InitializeBase {
     public async onJoin( client: Client, guild: Guild ) {
         this.logger.info( this.onJoin, `Dynamico joined guild: '${ guild.name }' guildId: '${ guild.id }'` );
 
-        const owner = await client.users.fetch( guild.ownerId ),
-            permissions = Permissions.getMissingPermissions( guild );
+        const owner = await client.users.fetch( guild.ownerId );
 
-        if ( permissions.length > 0 ) {
-            await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendUser( owner, {
-                botName: owner.client.user.username,
-                permissions
-            } );
-
-            return;
-        }
+        // Setup on join.
+        //     permissions = Permissions.getMissingPermissions( guild,  );
+        //
+        // if ( permissions.length > 0 ) {
+        //     await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendUser( owner, {
+        //         botName: owner.client.user.username,
+        //         permissions
+        //     } );
+        //
+        //     return;
+        // }
 
         // Determine if the guild is already in the database.
         if ( await this.guildModel.isExisting( guild ) ) {

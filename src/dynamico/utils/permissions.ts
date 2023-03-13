@@ -1,8 +1,6 @@
-import { Guild, PermissionsBitField, VoiceChannel } from "discord.js";
+import { Guild, PermissionsBitField, User, VoiceChannel } from "discord.js";
 
 import DynamicoManager from "@dynamico/managers/dynamico";
-
-import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@dynamico/constants/master-channel";
 
 import { ObjectBase } from "@internal/bases";
 
@@ -33,9 +31,10 @@ export class Permissions extends ObjectBase {
     /**
      * Function getMissingPermissions() :: Return missing permissions names.
      */
-    public static getMissingPermissions( context: Guild, permissions?: bigint[] ): string[];
-    public static getMissingPermissions( context: VoiceChannel, permissions?: bigint[] ): string[];
-    public static getMissingPermissions( context: VoiceChannel|Guild, permissions: bigint[] ) {
+    public static getMissingPermissions( context: VoiceChannel, permissions: bigint[], user: User ): string[];
+    public static getMissingPermissions( context: Guild, permissions: bigint[] ): string[];
+    public static getMissingPermissions( context: VoiceChannel, permissions: bigint[] ): string[];
+    public static getMissingPermissions( context: VoiceChannel|Guild, permissions: bigint[], user?: User ) {
         const result: string[] = [];
 
         let guild: Guild;
@@ -64,6 +63,20 @@ export class Permissions extends ObjectBase {
         if ( context instanceof VoiceChannel ) {
             // Ensure there are no overwrites that effect the bot role.
             const permissionOverwrites = context.permissionOverwrites.cache.get( selfRoleId );
+
+            if ( permissionOverwrites ) {
+                // Loop through the permissions that are defined in the overwrites.
+                for ( const permission of permissionOverwrites.deny.toArray() ) {
+                    if ( guildRolePermissionsField.has( permission ) && ! result.includes( permission ) ) {
+                        result.push( permission );
+                    }
+                }
+            }
+        }
+
+        if ( user && context instanceof VoiceChannel ) {
+            // Ensure there are no overwrites that effect the user.
+            const permissionOverwrites = context.permissionOverwrites.cache.get( user.id );
 
             if ( permissionOverwrites ) {
                 // Loop through the permissions that are defined in the overwrites.

@@ -1,76 +1,86 @@
 import {
     ApplicationCommandType,
     Client,
-    Colors,
     CommandInteraction,
-    EmbedBuilder,
     PermissionsBitField,
 } from "discord.js";
 
+import { guiManager } from "../managers/gui";
+
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
+
+import { commandsLogger } from "@dynamico/commands/index";
 
 import { ICommand } from "@dynamico/interfaces/command";
 
-import MasterChannelManager from "@dynamico/managers/master-channel";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
 
 import ChannelModel from "@dynamico/models/channel";
 
-const masterChannelManager = MasterChannelManager.getInstance();
+const name = "setup";
 
-// TODO: Extend common command class.
 export const Setup: ICommand = {
-    name: "setup",
+    name,
+
     description: "Setting up Dynamico",
     type: ApplicationCommandType.ChatInput,
 
     defaultMemberPermissions: [ PermissionsBitField.Flags.Administrator ],
 
     run: async ( client: Client, interaction: CommandInteraction ) => {
-        const embed = new EmbedBuilder(),
-            guildId = interaction.guildId;
+        const guildId = interaction.guildId;
 
-        if ( guildId && await ChannelModel.getInstance().isReachedMasterLimit( guildId ) ) {
-            embed
-                .setTitle( "You have reached your Master Channels limit" )
-                .setDescription( `You can create up to ${ DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } Master Channels in total.` )
-                .setColor( Colors.Red );
-        } else if ( interaction.guild ){
-            const result = await masterChannelManager.createDefaultMasters( interaction.guild, interaction.user.id );
+        if ( ! guildId || ! interaction.guild ) {
+            commandsLogger.error( name,
+                `GuildId or guild is not defined. GuildId: ${ guildId }, guild: ${ interaction.guild }` );
 
-            if ( ! result ) {
-                embed
-                    .setTitle( "Something went wrong" )
-                    .setDescription( "Please try again later." )
-                    .setColor( Colors.Red );
-
-                await interaction.followUp( {
-                    ephemeral: true,
-                    embeds: [ embed ],
+            return await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendFollowUp( interaction, {
+                    globalResponse: "%{somethingWentWrong}%"
                 } );
-
-                return;
-            }
-
-            const { masterCategory, masterCreateChannel } = result;
-
-            let description = `**Category**: ${ masterCategory.name }\n`;
-
-            description += `**Create Channel**: <#${ masterCreateChannel.id }>\n`;
-
-            embed
-                .setTitle( "Dynamico has been set up successfully !" )
-                .setDescription( description )
-                .setColor( Colors.Blue );
-        } else {
-            embed
-                .setTitle( "Something went wrong" )
-                .setDescription( "Please try again later." )
-                .setColor( Colors.Red );
         }
 
-        await interaction.followUp( {
-            ephemeral: true,
-            embeds: [ embed ],
-        } );
+        if ( guildId && await ChannelModel.getInstance().isReachedMasterLimit( guildId ) ) {
+            commandsLogger.debug( name, `GuildId: ${ guildId } has reached master limit.` );
+
+            return await guiManager.get( "Dynamico/UI/NotifyMaxMasterChannels" )
+                .sendFollowUp( interaction, { maxFreeMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } );
+        }
+
+        const result = await MasterChannelManager.getInstance()
+            .createDefaultMasters( interaction.guild, interaction.user.id );
+
+        if ( ! result ) {
+            commandsLogger.error( name,
+                `GuildId: ${ guildId } has not been set up, master channel creation failed`
+            );
+
+            return await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendFollowUp( interaction, {
+                    globalResponse: "%{somethingWentWrong}%"
+                } );
+        }
+
+        const { masterCategory, masterCreateChannel } = result;
+
+        if ( ! masterCreateChannel ) {
+            commandsLogger.error( name,
+                `GuildId: ${ guildId } has not been set up, master channel creation failed`
+            );
+
+            return await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendFollowUp( interaction, {
+                    globalResponse: "%{somethingWentWrong}%"
+                } );
+
+        }
+
+        commandsLogger.info( name, `GuildId: ${ guildId } has been set up successfully` );
+
+        await guiManager.get( "Dynamico/UI/NotifySetupSuccess" )
+            .sendFollowUp( interaction, {
+                masterCategoryName: masterCategory.name,
+                masterChannelId: masterCreateChannel.id,
+            } );
     }
 };

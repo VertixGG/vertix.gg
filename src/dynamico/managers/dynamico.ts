@@ -4,6 +4,7 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import { ChannelType, Client } from "discord.js";
 
 import { Commands } from "@dynamico/commands";
+
 import CategoryManager from "@dynamico/managers/category";
 import ChannelManager from "@dynamico/managers/channel";
 
@@ -27,6 +28,10 @@ export class DynamicoManager extends InitializeBase {
         return "Dynamico/Managers/Dynamico";
     }
 
+    public getClient() {
+        return this.client;
+    }
+
     public async onReady( client: Client ) {
         if ( this.client ) {
             this.logger.error( this.onReady, "Client is already set" );
@@ -44,12 +49,16 @@ export class DynamicoManager extends InitializeBase {
 
         await client.application.commands.set( Commands );
 
+        await this.removeMasterChannels( client );
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
         await this.removeEmptyChannelData();
 
+        const username = client.user.username,
+            id = client.user.id;
+
         this.logger.log( this.onReady,
-            `Ready handle is set, bot: '${ client.user.username }' is online, commands is set.` );
+            `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.` );
     }
 
     private async removeEmptyChannels( client: Client ) {
@@ -86,6 +95,32 @@ export class DynamicoManager extends InitializeBase {
 
                 this.logger.info( this.removeEmptyChannels,
                     `Channel '${ channel.channelId }' is deleted from db.` );
+            }
+        }
+    }
+
+    public async removeMasterChannels( client: Client ) {
+        // Remove non-existing master channels.
+        const prisma = await PrismaInstance.getClient(),
+            masterChannels = await prisma.channel.findMany( {
+                where: {
+                    internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
+                }
+            } );
+
+        for ( const channel of masterChannels ) {
+            const guildCache = client.guilds.cache.get( channel.guildId ),
+                channelCache = guildCache?.channels.cache.get( channel.channelId );
+
+            if ( ! guildCache || ! channelCache ) {
+                await prisma.channel.delete( {
+                    where: {
+                        id: channel.id
+                    }
+                } );
+
+                this.logger.info( this.removeEmptyChannels,
+                    `Master channel '${ channel.channelId }' is deleted from db.` );
             }
         }
     }

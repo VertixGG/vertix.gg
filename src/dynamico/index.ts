@@ -2,11 +2,11 @@ import * as process from "process";
 
 import chalk from "chalk";
 
-import { Client } from "discord.js";
-
-import * as handlers from "./listeners/";
+import { Client, Partials } from "discord.js";
 
 import { guiManager } from "./managers/";
+
+import * as handlers from "./listeners/";
 
 import GlobalLogger from "./global-logger";
 
@@ -18,6 +18,9 @@ export default function Main() {
     guiManager.register( require( "@dynamico/ui/global-responses/global-responses" ).default );
     guiManager.register( require( "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel" ).default );
     guiManager.register( require( "@dynamico/ui/edit-users-permissions/edit-users-permissions" ).default );
+    guiManager.register( require( "@dynamico/ui/notify-permissions" ).default );
+    guiManager.register( require( "@dynamico/ui/notify-max-master-channels" ).default );
+    guiManager.register( require( "@dynamico/ui/notify-setup-success" ).default );
 
     const client = new Client( {
         intents: [
@@ -25,13 +28,16 @@ export default function Main() {
             "GuildInvites",
             "Guilds",
             "GuildVoiceStates",
+        ],
+        partials: [
+            Partials.Channel,
         ]
     } );
 
     // DiscordJS Debug mode.
     if ( process.env.debug_mode === "discord" ) {
         const debug = ( ... args: any[] ) => {
-            logger.debug( chalk.red( "API" ) , args.toString() );
+            logger.debug( chalk.red( "API" ), args.toString() );
         };
 
         client

@@ -70,19 +70,21 @@ export class ChannelModel extends ModelBase {
         return this.prisma.channelData.create( { data } );
     }
 
-    public async delete( guild: Guild, channelId?: string|null ) {
+    public async delete( guild: Guild, channelId?: string | null ) {
         if ( channelId ) {
             this.logger.info( this.delete,
                 `Deleting channel '${ channelId }' for guild '${ guild.name }' guildId: '${ guild.id }'` );
 
-            return this.model.delete( {
-                where: {
-                    channelId
-                },
-                include: {
-                    data: true
-                }
-            } );
+            if ( await this.isExisting( guild, channelId ) ) {
+                return this.model.delete( {
+                    where: {
+                        channelId
+                    },
+                    include: {
+                        data: true
+                    }
+                } );
+            }
         }
 
         this.logger.info( this.delete,
@@ -107,7 +109,7 @@ export class ChannelModel extends ModelBase {
     }
 
     public async getChannelDataByChannelId( args: IChannelDataGetArgs ) {
-        this.debugger.log( this.getChannelDataByChannelId, "Getting master channel data for channel", args  );
+        this.debugger.log( this.getChannelDataByChannelId, "Getting master channel data for channel", args );
 
         return this.prisma.channel.findUnique( {
             where: {
@@ -135,7 +137,7 @@ export class ChannelModel extends ModelBase {
     }
 
     public async isReachedMasterLimit( guildId: string ) {
-        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL  ) >= DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS;
+        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS;
     }
 
     public async isMasterCreate( channelId: string, guildId: string ) {
@@ -158,8 +160,8 @@ export class ChannelModel extends ModelBase {
         } );
     }
 
-    public async isExisting( guild: Guild, channelId?: string|null ) {
-        const where: any =  { guildId: guild.id };
+    public async isExisting( guild: Guild, channelId?: string | null ) {
+        const where: any = { guildId: guild.id };
 
         if ( channelId ) {
             where.channelId = channelId;

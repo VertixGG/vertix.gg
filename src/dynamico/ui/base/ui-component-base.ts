@@ -1,13 +1,19 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
+    CommandInteraction,
     EmbedBuilder,
     Interaction,
     ModalBuilder,
-    NonThreadGuildBasedChannel,
+    User,
 } from "discord.js";
 
-import { ContinuesInteractionTypes, E_UI_TYPES, EmbedsTypes, } from "@dynamico/interfaces/ui";
+import {
+    BaseInteractionTypes,
+    ContinuesInteractionTypes,
+    E_UI_TYPES,
+    EmbedsTypes,
+} from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 import UITemplate from "@dynamico/ui/base/ui-template";
@@ -35,8 +41,18 @@ export class UIComponentBase extends UIBase {
         return this.storeStaticComponents();
     }
 
-    public async sendContinues( interaction: ContinuesInteractionTypes, args: any ) {
+    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
         return await guiManager.sendContinuesMessage( interaction, this, args );
+    }
+
+    public async sendFollowUp( interaction: CommandInteraction, args: any ) {
+        return await interaction.followUp( await this.getMessage( interaction, args ) );
+    }
+
+    public async sendUser( user: User, args: any ) {
+        const message = await this.getMessage( await user.createDM(), args );
+
+        await user.send( message );
     }
 
     public async storeStaticComponents() {
@@ -67,7 +83,7 @@ export class UIComponentBase extends UIBase {
         }
     }
 
-    public async getEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel, args?: any ): Promise<EmbedsTypes> {
+    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedsTypes> {
         const staticThis = ( this.constructor as typeof UIComponentBase );
 
         let result: any = [];
@@ -76,11 +92,11 @@ export class UIComponentBase extends UIBase {
             result = result.push( ... staticThis.embeds );
         }
 
-        const dynamicEmbeds = this.getDynamicEmbeds( interaction ),
+        const dynamicEmbeds = this.getDynamicEmbeds( interaction, args ),
             isUITemplates = dynamicEmbeds?.length ? dynamicEmbeds[0] instanceof UITemplate : false;
 
         // TODO UIEmbedTemplate + Validate.
-        if ( interaction && isUITemplates ) {
+        if ( isUITemplates && ( interaction || null === interaction ) ) {
             for ( const uiTemplateObject of dynamicEmbeds as UITemplate[] ) {
                 const template = await uiTemplateObject.compose( interaction, args ),
                     embed = new EmbedBuilder();
@@ -106,7 +122,7 @@ export class UIComponentBase extends UIBase {
         return result;
     }
 
-    public async getMessage( interaction?: Interaction | NonThreadGuildBasedChannel, args?: any ): Promise<BaseMessageOptions> {
+    public async getMessage( interaction?: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
         const builtComponents = await this.getActionRows( interaction ),
             result: any = { components: builtComponents },
             embeds = await this.getEmbeds( interaction, args );
@@ -125,7 +141,7 @@ export class UIComponentBase extends UIBase {
         return null;
     }
 
-    protected getDynamicEmbeds( interaction?: Interaction | NonThreadGuildBasedChannel ): EmbedsTypes {
+    protected getDynamicEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): EmbedsTypes {
         return null;
     }
 
@@ -133,7 +149,7 @@ export class UIComponentBase extends UIBase {
         throw new ForceMethodImplementation( this, this.getInternalComponents.name );
     }
 
-    private async getActionRows( interaction?: Interaction | NonThreadGuildBasedChannel ): Promise<ActionRowBuilder<any>[]> {
+    private async getActionRows( interaction?: BaseInteractionTypes ): Promise<ActionRowBuilder<any>[]> {
         const components: any[] = [],
             staticThis = ( this.constructor as typeof UIComponentBase );
 
@@ -158,7 +174,7 @@ export class UIComponentBase extends UIBase {
         return builtComponents;
     }
 
-    private async createComponents( components: typeof UIElement[], interaction?: Interaction | NonThreadGuildBasedChannel ): Promise<UIElement[]> {
+    private async createComponents( components: typeof UIElement[], interaction?: BaseInteractionTypes ): Promise<UIElement[]> {
         const result: any = [];
 
         for ( const component of components ) {

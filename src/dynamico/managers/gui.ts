@@ -4,9 +4,8 @@ import {
     APIEmbed,
     APIMessageActionRowComponent,
     ButtonInteraction,
-    ChannelType,
+    CommandInteraction,
     EmbedBuilder,
-    Interaction,
     InteractionReplyOptions,
     InteractionResponse,
     JSONEncodable,
@@ -17,7 +16,7 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import { ContinuesInteractionTypes } from "@dynamico/interfaces/ui";
+import { ContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
 
 import Debugger from "@dynamico/utils/debugger";
 
@@ -102,7 +101,7 @@ export class GUIManager extends InitializeBase {
         return unique;
     }
 
-    public getCallback( unique: string, middleware: ( interaction: Interaction ) => Promise<boolean> ) {
+    public async getCallback( unique: string, middleware: (( interaction: UIInteractionTypes ) => Promise<boolean>)[] ) {
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {
@@ -113,10 +112,15 @@ export class GUIManager extends InitializeBase {
             };
         }
 
-        return async ( interaction: Interaction ) => {
-            if ( await middleware( interaction ) ) {
-                return result( interaction );
+        // Run the middlewares.
+        return async ( interaction: UIInteractionTypes ) => {
+            for ( const middlewareItem of middleware ) {
+                if ( ! await middlewareItem( interaction ) ) {
+                    return false;
+                }
             }
+
+            return result( interaction );
         };
     }
 
@@ -131,7 +135,7 @@ export class GUIManager extends InitializeBase {
         return embed;
     }
 
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, component: UIComponentBase, args?: any ): Promise<void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes|CommandInteraction, component: UIComponentBase, args?: any ): Promise<void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIComponentBase | string, args?: any ): Promise<void> {
@@ -140,16 +144,18 @@ export class GUIManager extends InitializeBase {
             interaction instanceof SelectMenuInteraction ||
             interaction instanceof UserSelectMenuInteraction ||
             interaction instanceof ModalSubmitInteraction ||
-            interaction.isStringSelectMenu();
+            interaction instanceof CommandInteraction ||
+            interaction.isCommand() ||
+            interaction.isStringSelectMenu?.();
 
-        if ( ! isInstanceTypeOfContinuesInteraction ) {
+        if ( ! isInstanceTypeOfContinuesInteraction || undefined === interaction.channel?.type ) {
             this.logger.error( this.sendContinuesMessage,
                 `Interaction type '${ interaction.constructor.name }' is not supported`
             );
             return;
         }
 
-        if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type ) {
+        if ( interaction.channel ) {
             let message: string | undefined,
                 embeds: ( JSONEncodable<APIEmbed> | APIEmbed )[] | undefined,
                 components: ComponentTypes[] | undefined,
@@ -186,9 +192,15 @@ export class GUIManager extends InitializeBase {
             if ( ! isInteractionExist ) {
                 // Validate interaction
                 if ( interaction.isRepliable() ) {
-                    const defer = await interaction.reply( replyArgs );
+                    interaction.reply( replyArgs )
+                        .catch( e => this.logger.warn( this.sendContinuesMessage, "", e ) )
+                        .then( defer => {
+                            if ( defer && interaction.channel ) {
+                                this.continuesInteractions.set( interaction.channel.id, defer );
+                            }
 
-                    this.continuesInteractions.set( interaction.channel.id, defer );
+                            return defer;
+                        } );
                 }
 
                 return;

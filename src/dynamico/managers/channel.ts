@@ -3,6 +3,7 @@ import { Channel } from "@prisma/client";
 import {
     ChannelType,
     DMChannel,
+    MessageEditOptions,
     NonThreadGuildBasedChannel,
     VoiceChannel,
     VoiceState
@@ -176,19 +177,11 @@ export class ChannelManager extends InitializeBase {
         this.debugger.log( this.onVoiceChannelUpdatePermissions, `New permissions for channel '${ oldChannel.id }'` );
         this.debugger.debugPermissions( this.onVoiceChannelUpdatePermissions, newChannel.permissionOverwrites );
 
-        const message = await newChannel.messages.fetch( { limit: 1 } ).then( ( messages ) => messages.first() );
-
-        if ( ! message ) {
-            this.logger.error( this.onVoiceChannelUpdatePermissions,
-                `Failed to find message in channel '${ newChannel.id }'.` );
-            return;
-        }
-
         const newMessage = await guiManager
             .get( "Dynamico/UI/EditDynamicChannel" )
             .getMessage( newChannel );
 
-        message.edit( newMessage ).catch( ( e ) => this.logger.error( this.onVoiceChannelUpdatePermissions,  "", e ) );
+        await this.editPrimaryMessage( newMessage, newChannel );
     }
 
     public async getChannel( guildId: string, channelId: string, cache = false ) {
@@ -238,6 +231,10 @@ export class ChannelManager extends InitializeBase {
                 createdAtDiscord: channel.createdTimestamp,
             };
 
+        this.debugger.log( this.create,
+            `Channel '${ channel.id }' was created for guild '${ guild.id }'`
+        );
+
         if ( channel.parentId ) {
             data.categoryId = channel.parentId;
         }
@@ -261,9 +258,23 @@ export class ChannelManager extends InitializeBase {
 
         await this.channelModel.delete( guild, channel.id );
 
-        await channel.delete();
+        // Some channels are not deletable, so we need to catch the error.
+        channel.delete()
+            .catch( ( e ) => this.logger.error( this.delete, "", e ) )
+            .finally( () => this.removeFromCache( channel.id ) );
+    }
 
-        this.removeFromCache( channel.id );
+    public async editPrimaryMessage( newMessage: MessageEditOptions, channel: VoiceChannel ) {
+        const message = await channel.messages.cache.at( 0 );
+
+        if ( ! message ) {
+            this.logger.error( this.editPrimaryMessage,
+                `Failed to find message in channel '${ channel.id }'.` );
+            return;
+        }
+
+        return message.edit( newMessage ).catch(
+            ( e ) => this.logger.error( this.editPrimaryMessage, "", e ) );
     }
 
     // TODO: Should be mandatory in the parent class, e: ManagerCacheBase.

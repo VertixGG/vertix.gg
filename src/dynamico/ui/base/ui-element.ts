@@ -2,10 +2,8 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ComponentBuilder,
-    Interaction,
     ModalBuilder,
     ModalSubmitInteraction,
-    NonThreadGuildBasedChannel,
     SelectMenuInteraction,
     StringSelectMenuBuilder,
     TextInputBuilder,
@@ -17,7 +15,7 @@ import UIBase from "@dynamico/ui/base/ui-base";
 
 import guiManager from "@dynamico/managers/gui";
 
-import { CallbackUIType, DYNAMICO_UI_ELEMENT, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, CallbackUIType, DYNAMICO_UI_ELEMENT, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import Logger from "@internal/modules/logger";
 
@@ -26,7 +24,7 @@ import { ForceMethodImplementation } from "@internal/errors";
 export default class UIElement extends UIBase {
     protected static logger: Logger = new Logger( this );
 
-    public interaction?: Interaction | NonThreadGuildBasedChannel;
+    public interaction?: BaseInteractionTypes;
 
     private builtRows: ActionRowBuilder<any>[] = [];
 
@@ -38,7 +36,7 @@ export default class UIElement extends UIBase {
         throw new ForceMethodImplementation( this, this.getType.name );
     }
 
-    public constructor( interaction?: Interaction | NonThreadGuildBasedChannel ) {
+    public constructor( interaction?: BaseInteractionTypes ) {
         super( interaction );
 
         if ( this.getName() === UIElement.getName() ) {
@@ -50,7 +48,7 @@ export default class UIElement extends UIBase {
         }
     }
 
-    protected load( interaction?: Interaction | NonThreadGuildBasedChannel ) {
+    protected load( interaction?: BaseInteractionTypes ) {
         return this.build( interaction );
     }
 
@@ -96,11 +94,11 @@ export default class UIElement extends UIBase {
         return modal;
     }
 
-    protected async getBuilders( interaction?: Interaction | NonThreadGuildBasedChannel ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
+    protected async getBuilders( interaction?: BaseInteractionTypes ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 
-    public async build( interaction?: Interaction | NonThreadGuildBasedChannel ) {
+    public async build( interaction?: BaseInteractionTypes ) {
         UIElement.logger.debug( this.build, `Building UI '${ this.getName() }'` );
 
         const builders = await this.getBuilders( interaction ),

@@ -1,6 +1,4 @@
-import { Interaction, NonThreadGuildBasedChannel } from "discord.js";
-
-import { DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
 
 import { ObjectBase } from "@internal/bases/object-base";
 
@@ -9,7 +7,7 @@ export abstract class UITemplate extends ObjectBase {
         return DYNAMICO_UI_TEMPLATE;
     }
 
-    public async compose( interaction?: Interaction | NonThreadGuildBasedChannel | null, args?: any ): Promise<any> {
+    public async compose( interaction?: BaseInteractionTypes | null, args?: any ): Promise<any> {
         const template = this.getTemplateInputs(),
             logic = await this.getTemplateLogic( interaction, args ),
             logicParsed = { ... logic, ... this.extractVariables( logic, this.getTemplateOptions() ) };
@@ -35,7 +33,7 @@ export abstract class UITemplate extends ObjectBase {
 
     protected abstract getTemplateInputs(): any;
 
-    protected abstract getTemplateLogic( interaction?: Interaction | NonThreadGuildBasedChannel | null, args?: any ): any;
+    protected abstract getTemplateLogic( interaction?: BaseInteractionTypes | null, args?: any ): any;
 
     private extractVariables( templateLogic: any, templateOptions: any ) {
         const variables = templateOptions,

@@ -1,8 +1,11 @@
 import {
     ButtonInteraction,
+    CommandInteraction,
+    DMChannel,
     EmbedBuilder,
     Interaction,
     ModalSubmitInteraction,
+    NonThreadGuildBasedChannel,
     SelectMenuInteraction,
     StringSelectMenuInteraction,
     UserSelectMenuInteraction,
@@ -10,9 +13,10 @@ import {
 
 import UITemplate from "@dynamico/ui/base/ui-template";
 
-export const DYNAMICO_UI_ELEMENT = "Dynamico/UI/UIElement";
-export const DYNAMICO_UI_BASE = "Dynamico/UI/Base";
-export const DYNAMICO_UI_TEMPLATE = "Dynamico/UI/UITemplate";
+export const DYNAMICO_UI_ELEMENT = "Dynamico/UI/UIElement",
+    DYNAMICO_UI_BASE = "Dynamico/UI/Base",
+    DYNAMICO_UI_TEMPLATE = "Dynamico/UI/UITemplate",
+    DYNAMICO_UI_TEMPLATE_COMPONENT_EMBED = "Dynamico/UI/UITemplateComponentEmbed";
 
 // TODO: UITemplate[] should be UIEmbedTemplate[].
 export type EmbedsTypes = EmbedBuilder[] | UITemplate[] | null;
@@ -25,12 +29,15 @@ export enum E_UI_TYPES {
     DYNAMIC,
 }
 
-export type ContinuesInteractionTypes =
-    Interaction
+export type BaseInteractionTypes = Interaction | CommandInteraction | DMChannel | NonThreadGuildBasedChannel;
+
+export type UIInteractionTypes =
     | ButtonInteraction
     | SelectMenuInteraction
     | UserSelectMenuInteraction
     | StringSelectMenuInteraction
-    | ModalSubmitInteraction;
+    | ModalSubmitInteraction
+
+export type ContinuesInteractionTypes = Interaction | CommandInteraction | UIInteractionTypes;
 
 // TODO: Check if `interface` may help with mixins.

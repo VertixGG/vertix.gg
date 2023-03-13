@@ -4,6 +4,10 @@ import MasterChannelManager from "./master-channel";
 
 import GuildModel from "../models/guild";
 
+import Permissions from "@dynamico/utils/permissions";
+
+import guiManager from "@dynamico/managers/gui";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 export class GuildManager extends InitializeBase {
@@ -36,6 +40,18 @@ export class GuildManager extends InitializeBase {
     public async onJoin( client: Client, guild: Guild ) {
         this.logger.info( this.onJoin, `Dynamico joined guild: '${ guild.name }' guildId: '${ guild.id }'` );
 
+        const owner = await client.users.fetch( guild.ownerId ),
+            permissions = Permissions.getMissingPermissions( guild );
+
+        if ( permissions.length > 0 ) {
+            await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendUser( owner, {
+                botName: owner.client.user.username,
+                permissions
+            } );
+
+            return;
+        }
+
         // Determine if the guild is already in the database.
         if ( await this.guildModel.isExisting( guild ) ) {
             // Updating that the bot is now in the guild.
@@ -43,8 +59,6 @@ export class GuildManager extends InitializeBase {
         } else {
             await this.guildModel.create( guild );
         }
-
-        const owner = await client.users.fetch( guild.ownerId );
 
         return this.masterChannelManager.createDefaultMasters( guild, owner.id );
     }

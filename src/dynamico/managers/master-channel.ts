@@ -4,6 +4,7 @@ import {
     Guild,
     Interaction,
     NonThreadGuildBasedChannel,
+    OverwriteType,
     PermissionsBitField,
     SelectMenuInteraction,
     VoiceBasedChannel
@@ -21,6 +22,7 @@ import {
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
     DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
@@ -34,6 +36,8 @@ import ChannelModel from "@dynamico/models/channel";
 import Debugger from "@dynamico/utils/debugger";
 
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
+
+import Permissions from "@dynamico/utils/permissions";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -245,8 +249,19 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
 
-        // Create master channel.
-        return ChannelManager.getInstance().create( {
+        const selfRoleId = Permissions.getSelfRoleId( guild );
+
+        if ( ! selfRoleId ) {
+            this.logger.error( this.createCreateChannel,
+                `Self role id not found for guild '${ guild.name }' guildId: '${ guild.id }'`
+            );
+            return;
+        }
+
+        const allowedPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow;
+            allowedPermissions.shift(); // Remove MANGE_ROLES, Cannot be set without admin permission.
+
+        return await ChannelManager.getInstance().create( {
             parent,
             guild,
             userOwnerId: args.userOwnerId,
@@ -254,6 +269,11 @@ export class MasterChannelManager extends InitializeBase {
             name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
             permissionOverwrites: [ {
+                // Add self role id
+                id: selfRoleId,
+                type: OverwriteType.Role,
+                allow: allowedPermissions,
+            }, {
                 id: guild.roles.everyone,
                 ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
             } ],

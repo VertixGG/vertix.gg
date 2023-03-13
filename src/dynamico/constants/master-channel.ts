@@ -14,6 +14,19 @@ export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
         Flags.ViewChannel,
         Flags.Connect,
         Flags.ReadMessageHistory,
+        Flags.ManageChannels, // Temporarily.
+    ],
+};
+
+export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
+    allow: [
+        Flags.ManageRoles, // Should be first.
+        Flags.Connect,
+        Flags.ManageChannels,
+        Flags.MoveMembers,
+        Flags.ReadMessageHistory,
+        Flags.SendMessages,
+        Flags.ViewChannel,
     ],
 };
 

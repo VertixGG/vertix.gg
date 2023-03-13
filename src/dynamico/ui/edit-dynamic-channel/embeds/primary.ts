@@ -1,4 +1,6 @@
-import { Interaction, NonThreadGuildBasedChannel, PermissionsBitField, VoiceChannel, } from "discord.js";
+import { PermissionsBitField, VoiceChannel, } from "discord.js";
+
+import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
 
 import UITemplate from "@dynamico/ui/base/ui-template";
 
@@ -35,7 +37,7 @@ export class Primary extends UITemplate {
         };
     }
 
-    protected getTemplateLogic( interaction: Interaction | NonThreadGuildBasedChannel ) {
+    protected getTemplateLogic( interaction: BaseInteractionTypes ) {
         interaction = interaction as VoiceChannel;
 
         const everyoneRole = interaction.permissionOverwrites.cache.get( interaction.guild.roles.everyone.id ),

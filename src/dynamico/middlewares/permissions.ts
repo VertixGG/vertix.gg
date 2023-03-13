@@ -8,9 +8,15 @@ import Permissions from "@dynamico/utils/permissions";
 
 import GlobalLogger from "@dynamico/global-logger";
 
+import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@dynamico/constants/master-channel";
+
 export default async function permissionsMiddleware( interaction: UIInteractionTypes|CommandInteraction ) {
+    const requiredPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow;
+
     if ( interaction.isCommand() && interaction.guild ) {
-        const result = Permissions.getMissingPermissions( interaction.guild );
+        const result = ChannelType.GuildVoice === interaction.channel?.type ?
+            Permissions.getMissingPermissions( interaction.channel, requiredPermissions, interaction.client.user ) :
+            Permissions.getMissingPermissions( interaction.guild, requiredPermissions );
 
         if ( result.length ) {
             await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
@@ -22,8 +28,8 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
         }
 
         return true;
-    } else if (  interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guild ) {
-        const result = Permissions.getMissingPermissions( interaction.channel );
+    } else if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guild ) {
+        const result = Permissions.getMissingPermissions( interaction.channel, requiredPermissions, interaction.client.user );
 
         if ( result.length ) {
             GlobalLogger.getInstance().warn( permissionsMiddleware,

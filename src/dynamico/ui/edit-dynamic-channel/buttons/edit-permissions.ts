@@ -58,10 +58,9 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
-            // Set connect permissions for @everyone to false.
-            // TODO: If user set basic roles, then we apply all the changes for each basicRole, except for @everyone.
+            // Set connect permissions for @everyone to '/'.
             await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
-                Connect: true,
+                Connect: null,
             } );
 
             // TODO: Can be static.

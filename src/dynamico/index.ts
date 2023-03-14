@@ -37,7 +37,7 @@ export default function Main() {
     // DiscordJS Debug mode.
     if ( process.env.debug_mode === "discord" ) {
         const debug = ( ... args: any[] ) => {
-            logger.debug( chalk.red( "API" ), args.toString() );
+            logger.debug( chalk.red( "API" ), "", args );
         };
 
         client

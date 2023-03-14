@@ -1,10 +1,10 @@
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 import {
     ChannelType,
     Guild,
     Interaction,
     NonThreadGuildBasedChannel,
-    OverwriteType,
     PermissionsBitField,
     SelectMenuInteraction,
     VoiceBasedChannel
@@ -22,7 +22,6 @@ import {
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
     DEFAULT_MASTER_CATEGORY_NAME,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
@@ -38,10 +37,7 @@ import Debugger from "@dynamico/utils/debugger";
 
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
 
-import Permissions from "@dynamico/utils/permissions";
-
 import InitializeBase from "@internal/bases/initialize-base";
-import gui from "./gui";
 
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
@@ -146,6 +142,88 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         return result;
+    }
+
+    public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
+        this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
+
+        // If it exists in the cache, then return it.
+        if ( interaction.channelId && cache ) {
+            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
+
+            if ( cached ) {
+                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
+
+                return cached;
+            }
+        }
+
+        if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Interaction is not a voice channel, interaction: '${ interaction.id }'` );
+            return null;
+        }
+
+        const dynamicChannel = interaction.channel,
+            dynamicChannelDB = await ChannelModel.getInstance().get( interaction.guildId, dynamicChannel.id );
+
+        if ( ! dynamicChannelDB ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Could not find channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+
+            await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendContinues( interaction as SelectMenuInteraction, {
+                    globalResponse: "%{masterChannelNotExist}%"
+                } );
+
+            return;
+        }
+
+        if ( ! dynamicChannelDB.ownerChannelId ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Could not find master channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+
+            await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendContinues( interaction as SelectMenuInteraction, {
+                    globalResponse: "%{masterChannelNotExist}%"
+                } );
+
+            return;
+        }
+
+        let masterChannel,
+            masterChannelPromise = interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
+
+        const promise = new Promise( ( resolve ) => {
+            masterChannelPromise?.catch( ( e ) => {
+                this.logger.error( this.getByDynamicChannel,
+                    `Could not fetch master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                this.logger.error( this.getByDynamicChannel, "", e );
+                resolve( null );
+            } ).then( ( result ) => {
+                masterChannel = result;
+                resolve( result );
+            } );
+        } );
+
+        await promise;
+
+        if ( ! masterChannel ) {
+            this.logger.warn( this.getByDynamicChannel,
+                `Could not find master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+
+            await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                .sendContinues( interaction as SelectMenuInteraction, {
+                    globalResponse: "%{masterChannelNotExist}%"
+                } );
+
+            return;
+        }
+
+        // Set cache, anyway.
+        this.cache.set( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
+
+        return masterChannel;
     }
 
     /**
@@ -274,88 +352,6 @@ export class MasterChannelManager extends InitializeBase {
         // TODO Relations are deleted automatically??
         await CategoryModel.getInstance().delete( guild.id );
         await ChannelModel.getInstance().delete( guild );
-    }
-
-    public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
-        this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
-
-        // If it exists in the cache, then return it.
-        if ( interaction.channelId && cache ) {
-            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
-
-            if ( cached ) {
-                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
-
-                return cached;
-            }
-        }
-
-        if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Interaction is not a voice channel, interaction: '${ interaction.id }'` );
-            return null;
-        }
-
-        const dynamicChannel = interaction.channel,
-            dynamicChannelDB = await ChannelModel.getInstance().get( interaction.guildId, dynamicChannel.id );
-
-        if ( ! dynamicChannelDB ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Could not find channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
-
-            await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: "%{masterChannelNotExist}%"
-                } );
-
-            return;
-        }
-
-        if ( ! dynamicChannelDB.ownerChannelId ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Could not find master channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
-
-            await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: "%{masterChannelNotExist}%"
-                } );
-
-            return;
-        }
-
-        let masterChannel,
-            masterChannelPromise = interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
-
-        const promise = new Promise( ( resolve ) => {
-            masterChannelPromise?.catch( ( e ) => {
-                this.logger.error( this.getByDynamicChannel,
-                    `Could not fetch master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
-                this.logger.error( this.getByDynamicChannel, "", e );
-                resolve( null );
-            } ).then( ( result ) => {
-                masterChannel = result;
-                resolve( result );
-            } );
-        } );
-
-        await promise;
-
-        if ( ! masterChannel ) {
-            this.logger.warn( this.getByDynamicChannel,
-                `Could not find master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
-
-            await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: "%{masterChannelNotExist}%"
-                } );
-
-            return;
-        }
-
-        // Set cache, anyway.
-        this.cache.set( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
-
-        return masterChannel;
     }
 }
 

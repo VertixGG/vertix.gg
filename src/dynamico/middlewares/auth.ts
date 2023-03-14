@@ -28,6 +28,8 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
         await interaction.reply( {
             embeds: [ embed ],
             ephemeral: true,
+        } ).catch( ( e ) => {
+            console.log( e );
         } );
     }
 

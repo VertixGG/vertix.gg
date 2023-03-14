@@ -1,4 +1,4 @@
-import { ChannelType, CommandInteraction } from "discord.js";
+import { ChannelType, VoiceChannel } from "discord.js";
 
 import { guiManager } from "@dynamico/managers";
 
@@ -8,44 +8,47 @@ import Permissions from "@dynamico/utils/permissions";
 
 import GlobalLogger from "@dynamico/global-logger";
 
-import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@dynamico/constants/master-channel";
+import {
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS
+} from "@dynamico/constants/master-channel";
 
-export default async function permissionsMiddleware( interaction: UIInteractionTypes|CommandInteraction ) {
-    const requiredPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow;
+export default async function permissionsMiddleware( interaction: UIInteractionTypes ) {
+    let result = false;
 
-    if ( interaction.isCommand() && interaction.guild ) {
-        const result = ChannelType.GuildVoice === interaction.channel?.type ?
-            Permissions.getMissingPermissions( interaction.channel, requiredPermissions, interaction.client.user ) :
-            Permissions.getMissingPermissions( interaction.guild, requiredPermissions );
+    const isSupportedInteraction = interaction.guild && (
+        interaction.isButton() ||
+        interaction.isStringSelectMenu() ||
+        interaction.isModalSubmit() ||
+        interaction.isUserSelectMenu()
+    );
 
-        if ( result.length ) {
-            await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
-                botName: interaction.client.user.username,
-                permissions: result,
-            } );
+    if ( isSupportedInteraction && ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type ) {
+        const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
+            requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+            missingPermissions = [
+                ... Permissions.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel, interaction.client.user ),
+                ... Permissions.getMissingPermissions( requiredRolePermissions, interaction.guild ),
+            ];
 
-            return false;
-        }
+        result = ! missingPermissions.length;
 
-        return true;
-    } else if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guild ) {
-        const result = Permissions.getMissingPermissions( interaction.channel, requiredPermissions, interaction.client.user );
-
-        if ( result.length ) {
+        if ( missingPermissions.length ) {
             GlobalLogger.getInstance().warn( permissionsMiddleware,
-                `Bot role: '${ Permissions.getSelfRoleId( interaction.guild ) }' leaking permissions:`, result
+                `Bot role: '${ Permissions.getSelfRoleId( interaction.guild ) }' required permissions:`,
+                missingPermissions
             );
 
             await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
                 botName: interaction.client.user.username,
-                permissions: result,
+                permissions: missingPermissions,
             } );
-
-            return false;
         }
-
-        return true;
+    } else {
+        GlobalLogger.getInstance().warn( permissionsMiddleware,
+            `Unsupported interaction type: '{ ${ interaction.type } }'`
+        );
     }
 
-    return false;
+    return result;
 };

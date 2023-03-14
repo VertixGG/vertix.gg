@@ -12,7 +12,8 @@
 		"start": "ts-node src/index.ts",
 		"start-transpile": "npx ts-node --transpile-only src/index.ts",
 		"test": "jest --runInBand --detectOpenHandles --coverage",
-		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js"
+		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js",
+		"release": "bash ./scripts/release.sh"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.11.0",

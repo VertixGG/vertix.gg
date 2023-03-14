@@ -1,6 +1,6 @@
 /**
  * @see https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots
- * @see https://discord.com/api/oauth2/authorize?client_id=1079487067932868608&permissions=285213712&scope=bot%20applications.commands
+ * @see https://discord.com/api/oauth2/authorize?client_id=1079487067932868608&permissions=286329872&scope=bot%20applications.commands
  */
 
 import botInitialize from "./dynamico";

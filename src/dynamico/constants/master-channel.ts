@@ -2,7 +2,7 @@ import { OverwriteType, PermissionsBitField } from "discord.js";
 
 const { Flags } = PermissionsBitField;
 
-export const DEFAULT_MASTER_CATEGORY_NAME = "⚡ Dynamic Channels",
+export const DEFAULT_MASTER_CATEGORY_NAME = "🌀 Dynamic Channels",
     DEFAULT_MASTER_CHANNEL_CREATE_NAME = "➕ New Channel",
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS = 3;
 
@@ -21,14 +21,19 @@ export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
     type: OverwriteType.Role,
     allow: [
+        Flags.Connect,
         Flags.ManageChannels,
         Flags.ManageRoles,
         Flags.MoveMembers,
+        Flags.ReadMessageHistory,
+        Flags.SendMessages,
         Flags.ViewChannel,
+        Flags.EmbedLinks,
     ],
 };
 
-export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS_REQUIREMENTS_FIELDS = {
+// TODO: Remove, duplication of `DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS`.
+export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS = {
     Connect: true,
     ReadMessageHistory: true,
     SendMessages: true,

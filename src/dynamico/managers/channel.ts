@@ -27,7 +27,7 @@ import Debugger from "@dynamico/utils/debugger";
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
 
 import {
-    DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS_REQUIREMENTS_FIELDS
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS
 } from "@dynamico/constants/master-channel";
 
 import InitializeBase from "@internal/bases/initialize-base";
@@ -182,17 +182,20 @@ export class ChannelManager extends InitializeBase {
         this.debugger.debugPermissions( this.onVoiceChannelUpdatePermissions, newChannel.permissionOverwrites );
 
         const botId = newChannel.client.user.id,
-            isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.has( botId ) &&
-            // TODO: Add cache.
-            await this.channelModel.isDynamic( newChannel.id, newChannel.guildId ) ||
-            await this.channelModel.isMasterCreate( newChannel.id, newChannel.guildId );
+            isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.has( botId ) && (
+                // TODO: Cache;
+                await this.channelModel.isDynamic( newChannel.id, newChannel.guildId ) ||
+                await this.channelModel.isMasterCreate( newChannel.id, newChannel.guildId )
+            );
 
         if ( isBotPermissionsRemovedFromChannel ) {
             this.logger.info( this.onVoiceChannelUpdatePermissions,
                 `Bot permissions were removed from dynamic channel '${ newChannel.id }'` );
 
             await newChannel.permissionOverwrites.edit( botId,
-                DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS_REQUIREMENTS_FIELDS
+                DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS
+            ).catch(
+                ( e ) => this.logger.warn( this.onVoiceChannelUpdatePermissions, "", e )
             );
         }
 
@@ -287,7 +290,7 @@ export class ChannelManager extends InitializeBase {
         const message = await channel.messages.cache.at( 0 );
 
         if ( ! message ) {
-            this.logger.error( this.editPrimaryMessage,
+            this.logger.warn( this.editPrimaryMessage,
                 `Failed to find message in channel '${ channel.id }'.` );
             return;
         }

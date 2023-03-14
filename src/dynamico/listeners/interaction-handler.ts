@@ -19,9 +19,14 @@ import authMiddleware from "@dynamico/middlewares/auth";
 
 import permissionsMiddleware from "@dynamico/middlewares/permissions";
 
+import Permissions from "@dynamico/utils/permissions";
+
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
 
 import { guiManager, } from "@dynamico/managers";
+import {
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS
+} from "@dynamico/constants/master-channel";
 
 const globalLogger = GlobalLogger.getInstance();
 
@@ -42,9 +47,36 @@ export function interactionHandler( client: Client ) {
 };
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
-    globalLogger.log( handleSlashCommand, `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'` );
+    globalLogger.log( handleSlashCommand,
+        `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'
+        ` );
 
-    if ( ! await permissionsMiddleware( interaction ) ) {
+    if ( ! interaction.guild ) {
+        await interaction.reply( { content: "This command can only be used in a server", ephemeral: true } );
+        return;
+    }
+
+    const missingPermissions = Permissions.getMissingPermissions(
+        DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+        interaction.guild
+    );
+
+    if ( missingPermissions.length ) {
+        globalLogger.log( handleSlashCommand, `
+            User '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'
+        ` );
+
+        const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+            .getMessage( interaction, {
+                permissions: missingPermissions,
+                botName: interaction.guild.client.user.username,
+            } );
+
+        await interaction.reply( {
+            ... message,
+            ephemeral: true,
+        } );
+
         return;
     }
 

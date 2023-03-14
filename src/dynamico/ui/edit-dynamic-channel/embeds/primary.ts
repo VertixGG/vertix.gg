@@ -32,7 +32,7 @@ export class Primary extends UITemplate {
 
         return {
             type: "embed",
-            title: "Manage your Dynamic Channel",
+            title: "🌀 Manage your Dynamic Channel",
             description,
         };
     }

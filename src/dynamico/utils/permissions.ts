@@ -1,4 +1,4 @@
-import { Guild, PermissionsBitField, User, VoiceChannel } from "discord.js";
+import { Guild, PermissionOverwriteOptions, PermissionsBitField, User, VoiceChannel } from "discord.js";
 
 import DynamicoManager from "@dynamico/managers/dynamico";
 
@@ -31,61 +31,67 @@ export class Permissions extends ObjectBase {
     /**
      * Function getMissingPermissions() :: Return missing permissions names.
      */
-    public static getMissingPermissions( context: VoiceChannel, permissions: bigint[], user: User ): string[];
-    public static getMissingPermissions( context: Guild, permissions: bigint[] ): string[];
-    public static getMissingPermissions( context: VoiceChannel, permissions: bigint[] ): string[];
-    public static getMissingPermissions( context: VoiceChannel|Guild, permissions: bigint[], user?: User ) {
+    public static getMissingPermissions( permissions: bigint[], context: VoiceChannel, user: User ): string[];
+    public static getMissingPermissions( permissions: bigint[], context: VoiceChannel ): string[];
+    public static getMissingPermissions( permissions: bigint[], context: Guild ): string[];
+    public static getMissingPermissions( permissions: bigint[], context: VoiceChannel | Guild, user?: User ) {
+        const resultMissingPermissions: PermissionOverwriteOptions = {},
+            requiredPermissionsField = new PermissionsBitField( permissions );
+
+        // Determine the context.
+        let guild: Guild;
+        if ( context instanceof VoiceChannel ) {
+            guild = context.guild;
+        } else {
+            guild = context;
+        }
+
+        // Determine which roles are missing.
+        requiredPermissionsField.toArray().forEach( ( permission ) => {
+            resultMissingPermissions[ permission ] = true;
+        } );
+
+        if ( context instanceof VoiceChannel && user ) {
+            // Get all permissions that are defined in the voice channel.
+            const userChannelPermissions = context.permissionOverwrites.cache.get( user.id ),
+                allow = userChannelPermissions?.allow.toArray(),
+                deny = userChannelPermissions?.deny.toArray();
+
+            deny && deny.forEach( ( permission ) => {
+                resultMissingPermissions[ permission ] = false;
+            } );
+
+            allow && allow.forEach( ( permission ) => {
+                delete resultMissingPermissions[ permission ];
+            } );
+        } else {
+            // Get all roles in the guild;
+            const roles = guild.roles.cache.values();
+
+            // Iterate over all roles.
+            for ( const role of roles ) {
+                const isUserInRole = role.members.get( guild.client.user.id || "" );
+
+                if ( isUserInRole ) {
+                    const grantedRoles = role.permissions.toArray();
+
+                    grantedRoles.forEach( ( permission ) => {
+                        delete resultMissingPermissions[ permission ];
+                    } );
+                }
+
+                // If the resultMissingPermissions is empty.
+                if ( ! Object.keys( resultMissingPermissions ).length ) {
+                    break;
+                }
+            }
+        }
+
+        // Transform the resultMissingPermissions object to the array.
         const result: string[] = [];
 
-        let guild: Guild;
-
-        if ( context instanceof Guild ) {
-            guild = context;
-        } else {
-            guild = context.guild;
-        }
-
-        const selfRoleId = this.getSelfRoleId( guild );
-
-        if ( ! selfRoleId ) {
-            return result;
-        }
-
-        // Get guild role permissions.
-        const guildRolePermissions = guild.roles.cache.get( selfRoleId )?.permissions,
-            guildRolePermissionsField = new PermissionsBitField( guildRolePermissions ),
-            missingGuildRolePermissions = guildRolePermissionsField.missing( permissions );
-
-        if ( missingGuildRolePermissions.length ) {
-            result.push( ... missingGuildRolePermissions );
-        }
-
-        if ( context instanceof VoiceChannel ) {
-            // Ensure there are no overwrites that effect the bot role.
-            const permissionOverwrites = context.permissionOverwrites.cache.get( selfRoleId );
-
-            if ( permissionOverwrites ) {
-                // Loop through the permissions that are defined in the overwrites.
-                for ( const permission of permissionOverwrites.deny.toArray() ) {
-                    if ( guildRolePermissionsField.has( permission ) && ! result.includes( permission ) ) {
-                        result.push( permission );
-                    }
-                }
-            }
-        }
-
-        if ( user && context instanceof VoiceChannel ) {
-            // Ensure there are no overwrites that effect the user.
-            const permissionOverwrites = context.permissionOverwrites.cache.get( user.id );
-
-            if ( permissionOverwrites ) {
-                // Loop through the permissions that are defined in the overwrites.
-                for ( const permission of permissionOverwrites.deny.toArray() ) {
-                    if ( guildRolePermissionsField.has( permission ) && ! result.includes( permission ) ) {
-                        result.push( permission );
-                    }
-                }
-            }
+        for ( const permissionName in resultMissingPermissions ) {
+            result.push( permissionName );
         }
 
         return result;

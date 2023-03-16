@@ -95,31 +95,40 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         // Receive missing permissions.
-        let missingPermissions: any;
-        const missingRoles = permissionsManager.getMissingPermissions(
-            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
-            args.newState.guild,
-        );
-
-        if ( missingRoles.length > 0 ) {
-            missingPermissions = {
-                values: missingRoles,
-            };
-        } else {
-            missingPermissions = await channelDataManager.getData( {
+        const missingPermissions: string[] = [],
+            missingPermissionsDB = await channelDataManager.getData( {
                 ownerId: channel.id,
                 key: DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
                 default: null,
             } );
+        if ( missingPermissionsDB?.values ) {
+            missingPermissions.push( ... missingPermissionsDB.values );
         }
 
-        if ( missingPermissions && missingPermissions.values ) {
+        const missingPermissionsRoles = permissionsManager.getMissingPermissions(
+            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+            args.newState.guild,
+        );
+
+        // Add missing permissions roles to missing permissions.
+        if ( missingPermissionsRoles.length > 0 ) {
+            // Add only if not already added.
+
+            // TODO: Can by optimized.
+            missingPermissionsRoles.forEach( ( role ) => {
+                if ( ! missingPermissions.includes( role ) ) {
+                    missingPermissions.push( role );
+                }
+            } );
+        }
+
+        if ( missingPermissions.length ) {
             this.logger.warn( this.onJoinMasterCreateChannel,
                 `User '${ displayName }' connected to master channel '${ channelName }' but is missing permissions` );
 
             const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
                 .getMessage( newState.channel, {
-                    permissions: missingPermissions.values,
+                    permissions: missingPermissions,
                     botName: newState.guild.client.user.username,
                 } );
 

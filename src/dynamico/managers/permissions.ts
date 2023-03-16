@@ -12,12 +12,14 @@ import ChannelModel, { ChannelResult } from "../models/channel";
 import Debugger from "@dynamico/utils/debugger";
 
 import {
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
 } from "@dynamico/constants/master-channel";
 
 import { channelDataManager, channelManager, guiManager, } from "@dynamico/managers";
 
 import { DATA_CHANNEL_KEY_MISSING_PERMISSIONS } from "@dynamico/constants/channel-data";
+
+import { permissionsConvertBitfieldToOverwriteOptions } from "@dynamico/utils/permissions";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
 
@@ -85,7 +87,7 @@ export default class PermissionsManager extends InitializeBase {
     }
 
     private async ensureChannelPermissions( newChannel: VoiceChannel, channel: ChannelResult ) {
-        const missingPermissions = await this.getChannelPermissionsThatAreMissingInRoles( newChannel, channel );
+        const missingPermissions = await this.getChannelPermissionsThatAreMissingInRoles( newChannel );
 
         if ( missingPermissions.length ) {
             this.logger.warn( this.ensureChannelPermissions,
@@ -152,14 +154,16 @@ export default class PermissionsManager extends InitializeBase {
         this.logger.info( this.botHasRemovedFromChannel,
             `Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'` );
 
-        await channel.permissionOverwrites.edit( channel.client.user.id,
-            DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS
-        ).catch(
+        const requiredPermissionsOptions = permissionsConvertBitfieldToOverwriteOptions(
+            DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow
+        );
+
+        await channel.permissionOverwrites.edit( channel.client.user.id, requiredPermissionsOptions ).catch(
             ( e ) => this.logger.warn( this.botHasRemovedFromChannel, "", e )
         );
     }
 
-    public async getChannelPermissionsThatAreMissingInRoles( channel: VoiceChannel, channelResult: ChannelResult ) {
+    public async getChannelPermissionsThatAreMissingInRoles( channel: VoiceChannel ) {
         const situation: PermissionOverwriteOptions = {},
             allSituationsLength = Object.keys( PermissionsBitField.Flags ).length;
 

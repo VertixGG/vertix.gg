@@ -11,9 +11,7 @@ import UIElement from "@dynamico/ui/base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import { MasterChannelManager } from "@dynamico/managers";
-
-import guiManager from "@dynamico/managers/gui";
+import { masterChannelManager, guiManager } from "@dynamico/managers";
 
 export default class UsersMenus extends UIElement {
     public static getName() {
@@ -36,7 +34,7 @@ export default class UsersMenus extends UIElement {
 
         const members: { label: string; value: string; }[] = [];
 
-        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
             UsersMenus.logger.warn( this.getBuilders,

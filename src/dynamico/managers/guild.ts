@@ -43,6 +43,14 @@ export class GuildManager extends InitializeBase {
         } else {
             await this.guildModel.create( guild );
         }
+
+        // Send DM to the owner of the guild.
+        const owner = await guild.members.fetch( guild.ownerId );
+
+        if ( owner ) {
+            await owner.send( "Dynamico is up and active!\n" +
+                "/setup - to setup Dynamico" );
+        }
     }
 
     public async onLeave( client: Client, guild: Guild ) {

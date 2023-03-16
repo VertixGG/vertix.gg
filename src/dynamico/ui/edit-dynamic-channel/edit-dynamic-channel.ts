@@ -1,4 +1,4 @@
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 

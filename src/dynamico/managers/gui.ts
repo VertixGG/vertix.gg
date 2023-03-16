@@ -38,10 +38,20 @@ interface ContinuesInteractionArgs {
 }
 
 export class GUIManager extends InitializeBase {
+    private static instance: GUIManager;
+
     private userInterfaces = new Map<string, UIComponentBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
+
+    public static getInstance() {
+        if ( ! this.instance ) {
+            this.instance = new GUIManager();
+        }
+
+        return this.instance;
+    }
 
     public static getName() {
         return "Dynamico/Managers/GUI";
@@ -224,6 +234,4 @@ export class GUIManager extends InitializeBase {
     }
 }
 
-export const guiManager = new GUIManager();
-
-export default guiManager;
+export default GUIManager;

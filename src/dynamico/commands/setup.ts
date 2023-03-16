@@ -1,11 +1,6 @@
-import {
-    ApplicationCommandType,
-    Client,
-    CommandInteraction,
-    PermissionsBitField,
-} from "discord.js";
+import { ApplicationCommandType, Client, CommandInteraction, PermissionsBitField, } from "discord.js";
 
-import { guiManager } from "../managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
 
@@ -40,6 +35,7 @@ export const Setup: ICommand = {
                 } );
         }
 
+        // If ( checkMasterLimit() ).
         if ( guildId && await ChannelModel.getInstance().isReachedMasterLimit( guildId ) ) {
             commandsLogger.debug( name, `GuildId: ${ guildId } has reached master limit.` );
 

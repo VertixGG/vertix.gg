@@ -13,7 +13,7 @@ import {
 
 import UIBase from "@dynamico/ui/base/ui-base";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 import { BaseInteractionTypes, CallbackUIType, DYNAMICO_UI_ELEMENT, E_UI_TYPES } from "@dynamico/interfaces/ui";
 

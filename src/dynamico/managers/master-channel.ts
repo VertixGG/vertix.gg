@@ -10,8 +10,6 @@ import {
     VoiceBasedChannel
 } from "discord.js";
 
-import guiManager from "./gui";
-
 import {
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs,
@@ -21,21 +19,30 @@ import {
 
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-    DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
 
-import { CategoryManager, ChannelManager } from "@dynamico/managers";
+import {
+    categoryManager,
+    channelManager,
+    guiManager,
+    channelDataManager,
+    permissionsManager
+} from "@dynamico/managers";
+
+import {
+    DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
+    DATA_CHANNEL_KEY_SETTINGS
+} from "@dynamico/constants/channel-data";
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 
 import Debugger from "@dynamico/utils/debugger";
-
-import { ChannelDataManager } from "@dynamico/managers/channel-data";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -74,15 +81,80 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.onJoinMasterCreateChannel,
             `User '${ displayName }' joined master channel '${ channelName }'` );
 
+        const channel = await channelManager.getChannel(
+            args.newState.guild.id,
+            args.newState.channelId || "",
+            true
+        );
+
+        if ( ! channel || ! newState.channel ) {
+            this.logger.error( this.onJoinMasterCreateChannel,
+                `Could not find channel '${ channelName }'` );
+
+            return;
+        }
+
+        // Receive missing permissions.
+        let missingPermissions: any = null;
+        const missingRoles = permissionsManager.getMissingPermissions(
+            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+            args.newState.guild,
+        );
+
+        if ( missingRoles.length > 0 ) {
+            missingPermissions = {
+                values: missingRoles,
+            };
+        } else {
+            missingPermissions = await channelDataManager.getData( {
+                ownerId: channel.id,
+                key: DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
+                default: null,
+            } );
+        }
+
+        if ( missingPermissions && missingPermissions.values ) {
+            this.logger.warn( this.onJoinMasterCreateChannel,
+                `User '${ displayName }' connected to master channel '${ channelName }' but is missing permissions` );
+
+            const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+                .getMessage( newState.channel, {
+                    permissions: missingPermissions.values,
+                    botName: newState.guild.client.user.username,
+                } );
+
+            // Get owner from guild.
+            const userOwnerId = newState.guild.ownerId,
+                owner = await newState.guild.members.fetch( userOwnerId );
+
+            // Get guild master from database.
+            if ( newState.channelId ) {
+                const masterChannel = await channelManager.getChannel( newState.guild.id, newState.channelId, true );
+
+                if ( masterChannel ) {
+                    const channelOwner = await newState.guild.members.fetch( masterChannel.userOwnerId );
+
+                    if ( channelOwner.id !== userOwnerId ) {
+                        await channelOwner.send( message );
+                    }
+                }
+            }
+
+            // Send message to owner.
+            await owner.send( message );
+
+            return;
+        }
+
         // Create a new dynamic channel for the user.
-        const channel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
+        const dynamicChannel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
             message = await guiManager
                 .get( "Dynamico/UI/EditDynamicChannel" )
                 .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
         message.content = "<@" + newState.member?.id + ">";
 
-        await channel.send( message );
+        await dynamicChannel?.send( message );
     }
 
     /**
@@ -97,7 +169,7 @@ export class MasterChannelManager extends InitializeBase {
 
         // If the channel is empty, delete it.
         if ( args.oldState.channel?.members.size === 0 ) {
-            await ChannelManager.getInstance().delete( {
+            await channelManager.delete( {
                 guild,
                 channel: args.oldState.channel,
             } );
@@ -232,11 +304,21 @@ export class MasterChannelManager extends InitializeBase {
     public async createDynamic( args: IMasterChannelCreateDynamicArgs ) {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
-            userOwnerId = newState.member?.id,
-            data = await ChannelDataManager.getInstance().getData( {
+            userOwnerId = newState.member?.id;
+
+        const masterChannelDB = await channelManager.getChannel( guild.id, masterChannel.id, true );
+
+        if ( ! masterChannelDB ) {
+            this.logger.error( this.createDynamic,
+                `Could not find master channel in database, guildId: ${ guild.id }, master channelId: ${ masterChannel.id }` );
+            return;
+        }
+
+        // TODO: Data should be created, after creating the master.
+        const data = await channelDataManager.getData( {
+                ownerId: masterChannelDB.id,
+                key: DATA_CHANNEL_KEY_SETTINGS,
                 cache: true,
-                key: "settings",
-                channelId: masterChannel.id,
                 default: {
                     dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
                 },
@@ -262,7 +344,7 @@ export class MasterChannelManager extends InitializeBase {
             ];
 
         // Create channel for the user.
-        const channel = await ChannelManager.getInstance().create( {
+        const channel = await channelManager.create( {
             guild,
             name: dynamicChannelName,
             // ---
@@ -314,7 +396,7 @@ export class MasterChannelManager extends InitializeBase {
      * Function createMasterCategory() :: Creates a new master category for a master channel(s).
      */
     public async createMasterCategory( guild: Guild ) {
-        return await CategoryManager.getInstance().create( {
+        return await categoryManager.create( {
             guild,
             name: DEFAULT_MASTER_CATEGORY_NAME,
         } );
@@ -329,7 +411,7 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
 
-        return await ChannelManager.getInstance().create( {
+        return await channelManager.create( {
             parent,
             guild,
             userOwnerId: args.userOwnerId,

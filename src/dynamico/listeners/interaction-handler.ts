@@ -13,22 +13,23 @@ import {
 
 import { Commands } from "../commands";
 
-import GlobalLogger from "@dynamico/global-logger";
-
-import authMiddleware from "@dynamico/middlewares/auth";
-
-import permissionsMiddleware from "@dynamico/middlewares/permissions";
-
-import Permissions from "@dynamico/utils/permissions";
+import { guiManager } from "@dynamico/managers";
 
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
 
-import { guiManager, } from "@dynamico/managers";
+import GlobalLogger from "@dynamico/global-logger";
+
+import authMiddleware from "@dynamico/middlewares/auth";
+import permissionsMiddleware from "@dynamico/middlewares/permissions";
+
+import PermissionsManager from "@dynamico/managers/permissions";
+
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS
 } from "@dynamico/constants/master-channel";
 
-const globalLogger = GlobalLogger.getInstance();
+const globalLogger = GlobalLogger.getInstance(),
+    permissionManager = PermissionsManager.getInstance();
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -56,7 +57,7 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
         return;
     }
 
-    const missingPermissions = Permissions.getMissingPermissions(
+    const missingPermissions = permissionManager.getMissingPermissions(
         DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
         interaction.guild
     );

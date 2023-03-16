@@ -57,19 +57,18 @@ export interface IChannelDeleteArgs {
 
 /* Channel data */
 
-export interface IChannelDataCreateArgs {
-    id: string,
+export interface IChannelDataSelectUniqueArgs {
+    ownerId: string,
     key: string,
+}
 
+export interface IChannelDataCreateArgs extends IChannelDataSelectUniqueArgs {
     value: string|string[]|object,
 }
 
-export interface IChannelDataGetArgs {
-    key: string,
-
-    channelId: string,
-
-    default: string|string[]|object,
-
+export interface IChannelDataGetArgs extends IChannelDataSelectUniqueArgs {
+    default: string|string[]|object|null,
     cache?: boolean,
 }
+
+export interface IChannelDataUpsertArgs extends IChannelDataGetArgs {}

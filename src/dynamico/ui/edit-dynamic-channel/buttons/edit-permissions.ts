@@ -9,7 +9,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 export default class EditPermissions extends UIElement {
     public static getName() {

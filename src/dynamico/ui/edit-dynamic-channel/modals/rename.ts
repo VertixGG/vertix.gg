@@ -10,7 +10,7 @@ import MasterChannelManager from "@dynamico/managers/master-channel";
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import { GenericInputUIModal } from "@dynamico/ui/base/generic/generic-input-ui-modal";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;

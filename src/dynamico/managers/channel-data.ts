@@ -11,14 +11,14 @@ import {
 
 import { InitializeBase } from "@internal/bases";
 
-const channelModel = ChannelModel.getInstance(); // Move to instance.
-
 export class ChannelDataManager extends InitializeBase {
     private static instance: ChannelDataManager;
 
     private cache = new Map<string, any>();
 
     private debugger: Debugger;
+
+    private channelModel: ChannelModel;
 
     public static getInstance(): ChannelDataManager {
         if ( ! ChannelDataManager.instance ) {
@@ -35,6 +35,8 @@ export class ChannelDataManager extends InitializeBase {
         super();
 
         this.debugger = new Debugger( this );
+
+        this.channelModel = ChannelModel.getInstance();
     }
 
     public async getData( args: IChannelDataGetArgs ) {
@@ -55,7 +57,7 @@ export class ChannelDataManager extends InitializeBase {
         }
 
         // Get from database.
-        const channel = await channelModel.getChannelDataByChannelId( args );
+        const channel = await this.channelModel.getChannelDataByChannelId( args );
         if ( ! channel ) {
             this.logger.debug( this.getData,
                 `Could not find channel data for ownerId: '${ args.ownerId }' with key: '${ args.key }'`
@@ -68,7 +70,7 @@ export class ChannelDataManager extends InitializeBase {
 
         // If not exist, create.
         if ( args.default !== null && ! channel?.data.length ) {
-            data = await channelModel.createChannelData( {
+            data = await this.channelModel.createChannelData( {
                 key: args.key,
                 value: args.default,
                 ownerId: channel.id,
@@ -125,7 +127,7 @@ export class ChannelDataManager extends InitializeBase {
             this.logger.debug( this.addData,
                 `Channel data for ownerId: '${ args.ownerId }', key: '${ args.key }' does not exist, creating...` );
 
-            const data = await channelModel.createChannelData( {
+            const data = await this.channelModel.createChannelData( {
                 key: args.key,
                 value: args.default,
                 ownerId: args.ownerId,
@@ -146,7 +148,7 @@ export class ChannelDataManager extends InitializeBase {
             `Setting channel data for ownerId: '${ args.ownerId }', key: '${ args.key }'`
         );
 
-        await channelModel.setChannelData( args );
+        await this.channelModel.setChannelData( args );
 
         // Set cache.
         this.cache.set( cacheKey, args.default );
@@ -161,7 +163,7 @@ export class ChannelDataManager extends InitializeBase {
 
         this.removeFromCache( args.ownerId );
 
-        return await channelModel.deleteChannelData( args );
+        return await this.channelModel.deleteChannelData( args );
     }
 
     public removeFromCache( ownerId: string ) {

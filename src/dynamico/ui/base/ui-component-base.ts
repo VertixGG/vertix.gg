@@ -19,7 +19,7 @@ import UIElement from "@dynamico/ui/base/ui-element";
 import UITemplate from "@dynamico/ui/base/ui-template";
 import UIBase from "@dynamico/ui/base/ui-base";
 
-import { guiManager } from "@dynamico/managers";
+import guiManager from "@dynamico/managers/gui";
 
 import { ForceMethodImplementation } from "@internal/errors";
 
@@ -42,7 +42,7 @@ export class UIComponentBase extends UIBase {
     }
 
     public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
-        return await guiManager.sendContinuesMessage( interaction, this, args );
+        return await guiManager.getInstance().sendContinuesMessage( interaction, this, args );
     }
 
     public async sendFollowUp( interaction: CommandInteraction, args: any ) {

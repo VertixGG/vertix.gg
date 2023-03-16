@@ -32,14 +32,6 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
     ],
 };
 
-// TODO: Remove, duplication of `DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS`.
-export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS = {
-    Connect: true,
-    ReadMessageHistory: true,
-    SendMessages: true,
-    ViewChannel: true,
-};
-
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS = {
     type: OverwriteType.Member,
     allow: [

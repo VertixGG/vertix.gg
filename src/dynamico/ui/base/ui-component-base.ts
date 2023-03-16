@@ -19,7 +19,7 @@ import UIElement from "@dynamico/ui/base/ui-element";
 import UITemplate from "@dynamico/ui/base/ui-template";
 import UIBase from "@dynamico/ui/base/ui-base";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 import { ForceMethodImplementation } from "@internal/errors";
 

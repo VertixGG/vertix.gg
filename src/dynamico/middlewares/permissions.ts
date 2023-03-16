@@ -4,14 +4,17 @@ import { guiManager } from "@dynamico/managers";
 
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
 
-import Permissions from "@dynamico/utils/permissions";
-
 import GlobalLogger from "@dynamico/global-logger";
 
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS
 } from "@dynamico/constants/master-channel";
+
+import PermissionsManager from "@dynamico/managers/permissions";
+
+const permissionManager = PermissionsManager.getInstance(),
+    globalLogger = GlobalLogger.getInstance();
 
 export default async function permissionsMiddleware( interaction: UIInteractionTypes ) {
     let result = false;
@@ -27,17 +30,14 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
         const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
             requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             missingPermissions = [
-                ... Permissions.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel, interaction.client.user ),
-                ... Permissions.getMissingPermissions( requiredRolePermissions, interaction.guild ),
+                ... permissionManager.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel, interaction.client.user ),
+                ... permissionManager.getMissingPermissions( requiredRolePermissions, interaction.guild ),
             ];
 
         result = ! missingPermissions.length;
 
         if ( missingPermissions.length ) {
-            GlobalLogger.getInstance().warn( permissionsMiddleware,
-                `Bot role: '${ Permissions.getSelfRoleId( interaction.guild ) }' required permissions:`,
-                missingPermissions
-            );
+            globalLogger.warn( permissionsMiddleware, "Required permissions:", missingPermissions );
 
             await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
                 botName: interaction.client.user.username,
@@ -45,7 +45,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
             } );
         }
     } else {
-        GlobalLogger.getInstance().warn( permissionsMiddleware,
+        globalLogger.warn( permissionsMiddleware,
             `Unsupported interaction type: '{ ${ interaction.type } }'`
         );
     }

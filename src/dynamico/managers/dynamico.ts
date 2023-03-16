@@ -152,28 +152,7 @@ export class DynamicoManager extends InitializeBase {
     }
 
     public async removeEmptyChannelData() {
-        // Get all dynamic channels.
-        const prisma = await PrismaInstance.getClient(),
-            channelData = await prisma.channelData.findMany();
-
-        for ( const data of channelData ) {
-            const channel = await prisma.channel.findFirst( {
-                where: {
-                    id: data.id
-                }
-            } );
-
-            if ( ! channel ) {
-                await prisma.channelData.delete( {
-                    where: {
-                        id: data.id
-                    }
-                } );
-
-                this.logger.info( this.removeEmptyChannelData,
-                    `Channel data '${ data.id }' is deleted from db.` );
-            }
-        }
+        // TODO: Implement.
     }
 }
 

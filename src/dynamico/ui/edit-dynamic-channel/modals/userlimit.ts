@@ -6,7 +6,7 @@ import {
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 import { GenericInputNumberUIModal } from "@dynamico/ui/base/generic/generic-input-number-ui-modal";
 

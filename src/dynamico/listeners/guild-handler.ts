@@ -1,10 +1,8 @@
 import { Client } from "discord.js";
 
-import GuildManager from "../managers/guild";
+import { guildManager } from "../managers";
 
 export function guildHandler ( client: Client ) {
-    const guildManager = GuildManager.getInstance();
-
     client.on( "guildCreate", async ( guild ) => {
         await guildManager.onJoin( client, guild );
     } );

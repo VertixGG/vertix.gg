@@ -1,5 +1,3 @@
-import { Channel } from "@prisma/client";
-
 import {
     ChannelType,
     DMChannel,
@@ -18,17 +16,13 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-import guiManager from "@dynamico/managers/gui";
-
-import ChannelModel from "@dynamico/models/channel";
+import ChannelModel, { ChannelResult } from "@dynamico/models/channel";
 
 import Debugger from "@dynamico/utils/debugger";
 
-import { ChannelDataManager } from "@dynamico/managers/channel-data";
+import ChannelDataManager from "@dynamico/managers/channel-data";
 
-import {
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS
-} from "@dynamico/constants/master-channel";
+import PermissionsManager from "@dynamico/managers/permissions";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -40,9 +34,10 @@ export class ChannelManager extends InitializeBase {
 
     private channelModel: ChannelModel;
 
-    private cache = new Map<string, Channel | null>();
+    private cache = new Map<string, ChannelResult>;
 
     private masterChannelManager: MasterChannelManager;
+    private permissionsManager: PermissionsManager;
 
     private debugger: Debugger;
 
@@ -62,6 +57,8 @@ export class ChannelManager extends InitializeBase {
         super();
 
         this.channelModel = ChannelModel.getInstance();
+
+        this.permissionsManager = PermissionsManager.getInstance();
 
         this.masterChannelManager = MasterChannelManager.getInstance();
 
@@ -168,42 +165,10 @@ export class ChannelManager extends InitializeBase {
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
             if ( ( oldChannel as VoiceChannel ).permissionOverwrites !== ( newChannel as VoiceChannel ).permissionOverwrites ) {
-                await this.onVoiceChannelUpdatePermissions( oldChannel as VoiceChannel, newChannel as VoiceChannel );
+                await this.permissionsManager
+                    .onChannelPermissionsUpdate( oldChannel as VoiceChannel, newChannel as VoiceChannel );
             }
         }
-    }
-
-    public async onVoiceChannelUpdatePermissions( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
-        this.logger.info( this.onVoiceChannelUpdatePermissions,
-            `Channel '${ oldChannel.id }' permissions were updated.` );
-
-        // Print debug new permissions.
-        this.debugger.log( this.onVoiceChannelUpdatePermissions, `New permissions for channel '${ oldChannel.id }'` );
-        this.debugger.debugPermissions( this.onVoiceChannelUpdatePermissions, newChannel.permissionOverwrites );
-
-        const botId = newChannel.client.user.id,
-            isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.has( botId ) && (
-                // TODO: Cache;
-                await this.channelModel.isDynamic( newChannel.id, newChannel.guildId ) ||
-                await this.channelModel.isMasterCreate( newChannel.id, newChannel.guildId )
-            );
-
-        if ( isBotPermissionsRemovedFromChannel ) {
-            this.logger.info( this.onVoiceChannelUpdatePermissions,
-                `Bot permissions were removed from dynamic channel '${ newChannel.id }'` );
-
-            await newChannel.permissionOverwrites.edit( botId,
-                DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS_FIELDS
-            ).catch(
-                ( e ) => this.logger.warn( this.onVoiceChannelUpdatePermissions, "", e )
-            );
-        }
-
-        const newMessage = await guiManager
-            .get( "Dynamico/UI/EditDynamicChannel" )
-            .getMessage( newChannel );
-
-        await this.editPrimaryMessage( newMessage, newChannel );
     }
 
     public async getChannel( guildId: string, channelId: string, cache = false ) {
@@ -225,8 +190,10 @@ export class ChannelManager extends InitializeBase {
 
         const result = await this.channelModel.get( guildId, channelId );
 
-        // Set cache.
-        this.cache.set( channelId, result );
+        if ( result ) {
+            // Set cache.
+            this.cache.set( channelId, result );
+        }
 
         return result;
     }

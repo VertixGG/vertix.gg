@@ -8,7 +8,7 @@ import UserlimitModal from "../modals/userlimit";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 

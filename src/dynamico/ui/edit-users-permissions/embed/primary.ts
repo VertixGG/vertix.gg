@@ -8,7 +8,7 @@ import UITemplate from "@dynamico/ui/base/ui-template";
 
 import GlobalLogger from "@dynamico/global-logger";
 
-import { MasterChannelManager } from "@dynamico/managers";
+import { masterChannelManager } from "@dynamico/managers";
 
 export class Primary extends UITemplate {
     public static getName() {
@@ -75,7 +75,7 @@ export class Primary extends UITemplate {
             return [];
         }
 
-        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
             GlobalLogger.getInstance().warn( this.getName(),

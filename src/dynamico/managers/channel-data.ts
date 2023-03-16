@@ -3,11 +3,15 @@ import { ChannelData } from ".prisma/client";
 import ChannelModel from "../models/channel";
 import Debugger from "@dynamico/utils/debugger";
 
-import { IChannelDataGetArgs } from "@dynamico/interfaces/channel";
+import {
+    IChannelDataGetArgs,
+    IChannelDataSelectUniqueArgs,
+    IChannelDataUpsertArgs
+} from "@dynamico/interfaces/channel";
 
 import { InitializeBase } from "@internal/bases";
 
-const channelModel = ChannelModel.getInstance();
+const channelModel = ChannelModel.getInstance(); // Move to instance.
 
 export class ChannelDataManager extends InitializeBase {
     private static instance: ChannelDataManager;
@@ -34,12 +38,13 @@ export class ChannelDataManager extends InitializeBase {
     }
 
     public async getData( args: IChannelDataGetArgs ) {
-        const { channelId, key, cache } = args,
-            cacheKey = `${ channelId }-${ key }`;
+        const { ownerId, key, cache } = args,
+            cacheKey = `${ ownerId }-${ key }`;
 
         this.logger.info( this.getData,
-            `Getting master channel data for channelId: '${ channelId }', key: '${ key }'` );
+            `Getting channel data for ownerId: '${ ownerId }', key: '${ key }'` );
 
+        // Get from cache.
         if ( cache ) {
             const cached = this.cache.get( cacheKey );
 
@@ -49,11 +54,11 @@ export class ChannelDataManager extends InitializeBase {
             }
         }
 
+        // Get from database.
         const channel = await channelModel.getChannelDataByChannelId( args );
-
         if ( ! channel ) {
-            this.logger.error( this.getData,
-                `Could not find master channel data for channelId: '${ args.channelId }'`
+            this.logger.debug( this.getData,
+                `Could not find channel data for ownerId: '${ args.ownerId }' with key: '${ args.key }'`
             );
             return;
         }
@@ -61,21 +66,27 @@ export class ChannelDataManager extends InitializeBase {
         let data: ChannelData,
             message: string;
 
-        if ( ! channel?.data.length ) {
+        // If not exist, create.
+        if ( args.default !== null && ! channel?.data.length ) {
             data = await channelModel.createChannelData( {
-                id: channel.id,
                 key: args.key,
                 value: args.default,
+                ownerId: channel.id,
             } );
 
             message = "Created new";
-        } else {
+        } else if ( channel?.data.length ) {
             data = channel.data[ 0 ];
 
             message = "Getting";
+        } else {
+            this.logger.debug( this.getData,
+                `Could not find channel data for ownerId: '${ args.ownerId }'`
+            );
+            return;
         }
 
-        message += ` channel data for channelId: '${ args.channelId }', type: '${ data.type }' key: '${ args.key }' with values:\n`;
+        message += ` channel data for ownerId: '${ args.ownerId }', type: '${ data.type }' key: '${ args.key }' with values:\n`;
 
         this.debugger.log( this.getData, message, data.object || data.values );
 
@@ -89,12 +100,76 @@ export class ChannelDataManager extends InitializeBase {
         return data;
     }
 
-    public removeFromCache( channelId: string ) {
+    public async addData( args: IChannelDataUpsertArgs ) {
+        this.logger.info( this.addData,
+            `Adding channel data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
+
+        args.cache = true;
+
+        // Don't create on default.
+        const channelData = await this.getData( {
+            ... args,
+            default: null,
+        } );
+
+        // If exist, replace.
+        if ( channelData ) {
+            this.logger.debug( this.addData,
+                `Channel data for ownerId: '${ args.ownerId }', key: '${ args.key }' already exist, replacing...` );
+
+            return this.setData( args );
+        }
+
+        // If not exist, create.
+        if ( null !== args.default ) {
+            this.logger.debug( this.addData,
+                `Channel data for ownerId: '${ args.ownerId }', key: '${ args.key }' does not exist, creating...` );
+
+            const data = await channelModel.createChannelData( {
+                key: args.key,
+                value: args.default,
+                ownerId: args.ownerId,
+            } );
+
+            // Set cache.
+            this.cache.set( `${ args.ownerId }-${ args.key }`, data );
+
+            return data;
+        }
+    }
+
+    public async setData( args: IChannelDataUpsertArgs ) {
+        const { ownerId, key } = args,
+            cacheKey = `${ ownerId }-${ key }`;
+
+        this.logger.info( this.setData,
+            `Setting channel data for ownerId: '${ args.ownerId }', key: '${ args.key }'`
+        );
+
+        await channelModel.setChannelData( args );
+
+        // Set cache.
+        this.cache.set( cacheKey, args.default );
+
+        this.logger.debug( this.setData,
+            `Setting cache for key: '${ cacheKey }' with value:`, args.default );
+    }
+
+    public async deleteData( args: IChannelDataSelectUniqueArgs ) {
+        this.logger.info( this.deleteData,
+            `Removing channel data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
+
+        this.removeFromCache( args.ownerId );
+
+        return await channelModel.deleteChannelData( args );
+    }
+
+    public removeFromCache( ownerId: string ) {
         this.logger.info( this.removeFromCache,
-            `Removing channel data from cache for channelId: '${ channelId }'` );
+            `Removing channel data from cache for ownerId: '${ ownerId }'` );
 
         for ( const [ key ] of this.cache.entries() ) {
-            if ( key.startsWith( channelId ) ) {
+            if ( key.startsWith( ownerId ) ) {
                 this.debugger.log( this.removeFromCache, `Removing cache key: '${ key }'` );
 
                 this.cache.delete( key );
@@ -102,3 +177,5 @@ export class ChannelDataManager extends InitializeBase {
         }
     }
 }
+
+export default ChannelDataManager;

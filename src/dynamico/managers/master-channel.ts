@@ -2,6 +2,7 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
 import {
     ChannelType,
+    CommandInteraction,
     Guild,
     Interaction,
     NonThreadGuildBasedChannel,
@@ -19,25 +20,24 @@ import {
 
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
 
 import {
     categoryManager,
+    channelDataManager,
     channelManager,
     guiManager,
-    channelDataManager,
     permissionsManager
 } from "@dynamico/managers";
 
-import {
-    DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
-    DATA_CHANNEL_KEY_SETTINGS
-} from "@dynamico/constants/channel-data";
+import { DATA_CHANNEL_KEY_MISSING_PERMISSIONS, DATA_CHANNEL_KEY_SETTINGS } from "@dynamico/constants/channel-data";
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
@@ -95,7 +95,7 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         // Receive missing permissions.
-        let missingPermissions: any = null;
+        let missingPermissions: any;
         const missingRoles = permissionsManager.getMissingPermissions(
             DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             args.newState.guild,
@@ -216,6 +216,9 @@ export class MasterChannelManager extends InitializeBase {
         return result;
     }
 
+    /**
+     * Function getByDynamicChannel() :: Returns the master channel by the dynamic channel according the interaction.
+     */
     public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
         this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
 
@@ -316,13 +319,13 @@ export class MasterChannelManager extends InitializeBase {
 
         // TODO: Data should be created, after creating the master.
         const data = await channelDataManager.getData( {
-                ownerId: masterChannelDB.id,
-                key: DATA_CHANNEL_KEY_SETTINGS,
-                cache: true,
-                default: {
-                    dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-                },
-            } );
+            ownerId: masterChannelDB.id,
+            key: DATA_CHANNEL_KEY_SETTINGS,
+            cache: true,
+            default: {
+                dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+            },
+        } );
 
         const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
             "%{userDisplayName}%",
@@ -366,30 +369,39 @@ export class MasterChannelManager extends InitializeBase {
         return channel;
     }
 
-    public async createDefaultMasters( guild: Guild, userOwnerId: string ) {
-        let masterCategory;
+    /**
+     * Function createDefaultMasters() :: Creates a default master channel(s) for a guild, part of setup process.
+     */
+    public async createDefaultMasters( interaction: CommandInteraction, userOwnerId: string ) {
+        const guild = interaction.guild as Guild;
 
+        let masterCategory;
         try {
             masterCategory = await this.createMasterCategory( guild );
         } catch ( e ) {
             this.logger.warn( this.createDefaultMasters, "", e );
         }
 
-        if ( ! masterCategory ) {
-            return false;
+        if ( masterCategory ) {
+            const args = {
+                    guild,
+                    userOwnerId,
+                    parent: masterCategory,
+                },
+                masterCreateChannel = await this.createCreateChannel( args );
+
+            return {
+                masterCategory,
+                masterCreateChannel,
+            };
         }
 
-        const args = {
-                guild,
-                userOwnerId,
-                parent: masterCategory,
-            },
-            masterCreateChannel = await this.createCreateChannel( args );
+        await guiManager.get( "Dynamico/UI/GlobalResponse" )
+            .sendFollowUp( interaction, {
+                globalResponse: "%{somethingWentWrong}%"
+            } );
 
-        return {
-            masterCategory,
-            masterCreateChannel,
-        };
+        return false;
     }
 
     /**
@@ -428,6 +440,25 @@ export class MasterChannelManager extends InitializeBase {
         } );
     }
 
+    /**
+     * Function checkLimit() :: Validates if the guild has reached the master channel limit.
+     */
+    public async checkLimit( interaction: CommandInteraction, guildId: string ) {
+        const hasReachedLimit = await ChannelModel.getInstance().isReachedMasterLimit( guildId );
+
+        if ( hasReachedLimit ) {
+            this.debugger.log( this.checkLimit, `GuildId: ${ guildId } has reached master limit.` );
+
+            await guiManager.get( "Dynamico/UI/NotifyMaxMasterChannels" )
+                .sendFollowUp( interaction, { maxFreeMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } );
+        }
+
+        return ! hasReachedLimit;
+    }
+
+    /**
+     * Function removeLeftOvers() :: Removes leftovers of a guild.
+     */
     public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
 

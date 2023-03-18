@@ -312,10 +312,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             return;
         }
 
-        // TODO: Data should be created, after creating the master.
         const data = await channelDataManager.getData( {
             ownerId: masterChannelDB.id,
             key: DATA_CHANNEL_KEY_SETTINGS,
+            // TODO: Ensure cache usage.
             cache: true,
             default: {
                 dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
@@ -342,7 +342,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             ];
 
         // Create channel for the user.
-        const channel = await channelManager.create( {
+        const { channel } = await channelManager.create( {
             guild,
             name: dynamicChannelName,
             // ---
@@ -418,21 +418,32 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
 
-        return await channelManager.create( {
-            parent,
-            guild,
-            userOwnerId: args.userOwnerId,
-            internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
-            type: ChannelType.GuildVoice,
-            permissionOverwrites: [ {
-                id: guild.client.user.id,
-                ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-            }, {
-                id: guild.roles.everyone,
-                ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-            } ],
+        const result = await channelManager.create( {
+                parent,
+                guild,
+                userOwnerId: args.userOwnerId,
+                internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+                name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+                type: ChannelType.GuildVoice,
+                permissionOverwrites: [ {
+                    id: guild.client.user.id,
+                    ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
+                }, {
+                    id: guild.roles.everyone,
+                    ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+                } ],
+            } );
+
+        // Set default settings.
+        await channelDataManager.addData( {
+            ownerId: result.channelDB.id,
+            key: DATA_CHANNEL_KEY_SETTINGS,
+            default: {
+                dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+            }
         } );
+
+        return result.channel;
     }
 
     /**

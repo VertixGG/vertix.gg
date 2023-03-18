@@ -220,9 +220,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             data.ownerChannelId = ownerChannelId;
         }
 
-        await this.channelModel.create( { data } );
-
-        return channel;
+        return { channel, channelDB: await this.channelModel.create( { data } ) };
     }
 
     public async delete( args: IChannelDeleteArgs ) {

@@ -79,13 +79,20 @@ export default class PermissionsManager extends InitializeBase {
                 );
 
             if ( isBotPermissionsRemovedFromChannel ) {
-                await this.botHasRemovedFromChannel( newChannel, channel );
+                await this.botHasRemovedFromChannelPermissions( newChannel, channel );
             }
 
             await this.ensureChannelPermissions( newChannel, channel );
         }
     }
 
+    /**
+     * Function ensureChannelPermissions() :: Ensures that the channel has the required permissions.
+     * Once the channel permissions are updated, the bot will check if the channel has the required permissions
+     * If it does not have the required permissions, the bot will send a message to the channel owner and the guild owner,
+     * and update the database with the missing permissions, else if the channel has the required permissions, the bot
+     * will remove the missing permissions data from the database.
+     */
     private async ensureChannelPermissions( newChannel: VoiceChannel, channel: ChannelResult ) {
         const missingPermissions = await this.getChannelPermissionsThatAreMissingInRoles( newChannel );
 
@@ -150,8 +157,12 @@ export default class PermissionsManager extends InitializeBase {
         }
     }
 
-    public async botHasRemovedFromChannel( channel: VoiceChannel, channelResult: ChannelResult ) {
-        this.logger.info( this.botHasRemovedFromChannel,
+    /**
+     * Function botHasRemovedFromChannelPermissions() :: Called when the bot has removed from the channel permissions.
+     * The function will try to re-add the bot permissions to the channel.
+     */
+    public async botHasRemovedFromChannelPermissions( channel: VoiceChannel, channelResult: ChannelResult ) {
+        this.logger.info( this.botHasRemovedFromChannelPermissions,
             `Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'` );
 
         const requiredPermissionsOptions = permissionsConvertBitfieldToOverwriteOptions(
@@ -159,10 +170,14 @@ export default class PermissionsManager extends InitializeBase {
         );
 
         await channel.permissionOverwrites.edit( channel.client.user.id, requiredPermissionsOptions ).catch(
-            ( e ) => this.logger.warn( this.botHasRemovedFromChannel, "", e )
+            ( e ) => this.logger.warn( this.botHasRemovedFromChannelPermissions, "", e )
         );
     }
 
+    /**
+     * Function getChannelPermissionsThatAreMissingInRoles() :: Returns an array of permissions that are missing in the channel.
+     * The function will test the channel permissions against the guild roles permissions, that bot is in.
+     */
     public async getChannelPermissionsThatAreMissingInRoles( channel: VoiceChannel ) {
         const situation: PermissionOverwriteOptions = {},
             allSituationsLength = Object.keys( PermissionsBitField.Flags ).length;

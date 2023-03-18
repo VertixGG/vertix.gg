@@ -28,10 +28,6 @@ export class DynamicoManager extends InitializeBase {
         return "Dynamico/Managers/Dynamico";
     }
 
-    public getClient() {
-        return this.client;
-    }
-
     public async onReady( client: Client ) {
         if ( this.client ) {
             this.logger.error( this.onReady, "Client is already set" );
@@ -52,7 +48,6 @@ export class DynamicoManager extends InitializeBase {
         await this.removeMasterChannels( client );
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
-        await this.removeEmptyChannelData();
 
         const username = client.user.username,
             id = client.user.id;
@@ -85,17 +80,22 @@ export class DynamicoManager extends InitializeBase {
                         guild: guildCache,
                     } );
                 }
-            } else {
-                // Delete only from db.
-                await prisma.channel.delete( {
-                    where: {
-                        id: channel.id
-                    }
-                } );
 
-                this.logger.info( this.removeEmptyChannels,
-                    `Channel '${ channel.channelId }' is deleted from db.` );
+                continue;
             }
+
+            // Delete only from db.
+            await prisma.channel.delete( {
+                where: {
+                    id: channel.id
+                },
+                include: {
+                    data: true
+                }
+            } );
+
+            this.logger.info( this.removeEmptyChannels,
+                `Channel '${ channel.channelId }' is deleted from db.` );
         }
     }
 
@@ -137,22 +137,20 @@ export class DynamicoManager extends InitializeBase {
                 if ( 0 === categoryCache.children.cache.size ) {
                     await CategoryManager.getInstance().delete( categoryCache );
                 }
-            } else {
-                // Delete only from db.
-                await prisma.category.delete( {
-                    where: {
-                        id: category.id
-                    }
-                } );
 
-                this.logger.info( this.removeEmptyCategories,
-                    `Category '${ category.categoryId }' is deleted from db.` );
+                continue;
             }
-        }
-    }
 
-    public async removeEmptyChannelData() {
-        // TODO: Implement.
+            // Delete only from db.
+            await prisma.category.delete( {
+                where: {
+                    id: category.id
+                }
+            } );
+
+            this.logger.info( this.removeEmptyCategories,
+                `Category '${ category.categoryId }' is deleted from db.` );
+        }
     }
 }
 

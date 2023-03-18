@@ -23,7 +23,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
         const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
             requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             missingPermissions = [
-                ... permissionManager.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel, interaction.client.user ),
+                ... permissionManager.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel ),
                 ... permissionManager.getMissingPermissions( requiredRolePermissions, interaction.guild ),
             ];
 

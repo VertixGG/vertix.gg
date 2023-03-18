@@ -1,9 +1,9 @@
 {
-	"name": "discord-bot",
-	"version": "1.0.0",
-	"license": "GPL-3.0-or-later",
+	"name": "dynamico-bot",
+	"version": "0.0.1",
 	"author": "Leonid Vinikov <leonidvinikov@gmail.com>",
 	"main": "index.ts",
+	"license": "MIT",
 	"scripts": {
 		"debug-discord": "export debug_mode=discord && ts-node src/index.ts",
 		"debug-prisma": "export debug_mode=prisma && ts-node src/index.ts",

@@ -94,8 +94,8 @@ export class ChannelDataManager extends ManagerCacheBase<any> {
         return data;
     }
 
-    public async addData( args: IChannelDataUpsertArgs ) {
-        this.logger.info( this.addData,
+    public async setData( args: IChannelDataUpsertArgs ) {
+        this.logger.info( this.setData,
             `Adding channel data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
 
         args.cache = true;
@@ -108,15 +108,15 @@ export class ChannelDataManager extends ManagerCacheBase<any> {
 
         // If exist, replace.
         if ( channelData ) {
-            this.logger.debug( this.addData,
+            this.logger.debug( this.setData,
                 `Channel data for ownerId: '${ args.ownerId }', key: '${ args.key }' already exist, replacing...` );
 
-            return this.setData( args );
+            return this.updateData( args );
         }
 
         // If not exist, create.
         if ( null !== args.default ) {
-            this.logger.debug( this.addData,
+            this.logger.debug( this.setData,
                 `Channel data for ownerId: '${ args.ownerId }', key: '${ args.key }' does not exist, creating...` );
 
             const data = await this.channelModel.createChannelData( {
@@ -132,11 +132,11 @@ export class ChannelDataManager extends ManagerCacheBase<any> {
         }
     }
 
-    public async setData( args: IChannelDataUpsertArgs ) {
+    public async updateData( args: IChannelDataUpsertArgs ) {
         const { ownerId, key } = args,
             cacheKey = `${ ownerId }-${ key }`;
 
-        this.logger.info( this.setData,
+        this.logger.info( this.updateData,
             `Setting channel data for ownerId: '${ args.ownerId }', key: '${ args.key }'`
         );
 

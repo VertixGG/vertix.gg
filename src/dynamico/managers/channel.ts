@@ -1,12 +1,10 @@
-import { Channel } from "@prisma/client";
-
 import {
     ChannelType,
     DMChannel,
     MessageEditOptions,
     NonThreadGuildBasedChannel,
     VoiceChannel,
-    VoiceState
+    VoiceState,
 } from "discord.js";
 
 import MasterChannelManager from "./master-channel";
@@ -18,29 +16,24 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-import guiManager from "@dynamico/managers/gui";
+import ChannelModel, { ChannelResult } from "@dynamico/models/channel";
 
-import ChannelModel from "@dynamico/models/channel";
+import ChannelDataManager from "@dynamico/managers/channel-data";
 
-import Debugger from "@dynamico/utils/debugger";
+import PermissionsManager from "@dynamico/managers/permissions";
 
-import { ChannelDataManager } from "@dynamico/managers/channel-data";
-
-import InitializeBase from "@internal/bases/initialize-base";
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
 
-export class ChannelManager extends InitializeBase {
+export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     private static instance: ChannelManager;
 
     private channelModel: ChannelModel;
 
-    private cache = new Map<string, Channel | null>();
-
     private masterChannelManager: MasterChannelManager;
-
-    private debugger: Debugger;
+    private permissionsManager: PermissionsManager;
 
     public static getInstance(): ChannelManager {
         if ( ! ChannelManager.instance ) {
@@ -59,9 +52,9 @@ export class ChannelManager extends InitializeBase {
 
         this.channelModel = ChannelModel.getInstance();
 
-        this.masterChannelManager = MasterChannelManager.getInstance();
+        this.permissionsManager = PermissionsManager.getInstance();
 
-        this.debugger = new Debugger( this );
+        this.masterChannelManager = MasterChannelManager.getInstance();
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {
@@ -164,24 +157,10 @@ export class ChannelManager extends InitializeBase {
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
             if ( ( oldChannel as VoiceChannel ).permissionOverwrites !== ( newChannel as VoiceChannel ).permissionOverwrites ) {
-                await this.onVoiceChannelUpdatePermissions( oldChannel as VoiceChannel, newChannel as VoiceChannel );
+                await this.permissionsManager
+                    .onChannelPermissionsUpdate( oldChannel as VoiceChannel, newChannel as VoiceChannel );
             }
         }
-    }
-
-    public async onVoiceChannelUpdatePermissions( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
-        this.logger.info( this.onVoiceChannelUpdatePermissions,
-            `Channel '${ oldChannel.id }' permissions were updated.` );
-
-        // Print debug new permissions.
-        this.debugger.log( this.onVoiceChannelUpdatePermissions, `New permissions for channel '${ oldChannel.id }'` );
-        this.debugger.debugPermissions( this.onVoiceChannelUpdatePermissions, newChannel.permissionOverwrites );
-
-        const newMessage = await guiManager
-            .get( "Dynamico/UI/EditDynamicChannel" )
-            .getMessage( newChannel );
-
-        await this.editPrimaryMessage( newMessage, newChannel );
     }
 
     public async getChannel( guildId: string, channelId: string, cache = false ) {
@@ -191,20 +170,18 @@ export class ChannelManager extends InitializeBase {
 
         // If in cache, return it.
         if ( cache ) {
-            const result = this.cache.get( channelId );
+            const result = this.getCache( channelId );
 
             if ( result ) {
-                this.debugger.log( this.getChannel,
-                    `Channel '${ channelId }' from guild '${ guildId }' was found in cache.`
-                );
                 return result;
             }
         }
 
         const result = await this.channelModel.get( guildId, channelId );
 
-        // Set cache.
-        this.cache.set( channelId, result );
+        if ( result ) {
+            this.setCache( channelId, result );
+        }
 
         return result;
     }
@@ -243,9 +220,7 @@ export class ChannelManager extends InitializeBase {
             data.ownerChannelId = ownerChannelId;
         }
 
-        await this.channelModel.create( { data } );
-
-        return channel;
+        return { channel, channelDB: await this.channelModel.create( { data } ) };
     }
 
     public async delete( args: IChannelDeleteArgs ) {
@@ -268,21 +243,20 @@ export class ChannelManager extends InitializeBase {
         const message = await channel.messages.cache.at( 0 );
 
         if ( ! message ) {
-            this.logger.error( this.editPrimaryMessage,
+            this.logger.warn( this.editPrimaryMessage,
                 `Failed to find message in channel '${ channel.id }'.` );
             return;
         }
 
         return message.edit( newMessage ).catch(
-            ( e ) => this.logger.error( this.editPrimaryMessage, "", e ) );
+            ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
     }
 
-    // TODO: Should be mandatory in the parent class, e: ManagerCacheBase.
     public removeFromCache( channelId: string ) {
         this.debugger.log( this.removeFromCache, `Removing channel '${ channelId }' from cache.` );
 
         // Remove from cache.
-        this.cache.delete( channelId );
+        this.deleteCache( channelId );
 
         ChannelDataManager.getInstance().removeFromCache( channelId );
     }

@@ -7,6 +7,7 @@ import { Client, Partials } from "discord.js";
 import { guiManager } from "./managers/";
 
 import * as handlers from "./listeners/";
+import * as uiEntities from "./ui/";
 
 import GlobalLogger from "./global-logger";
 
@@ -15,12 +16,8 @@ export default function Main() {
 
     logger.log( Main, "Bot is starting..." );
 
-    guiManager.register( require( "@dynamico/ui/global-responses/global-responses" ).default );
-    guiManager.register( require( "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel" ).default );
-    guiManager.register( require( "@dynamico/ui/edit-users-permissions/edit-users-permissions" ).default );
-    guiManager.register( require( "@dynamico/ui/notify-permissions" ).default );
-    guiManager.register( require( "@dynamico/ui/notify-max-master-channels" ).default );
-    guiManager.register( require( "@dynamico/ui/notify-setup-success" ).default );
+    // Register UI.
+    Object.values( uiEntities ).forEach( ( entry ) => guiManager.register( entry ) );
 
     const client = new Client( {
         intents: [
@@ -37,7 +34,7 @@ export default function Main() {
     // DiscordJS Debug mode.
     if ( process.env.debug_mode === "discord" ) {
         const debug = ( ... args: any[] ) => {
-            logger.debug( chalk.red( "API" ), args.toString() );
+            logger.debug( chalk.red( "API" ), "", args );
         };
 
         client

@@ -18,28 +18,22 @@ import {
 
 import ChannelModel, { ChannelResult } from "@dynamico/models/channel";
 
-import Debugger from "@dynamico/utils/debugger";
-
 import ChannelDataManager from "@dynamico/managers/channel-data";
 
 import PermissionsManager from "@dynamico/managers/permissions";
 
-import InitializeBase from "@internal/bases/initialize-base";
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
 
-export class ChannelManager extends InitializeBase {
+export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     private static instance: ChannelManager;
 
     private channelModel: ChannelModel;
 
-    private cache = new Map<string, ChannelResult>;
-
     private masterChannelManager: MasterChannelManager;
     private permissionsManager: PermissionsManager;
-
-    private debugger: Debugger;
 
     public static getInstance(): ChannelManager {
         if ( ! ChannelManager.instance ) {
@@ -61,8 +55,6 @@ export class ChannelManager extends InitializeBase {
         this.permissionsManager = PermissionsManager.getInstance();
 
         this.masterChannelManager = MasterChannelManager.getInstance();
-
-        this.debugger = new Debugger( this );
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {
@@ -178,12 +170,9 @@ export class ChannelManager extends InitializeBase {
 
         // If in cache, return it.
         if ( cache ) {
-            const result = this.cache.get( channelId );
+            const result = this.getCache( channelId );
 
             if ( result ) {
-                this.debugger.log( this.getChannel,
-                    `Channel '${ channelId }' from guild '${ guildId }' was found in cache.`
-                );
                 return result;
             }
         }
@@ -191,8 +180,7 @@ export class ChannelManager extends InitializeBase {
         const result = await this.channelModel.get( guildId, channelId );
 
         if ( result ) {
-            // Set cache.
-            this.cache.set( channelId, result );
+            this.setCache( channelId, result );
         }
 
         return result;
@@ -266,12 +254,11 @@ export class ChannelManager extends InitializeBase {
             ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
     }
 
-    // TODO: Should be mandatory in the parent class, e: ManagerCacheBase.
     public removeFromCache( channelId: string ) {
         this.debugger.log( this.removeFromCache, `Removing channel '${ channelId }' from cache.` );
 
         // Remove from cache.
-        this.cache.delete( channelId );
+        this.deleteCache( channelId );
 
         ChannelDataManager.getInstance().removeFromCache( channelId );
     }

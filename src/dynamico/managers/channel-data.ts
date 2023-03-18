@@ -1,7 +1,6 @@
 import { ChannelData } from ".prisma/client";
 
 import ChannelModel from "../models/channel";
-import Debugger from "@dynamico/utils/debugger";
 
 import {
     IChannelDataGetArgs,
@@ -9,14 +8,10 @@ import {
     IChannelDataUpsertArgs
 } from "@dynamico/interfaces/channel";
 
-import { InitializeBase } from "@internal/bases";
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
-export class ChannelDataManager extends InitializeBase {
+export class ChannelDataManager extends ManagerCacheBase<any> {
     private static instance: ChannelDataManager;
-
-    private cache = new Map<string, any>();
-
-    private debugger: Debugger;
 
     private channelModel: ChannelModel;
 
@@ -34,8 +29,6 @@ export class ChannelDataManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this );
-
         this.channelModel = ChannelModel.getInstance();
     }
 
@@ -48,10 +41,9 @@ export class ChannelDataManager extends InitializeBase {
 
         // Get from cache.
         if ( cache ) {
-            const cached = this.cache.get( cacheKey );
+            const cached = this.getCache( cacheKey );
 
             if ( cached ) {
-                this.debugger.log( this.getData, `Getting cached data from key: ${ cacheKey }`, cached );
                 return cached;
             }
         }
@@ -93,7 +85,7 @@ export class ChannelDataManager extends InitializeBase {
         this.debugger.log( this.getData, message, data.object || data.values );
 
         // Set cache.
-        this.cache.set( cacheKey, data );
+        this.setCache( cacheKey, data );
 
         if ( data.type === "object" ) {
             return data;
@@ -134,7 +126,7 @@ export class ChannelDataManager extends InitializeBase {
             } );
 
             // Set cache.
-            this.cache.set( `${ args.ownerId }-${ args.key }`, data );
+            this.setCache( `${ args.ownerId }-${ args.key }`, data );
 
             return data;
         }
@@ -151,10 +143,7 @@ export class ChannelDataManager extends InitializeBase {
         await this.channelModel.setChannelData( args );
 
         // Set cache.
-        this.cache.set( cacheKey, args.default );
-
-        this.logger.debug( this.setData,
-            `Setting cache for key: '${ cacheKey }' with value:`, args.default );
+        this.setCache( cacheKey, args.default );
     }
 
     public async deleteData( args: IChannelDataSelectUniqueArgs ) {
@@ -170,13 +159,7 @@ export class ChannelDataManager extends InitializeBase {
         this.logger.info( this.removeFromCache,
             `Removing channel data from cache for ownerId: '${ ownerId }'` );
 
-        for ( const [ key ] of this.cache.entries() ) {
-            if ( key.startsWith( ownerId ) ) {
-                this.debugger.log( this.removeFromCache, `Removing cache key: '${ key }'` );
-
-                this.cache.delete( key );
-            }
-        }
+        this.deleteCacheWithPrefix( ownerId );
     }
 }
 

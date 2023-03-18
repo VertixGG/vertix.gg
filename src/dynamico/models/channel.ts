@@ -94,10 +94,10 @@ export class ChannelModel extends ModelBase {
         }
 
         const createArgs: IChannelDataCreateArgs = {
-                ownerId: args.ownerId,
-                key: args.key,
-                value: args.default,
-            };
+            ownerId: args.ownerId,
+            key: args.key,
+            value: args.default,
+        };
 
         return this.prisma.channelData.update( {
             where: {

@@ -8,7 +8,7 @@ import {
     NonThreadGuildBasedChannel,
     PermissionsBitField,
     SelectMenuInteraction,
-    VoiceBasedChannel
+    VoiceBasedChannel,
 } from "discord.js";
 
 import {
@@ -20,8 +20,7 @@ import {
 
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-    DEFAULT_MASTER_CATEGORY_NAME,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
@@ -37,7 +36,7 @@ import {
     permissionsManager
 } from "@dynamico/managers";
 
-import { DATA_CHANNEL_KEY_MISSING_PERMISSIONS, DATA_CHANNEL_KEY_SETTINGS } from "@dynamico/constants/channel-data";
+import { DATA_CHANNEL_KEY_SETTINGS } from "@dynamico/constants/channel-data";
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
@@ -82,33 +81,16 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             return;
         }
 
-        // Receive missing permissions.
-        const missingPermissions: string[] = [],
-            missingPermissionsDB = await channelDataManager.getData( {
-                ownerId: channel.id,
-                key: DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
-                default: null,
-            } );
-        if ( missingPermissionsDB?.values ) {
-            missingPermissions.push( ... missingPermissionsDB.values );
-        }
-
-        const missingPermissionsRoles = permissionsManager.getMissingPermissions(
-            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
-            args.newState.guild,
-        );
-
-        // Add missing permissions roles to missing permissions.
-        if ( missingPermissionsRoles.length > 0 ) {
-            // Add only if not already added.
-
-            // TODO: Can by optimized.
-            missingPermissionsRoles.forEach( ( role ) => {
-                if ( ! missingPermissions.includes( role ) ) {
-                    missingPermissions.push( role );
-                }
-            } );
-        }
+        const missingPermissions = [
+            ... permissionsManager.getMissingPermissions(
+                DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
+                newState.channel
+            ),
+            ... permissionsManager.getMissingPermissions(
+                DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+                newState.channel.guild
+            )
+        ];
 
         if ( missingPermissions.length ) {
             this.logger.warn( this.onJoinMasterCreateChannel,
@@ -120,38 +102,28 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                     botName: newState.guild.client.user.username,
                 } );
 
-            // Get owner from guild.
-            const userOwnerId = newState.guild.ownerId,
-                owner = await newState.guild.members.fetch( userOwnerId );
-
-            // Get guild master from database.
-            if ( newState.channelId ) {
-                const masterChannel = await channelManager.getChannel( newState.guild.id, newState.channelId, true );
-
-                if ( masterChannel ) {
-                    const channelOwner = await newState.guild.members.fetch( masterChannel.userOwnerId );
-
-                    if ( channelOwner.id !== userOwnerId ) {
-                        await channelOwner.send( message );
-                    }
-                }
-            }
-
-            // Send message to owner.
-            await owner.send( message );
+            // Send DM message to the user with missing permissions.
+            await newState.member?.send( message );
 
             return;
         }
 
-        // Create a new dynamic channel for the user.
-        const dynamicChannel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
-            message = await guiManager
-                .get( "Dynamico/UI/EditDynamicChannel" )
-                .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
+        try {
+            // Create a new dynamic channel for the user.
+            const dynamicChannel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
+                message = await guiManager
+                    .get( "Dynamico/UI/EditDynamicChannel" )
+                    .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
-        message.content = "<@" + newState.member?.id + ">";
+            message.content = "<@" + newState.member?.id + ">";
 
-        await dynamicChannel?.send( message );
+            await dynamicChannel?.send( message );
+        } catch ( e ) {
+            this.logger.error( this.onJoinMasterCreateChannel,
+                `Failed to create dynamic channel for user '${ displayName }'` );
+
+            this.logger.error( this.onJoinMasterCreateChannel, "", e );
+        }
     }
 
     /**
@@ -435,7 +407,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             } );
 
         // Set default settings.
-        await channelDataManager.addData( {
+        await channelDataManager.setData( {
             ownerId: result.channelDB.id,
             key: DATA_CHANNEL_KEY_SETTINGS,
             default: {

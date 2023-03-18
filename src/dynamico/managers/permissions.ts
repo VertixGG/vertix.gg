@@ -2,8 +2,7 @@ import {
     Guild,
     PermissionOverwriteOptions,
     PermissionsBitField,
-    PermissionsString,
-    User,
+    VoiceBasedChannel,
     VoiceChannel
 } from "discord.js";
 
@@ -11,13 +10,9 @@ import ChannelModel, { ChannelResult } from "../models/channel";
 
 import Debugger from "@dynamico/utils/debugger";
 
-import {
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-} from "@dynamico/constants/master-channel";
+import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS, } from "@dynamico/constants/master-channel";
 
-import { channelDataManager, channelManager, guiManager, } from "@dynamico/managers";
-
-import { DATA_CHANNEL_KEY_MISSING_PERMISSIONS } from "@dynamico/constants/channel-data";
+import { channelManager, guiManager, } from "@dynamico/managers";
 
 import { permissionsConvertBitfieldToOverwriteOptions } from "@dynamico/utils/permissions";
 
@@ -67,102 +62,100 @@ export default class PermissionsManager extends InitializeBase {
         const channel = await channelManager.getChannel( newChannel.guildId, newChannel.id, true );
 
         if ( ! channel ) {
-            return this.logger.warn( this.onChannelPermissionsUpdate,
+            return this.logger.error( this.onChannelPermissionsUpdate,
                 `Channel '${ newChannel.id }' was not found in the database.` );
         }
 
-        if ( channel.isMasterCreate ) {
+        if ( channel.isMasterCreate || channel.isDynamic ) {
             const botId = newChannel.client.user.id,
-                isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.get( botId ) && (
-                    channel.isMasterCreate ||
-                    channel.isDynamic
-                );
+                isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.get( botId );
 
             if ( isBotPermissionsRemovedFromChannel ) {
-                await this.botHasRemovedFromChannelPermissions( newChannel, channel );
+                await this.resetBotUserPermissions( newChannel, channel );
             }
-
-            await this.ensureChannelPermissions( newChannel, channel );
         }
     }
 
+    public getMissingRolePermissions( permissions: bigint[], context: Guild, userId = context.client.user.id ): string[] {
+        const resultMissingPermissions: PermissionOverwriteOptions = {},
+            requiredPermissionsField = new PermissionsBitField( permissions );
+
+        // Determine which roles are missing.
+        requiredPermissionsField.toArray().forEach( ( permission ) => {
+            resultMissingPermissions[ permission ] = true;
+        } );
+
+        // Get all roles in the guild;
+        const roles = context.roles.cache.values();
+
+        for ( const role of roles ) {
+            // Skip if user is not in role.
+            if ( ! role.members.get( userId ) ) {
+                continue;
+            }
+
+            const rolePermissions = context.roles.cache.get( role.id )?.permissions;
+
+            // Skip non-effected roles, or user not in role.
+            if ( ! rolePermissions || ! rolePermissions.bitfield ) {
+                continue;
+            }
+
+            const rolePermissionsField = new PermissionsBitField( rolePermissions.bitfield );
+
+            rolePermissionsField.toArray().forEach( ( permission ) => {
+                delete resultMissingPermissions[ permission ];
+            } );
+
+            // If resultMissingPermissions is empty.
+            if ( ! Object.keys( resultMissingPermissions ).length ) {
+                break;
+            }
+        }
+
+        return Object.keys( resultMissingPermissions );
+    }
+
+    public getMissingChannelPermissions( permissions: bigint[], context: VoiceBasedChannel, userId = context.client.user.id ): string[] {
+        const resultMissingPermissions: PermissionOverwriteOptions = {},
+            requiredPermissionsField = new PermissionsBitField( permissions );
+
+        // Determine which roles are missing.
+        requiredPermissionsField.toArray().forEach( ( permission ) => {
+            resultMissingPermissions[ permission ] = true;
+        } );
+
+        // Get user permissions that are defined in the voice channel.
+        const channelPermissions = context.permissionOverwrites.cache.get( userId ),
+            permissionField = new PermissionsBitField( channelPermissions?.allow.bitfield );
+
+        permissionField.toArray().forEach( ( permission ) => {
+            delete resultMissingPermissions[ permission ];
+        } );
+
+        return Object.keys( resultMissingPermissions );
+    }
+
     /**
-     * Function ensureChannelPermissions() :: Ensures that the channel has the required permissions.
-     * Once the channel permissions are updated, the bot will check if the channel has the required permissions
-     * If it does not have the required permissions, the bot will send a message to the channel owner and the guild owner,
-     * and update the database with the missing permissions, else if the channel has the required permissions, the bot
-     * will remove the missing permissions data from the database.
+     * Function getMissingPermissions() :: Return missing permissions names.
      */
-    private async ensureChannelPermissions( newChannel: VoiceChannel, channel: ChannelResult ) {
-        const missingPermissions = await this.getChannelPermissionsThatAreMissingInRoles( newChannel );
-
-        if ( missingPermissions.length ) {
-            this.logger.warn( this.ensureChannelPermissions,
-                `Channel '${ newChannel.id }' is missing permissions: '${ missingPermissions.join( ", " ) }'` );
-
-            await channelDataManager.addData( {
-                ownerId: channel.id,
-                key: DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
-                default: missingPermissions,
-            } );
-
-            const channelOwner = await newChannel.guild.members.fetch( channel.userOwnerId ),
-                guildOwner = await newChannel.guild.members.fetch( newChannel.guild.ownerId ),
-                targets = [];
-
-            if ( guildOwner ) {
-                targets.push( guildOwner );
-
-                if ( channelOwner && channelOwner.id !== guildOwner.id ) {
-                    targets.push( channelOwner );
-                }
-            }
-
-            if ( targets.length ) {
-                targets.forEach( ( target ) =>
-                    target.createDM().then( ( dm ) => {
-                        dm.send(
-                            `Someone has changed the permissions for the channel '<#${ newChannel.id }>':\n` +
-                            "Those are the missing permissions:\n" +
-                            missingPermissions.join( "\n" )
-                        );
-                    } ) );
-            } else {
-                this.logger.warn( this.ensureChannelPermissions,
-                    `Channel owners '${ channel.userOwnerId }' was not found in guild '${ newChannel.guildId }'` );
-            }
-        } else {
-            // Clean, should refresh the database.
-            const channel = await channelManager.getChannel( newChannel.guildId, newChannel.id, true );
-
-            if ( ! channel ) {
-                return this.logger.error( this.ensureChannelPermissions,
-                    `Channel '${ newChannel.id }' was not found in the database.` );
-            }
-
-            const missingPermissionsData = await channelDataManager.getData( {
-                ownerId: channel.id,
-                key: DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
-                default: null,
-                cache: false,
-            } );
-
-            // If there is missing permissions' data, remove it.
-            if ( missingPermissionsData?.values ) {
-                await channelDataManager.deleteData( {
-                    ownerId: channel.id,
-                    key: DATA_CHANNEL_KEY_MISSING_PERMISSIONS,
-                } );
-            }
+    public getMissingPermissions( permissions: bigint[], context: VoiceBasedChannel ): string[];
+    public getMissingPermissions( permissions: bigint[], context: Guild ): string[];
+    public getMissingPermissions( permissions: bigint[], context: VoiceBasedChannel | Guild ): string[] {
+        if ( context instanceof Guild ) {
+            return this.getMissingRolePermissions( permissions, context );
         }
+
+        return this.getMissingChannelPermissions( permissions, context );
+
     }
 
     /**
-     * Function botHasRemovedFromChannelPermissions() :: Called when the bot has removed from the channel permissions.
+     * Function resetBotUserPermissions() :: Called when the bot has removed from the channel permissions.
      * The function will try to re-add the bot permissions to the channel.
      */
-    public async botHasRemovedFromChannelPermissions( channel: VoiceChannel, channelResult: ChannelResult ) {
-        this.logger.info( this.botHasRemovedFromChannelPermissions,
+    private async resetBotUserPermissions( channel: VoiceChannel, channelResult: ChannelResult ) {
+        this.logger.info( this.resetBotUserPermissions,
             `Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'` );
 
         const requiredPermissionsOptions = permissionsConvertBitfieldToOverwriteOptions(
@@ -170,124 +163,7 @@ export default class PermissionsManager extends InitializeBase {
         );
 
         await channel.permissionOverwrites.edit( channel.client.user.id, requiredPermissionsOptions ).catch(
-            ( e ) => this.logger.warn( this.botHasRemovedFromChannelPermissions, "", e )
+            ( e ) => this.logger.warn( this.resetBotUserPermissions, "", e )
         );
-    }
-
-    /**
-     * Function getChannelPermissionsThatAreMissingInRoles() :: Returns an array of permissions that are missing in the channel.
-     * The function will test the channel permissions against the guild roles permissions, that bot is in.
-     */
-    public async getChannelPermissionsThatAreMissingInRoles( channel: VoiceChannel ) {
-        const situation: PermissionOverwriteOptions = {},
-            allSituationsLength = Object.keys( PermissionsBitField.Flags ).length;
-
-        // Loop through all permissions in the channel.
-        channel.permissionOverwrites.cache
-            .forEach( ( permission ) => {
-                    // Add allowed permissions to situation.
-                    const addSituation = ( permission: PermissionsString ) => {
-                        if ( ! situation[ permission ] ) {
-                            situation[ permission ] = true;
-                        }
-
-                        // Stop when situation is full.
-                        return Object.keys( situation ).length === allSituationsLength;
-                    };
-
-                    permission.allow.toArray().some( addSituation );
-                    permission.deny.toArray().some( addSituation );
-                }
-            );
-
-        // Loop through all guild roles that has bot in it.
-        const guildRoles = channel.guild.roles.cache.values();
-
-        for ( const role of guildRoles ) {
-            if ( 0n === role.permissions.bitfield ) {
-                continue;
-            }
-
-            const isUserInRole = role.members.get( channel.client.user.id || "" );
-
-            if ( isUserInRole ) {
-                // Removed allowed permissions to situation since situation is used to determine which permissions are missing.
-                role.permissions.toArray().forEach( ( permission ) => {
-                    if ( situation[ permission ] ) {
-                        delete situation[ permission ];
-                    }
-                } );
-            }
-        }
-
-        return Object.keys( situation );
-    }
-
-    /**
-     * Function getMissingPermissions() :: Return missing permissions names.
-     */
-    public getMissingPermissions( permissions: bigint[], context: Guild ): string[];
-    public getMissingPermissions( permissions: bigint[], context: VoiceChannel, user: User ): string[];
-    public getMissingPermissions( permissions: bigint[], context: VoiceChannel | Guild, user?: User ) {
-        const resultMissingPermissions: PermissionOverwriteOptions = {},
-            requiredPermissionsField = new PermissionsBitField( permissions );
-
-        // Determine the context.
-        let guild: Guild;
-        if ( context instanceof VoiceChannel ) {
-            guild = context.guild;
-        } else {
-            guild = context;
-        }
-
-        // Determine which roles are missing.
-        requiredPermissionsField.toArray().forEach( ( permission ) => {
-            resultMissingPermissions[ permission ] = true;
-        } );
-
-        if ( context instanceof VoiceChannel && user ) {
-            // Get all permissions that are defined in the voice channel.
-            const userChannelPermissions = context.permissionOverwrites.cache.get( user.id ),
-                allow = userChannelPermissions?.allow.toArray(),
-                deny = userChannelPermissions?.deny.toArray();
-
-            deny && deny.forEach( ( permission ) => {
-                resultMissingPermissions[ permission ] = false;
-            } );
-
-            allow && allow.forEach( ( permission ) => {
-                delete resultMissingPermissions[ permission ];
-            } );
-        } else {
-            // Get all roles in the guild;
-            const roles = guild.roles.cache.values();
-
-            // Iterate over all roles.
-            for ( const role of roles ) {
-                const isUserInRole = role.members.get( guild.client.user.id || "" );
-
-                if ( isUserInRole ) {
-                    const grantedRoles = role.permissions.toArray();
-
-                    grantedRoles.forEach( ( permission ) => {
-                        delete resultMissingPermissions[ permission ];
-                    } );
-                }
-
-                // If the resultMissingPermissions is empty.
-                if ( ! Object.keys( resultMissingPermissions ).length ) {
-                    break;
-                }
-            }
-        }
-
-        // Transform the resultMissingPermissions object to the array.
-        const result: string[] = [];
-
-        for ( const permissionName in resultMissingPermissions ) {
-            result.push( permissionName );
-        }
-
-        return result;
     }
 }

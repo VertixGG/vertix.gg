@@ -3,6 +3,7 @@ import { ChannelType, EmbedBuilder } from "discord.js";
 import { channelManager, masterChannelManager } from "@dynamico/managers";
 
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+import GlobalLogger from "@dynamico/global-logger";
 
 export default async function authMiddleware( interaction: UIInteractionTypes ) {
     // Only the channel owner can pass the middleware
@@ -30,7 +31,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
             embeds: [ embed ],
             ephemeral: true,
         } ).catch( ( e ) => {
-            console.log( e );
+            GlobalLogger.getInstance().warn( authMiddleware, "", e );
         } );
     }
 

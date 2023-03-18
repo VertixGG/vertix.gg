@@ -19,14 +19,7 @@ const permissionManager = PermissionsManager.getInstance(),
 export default async function permissionsMiddleware( interaction: UIInteractionTypes ) {
     let result = false;
 
-    const isSupportedInteraction = interaction.guild && (
-        interaction.isButton() ||
-        interaction.isStringSelectMenu() ||
-        interaction.isModalSubmit() ||
-        interaction.isUserSelectMenu()
-    );
-
-    if ( isSupportedInteraction && ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type ) {
+    if ( interaction.guild && ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type ) {
         const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
             requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             missingPermissions = [

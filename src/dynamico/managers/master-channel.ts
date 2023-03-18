@@ -42,16 +42,10 @@ import { DATA_CHANNEL_KEY_MISSING_PERMISSIONS, DATA_CHANNEL_KEY_SETTINGS } from 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 
-import Debugger from "@dynamico/utils/debugger";
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
-import InitializeBase from "@internal/bases/initialize-base";
-
-export class MasterChannelManager extends InitializeBase {
+export class MasterChannelManager extends ManagerCacheBase<any> {
     private static instance: MasterChannelManager;
-
-    private cache = new Map<string, any>();
-
-    private debugger: Debugger;
 
     public static getName(): string {
         return "Dynamico/Managers/MasterChannel";
@@ -63,12 +57,6 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         return MasterChannelManager.instance;
-    }
-
-    public constructor() {
-        super();
-
-        this.debugger = new Debugger( this );
     }
 
     /**
@@ -233,11 +221,9 @@ export class MasterChannelManager extends InitializeBase {
 
         // If it exists in the cache, then return it.
         if ( interaction.channelId && cache ) {
-            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
+            const cached = this.getCache( `getByDynamicChannel-${ interaction.channelId }` );
 
             if ( cached ) {
-                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
-
                 return cached;
             }
         }
@@ -305,7 +291,7 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         // Set cache, anyway.
-        this.cache.set( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
+        this.setCache( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
 
         return masterChannel;
     }

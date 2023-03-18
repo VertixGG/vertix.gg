@@ -1,5 +1,3 @@
-import { Colors } from "discord.js";
-
 import { UITemplateComponentEmbed } from "@dynamico/ui/base/ui-template-component-embed";
 
 export class NotifyMaxMasterChannels extends UITemplateComponentEmbed {
@@ -8,7 +6,7 @@ export class NotifyMaxMasterChannels extends UITemplateComponentEmbed {
     }
 
     protected getTitle() {
-        return "You have reached your Master Channels limit";
+        return "🤷 You have reached your Master Channels limit";
     }
 
     protected getDescription() {
@@ -16,7 +14,7 @@ export class NotifyMaxMasterChannels extends UITemplateComponentEmbed {
     }
 
     protected getColor(): number {
-        return Colors.Red;
+        return 0xFF8C00;
     }
 
     protected getFields() {

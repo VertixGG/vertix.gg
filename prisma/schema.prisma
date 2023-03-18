@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["clientExtensions"]
 }
 
 datasource db {
@@ -68,9 +69,11 @@ model ChannelData {
   object    Json?
   values    String[]
   // ---
-  ownerId   String   @unique @db.ObjectId
+  ownerId   String   @db.ObjectId
   channel   Channel  @relation("ChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
   // ---
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, key])
 }

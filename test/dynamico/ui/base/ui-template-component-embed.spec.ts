@@ -57,7 +57,7 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
             "• Manage Roles\n" +
             "• Manage Channels\n" +
             "• Manage Emojis\n" +
-            "• Manage The globe with meridians\n\n" +
+            "• Manage The Globe with meridians\n\n" +
             "Please ensure that **Dynamico** have the permissions above, and there are no overwrites that effect the bot role." );
         expect( embed?.data.color ).toBe( 0xFF8C00 );
     } );

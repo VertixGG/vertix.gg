@@ -42,7 +42,7 @@ export class UIComponentBase extends UIBase {
     }
 
     public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
-        return await guiManager.sendContinuesMessage( interaction, this, args );
+        return await guiManager.getInstance().sendContinuesMessage( interaction, this, args );
     }
 
     public async sendFollowUp( interaction: CommandInteraction, args: any ) {

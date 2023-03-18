@@ -1,16 +1,15 @@
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 import {
     ChannelType,
+    CommandInteraction,
     Guild,
     Interaction,
     NonThreadGuildBasedChannel,
-    OverwriteType,
     PermissionsBitField,
     SelectMenuInteraction,
-    VoiceBasedChannel
+    VoiceBasedChannel,
 } from "discord.js";
-
-import guiManager from "./gui";
 
 import {
     IChannelEnterGenericArgs,
@@ -21,32 +20,31 @@ import {
 
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-    DEFAULT_MASTER_CATEGORY_NAME,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
 
-import { CategoryManager, ChannelManager } from "@dynamico/managers";
+import {
+    categoryManager,
+    channelDataManager,
+    channelManager,
+    guiManager,
+    permissionsManager
+} from "@dynamico/managers";
+
+import { DATA_CHANNEL_KEY_SETTINGS } from "@dynamico/constants/channel-data";
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 
-import Debugger from "@dynamico/utils/debugger";
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
-import { ChannelDataManager } from "@dynamico/managers/channel-data";
-
-import Permissions from "@dynamico/utils/permissions";
-
-import InitializeBase from "@internal/bases/initialize-base";
-
-export class MasterChannelManager extends InitializeBase {
+export class MasterChannelManager extends ManagerCacheBase<any> {
     private static instance: MasterChannelManager;
-
-    private cache = new Map<string, any>();
-
-    private debugger: Debugger;
 
     public static getName(): string {
         return "Dynamico/Managers/MasterChannel";
@@ -60,12 +58,6 @@ export class MasterChannelManager extends InitializeBase {
         return MasterChannelManager.instance;
     }
 
-    public constructor() {
-        super();
-
-        this.debugger = new Debugger( this );
-    }
-
     /**
      * Function onJoinMasterCreateChannel() :: Called when a user joins the master channel(➕ New Channel).
      */
@@ -76,15 +68,62 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.onJoinMasterCreateChannel,
             `User '${ displayName }' joined master channel '${ channelName }'` );
 
-        // Create a new dynamic channel for the user.
-        const channel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
-            message = await guiManager
-                .get( "Dynamico/UI/EditDynamicChannel" )
-                .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
+        const channel = await channelManager.getChannel(
+            args.newState.guild.id,
+            args.newState.channelId || "",
+            true
+        );
 
-        message.content = "<@" + newState.member?.id + ">";
+        if ( ! channel || ! newState.channel ) {
+            this.logger.error( this.onJoinMasterCreateChannel,
+                `Could not find channel '${ channelName }'` );
 
-        await channel.send( message );
+            return;
+        }
+
+        const missingPermissions = [
+            ... permissionsManager.getMissingPermissions(
+                DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
+                newState.channel
+            ),
+            ... permissionsManager.getMissingPermissions(
+                DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+                newState.channel.guild
+            )
+        ];
+
+        if ( missingPermissions.length ) {
+            this.logger.warn( this.onJoinMasterCreateChannel,
+                `User '${ displayName }' connected to master channel '${ channelName }' but is missing permissions` );
+
+            const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+                .getMessage( newState.channel, {
+                    permissions: missingPermissions,
+                    botName: newState.guild.client.user.username,
+                } );
+
+            // Send DM message to the user with missing permissions.
+            await newState.member?.send( message );
+
+            return;
+        }
+
+        try {
+            // Create a new dynamic channel for the user.
+            const dynamicChannel = await this.createDynamic( { displayName, guild, oldState, newState, } ),
+                message = await guiManager
+                    .get( "Dynamico/UI/EditDynamicChannel" )
+                    .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
+
+            message.content = "<@" + newState.member?.id + ">";
+
+            await dynamicChannel?.send( message );
+        } catch ( e ) {
+            this.logger.error( this.onJoinMasterCreateChannel,
+                `Failed to create dynamic channel for user '${ displayName }'` );
+
+            this.logger.error( this.onJoinMasterCreateChannel, "", e );
+        }
     }
 
     /**
@@ -99,7 +138,7 @@ export class MasterChannelManager extends InitializeBase {
 
         // If the channel is empty, delete it.
         if ( args.oldState.channel?.members.size === 0 ) {
-            await ChannelManager.getInstance().delete( {
+            await channelManager.delete( {
                 guild,
                 channel: args.oldState.channel,
             } );
@@ -147,157 +186,16 @@ export class MasterChannelManager extends InitializeBase {
     }
 
     /**
-     * Function createDynamic() :: Creates a new dynamic channel for a user.
+     * Function getByDynamicChannel() :: Returns the master channel by the dynamic channel according the interaction.
      */
-    public async createDynamic( args: IMasterChannelCreateDynamicArgs ) {
-        const { displayName, guild, newState } = args,
-            masterChannel = newState.channel as VoiceBasedChannel,
-            userOwnerId = newState.member?.id,
-            data = await ChannelDataManager.getInstance().getData( {
-                cache: true,
-                key: "settings",
-                channelId: masterChannel.id,
-                default: {
-                    dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-                },
-            } );
-
-        const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
-            "%{userDisplayName}%",
-            displayName
-        );
-
-        this.logger.info( this.createDynamic,
-            `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
-
-        const categoryChannel = masterChannel.parent,
-            inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
-            inheritedPermissions = this.getDefaultInheritedPermissions( masterChannel ),
-            permissionOverwrites = [
-                ... inheritedPermissions,
-                {
-                    id: newState.id,
-                    ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-                }
-            ];
-
-        // Create channel for the user.
-        const channel = await ChannelManager.getInstance().create( {
-            guild,
-            name: dynamicChannelName,
-            // ---
-            userOwnerId: newState.id,
-            ownerChannelId: masterChannel.id,
-            // ---
-            type: ChannelType.GuildVoice,
-            parent: categoryChannel,
-            internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
-            // ---
-            ... inheritedProperties,
-            // ---
-            permissionOverwrites,
-        } );
-
-        // Move the user to new created channel.
-        await newState.setChannel( channel.id );
-
-        return channel;
-    }
-
-    public async createDefaultMasters( guild: Guild, userOwnerId: string ) {
-        let masterCategory;
-
-        try {
-            masterCategory = await this.createMasterCategory( guild );
-        } catch ( e ) {
-            this.logger.warn( this.createDefaultMasters, "", e );
-        }
-
-        if ( ! masterCategory ) {
-            return false;
-        }
-
-        const args = {
-                guild,
-                userOwnerId,
-                parent: masterCategory,
-            },
-            masterCreateChannel = await this.createCreateChannel( args );
-
-        return {
-            masterCategory,
-            masterCreateChannel,
-        };
-    }
-
-    /**
-     * Function createMasterCategory() :: Creates a new master category for a master channel(s).
-     */
-    public async createMasterCategory( guild: Guild ) {
-        return await CategoryManager.getInstance().create( {
-            guild,
-            name: DEFAULT_MASTER_CATEGORY_NAME,
-        } );
-    }
-
-    /**
-     * Function createCreateChannel() :: Creates channel master of create.
-     */
-    public async createCreateChannel( args: IMasterChannelCreateArgs ) {
-        const { guild, parent } = args;
-
-        this.logger.info( this.createCreateChannel,
-            `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
-
-        const selfRoleId = Permissions.getSelfRoleId( guild );
-
-        if ( ! selfRoleId ) {
-            this.logger.error( this.createCreateChannel,
-                `Self role id not found for guild '${ guild.name }' guildId: '${ guild.id }'`
-            );
-            return;
-        }
-
-        const allowedPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow;
-            allowedPermissions.shift(); // Remove MANGE_ROLES, Cannot be set without admin permission.
-
-        return await ChannelManager.getInstance().create( {
-            parent,
-            guild,
-            userOwnerId: args.userOwnerId,
-            internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
-            type: ChannelType.GuildVoice,
-            permissionOverwrites: [ {
-                // Add self role id
-                id: selfRoleId,
-                type: OverwriteType.Role,
-                allow: allowedPermissions,
-            }, {
-                id: guild.roles.everyone,
-                ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-            } ],
-        } );
-    }
-
-    public async removeLeftOvers( guild: Guild ) {
-        this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
-
-        // TODO Relations are deleted automatically??
-        await CategoryModel.getInstance().delete( guild.id );
-        await ChannelModel.getInstance().delete( guild );
-    }
-
     public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
         this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
 
         // If it exists in the cache, then return it.
         if ( interaction.channelId && cache ) {
-            const cached = this.cache.get( `getByDynamicChannel-${ interaction.channelId }` );
+            const cached = this.getCache( `getByDynamicChannel-${ interaction.channelId }` );
 
             if ( cached ) {
-                this.debugger.log( this.getByDynamicChannel, `Found in cache: '${ interaction.channelId }'` );
-
                 return cached;
             }
         }
@@ -365,9 +263,186 @@ export class MasterChannelManager extends InitializeBase {
         }
 
         // Set cache, anyway.
-        this.cache.set( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
+        this.setCache( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
 
         return masterChannel;
+    }
+
+    /**
+     * Function createDynamic() :: Creates a new dynamic channel for a user.
+     */
+    public async createDynamic( args: IMasterChannelCreateDynamicArgs ) {
+        const { displayName, guild, newState } = args,
+            masterChannel = newState.channel as VoiceBasedChannel,
+            userOwnerId = newState.member?.id;
+
+        const masterChannelDB = await channelManager.getChannel( guild.id, masterChannel.id, true );
+
+        if ( ! masterChannelDB ) {
+            this.logger.error( this.createDynamic,
+                `Could not find master channel in database, guildId: ${ guild.id }, master channelId: ${ masterChannel.id }` );
+            return;
+        }
+
+        const data = await channelDataManager.getData( {
+            ownerId: masterChannelDB.id,
+            key: DATA_CHANNEL_KEY_SETTINGS,
+            // TODO: Ensure cache usage.
+            cache: true,
+            default: {
+                dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+            },
+        } );
+
+        const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
+            "%{userDisplayName}%",
+            displayName
+        );
+
+        this.logger.info( this.createDynamic,
+            `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
+
+        const categoryChannel = masterChannel.parent,
+            inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
+            inheritedPermissions = this.getDefaultInheritedPermissions( masterChannel ),
+            permissionOverwrites = [
+                ... inheritedPermissions,
+                {
+                    id: newState.id,
+                    ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+                }
+            ];
+
+        // Create channel for the user.
+        const { channel } = await channelManager.create( {
+            guild,
+            name: dynamicChannelName,
+            // ---
+            userOwnerId: newState.id,
+            ownerChannelId: masterChannel.id,
+            // ---
+            type: ChannelType.GuildVoice,
+            parent: categoryChannel,
+            internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
+            // ---
+            ... inheritedProperties,
+            // ---
+            permissionOverwrites,
+        } );
+
+        // Move the user to new created channel.
+        await newState.setChannel( channel.id );
+
+        return channel;
+    }
+
+    /**
+     * Function createDefaultMasters() :: Creates a default master channel(s) for a guild, part of setup process.
+     */
+    public async createDefaultMasters( interaction: CommandInteraction, userOwnerId: string ) {
+        const guild = interaction.guild as Guild;
+
+        let masterCategory;
+        try {
+            masterCategory = await this.createMasterCategory( guild );
+        } catch ( e ) {
+            this.logger.warn( this.createDefaultMasters, "", e );
+        }
+
+        if ( masterCategory ) {
+            const args = {
+                    guild,
+                    userOwnerId,
+                    parent: masterCategory,
+                },
+                masterCreateChannel = await this.createCreateChannel( args );
+
+            return {
+                masterCategory,
+                masterCreateChannel,
+            };
+        }
+
+        await guiManager.get( "Dynamico/UI/GlobalResponse" )
+            .sendFollowUp( interaction, {
+                globalResponse: "%{somethingWentWrong}%"
+            } );
+
+        return false;
+    }
+
+    /**
+     * Function createMasterCategory() :: Creates a new master category for a master channel(s).
+     */
+    public async createMasterCategory( guild: Guild ) {
+        return await categoryManager.create( {
+            guild,
+            name: DEFAULT_MASTER_CATEGORY_NAME,
+        } );
+    }
+
+    /**
+     * Function createCreateChannel() :: Creates channel master of create.
+     */
+    public async createCreateChannel( args: IMasterChannelCreateArgs ) {
+        const { guild, parent } = args;
+
+        this.logger.info( this.createCreateChannel,
+            `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
+
+        const result = await channelManager.create( {
+                parent,
+                guild,
+                userOwnerId: args.userOwnerId,
+                internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+                name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+                type: ChannelType.GuildVoice,
+                permissionOverwrites: [ {
+                    id: guild.client.user.id,
+                    ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
+                }, {
+                    id: guild.roles.everyone,
+                    ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+                } ],
+            } );
+
+        // Set default settings.
+        await channelDataManager.setData( {
+            ownerId: result.channelDB.id,
+            key: DATA_CHANNEL_KEY_SETTINGS,
+            default: {
+                dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+            }
+        } );
+
+        return result.channel;
+    }
+
+    /**
+     * Function checkLimit() :: Validates if the guild has reached the master channel limit.
+     */
+    public async checkLimit( interaction: CommandInteraction, guildId: string ) {
+        const hasReachedLimit = await ChannelModel.getInstance().isReachedMasterLimit( guildId );
+
+        if ( hasReachedLimit ) {
+            this.debugger.log( this.checkLimit, `GuildId: ${ guildId } has reached master limit.` );
+
+            await guiManager.get( "Dynamico/UI/NotifyMaxMasterChannels" )
+                .sendFollowUp( interaction, { maxFreeMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } );
+        }
+
+        return ! hasReachedLimit;
+    }
+
+    /**
+     * Function removeLeftOvers() :: Removes leftovers of a guild.
+     */
+    public async removeLeftOvers( guild: Guild ) {
+        this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
+
+        // TODO Relations are deleted automatically??
+        await CategoryModel.getInstance().delete( guild.id );
+        await ChannelModel.getInstance().delete( guild );
     }
 }
 

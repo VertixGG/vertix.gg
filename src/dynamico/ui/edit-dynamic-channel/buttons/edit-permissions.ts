@@ -9,7 +9,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
-import guiManager from "@dynamico/managers/gui";
+import { guiManager } from "@dynamico/managers";
 
 export default class EditPermissions extends UIElement {
     public static getName() {
@@ -58,10 +58,9 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
-            // Set connect permissions for @everyone to false.
-            // TODO: If user set basic roles, then we apply all the changes for each basicRole, except for @everyone.
+            // Set connect permissions for @everyone to '/'.
             await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
-                Connect: true,
+                Connect: null,
             } );
 
             // TODO: Can be static.

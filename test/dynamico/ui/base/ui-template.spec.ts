@@ -1,9 +1,9 @@
-import UITemplate from "@dynamico/ui/base/ui-template";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
 describe( "Dynamico/UI/UITemplate", () => {
     it( "Should pass sanity test", async function () {
         // Arrange
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
             public getName() {
                 return "test-template";
             }
@@ -69,7 +69,7 @@ describe( "Dynamico/UI/UITemplate", () => {
 
     it( "Should stay alive, try to make it crash", async function () {
         // Arrange.
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
             public static getName() {
                 return "test-template";
             }
@@ -101,7 +101,7 @@ describe( "Dynamico/UI/UITemplate", () => {
 
     it( "Should able to handle comma cases", async function () {
         // Arrange.
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
             public static getName() {
                 return "test-template";
             }
@@ -147,7 +147,7 @@ describe( "Dynamico/UI/UITemplate", () => {
     } );
 
     it( "Should be able to support global responses", async function () {
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
 
             public static getName() {
                 return "test-template";

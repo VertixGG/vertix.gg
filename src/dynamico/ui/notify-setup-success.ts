@@ -1,34 +1,59 @@
-import { Colors } from "discord.js";
+import { MessageComponentInteraction } from "discord.js";
 
-import { UITemplateComponentEmbed } from "@dynamico/ui/base/ui-template-component-embed";
+import { UIEmbed } from "@dynamico/ui/base/ui-embed";
+import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
+import { guildGetBadwordsJoined } from "@dynamico/utils/guild";
+import { GUILD_DEFAULT_BADWORDS_PLACEHOLDER } from "@dynamico/constants/guild";
 
-export class NotifySetupSuccess extends UITemplateComponentEmbed {
+export class NotifySetupSuccess extends UIEmbed {
     public static getName() {
         return "Dynamico/UI/NotifySetupSuccess";
     }
 
     protected getTitle() {
-        return "Dynamico has been set up successfully !";
+        return "🛠️ Dynamico has been set up successfully!";
     }
 
     protected getDescription() {
-        return "**Category**: %{masterCategoryName}%\n" +
-            "**Create Channel**: <#%{masterChannelId}%>\n";
+        return "**Master Channel Created:**\n" +
+            "Master Channel: <#%{masterChannelId}%>\n" +
+            "Dynamic Channels Name: `%{dynamicChannelNameTemplate}%`\n\n" +
+            "**Bad Words:**\n" +
+            "%{badwords}%";
     }
 
     protected getColor(): number {
-        return Colors.Blue;
+        return 0xFFD700;
+    }
+
+    protected getOptions(): any {
+        return {
+            badwords: {
+                "%{badwordsPlaceholder}%": GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
+                "%{value}%": "`%{badwordsValue}%`",
+            }
+        };
     }
 
     protected getFields() {
         return [
             "masterCategoryName",
             "masterChannelId",
+
+            "dynamicChannelNameTemplate",
+
+            "badwords",
+            "badwordsValue",
         ];
     }
 
-    protected getFieldsLogic( interaction?: null ) {
-        return {};
+    protected async getFieldsLogic( interaction: BaseInteractionTypes ) {
+        const interactionAs = ( interaction as MessageComponentInteraction ),
+            badwords = await guildGetBadwordsJoined( interactionAs.guildId?.toString() ?? "" );
+
+        return {
+            badwords: badwords.length ? "%{value}%" : "%{badwordsPlaceholder}%",
+        };
     }
 }
 

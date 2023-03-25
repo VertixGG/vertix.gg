@@ -120,19 +120,28 @@ export default class UsersMenus extends UIElement {
             }
 
             if ( member ) {
-                // TODO: Move options to constants.
-                await channel.permissionOverwrites.create( member, {
-                    ViewChannel: true,
-                    Connect: true,
-                    ReadMessageHistory: true,
-                } );
+                try {
+                    // TODO: Move options to constants.
+                    await channel.permissionOverwrites.create( member, {
+                        ViewChannel: true,
+                        Connect: true,
+                        ReadMessageHistory: true,
+                    } );
 
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: "%{canNowConnect}%",
-                    username: member.username,
-                } );
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: "%{canNowConnect}%",
+                        username: member.username,
+                    } );
 
-                return;
+                    return;
+                } catch ( e ) {
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: "%{couldNotAddUser}%",
+                        username: member.username,
+                    } );
+
+                    UIElement.logger.error( this.grantUser, "", e );
+                }
             }
 
             await editPermissionsComponent.sendContinues( interaction, {

@@ -20,7 +20,7 @@ import { ContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfa
 
 import Debugger from "@dynamico/utils/debugger";
 
-import UIComponentBase from "@dynamico/ui/base/ui-component-base";
+import UIBase from "@dynamico/ui/base/ui-base";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
@@ -40,7 +40,7 @@ interface ContinuesInteractionArgs {
 export class GUIManager extends InitializeBase {
     private static instance: GUIManager;
 
-    private userInterfaces = new Map<string, UIComponentBase>;
+    private userInterfaces = new Map<string, UIBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
@@ -63,7 +63,7 @@ export class GUIManager extends InitializeBase {
         this.debugger = new Debugger( this );
     }
 
-    public register( ui: typeof UIComponentBase ) {
+    public register( ui: typeof UIBase ) {
         const uiName = ui.getName();
 
         if ( this.userInterfaces.has( uiName ) ) {
@@ -111,12 +111,12 @@ export class GUIManager extends InitializeBase {
         return unique;
     }
 
-    public async getCallback( unique: string, middleware: (( interaction: UIInteractionTypes ) => Promise<boolean>)[] ) {
+    public async getCallback( unique: string, middleware: ( ( interaction: UIInteractionTypes ) => Promise<boolean> )[] ) {
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {
             return () => {
-                this.logger.error(  this.getCallback, `Callback '${ unique }' does not exist` );
+                this.logger.error( this.getCallback, `Callback '${ unique }' does not exist` );
 
                 return true;
             };
@@ -145,10 +145,11 @@ export class GUIManager extends InitializeBase {
         return embed;
     }
 
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes|CommandInteraction, component: UIComponentBase, args?: any ): Promise<void>;
+    // TODO: Move to UI.
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIComponentBase | string, args?: any ): Promise<void> {
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<void> {
         // Validate interaction type.
         const isInstanceTypeOfContinuesInteraction = interaction instanceof ButtonInteraction ||
             interaction instanceof SelectMenuInteraction ||
@@ -173,7 +174,7 @@ export class GUIManager extends InitializeBase {
 
             if ( typeof context === "string" ) {
                 message = context;
-            } else if ( context instanceof UIComponentBase ) {
+            } else if ( context instanceof UIBase ) {
                 replyArgs = await context.getMessage( interaction, args );
                 replyArgs.ephemeral = true;
             } else {
@@ -197,7 +198,8 @@ export class GUIManager extends InitializeBase {
                 replyArgs.components = components;
             }
 
-            const isInteractionExist = this.continuesInteractions.has( interaction.channel.id );
+            const sharedId = interaction.channel.id + interaction.user.id,
+                isInteractionExist = this.continuesInteractions.has( sharedId );
 
             if ( ! isInteractionExist ) {
                 // Validate interaction
@@ -206,7 +208,7 @@ export class GUIManager extends InitializeBase {
                         .catch( e => this.logger.warn( this.sendContinuesMessage, "", e ) )
                         .then( defer => {
                             if ( defer && interaction.channel ) {
-                                this.continuesInteractions.set( interaction.channel.id, defer );
+                                this.continuesInteractions.set( sharedId, defer );
                             }
 
                             return defer;
@@ -216,14 +218,14 @@ export class GUIManager extends InitializeBase {
                 return;
             }
 
-            const defer = this.continuesInteractions.get( interaction.channel.id );
+            const defer = this.continuesInteractions.get( sharedId );
 
             if ( defer && defer.interaction.isRepliable() ) {
                 const warn = ( e: any ) => this.logger.warn( this.sendContinuesMessage, "", e );
                 defer.interaction.deleteReply().catch( warn ).then( async () => {
                     interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
                         if ( interaction.channel && newDefer ) {
-                            this.continuesInteractions.set( interaction.channel.id, newDefer );
+                            this.continuesInteractions.set( sharedId, newDefer );
                         } else {
                             warn( "Interaction channel or defer is undefined" );
                         }

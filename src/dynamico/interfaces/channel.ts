@@ -10,7 +10,12 @@ import {
 
 /* Master channel */
 
-export interface IMasterChannelCreateArgs {
+export interface IMasterChannelCreateDefaultMasters {
+    dynamicChannelNameTemplate?: string,
+    badwords?: string[],
+}
+
+export interface IMasterChannelCreateArgs extends IMasterChannelCreateDefaultMasters {
     parent: CategoryChannel,
     guild: Guild,
     name?: string
@@ -54,21 +59,3 @@ export interface IChannelDeleteArgs {
     guild: Guild,
     channel: NonThreadGuildBasedChannel,
 }
-
-/* Channel data */
-
-export interface IChannelDataSelectUniqueArgs {
-    ownerId: string,
-    key: string,
-}
-
-export interface IChannelDataCreateArgs extends IChannelDataSelectUniqueArgs {
-    value: string|string[]|object,
-}
-
-export interface IChannelDataGetArgs extends IChannelDataSelectUniqueArgs {
-    default: string|string[]|object|null,
-    cache?: boolean,
-}
-
-export interface IChannelDataUpsertArgs extends IChannelDataGetArgs {}

@@ -2,7 +2,7 @@ import UsersMenus from "./menus/users-menus";
 
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
-import Primary from "@dynamico/ui/edit-users-permissions/embed/primary";
+import MangeUsers from "@dynamico/ui/edit-users-permissions/embed/mange-users";
 
 import { BaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
@@ -12,14 +12,14 @@ export class EditUsersPermissions extends UIComponentBase {
     }
 
     public static getType() {
-        return E_UI_TYPES.DYNAMIC;
+        return E_UI_TYPES.STATIC;
     }
 
-    protected getDynamicEmbeds( interaction?: BaseInteractionTypes ) {
-        return [ new Primary ];
+    protected async getEmbedTemplates( interaction?: BaseInteractionTypes ) {
+        return [ new MangeUsers ];
     }
 
-    public getInternalComponents() {
+    public getInternalElements() {
         return [
             UsersMenus,
         ];

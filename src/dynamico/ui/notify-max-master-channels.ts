@@ -1,6 +1,6 @@
-import { UITemplateComponentEmbed } from "@dynamico/ui/base/ui-template-component-embed";
+import { UIEmbed } from "@dynamico/ui/base/ui-embed";
 
-export class NotifyMaxMasterChannels extends UITemplateComponentEmbed {
+export class NotifyMaxMasterChannels extends UIEmbed {
     public static getName() {
         return "Dynamico/UI/NotifyMaxMasterChannels";
     }
@@ -23,7 +23,7 @@ export class NotifyMaxMasterChannels extends UITemplateComponentEmbed {
         ];
     }
 
-    protected getFieldsLogic( interaction?: null ) {
+    protected async getFieldsLogic( interaction?: null ) {
         return {};
     }
 }

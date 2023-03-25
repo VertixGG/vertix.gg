@@ -8,16 +8,16 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import { guiManager } from "@dynamico/managers";
 
-import { GenericInputNumberUIModal } from "@dynamico/ui/base/generic/generic-input-number-ui-modal";
+import { GenericInputTextboxNumberUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-number-ui-modal";
 
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,
     MAX_USER_LIMIT_LENGTH = 2,
     MIN_USER_LIMIT_LENGTH = 1;
 
-export default class UserlimitModal extends GenericInputNumberUIModal {
+export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel/Modal/Userlimit";
+        return "Dynamico/UI/EditDynamicChannel::Modal/Userlimit";
     }
 
     public static getType() {

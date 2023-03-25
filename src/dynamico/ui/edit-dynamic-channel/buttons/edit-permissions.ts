@@ -13,7 +13,7 @@ import { guiManager } from "@dynamico/managers";
 
 export default class EditPermissions extends UIElement {
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel/Buttons/EditPermissions";
+        return "Dynamico/UI/EditDynamicChannel::Buttons/EditPermissions";
     }
 
     public static getType() {

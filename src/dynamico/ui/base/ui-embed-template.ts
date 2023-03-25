@@ -1,8 +1,10 @@
+import { EmbedBuilder } from "discord.js";
+
 import { BaseInteractionTypes, DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
 
 import { ObjectBase } from "@internal/bases/object-base";
 
-export abstract class UITemplate extends ObjectBase {
+export abstract class UIEmbedTemplate extends ObjectBase {
     public static getName() {
         return DYNAMICO_UI_TEMPLATE;
     }
@@ -13,6 +15,25 @@ export abstract class UITemplate extends ObjectBase {
             logicParsed = { ... logic, ... this.extractVariables( logic, this.getTemplateOptions() ) };
 
         return this.compile( template, logicParsed );
+    }
+
+    public async build( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder> {
+        const template = await this.compose( interaction, args ),
+            embed = new EmbedBuilder();
+
+        if ( template.title ) {
+            embed.setTitle( template.title );
+        }
+
+        if ( template.description ) {
+            embed.setDescription( template.description );
+        }
+
+        if ( template.color ) {
+            embed.setColor( parseInt( template.color ) );
+        }
+
+        return embed;
     }
 
     protected compile( template: any, logic: any ) {
@@ -33,6 +54,9 @@ export abstract class UITemplate extends ObjectBase {
 
     protected abstract getTemplateInputs(): any;
 
+    /**
+     * Function getTemplateLogic() :: The fields should be fully identical to the options.
+     */
     protected abstract getTemplateLogic( interaction?: BaseInteractionTypes | null, args?: any ): any;
 
     private extractVariables( templateLogic: any, templateOptions: any ) {
@@ -58,7 +82,10 @@ export abstract class UITemplate extends ObjectBase {
             return value.replace( /%\{(.+?)}%/g, ( match, p1 ) => {
                 const replaced = templateInputs[ p1 ];
 
-                if ( "object" === typeof replaced ) {
+                // Skip if the variable is not defined.
+                if ( "undefined" === typeof replaced ) {
+                    return match;
+                } else if ( "object" === typeof replaced ) {
                     return JSON.stringify( replaced );
                 }
 
@@ -70,4 +97,4 @@ export abstract class UITemplate extends ObjectBase {
     }
 }
 
-export default UITemplate;
+export default UIEmbedTemplate;

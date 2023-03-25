@@ -5,13 +5,12 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import { guiManager } from "@dynamico/managers";
+import { guiManager, masterChannelManager } from "@dynamico/managers";
 
 import { commandsLogger } from "@dynamico/commands/index";
 
 import { ICommand } from "@dynamico/interfaces/command";
-
-import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import {  guildGetBadwordsJoined } from "@dynamico/utils/guild";
 
 const name = "setup";
 
@@ -26,35 +25,18 @@ export const Setup: ICommand = {
     run: async ( client: Client, interaction: CommandInteraction ) => {
         const guildId = interaction.guildId as string;
 
-        const masterChannelManager = MasterChannelManager.getInstance(),
-            result = await masterChannelManager.checkLimit( interaction, guildId ) &&
-                await masterChannelManager.createDefaultMasters( interaction, interaction.user.id );
-
-        if ( ! result ) {
+        if ( ! await masterChannelManager.checkLimit( interaction, guildId ) ) {
             return commandsLogger.warn( name,
                 `GuildId: ${ guildId } has not been set up, master channel creation failed`
             );
         }
 
-        const { masterCategory, masterCreateChannel } = result;
-
-        if ( ! masterCreateChannel ) {
-            commandsLogger.error( name,
-                `GuildId: ${ guildId } has not been set up, master channel creation failed`
-            );
-
-            return await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendFollowUp( interaction, {
-                    globalResponse: "%{somethingWentWrong}%"
-                } );
-        }
-
-        commandsLogger.info( name, `GuildId: ${ guildId } has been set up successfully` );
-
-        await guiManager.get( "Dynamico/UI/NotifySetupSuccess" )
-            .sendFollowUp( interaction, {
-                masterCategoryName: masterCategory.name,
-                masterChannelId: masterCreateChannel.id,
+        // Create interaction defer.
+        // TODO: Wizard can only work with sendContinues.
+        await guiManager.get( "Dynamico/UI/SetupProcess" )
+            .sendContinues( interaction, {
+                step: "initial",
+                badwords: await guildGetBadwordsJoined( guildId ), // Remove all other calls to DB.
             } );
     }
 };

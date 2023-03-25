@@ -1,8 +1,8 @@
 import { Colors } from "discord.js";
 
-import UITemplate from "@dynamico/ui/base/ui-template";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
-export default class Embed extends UITemplate {
+export default class Embed extends UIEmbedTemplate {
     protected getTemplateOptions() {
         return {
             descriptions: {

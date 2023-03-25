@@ -1,17 +1,20 @@
 import { Client, Guild } from "discord.js";
 
-import MasterChannelManager from "./master-channel";
+import { Prisma } from ".prisma/client";
 
 import GuildModel from "../models/guild";
 
-import InitializeBase from "@internal/bases/initialize-base";
+import { masterChannelManager } from "@dynamico/managers/index";
 
-export class GuildManager extends InitializeBase {
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
+
+import GuildDelegate = Prisma.GuildDelegate;
+import RejectPerOperation = Prisma.RejectPerOperation;
+
+export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperation>> {
     private static instance: GuildManager;
 
     private guildModel: GuildModel;
-
-    private masterChannelManager: MasterChannelManager;
 
     public static getName(): string {
         return "Dynamico/Managers/Guild";
@@ -29,8 +32,6 @@ export class GuildManager extends InitializeBase {
         super();
 
         this.guildModel = GuildModel.getInstance();
-
-        this.masterChannelManager = MasterChannelManager.getInstance();
     }
 
     public async onJoin( client: Client, guild: Guild ) {
@@ -52,7 +53,7 @@ export class GuildManager extends InitializeBase {
         await this.guildModel.update( guild, false );
 
         // Remove leftovers of the guild.
-        await this.masterChannelManager.removeLeftOvers( guild );
+        await masterChannelManager.removeLeftOvers( guild );
     }
 }
 

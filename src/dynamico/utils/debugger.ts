@@ -13,7 +13,7 @@ export class Debugger extends ObjectBase {
         return "Dynamico/Utils/Debugger";
     }
 
-    public constructor( owner: ObjectBase, prefix?: string ) {
+    public constructor( owner: ObjectBase | typeof ObjectBase, prefix?: string ) {
         super();
 
         this.logger = new Logger( owner );

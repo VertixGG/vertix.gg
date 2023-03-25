@@ -2,11 +2,11 @@ import { PermissionsBitField, VoiceChannel, } from "discord.js";
 
 import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
 
-import UITemplate from "@dynamico/ui/base/ui-template";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
-export class Primary extends UITemplate {
+export class MangeChannel extends UIEmbedTemplate {
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel/Embeds/Primary";
+        return "Dynamico/UI/EditDynamicChannel/Embeds/MangeChannel";
     }
 
     protected getTemplateOptions() {
@@ -52,4 +52,4 @@ export class Primary extends UITemplate {
     }
 }
 
-export default Primary;
+export default MangeChannel;

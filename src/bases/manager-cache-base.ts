@@ -2,17 +2,17 @@ import Debugger from "@dynamico/utils/debugger";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
-export abstract class ManagerCacheBase<T> extends InitializeBase {
+export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
     protected debugger: Debugger;
 
-    private cache: Map<string, T>;
+    private cache: Map<string, CacheResult>;
 
     public constructor() {
         super();
 
         this.debugger = new Debugger( this );
 
-        this.cache = new Map<string, T>();
+        this.cache = new Map<string, CacheResult>();
     }
 
     protected getCache( key: string ) {

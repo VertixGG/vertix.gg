@@ -231,7 +231,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
         ChannelDataManager.getInstance().removeFromCache( channel.id );
 
-        await this.channelModel.delete( guild, channel.id );
+        this.channelModel.delete( guild, channel.id )
+            .catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
         // Some channels are not deletable, so we need to catch the error.
         channel.delete()
@@ -252,7 +253,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
     }
 
-    public removeFromCache( channelId: string ) {
+    protected removeFromCache( channelId: string ) {
         this.debugger.log( this.removeFromCache, `Removing channel '${ channelId }' from cache.` );
 
         // Remove from cache.

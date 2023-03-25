@@ -15,7 +15,7 @@ import UIBase from "@dynamico/ui/base/ui-base";
 
 import { guiManager } from "@dynamico/managers";
 
-import { BaseInteractionTypes, CallbackUIType, DYNAMICO_UI_ELEMENT, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, CallbackUIType, DYNAMICO_UI_ELEMENT } from "@dynamico/interfaces/ui";
 
 import Logger from "@internal/modules/logger";
 
@@ -24,7 +24,9 @@ import { ForceMethodImplementation } from "@internal/errors";
 export default class UIElement extends UIBase {
     protected static logger: Logger = new Logger( this );
 
-    public interaction?: BaseInteractionTypes;
+    public interaction?: BaseInteractionTypes; // TODO Try to remove this or make it private.
+
+    protected parent?: UIElement;
 
     private builtRows: ActionRowBuilder<any>[] = [];
 
@@ -32,12 +34,8 @@ export default class UIElement extends UIBase {
         return DYNAMICO_UI_ELEMENT;
     }
 
-    public static getType(): E_UI_TYPES {
-        throw new ForceMethodImplementation( this, this.getType.name );
-    }
-
-    public constructor( interaction?: BaseInteractionTypes ) {
-        super( interaction );
+    public constructor( interaction?: BaseInteractionTypes, args? : any  ) {
+        super( interaction, args );
 
         if ( this.getName() === UIElement.getName() ) {
             return;
@@ -46,10 +44,14 @@ export default class UIElement extends UIBase {
         if ( interaction ) {
             this.interaction = interaction;
         }
+
+        if ( args._parent ) {
+            this.parent = args._parent;
+        }
     }
 
     protected load( interaction?: BaseInteractionTypes ) {
-        return this.build( interaction );
+        return this.build( interaction, this.args );
     }
 
     protected getButtonBuilder( callback: CallbackUIType ) {
@@ -94,14 +96,14 @@ export default class UIElement extends UIBase {
         return modal;
     }
 
-    protected async getBuilders( interaction?: BaseInteractionTypes ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
+    protected async getBuilders( interaction?: BaseInteractionTypes, args?: any ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 
-    public async build( interaction?: BaseInteractionTypes ) {
+    public async build( interaction?: BaseInteractionTypes, args?: any ) {
         UIElement.logger.debug( this.build, `Building UI '${ this.getName() }'` );
 
-        const builders = await this.getBuilders( interaction ),
+        const builders = await this.getBuilders( interaction, args ),
             builtComponents: ActionRowBuilder<any>[] = [];
 
         // Loop through the builders and build them.

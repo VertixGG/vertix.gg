@@ -1,8 +1,8 @@
-import { UITemplateComponentEmbed } from "@dynamico/ui/base/ui-template-component-embed";
+import { UIEmbed } from "@dynamico/ui/base/ui-embed";
 
 describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
-    it( "It should allow logic and args combined", async function () {
-        const template = new class extends UITemplateComponentEmbed {
+    it( "Should allow logic and args combined", async function () {
+        const template = new class extends UIEmbed {
             public static getName() {
                 return "Dynamico/UI/Test";
             }
@@ -28,7 +28,7 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
                 ];
             }
 
-            protected getFieldsLogic( interaction?: null, args?: { permissions: string[] } ) {
+            protected async getFieldsLogic( interaction?: null, args?: { permissions: string[] } ) {
                 if ( ! args ) {
                     return {};
                 }
@@ -40,7 +40,7 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
         };
 
         // Act.
-        const embed = ( await template.getEmbeds( null, {
+        const embed = ( await template.buildEmbed( null, {
                 botName: "Dynamico",
                 permissions: [
                     "Manage Roles",
@@ -49,7 +49,7 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
                     "Manage The Globe with meridians",
                 ]
             } )
-        )?.at( 0 ) as any;
+        ) as any;
 
         // Assert.
         expect( embed?.data.title ).toBe( "🤷 Oops, bot permissions are insufficient" );
@@ -60,5 +60,61 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
             "• Manage The Globe with meridians\n\n" +
             "Please ensure that **Dynamico** have the permissions above, and there are no overwrites that effect the bot role." );
         expect( embed?.data.color ).toBe( 0xFF8C00 );
+    } );
+
+    it( "Should support getOptions() and getFieldLogic()", async function () {
+        // Arrange.
+        const template = new class extends UIEmbed {
+            public static getName() {
+                return "Dynamico/UI/Test";
+            }
+
+            protected getTitle() {
+                return "🤷 Oops, this a test";
+            }
+
+            protected getDescription() {
+                return "%{test}% %{limit}%";
+            }
+
+            protected getColor() {
+                return 0xFF8C00;
+            }
+
+            protected getOptions(): any {
+                return {
+                    limit: {
+                        "%{value}%": "%{limitValue}%",
+                        "%{unlimited}%": "Unlimited",
+                    },
+                };
+            }
+
+            protected getFields() {
+                return [
+                    "test",
+                    "limit",
+                    "limitValue",
+                ];
+            }
+
+            protected async getFieldsLogic( interaction?: null, args?: any ) {
+                // `limitValue` random from 0 to 1.
+                const limitValue = Math.floor( Math.random() * 2 );
+
+                return {
+                    test: "test123",
+                    limit: 0 === limitValue ? "%{unlimited}%" : "%{value}%",
+                    limitValue
+                };
+            }
+        };
+
+        // Act.
+        const embed = ( await template.buildEmbed( null, {} )),
+            description = ( embed as any ).data?.description;
+
+        // Assert - Ensure `test123`, `Unlimited` or `1`.
+        expect( description ).toMatch( /test123 Unlimited|test123 1/ );
     } );
 } );

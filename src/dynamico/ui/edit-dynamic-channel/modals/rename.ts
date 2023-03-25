@@ -8,17 +8,18 @@ import { Routes } from "discord-api-types/v10";
 import MasterChannelManager from "@dynamico/managers/master-channel";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { GenericInputUIModal } from "@dynamico/ui/base/generic/generic-input-ui-modal";
+import { GenericInputTextboxUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-ui-modal";
 
 import { guiManager } from "@dynamico/managers";
+import { guildGetBadwords } from "@dynamico/utils/guild";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
 
-export default class RenameModal extends GenericInputUIModal {
+export default class RenameModal extends GenericInputTextboxUIModal {
 
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel/Modal/Rename";
+        return "Dynamico/UI/EditDynamicChannel::Modal/Rename";
     }
 
     public static getType() {
@@ -65,6 +66,30 @@ export default class RenameModal extends GenericInputUIModal {
         switch ( interaction.channel.type ) {
             case ChannelType.GuildText:
             case ChannelType.GuildVoice:
+                const badwords = await guildGetBadwords( interaction.guildId as string );
+                let usedBadword: string | null = null;
+
+                ( badwords ).some( ( badword ) => {
+                    if ( badword.length && input.toLowerCase().includes( badword.toString().toLowerCase() ) ) {
+                        usedBadword = badword;
+                    }
+                    return !! usedBadword;
+                } );
+
+                if ( usedBadword ) {
+                    const embed = new EmbedBuilder()
+                        .setTitle( "🙅 Failed to rename your channel" )
+                        .setDescription(
+                            `The word "${ usedBadword }" has been classified as inappropriate by the server administrator.`
+                        )
+                        .setColor( 0xFF8C00 );
+
+                    await guiManager.sendContinuesMessage( interaction, {
+                        embeds: [ embed ]
+                    } );
+                    return;
+                }
+
                 const result = await fetch( "https://discord.com/api/v10/" + Routes.channel( interaction.channel.id ), {
                     method: "PATCH",
                     headers: {
@@ -91,7 +116,7 @@ export default class RenameModal extends GenericInputUIModal {
         let message = ".\n";
 
         if ( masterChannel ) {
-            message = `:\n\n<#${masterChannel.id}>\n`;
+            message = `:\n\n<#${ masterChannel.id }>\n`;
         }
 
         const embed = new EmbedBuilder()
@@ -100,7 +125,7 @@ export default class RenameModal extends GenericInputUIModal {
                 `Please wait ${ retryAfter.toFixed( 0 ) } second(s) until the next rename or open a new channel:` +
                 `${ message }`
             )
-            .setColor(0xFF8C00);
+            .setColor( 0xFF8C00 );
 
         await guiManager.sendContinuesMessage( interaction, {
             embeds: [ embed ]
@@ -110,7 +135,7 @@ export default class RenameModal extends GenericInputUIModal {
     private async onSuccessfulRename( interaction: ModalSubmitInteraction, channelName: string ) {
         const embed = new EmbedBuilder()
             .setTitle( `✏️ Your channel's name has changed to '${ channelName }'` )
-            .setColor(0x32CD32);
+            .setColor( 0x32CD32 );
 
         await guiManager.sendContinuesMessage( interaction, {
             embeds: [ embed ]

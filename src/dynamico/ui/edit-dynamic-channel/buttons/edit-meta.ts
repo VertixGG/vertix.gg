@@ -12,23 +12,14 @@ import { guiManager } from "@dynamico/managers";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
-import Logger from "@internal/modules/logger";
-
 export default class EditMeta extends UIElement {
-    private logger: Logger;
 
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel/Buttons/EditMeta";
+        return "Dynamico/UI/EditDynamicChannel::Buttons/EditMeta";
     }
 
     public static getType() {
         return E_UI_TYPES.STATIC;
-    }
-
-    public constructor() {
-        super();
-
-        this.logger = new Logger( this );
     }
 
     public async getBuilders() {

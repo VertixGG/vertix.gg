@@ -15,12 +15,19 @@ import {
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs,
     IMasterChannelCreateArgs,
+    IMasterChannelCreateDefaultMasters,
     IMasterChannelCreateDynamicArgs
 } from "../interfaces/channel";
 
 import {
+    DATA_CHANNEL_KEY_BADWORDS,
+    DATA_CHANNEL_KEY_SETTINGS
+} from "@dynamico/constants/data";
+
+import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-    DEFAULT_MASTER_CATEGORY_NAME, DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
+    DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
@@ -32,11 +39,10 @@ import {
     categoryManager,
     channelDataManager,
     channelManager,
+    guildDataManager,
     guiManager,
     permissionsManager
 } from "@dynamico/managers";
-
-import { DATA_CHANNEL_KEY_SETTINGS } from "@dynamico/constants/channel-data";
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
@@ -294,8 +300,14 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             },
         } );
 
+        if ( ! data ) {
+            this.logger.error( this.createDynamic,
+                `Could not find master channel data in database, guildId: ${ guild.id }, master channelId: ${ masterChannel.id }` );
+            return;
+        }
+
         const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
-            "%{userDisplayName}%",
+            "%{user}%",
             displayName
         );
 
@@ -339,7 +351,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
     /**
      * Function createDefaultMasters() :: Creates a default master channel(s) for a guild, part of setup process.
      */
-    public async createDefaultMasters( interaction: CommandInteraction, userOwnerId: string ) {
+    public async createDefaultMasters( interaction: CommandInteraction, userOwnerId: string, extraArgs: IMasterChannelCreateDefaultMasters = {} ) {
         const guild = interaction.guild as Guild;
 
         let masterCategory;
@@ -350,10 +362,18 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         if ( masterCategory ) {
+            if ( extraArgs.badwords ) {
+                // Remove empty spaces.
+                extraArgs.badwords = extraArgs.badwords.map( ( word ) => word.trim() );
+                // Remove empty words.
+                extraArgs.badwords = extraArgs.badwords.filter( ( word ) => word.length > 0 );
+            }
+
             const args = {
                     guild,
                     userOwnerId,
                     parent: masterCategory,
+                    ... extraArgs,
                 },
                 masterCreateChannel = await this.createCreateChannel( args );
 
@@ -364,7 +384,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         await guiManager.get( "Dynamico/UI/GlobalResponse" )
-            .sendFollowUp( interaction, {
+            .sendContinues( interaction, {
                 globalResponse: "%{somethingWentWrong}%"
             } );
 
@@ -390,30 +410,54 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         this.logger.info( this.createCreateChannel,
             `Creating master channel for guild '${ guild.name }' guildId: '${ guild.id }' for user: '${ args.guild.ownerId }'` );
 
+        this.debugger.log( this.createCreateChannel, "badwords", args.badwords );
+
         const result = await channelManager.create( {
-                parent,
-                guild,
-                userOwnerId: args.userOwnerId,
-                internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-                name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
-                type: ChannelType.GuildVoice,
-                permissionOverwrites: [ {
-                    id: guild.client.user.id,
-                    ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-                }, {
-                    id: guild.roles.everyone,
-                    ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-                } ],
-            } );
+            parent,
+            guild,
+            userOwnerId: args.userOwnerId,
+            internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+            type: ChannelType.GuildVoice,
+            permissionOverwrites: [ {
+                id: guild.client.user.id,
+                ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
+            }, {
+                id: guild.roles.everyone,
+                ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+            } ],
+        } );
+
+        // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
 
         // Set default settings.
         await channelDataManager.setData( {
             ownerId: result.channelDB.id,
             key: DATA_CHANNEL_KEY_SETTINGS,
             default: {
-                dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+                dynamicChannelNameTemplate: args.dynamicChannelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
             }
         } );
+
+        if ( ! args.badwords?.length ) {
+            try {
+                // await guildManager.deleteData( guild.id, DATA_CHANNEL_KEY_BADWORDS );
+                await guildDataManager.deleteData( {
+                    ownerId: guild.id,
+                    key: DATA_CHANNEL_KEY_BADWORDS,
+                }, true );
+            } catch ( e ) {
+                this.logger.warn( this.createCreateChannel, "", e );
+            }
+        } else {
+            // await guildManager.setData( guild.id, DATA_CHANNEL_KEY_BADWORDS, args.badwords );
+            await guildDataManager.setData( {
+                ownerId: guild.id,
+                key: DATA_CHANNEL_KEY_BADWORDS,
+                default: args.badwords,
+                cache: false, // TODO: it should not be effective.
+            }, true );
+        }
 
         return result.channel;
     }
@@ -428,7 +472,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             this.debugger.log( this.checkLimit, `GuildId: ${ guildId } has reached master limit.` );
 
             await guiManager.get( "Dynamico/UI/NotifyMaxMasterChannels" )
-                .sendFollowUp( interaction, { maxFreeMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } );
+                .sendContinues( interaction, { maxFreeMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } );
         }
 
         return ! hasReachedLimit;

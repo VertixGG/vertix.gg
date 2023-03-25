@@ -49,8 +49,8 @@ export function interactionHandler( client: Client ) {
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
     globalLogger.log( handleSlashCommand,
-        `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'
-        ` );
+        `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'`
+    );
 
     if ( ! interaction.guild ) {
         await interaction.reply( { content: "This command can only be used in a server", ephemeral: true } );
@@ -87,10 +87,6 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
         await interaction.followUp( { content: "An error has occurred" } );
         return;
     }
-
-    await interaction.deferReply( {
-        ephemeral: true,
-    } );
 
     slashCommand.run( client, interaction );
 };

@@ -1,6 +1,6 @@
-import { UITemplateComponentEmbed } from "@dynamico/ui/base/ui-template-component-embed";
+import { UIEmbed } from "@dynamico/ui/base/ui-embed";
 
-export class NotifyPermissions extends UITemplateComponentEmbed {
+export class NotifyPermissions extends UIEmbed {
     public static getName() {
         return "Dynamico/UI/NotifyPermissions";
     }
@@ -26,7 +26,7 @@ export class NotifyPermissions extends UITemplateComponentEmbed {
         ];
     }
 
-    protected getFieldsLogic( interaction?: null, args?: { permissions: string[] } ) {
+    protected async getFieldsLogic( interaction?: null, args?: { permissions: string[] } ) {
         if ( ! args ) {
             return {};
         }

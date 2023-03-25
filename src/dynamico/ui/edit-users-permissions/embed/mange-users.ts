@@ -4,15 +4,15 @@ import {
     OverwriteType
 } from "discord.js";
 
-import UITemplate from "@dynamico/ui/base/ui-template";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
 import GlobalLogger from "@dynamico/global-logger";
 
 import { masterChannelManager } from "@dynamico/managers";
 
-export class Primary extends UITemplate {
+export class MangeUsers extends UIEmbedTemplate {
     public static getName() {
-        return "Dynamico/UI/EditUserPermissions/Embeds/Primary";
+        return "Dynamico/UI/EditUserPermissions/Embeds/MangeUsers";
     }
 
     protected getTemplateOptions(): any {
@@ -24,6 +24,7 @@ export class Primary extends UITemplate {
                 "%{cannotAddYourSelf}%": "You cannot add yourself",
                 "%{canNowConnect}%": "☝ %{username}% can now connect to your channel",
                 "%{removedFromYourList}%": "👇 %{username}% removed from your list",
+                "%{couldNotAddUser}%": "Could not add user %{username}%",
             }
         };
     }
@@ -105,4 +106,4 @@ export class Primary extends UITemplate {
     }
 }
 
-export default Primary;
+export default MangeUsers;

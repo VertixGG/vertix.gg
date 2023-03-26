@@ -15,7 +15,7 @@ import UIElement from "@dynamico/ui/base/ui-element";
 export default class EditMeta extends UIElement {
 
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel::Buttons/EditMeta";
+        return "Dynamico/UI/EditDynamicChannel/Buttons/EditMeta";
     }
 
     public static getType() {

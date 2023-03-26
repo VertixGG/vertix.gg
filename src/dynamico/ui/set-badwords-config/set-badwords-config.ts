@@ -1,6 +1,6 @@
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
-import EditBadwords from "@dynamico/ui/set-badwords-config/buttons/edit-badwords";
+import EditBadwordsButton from "@dynamico/ui/set-badwords-config/edit-badwords-button";
 
 import { BadwordsConfigEmbed } from "@dynamico/ui/set-badwords-config/badwords-config-embed";
 
@@ -23,7 +23,7 @@ export class SetBadwordsConfig extends UIComponentBase {
 
     protected getInternalElements() {
         return [
-            EditBadwords
+            EditBadwordsButton
         ];
     }
 }

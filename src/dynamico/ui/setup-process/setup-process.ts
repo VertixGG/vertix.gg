@@ -29,8 +29,8 @@ export class SetupProcess extends UIWizardBase {
         super();
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            guiManager.register( require( "../set-badwords-config/modals/edit-badwords-modal" ).default );
-            guiManager.register( require( "../set-master-config/modals/edit-template-modal" ).default );
+            guiManager.register( require( "../set-badwords-config/edit-badwords-modal" ).default );
+            guiManager.register( require( "../set-master-config/edit-template-modal" ).default );
         } );
     }
 

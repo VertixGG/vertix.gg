@@ -6,11 +6,11 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import { guiManager } from "@dynamico/managers";
 
-import EditBadwordsModal from "@dynamico/ui/set-badwords-config/modals/edit-badwords-modal";
+import EditBadwordsModal from "@dynamico/ui/set-badwords-config/edit-badwords-modal";
 
-export default class EditBadwords extends UIElement {
+export default class EditBadwordsButton extends UIElement {
     public static getName() {
-        return "Dynamico/UI/SetBadwords/Buttons/EditBadwords";
+        return "Dynamico/UI/SetBadwords/EditBadwordsButton";
     }
 
     public static getType() {

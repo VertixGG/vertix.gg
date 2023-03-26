@@ -1,6 +1,6 @@
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
-import EditTemplate from "@dynamico/ui/set-master-config/buttons/edit-template";
+import EditTemplateButton from "@dynamico/ui/set-master-config/edit-template-button";
 
 import MasterConfigEmbed from "@dynamico/ui/set-master-config/master-config-embed";
 
@@ -17,7 +17,7 @@ export class SetMasterConfig extends UIComponentBase {
 
     protected getInternalElements() {
         return [
-            EditTemplate,
+            EditTemplateButton,
         ];
     }
 

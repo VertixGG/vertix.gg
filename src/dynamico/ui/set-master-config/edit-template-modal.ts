@@ -7,13 +7,13 @@ import { guiManager } from "@dynamico/managers";
 
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
 
-const MIN_INPUT_LENGTH = 1,
-    MAX_INPUT_LENGTH = 100;
+const MIN_INPUT_LENGTH = 0,
+    MAX_INPUT_LENGTH = 50;
 
 export class EditTemplateModal extends GenericInputTextboxUIModal {
 
     public static getName() {
-        return "Dynamico/UI/SetMasterConfig/Buttons/EditTemplateModal";
+        return "Dynamico/UI/SetMasterConfig/EditTemplateModal";
     }
 
     public static getType() {
@@ -29,7 +29,7 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
     }
 
     protected async getValue() {
-        return this.args.channelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME;
+        return this.args.channelNameTemplate;
     }
 
     protected getModalTitle(): string {
@@ -46,7 +46,7 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
         await guiManager
-            .sendContinuesMessage( interaction, "The channel name must be between 1 and 100 characters long" );
+            .sendContinuesMessage( interaction, `The channel name must be between ${ MIN_INPUT_LENGTH } and ${ MAX_INPUT_LENGTH } characters long` );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction ) {

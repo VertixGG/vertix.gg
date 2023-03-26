@@ -40,6 +40,10 @@ export abstract class GenericInputTextboxUIModal extends Mixin( UIElement, Modal
             maxLength = this.getMaxLength(),
             value = await this.getValue( interaction, args );
 
+        if ( ! minLength ) {
+            inputBuilder.setRequired( false );
+        }
+
         inputBuilder.setPlaceholder( this.getInputPlaceholder() );
         inputBuilder.setLabel( this.getInputLabel() );
         inputBuilder.setStyle( this.getInputStyle() );
@@ -47,14 +51,12 @@ export abstract class GenericInputTextboxUIModal extends Mixin( UIElement, Modal
 
         if ( minLength ) {
             inputBuilder.setMinLength( minLength );
+        } else {
+            inputBuilder.setRequired( false );
         }
 
         if ( maxLength ) {
             inputBuilder.setMaxLength( maxLength );
-        }
-
-        if ( ! minLength && ! maxLength ) {
-            inputBuilder.setRequired( false );
         }
 
         if ( value ) {

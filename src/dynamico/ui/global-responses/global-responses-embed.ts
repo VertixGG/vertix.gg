@@ -5,11 +5,11 @@ import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico"
 import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
-export default class Embed extends UIEmbedTemplate {
+export default class GlobalResponsesEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
     public static getName() {
-        return "Dynamico/UI/GlobalResponses/Embed";
+        return "Dynamico/UI/GlobalResponses/GlobalResponsesEmbed";
     }
 
     public constructor() {

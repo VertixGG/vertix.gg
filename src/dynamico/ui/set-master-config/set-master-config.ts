@@ -2,7 +2,7 @@ import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
 import EditTemplate from "@dynamico/ui/set-master-config/buttons/edit-template";
 
-import MasterConfigEmbed from "@dynamico/ui/set-master-config/embed/master-config-embed";
+import MasterConfigEmbed from "@dynamico/ui/set-master-config/master-config-embed";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 

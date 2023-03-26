@@ -3,14 +3,17 @@ import { CommandInteraction } from "discord.js";
 import UIWizardBase from "@dynamico/ui/base/ui-wizard-base";
 import SetMasterConfig from "@dynamico/ui/set-master-config/set-master-config";
 import SetBadwordsConfig from "@dynamico/ui/set-badwords-config/set-badwords-config";
+
 import { ContinuesInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import {
     guiManager,
     masterChannelManager
 } from "@dynamico/managers";
+
 import { GUILD_DEFAULT_BADWORDS, GUILD_DEFAULT_BADWORDS_SEPARATOR } from "@dynamico/constants/guild";
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
+
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export class SetupProcess extends UIWizardBase {

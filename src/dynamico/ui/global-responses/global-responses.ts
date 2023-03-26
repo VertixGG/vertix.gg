@@ -1,6 +1,6 @@
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
-import Embed from "@dynamico/ui/global-responses/embed";
+import GlobalResponsesEmbed from "@dynamico/ui/global-responses/global-responses-embed";
 
 import {
     E_UI_TYPES,
@@ -16,7 +16,7 @@ export class GlobalResponse extends UIComponentBase {
     }
 
     protected async getEmbedTemplates() {
-        return [ new Embed ];
+        return [ new GlobalResponsesEmbed ];
     }
 }
 

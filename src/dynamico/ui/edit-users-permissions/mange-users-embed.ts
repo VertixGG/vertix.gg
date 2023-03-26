@@ -12,11 +12,11 @@ import { masterChannelManager } from "@dynamico/managers";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
-export class MangeUsers extends UIEmbedTemplate {
+export class MangeUsersEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
     public static getName() {
-        return "Dynamico/UI/EditUserPermissions/Embeds/MangeUsers";
+        return "Dynamico/UI/EditUserPermissions/MangeUsersEmbed";
     }
 
     public constructor() {
@@ -130,4 +130,4 @@ export class MangeUsers extends UIEmbedTemplate {
     }
 }
 
-export default MangeUsers;
+export default MangeUsersEmbed;

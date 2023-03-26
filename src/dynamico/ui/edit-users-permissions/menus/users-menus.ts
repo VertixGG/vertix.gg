@@ -33,7 +33,7 @@ export default class UsersMenus extends UIElement {
 
         removeMenu.setPlaceholder( "👇 Remove User From List" );
 
-        const members: { label: string; value: string; }[] = [],
+        const members: { label: string; value: string; emoji: string }[] = [],
             masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
@@ -56,7 +56,6 @@ export default class UsersMenus extends UIElement {
         if ( interaction.channel && ChannelType.GuildVoice === interaction.channel.type ) {
             // Loop through the allowed users and add them to the description.
             for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
-                // Skip self.
                 if ( role.id === interaction.user.id ) {
                     continue;
                 }
@@ -77,6 +76,7 @@ export default class UsersMenus extends UIElement {
                     members.push( {
                         label: member.displayName + ` #${ member.user.discriminator }`,
                         value: member.id,
+                        emoji: "👤",
                     } );
                 }
             }
@@ -87,6 +87,7 @@ export default class UsersMenus extends UIElement {
             members.push( {
                 label: "No users found",
                 value: "no-users-found",
+                emoji: "👤",
             } );
         }
 
@@ -111,7 +112,8 @@ export default class UsersMenus extends UIElement {
                 editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
 
             // If user tries to add himself, then we just ignore it.
-            if ( member?.id === interaction.user.id ) {
+            const memberId = member?.id;
+            if ( memberId === interaction.user.id || memberId === interaction.client.user.id  ) {
                 await editPermissionsComponent.sendContinues( interaction, {
                     title: uiUtilsWrapAsTemplate( "cannotAddYourSelf" ),
                 } );

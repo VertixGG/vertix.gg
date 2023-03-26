@@ -14,7 +14,6 @@ export const guildGetBadwordsJoined = async ( guildId: string ): Promise<string>
 };
 
 export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => {
-    // const badwordsDB = await guildManager.getData( guildId, DATA_CHANNEL_KEY_BADWORDS, null, true );
     const badwordsDB = await guildDataManager.getData( {
         ownerId: guildId,
         key: DATA_CHANNEL_KEY_BADWORDS,
@@ -27,4 +26,19 @@ export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => 
     }
 
     return GUILD_DEFAULT_BADWORDS;
+};
+
+export const guildUsedBadword = async ( guildId: string, word: string ): Promise<string|null> => {
+    const badwords = await guildGetBadwords( guildId );
+
+    let usedBadword: string | null = null;
+
+    ( badwords ).some( ( badword ) => {
+        if ( badword.length && word.toLowerCase().includes( badword.toString().toLowerCase() ) ) {
+            usedBadword = badword;
+        }
+        return !! usedBadword;
+    } );
+
+    return usedBadword;
 };

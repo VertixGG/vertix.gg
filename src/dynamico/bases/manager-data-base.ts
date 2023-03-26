@@ -168,6 +168,12 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         return await this.dataSourceModel.deleteData( args );
     }
 
+    public async getAllData() {
+        this.logger.info( this.getAllData, "Getting all data" );
+
+        return await this.dataSourceModel.getAllData();
+    }
+
     private async getIdByOwnerSourceId( ownerId: string ) {
         const owner = await this.dataSourceModel.getOwnerId( ownerId );
 

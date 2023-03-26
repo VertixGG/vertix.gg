@@ -70,6 +70,8 @@ model ChannelData {
   object    Json?
   values    String[]
   // ---
+  version   String?  @default("0.0.0")
+  // ---
   ownerId   String   @db.ObjectId
   channel   Channel  @relation("ChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
   // ---
@@ -87,6 +89,8 @@ model GuildData {
   // ---
   object    Json?
   values    String[]
+  // ---
+  version   String?  @default("0.0.0")
   // ---
   ownerId   String   @db.ObjectId
   guild     Guild    @relation("GuildData", fields: [ownerId], references: [id], onDelete: Cascade)

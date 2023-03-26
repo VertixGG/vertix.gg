@@ -25,6 +25,7 @@ export interface DataResult {
     key: string,
     type: string,
     values: string[],
+    version: string,
     ownerId: string,
     createdAt: Date,
     updatedAt: Date
@@ -36,9 +37,9 @@ export interface DataResult {
 // TODO: Ensure you can find usage by examining interfaces methods.
 
 export interface IDataManager {
-    getData( args: IDataGetArgs ): Promise<DataResult|void>;
+    getData( args: IDataGetArgs ): Promise<DataResult | void>;
 
-    setData( args: IDataUpdateArgs ): Promise<DataResult|void>;
+    setData( args: IDataUpdateArgs ): Promise<DataResult | void>;
 
     updateData( args: IDataUpdateArgs, dbData: DataResult ): Promise<void>;
 
@@ -46,28 +47,30 @@ export interface IDataManager {
 }
 
 export interface IDataModel {
-    getOwnerId( ownerId: string ): Promise<{id: string}>
+    getOwnerId( ownerId: string ): Promise<{ id: string }>
 
     createData( args: IDataCreateArgs ): Promise<DataResult>;
 
-    getData( args: IDataSelectUniqueArgs ): Promise<DataResult|null>;
+    getData( args: IDataSelectUniqueArgs ): Promise<DataResult | null>;
 
-    setData( args: IDataUpdateArgs ): Promise<DataResult|void>
+    setData( args: IDataUpdateArgs ): Promise<DataResult | void>
 
     deleteData( args: IDataSelectUniqueArgs ): Promise<DataResult>
+
+    getAllData(): Promise<DataResult[]>
 
     getInternalNormalizedData( args: IDataCreateArgs ): DataResult;
 }
 
 export interface IOwnerInnerModel {
-    findUnique(args: {
+    findUnique( args: {
         where: any, // TODO try to find a way to make this more specific.
         include?: any // TODO modify this to include the 'include' property.
-    }): Promise<any>
+    } ): Promise<any>
 }
 
 export interface IDataInnerModel {
-    create(args: {
+    create( args: {
         data: {
             ownerId: string,
             key: string,
@@ -75,8 +78,9 @@ export interface IDataInnerModel {
             values?: string[],
             object?: Record<string, any>
         }
-    }): Promise<any>,
-    update(args: {
+    } ): Promise<any>,
+
+    update( args: {
         where: {
             ownerId_key: {
                 ownerId: string,
@@ -88,14 +92,20 @@ export interface IDataInnerModel {
             values?: string[],
             object?: Record<string, any>
         }
-    }): Promise<any>,
-    delete(args: {
+    } ): Promise<any>,
+
+    delete( args: {
         where: {
             ownerId_key: {
                 ownerId: string,
                 key: string
             }
         }
-    }): Promise<any>
+    } ): Promise<any>,
+
+    findMany( args?: {
+        where?: any,
+        include?: any
+    } ): Promise<any>,
 }
 

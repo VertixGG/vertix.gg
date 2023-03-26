@@ -8,6 +8,10 @@ import { Commands } from "@dynamico/commands";
 import CategoryManager from "@dynamico/managers/category";
 import ChannelManager from "@dynamico/managers/channel";
 
+import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
+
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
@@ -26,6 +30,10 @@ export class DynamicoManager extends InitializeBase {
 
     public static getName() {
         return "Dynamico/Managers/Dynamico";
+    }
+
+    public static getVersion() {
+        return "0.0.1";
     }
 
     public async onReady( client: Client ) {
@@ -48,6 +56,8 @@ export class DynamicoManager extends InitializeBase {
         await this.removeMasterChannels( client );
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
+
+        await this.ensureBackwardCompatibility();
 
         const username = client.user.username,
             id = client.user.id;
@@ -150,6 +160,49 @@ export class DynamicoManager extends InitializeBase {
 
             this.logger.info( this.removeEmptyCategories,
                 `Category '${ category.categoryId }' is deleted from db.` );
+        }
+    }
+
+    private async ensureBackwardCompatibility() {
+        await this.replaceTemplatesPrefixSuffix();
+    }
+
+    private async replaceTemplatesPrefixSuffix() {
+        const dataManagers = [ guildDataManager, channelDataManager ];
+
+        for ( const dataManager of dataManagers ) {
+            const allData = await dataManager.getAllData();
+
+            for ( const data of allData ) {
+                if ( null === data.version && "0.0.1" === DynamicoManager.getVersion() ) {
+                    if ( data.object ) {
+                        const newObject: any = {};
+                        for ( const [ key, value ] of Object.entries( data.object ) ) {
+                            const stringValue = value as string;
+                            // Check if value match the old template regex.
+                            if ( /%\{(.+?)}%/g.test( stringValue ) ) {
+                                // Extract the template, remove the prefix and suffix '%{', '%}'.
+                                const template = stringValue.match( /\w+/ )?.[ 0 ] as string,
+                                    newTemplate = uiUtilsWrapAsTemplate( template );
+
+                                // Log about the change.
+                                this.logger.info( this.replaceTemplatesPrefixSuffix,
+                                    `id: '${ data.id }' key: '${ key }' Template '${ value }' is replaced with '${ newTemplate }' in '${ dataManager.getName() }' data.` );
+
+                                newObject[ key ] = newTemplate;
+                            }
+                        }
+
+                        data.version = DynamicoManager.getVersion();
+
+                        await dataManager.setData( {
+                            ownerId: data.ownerId,
+                            key: data.key,
+                            default: newObject,
+                        } );
+                    }
+                }
+            }
         }
     }
 }

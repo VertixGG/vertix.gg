@@ -458,7 +458,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                 ownerId: guild.id,
                 key: DATA_CHANNEL_KEY_BADWORDS,
                 default: args.badwords,
-                cache: false, // TODO: it should not be effective.
             }, true );
         }
 

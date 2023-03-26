@@ -148,10 +148,10 @@ export class GUIManager extends InitializeBase {
     }
 
     // TODO: Move to UI.
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<void> {
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse|void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse|void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<InteractionResponse|void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<InteractionResponse|void> {
         // Validate interaction type.
         const isInstanceTypeOfContinuesInteraction = interaction instanceof ButtonInteraction ||
             interaction instanceof SelectMenuInteraction ||
@@ -206,7 +206,7 @@ export class GUIManager extends InitializeBase {
             if ( ! isInteractionExist ) {
                 // Validate interaction
                 if ( interaction.isRepliable() ) {
-                    interaction.reply( replyArgs )
+                    return interaction.reply( replyArgs )
                         .catch( e => this.logger.warn( this.sendContinuesMessage, "", e ) )
                         .then( defer => {
                             if ( defer && interaction.channel ) {
@@ -224,13 +224,15 @@ export class GUIManager extends InitializeBase {
 
             if ( defer && defer.interaction.isRepliable() ) {
                 const warn = ( e: any ) => this.logger.warn( this.sendContinuesMessage, "", e );
-                defer.interaction.deleteReply().catch( warn ).then( async () => {
-                    interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
+                return defer.interaction.deleteReply().catch( warn ).then( async () => {
+                    return interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
                         if ( interaction.channel && newDefer ) {
                             this.continuesInteractions.set( sharedId, newDefer );
                         } else {
                             warn( "Interaction channel or defer is undefined" );
                         }
+
+                        return newDefer;
                     } );
                 } );
             }

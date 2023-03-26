@@ -12,7 +12,7 @@ import { masterChannelManager } from "@dynamico/managers";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
-export class MangeUsersEmbed extends UIEmbedTemplate {
+export class EditUsersEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
     public static getName() {
@@ -45,7 +45,7 @@ export class MangeUsersEmbed extends UIEmbedTemplate {
                 [ this.vars.private ]: "🚫 Your channel is private now!",
                 [ this.vars.public ]: "🌐 Your channel is public now!",
                 [ this.vars.mange ]: "👥 Manage users access for your dynamic channel",
-                [ this.vars.cannotAddYourSelf ]: "You cannot add yourself",
+                [ this.vars.cannotAddYourSelf ]: "🤷 Hmm.. nothing changed",
                 [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
                 [ this.vars.removedFromYourList ] : `👇 ${ this.vars.username } removed from your list`,
                 [ this.vars.couldNotAddUser ]: `Could not add user ${ this.vars.username }`,
@@ -130,4 +130,4 @@ export class MangeUsersEmbed extends UIEmbedTemplate {
     }
 }
 
-export default MangeUsersEmbed;
+export default EditUsersEmbed;

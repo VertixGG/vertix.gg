@@ -1,10 +1,13 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
+    CommandInteraction,
     EmbedBuilder,
+    InteractionResponse,
+    MessageComponentInteraction,
 } from "discord.js";
 
-import { BaseInteractionTypes, E_UI_TYPES, } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, ContinuesInteractionTypes, E_UI_TYPES, } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 import UIBase from "@dynamico/ui/base/ui-base";
@@ -28,6 +31,12 @@ export class UIComponentBase extends UIBase {
 
     private parent?: UIComponentBase;
 
+    private specificFlowInteraction: Map<string, InteractionResponse> = new Map();
+
+    protected static specify(): string[] {
+        return [];
+    }
+
     /**
      * Function constructor() :: constructor function for the UIComponentBase class.
      * It initializes the components..
@@ -43,6 +52,145 @@ export class UIComponentBase extends UIBase {
         this.staticElementsInstances = [];
     }
 
+    public async getDynamicElements( interaction?: BaseInteractionTypes, args?: any ): Promise<any[]> {
+        return this.buildDynamicElements( interaction, args );
+    }
+
+    public async getElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+        const elements: UIElement[] = [];
+
+        elements.push( ... await this.buildComponentElements( interaction, args ) );
+        elements.push( ... await this.buildElements( interaction, args ) );
+
+        return elements;
+    }
+
+    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder[]> {
+        let embeds = [],
+            staticThis = this.getStaticThis(),
+            dynamicEmbeds = staticThis.dynamicEmbeds,
+            templateEmbeds = this.embedsTemplates;
+
+        // Static embeds.
+        if ( this.staticEmbedsInstances?.length ) {
+            embeds.push( ... this.staticEmbedsInstances );
+        }
+
+        // Dynamic embeds.
+        if ( dynamicEmbeds?.length ) {
+            dynamicEmbeds.forEach( ( EmbedClass ) => {
+                embeds.push( new EmbedClass( interaction, args ) );
+            } );
+        }
+
+        // Template embeds.
+        const builtTemplatesEmbeds: EmbedBuilder[] = [];
+
+        if ( templateEmbeds?.length ) {
+            await Promise.all(
+                templateEmbeds.map( async ( embed ) => {
+                    builtTemplatesEmbeds.push( await embed.build( interaction, args ) );
+                } )
+            );
+        }
+
+        return [
+            ... await Promise.all(
+                embeds.map( async ( embed ) => await embed.buildEmbed( interaction, args ) )
+            ),
+            ... builtTemplatesEmbeds,
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * The method is overridden to add the ability to edit the last message sent by the bot.
+     */
+    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
+        const msgInteraction = interaction as MessageComponentInteraction,
+            staticThis = this.getStaticThis(),
+            spec = staticThis.specify(),
+            customId = msgInteraction.customId,
+            customIdParts = customId.split( ":" );
+
+        if ( ! spec.length || ! interaction.channel ) {
+            return super.sendContinues( interaction, args );
+        }
+
+        // Check if one of the specs includes the customId.
+        if ( ! spec.some( ( spec ) => spec.includes( customIdParts[ 0 ] ) ) ) {
+            return super.sendContinues( interaction, args );
+        }
+
+        const uniqueId = staticThis.getName() + ":" + interaction.channel.id + ":" + interaction.user.id,
+            specificFlowInteraction = this.specificFlowInteraction.get( uniqueId );
+
+        if ( ! specificFlowInteraction ) {
+            const newDefer = await super.sendContinues( interaction, args );
+
+            if ( newDefer ) {
+                this.specificFlowInteraction.set( uniqueId, newDefer );
+            }
+
+            return;
+        }
+
+        await specificFlowInteraction.edit( await this.getMessage( interaction, args ) )
+            .then( () => msgInteraction.deferUpdate() )
+            .catch( ( e ) => {
+                staticThis.logger.warn( this.sendContinues, "", e );
+
+                this.specificFlowInteraction.delete( uniqueId );
+
+                return this.sendContinues( interaction, args );
+            } );
+    }
+
+    public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
+        const builtComponents = await this.getActionRows( interaction, args ),
+            result: any = { components: builtComponents },
+            embeds = await this.getEmbeds( interaction, args );
+
+        if ( embeds?.length ) {
+            result.embeds = embeds;
+        }
+
+        return result;
+    }
+
+    protected getStaticThis(): typeof UIComponentBase {
+        return ( this.constructor as typeof UIComponentBase );
+    }
+
+    /**
+     * Function getInternalComponents() :: a method that returns the internal components for the UI.
+     * It is an abstract method that needs to be implemented by the child class.
+     */
+    protected getInternalComponents(): typeof UIComponentBase[] {
+        return [];
+    }
+
+    /**
+     * Function getInternalElements() :: a method that returns the internal elements for the UI.
+     * It is an abstract method that needs to be implemented by the child class.
+     */
+    protected getInternalElements(): typeof UIElement[] {
+        return [];
+    }
+
+    /**
+     * Function getInternalEmbeds() :: a method that returns the internal embeds for the UI.
+     * It is an abstract method that needs to be implemented by the child class.
+     */
+    protected getInternalEmbeds(): typeof UIEmbed[] {
+        return [];
+    }
+
+    protected async getEmbedTemplates(): Promise<UIEmbedTemplate[]> {
+        return [];
+    }
+
     /**
      * Function load() :: a method that loads the UI.
      */
@@ -53,9 +201,19 @@ export class UIComponentBase extends UIBase {
     }
 
     /**
+     * Function pulse() :: a method that is being called from within the inner components.
+     */
+    protected async pulse?( interaction: BaseInteractionTypes, args: any ) {
+        // If there is parent pulse method, call it.
+        if ( this.parent?.pulse ) {
+            await this.parent.pulse( interaction, args );
+        }
+    }
+
+    /**
      * Function storeEntities() :: a method that stores UI entities.
      */
-    public async storeEntities() {
+    private async storeEntities() {
         const embeds = this.getInternalEmbeds(),
             embedsTemplates = await this.getEmbedTemplates(),
             elements = this.getInternalElements(),
@@ -116,110 +274,6 @@ export class UIComponentBase extends UIBase {
         if ( ! ( this instanceof UIEmbed ) && all.every( ( instance ) => ! instance?.length ) ) {
             throw new Error( "No UI elements were found." );
         }
-    }
-
-    public async getElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {
-        const elements: UIElement[] = [];
-
-        elements.push( ... await this.buildComponentElements( interaction, args ) );
-        elements.push( ... await this.buildElements( interaction, args ) );
-
-        return elements;
-    }
-
-    public async getDynamicElements( interaction?: BaseInteractionTypes, args?: any ): Promise<any[]> {
-        return this.buildDynamicElements( interaction, args );
-    }
-
-    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder[]> {
-        let embeds = [],
-            staticThis = this.getStaticThis(),
-            dynamicEmbeds = staticThis.dynamicEmbeds,
-            templateEmbeds = this.embedsTemplates;
-
-        // Static embeds.
-        if ( this.staticEmbedsInstances?.length ) {
-            embeds.push( ... this.staticEmbedsInstances );
-        }
-
-        // Dynamic embeds.
-        if ( dynamicEmbeds?.length ) {
-            dynamicEmbeds.forEach( ( EmbedClass ) => {
-                embeds.push( new EmbedClass( interaction, args ) );
-            } );
-        }
-
-        // Template embeds.
-        const builtTemplatesEmbeds: EmbedBuilder[] = [];
-
-        if ( templateEmbeds?.length ) {
-            await Promise.all(
-                templateEmbeds.map( async ( embed ) => {
-                    builtTemplatesEmbeds.push( await embed.build( interaction, args ) );
-                } )
-            );
-        }
-
-        return [
-            ... await Promise.all(
-                embeds.map( async ( embed ) => await embed.buildEmbed( interaction, args ) )
-            ),
-            ... builtTemplatesEmbeds,
-        ];
-    }
-
-    public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
-        const builtComponents = await this.getActionRows( interaction, args ),
-            result: any = { components: builtComponents },
-            embeds = await this.getEmbeds( interaction, args );
-
-        if ( embeds?.length ) {
-            result.embeds = embeds;
-        }
-
-        return result;
-    }
-
-    protected getStaticThis(): typeof UIComponentBase {
-        return ( this.constructor as typeof UIComponentBase );
-    }
-
-    /**
-     * Function pulse() :: a method that is being called from within the inner components.
-     */
-    protected async pulse?( interaction: BaseInteractionTypes, args: any ) {
-        // If there is parent pulse method, call it.
-        if ( this.parent?.pulse ) {
-            await this.parent.pulse( interaction, args );
-        }
-    }
-
-    /**
-     * Function getInternalComponents() :: a method that returns the internal components for the UI.
-     * It is an abstract method that needs to be implemented by the child class.
-     */
-    protected getInternalComponents(): typeof UIComponentBase[] {
-        return [];
-    }
-
-    /**
-     * Function getInternalElements() :: a method that returns the internal elements for the UI.
-     * It is an abstract method that needs to be implemented by the child class.
-     */
-    protected getInternalElements(): typeof UIElement[] {
-        return [];
-    }
-
-    /**
-     * Function getInternalEmbeds() :: a method that returns the internal embeds for the UI.
-     * It is an abstract method that needs to be implemented by the child class.
-     */
-    protected getInternalEmbeds(): typeof UIEmbed[] {
-        return [];
-    }
-
-    protected async getEmbedTemplates(): Promise<UIEmbedTemplate[]> {
-        return [];
     }
 
     private async buildElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {

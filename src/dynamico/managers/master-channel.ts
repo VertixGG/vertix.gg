@@ -67,6 +67,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         return MasterChannelManager.instance;
     }
 
+   public constructor( shouldDebug = false ) {
+        super( shouldDebug );
+    }
+
     /**
      * Function onJoinMasterCreateChannel() :: Called when a user joins the master channel(➕ New Channel).
      */

@@ -92,7 +92,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         }
 
         this.logger.info( this.setData,
-            `Adding data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
+            `Setting data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
 
         args.cache = true;
 
@@ -145,7 +145,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
             cacheKey = `${ ownerId }-${ key }`;
 
         this.logger.info( this.updateData,
-            `Setting data for ownerId: '${ args.ownerId }', key: '${ args.key }'`
+            `Updating data for ownerId: '${ args.ownerId }', key: '${ args.key }'`
         );
 
         // Set cache.
@@ -161,7 +161,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         }
 
         this.logger.info( this.deleteData,
-            `Removing data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
+            `Deleting data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
 
         this.removeFromCache( args.ownerId );
 

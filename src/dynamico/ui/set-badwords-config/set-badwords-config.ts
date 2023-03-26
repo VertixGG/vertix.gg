@@ -1,7 +1,9 @@
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
-import { BadwordsConfig } from "@dynamico/ui/set-badwords-config/embed/badwords-config";
 import EditBadwords from "@dynamico/ui/set-badwords-config/buttons/edit-badwords";
+
+import { BadwordsConfigEmbed } from "@dynamico/ui/set-badwords-config/badwords-config-embed";
+
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 export class SetBadwordsConfig extends UIComponentBase {
@@ -15,7 +17,7 @@ export class SetBadwordsConfig extends UIComponentBase {
 
     protected async getEmbedTemplates() {
         return [
-            new BadwordsConfig(),
+            new BadwordsConfigEmbed(),
         ];
     }
 

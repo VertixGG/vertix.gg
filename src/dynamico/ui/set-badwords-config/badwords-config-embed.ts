@@ -1,16 +1,16 @@
 import { Interaction } from "discord.js";
 
 import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 import { GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/guild";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
-export class BadwordsConfig extends UIEmbedTemplate {
+export class BadwordsConfigEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
     public static getName() {
-        return "Dynamico/UI/SetBadwordsConfig/Embeds/BadwordsConfig";
+        return "Dynamico/UI/SetBadwordsConfig/BadwordsConfigEmbed";
     }
 
     public constructor() {

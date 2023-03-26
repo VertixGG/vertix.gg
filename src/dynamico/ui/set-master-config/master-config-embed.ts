@@ -6,7 +6,7 @@ import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export class MasterConfigEmbed extends UIEmbed {
     public static getName() {
-        return "Dynamico/UI/SetMasterConfig/Embeds/MasterConfigEmbed";
+        return "Dynamico/UI/SetMasterConfig/MasterConfigEmbed";
     }
 
     protected getColor(): number {

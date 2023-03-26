@@ -1,8 +1,22 @@
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+
 import { UIEmbed } from "@dynamico/ui/base/ui-embed";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export class NotifyPermissions extends UIEmbed {
+    private vars: any = {};
+
     public static getName() {
         return "Dynamico/UI/NotifyPermissions";
+    }
+
+    public constructor() {
+        super();
+
+        this.vars = {
+            botName: uiUtilsWrapAsTemplate( "botName" ),
+            permissions: uiUtilsWrapAsTemplate( "permissions" ),
+        };
     }
 
     protected getTitle() {
@@ -10,13 +24,13 @@ export class NotifyPermissions extends UIEmbed {
     }
 
     protected getDescription() {
-        return "The bot **%{botName}%** should have the following permissions:\n\n" +
-            "%{permissions}%\n\n" +
-            "Please ensure that **%{botName}%** have the permissions above, and there are no overwrites that effect the bot role.";
+        return `The bot **${ this.vars.botName }** should have the following permissions:\n\n` +
+            `${ this.vars.permissions }\n\n` +
+            `Please ensure that **${ this.vars.botName }** have the permissions above, and there are no overwrites that effect the bot role.`;
     }
 
     protected getColor() {
-        return 0xFF8C00;
+        return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
     }
 
     protected getFields() {

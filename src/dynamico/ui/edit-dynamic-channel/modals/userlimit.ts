@@ -1,14 +1,12 @@
-import {
-    ChannelType,
-    EmbedBuilder,
-    ModalSubmitInteraction
-} from "discord.js";
+import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
+
+import { GenericInputTextboxNumberUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-number-ui-modal";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import { guiManager } from "@dynamico/managers";
 
-import { GenericInputTextboxNumberUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-number-ui-modal";
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,
@@ -54,8 +52,8 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
         const embed = new EmbedBuilder()
-            .setTitle( `🙅 User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }`)
-            .setColor(0xFF8C00);
+            .setTitle( `🙅 User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }` )
+            .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
         await guiManager.sendContinuesMessage( interaction, {
             embeds: [ embed ],
@@ -71,7 +69,7 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
             const limitValue = parsedInput === 0 ? "Unlimited" : parsedInput,
                 embed = new EmbedBuilder()
                     .setTitle( `✋ Your channel's user limit has changed to ${ limitValue }` )
-                    .setColor(0x32CD32);
+                    .setColor( 0x32CD32 );
 
             await guiManager.sendContinuesMessage( interaction, {
                 embeds: [ embed ]

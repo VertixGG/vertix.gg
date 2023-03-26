@@ -1,10 +1,23 @@
 import { UIEmbed } from "@dynamico/ui/base/ui-embed";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
     it( "Should allow logic and args combined", async function () {
         const template = new class extends UIEmbed {
+            private vars: { botName: string; permissions: string };
+
             public static getName() {
                 return "Dynamico/UI/Test";
+            }
+
+            public constructor() {
+                super();
+
+                this.vars = {
+                    botName: uiUtilsWrapAsTemplate( "botName" ),
+                    permissions: uiUtilsWrapAsTemplate( "permissions" ),
+                };
             }
 
             protected getTitle() {
@@ -12,13 +25,13 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
             }
 
             protected getDescription() {
-                return "The bot **%{botName}%** should have the following permissions:\n\n" +
-                    "%{permissions}%\n\n" +
-                    "Please ensure that **%{botName}%** have the permissions above, and there are no overwrites that effect the bot role.";
+                return `The bot **${ this.vars.botName }** should have the following permissions:\n\n` +
+                    `${ this.vars.permissions }\n\n` +
+                    `Please ensure that **${ this.vars.botName }** have the permissions above, and there are no overwrites that effect the bot role.`;
             }
 
             protected getColor() {
-                return 0xFF8C00;
+                return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
             }
 
             protected getFields() {
@@ -59,14 +72,27 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
             "• Manage Emojis\n" +
             "• Manage The Globe with meridians\n\n" +
             "Please ensure that **Dynamico** have the permissions above, and there are no overwrites that effect the bot role." );
-        expect( embed?.data.color ).toBe( 0xFF8C00 );
+        expect( embed?.data.color ).toBe( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
     } );
 
     it( "Should support getOptions() and getFieldLogic()", async function () {
         // Arrange.
         const template = new class extends UIEmbed {
+            private vars: any = {};
+
             public static getName() {
                 return "Dynamico/UI/Test";
+            }
+
+            public constructor() {
+                super();
+
+                this.vars = {
+                    value: uiUtilsWrapAsTemplate( "value" ),
+
+                    limitValue: uiUtilsWrapAsTemplate( "limitValue" ),
+                    unlimited: uiUtilsWrapAsTemplate( "unlimited" ),
+                };
             }
 
             protected getTitle() {
@@ -74,18 +100,18 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
             }
 
             protected getDescription() {
-                return "%{test}% %{limit}%";
+                return uiUtilsWrapAsTemplate( "test" ) + " " + uiUtilsWrapAsTemplate( "limit" );
             }
 
             protected getColor() {
-                return 0xFF8C00;
+                return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
             }
 
-            protected getOptions(): any {
+            protected getFieldOptions(): any {
                 return {
                     limit: {
-                        "%{value}%": "%{limitValue}%",
-                        "%{unlimited}%": "Unlimited",
+                        [ this.vars.value ]: this.vars.limitValue,
+                        [ this.vars.unlimited ]: "Unlimited",
                     },
                 };
             }
@@ -104,7 +130,7 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
 
                 return {
                     test: "test123",
-                    limit: 0 === limitValue ? "%{unlimited}%" : "%{value}%",
+                    limit: 0 === limitValue ? this.vars.unlimited : this.vars.value,
                     limitValue
                 };
             }

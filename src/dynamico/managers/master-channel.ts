@@ -32,7 +32,8 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
-    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
+    DEFAULT_USER_DYNAMIC_CHANNEL_TEMPLATE
 } from "@dynamico/constants/master-channel";
 
 import {
@@ -46,6 +47,8 @@ import {
 
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
+
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -221,7 +224,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             await guiManager.get( "Dynamico/UI/GlobalResponse" )
                 .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: "%{masterChannelNotExist}%"
+                    globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
                 } );
 
             return;
@@ -233,7 +236,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             await guiManager.get( "Dynamico/UI/GlobalResponse" )
                 .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: "%{masterChannelNotExist}%"
+                    globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
                 } );
 
             return;
@@ -262,7 +265,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             await guiManager.get( "Dynamico/UI/GlobalResponse" )
                 .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: "%{masterChannelNotExist}%"
+                    globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" )
                 } );
 
             return;
@@ -307,7 +310,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
-            "%{user}%",
+            DEFAULT_USER_DYNAMIC_CHANNEL_TEMPLATE,
             displayName
         );
 
@@ -385,7 +388,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         await guiManager.get( "Dynamico/UI/GlobalResponse" )
             .sendContinues( interaction, {
-                globalResponse: "%{somethingWentWrong}%"
+                globalResponse: uiUtilsWrapAsTemplate( "somethingWentWrong" ),
             } );
 
         return false;

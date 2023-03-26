@@ -6,9 +6,14 @@ import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
 import UIBase from "@dynamico/ui/base/ui-base";
 
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
 import { ForceMethodImplementation } from "@internal/errors";
+import Logger from "@internal/modules/logger";
 
 export class UIEmbed extends UIBase {
+    protected static logger: Logger = new Logger( this );
+
     public static getName() {
         return DYNAMICO_UI_EMBED;
     }
@@ -18,16 +23,26 @@ export class UIEmbed extends UIBase {
         return E_UI_TYPES.DYNAMIC;
     }
 
+    public async getMessage( interaction: BaseInteractionTypes, args?: any ) {
+       const embed = await this.buildEmbed( interaction, args );
+
+        return {
+            embeds: [ embed ]
+        };
+    }
+
     public async buildEmbed( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder> {
         const name = this.getName() + "-embed",
             title = this.getTitle(),
             description = this.getDescription(),
             color = this.getColor(),
             fields = this.getFields(),
-            options = this.getOptions(),
+            options = this.getFieldOptions(),
             logic = await this.getFieldsLogic( interaction, args ),
             fieldsObject = fields.reduce( ( acc, field ) => {
-                acc[ `%{${ field }}%` ] = `%{${ field }}%`; // TODO `%{`, `}%` should be configurable.
+                const wrappedField = uiUtilsWrapAsTemplate( field );
+
+                acc[ wrappedField ] = wrappedField;
                 return acc;
             }, {} as any );
 
@@ -71,8 +86,10 @@ export class UIEmbed extends UIBase {
         return uiTemplate.build( interaction, args );
     }
 
-    protected async load(interaction?: BaseInteractionTypes | null | undefined) {
-        // Bypass.
+    protected async load() {
+       UIEmbed.logger.debug( this.load,
+            `Loading UIEmbed: ${ this.getName() }`
+        );
     }
 
     protected getColor(): number {
@@ -87,6 +104,8 @@ export class UIEmbed extends UIBase {
         throw new ForceMethodImplementation( this, this.getDescription.name );
     }
 
+    // TODO: Implement `getArgs`.
+
     /**
      * Function getFields() :: Should contain only the logic fields.
      * TODO: Try remove this function.
@@ -95,16 +114,16 @@ export class UIEmbed extends UIBase {
         throw new ForceMethodImplementation( this, this.getColor.name );
     }
 
+    protected getFieldOptions(): any {
+        return {};
+    }
+
     /**
      * Function getFieldsLogic() :: The logic behind the fields.
-     * When variables are used, they should be in the format of `%{variable}%`. without any extra character(s).
+     * When variables are used, they should be in the format of `UI_TEMPLATE_WRAPPER_START{variable}UI_TEMPLATE_WRAPPER_END`. without any extra character(s).
      */
     protected async getFieldsLogic( interaction?: BaseInteractionTypes | null, args?: any ): Promise<{ [ key: string ]: string } | any> {
         return [];
-    }
-
-    protected getOptions(): any {
-        return {};
     }
 
     protected getInternalComponents(): any {

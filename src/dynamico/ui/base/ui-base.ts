@@ -1,8 +1,6 @@
 import {
-    ActionRowBuilder,
     BaseMessageOptions,
     CommandInteraction,
-    EmbedBuilder,
     Interaction,
     ModalBuilder,
     User
@@ -92,23 +90,7 @@ export class UIBase extends ObjectBase {
     }
 
     public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
-        const builtComponents = await this.getActionRows( interaction, args ),
-            result: any = { components: builtComponents },
-            embeds = await this.getEmbeds( interaction, args );
-
-        if ( embeds?.length ) {
-            result.embeds = embeds;
-        }
-
-        return result;
-    }
-
-    public async getElements( interaction?: BaseInteractionTypes, args?: any ): Promise<any[]> {
-        return [];
-    }
-
-    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder[]> {
-        return [];
+        throw new ForceMethodImplementation( this, this.getMessage.name );
     }
 
     /**
@@ -125,28 +107,6 @@ export class UIBase extends ObjectBase {
      */
     protected load( interaction?: BaseInteractionTypes | null ): Promise<void> {
         throw new ForceMethodImplementation( this, this.load.name );
-    }
-
-    /**
-     * Function getActionRows() :: a method that returns the action rows for the UI.
-     * It combines the static and dynamic components and returns them as an array.
-     */
-    private async getActionRows( interaction?: BaseInteractionTypes, args?: any ): Promise<ActionRowBuilder<any>[]> {
-        const elements = [];
-
-        elements.push( ... await this.getElements( interaction, args ) );
-
-        const builtComponents = [];
-
-        for ( const component of elements ) {
-            const builtComponent = component.getBuiltRows();
-
-            if ( Array.isArray( builtComponent ) ) {
-                builtComponents.push( ... builtComponent );
-            }
-        }
-
-        return builtComponents;
     }
 }
 

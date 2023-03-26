@@ -3,18 +3,33 @@ import { Interaction } from "discord.js";
 import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
 
 import { GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/guild";
-import { DATA_DEFAULT_DYNAMICO_BRAND_COLOR } from "@dynamico/constants/data";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
-export class BadwordsConfig extends UIEmbedTemplate { // TODO: Extend UITemplateElement
+export class BadwordsConfig extends UIEmbedTemplate {
+    private vars: any = {};
+
     public static getName() {
         return "Dynamico/UI/SetBadwordsConfig/Embeds/BadwordsConfig";
+    }
+
+    public constructor() {
+        super();
+
+        this.vars = {
+            value: uiUtilsWrapAsTemplate( "value" ),
+            default: uiUtilsWrapAsTemplate( "default" ),
+
+            current: uiUtilsWrapAsTemplate( "current" ),
+            badwords: uiUtilsWrapAsTemplate( "badwords" ),
+        };
     }
 
     protected getTemplateOptions() {
         return {
             current: {
-                "%{value}%": "`%{badwords}%`",
-                "%{default}%": `${ GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE }`,
+                [ this.vars.value ]: "`" + this.vars.badwords + "`",
+                [ this.vars.default ]: `${ GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE }`,
             }
         };
     }
@@ -24,11 +39,11 @@ export class BadwordsConfig extends UIEmbedTemplate { // TODO: Extend UITemplate
             description = "Here you can filter out “bad words” from dynamic channels names.\n" +
                 "You can keep the current words by pressing the \"Next\" button.\n\n" +
                 "**Current bad words**:\n" +
-                "%{current}%";
+                this.vars.current;
 
         return {
             type: "embed",
-            color: DATA_DEFAULT_DYNAMICO_BRAND_COLOR,
+            color: DYNAMICO_DEFAULT_COLOR_BRAND,
             title,
             description,
         };
@@ -44,10 +59,10 @@ export class BadwordsConfig extends UIEmbedTemplate { // TODO: Extend UITemplate
         }
 
         if ( badwords.length ) {
-            result.current = "%{value}%";
+            result.current = this.vars.value;
             result.badwords = badwords;
         } else {
-            result.current = "%{default}%";
+            result.current = this.vars.default;
         }
 
         return result;

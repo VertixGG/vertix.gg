@@ -10,6 +10,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import UIElement from "@dynamico/ui/base/ui-element";
 
 import { guiManager } from "@dynamico/managers";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export default class EditPermissions extends UIElement {
     public static getName() {
@@ -85,7 +86,7 @@ export default class EditPermissions extends UIElement {
             } );
 
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
-                title: "%{private}%",
+                title: uiUtilsWrapAsTemplate( "private" ),
             } );
         }
     }
@@ -93,7 +94,7 @@ export default class EditPermissions extends UIElement {
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
-                title: "%{mange}%",
+                title: uiUtilsWrapAsTemplate( "mange" ),
             } );
         }
     }

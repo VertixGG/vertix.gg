@@ -50,10 +50,38 @@ export default class UIElement extends UIBase {
         }
     }
 
-    protected load( interaction?: BaseInteractionTypes ) {
-        return this.build( interaction, this.args );
+    public async build( interaction?: BaseInteractionTypes, args?: any ) {
+        UIElement.logger.debug( this.build, `Building UIElement: '${ this.getName() }'` );
+
+        const builders = await this.getBuilders( interaction, args ),
+            builtComponents: ActionRowBuilder<any>[] = [];
+
+        // Loop through the builders and build them.
+        const isMultiRow = Array.isArray( builders[ 0 ] );
+
+        if ( isMultiRow ) {
+            for ( const row of builders ) {
+                const actionRow = new ActionRowBuilder<any>();
+
+                builtComponents.push( actionRow.addComponents( row as ComponentBuilder[] ) );
+            }
+        } else {
+            const actionRow = new ActionRowBuilder<any>();
+
+            builtComponents.push( actionRow.addComponents( builders as ComponentBuilder[] ) );
+        }
+
+        // Set row type according to the type of the component.
+        builtComponents.forEach( ( row ) => {
+            row.data.type = 1;
+        } );
+
+        this.builtRows = builtComponents;
     }
 
+    public getBuiltRows() {
+        return this.builtRows;
+    }
     protected getButtonBuilder( callback: CallbackUIType ) {
         const button = new ButtonBuilder();
 
@@ -100,37 +128,8 @@ export default class UIElement extends UIBase {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 
-    public async build( interaction?: BaseInteractionTypes, args?: any ) {
-        UIElement.logger.debug( this.build, `Building UI '${ this.getName() }'` );
-
-        const builders = await this.getBuilders( interaction, args ),
-            builtComponents: ActionRowBuilder<any>[] = [];
-
-        // Loop through the builders and build them.
-        const isMultiRow = Array.isArray( builders[ 0 ] );
-
-        if ( isMultiRow ) {
-            for ( const row of builders ) {
-                const actionRow = new ActionRowBuilder<any>();
-
-               builtComponents.push( actionRow.addComponents( row as ComponentBuilder[] ) );
-            }
-        } else {
-            const actionRow = new ActionRowBuilder<any>();
-
-            builtComponents.push( actionRow.addComponents( builders as ComponentBuilder[] ) );
-        }
-
-        // Set row type according to the type of the component.
-        builtComponents.forEach( ( row ) => {
-            row.data.type = 1;
-        } );
-
-        this.builtRows = builtComponents;
-    }
-
-    public getBuiltRows() {
-        return this.builtRows;
+    protected load( interaction?: BaseInteractionTypes ) {
+        return this.build( interaction, this.args );
     }
 
     private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {

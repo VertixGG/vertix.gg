@@ -12,6 +12,7 @@ import UIElement from "@dynamico/ui/base/ui-element";
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import { masterChannelManager, guiManager } from "@dynamico/managers";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export default class UsersMenus extends UIElement {
     public static getName() {
@@ -43,7 +44,7 @@ export default class UsersMenus extends UIElement {
             if ( interaction.isRepliable() ) {
                 await guiManager.get( "Dynamico/UI/GlobalResponse")
                     .sendContinues( interaction as SelectMenuInteraction, {
-                        globalResponse: "%{masterChannelNotExist}%"
+                        globalResponse: uiUtilsWrapAsTemplate("masterChannelNotExist" )
                     } );
             }
 
@@ -113,7 +114,7 @@ export default class UsersMenus extends UIElement {
             // If user tries to add himself, then we just ignore it.
             if ( member?.id === interaction.user.id ) {
                 await editPermissionsComponent.sendContinues( interaction, {
-                    title: "%{cannotAddYourSelf}%",
+                    title: uiUtilsWrapAsTemplate( "cannotAddYourSelf" ),
                 } );
 
                 return;
@@ -129,14 +130,14 @@ export default class UsersMenus extends UIElement {
                     } );
 
                     await editPermissionsComponent.sendContinues( interaction, {
-                        title: "%{canNowConnect}%",
+                        title: uiUtilsWrapAsTemplate( "canNowConnect" ),
                         username: member.username,
                     } );
 
                     return;
                 } catch ( e ) {
                     await editPermissionsComponent.sendContinues( interaction, {
-                        title: "%{couldNotAddUser}%",
+                        title: uiUtilsWrapAsTemplate( "couldNotAddUser" ),
                         username: member.username,
                     } );
 
@@ -167,7 +168,7 @@ export default class UsersMenus extends UIElement {
                 await channel.permissionOverwrites.delete( member );
 
                 await editPermissionsComponent.sendContinues( interaction, {
-                    title: "%{removedFromYourList}%",
+                    title: uiUtilsWrapAsTemplate( "removedFromYourList" ),
                     username: member.username,
                 } );
             } else {

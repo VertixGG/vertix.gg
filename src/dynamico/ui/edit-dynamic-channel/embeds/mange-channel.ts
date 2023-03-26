@@ -2,22 +2,42 @@ import { PermissionsBitField, VoiceChannel, } from "discord.js";
 
 import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
 
-import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
+import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export class MangeChannel extends UIEmbedTemplate {
+    private vars: any = {};
+
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Embeds/MangeChannel";
+    }
+
+    public constructor() {
+        super();
+
+        this.vars = {
+            name: uiUtilsWrapAsTemplate( "name" ),
+            limit: uiUtilsWrapAsTemplate( "limit" ),
+            state: uiUtilsWrapAsTemplate( "state" ),
+            value: uiUtilsWrapAsTemplate( "value" ),
+
+            limitValue: uiUtilsWrapAsTemplate( "limitValue" ),
+            unlimited: uiUtilsWrapAsTemplate( "unlimited" ),
+
+            public: uiUtilsWrapAsTemplate( "public" ),
+            private: uiUtilsWrapAsTemplate( "private" ),
+        };
     }
 
     protected getTemplateOptions() {
         return {
             limit: {
-                "%{value}%": "%{limitValue}%",
-                "%{unlimited}%": "Unlimited",
+                [ this.vars.value ]: this.vars.limitValue,
+                [ this.vars.unlimited ]: "Unlimited",
             },
             state: {
-                "%{public}%": "🌐 **Public**",
-                "%{private}%": "🚫 **Private**",
+                [ this.vars.public ]: "🌐 **Public**",
+                [ this.vars.private ]: "🚫 **Private**",
             },
         };
     }
@@ -26,9 +46,9 @@ export class MangeChannel extends UIEmbedTemplate {
         let description = "Take control of your dynamic channel and customize it to as you see fit.\n" +
             "Keep in mind that only the channel owner has permission to make changes.\n\n" +
             "Current settings:\n\n" +
-            "Name: **%{name}%**\n" +
-            "User Limit: ✋ **%{limit}%**\n" +
-            "State: %{state}%";
+            `Name: **${ this.vars.name }**\n` +
+            `User Limit: ✋ **${ this.vars.limit }**\n` +
+            `State: ${ this.vars.state }`;
 
         return {
             type: "embed",
@@ -45,8 +65,11 @@ export class MangeChannel extends UIEmbedTemplate {
 
         return {
             name: interaction.name,
-            limit: 0 === limitValue ? "%{unlimited}%" : "%{value}%",
-            state: everyoneRole?.deny.has( PermissionsBitField.Flags.Connect ) ? "%{private}%" : "%{public}%",
+            limit: 0 === limitValue ? this.vars.unlimited : this.vars.value,
+            state: everyoneRole?.deny.has( PermissionsBitField.Flags.Connect ) ?
+                this.vars.private :
+                this.vars.public,
+
             limitValue
         };
     }

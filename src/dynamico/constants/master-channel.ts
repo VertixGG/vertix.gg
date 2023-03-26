@@ -1,5 +1,7 @@
 import { OverwriteType, PermissionsBitField } from "discord.js";
 
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
 const { Flags } = PermissionsBitField;
 
 export const DEFAULT_MASTER_CATEGORY_NAME = "🌀 Dynamic Channels",
@@ -44,4 +46,5 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
     deny: [ Flags.SendMessages ],
 };
 
-export const DEFAULT_DATA_DYNAMIC_CHANNEL_NAME = "%{user}%'s Channel";
+export const DEFAULT_USER_DYNAMIC_CHANNEL_TEMPLATE = uiUtilsWrapAsTemplate( "user" );
+export const DEFAULT_DATA_DYNAMIC_CHANNEL_NAME = DEFAULT_USER_DYNAMIC_CHANNEL_TEMPLATE + "'s Channel";

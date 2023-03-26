@@ -1,4 +1,8 @@
-import { EmbedBuilder, } from "discord.js";
+import {
+    ActionRowBuilder,
+    BaseMessageOptions,
+    EmbedBuilder,
+} from "discord.js";
 
 import { BaseInteractionTypes, E_UI_TYPES, } from "@dynamico/interfaces/ui";
 
@@ -7,7 +11,11 @@ import UIBase from "@dynamico/ui/base/ui-base";
 import UIEmbed from "@dynamico/ui/base/ui-embed";
 import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
+import Logger from "@internal/modules/logger";
+
 export class UIComponentBase extends UIBase {
+    protected static logger: Logger = new Logger( this );
+
     protected static dynamicElements: typeof UIElement[] = [];
     protected static dynamicComponents: typeof UIComponentBase[] = [];
     protected static dynamicEmbeds: typeof UIEmbed[] = [];
@@ -33,14 +41,14 @@ export class UIComponentBase extends UIBase {
 
         this.staticComponentsInstances = [];
         this.staticElementsInstances = [];
-
-        // TODO: Add debuggers.
     }
 
     /**
      * Function load() :: a method that loads the UI.
      */
     protected async load() {
+        UIComponentBase.logger.debug( this.load, `Loading UIComponent: '${ this.getName() }'` );
+
         return await this.storeEntities();
     }
 
@@ -158,6 +166,18 @@ export class UIComponentBase extends UIBase {
             ),
             ... builtTemplatesEmbeds,
         ];
+    }
+
+    public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
+        const builtComponents = await this.getActionRows( interaction, args ),
+            result: any = { components: builtComponents },
+            embeds = await this.getEmbeds( interaction, args );
+
+        if ( embeds?.length ) {
+            result.embeds = embeds;
+        }
+
+        return result;
     }
 
     protected getStaticThis(): typeof UIComponentBase {
@@ -279,6 +299,24 @@ export class UIComponentBase extends UIBase {
         }
 
         return result;
+    }
+
+    private async getActionRows( interaction?: BaseInteractionTypes, args?: any ): Promise<ActionRowBuilder<any>[]> {
+        const elements = [];
+
+        elements.push( ... await this.getElements( interaction, args ) );
+
+        const builtElements = [];
+
+        for ( const uiElements of elements ) {
+            const builtComponent = uiElements.getBuiltRows();
+
+            if ( Array.isArray( builtComponent ) ) {
+                builtElements.push( ... builtComponent );
+            }
+        }
+
+        return builtElements;
     }
 }
 

@@ -12,7 +12,7 @@ const MIN_INPUT_LENGTH = 0,
 export class EditBadwordsModal extends GenericInputTextboxUIModal {
 
     public static getName() {
-            return "Dynamico/UI/SetMasterConfig/Buttons/EditBadwordsModal";
+            return "Dynamico/UI/SetMasterConfig/EditBadwordsModal";
     }
 
     public static getType() {

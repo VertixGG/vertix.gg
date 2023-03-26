@@ -22,6 +22,8 @@ import Debugger from "@dynamico/utils/debugger";
 
 import UIBase from "@dynamico/ui/base/ui-base";
 
+import UIComponentBase from "@dynamico/ui/base/ui-component-base";
+
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
 
@@ -40,7 +42,7 @@ interface ContinuesInteractionArgs {
 export class GUIManager extends InitializeBase {
     private static instance: GUIManager;
 
-    private userInterfaces = new Map<string, UIBase>;
+    private userInterfaces = new Map<string, UIComponentBase|UIBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;

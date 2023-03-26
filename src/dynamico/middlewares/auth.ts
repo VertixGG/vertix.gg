@@ -6,6 +6,8 @@ import { UIInteractionTypes } from "@dynamico/interfaces/ui";
 
 import GlobalLogger from "@dynamico/global-logger";
 
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+
 const globalLogger = GlobalLogger.getInstance();
 
 export default async function authMiddleware( interaction: UIInteractionTypes ) {
@@ -35,7 +37,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
 
         embed.setTitle( "🤷 Oops, this is not your channel" );
         embed.setDescription( message );
-        embed.setColor( 0xFF8C00 );
+        embed.setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
         await interaction.reply( {
             embeds: [ embed ],

@@ -2,7 +2,11 @@ import { EmbedBuilder } from "discord.js";
 
 import { BaseInteractionTypes, DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
 
+import { UI_TEMPLATE_WRAPPER_END, UI_TEMPLATE_WRAPPER_START } from "@dynamico/ui/base/ui-utils";
+
 import { ObjectBase } from "@internal/bases/object-base";
+
+const UI_TEMPLATE_WRAPPER_REGEX = new RegExp( UI_TEMPLATE_WRAPPER_START + "(.+?)" + UI_TEMPLATE_WRAPPER_END, "g" );
 
 export abstract class UIEmbedTemplate extends ObjectBase {
     public static getName() {
@@ -79,7 +83,7 @@ export abstract class UIEmbedTemplate extends ObjectBase {
 
     private replaceVariable( value: any, templateInputs: any ): any {
         if ( "string" === typeof value ) {
-            return value.replace( /%\{(.+?)}%/g, ( match, p1 ) => {
+            return value.replace( UI_TEMPLATE_WRAPPER_REGEX, ( match, p1 ) => {
                 const replaced = templateInputs[ p1 ];
 
                 // Skip if the variable is not defined.

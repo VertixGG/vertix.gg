@@ -11,7 +11,7 @@
 		"eslint:fix": "npx eslint --fix --ext .ts .",
 		"start": "ts-node src/index.ts",
 		"start-transpile": "npx ts-node --transpile-only src/index.ts",
-		"test": "jest --runInBand --detectOpenHandles --coverage",
+		"test": "export disable_logger=true && jest --runInBand --detectOpenHandles --coverage",
 		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js",
 		"release": "bash ./scripts/release.sh"
 	},

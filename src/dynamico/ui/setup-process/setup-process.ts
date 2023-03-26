@@ -11,6 +11,7 @@ import {
 } from "@dynamico/managers";
 import { GUILD_DEFAULT_BADWORDS, GUILD_DEFAULT_BADWORDS_SEPARATOR } from "@dynamico/constants/guild";
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export class SetupProcess extends UIWizardBase {
     public static getName() {
@@ -79,7 +80,7 @@ export class SetupProcess extends UIWizardBase {
 
             return await guiManager.get( "Dynamico/UI/GlobalResponse" )
                 .sendContinues( interaction, {
-                    globalResponse: "%{somethingWentWrong}%"
+                    globalResponse: uiUtilsWrapAsTemplate( "somethingWentWrong" ),
                 } );
         }
 

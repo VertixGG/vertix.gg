@@ -12,6 +12,7 @@ import { GenericInputTextboxUIModal } from "@dynamico/ui/base/generic/generic-in
 
 import { guiManager } from "@dynamico/managers";
 import { guildGetBadwords } from "@dynamico/utils/guild";
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
@@ -82,7 +83,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
                         .setDescription(
                             `The word "${ usedBadword }" has been classified as inappropriate by the server administrator.`
                         )
-                        .setColor( 0xFF8C00 );
+                        .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
                     await guiManager.sendContinuesMessage( interaction, {
                         embeds: [ embed ]
@@ -125,7 +126,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
                 `Please wait ${ retryAfter.toFixed( 0 ) } second(s) until the next rename or open a new channel:` +
                 `${ message }`
             )
-            .setColor( 0xFF8C00 );
+            .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
         await guiManager.sendContinuesMessage( interaction, {
             embeds: [ embed ]

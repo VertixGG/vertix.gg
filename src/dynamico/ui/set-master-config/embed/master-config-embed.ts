@@ -1,6 +1,8 @@
-import { UIEmbed } from "@dynamico/ui/base/ui-embed";
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
-import { DATA_DEFAULT_DYNAMICO_BRAND_COLOR } from "@dynamico/constants/data";
+import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
+
+import { UIEmbed } from "@dynamico/ui/base/ui-embed";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export class MasterConfigEmbed extends UIEmbed {
     public static getName() {
@@ -8,7 +10,7 @@ export class MasterConfigEmbed extends UIEmbed {
     }
 
     protected getColor(): number {
-        return DATA_DEFAULT_DYNAMICO_BRAND_COLOR;
+        return DYNAMICO_DEFAULT_COLOR_BRAND;
     }
 
     protected getTitle() {
@@ -19,7 +21,7 @@ export class MasterConfigEmbed extends UIEmbed {
         return "Here you can set a default name for dynamic channels.\n" +
             "You can keep the default settings by pressing the \"Next\" button.\n\n" +
             "**Current default name:**\n" +
-            "`%{textTemplate}%`";
+            uiUtilsWrapAsTemplate( "textTemplate" );
     }
 
     protected getFields() {

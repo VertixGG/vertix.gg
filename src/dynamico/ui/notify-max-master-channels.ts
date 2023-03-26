@@ -1,5 +1,9 @@
 import { UIEmbed } from "@dynamico/ui/base/ui-embed";
 
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+
 export class NotifyMaxMasterChannels extends UIEmbed {
     public static getName() {
         return "Dynamico/UI/NotifyMaxMasterChannels";
@@ -10,11 +14,11 @@ export class NotifyMaxMasterChannels extends UIEmbed {
     }
 
     protected getDescription() {
-        return "You can create up to %{maxFreeMasterChannels}% Master Channels in total.";
+        return `You can create up to ${ uiUtilsWrapAsTemplate( "maxFreeMasterChannels" ) } Master Channels in total.`;
     }
 
     protected getColor(): number {
-        return 0xFF8C00;
+        return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
     }
 
     protected getFields() {

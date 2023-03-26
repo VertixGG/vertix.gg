@@ -1,21 +1,43 @@
 import { Colors } from "discord.js";
 
-import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+
+import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export default class Embed extends UIEmbedTemplate {
+    private vars: any = {};
+
+    public static getName() {
+        return "Dynamico/UI/GlobalResponses/Embed";
+    }
+
+    public constructor() {
+        super();
+
+        this.vars = {
+            masterChannelNotExist: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
+            somethingWentWrong: uiUtilsWrapAsTemplate( "somethingWentWrong" ),
+
+            titles: uiUtilsWrapAsTemplate( "titles" ),
+            descriptions: uiUtilsWrapAsTemplate( "descriptions" ),
+            colors: uiUtilsWrapAsTemplate( "colors" ),
+        };
+    }
+
     protected getTemplateOptions() {
         return {
             descriptions: {
-                "%{masterChannelNotExist}%": "Master channel does not exist",
-                "%{somethingWentWrong}%": "Something went wrong",
+                [ this.vars.masterChannelNotExist ]: "Master channel does not exist",
+                [ this.vars.somethingWentWrong ]: "Something went wrong",
             },
             titles: {
-                "%{masterChannelNotExist}%": "🤷 Oops, an issue has occurred",
-                "%{somethingWentWrong}%": "🤷 Oops, an issue has occurred",
+                [ this.vars.masterChannelNotExist ]: "🤷 Oops, an issue has occurred",
+                [ this.vars.somethingWentWrong ]: "🤷 Oops, an issue has occurred",
             },
             colors: {
-                "%{masterChannelNotExist}%": 0xFF8C00,
-                "%{somethingWentWrong}%": Colors.Red,
+                [ this.vars.masterChannelNotExist ]: DYNAMICO_DEFAULT_COLOR_ORANGE_RED,
+                [ this.vars.somethingWentWrong ]: Colors.Red,
             },
         };
     }
@@ -23,14 +45,15 @@ export default class Embed extends UIEmbedTemplate {
     protected getTemplateInputs() {
         return {
             type: "embed",
-            title: "%{titles}%",
-            description: "%{descriptions}%",
-            color: "%{colors}%",
+            title: this.vars.titles,
+            description: this.vars.descriptions,
+            color: this.vars.colors,
         };
     }
 
     protected getTemplateLogic( interaction: null, args?: any ) {
         return {
+            // Args.
             descriptions: args.globalResponse,
             colors: args.globalResponse,
             titles: args.globalResponse,

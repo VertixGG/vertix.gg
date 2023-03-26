@@ -20,7 +20,7 @@ const MIN_INPUT_LENGTH = 1,
 export default class RenameModal extends GenericInputTextboxUIModal {
 
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel::Modal/Rename";
+        return "Dynamico/UI/EditDynamicChannel/Modal/Rename";
     }
 
     public static getType() {

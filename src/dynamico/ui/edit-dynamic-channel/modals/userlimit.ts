@@ -15,7 +15,7 @@ const MIN_USER_LIMIT = 0,
 
 export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel::Modal/Userlimit";
+        return "Dynamico/UI/EditDynamicChannel/Modal/Userlimit";
     }
 
     public static getType() {

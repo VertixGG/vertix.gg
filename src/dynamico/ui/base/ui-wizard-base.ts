@@ -14,12 +14,26 @@ import Logger from "@internal/modules/logger";
 
 const MINIMUM_COMPONENTS = 2;
 
-// TODO: Document this.
+/**
+ * A base class for creating wizard-like UI components. This class is designed to be extended
+ * and provides functionality for managing multiple steps of UI interaction. Each step in the wizard
+ * can contain two or more UI components.
+ */
 export abstract class UIWizardBase extends UIComponentBase {
     protected static logger = new Logger( this );
 
     protected currentInteractions: { [ interactionId: string ]: ContinuesInteractionTypes } = {};
+
+    /**
+     * An object that contains data shared between steps of the wizard. This data can be used
+     * to store information that needs to be passed between steps.
+     */
     protected sharedSteps: any = {};
+
+    /**
+     * An object that contains data shared between steps of the wizard. This data can be used
+     * to store information that needs to be passed between steps.
+     */
     protected sharedArgs: any = {};
 
     public static getName() {
@@ -38,6 +52,9 @@ export abstract class UIWizardBase extends UIComponentBase {
         }
     }
 
+    /**
+     * Function getSharedArgs() :: Returns an object containing data shared between steps of the wizard.
+     */
     protected getSharedArgs( interactionId: string ) {
         const args: any = {};
 
@@ -180,18 +197,6 @@ export abstract class UIWizardBase extends UIComponentBase {
             delete this.sharedSteps[ userId ];
             delete this.sharedArgs[ userId ];
 
-            // if ( currentInteraction ) {
-            //     try {
-            //         setTimeout( async () => {
-            //             if ( currentInteraction?.isRepliable() ) {
-            //                 await currentInteraction.deleteReply();
-            //             }
-            //         } );
-            //     } catch ( e ) {
-            //         this.getLogger().error( this.setStep, "", e );
-            //     }
-            // }
-
             return;
         }
 
@@ -226,25 +231,3 @@ export abstract class UIWizardBase extends UIComponentBase {
 }
 
 export default UIWizardBase;
-
-// protected async createDynamicComponents( interaction?: BaseInteractionTypes, args?: any ) {
-//     const component = [ new ( await this.getStaticThis().dynamicComponents[ this.step ] ) ];
-//
-//     await component[ 0 ].waitUntilLoaded();
-//
-//     this.dynamicComponents[ this.step ] = component[ 0 ];
-//
-//     return component;
-// }
-
-// protected async getDynamicEmbeds( interaction?: BaseInteractionTypes | null, args?: any ) {
-//     const component = this.dynamicComponents[ this.step ];
-//
-//     const embeds = await component.getEmbeds( interaction, args );
-//
-//     if ( embeds?.length ) {
-//         return embeds;
-//     }
-//
-//     return [];
-// }

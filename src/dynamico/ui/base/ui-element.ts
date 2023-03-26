@@ -24,7 +24,7 @@ import { ForceMethodImplementation } from "@internal/errors";
 export default class UIElement extends UIBase {
     protected static logger: Logger = new Logger( this );
 
-    public interaction?: BaseInteractionTypes; // TODO Try to remove this or make it private.
+    protected interaction?: BaseInteractionTypes;
 
     protected parent?: UIElement;
 

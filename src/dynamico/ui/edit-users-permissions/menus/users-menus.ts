@@ -33,9 +33,8 @@ export default class UsersMenus extends UIElement {
 
         removeMenu.setPlaceholder( "👇 Remove User From List" );
 
-        const members: { label: string; value: string; }[] = [];
-
-        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+        const members: { label: string; value: string; }[] = [],
+            masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
             UsersMenus.logger.warn( this.getBuilders,

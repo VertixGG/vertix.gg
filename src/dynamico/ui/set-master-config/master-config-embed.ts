@@ -21,7 +21,7 @@ export class MasterConfigEmbed extends UIEmbed {
         return "Here you can set a default name for dynamic channels.\n" +
             "You can keep the default settings by pressing the \"Next\" button.\n\n" +
             "**Current default name:**\n" +
-            uiUtilsWrapAsTemplate( "textTemplate" );
+            "`" + uiUtilsWrapAsTemplate( "textTemplate" ) + "`";
     }
 
     protected getFields() {

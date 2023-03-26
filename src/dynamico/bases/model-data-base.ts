@@ -7,6 +7,7 @@ import {
 } from "@dynamico/interfaces/data";
 
 import { ModelBase } from "@internal/bases";
+import DynamicoManager from "@dynamico/managers/dynamico";
 
 export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataModel extends IDataInnerModel> extends ModelBase implements IDataModel {
     protected ownerModel: OwnerModel;
@@ -78,6 +79,10 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
                 data: { where: { key: args.key } },
             }
         } );
+    }
+
+    public async getAllData() {
+        return this.dataModel.findMany();
     }
 
     public getInternalNormalizedData( args: IDataCreateArgs ) {

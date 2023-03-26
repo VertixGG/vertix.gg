@@ -11,7 +11,7 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-ui-modal";
 
 import { guiManager } from "@dynamico/managers";
-import { guildGetBadwords } from "@dynamico/utils/guild";
+import { guildGetBadwords, guildUsedBadword } from "@dynamico/utils/guild";
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 const MIN_INPUT_LENGTH = 1,
@@ -67,15 +67,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
         switch ( interaction.channel.type ) {
             case ChannelType.GuildText:
             case ChannelType.GuildVoice:
-                const badwords = await guildGetBadwords( interaction.guildId as string );
-                let usedBadword: string | null = null;
-
-                ( badwords ).some( ( badword ) => {
-                    if ( badword.length && input.toLowerCase().includes( badword.toString().toLowerCase() ) ) {
-                        usedBadword = badword;
-                    }
-                    return !! usedBadword;
-                } );
+                const usedBadword = await guildUsedBadword( interaction.guildId as string, input );
 
                 if ( usedBadword ) {
                     const embed = new EmbedBuilder()

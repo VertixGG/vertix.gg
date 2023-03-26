@@ -174,7 +174,7 @@ export class DynamicoManager extends InitializeBase {
             const allData = await dataManager.getAllData();
 
             for ( const data of allData ) {
-                if ( null === data.version && "0.0.1" === DynamicoManager.getVersion() ) {
+                if ( null === data.version ) {
                     if ( data.object ) {
                         const newObject: any = {};
                         for ( const [ key, value ] of Object.entries( data.object ) ) {

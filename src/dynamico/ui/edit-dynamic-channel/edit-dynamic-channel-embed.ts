@@ -5,11 +5,11 @@ import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
 import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
-export class MangeChannelEmbed extends UIEmbedTemplate {
+export class EditDynamicChannelEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
     public static getName() {
-        return "Dynamico/UI/EditDynamicChannel/Embeds/MangeChannelEmbed";
+        return "Dynamico/UI/EditDynamicChannel/EditDynamicChannelEmbed";
     }
 
     public constructor() {
@@ -75,4 +75,4 @@ export class MangeChannelEmbed extends UIEmbedTemplate {
     }
 }
 
-export default MangeChannelEmbed;
+export default EditDynamicChannelEmbed;

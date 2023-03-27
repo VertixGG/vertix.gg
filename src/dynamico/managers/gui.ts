@@ -22,8 +22,6 @@ import Debugger from "@dynamico/utils/debugger";
 
 import UIBase from "@dynamico/ui/base/ui-base";
 
-import UIComponentBase from "@dynamico/ui/base/ui-component-base";
-
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
 
@@ -42,7 +40,7 @@ interface ContinuesInteractionArgs {
 export class GUIManager extends InitializeBase {
     private static instance: GUIManager;
 
-    private userInterfaces = new Map<string, UIComponentBase|UIBase>;
+    private userInterfaces = new Map<string, UIBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
@@ -147,7 +145,6 @@ export class GUIManager extends InitializeBase {
         return embed;
     }
 
-    // TODO: Move to UI.
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse|void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse|void>;
     public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<InteractionResponse|void>;

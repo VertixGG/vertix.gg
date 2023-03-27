@@ -5,12 +5,13 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-
 import UIElement from "@dynamico/ui/base/ui-element";
 
-import { guiManager } from "@dynamico/managers";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
+import { guiManager } from "@dynamico/managers";
 
 export default class EditPermissions extends UIElement {
     public static getName() {
@@ -25,8 +26,7 @@ export default class EditPermissions extends UIElement {
         const publicButton = this.getButtonBuilder( this.makeChannelPublic.bind( this ) ),
             privateButton = this.getButtonBuilder( this.makeChannelPrivate.bind( this ) ),
             usersButton = this.getButtonBuilder( this.displayManageUsers.bind( this ) ),
-            specialButton = this.getButtonBuilder( async () => {
-            } );
+            specialButton = this.getButtonBuilder( async () => {} );
 
         publicButton
             .setStyle( ButtonStyle.Secondary )
@@ -64,14 +64,8 @@ export default class EditPermissions extends UIElement {
                 Connect: null,
             } );
 
-            // TODO: Can be static.
-            const embed = guiManager.createEmbed( "🌐 Your channel is public now!" );
-
-            embed.setColor(0x1E90FF);
-
-            await guiManager.sendContinuesMessage( interaction, {
-                embeds: [ embed ]
-            } );
+            await guiManager.get( "Dynamico/UI/EditUsersPermissions/EditUsersChannelPublicEmbed" )
+                .sendContinues( interaction, {} );
         }
     }
 

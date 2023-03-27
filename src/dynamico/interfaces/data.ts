@@ -34,8 +34,6 @@ export interface DataResult {
     data?: DataResult[]
 }
 
-// TODO: Ensure you can find usage by examining interfaces methods.
-
 export interface IDataManager {
     getData( args: IDataGetArgs ): Promise<DataResult | void>;
 
@@ -64,8 +62,8 @@ export interface IDataModel {
 
 export interface IOwnerInnerModel {
     findUnique( args: {
-        where: any, // TODO try to find a way to make this more specific.
-        include?: any // TODO modify this to include the 'include' property.
+        where: any,
+        include?: any,
     } ): Promise<any>
 }
 

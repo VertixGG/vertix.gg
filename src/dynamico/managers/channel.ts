@@ -47,8 +47,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return "Dynamico/Managers/Channel";
     }
 
-    public constructor() {
-        super();
+    public constructor( shouldDebug = !! process.env.debug_cache_channel || false ) {
+        super( shouldDebug );
 
         this.channelModel = ChannelModel.getInstance();
 

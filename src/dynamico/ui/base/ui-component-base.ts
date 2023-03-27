@@ -1,13 +1,10 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
-    CommandInteraction,
     EmbedBuilder,
-    InteractionResponse,
-    MessageComponentInteraction,
 } from "discord.js";
 
-import { BaseInteractionTypes, ContinuesInteractionTypes, E_UI_TYPES, } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, E_UI_TYPES, } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 import UIBase from "@dynamico/ui/base/ui-base";
@@ -30,12 +27,6 @@ export class UIComponentBase extends UIBase {
     protected embedsTemplates: UIEmbedTemplate[] = [];
 
     private parent?: UIComponentBase;
-
-    private specificFlowInteraction: Map<string, InteractionResponse> = new Map();
-
-    protected static specify(): string[] {
-        return [];
-    }
 
     /**
      * Function constructor() :: constructor function for the UIComponentBase class.
@@ -102,55 +93,14 @@ export class UIComponentBase extends UIBase {
         ];
     }
 
-    /**
-     * @inheritDoc
-     *
-     * The method is overridden to add the ability to edit the last message sent by the bot.
-     */
-    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
-        const msgInteraction = interaction as MessageComponentInteraction,
-            staticThis = this.getStaticThis(),
-            spec = staticThis.specify(),
-            customId = msgInteraction.customId,
-            customIdParts = customId.split( ":" );
-
-        if ( ! spec.length || ! interaction.channel ) {
-            return super.sendContinues( interaction, args );
-        }
-
-        // Check if one of the specs includes the customId.
-        if ( ! spec.some( ( spec ) => spec.includes( customIdParts[ 0 ] ) ) ) {
-            return super.sendContinues( interaction, args );
-        }
-
-        const uniqueId = staticThis.getName() + ":" + interaction.channel.id + ":" + interaction.user.id,
-            specificFlowInteraction = this.specificFlowInteraction.get( uniqueId );
-
-        if ( ! specificFlowInteraction ) {
-            const newDefer = await super.sendContinues( interaction, args );
-
-            if ( newDefer ) {
-                this.specificFlowInteraction.set( uniqueId, newDefer );
-            }
-
-            return;
-        }
-
-        await specificFlowInteraction.edit( await this.getMessage( interaction, args ) )
-            .then( () => msgInteraction.deferUpdate() )
-            .catch( ( e ) => {
-                staticThis.logger.warn( this.sendContinues, "", e );
-
-                this.specificFlowInteraction.delete( uniqueId );
-
-                return this.sendContinues( interaction, args );
-            } );
-    }
-
     public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
         const builtComponents = await this.getActionRows( interaction, args ),
-            result: any = { components: builtComponents },
-            embeds = await this.getEmbeds( interaction, args );
+            embeds = await this.getEmbeds( interaction, args ),
+            result: BaseMessageOptions = {};
+
+        if ( builtComponents?.length ) {
+            result.components = builtComponents;
+        }
 
         if ( embeds?.length ) {
             result.embeds = embeds;

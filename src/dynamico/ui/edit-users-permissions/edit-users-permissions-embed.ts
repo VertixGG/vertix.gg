@@ -12,11 +12,11 @@ import { masterChannelManager } from "@dynamico/managers";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
-export class EditUsersEmbed extends UIEmbedTemplate {
+export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
     public static getName() {
-        return "Dynamico/UI/EditUserPermissions/MangeUsersEmbed";
+        return "Dynamico/UI/EditUserPermissions/EditUserPermissionsEmbed";
     }
 
     public constructor() {
@@ -43,7 +43,6 @@ export class EditUsersEmbed extends UIEmbedTemplate {
         return {
             title: {
                 [ this.vars.private ]: "🚫 Your channel is private now!",
-                [ this.vars.public ]: "🌐 Your channel is public now!",
                 [ this.vars.mange ]: "👥 Manage users access for your dynamic channel",
                 [ this.vars.cannotAddYourSelf ]: "🤷 Hmm.. nothing changed",
                 [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
@@ -130,4 +129,4 @@ export class EditUsersEmbed extends UIEmbedTemplate {
     }
 }
 
-export default EditUsersEmbed;
+export default EditUsersPermissionsEmbed;

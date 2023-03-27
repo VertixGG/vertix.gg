@@ -2,9 +2,10 @@ import UsersMenus from "./menus/users-menus";
 
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
-import EditUsersEmbed from "@dynamico/ui/edit-users-permissions/edit-users-embed";
+import EditUsersPermissionsEmbed from "@dynamico/ui/edit-users-permissions/edit-users-permissions-embed";
 
 import { BaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { guiManager } from "@dynamico/managers";
 
 export class EditUsersPermissions extends UIComponentBase {
     public static getName() {
@@ -15,15 +16,17 @@ export class EditUsersPermissions extends UIComponentBase {
         return E_UI_TYPES.STATIC;
     }
 
-    protected static specify() {
-        return [
-            "Dynamico/UI/EditDynamicChannel/Buttons/EditPermissions",
-            "Dynamico/UI/EditUserPermissions/UsersMenus",
-        ];
+    public constructor() {
+        super();
+
+        // TODO: This is probably not the best way to do this.
+        setTimeout( () => {
+            guiManager.register( require( "./edit-users-channel-public-embed" ).default );
+        } );
     }
 
     protected async getEmbedTemplates( interaction?: BaseInteractionTypes ) {
-        return [ new EditUsersEmbed ];
+        return [ new EditUsersPermissionsEmbed ];
     }
 
     public getInternalElements() {

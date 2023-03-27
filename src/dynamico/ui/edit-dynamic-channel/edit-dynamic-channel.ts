@@ -7,7 +7,7 @@ import EditPermissions from "@dynamico/ui/edit-dynamic-channel/buttons/edit-perm
 
 import { BaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import MangeChannelEmbed from "@dynamico/ui/edit-dynamic-channel/mange-channel-embed";
+import EditDynamicChannelEmbed from "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel-embed";
 
 export class EditDynamicChannel extends UIComponentBase {
     public static getName() {
@@ -29,7 +29,7 @@ export class EditDynamicChannel extends UIComponentBase {
     }
 
     protected async getEmbedTemplates( interaction?: BaseInteractionTypes ) {
-        return [ new MangeChannelEmbed ];
+        return [ new EditDynamicChannelEmbed ];
     }
 
     protected getInternalElements() {

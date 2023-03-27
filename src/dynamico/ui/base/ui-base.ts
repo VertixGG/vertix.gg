@@ -2,25 +2,34 @@ import {
     BaseMessageOptions,
     CommandInteraction,
     Interaction,
+    InteractionResponse,
+    MessageComponentInteraction,
     ModalBuilder,
     User
 } from "discord.js";
 
 import {
-    BaseInteractionTypes, ContinuesInteractionTypes,
+    BaseInteractionTypes,
+    ContinuesInteractionTypes,
     DYNAMICO_UI_BASE,
-    DYNAMICO_UI_ELEMENT, E_UI_TYPES,
+    DYNAMICO_UI_ELEMENT,
+    E_UI_TYPES,
 } from "@dynamico/interfaces/ui";
+
+import { guiManager } from "@dynamico/managers";
 
 import Debugger from "@dynamico/utils/debugger";
 
-import guiManager from "@dynamico/managers/gui";
+import Logger from "@internal/modules/logger";
 
 import { ObjectBase } from "@internal/bases/object-base";
 import { ForceMethodImplementation } from "@internal/errors";
 
 export class UIBase extends ObjectBase {
     protected static debugger = new Debugger( this );
+    protected static logger = new Logger( this );
+
+    private static specificFlowInteraction: Map<string, InteractionResponse> = new Map();
 
     protected loadPromise: Promise<void> | null = null;
 
@@ -30,6 +39,10 @@ export class UIBase extends ObjectBase {
 
     public static getType(): E_UI_TYPES {
         throw new ForceMethodImplementation( this, this.name );
+    }
+
+    protected static groups(): string[] {
+        return[];
     }
 
     public constructor( interaction?: BaseInteractionTypes | null, args?: any ) {
@@ -68,7 +81,46 @@ export class UIBase extends ObjectBase {
      * It takes an interaction object and additional arguments as input and returns a promise.
      */
     public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
-        return await guiManager.getInstance().sendContinuesMessage( interaction, this, args );
+        if ( ! interaction.channel ) {
+            return guiManager.sendContinuesMessage( interaction, this, args );
+        }
+
+        const msgInteraction = interaction as MessageComponentInteraction,
+            staticThis = ( this.constructor as typeof UIBase );
+
+        const groups = staticThis.groups(),
+            uniqueId = groups.join() ?? "" + ":" + interaction.channel.id + ":" + interaction.user.id;
+
+        if ( ! groups.length ) {
+            staticThis.logger.debug( this.sendContinues,
+            `No groups found for: '${ staticThis.getName() }'`
+            );
+            return guiManager.sendContinuesMessage( interaction, this, args );
+        }
+
+        const specificFlowInteraction = staticThis.specificFlowInteraction.get( uniqueId );
+
+        if ( ! specificFlowInteraction ) {
+            const newDefer = await guiManager.sendContinuesMessage( interaction, this, args );
+
+            if ( newDefer ) {
+                staticThis.specificFlowInteraction.set( uniqueId, newDefer );
+            }
+
+            return;
+        }
+
+        await specificFlowInteraction.edit( await this.getMessage( interaction, args ) )
+            .then( () => {
+                msgInteraction.deferUpdate?.();
+            } )
+            .catch( ( e ) => {
+                staticThis.logger.warn( this.sendContinues, "", e );
+
+                staticThis.specificFlowInteraction.delete( uniqueId );
+
+                return this.sendContinues( interaction, args );
+            } );
     }
 
     /**

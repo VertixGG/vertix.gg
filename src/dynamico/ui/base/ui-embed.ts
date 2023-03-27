@@ -27,7 +27,9 @@ export class UIEmbed extends UIBase {
        const embed = await this.buildEmbed( interaction, args );
 
         return {
-            embeds: [ embed ]
+            embeds: [ embed ],
+            components: [],
+            content: ""
         };
     }
 
@@ -111,7 +113,7 @@ export class UIEmbed extends UIBase {
      * TODO: Try remove this function.
      */
     protected getFields(): string[] {
-        throw new ForceMethodImplementation( this, this.getColor.name );
+        throw new ForceMethodImplementation( this, this.getFields.name );
     }
 
     protected getFieldOptions(): any {

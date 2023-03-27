@@ -82,6 +82,7 @@ export default class UIElement extends UIBase {
     public getBuiltRows() {
         return this.builtRows;
     }
+
     protected getButtonBuilder( callback: CallbackUIType ) {
         const button = new ButtonBuilder();
 

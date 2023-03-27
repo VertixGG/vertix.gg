@@ -21,6 +21,14 @@ export class SetupProcess extends UIWizardBase {
         return "Dynamico/UI/SetupProcess";
     }
 
+    public static groups() {
+        return [
+            "Dynamico/UI/SetupProcess",
+            "Dynamico/UI/SetupProcess/SetMasterConfig",
+            "Dynamico/UI/SetupProcess/SetBadwordsConfig",
+        ];
+    }
+
     public static getType() {
         return E_UI_TYPES.DYNAMIC;
     }

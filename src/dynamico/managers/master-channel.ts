@@ -67,7 +67,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         return MasterChannelManager.instance;
     }
 
-   public constructor( shouldDebug = false ) {
+   public constructor( shouldDebug = !! process.env.debug_cache_master_channel || false ) {
         super( shouldDebug );
     }
 

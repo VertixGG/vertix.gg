@@ -23,7 +23,7 @@ export default class UsersMenus extends UIElement {
         return E_UI_TYPES.DYNAMIC;
     }
 
-    protected async getBuilders( interaction: Interaction ) {
+    protected async getBuilders( interaction: Interaction, args: any ) {
         const grantMenu = this.getUserMenuBuilder( this.grantUser.bind( this ) ),
             removeMenu = this.getMenuBuilder( this.removeUser.bind( this ) );
 

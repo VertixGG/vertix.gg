@@ -7,7 +7,7 @@ import { guiManager } from "@dynamico/managers";
 import { GUILD_DEFAULT_BADWORDS_PLACEHOLDER } from "@dynamico/constants/guild";
 
 const MIN_INPUT_LENGTH = 0,
-    MAX_INPUT_LENGTH = 0;
+    MAX_INPUT_LENGTH = 2500;
 
 export class EditBadwordsModal extends GenericInputTextboxUIModal {
 

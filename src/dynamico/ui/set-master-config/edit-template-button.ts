@@ -38,6 +38,7 @@ export default class EditTemplateButton extends UIElement {
 
             if ( component && component.getModal ) {
                 await interaction.showModal( await component.getModal( interaction ) );
-            }        }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 import {
-    Guild, Interaction,
+    Guild,
+    Interaction,
     PermissionOverwriteOptions,
     PermissionsBitField,
     VoiceBasedChannel,

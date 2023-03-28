@@ -22,7 +22,6 @@ export default class PrismaInstance extends ObjectBase {
     }
 
     public static getInstance() {
-
         if ( ! PrismaInstance.instance ) {
             PrismaInstance.instance = new PrismaInstance();
         }

@@ -31,8 +31,6 @@ export const Setup: ICommand = {
             );
         }
 
-        // Create interaction defer.
-        // TODO: Wizard can only work with sendContinues.
         await guiManager.get( "Dynamico/UI/SetupProcess" )
             .sendContinues( interaction, {
                 step: "initial",

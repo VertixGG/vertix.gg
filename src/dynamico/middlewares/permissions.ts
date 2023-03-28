@@ -47,18 +47,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
             } );
         }
     } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isStringSelectMenu() ) {
-        // TODO: Repeater logic.
-        // Get guild owner from cache.
-        const hasPermission = interaction.guild.ownerId === interaction.user.id ||
-            interaction.memberPermissions?.has( PermissionsBitField.Flags.Administrator ) || false;
-
-        if ( ! hasPermission ) {
-            globalLogger.error( permissionsMiddleware,
-                `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', user: '${ interaction.user.id }' is not the guild owner`
-            );
-        }
-
-        return hasPermission;
+        return permissionManager.validateAdminPermission( interaction, permissionsMiddleware );
     } else {
         globalLogger.warn( permissionsMiddleware,
             `Unsupported interaction type: '{ ${ interaction.type } }'`

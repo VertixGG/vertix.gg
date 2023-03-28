@@ -1,5 +1,5 @@
 import {
-    Guild,
+    Guild, Interaction,
     PermissionOverwriteOptions,
     PermissionsBitField,
     VoiceBasedChannel,
@@ -134,6 +134,25 @@ export default class PermissionsManager extends InitializeBase {
         } );
 
         return Object.keys( resultMissingPermissions );
+    }
+
+    public validateAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
+        if ( ! interaction.guild ) {
+            this.logger.error( this.validateAdminPermission,
+                `Interaction id: '${ interaction.id }' is not a guild interaction.` );
+            return false;
+        }
+
+        const hasPermission = interaction.guild.ownerId === interaction.user.id ||
+            interaction.memberPermissions?.has( PermissionsBitField.Flags.Administrator ) || false;
+
+        if ( logFunctionOwner && ! hasPermission ) {
+            this.logger.warn( logFunctionOwner,
+                `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', user: '${ interaction.user.id }' is not the guild owner`
+            );
+        }
+
+        return hasPermission;
     }
 
     /**

@@ -1,6 +1,6 @@
-import { ChannelType, EmbedBuilder, PermissionsBitField } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
 
-import { channelManager, masterChannelManager } from "@dynamico/managers";
+import { channelManager, masterChannelManager, permissionsManager } from "@dynamico/managers";
 
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
 
@@ -46,18 +46,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
             globalLogger.warn( authMiddleware, "", e );
         } );
     } else if ( ChannelType.GuildText === interaction.channel.type ) {
-        // TODO: Repeater logic.
-        // Get guild owner from cache.
-        const hasPermission = interaction.guild.ownerId === interaction.user.id ||
-            interaction.memberPermissions?.has( PermissionsBitField.Flags.Administrator ) || false;
-
-        if ( ! hasPermission ) {
-            globalLogger.error( authMiddleware,
-                `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', user: '${ interaction.user.id }' is not the guild owner`
-            );
-        }
-
-        return hasPermission;
+        return permissionsManager.validateAdminPermission( interaction, authMiddleware );
     } else {
         globalLogger.error( authMiddleware,
             `guildId: '${ interaction.guildId }' interaction channel type is not supported: '${ interaction.channel?.type.toString() }'`

@@ -238,3 +238,5 @@ export class GUIManager extends InitializeBase {
 }
 
 export default GUIManager;
+
+export const guiManager = GUIManager.getInstance();

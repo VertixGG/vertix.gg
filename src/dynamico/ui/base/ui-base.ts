@@ -16,7 +16,7 @@ import {
     E_UI_TYPES,
 } from "@dynamico/interfaces/ui";
 
-import { guiManager } from "@dynamico/managers";
+import { guiManager } from "@dynamico/managers/gui";
 
 import Debugger from "@dynamico/utils/debugger";
 

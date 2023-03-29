@@ -167,7 +167,6 @@ export default class PermissionsManager extends InitializeBase {
         }
 
         return this.getMissingChannelPermissions( permissions, context );
-
     }
 
     /**

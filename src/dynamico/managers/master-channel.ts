@@ -33,7 +33,7 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
-    DEFAULT_USER_DYNAMIC_CHANNEL_TEMPLATE
+    DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE
 } from "@dynamico/constants/master-channel";
 
 import {
@@ -67,7 +67,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         return MasterChannelManager.instance;
     }
 
-   public constructor( shouldDebug = !! process.env.debug_cache_master_channel || false ) {
+    public constructor( shouldDebug = !! process.env.debug_cache_master_channel || false ) {
         super( shouldDebug );
     }
 
@@ -314,7 +314,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
-            DEFAULT_USER_DYNAMIC_CHANNEL_TEMPLATE,
+            DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
             displayName
         );
 
@@ -369,6 +369,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         if ( masterCategory ) {
+            // TODO: Not the right place for this.
             if ( extraArgs.badwords ) {
                 // Remove empty spaces.
                 extraArgs.badwords = extraArgs.badwords.map( ( word ) => word.trim() );
@@ -419,6 +420,16 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         this.debugger.log( this.createCreateChannel, "badwords", args.badwords );
 
+        const outOfBoxPermissionsOverwrites = [ {
+            id: guild.client.user.id,
+            ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
+        }, {
+            id: guild.roles.everyone,
+            ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+        } ];
+
+        // TODO In future, we should use hooks for this. `Commands.on( "masterChannelCreate", ( channel ) => {} );`.
+
         const result = await channelManager.create( {
             parent,
             guild,
@@ -426,13 +437,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: args.name || DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
-            permissionOverwrites: [ {
-                id: guild.client.user.id,
-                ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-            }, {
-                id: guild.roles.everyone,
-                ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-            } ],
+            permissionOverwrites: outOfBoxPermissionsOverwrites,
         } );
 
         // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
@@ -448,7 +453,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! args.badwords?.length ) {
             try {
-                // await guildManager.deleteData( guild.id, DATA_CHANNEL_KEY_BADWORDS );
                 await guildDataManager.deleteData( {
                     ownerId: guild.id,
                     key: DATA_CHANNEL_KEY_BADWORDS,
@@ -457,7 +461,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                 this.logger.warn( this.createCreateChannel, "", e );
             }
         } else {
-            // await guildManager.setData( guild.id, DATA_CHANNEL_KEY_BADWORDS, args.badwords );
             await guildDataManager.setData( {
                 ownerId: guild.id,
                 key: DATA_CHANNEL_KEY_BADWORDS,

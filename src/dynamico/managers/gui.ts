@@ -75,14 +75,15 @@ export class GUIManager extends InitializeBase {
         this.logger.info( this.register, `Registered user interface '${ uiName }'` );
     }
 
-    public get( name: string ) {
+    public get( name: string, force = false ): UIBase {
         const result = this.userInterfaces.get( name );
 
-        if ( ! result ) {
+        if ( ! force && ! result ) {
             throw new Error( `User interface '${ name }' does not exist` );
         }
 
-        return result;
+        // TODO: Find a better way to do this, it may return undefined.
+        return result as UIBase;
     }
 
     public storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "" ) {
@@ -145,10 +146,10 @@ export class GUIManager extends InitializeBase {
         return embed;
     }
 
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse|void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse|void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<InteractionResponse|void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<InteractionResponse|void> {
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<InteractionResponse | void> {
         // Validate interaction type.
         const isInstanceTypeOfContinuesInteraction = interaction instanceof ButtonInteraction ||
             interaction instanceof SelectMenuInteraction ||
@@ -219,7 +220,7 @@ export class GUIManager extends InitializeBase {
 
             const defer = this.continuesInteractions.get( sharedId );
 
-            if ( defer && defer.interaction.isRepliable() ) {
+            if ( defer?.interaction.isRepliable() ) {
                 const warn = ( e: any ) => this.logger.warn( this.sendContinuesMessage, "", e );
                 return defer.interaction.deleteReply().catch( warn ).then( async () => {
                     return interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
@@ -233,6 +234,20 @@ export class GUIManager extends InitializeBase {
                     } );
                 } );
             }
+        }
+    }
+
+    public async deleteContinuesInteraction( interaction: ContinuesInteractionTypes ) {
+        if ( ! interaction.channel ) {
+            return;
+        }
+
+        const defer = this.continuesInteractions.get( interaction.channel.id + interaction.user.id );
+
+        if ( defer?.interaction.isRepliable() ) {
+            return defer.interaction.deleteReply()
+                .catch( ( e ) => this.logger.warn( this.deleteContinuesInteraction, "", e ) )
+                .then( () => this.continuesInteractions.delete( interaction?.channel?.id + interaction.user.id ) );
         }
     }
 }

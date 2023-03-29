@@ -2,9 +2,11 @@ import { MessageComponentInteraction } from "discord.js";
 
 import { UIEmbed } from "@dynamico/ui/base/ui-embed";
 import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
-import { guildGetBadwordsJoined } from "@dynamico/utils/guild";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
 
-import { GUILD_DEFAULT_BADWORDS_PLACEHOLDER } from "@dynamico/constants/guild";
+import {
+    GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
+} from "@dynamico/constants/guild";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
@@ -13,6 +15,12 @@ export class NotifySetupSuccess extends UIEmbed {
 
     public static getName() {
         return "Dynamico/UI/NotifySetupSuccess";
+    }
+
+    public static belongsTo() {
+        return [
+            "Dynamico/UI/SetupProcess",
+        ];
     }
 
     public constructor() {
@@ -27,8 +35,7 @@ export class NotifySetupSuccess extends UIEmbed {
             badwords: uiUtilsWrapAsTemplate( "badwords" ),
             badwordsValue: uiUtilsWrapAsTemplate( "badwordsValue" ),
             badwordsPlaceholder: uiUtilsWrapAsTemplate( "badwordsPlaceholder" ),
-
-            value: uiUtilsWrapAsTemplate( "value" ),
+            badwordsOptionValue: uiUtilsWrapAsTemplate( "badwordsOptionValue" ),
         };
     }
 
@@ -47,7 +54,7 @@ export class NotifySetupSuccess extends UIEmbed {
             `Master Channel: ${ templates.masterChannelId }\n` +
             `Dynamic Channels Name: ${ templates.dynamicChannelNameTemplate }\n\n` +
             "**Bad Words:**\n" +
-            templates.badwords;
+            templates.badwords + "\n\n";
     }
 
     protected getColor(): number {
@@ -71,19 +78,18 @@ export class NotifySetupSuccess extends UIEmbed {
     protected getFieldOptions() {
         return {
             badwords: {
-                [ this.vars.value ]: "`" + this.vars.badwordsValue + "`",
+                [ this.vars.badwordsOptionValue ]: "`" + this.vars.badwordsValue + "`",
                 [ this.vars.badwordsPlaceholder ]: GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
             }
         };
     }
 
-    protected async getFieldsLogic( interaction: BaseInteractionTypes ) {
+    protected async getFieldsLogic( interaction: BaseInteractionTypes, args: any ) {
         const interactionAs = ( interaction as MessageComponentInteraction ),
-            badwords = await guildGetBadwordsJoined( interactionAs.guildId?.toString() ?? "" );
+            badwords = await guildGetBadwordsFormatted( interactionAs.guildId?.toString() ?? "" );
 
         return {
-            badwords: badwords.length ? this.vars.value : this.vars.badwordsPlaceholder,
-
+            badwords: badwords.length ? this.vars.badwordsOptionValue : this.vars.badwordsPlaceholder,
             badwordsValue: badwords,
         };
     }

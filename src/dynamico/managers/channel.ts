@@ -7,6 +7,8 @@ import {
     VoiceState,
 } from "discord.js";
 
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 import MasterChannelManager from "./master-channel";
 
 import {
@@ -184,6 +186,22 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         }
 
         return result;
+    }
+
+    public async getMasterCreateChannels( guildId: string ) {
+        this.logger.info( this.getMasterCreateChannels,
+            `Getting master create channel(s) from guildId: '${ guildId }'`
+        );
+
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL );
+    }
+
+    public async getDynamicChannels( guildId: string ) {
+        this.logger.info( this.getMasterCreateChannels,
+            `Getting dynamic channel(s) from guildId: '${ guildId }'`
+        );
+
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL );
     }
 
     /**

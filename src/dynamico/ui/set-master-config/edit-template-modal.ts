@@ -21,7 +21,7 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
     }
 
     protected getInputLabel(): string {
-        return "set dynamic channels name";
+        return "SET DEFAULT DYNAMIC CHANNELS NAME";
     }
 
     protected getInputPlaceholder(): string {
@@ -33,7 +33,7 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
     }
 
     protected getModalTitle(): string {
-        return "Set default dynamic channels name";
+        return "Set dynamic channels name";
     }
 
     protected getMinLength(): number {

@@ -10,7 +10,7 @@ import { guiManager } from "@dynamico/managers";
 
 export default class EditTemplateButton extends UIElement {
     public static getName() {
-        return "Dynamico/UI/SetMasterConfig/Buttons/EditTemplateButton";
+        return "Dynamico/UI/SetMasterConfig/EditTemplateButton";
     }
 
     public static getType() {

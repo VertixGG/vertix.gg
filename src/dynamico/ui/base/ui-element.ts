@@ -3,7 +3,7 @@ import {
     ButtonBuilder,
     ComponentBuilder,
     ModalBuilder,
-    ModalSubmitInteraction,
+    ModalSubmitInteraction, RoleSelectMenuBuilder, RoleSelectMenuInteraction,
     SelectMenuInteraction,
     StringSelectMenuBuilder,
     TextInputBuilder,
@@ -107,6 +107,14 @@ export default class UIElement extends UIBase {
         return menu;
     }
 
+    protected getRoleMenuBuilder( callback: ( interaction: RoleSelectMenuInteraction ) => Promise<void> ) {
+        const menu = new RoleSelectMenuBuilder();
+
+        this.setCallback( menu, callback );
+
+        return menu;
+    }
+
     protected getInputBuilder( callback?: CallbackUIType ) {
         const input = new TextInputBuilder();
 
@@ -133,7 +141,7 @@ export default class UIElement extends UIBase {
         return this.build( interaction, this.args );
     }
 
-    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
+    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | RoleSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
         const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" );
 
         context.setCustomId( unique );

@@ -10,7 +10,7 @@ import { guiManager, masterChannelManager } from "@dynamico/managers";
 import { commandsLogger } from "@dynamico/commands/index";
 
 import { ICommand } from "@dynamico/interfaces/command";
-import {  guildGetBadwordsJoined } from "@dynamico/utils/guild";
+import { guildGetBadwordsFormatted, guildGetBasicRolesIds } from "@dynamico/utils/guild";
 
 const name = "setup";
 
@@ -34,7 +34,8 @@ export const Setup: ICommand = {
         await guiManager.get( "Dynamico/UI/SetupProcess" )
             .sendContinues( interaction, {
                 step: "initial",
-                badwords: await guildGetBadwordsJoined( guildId ), // Remove all other calls to DB.
+                badwords: await guildGetBadwordsFormatted( guildId ),
+                basicRoles: await guildGetBasicRolesIds( guildId ),
             } );
     }
 };

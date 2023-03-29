@@ -1,10 +1,10 @@
-import UsersMenus from "./menus/users-menus";
-
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 
 import EditUsersPermissionsEmbed from "@dynamico/ui/edit-users-permissions/edit-users-permissions-embed";
+import EditPermissionsUsersMenuMenus from "@dynamico/ui/edit-users-permissions/edit-permissions-users-menus";
 
 import { BaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
+
 import { guiManager } from "@dynamico/managers";
 
 export class EditUsersPermissions extends UIComponentBase {
@@ -31,7 +31,7 @@ export class EditUsersPermissions extends UIComponentBase {
 
     public getInternalElements() {
         return [
-            UsersMenus,
+            EditPermissionsUsersMenuMenus,
         ];
     }
 }

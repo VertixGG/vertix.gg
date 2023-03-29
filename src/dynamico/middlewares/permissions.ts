@@ -1,4 +1,4 @@
-import { ChannelType, PermissionsBitField, VoiceChannel } from "discord.js";
+import { ChannelType, Interaction, VoiceChannel } from "discord.js";
 
 import { guiManager } from "@dynamico/managers";
 
@@ -46,11 +46,12 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
                 permissions: missingPermissions,
             } );
         }
-    } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isStringSelectMenu() ) {
+    } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu() ) {
         return permissionManager.validateAdminPermission( interaction, permissionsMiddleware );
     } else {
+        const type = (interaction as Interaction).type || "unknown";
         globalLogger.warn( permissionsMiddleware,
-            `Unsupported interaction type: '{ ${ interaction.type } }'`
+            `Unsupported interaction type: '{ ${ type } }'`
         );
     }
 

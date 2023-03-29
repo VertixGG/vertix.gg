@@ -20,7 +20,7 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
     }
 
     protected getInputLabel(): string {
-        return "set bad words (separated by comma)";
+        return "SET BAD WORDS (SEPARATED BY COMMA)";
     }
 
     protected getInputPlaceholder(): string {
@@ -36,7 +36,7 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
     }
 
     protected getModalTitle(): string {
-        return "Choose bad words";
+        return "Set bad words";
     }
 
     protected getMinLength(): number {

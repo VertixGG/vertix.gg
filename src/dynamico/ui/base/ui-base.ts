@@ -29,8 +29,6 @@ export class UIBase extends ObjectBase {
     protected static debugger = new Debugger( this );
     protected static logger = new Logger( this );
 
-    private static specificFlowInteraction: Map<string, InteractionResponse> = new Map();
-
     protected loadPromise: Promise<void> | null = null;
 
     public static getName() {
@@ -41,8 +39,12 @@ export class UIBase extends ObjectBase {
         throw new ForceMethodImplementation( this, this.name );
     }
 
-    protected static groups(): string[] {
-        return[];
+    public static groups(): string[] {
+        return [];
+    }
+
+    public static belongsTo(): string[] {
+        return [];
     }
 
     public constructor( interaction?: BaseInteractionTypes | null, args?: any ) {
@@ -76,51 +78,20 @@ export class UIBase extends ObjectBase {
         this.args[ key ] = value;
     }
 
+    public async sendReply( interaction: MessageComponentInteraction, args: any, isEphemeral = true ) {
+        const replyArgs = { ... await this.getMessage( interaction as Interaction, args ) } as any;
+
+        replyArgs.ephemeral = isEphemeral;
+
+        return await interaction.reply( replyArgs );
+    }
+
     /**
      * Function sendContinues() :: a method that sends a continues interaction message to the user.
      * It takes an interaction object and additional arguments as input and returns a promise.
      */
-    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
-        if ( ! interaction.channel ) {
-            return guiManager.sendContinuesMessage( interaction, this, args );
-        }
-
-        const msgInteraction = interaction as MessageComponentInteraction,
-            staticThis = ( this.constructor as typeof UIBase );
-
-        const groups = staticThis.groups(),
-            uniqueId = groups.join() ?? "" + ":" + interaction.channel.id + ":" + interaction.user.id;
-
-        if ( ! groups.length ) {
-            staticThis.logger.debug( this.sendContinues,
-            `No groups found for: '${ staticThis.getName() }'`
-            );
-            return guiManager.sendContinuesMessage( interaction, this, args );
-        }
-
-        const specificFlowInteraction = staticThis.specificFlowInteraction.get( uniqueId );
-
-        if ( ! specificFlowInteraction ) {
-            const newDefer = await guiManager.sendContinuesMessage( interaction, this, args );
-
-            if ( newDefer ) {
-                staticThis.specificFlowInteraction.set( uniqueId, newDefer );
-            }
-
-            return;
-        }
-
-        await specificFlowInteraction.edit( await this.getMessage( interaction, args ) )
-            .then( () => {
-                msgInteraction.deferUpdate?.();
-            } )
-            .catch( ( e ) => {
-                staticThis.logger.warn( this.sendContinues, "", e );
-
-                staticThis.specificFlowInteraction.delete( uniqueId );
-
-                return this.sendContinues( interaction, args );
-            } );
+    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse|void> {
+        return guiManager.sendContinuesMessage( interaction, this, args );
     }
 
     /**
@@ -143,6 +114,10 @@ export class UIBase extends ObjectBase {
 
     public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
         throw new ForceMethodImplementation( this, this.getMessage.name );
+    }
+
+    public getGroups(): string[] {
+        return ( this.constructor as typeof UIBase ).groups();
     }
 
     /**

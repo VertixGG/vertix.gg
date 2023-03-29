@@ -5,6 +5,7 @@ import {
     Interaction,
     ModalSubmitInteraction,
     NonThreadGuildBasedChannel,
+    RoleSelectMenuInteraction,
     SelectMenuInteraction,
     StringSelectMenuInteraction,
     UserSelectMenuInteraction,
@@ -30,6 +31,7 @@ export type UIInteractionTypes =
     | ButtonInteraction
     | SelectMenuInteraction
     | UserSelectMenuInteraction
+    | RoleSelectMenuInteraction
     | StringSelectMenuInteraction
     | ModalSubmitInteraction
 

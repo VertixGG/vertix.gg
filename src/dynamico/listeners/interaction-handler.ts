@@ -6,7 +6,7 @@ import {
     CommandInteraction,
     Events,
     Interaction,
-    ModalSubmitInteraction,
+    ModalSubmitInteraction, RoleSelectMenuInteraction,
     SelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
@@ -41,6 +41,8 @@ export function interactionHandler( client: Client ) {
             await handleModalSubmit( client, interaction );
         } else if ( interaction.isUserSelectMenu() || interaction.isStringSelectMenu() ) {
             await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction );
+        } else if ( interaction.isRoleSelectMenu() ) {
+            await handleRoleSelectMenuInteraction( client, interaction as RoleSelectMenuInteraction );
         } else if ( process.env.debug_mode === "discord" ) {
             globalLogger.log( interactionHandler, "", interaction );
         }
@@ -119,6 +121,14 @@ async function handleModalSubmit( client: Client, interaction: ModalSubmitIntera
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
     globalLogger.log( handleUserSelectMenuInteraction,
         `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+    );
+
+    await getCallback( interaction );
+}
+
+async function handleRoleSelectMenuInteraction( client: Client, interaction: RoleSelectMenuInteraction ) {
+    globalLogger.log( handleRoleSelectMenuInteraction,
+        `RoleSelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );

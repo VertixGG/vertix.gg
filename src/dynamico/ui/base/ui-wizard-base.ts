@@ -191,8 +191,6 @@ export abstract class UIWizardBase extends UIComponentBase {
         const userId = this.getId( interaction );
 
         if ( -1 === step ) {
-            // const currentInteraction = this.currentInteractions[ userId ];
-
             delete this.currentInteractions[ userId ];
             delete this.sharedSteps[ userId ];
             delete this.sharedArgs[ userId ];

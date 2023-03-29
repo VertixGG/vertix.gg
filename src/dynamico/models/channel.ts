@@ -104,6 +104,20 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return await this.ownerModel.findFirst( args );
     }
 
+    public async getAll( guildId: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
+        const args: any = {
+            where: {
+                guildId,
+            }
+        };
+
+        if ( internalType ) {
+            args.where.internalType = internalType;
+        }
+
+        return await this.ownerModel.findMany( args );
+    }
+
     public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {
         const total = await this.ownerModel.count( {
             where: {

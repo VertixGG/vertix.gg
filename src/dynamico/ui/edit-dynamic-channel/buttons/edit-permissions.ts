@@ -1,9 +1,4 @@
-import {
-    ButtonStyle,
-    ChannelType,
-    Interaction,
-    VoiceChannel
-} from "discord.js";
+import { ButtonStyle, ChannelType, Interaction, VoiceChannel } from "discord.js";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
@@ -59,8 +54,9 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
-            // Set connect permissions for @everyone to '/'.
+            // Set permissions for @everyone to '/'.
             await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
+                ViewChannel: null,
                 Connect: null,
             } );
 
@@ -73,9 +69,8 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
-            // If user didn't set any basic roles, then we apply the changes on @everyone.
-            // TODO: If user set basic roles, then we apply all the changes for each basicRole, except for @everyone.
             await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
+                ViewChannel: null,
                 Connect: false,
             } );
 

@@ -109,13 +109,13 @@ export default class RenameModal extends GenericInputTextboxUIModal {
         let message = ".\n";
 
         if ( masterChannel ) {
-            message = `:\n\n<#${ masterChannel.id }>\n`;
+            message = `\n\n<#${ masterChannel.id }>\n`;
         }
 
         const embed = new EmbedBuilder()
             .setTitle( "🙅 You renamed your channel too fast!" )
             .setDescription(
-                `Please wait ${ retryAfter.toFixed( 0 ) } second(s) until the next rename or open a new channel:` +
+                `Please wait **${ retryAfter.toFixed( 0 ) } seconds** until the next rename or open a new channel:` +
                 `${ message }`
             )
             .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );

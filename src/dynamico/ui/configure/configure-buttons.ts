@@ -33,9 +33,9 @@ export default class ConfigureButtons extends UIElement {
                 ++index;
 
                 const button = this.getButtonBuilder( this.onMasterChannelSelect.bind( this ), index.toString() );
-                
+
                 button.setEmoji( "✏️" );
-                button.setLabel( `Edit Master Channel #${ index }` );
+                button.setLabel( `Master Channel #${ index }` );
                 button.setStyle( ButtonStyle.Secondary );
 
                 editMasterChannelButtons.push( button );

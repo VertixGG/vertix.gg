@@ -115,7 +115,17 @@ export default class EditPermissionsUsersMenus extends UIElement {
             const memberId = member?.id;
             if ( memberId === interaction.user.id || memberId === interaction.client.user.id  ) {
                 await editPermissionsComponent.sendContinues( interaction, {
-                    title: uiUtilsWrapAsTemplate( "cannotAddYourSelf" ),
+                    title: uiUtilsWrapAsTemplate( "nothingChanged" ),
+                } );
+
+                return;
+            }
+
+            // If user is already in the list, then we just ignore it.
+            if ( channel.permissionOverwrites.cache.has( memberId as string  ) ) {
+                await editPermissionsComponent.sendContinues( interaction, {
+                    title: uiUtilsWrapAsTemplate( "nothingChanged" ),
+                    username: member?.username,
                 } );
 
                 return;

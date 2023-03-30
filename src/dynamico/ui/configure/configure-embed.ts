@@ -45,7 +45,7 @@ export class ConfigureEmbed extends UIEmbed {
             "If you want to create new Master Channel, please use the command `/setup`\n\n" +
             "**Current Master Channels:**\n" +
             this.vars.currentMasterChannelsState +
-            "\n**Current Bad Words**:\n" +
+            "\n**Current Bad Words:**\n" +
             this.vars.badwordsState;
     }
 
@@ -98,8 +98,8 @@ export class ConfigureEmbed extends UIEmbed {
                 ++index;
                 return `**#${ index }**\n` +
                     `Name: <#${ masterChannel.channelId }>\n` +
-                    `Channel ID: ${ masterChannel.channelId }\n` +
-                    "Default Channels Name: `" + masterChannel.data[ 0 ].object.dynamicChannelNameTemplate + "`\n"; // TODO Use utils.
+                    "Channel ID: `" + masterChannel.channelId + "`\n" +
+                    "Dynamic Channels Name: `" + masterChannel.data[ 0 ].object.dynamicChannelNameTemplate + "`\n"; // TODO Use utils.
             } );
 
         if ( currentMasterChannels.length ) {

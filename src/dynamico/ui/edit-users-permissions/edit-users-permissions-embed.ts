@@ -26,7 +26,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
             private: uiUtilsWrapAsTemplate( "private" ),
             public: uiUtilsWrapAsTemplate( "public" ),
             mange: uiUtilsWrapAsTemplate( "mange" ),
-            cannotAddYourSelf: uiUtilsWrapAsTemplate( "cannotAddYourSelf" ),
+            nothingChanged: uiUtilsWrapAsTemplate( "nothingChanged" ),
             canNowConnect: uiUtilsWrapAsTemplate( "canNowConnect" ),
             removedFromYourList: uiUtilsWrapAsTemplate( "removedFromYourList" ),
             couldNotAddUser: uiUtilsWrapAsTemplate( "couldNotAddUser" ),
@@ -44,7 +44,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
             title: {
                 [ this.vars.private ]: "🚫 Your channel is private now!",
                 [ this.vars.mange ]: "👥 Manage users access for your dynamic channel",
-                [ this.vars.cannotAddYourSelf ]: "🤷 Hmm.. nothing changed",
+                [ this.vars.nothingChanged ]: "🤷 Hmm.. nothing changed",
                 [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
                 [ this.vars.removedFromYourList ] : `👇 ${ this.vars.username } removed from your list`,
                 [ this.vars.couldNotAddUser ]: `Could not add user ${ this.vars.username }`,

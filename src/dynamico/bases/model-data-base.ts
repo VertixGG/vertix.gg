@@ -7,7 +7,6 @@ import {
 } from "@dynamico/interfaces/data";
 
 import { ModelBase } from "@internal/bases";
-import DynamicoManager from "@dynamico/managers/dynamico";
 
 export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataModel extends IDataInnerModel> extends ModelBase implements IDataModel {
     protected ownerModel: OwnerModel;
@@ -46,15 +45,27 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
             value: args.default,
         };
 
-        return this.dataModel.update( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
+        let result;
+
+        try {
+            result = await this.dataModel.update( {
+                where: {
+                    ownerId_key: {
+                        ownerId: args.ownerId,
+                        key: args.key,
+                    },
                 },
-            },
-            data: this.getInternalNormalizedData( createArgs )
-        } );
+                data: this.getInternalNormalizedData( createArgs )
+            } );
+        } catch ( e ) {
+            this.logger.warn( this.setData,
+                `Issue for data with key: '${ args.key }' ownerId: '${ args.ownerId }'`
+            );
+
+            return e;
+        }
+
+        return result;
     }
 
     public async deleteData( args: IDataSelectUniqueArgs ) {

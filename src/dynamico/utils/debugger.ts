@@ -40,11 +40,12 @@ export class Debugger extends ObjectBase {
         this.logger.debug( source, message );
     }
 
-    public dumpDown( source: Function, object: any ) {
+    public dumpDown( source: Function, object: any, objectName: string = "" ) {
         if ( ! this.shouldDebug ) {
             return;
         }
-        this.log( source, "🔽", object );
+
+        this.log( source, `${ objectName ? objectName + ":" : "" } ` + "🔽", object );
     }
 
     public debugPermission( source: Function, overwrite: PermissionOverwrites ) {

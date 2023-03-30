@@ -1,6 +1,6 @@
 import {
     ActionRowBuilder,
-    ButtonBuilder,
+    ButtonBuilder, ButtonInteraction, ChatInputCommandInteraction,
     ComponentBuilder,
     ModalBuilder,
     ModalSubmitInteraction, RoleSelectMenuBuilder, RoleSelectMenuInteraction,
@@ -11,17 +11,17 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import { guiManager } from "@dynamico/managers";
 
-import { BaseInteractionTypes, CallbackUIType, DYNAMICO_UI_ELEMENT } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, DYNAMICO_UI_ELEMENT } from "@dynamico/interfaces/ui";
 
 import Logger from "@internal/modules/logger";
 
 import { ForceMethodImplementation } from "@internal/errors";
 
-export default class UIElement extends UIBase {
+export default class UIElement extends UIGroupBase {
     protected static logger: Logger = new Logger( this );
 
     protected interaction?: BaseInteractionTypes;
@@ -83,10 +83,10 @@ export default class UIElement extends UIBase {
         return this.builtRows;
     }
 
-    protected getButtonBuilder( callback: CallbackUIType ) {
+    protected getButtonBuilder( callback: ( inteaction: ButtonInteraction ) => Promise<void>, extraData = "" ) {
         const button = new ButtonBuilder();
 
-        this.setCallback( button, callback );
+        this.setCallback( button, callback, extraData );
 
         return button;
     }
@@ -115,7 +115,7 @@ export default class UIElement extends UIBase {
         return menu;
     }
 
-    protected getInputBuilder( callback?: CallbackUIType ) {
+    protected getInputBuilder( callback?: ( interaction: ChatInputCommandInteraction ) => Promise<void> ) {
         const input = new TextInputBuilder();
 
         if ( callback ) {
@@ -141,8 +141,8 @@ export default class UIElement extends UIBase {
         return this.build( interaction, this.args );
     }
 
-    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | RoleSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
-        const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" );
+    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | RoleSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function, extraData = "" ) {
+        const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" ) + ( extraData ? `>${ extraData }` : "" );
 
         context.setCustomId( unique );
     }

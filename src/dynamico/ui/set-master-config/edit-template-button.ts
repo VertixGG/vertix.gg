@@ -1,4 +1,4 @@
-import { ButtonStyle, Interaction } from "discord.js";
+import { ButtonInteraction, ButtonStyle, Interaction } from "discord.js";
 
 import EditTemplateModal from "@dynamico/ui/set-master-config/edit-template-modal";
 
@@ -27,18 +27,16 @@ export default class EditTemplateButton extends UIElement {
         return [ modifyTemplate ];
     }
 
-    private async onClick( interaction: Interaction ) {
-        if ( interaction.channel && interaction.isButton() ) {
-            const component = guiManager
-                .get( EditTemplateModal.getName() );
+    private async onClick( interaction: ButtonInteraction ) {
+        const component = guiManager
+            .get( EditTemplateModal.getName() );
 
-            if ( undefined !== typeof this.args.channelNameTemplate ) {
-                component.setArg( "channelNameTemplate", this.args.channelNameTemplate );
-            }
+        if ( undefined !== typeof this.args.channelNameTemplate ) {
+            component.setArg( "channelNameTemplate", this.args.channelNameTemplate );
+        }
 
-            if ( component && component.getModal ) {
-                await interaction.showModal( await component.getModal( interaction ) );
-            }
+        if ( component && component.getModal ) {
+            await interaction.showModal( await component.getModal( interaction ) );
         }
     }
 }

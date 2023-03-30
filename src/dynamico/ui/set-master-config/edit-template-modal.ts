@@ -57,10 +57,22 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
             return;
         }
 
+        if ( this.args.onTemplateModified ) {
+            this.setArg( "channelNameTemplate", input );
+
+            await this.args.onTemplateModified( interaction, this.args );
+
+            this.args.onTemplateModified = null;
+
+            return;
+        }
+
+        // TODO: should be callback or commands.on.
+
         await guiManager.get( "Dynamico/UI/SetupProcess" )
             .sendContinues( interaction, {
                 _step: 0,
-                channelNameTemplate: input,
+                channelNameTemplate: input || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
             } );
     }
 }

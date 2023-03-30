@@ -21,6 +21,7 @@ import { ContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfa
 import Debugger from "@dynamico/utils/debugger";
 
 import UIBase from "@dynamico/ui/base/ui-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
@@ -75,7 +76,7 @@ export class GUIManager extends InitializeBase {
         this.logger.info( this.register, `Registered user interface '${ uiName }'` );
     }
 
-    public get( name: string, force = false ): UIBase {
+    public get( name: string, force = false ): UIBase|UIGroupBase {
         const result = this.userInterfaces.get( name );
 
         if ( ! force && ! result ) {
@@ -107,12 +108,18 @@ export class GUIManager extends InitializeBase {
 
         this.debugger.log( this.storeCallback, `Storing callback '${ unique }'` );
 
+        // Remove every character after '>' including '>' itself, TODO: duplicate code.
+        unique = unique.replace( />(.*)/g, "" );
+
         this.callbacks.set( unique, callback );
 
         return unique;
     }
 
     public async getCallback( unique: string, middleware: ( ( interaction: UIInteractionTypes ) => Promise<boolean> )[] ) {
+        // Remove every character after '>' including '>' itself, TODO: duplicate code.
+        unique = unique.replace( />(.*)/g, "" );
+
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {

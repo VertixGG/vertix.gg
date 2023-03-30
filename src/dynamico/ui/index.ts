@@ -1,4 +1,5 @@
 export { EmbedTest } from "./_embed-test";
+export { Configure } from "./configure/configure";
 export { EditDynamicChannel } from "./edit-dynamic-channel/edit-dynamic-channel";
 export { EditUsersPermissions } from "./edit-users-permissions/edit-users-permissions";
 export { GlobalResponse } from "./global-responses/global-responses";

@@ -12,13 +12,8 @@ import {
     masterChannelManager
 } from "@dynamico/managers";
 
-import {
-    GUILD_DEFAULT_BADWORDS,
-    GUILD_DEFAULT_BADWORDS_SEPARATOR,
-} from "@dynamico/constants/guild";
-import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
-
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { badwordsSplitOrDefault } from "@dynamico/utils/badwords";
 
 export class SetupProcess extends UIWizardBase {
     public static getName() {
@@ -30,7 +25,12 @@ export class SetupProcess extends UIWizardBase {
             "Dynamico/UI/SetupProcess",
             "Dynamico/UI/SetupProcess/SetMasterConfig",
             "Dynamico/UI/SetupProcess/SetBadwordsConfig",
-            "Dynamico/UI/NotifySetupSuccess",
+        ];
+    }
+
+    public static hasMany() {
+        return [
+            "Dynamico/UI/NotifySetupSuccess"
         ];
     }
 
@@ -76,11 +76,7 @@ export class SetupProcess extends UIWizardBase {
 
         logger.debug( this.onFinish, "", args );
 
-        if ( "string" === typeof args.badwords ) {
-            args.badwords = args.badwords.split( GUILD_DEFAULT_BADWORDS_SEPARATOR.trim() );
-        } else {
-            args.badwords = GUILD_DEFAULT_BADWORDS;
-        }
+        args.badwords = badwordsSplitOrDefault( args.badwords );
 
         const result = await masterChannelManager
                 .createDefaultMasters( interaction as CommandInteraction, interaction.user.id, {
@@ -113,7 +109,7 @@ export class SetupProcess extends UIWizardBase {
             .sendContinues( interaction, {
                 masterCategoryName: masterCategory.name,
                 masterChannelId: masterCreateChannel.id,
-                dynamicChannelNameTemplate: args.channelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+                dynamicChannelNameTemplate: args.channelNameTemplate,
             } );
     }
 }

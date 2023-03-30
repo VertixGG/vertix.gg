@@ -39,14 +39,6 @@ export class UIBase extends ObjectBase {
         throw new ForceMethodImplementation( this, this.name );
     }
 
-    public static groups(): string[] {
-        return [];
-    }
-
-    public static belongsTo(): string[] {
-        return [];
-    }
-
     public constructor( interaction?: BaseInteractionTypes | null, args?: any ) {
         super( args );
 
@@ -114,10 +106,6 @@ export class UIBase extends ObjectBase {
 
     public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
         throw new ForceMethodImplementation( this, this.getMessage.name );
-    }
-
-    public getGroups(): string[] {
-        return ( this.constructor as typeof UIBase ).groups();
     }
 
     /**

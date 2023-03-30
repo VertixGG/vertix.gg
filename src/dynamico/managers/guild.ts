@@ -28,8 +28,8 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
         return GuildManager.instance;
     }
 
-    public constructor( shouldDebug = !! process.env.debug_cache_guild || false ) {
-        super( shouldDebug );
+    public constructor( shouldDebugCache = !! process.env.debug_cache_guild || false ) {
+        super( shouldDebugCache );
 
         this.guildModel = GuildModel.getInstance();
     }

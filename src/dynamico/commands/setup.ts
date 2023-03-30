@@ -1,16 +1,13 @@
-import {
-    ApplicationCommandType,
-    Client,
-    CommandInteraction,
-    PermissionsBitField,
-} from "discord.js";
+import { ApplicationCommandType, Client, CommandInteraction, PermissionsBitField, } from "discord.js";
 
 import { guiManager, masterChannelManager } from "@dynamico/managers";
+
+import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
 
 import { commandsLogger } from "@dynamico/commands/index";
 
 import { ICommand } from "@dynamico/interfaces/command";
-import { guildGetBadwordsFormatted, guildGetBasicRolesIds } from "@dynamico/utils/guild";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
 
 const name = "setup";
 
@@ -34,8 +31,8 @@ export const Setup: ICommand = {
         await guiManager.get( "Dynamico/UI/SetupProcess" )
             .sendContinues( interaction, {
                 step: "initial",
+                channelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
                 badwords: await guildGetBadwordsFormatted( guildId ),
-                basicRoles: await guildGetBasicRolesIds( guildId ),
             } );
     }
 };

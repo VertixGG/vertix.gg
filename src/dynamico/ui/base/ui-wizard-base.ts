@@ -109,6 +109,8 @@ export abstract class UIWizardBase extends UIComponentBase {
 
         this.setStep( interaction, step );
 
+        this.setSharedArgs( userId, ensureArgs );
+
         return super.getMessage( interaction, ensureArgs );
     }
 

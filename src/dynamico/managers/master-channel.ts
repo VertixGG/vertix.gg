@@ -20,7 +20,6 @@ import {
 } from "../interfaces/channel";
 
 import {
-    DATA_CHANNEL_KEY_BADWORDS,
     DATA_CHANNEL_KEY_SETTINGS
 } from "@dynamico/constants/data";
 
@@ -40,7 +39,6 @@ import {
     categoryManager,
     channelDataManager,
     channelManager,
-    guildDataManager,
     guiManager,
     permissionsManager
 } from "@dynamico/managers";
@@ -50,10 +48,17 @@ import ChannelModel from "@dynamico/models/channel";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
+import { badwordsNormalizeArray } from "@dynamico/utils/badwords";
+import { guildSetBadwords } from "@dynamico/utils/guild";
+
+import Debugger from "@dynamico/utils/debugger";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 export class MasterChannelManager extends ManagerCacheBase<any> {
     private static instance: MasterChannelManager;
+
+    private debugger: Debugger;
 
     public static getName(): string {
         return "Dynamico/Managers/MasterChannel";
@@ -67,8 +72,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         return MasterChannelManager.instance;
     }
 
-    public constructor( shouldDebug = !! process.env.debug_cache_master_channel || false ) {
-        super( shouldDebug );
+    public constructor( shouldDebugCache = !! process.env.debug_cache_master_channel || false ) {
+        super( shouldDebugCache );
+
+        this.debugger = new Debugger( this );
     }
 
     /**
@@ -369,13 +376,9 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         if ( masterCategory ) {
-            // TODO: Not the right place for this.
-            if ( extraArgs.badwords ) {
-                // Remove empty spaces.
-                extraArgs.badwords = extraArgs.badwords.map( ( word ) => word.trim() );
-                // Remove empty words.
-                extraArgs.badwords = extraArgs.badwords.filter( ( word ) => word.length > 0 );
-            }
+            extraArgs.badwords = badwordsNormalizeArray( extraArgs.badwords );
+
+            this.debugger.dumpDown( this.createDefaultMasters, extraArgs, "extraArgs" );
 
             const args = {
                     guild,
@@ -442,6 +445,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
 
+        // TODO: Create util.
         // Set default settings.
         await channelDataManager.setData( {
             ownerId: result.channelDB.id,
@@ -451,22 +455,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             }
         } );
 
-        if ( ! args.badwords?.length ) {
-            try {
-                await guildDataManager.deleteData( {
-                    ownerId: guild.id,
-                    key: DATA_CHANNEL_KEY_BADWORDS,
-                }, true );
-            } catch ( e ) {
-                this.logger.warn( this.createCreateChannel, "", e );
-            }
-        } else {
-            await guildDataManager.setData( {
-                ownerId: guild.id,
-                key: DATA_CHANNEL_KEY_BADWORDS,
-                default: args.badwords,
-            }, true );
-        }
+        await guildSetBadwords( guild, args.badwords );
 
         return result.channel;
     }

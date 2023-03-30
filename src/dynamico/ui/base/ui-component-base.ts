@@ -1,26 +1,20 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
-    CommandInteraction,
     EmbedBuilder,
-    InteractionResponse,
-    MessageComponentInteraction,
 } from "discord.js";
 
-import { BaseInteractionTypes, ContinuesInteractionTypes, E_UI_TYPES, } from "@dynamico/interfaces/ui";
+import { BaseInteractionTypes, E_UI_TYPES, UIGroupAttitude, } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 import UIEmbed from "@dynamico/ui/base/ui-embed";
-import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
-import { guiManager } from "@dynamico/managers/gui";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
 import Logger from "@internal/modules/logger";
 
-export class UIComponentBase extends UIBase {
-    private static specificFlowInteraction: Map<string, any> = new Map();
-
+export class UIComponentBase extends UIGroupBase {
     protected static logger: Logger = new Logger( this );
 
     protected static dynamicElements: typeof UIElement[] = [];
@@ -116,121 +110,30 @@ export class UIComponentBase extends UIBase {
         return result;
     }
 
-    /**
-     * Function sendContinues() :: a method that sends a continues interaction message to the user.
-     * It takes an interaction object and additional arguments as input and returns a promise.
-     */
-    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse | void> {
-        if ( ! interaction.channel ) {
-            return guiManager.sendContinuesMessage( interaction, this, args );
-        }
-
-        const msgInteraction = interaction as MessageComponentInteraction,
-            staticThis = this.getStaticThis();
-
-        staticThis.debugger.log( this.sendContinues,
-            `Sending continues interaction message to user: '${ interaction.user.username }'`
-        );
-
-        let groups = staticThis.groups(),
-            belongsTo = staticThis.belongsTo(),
-            customId = msgInteraction?.customId || "",
-            attitude = !! ( groups.length || belongsTo.length );
-
-        // If the component has no groups or relationship and has a customId, try to find the element via customId.
-        if ( ! attitude && customId.length ) {
-            // Try to find a attitude via customId.
-            const namespace = customId.split( ":" )?.[ 0 ],
-                // Try to find the namespace in internal components.
-                internalElement = this.getInternalElements().find( ( element ) => element.getName() === namespace );
-
-            if ( internalElement ) {
-                // # Critical.
-                belongsTo = internalElement.belongsTo();
-                groups = internalElement.groups();
-
-               if ( belongsTo.length || groups.length ) {
-                   attitude = true;
-               }
-            }
-        }
-
-        if ( ! attitude ) {
-            staticThis.logger.debug( this.sendContinues,
-                `No groups or relationship has been found for: '${ staticThis.getName() }'`
-            );
-            return guiManager.sendContinuesMessage( interaction, this, args );
-        } else if ( groups.length && belongsTo.length ) {
-            staticThis.logger.error( this.sendContinues,
-                `Invalid behaviour both groups and relationship has been found for: '${ staticThis.getName() }'`
-            );
-            return guiManager.sendContinuesMessage( interaction, this, args );
-        }
-
-        if ( belongsTo.length ) {
-            let isRelated = false;
-
-            for ( const namespace of belongsTo ) {
-                const owner = guiManager.get( namespace ),
-                    ownerGroups = owner.getGroups();
-
-                if ( ownerGroups.includes( this.getName() ) ) {
-                    isRelated = true;
-
-                    // # Critical.
-                    groups = ownerGroups;
-
-                    break;
-                }
-            }
-
-            if ( ! isRelated ) {
-                staticThis.logger.error( this.sendContinues,
-                    `Invalid behaviour, '${ this.getName() }' with customId: '${ msgInteraction.customId }' not belonging to any group.`
-                );
-                staticThis.logger.error( this.sendContinues, "belongsTo", belongsTo );
-
-                return guiManager.sendContinuesMessage( interaction, this, args );
-            }
-        }
-
-        // TODO: Replace join with cached hash key.
-        const uniqueId = groups.join() + ":" + interaction.channel.id + ":" + interaction.user.id,
-            specificFlowInteraction = staticThis.specificFlowInteraction.get( uniqueId ) as InteractionResponse;
-
-        if ( interaction.isCommand() ) {
-            await specificFlowInteraction?.delete().catch( ( e ) => {
-                staticThis.logger.warn( this.sendContinues, "", e );
-            } );
-
-            staticThis.specificFlowInteraction.delete( uniqueId );
-        }
-
-        if ( ! specificFlowInteraction ) {
-            const newDefer = await this.sendReply( msgInteraction, args );
-
-            if ( newDefer ) {
-                staticThis.specificFlowInteraction.set( uniqueId, newDefer );
-            }
-
-            return;
-        }
-
-        await specificFlowInteraction.edit( await this.getMessage( interaction, args ) )
-            .then( () => {
-                msgInteraction.deferUpdate?.();
-            } )
-            .catch( ( e ) => {
-                staticThis.logger.warn( this.sendContinues, "", e );
-
-                staticThis.specificFlowInteraction.delete( uniqueId );
-
-                return this.sendContinues( interaction, args );
-            } );
-    }
-
     protected getStaticThis(): typeof UIComponentBase {
         return ( this.constructor as typeof UIComponentBase );
+    }
+
+    protected getExtendedAttitude( customId: string ): UIGroupAttitude | null {
+        // Try to find a attitude via customId.
+        const namespace = customId.split( ":" )?.[ 0 ],
+            // Try to find the namespace in internal components.
+            internalElement = this.getInternalElements().find( ( element ) => element.getName() === namespace );
+
+        if ( internalElement ) {
+            // # Critical.
+            const belongsTo = internalElement.belongsTo(),
+                groups = internalElement.groups();
+
+            if ( belongsTo.length || groups.length ) {
+                return {
+                    belongsTo,
+                    groups
+                };
+            }
+        }
+
+        return null;
     }
 
     /**

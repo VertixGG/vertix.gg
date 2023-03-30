@@ -2,10 +2,7 @@ import { Guild } from "discord.js";
 
 import { guildDataManager } from "@dynamico/managers";
 
-import {
-    DATA_CHANNEL_KEY_BADWORDS,
-    DATA_CHANNEL_KEY_BASIC_ROLES
-} from "@dynamico/constants/data";
+import { DATA_CHANNEL_KEY_BADWORDS, DATA_CHANNEL_KEY_BASIC_ROLES } from "@dynamico/constants/data";
 
 import {
     GUILD_DEFAULT_BADWORDS,
@@ -17,6 +14,7 @@ import {
 } from "@dynamico/constants/guild";
 
 import { rolesGetEveryoneRoleMention } from "@dynamico/utils/roles";
+import { badwordsSomeUsed } from "@dynamico/utils/badwords";
 
 export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => {
     const badwordsDB = await guildDataManager.getData( {
@@ -33,19 +31,8 @@ export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => 
     return GUILD_DEFAULT_BADWORDS;
 };
 
-export const guildUsedBadword = async ( guildId: string, word: string ): Promise<string | null> => {
-    const badwords = await guildGetBadwords( guildId );
-
-    let usedBadword: string | null = null;
-
-    ( badwords ).some( ( badword ) => {
-        if ( badword.length && word.toLowerCase().includes( badword.toString().toLowerCase() ) ) {
-            usedBadword = badword;
-        }
-        return !! usedBadword;
-    } );
-
-    return usedBadword;
+export const guildUsedSomeBadword = async ( guildId: string, word: string ): Promise<string | null> => {
+    return badwordsSomeUsed( word, await guildGetBadwords( guildId ) );
 };
 
 export const guildGetBadwordsFormatted = async ( guildId: string ): Promise<string> => {
@@ -71,6 +58,27 @@ export const guildGetBasicRolesIds = async ( guildId: string ): Promise<string[]
 
 export const guildGetBasicRolesFormatted = async ( guild: Guild, roleIds: string[] ): Promise<string> => {
     return roleIds?.length ? roleIds
-            .map( ( i: string ) => GUILD_DEFAULT_BASIC_ROLE_PREFIX + i + GUILD_DEFAULT_BASIC_ROLE_SUFFIX )
-            .join( GUILD_DEFAULT_BASIC_ROLE_SEPARATOR ) : rolesGetEveryoneRoleMention( guild );
+        .map( ( i: string ) => GUILD_DEFAULT_BASIC_ROLE_PREFIX + i + GUILD_DEFAULT_BASIC_ROLE_SUFFIX )
+        .join( GUILD_DEFAULT_BASIC_ROLE_SEPARATOR ) : rolesGetEveryoneRoleMention( guild );
+};
+
+export const guildSetBadwords = async ( guild: Guild, badwords: string[] | undefined ): Promise<void> => {
+    if ( ! badwords?.length ) {
+        try {
+            await guildDataManager.deleteData( {
+                ownerId: guild.id,
+                key: DATA_CHANNEL_KEY_BADWORDS,
+            }, true );
+        } catch ( e ) {
+            // Ignore
+        }
+
+        return;
+    }
+
+    await guildDataManager.setData( {
+        ownerId: guild.id,
+        key: DATA_CHANNEL_KEY_BADWORDS,
+        default: badwords,
+    }, true );
 };

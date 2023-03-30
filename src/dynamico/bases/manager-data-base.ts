@@ -7,13 +7,19 @@ import {
     IDataUpdateArgs
 } from "@dynamico/interfaces/data";
 
+import Debugger from "@dynamico/utils/debugger";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 export abstract class ManagerDataBase<ModelType extends IDataModel> extends ManagerCacheBase<DataResult> implements IDataManager {
+    private debugger: Debugger;
+
     private dataSourceModel: ModelType;
 
     public constructor() {
         super();
+
+        this.debugger = new Debugger( this );
 
         this.dataSourceModel = this.getDataSourceModel();
     }

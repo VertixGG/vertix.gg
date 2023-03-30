@@ -104,7 +104,7 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return await this.ownerModel.findFirst( args );
     }
 
-    public async getAll( guildId: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
+    public async getAll( guildId: string, internalType?: E_INTERNAL_CHANNEL_TYPES, includeData?: boolean ) {
         const args: any = {
             where: {
                 guildId,
@@ -113,6 +113,12 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
 
         if ( internalType ) {
             args.where.internalType = internalType;
+        }
+
+        if ( includeData ) {
+            args.include = {
+                data: true
+            };
         }
 
         return await this.ownerModel.findMany( args );

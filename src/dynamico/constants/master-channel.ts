@@ -6,6 +6,7 @@ const { Flags } = PermissionsBitField;
 
 export const DEFAULT_MASTER_CATEGORY_NAME = "🌀 Dynamic Channels",
     DEFAULT_MASTER_CHANNEL_CREATE_NAME = "➕ New Channel",
+    DEFAULT_MASTER_CHANNEL_CREATE_NONE_NAME = "🚫 No Channels",
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS = 3;
 
 export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {

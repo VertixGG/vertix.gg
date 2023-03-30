@@ -1,4 +1,4 @@
-import { ButtonStyle, Interaction } from "discord.js";
+import { ButtonInteraction, ButtonStyle, Interaction } from "discord.js";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
@@ -27,18 +27,16 @@ export default class EditBadwordsButton extends UIElement {
         return [ modifyBadwords ];
     }
 
-    private async onClick( interaction: Interaction ) {
-        if ( interaction.channel && interaction.isButton() ) {
-            const component = guiManager
-                .get( EditBadwordsModal.getName() );
+    private async onClick( interaction: ButtonInteraction ) {
+        const component = guiManager
+            .get( EditBadwordsModal.getName() );
 
-            if ( undefined !== typeof this.args.badwords ) {
-                component.setArg( "badwords", this.args.badwords );
-            }
+        if ( undefined !== typeof this.args.badwords ) {
+            component.setArg( "badwords", this.args.badwords );
+        }
 
-            if ( component && component.getModal ) {
-                await interaction.showModal( await component.getModal( interaction ) );
-            }
+        if ( component && component.getModal ) {
+            await interaction.showModal( await component.getModal( interaction ) );
         }
     }
 }

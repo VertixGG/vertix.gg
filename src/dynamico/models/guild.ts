@@ -43,7 +43,6 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         let result;
 
         try {
-            // @ts-ignore
             result = await this.prisma.guild.update( {
                 where: { guildId: guild.id },
                 data: { isInGuild }

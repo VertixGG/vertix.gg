@@ -3,14 +3,14 @@ import Debugger from "@dynamico/utils/debugger";
 import InitializeBase from "@internal/bases/initialize-base";
 
 export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
-    protected debugger: Debugger;
-
     private cache: Map<string, CacheResult>;
+
+    private cacheDebugger: Debugger;
 
     public constructor( debugState = true  ) {
         super();
 
-        this.debugger = new Debugger( this, undefined, debugState );
+        this.cacheDebugger = new Debugger( this, undefined, debugState );
 
         this.cache = new Map<string, CacheResult>();
     }
@@ -21,8 +21,8 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
         const result = this.cache.get( key );
 
         if ( result ) {
-            this.debugger.log( this.getCache, `Got cache for key: '${ key }'` );
-            this.debugger.dumpDown( this.setCache, result );
+            this.cacheDebugger.log( this.getCache, `Got cache for key: '${ key }'` );
+            this.cacheDebugger.dumpDown( this.setCache, result );
         }
 
         return result;
@@ -31,7 +31,7 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
     protected setCache( key: string, value: any ): void {
         this.logger.log( this.setCache, `Setting cache for key: '${ key }'` );
 
-        this.debugger.dumpDown( this.setCache, value );
+        this.cacheDebugger.dumpDown( this.setCache, value );
 
         this.cache.set( key, value );
     }

@@ -4,14 +4,15 @@ import { BaseInteractionTypes, DYNAMICO_UI_EMBED, E_UI_TYPES } from "@dynamico/i
 
 import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 import { ForceMethodImplementation } from "@internal/errors";
+
 import Logger from "@internal/modules/logger";
 
-export class UIEmbed extends UIBase {
+export class UIEmbed extends UIGroupBase {
     protected static logger: Logger = new Logger( this );
 
     public static getName() {

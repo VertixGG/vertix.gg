@@ -24,6 +24,8 @@ import ChannelDataManager from "@dynamico/managers/channel-data";
 
 import PermissionsManager from "@dynamico/managers/permissions";
 
+import Debugger from "@dynamico/utils/debugger";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
@@ -31,6 +33,8 @@ const UNKNOWN_DISPLAY_NAME = "Unknown User",
 
 export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     private static instance: ChannelManager;
+
+    private debugger: Debugger;
 
     private channelModel: ChannelModel;
 
@@ -49,8 +53,10 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return "Dynamico/Managers/Channel";
     }
 
-    public constructor( shouldDebug = !! process.env.debug_cache_channel || false ) {
-        super( shouldDebug );
+    public constructor( shouldDebugCache = !! process.env.debug_cache_channel || false ) {
+        super( shouldDebugCache );
+
+        this.debugger = new Debugger( this );
 
         this.channelModel = ChannelModel.getInstance();
 
@@ -188,20 +194,20 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return result;
     }
 
-    public async getMasterCreateChannels( guildId: string ) {
+    public async getMasterCreateChannels( guildId: string, includeData = false ) {
         this.logger.info( this.getMasterCreateChannels,
             `Getting master create channel(s) from guildId: '${ guildId }'`
         );
 
-        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL );
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL, includeData );
     }
 
-    public async getDynamicChannels( guildId: string ) {
+    public async getDynamicChannels( guildId: string, includeData = false ) {
         this.logger.info( this.getMasterCreateChannels,
             `Getting dynamic channel(s) from guildId: '${ guildId }'`
         );
 
-        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL );
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL, includeData );
     }
 
     /**

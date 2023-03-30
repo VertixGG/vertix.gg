@@ -17,12 +17,15 @@ export const DYNAMICO_UI_ELEMENT = "Dynamico/UI/UIElement",
     DYNAMICO_UI_EMBED = "Dynamico/UI/UIEmbed",
     DYNAMICO_UI_WIZARD = "Dynamico/UI/UIWizard";
 
-export type CallbackUIType = ( interaction: Interaction ) => Promise<any>;
-
 export enum E_UI_TYPES {
     UNKNOWN,
     STATIC,
     DYNAMIC,
+}
+
+export interface UIGroupAttitude {
+    belongsTo: string[];
+    groups: string[];
 }
 
 export type BaseInteractionTypes = Interaction | CommandInteraction | DMChannel | NonThreadGuildBasedChannel;

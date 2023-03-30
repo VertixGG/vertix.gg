@@ -9,7 +9,7 @@ import {
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
-import { BaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import {  E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import { masterChannelManager, guiManager } from "@dynamico/managers";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
@@ -21,12 +21,6 @@ export default class EditPermissionsUsersMenus extends UIElement {
 
     public static getType() {
         return E_UI_TYPES.DYNAMIC;
-    }
-
-    public async build( interaction?: BaseInteractionTypes, args?: any ): Promise<void> {
-        await guiManager.deleteContinuesInteraction( interaction  as Interaction);
-
-        return super.build( interaction, args );
     }
 
     protected async getBuilders( interaction: Interaction, args: any ) {

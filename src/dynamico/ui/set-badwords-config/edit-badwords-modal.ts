@@ -62,6 +62,17 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
             return;
         }
 
+        if ( this.args.onBadwordsModified ) {
+            this.setArg( "badwords", input );
+
+            await this.args.onBadwordsModified( interaction, this.args );
+
+            this.args.onBadwordsModified = null;
+
+            return;
+        }
+
+        // TODO: should be callback or commands.on.
         await guiManager.get( "Dynamico/UI/SetupProcess" )
             .sendContinues( interaction, {
                 _step: 1,

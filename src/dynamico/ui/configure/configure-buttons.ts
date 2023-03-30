@@ -33,9 +33,10 @@ export default class ConfigureButtons extends UIElement {
                 ++index;
 
                 const button = this.getButtonBuilder( this.onMasterChannelSelect.bind( this ), index.toString() );
-
+                
+                button.setEmoji( "✏️" );
                 button.setLabel( `Edit Master Channel #${ index }` );
-                button.setStyle( ButtonStyle.Primary );
+                button.setStyle( ButtonStyle.Secondary );
 
                 editMasterChannelButtons.push( button );
             } );
@@ -44,8 +45,8 @@ export default class ConfigureButtons extends UIElement {
         const modifyBadwords = this.getButtonBuilder( this.onModifyBadwords.bind( this ) );
 
         modifyBadwords.setEmoji( "🙅" );
-        modifyBadwords.setLabel( "Modify Badwords" );
-        modifyBadwords.setStyle( ButtonStyle.Secondary );
+        modifyBadwords.setLabel( "Modify Bad Words" );
+        modifyBadwords.setStyle( ButtonStyle.Primary );
 
         const result = [];
 

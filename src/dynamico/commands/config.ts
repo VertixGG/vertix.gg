@@ -15,7 +15,7 @@ const name = "config";
 export const Config: ICommand = {
     name,
 
-    description: "Configure up Dynamico",
+    description: "Configure Dynamico",
     type: ApplicationCommandType.ChatInput,
 
     defaultMemberPermissions: [ PermissionsBitField.Flags.Administrator ],

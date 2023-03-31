@@ -2,16 +2,16 @@ import { ChannelType, EmbedBuilder } from "discord.js";
 
 import { channelManager, masterChannelManager, permissionsManager } from "@dynamico/managers";
 
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
 
 import GlobalLogger from "@dynamico/global-logger";
 
-import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
-
 const globalLogger = GlobalLogger.getInstance();
 
 export default async function authMiddleware( interaction: UIInteractionTypes ) {
-    if ( ( ! interaction.channel?.type && 0 !== interaction.channel?.type ) || ! interaction.guildId || ! interaction.guild  ) {
+    if ( ( ! interaction.channel?.type && ChannelType.GuildText !== interaction.channel?.type ) || ! interaction.guildId || ! interaction.guild  ) {
         globalLogger.error( authMiddleware,
             `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', is not unexpected`
         );

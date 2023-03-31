@@ -75,7 +75,9 @@ export class UIBase extends ObjectBase {
 
         replyArgs.ephemeral = isEphemeral;
 
-        return await interaction.reply( replyArgs );
+        return await interaction.reply( replyArgs ).catch( ( e ) => {
+            UIBase.logger.error( this.sendReply, "", e );
+        } );
     }
 
     /**

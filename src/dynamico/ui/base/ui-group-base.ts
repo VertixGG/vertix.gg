@@ -111,7 +111,6 @@ export class UIGroupBase extends UIBase {
             }
         }
 
-        // TODO: Replace join with cached hash key.
         const uniqueId = groups.join() + ":" + interaction.channel.id + ":" + interaction.user.id,
             specificFlowInteraction = staticThis.specificFlowInteraction.get( uniqueId ) as InteractionResponse;
 

@@ -16,9 +16,9 @@ const MINIMUM_COMPONENTS = 2;
 
 /**
  * A base class for creating wizard-like UI components. This class is designed to be extended
- * and provides functionality for managing multiple steps of UI interaction. Each step in the wizard
- * can contain two or more UI components.
- */
+ * and provides functionality for managing multiple steps of UI interaction.
+ * It should contain at least two UI component.
+ **/
 export abstract class UIWizardBase extends UIComponentBase {
     protected static logger = new Logger( this );
 

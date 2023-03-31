@@ -41,7 +41,7 @@ interface ContinuesInteractionArgs {
 export class GUIManager extends InitializeBase {
     private static instance: GUIManager;
 
-    private userInterfaces = new Map<string, UIBase>;
+    private userInterfaces = new Map<string, UIBase|UIGroupBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
@@ -83,8 +83,8 @@ export class GUIManager extends InitializeBase {
             throw new Error( `User interface '${ name }' does not exist` );
         }
 
-        // TODO: Find a better way to do this, it may return undefined.
-        return result as UIBase;
+        // Since `force` is used, we can safely assume that `result` is not negative.
+        return result as UIBase|UIGroupBase;
     }
 
     public storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "" ) {
@@ -108,8 +108,7 @@ export class GUIManager extends InitializeBase {
 
         this.debugger.log( this.storeCallback, `Storing callback '${ unique }'` );
 
-        // Remove every character after '>' including '>' itself, TODO: duplicate code.
-        unique = unique.replace( />(.*)/g, "" );
+        unique = this.removeExtraData( unique );
 
         this.callbacks.set( unique, callback );
 
@@ -117,8 +116,7 @@ export class GUIManager extends InitializeBase {
     }
 
     public async getCallback( unique: string, middleware: ( ( interaction: UIInteractionTypes ) => Promise<boolean> )[] ) {
-        // Remove every character after '>' including '>' itself, TODO: duplicate code.
-        unique = unique.replace( />(.*)/g, "" );
+        unique = this.removeExtraData( unique );
 
         const result = this.callbacks.get( unique );
 
@@ -256,6 +254,11 @@ export class GUIManager extends InitializeBase {
                 .catch( ( e ) => this.logger.warn( this.deleteContinuesInteraction, "", e ) )
                 .then( () => this.continuesInteractions.delete( interaction?.channel?.id + interaction.user.id ) );
         }
+    }
+
+    private removeExtraData( uniqueId: string ) {
+        // Remove every character after '>' including '>' itself.
+        return uniqueId.replace( />(.*)/g, "" );
     }
 }
 

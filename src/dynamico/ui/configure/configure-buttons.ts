@@ -5,13 +5,13 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import UIElement from "@dynamico/ui/base/ui-element";
 
 import EditBadwordsModal from "@dynamico/ui/set-badwords-config/edit-badwords-modal";
+import EditTemplateModal from "@dynamico/ui/set-master-config/edit-template-modal";
 
 import { guildGetBadwordsFormatted, guildSetBadwords } from "@dynamico/utils/guild";
 import { badwordsNormalizeArray, badwordsSplitOrDefault } from "@dynamico/utils/badwords";
+import { masterChannelSetSettingsData } from "@dynamico/utils/master-channel";
 
-import { channelDataManager, channelManager, guiManager } from "@dynamico/managers";
-import EditTemplateModal from "@dynamico/ui/set-master-config/edit-template-modal";
-import { DATA_CHANNEL_KEY_SETTINGS } from "@dynamico/constants/data";
+import { channelManager, guiManager } from "@dynamico/managers";
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
 
 export default class ConfigureButtons extends UIElement {
@@ -68,7 +68,7 @@ export default class ConfigureButtons extends UIElement {
         component.setArg( "onTemplateModified", this.onTemplateModified.bind( this ) );
         component.setArg( "channelIndex", channelIndex );
         component.setArg( "channelNameTemplate",
-            this.args.masterChannels[ channelIndex - 1].data[0].object.dynamicChannelNameTemplate
+            this.args.masterChannels[ channelIndex - 1 ].data[ 0 ].object.dynamicChannelNameTemplate
         );
 
         if ( component && component.getModal ) {
@@ -104,12 +104,8 @@ export default class ConfigureButtons extends UIElement {
     }
 
     private async onTemplateModified( interaction: ButtonInteraction, args: any ) {
-        await channelDataManager.setData( {
-            ownerId: this.args.masterChannels[ args.channelIndex - 1].id,
-            key: DATA_CHANNEL_KEY_SETTINGS,
-            default: {
-                dynamicChannelNameTemplate: args.channelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-            }
+        await masterChannelSetSettingsData( this.args.masterChannels[ args.channelIndex - 1 ].id, {
+            dynamicChannelNameTemplate: args.channelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
         } );
 
         await guiManager.get( "Dynamico/UI/Configure" )

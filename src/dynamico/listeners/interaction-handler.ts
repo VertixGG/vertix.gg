@@ -6,7 +6,8 @@ import {
     CommandInteraction,
     Events,
     Interaction,
-    ModalSubmitInteraction, RoleSelectMenuInteraction,
+    ModalSubmitInteraction,
+    RoleSelectMenuInteraction,
     SelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";

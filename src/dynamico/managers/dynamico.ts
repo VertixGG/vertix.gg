@@ -15,6 +15,8 @@ import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
+const VERSION_PHASE_4 = "0.0.1";
+
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
 
@@ -33,7 +35,7 @@ export class DynamicoManager extends InitializeBase {
     }
 
     public static getVersion() {
-        return "0.0.1";
+        return VERSION_PHASE_4;
     }
 
     public async onReady( client: Client ) {
@@ -167,6 +169,10 @@ export class DynamicoManager extends InitializeBase {
         await this.replaceTemplatesPrefixSuffix();
     }
 
+    /**
+     * Function replaceTemplatesPrefixSuffix() :: Replace the old template prefix and suffix '%{', '%}' to the new one '{{', '}}'
+     * From version `null` to version `0.0.1`.
+     */
     private async replaceTemplatesPrefixSuffix() {
         const dataManagers = [ guildDataManager, channelDataManager ];
 
@@ -193,7 +199,7 @@ export class DynamicoManager extends InitializeBase {
                             }
                         }
 
-                        data.version = DynamicoManager.getVersion();
+                        data.version = VERSION_PHASE_4;
 
                         await dataManager.setData( {
                             ownerId: data.ownerId,

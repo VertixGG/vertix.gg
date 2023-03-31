@@ -6,7 +6,6 @@ import { Welcome } from "@dynamico/commands/welcome";
 
 import Logger from "@internal/modules/logger";
 
-// TODO: Use index.ts to export all commands.
 export const Commands: ICommand[] = [
     Config,
     Setup,

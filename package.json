@@ -13,7 +13,8 @@
 		"start-transpile": "npx ts-node --transpile-only src/index.ts",
 		"test": "export disable_logger=true && jest --runInBand --detectOpenHandles --coverage",
 		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js",
-		"release": "bash ./scripts/release.sh"
+		"release": "bash ./scripts/release.sh",
+		"release-test-env": "bash ./scripts/release-test-env.sh"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.11.0",

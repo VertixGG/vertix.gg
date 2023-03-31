@@ -308,10 +308,6 @@ export class UIComponentBase extends UIGroupBase {
         return result;
     }
 
-    /**
-     * Function createComponents() :: a method that creates the components for the UI.
-     * It takes an array of components and an interaction object as input and returns an array of components.
-     */
     private async createElements( elements: typeof UIElement[], interaction?: BaseInteractionTypes, args: any = {} ): Promise<UIElement[]> {
         const result: any = [];
 

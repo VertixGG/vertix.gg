@@ -1,4 +1,9 @@
-import { ApplicationCommandType, Client, CommandInteraction, PermissionsBitField, } from "discord.js";
+import {
+    ApplicationCommandType,
+    Client,
+    CommandInteraction,
+    PermissionsBitField,
+} from "discord.js";
 
 import { guiManager, masterChannelManager } from "@dynamico/managers";
 
@@ -6,8 +11,9 @@ import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-ch
 
 import { commandsLogger } from "@dynamico/commands/index";
 
-import { ICommand } from "@dynamico/interfaces/command";
 import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
+
+import { ICommand } from "@dynamico/interfaces/command";
 
 const name = "setup";
 

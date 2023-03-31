@@ -20,10 +20,6 @@ import {
 } from "../interfaces/channel";
 
 import {
-    DATA_CHANNEL_KEY_SETTINGS
-} from "@dynamico/constants/data";
-
-import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
@@ -32,7 +28,8 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
-    DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE
+    DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
+    DEFAULT_DATA_MASTER_CHANNEL_SETTINGS
 } from "@dynamico/constants/master-channel";
 
 import {
@@ -52,6 +49,8 @@ import { badwordsNormalizeArray } from "@dynamico/utils/badwords";
 import { guildSetBadwords } from "@dynamico/utils/guild";
 
 import Debugger from "@dynamico/utils/debugger";
+
+import { masterChannelGetSettingsData, masterChannelSetSettingsData } from "@dynamico/utils/master-channel";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -304,15 +303,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             return;
         }
 
-        const data = await channelDataManager.getData( {
-            ownerId: masterChannelDB.id,
-            key: DATA_CHANNEL_KEY_SETTINGS,
-            // TODO: Ensure cache usage.
-            cache: true,
-            default: {
-                dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-            },
-        } );
+        const data = await masterChannelGetSettingsData( masterChannel.id, DEFAULT_DATA_MASTER_CHANNEL_SETTINGS );
 
         if ( ! data ) {
             this.logger.error( this.createDynamic,
@@ -431,8 +422,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
         } ];
 
-        // TODO In future, we should use hooks for this. `Commands.on( "masterChannelCreate", ( channel ) => {} );`.
-
         const result = await channelManager.create( {
             parent,
             guild,
@@ -445,14 +434,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
 
-        // TODO: Create util.
-        // Set default settings.
-        await channelDataManager.setData( {
-            ownerId: result.channelDB.id,
-            key: DATA_CHANNEL_KEY_SETTINGS,
-            default: {
-                dynamicChannelNameTemplate: args.dynamicChannelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-            }
+        await masterChannelSetSettingsData( result.channelDB.id, {
+            dynamicChannelNameTemplate: args.dynamicChannelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
         } );
 
         await guildSetBadwords( guild, args.badwords );

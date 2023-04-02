@@ -25,6 +25,7 @@ export default function Main() {
             "GuildInvites",
             "Guilds",
             "GuildVoiceStates",
+            "DirectMessages",
         ],
         partials: [
             Partials.Channel,

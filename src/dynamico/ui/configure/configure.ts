@@ -16,17 +16,8 @@ export class Configure extends UIComponentBase {
 
     public static groups() {
         return [
-            this.getName(), // TODO: Do the same for all UI components.
+            this.getName(),
         ];
-    }
-
-    public constructor() {
-        super();
-
-        // TODO: This is probably not the best way to do this.
-        // setTimeout( () => {
-        //     guiManager.register( require( "./edit-users-channel-public-embed" ).default );
-        // } );
     }
 
     protected getInternalEmbeds() {

@@ -20,7 +20,7 @@ const VERSION_PHASE_4 = "0.0.1";
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
 
-    private client: Client | null = null;
+    private client: Client | undefined;
 
     public static getInstance() {
         if ( ! DynamicoManager.instance ) {
@@ -36,6 +36,10 @@ export class DynamicoManager extends InitializeBase {
 
     public static getVersion() {
         return VERSION_PHASE_4;
+    }
+
+    public getClient() {
+        return this.client;
     }
 
     public async onReady( client: Client ) {

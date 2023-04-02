@@ -16,7 +16,7 @@ export default class GlobalResponsesEmbed extends UIEmbedTemplate {
         super();
 
         this.vars = {
-            masterChannelNotExist: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
+            masterChannelNotExist: uiUtilsWrapAsTemplate( "masterChannelNotExist" ), // TODO: Not a global message.
             somethingWentWrong: uiUtilsWrapAsTemplate( "somethingWentWrong" ),
 
             titles: uiUtilsWrapAsTemplate( "titles" ),

@@ -103,7 +103,7 @@ export class SetupProcess extends UIWizardBase {
                 } );
         }
 
-        logger.info( this.onFinish, `GuildId: ${ guildId } has been set up successfully` );
+        logger.info( this.onFinish, `GuildId: '${ guildId }' has been set up successfully` );
 
         await guiManager.get( "Dynamico/UI/NotifySetupSuccess" )
             .sendContinues( interaction, {

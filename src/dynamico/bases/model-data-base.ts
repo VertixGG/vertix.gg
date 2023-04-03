@@ -1,9 +1,11 @@
 import {
     IDataCreateArgs,
-    IDataGetArgs, IDataInnerModel,
+    IDataGetArgs,
+    IDataInnerModel,
     IDataModel,
     IDataSelectUniqueArgs,
-    IDataUpdateArgs, IOwnerInnerModel
+    IDataUpdateArgs,
+    IOwnerInnerModel
 } from "@dynamico/interfaces/data";
 
 import { ModelBase } from "@internal/bases";

@@ -9,9 +9,9 @@ import {
 
 import UIElement from "@dynamico/ui/base/ui-element";
 
-import {  E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import { masterChannelManager, guiManager } from "@dynamico/managers";
+import { guiManager, masterChannelManager } from "@dynamico/managers";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 export default class EditPermissionsUsersMenus extends UIElement {
@@ -41,9 +41,9 @@ export default class EditPermissionsUsersMenus extends UIElement {
                 `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
 
             if ( interaction.isRepliable() ) {
-                await guiManager.get( "Dynamico/UI/GlobalResponse")
+                await guiManager.get( "Dynamico/UI/GlobalResponse" )
                     .sendContinues( interaction as SelectMenuInteraction, {
-                        globalResponse: uiUtilsWrapAsTemplate("masterChannelNotExist" )
+                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" )
                     } );
             }
 
@@ -113,7 +113,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
 
             // If user tries to add himself, then we just ignore it.
             const memberId = member?.id;
-            if ( memberId === interaction.user.id || memberId === interaction.client.user.id  ) {
+            if ( memberId === interaction.user.id || memberId === interaction.client.user.id ) {
                 await editPermissionsComponent.sendContinues( interaction, {
                     title: uiUtilsWrapAsTemplate( "nothingChanged" ),
                 } );
@@ -122,7 +122,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
             }
 
             // If user is already in the list, then we just ignore it.
-            if ( channel.permissionOverwrites.cache.has( memberId as string  ) ) {
+            if ( channel.permissionOverwrites.cache.has( memberId as string ) ) {
                 await editPermissionsComponent.sendContinues( interaction, {
                     title: uiUtilsWrapAsTemplate( "nothingChanged" ),
                     username: member?.username,

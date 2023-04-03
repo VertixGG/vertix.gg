@@ -29,6 +29,10 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
     const isChannelTypeSupported = ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type;
 
     if ( isChannelTypeSupported ) {
+        if ( permissionManager.isSelfAdministratorRole( interaction.guild ) ) {
+            return true;
+        }
+
         const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
             requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             missingPermissions = [
@@ -49,7 +53,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
     } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu() ) {
         return permissionManager.validateAdminPermission( interaction, permissionsMiddleware );
     } else {
-        const type = (interaction as Interaction).type || "unknown";
+        const type = ( interaction as Interaction ).type || "unknown";
         globalLogger.warn( permissionsMiddleware,
             `Unsupported interaction type: '{ ${ type } }'`
         );

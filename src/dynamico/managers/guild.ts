@@ -5,12 +5,12 @@ import { Prisma } from ".prisma/client";
 import GuildModel from "../models/guild";
 
 import { masterChannelManager } from "@dynamico/managers/index";
+import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 import GuildDelegate = Prisma.GuildDelegate;
 import RejectPerOperation = Prisma.RejectPerOperation;
-import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
 export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperation>> {
     private static instance: GuildManager;

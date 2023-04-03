@@ -128,9 +128,9 @@ export default class PermissionsManager extends InitializeBase {
 
         // Get user permissions that are defined in the voice channel.
         const channelPermissions = context.permissionOverwrites.cache.get( userId ),
-            permissionField = new PermissionsBitField( channelPermissions?.allow.bitfield );
+            permissionFieldAllow = new PermissionsBitField( channelPermissions?.allow.bitfield );
 
-        permissionField.toArray().forEach( ( permission ) => {
+        permissionFieldAllow.toArray().forEach( ( permission ) => {
             delete resultMissingPermissions[ permission ];
         } );
 
@@ -154,6 +154,16 @@ export default class PermissionsManager extends InitializeBase {
         }
 
         return hasPermission;
+    }
+
+    public isSelfAdministratorRole( guild: Guild ): boolean {
+        const botMember = guild.members.cache.get( guild.client.user.id );
+
+        if ( ! botMember ) {
+            return false;
+        }
+
+        return botMember.permissions.has( PermissionsBitField.Flags.Administrator );
     }
 
     /**

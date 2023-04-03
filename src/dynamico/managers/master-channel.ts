@@ -6,9 +6,11 @@ import {
     Guild,
     Interaction,
     NonThreadGuildBasedChannel,
+    OverwriteType,
     PermissionsBitField,
     SelectMenuInteraction,
     VoiceBasedChannel,
+    VoiceChannel,
 } from "discord.js";
 
 import {
@@ -34,8 +36,8 @@ import {
 
 import {
     categoryManager,
-    channelDataManager,
     channelManager,
+    dynamicoManager,
     guiManager,
     permissionsManager
 } from "@dynamico/managers";
@@ -48,9 +50,9 @@ import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 import { badwordsNormalizeArray } from "@dynamico/utils/badwords";
 import { guildSetBadwords } from "@dynamico/utils/guild";
 
-import Debugger from "@dynamico/utils/debugger";
-
 import { masterChannelGetSettingsData, masterChannelSetSettingsData } from "@dynamico/utils/master-channel";
+
+import Debugger from "@dynamico/utils/debugger";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -87,44 +89,95 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         this.logger.info( this.onJoinMasterCreateChannel,
             `User '${ displayName }' joined master channel '${ channelName }'` );
 
-        const channel = await channelManager.getChannel(
-            args.newState.guild.id,
-            args.newState.channelId || "",
-            true
-        );
-
-        if ( ! channel || ! newState.channel ) {
+        if ( ! newState.channel ) {
             this.logger.error( this.onJoinMasterCreateChannel,
                 `Could not find channel '${ channelName }'` );
 
             return;
         }
 
-        const missingPermissions = [
-            ... permissionsManager.getMissingPermissions(
-                DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
-                newState.channel
-            ),
-            ... permissionsManager.getMissingPermissions(
-                DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
-                newState.channel.guild
-            )
-        ];
+        // Get permissions of master channel.
+        const roleMasterChannelPermissions: bigint[] = [];
 
-        if ( missingPermissions.length ) {
-            this.logger.warn( this.onJoinMasterCreateChannel,
-                `User '${ displayName }' connected to master channel '${ channelName }' but is missing permissions` );
+        if ( newState.channel ) {
+            for ( const permission of newState.channel.permissionOverwrites.cache.values() ) {
+                const bitfield = permission.allow.bitfield;
 
-            const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
-                .getMessage( newState.channel, {
-                    permissions: missingPermissions,
-                    botName: newState.guild.client.user.username,
+                // Push allow or deny permissions.
+                if ( OverwriteType.Role === permission.type ) {
+                    roleMasterChannelPermissions.push( bitfield );
+                }
+            }
+        }
+
+        // Check if bot exist in administrator role.
+        if ( ! permissionsManager.isSelfAdministratorRole( guild ) ) {
+           const missingPermissions = [
+                ... permissionsManager.getMissingPermissions(
+                    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
+                    newState.channel
+                ),
+                ... permissionsManager.getMissingPermissions(
+                    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+                    newState.channel.guild
+                ),
+                ... permissionsManager.getMissingPermissions(
+                    roleMasterChannelPermissions,
+                    newState.channel.guild
+                )
+            ];
+
+            // TODO: Fully refactor, it does add denied channel permissions to the missing permissions, if they not exist in the role permissions.
+            const userOrRoles = newState.channel.permissionOverwrites.cache,
+                missingPermissionsAdditional: any = {};
+
+            for ( const userOrRole of userOrRoles.values() ) {
+                const requiredPermissionsField = new PermissionsBitField( userOrRole.deny.bitfield === 0n ? userOrRole.allow.bitfield : userOrRole.deny.bitfield ),
+                    requirePermissionArray = requiredPermissionsField.toArray();
+
+                requirePermissionArray.forEach( ( permission ) => {
+                    missingPermissionsAdditional[ permission ] = true;
+                } );
+            }
+
+            // Find all roles that has bot member.
+            for ( const role of newState.guild.roles.cache.values() ) {
+                if ( role.members.has( dynamicoManager.getClient()?.user?.id || "" ) ) {
+                    const rolePermissions = role.permissions.toArray();
+
+                    rolePermissions.forEach( ( permission ) => {
+                        delete missingPermissionsAdditional[ permission ];
+                    } );
+                }
+            }
+
+            missingPermissions.push( ... Object.keys( missingPermissionsAdditional ) );
+
+            if ( missingPermissions.length ) {
+                this.logger.warn( this.onJoinMasterCreateChannel,
+                    `User '${ displayName }' connected to master channel '${ channelName }' but is missing permissions` );
+
+                const uniqueMissingPermissions = [ ... new Set( missingPermissions ) ];
+
+                const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+                    .getMessage( newState.channel, {
+                        permissions: uniqueMissingPermissions,
+                        botName: newState.guild.client.user.username,
+                    } );
+
+                // Get guild owner.
+                const guildOwner = await newState.guild.members.cache.get( newState.guild.ownerId );
+
+                // Send DM message to the user with missing permissions.
+                await guildOwner?.send( message ).catch( ( e ) => {
+                    this.logger.error( this.onJoinMasterCreateChannel,
+                        `Failed to send message to guild owner '${ guildOwner.displayName }'` );
+
+                    this.logger.error( this.onJoinMasterCreateChannel, "", e );
                 } );
 
-            // Send DM message to the user with missing permissions.
-            await newState.member?.send( message );
-
-            return;
+                return;
+            }
         }
 
         try {
@@ -205,60 +258,57 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
     }
 
     /**
-     * Function getByDynamicChannel() :: Returns the master channel by the dynamic channel according the interaction.
+     * Function getByDynamicChannel() :: Returns the master channel by the guildID & dynamic channel id.
      */
-    public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
-        this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
+    public async getByDynamicChannelId( guildId: string, dynamicChannelId: string, cache: boolean = false, interaction: Interaction | null = null ) : Promise<VoiceChannel | void> {
+        this.logger.info( this.getByDynamicChannelId, `Guild id: '${ guildId }' dynamic channel id: '${ dynamicChannelId }', cache: '${ cache }'` );
 
-        // If it exists in the cache, then return it.
-        if ( interaction.channelId && cache ) {
-            const cached = this.getCache( `getByDynamicChannel-${ interaction.channelId }` );
+        if ( cache ) {
+            const cached = this.getCache( `getByDynamicChannel-${ dynamicChannelId }` );
 
             if ( cached ) {
                 return cached;
             }
         }
 
-        if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Interaction is not a voice channel, interaction: '${ interaction.id }'` );
-            return null;
-        }
-
-        const dynamicChannel = interaction.channel,
-            dynamicChannelDB = await ChannelModel.getInstance().get( interaction.guildId, dynamicChannel.id );
+        const dynamicChannelDB = await channelManager.getChannel( guildId, dynamicChannelId, true );
 
         if ( ! dynamicChannelDB ) {
             this.logger.error( this.getByDynamicChannel,
-                `Could not find channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                `Could not find dynamic channel in database, guildId: ${ guildId }, channelId: ${ dynamicChannelId }` );
 
-            await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
-                } );
+            if ( interaction ) {
+                await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                    .sendContinues( interaction as SelectMenuInteraction, {
+                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
+                    } );
+            }
 
             return;
         }
 
         if ( ! dynamicChannelDB.ownerChannelId ) {
             this.logger.error( this.getByDynamicChannel,
-                `Could not find master channel in database, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                `Could not find master channel in database, guildId: ${ guildId }, dynamic channelId: ${ dynamicChannelId }` );
 
-            await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
-                } );
+            if ( interaction ) {
+                await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                    .sendContinues( interaction as SelectMenuInteraction, {
+                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
+                    } );
+            }
 
             return;
         }
 
         let masterChannel,
-            masterChannelPromise = interaction.guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
+            guild = await dynamicoManager.getClient()?.guilds.cache.get( guildId ),
+            masterChannelPromise = guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
 
         const promise = new Promise( ( resolve ) => {
             masterChannelPromise?.catch( ( e ) => {
                 this.logger.error( this.getByDynamicChannel,
-                    `Could not fetch master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                    `Could not fetch master channel, guildId: ${ guildId }, dynamic channelId: ${ dynamicChannelId }` );
                 this.logger.error( this.getByDynamicChannel, "", e );
                 resolve( null );
             } ).then( ( result ) => {
@@ -271,20 +321,37 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! masterChannel ) {
             this.logger.warn( this.getByDynamicChannel,
-                `Could not find master channel, guildId: ${ interaction.guildId }, dynamic channelId: ${ dynamicChannel.id }` );
+                `Could not find master channel, guildId: ${ guildId }, dynamic channelId: ${ dynamicChannelId }` );
 
-            await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                .sendContinues( interaction as SelectMenuInteraction, {
-                    globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" )
-                } );
+            if ( interaction ) {
+                await guiManager.get( "Dynamico/UI/GlobalResponse" )
+                    .sendContinues( interaction as SelectMenuInteraction, {
+                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" )
+                    } );
+            }
 
             return;
         }
 
         // Set cache, anyway.
-        this.setCache( `getByDynamicChannel-${ interaction.channelId }`, masterChannel );
+        this.setCache( `getByDynamicChannel-${ dynamicChannelId }`, masterChannel );
 
         return masterChannel;
+    }
+
+    /**
+     * Function getByDynamicChannel() :: Returns the master channel by the dynamic channel according the interaction.
+     */
+    public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
+        this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }'` );
+
+        if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId || ! interaction.channelId ) {
+            this.logger.error( this.getByDynamicChannel,
+                `Interaction is not a voice channel, interaction: '${ interaction.id }'` );
+            return;
+        }
+
+        return this.getByDynamicChannelId( interaction.guildId, interaction.channelId, cache, interaction );
     }
 
     /**
@@ -303,7 +370,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             return;
         }
 
-        const data = await masterChannelGetSettingsData( masterChannel.id, DEFAULT_DATA_MASTER_CHANNEL_SETTINGS );
+        const data = await masterChannelGetSettingsData( masterChannelDB.id, DEFAULT_DATA_MASTER_CHANNEL_SETTINGS );
 
         if ( ! data ) {
             this.logger.error( this.createDynamic,

@@ -8,6 +8,8 @@ import {
     IOwnerInnerModel
 } from "@dynamico/interfaces/data";
 
+import DynamicoManager from "@dynamico/managers/dynamico";
+
 import { ModelBase } from "@internal/bases";
 
 export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataModel extends IDataInnerModel> extends ModelBase implements IDataModel {
@@ -120,6 +122,9 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
             case "string":
                 data.values = [ args.value ];
         }
+
+        // # CRITICAL: This is the version of the data.
+        data.version = DynamicoManager.getVersion();
 
         return data;
     }

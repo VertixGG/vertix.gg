@@ -49,7 +49,7 @@ export default class PrismaInstance extends ObjectBase {
 
         let options = {};
 
-        if ( "prisma" === process.env.debug_mode ) {
+        if ( "prisma" === process.env.env_mode ) {
             options = {
                 log: [
                     { level: "warn", emit: "event" },
@@ -62,7 +62,7 @@ export default class PrismaInstance extends ObjectBase {
 
         this.client = new PrismaClient( options );
 
-        if ( "prisma" === process.env.debug_mode ) {
+        if ( "prisma" === process.env.env_mode ) {
             // @ts-ignore
             this.client.$on( "warn", this.onWarn.bind( this ) ); // @ts-ignore
             this.client.$on( "info", this.onInfo.bind( this ) ); // @ts-ignore

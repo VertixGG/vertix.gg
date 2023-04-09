@@ -71,6 +71,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
 
             message = "Created new";
         } else if ( dbData?.data?.length ) {
+            // If exist, assign.
             data = dbData.data[ 0 ];
 
             message = "Getting";
@@ -133,6 +134,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
             this.logger.debug( this.setData,
                 `Data for ownerId: '${ args.ownerId }', key: '${ args.key }' does not exist, creating...` );
 
+            // `dataSourceModel.createData` calls, `dataSourceModel.getInternalNormalizedData` internally.
             const data = await this.dataSourceModel.createData( {
                 key: args.key,
                 value: args.default,

@@ -203,6 +203,11 @@ export class DynamicoManager extends InitializeBase {
                             }
                         }
 
+                        // Skip if no changes.
+                        if ( ! Object.keys( newObject ).length ) {
+                            continue;
+                        }
+
                         data.version = VERSION_PHASE_4;
 
                         await dataManager.setData( {

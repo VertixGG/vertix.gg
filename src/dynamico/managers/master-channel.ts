@@ -28,7 +28,6 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
-    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
     DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
     DEFAULT_DATA_MASTER_CHANNEL_SETTINGS
@@ -48,7 +47,7 @@ import ChannelModel from "@dynamico/models/channel";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 import { badwordsNormalizeArray } from "@dynamico/utils/badwords";
-import { guildSetBadwords } from "@dynamico/utils/guild";
+import { guildGetSettings, guildSetBadwords } from "@dynamico/utils/guild";
 
 import { masterChannelGetSettingsData, masterChannelSetSettingsData } from "@dynamico/utils/master-channel";
 
@@ -514,13 +513,14 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
      * Function checkLimit() :: Validates if the guild has reached the master channel limit.
      */
     public async checkLimit( interaction: CommandInteraction, guildId: string ) {
-        const hasReachedLimit = await ChannelModel.getInstance().isReachedMasterLimit( guildId );
+        const limit = ( await guildGetSettings( guildId ) ).maxMasterChannels,
+            hasReachedLimit = await ChannelModel.getInstance().isReachedMasterLimit( guildId, limit );
 
         if ( hasReachedLimit ) {
             this.debugger.log( this.checkLimit, `GuildId: ${ guildId } has reached master limit.` );
 
             await guiManager.get( "Dynamico/UI/NotifyMaxMasterChannels" )
-                .sendContinues( interaction, { maxFreeMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } );
+                .sendContinues( interaction, { maxFreeMasterChannels: limit } );
         }
 
         return ! hasReachedLimit;

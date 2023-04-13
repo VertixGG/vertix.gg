@@ -139,8 +139,8 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return total;
     }
 
-    public async isReachedMasterLimit( guildId: string ) {
-        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS;
+    public async isReachedMasterLimit( guildId: string, limit = DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS ) {
+        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
     }
 
     public async isMasterCreate( channelId: string, guildId: string ) {

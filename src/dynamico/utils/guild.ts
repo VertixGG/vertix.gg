@@ -2,7 +2,7 @@ import { Guild } from "discord.js";
 
 import { guildDataManager } from "@dynamico/managers";
 
-import { DATA_CHANNEL_KEY_BADWORDS, DATA_CHANNEL_KEY_BASIC_ROLES } from "@dynamico/constants/data";
+import { DATA_GUILD_KEY_BADWORDS, DATA_GUILD_KEY_BASIC_ROLES, DATA_GUILD_KEY_SETTINGS } from "@dynamico/constants/data";
 
 import {
     GUILD_DEFAULT_BADWORDS,
@@ -15,11 +15,12 @@ import {
 
 import { rolesGetEveryoneRoleMention } from "@dynamico/utils/roles";
 import { badwordsSomeUsed } from "@dynamico/utils/badwords";
+import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
 
 export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => {
     const badwordsDB = await guildDataManager.getData( {
         ownerId: guildId,
-        key: DATA_CHANNEL_KEY_BADWORDS,
+        key: DATA_GUILD_KEY_BADWORDS,
         default: null,
         cache: true,
     }, true );
@@ -44,7 +45,7 @@ export const guildGetBadwordsFormatted = async ( guildId: string ): Promise<stri
 export const guildGetBasicRolesIds = async ( guildId: string ): Promise<string[]> => {
     const basicRolesIdsDB = await guildDataManager.getData( {
         ownerId: guildId,
-        key: DATA_CHANNEL_KEY_BASIC_ROLES,
+        key: DATA_GUILD_KEY_BASIC_ROLES,
         default: null,
         cache: true,
     }, true );
@@ -67,7 +68,7 @@ export const guildSetBadwords = async ( guild: Guild, badwords: string[] | undef
         try {
             await guildDataManager.deleteData( {
                 ownerId: guild.id,
-                key: DATA_CHANNEL_KEY_BADWORDS,
+                key: DATA_GUILD_KEY_BADWORDS,
             }, true );
         } catch ( e ) {
             // Ignore
@@ -78,7 +79,24 @@ export const guildSetBadwords = async ( guild: Guild, badwords: string[] | undef
 
     await guildDataManager.setData( {
         ownerId: guild.id,
-        key: DATA_CHANNEL_KEY_BADWORDS,
+        key: DATA_GUILD_KEY_BADWORDS,
         default: badwords,
     }, true );
+};
+
+export const guildGetSettings = async ( guildId: string ): Promise<{ maxMasterChannels: number }> => {
+    const dataDB = await guildDataManager.getData( {
+        ownerId: guildId,
+        key: DATA_GUILD_KEY_SETTINGS,
+        default: null,
+        cache: false,
+    }, true );
+
+    if ( dataDB?.object ) {
+        return dataDB.object;
+    }
+
+    return {
+        maxMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
+    };
 };

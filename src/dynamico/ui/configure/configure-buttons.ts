@@ -32,10 +32,11 @@ export default class ConfigureButtons extends UIElement {
             args.masterChannels.forEach( () => {
                 ++index;
 
-                const button = this.getButtonBuilder( this.onMasterChannelSelect.bind( this ), index.toString() );
+                const button = this.getButtonBuilder( this.onMasterChannelSelect.bind( this ), index.toString() ),
+                    indexString = args.masterChannels.length > 9 ? index.toString().padStart( 2, "0" ) : index.toString();
 
                 button.setEmoji( "✏️" );
-                button.setLabel( `Master Channel #${ index }` );
+                button.setLabel( `Master Channel #${ indexString }` );
                 button.setStyle( ButtonStyle.Secondary );
 
                 editMasterChannelButtons.push( button );
@@ -51,7 +52,10 @@ export default class ConfigureButtons extends UIElement {
         const result = [];
 
         if ( editMasterChannelButtons.length ) {
-            result.push( editMasterChannelButtons );
+            // Limit buttons to 3 per row.
+            for ( let i = 0; i < editMasterChannelButtons.length; i += 3 ) {
+                result.push( editMasterChannelButtons.slice( i, i + 3 ) );
+            }
         }
 
         result.push( [ modifyBadwords ] );

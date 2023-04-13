@@ -10,8 +10,6 @@ import ChannelManager from "@dynamico/managers/channel";
 
 import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
-
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
@@ -185,35 +183,17 @@ export class DynamicoManager extends InitializeBase {
 
             for ( const data of allData ) {
                 if ( null === data.version ) {
-                    if ( data.object ) {
-                        const newObject: any = {};
-                        for ( const [ key, value ] of Object.entries( data.object ) ) {
-                            const stringValue = value as string;
-                            // Check if value match the old template regex.
-                            if ( /%\{(.+?)}%/g.test( stringValue ) ) {
-                                // Extract the template, remove the prefix and suffix '%{', '%}'.
-                                const template = stringValue.match( /\w+/ )?.[ 0 ] as string,
-                                    newTemplate = uiUtilsWrapAsTemplate( template );
+                    if ( data.object && "settings" === data.key ) {
+                        // Assign new one.
+                        data.object.dynamicChannelNameTemplate = "{user}'s Channel";
 
-                                // Log about the change.
-                                this.logger.info( this.replaceTemplatesPrefixSuffix,
-                                    `id: '${ data.id }' key: '${ key }' Template '${ value }' is replaced with '${ newTemplate }' in '${ dataManager.getName() }' data.` );
-
-                                newObject[ key ] = newTemplate;
-                            }
-                        }
-
-                        // Skip if no changes.
-                        if ( ! Object.keys( newObject ).length ) {
-                            continue;
-                        }
-
+                        // Describe version.
                         data.version = VERSION_PHASE_4;
 
                         await dataManager.setData( {
                             ownerId: data.ownerId,
                             key: data.key,
-                            default: newObject,
+                            default: data.object,
                         } );
                     }
                 }

@@ -24,15 +24,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         this.dataSourceModel = this.getDataSourceModel();
     }
 
-    public abstract removeFromCache( ownerId: string ): void;
-
-    protected abstract getDataSourceModel(): ModelType;
-
     public async getData( args: IDataGetArgs, isOwnerIdSourceId = false ) {
-        if ( isOwnerIdSourceId ) {
-            args = { ... args };
-            args.ownerId = await this.getIdByOwnerSourceId( args.ownerId );
-        }
+        args = await this.normalizeArgs( args, isOwnerIdSourceId );
 
         const { ownerId, key, cache } = args,
             cacheKey = `${ ownerId }-${ key }`;
@@ -50,7 +43,9 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         }
 
         // Get from database.
-        const dbData = await this.dataSourceModel.getData( args );
+        const dbData = await this.dataSourceModel.getData( args ).catch( () => {
+        } );
+
         if ( ! dbData ) {
             this.logger.debug( this.getData,
                 `Could not find data for ownerId: '${ args.ownerId }' with key: '${ args.key }'`
@@ -93,10 +88,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
     }
 
     public async setData( args: IDataUpdateArgs, isOwnerIdSourceId = false ) {
-        if ( isOwnerIdSourceId ) {
-            args = { ... args };
-            args.ownerId = await this.getIdByOwnerSourceId( args.ownerId );
-        }
+        args = await this.normalizeArgs( args, isOwnerIdSourceId );
 
         this.logger.info( this.setData,
             `Setting data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
@@ -163,10 +155,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
     }
 
     public async deleteData( args: IDataSelectUniqueArgs, isOwnerIdSourceId = false ) {
-        if ( isOwnerIdSourceId ) {
-            args = { ... args };
-            args.ownerId = await this.getIdByOwnerSourceId( args.ownerId );
-        }
+        args = await this.normalizeArgs( args, isOwnerIdSourceId );
 
         this.logger.info( this.deleteData,
             `Deleting data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
@@ -180,6 +169,22 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         this.logger.info( this.getAllData, "Getting all data" );
 
         return await this.dataSourceModel.getAllData();
+    }
+
+    public abstract removeFromCache( ownerId: string ): void;
+
+    /**
+     * Function getDataSourceModel() :: is used to determine the data source model since the current class is abstract/wrapper.
+     */
+    protected abstract getDataSourceModel(): ModelType;
+
+    private async normalizeArgs( args: any, isOwnerIdSourceId: boolean ) {
+        if ( isOwnerIdSourceId ) {
+            args = { ... args };
+            args.ownerId = await this.getIdByOwnerSourceId( args.ownerId );
+        }
+
+        return args;
     }
 
     private async getIdByOwnerSourceId( ownerId: string ) {

@@ -15,17 +15,18 @@ enum E_INTERNAL_CHANNEL_TYPES {
 }
 
 model Guild {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  guildId   String      @unique
-  name      String
+  guildId           String      @unique
+  name              String
   // ---
-  isInGuild Boolean
+  isInGuild         Boolean
   // ---
-  data      GuildData[] @relation("GuildData")
+  data              GuildData[] @relation("GuildData")
   // ---
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  updatedAtInternal DateTime?
 }
 
 model Category {

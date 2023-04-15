@@ -176,42 +176,25 @@ export class DynamicoManager extends InitializeBase {
 
         for ( const guild of guilds ) {
             // Check if guild is active.
-            const guildCache = this.client?.guilds.cache.get( guild.guildId );
+            const guildCache = this.client?.guilds.cache.get( guild.guildId ),
+                name = guildCache?.name || guild.name,
+                isInGuild = !! guildCache;
 
-            if ( ! guildCache ) {
-                // Set `isInGuild` to false.
-                await prisma.guild.update( {
-                    where: {
-                        id: guild.id
-                    }, data: {
-                        isInGuild: false,
-                        // Do not update `updatedAt` field.
-                        updatedAt: guild.updatedAt,
-                    },
-                } );
-
-                this.logger.info( this.updateGuilds,
-                    `Guild id: '${ guild.guildId }' is not active, set 'isInGuild' to false.` );
-
-                continue;
-            }
-
-            const name = guildCache.name;
-
-            // Update name.
             await prisma.guild.update( {
                 where: {
                     id: guild.id
                 },
                 data: {
                     name,
+                    isInGuild,
                     // Do not update `updatedAt` field.
                     updatedAt: guild.updatedAt,
+                    updatedAtInternal: new Date(),
                 },
             } );
 
             this.logger.info( this.updateGuilds,
-                `Guild id: '${ guild.guildId }' is active, update name: '${ name }'` );
+                `Guild id: '${ guild.guildId }' is updated, name: '${ name }', isInGuild: '${ isInGuild }'.` );
         }
     }
 

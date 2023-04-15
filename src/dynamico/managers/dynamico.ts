@@ -13,6 +13,7 @@ import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
+// https://github.com/CoffeBuffet/dynamico/pull/44/
 const VERSION_PHASE_4 = "0.0.1";
 
 export class DynamicoManager extends InitializeBase {

@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message } from "discord.js";
+import { EmbedBuilder, Message, TextBasedChannel } from "discord.js";
 
 import { dynamicoManager } from "@dynamico/managers";
 
@@ -49,28 +49,48 @@ export class DMManager extends InitializeBase {
             .filter( ( entry ) => entry.length );
 
         switch ( command[ 0 ] ) {
-            case "!welcome": {
-                if ( command.length < 2 || command.length > 2 ) {
-                    await message.reply( "Syntax: !welcome #channel_id <message_url>" );
+            case "!embed": {
+                if ( command.length < 2 || command.length > 3 || ! command[ 1 ]?.length || ! command[ 2 ]?.length ) {
+                    return await message.reply( "Syntax: !embed <#channel_id> <https://message_url.com>" );
                 }
 
                 const channel = await dynamicoManager.getClient()?.channels.fetch( command[ 1 ] );
 
-                if ( ! channel ) {
-                    await message.reply( "Channel is invalid!" );
-                }
-
-                const content = await fetch( command[ 2 ] ).then( ( response ) => response.text() );
-
-                if ( ! content ) {
-                    await message.reply( "Message is invalid!" );
-                }
-
                 if ( channel && channel.isTextBased() ) {
-                    await channel.send( content );
-                    await message.reply( "Message sent!" );
+                    try {
+                        const request = fetch( command[ 2 ] ),
+                            response = await request.then( async ( _response ) => {
+                                if ( ! _response.ok ) {
+                                    throw _response;
+                                }
+
+                                return _response.json();
+                            } );
+
+                        const embedBuilder = new EmbedBuilder();
+
+                        if ( response.title ) {
+                            embedBuilder.setTitle( response.title );
+                        }
+
+                        if ( response.description ) {
+                            embedBuilder.setDescription( response.description );
+                        }
+
+                        if ( response.color ) {
+                            embedBuilder.setColor( parseInt( response.color ) );
+                        }
+
+                        ( channel as TextBasedChannel ).send( {
+                            embeds: [ embedBuilder ]
+                        } );
+
+                        await message.reply( "Message sent!" );
+                    } catch ( e: any ) {
+                        await message.reply( e.message as string );
+                    }
                 } else {
-                    await message.reply( "Channel is invalid!" );
+                    await message.reply( "Channel is wrong" );
                 }
             }
         }

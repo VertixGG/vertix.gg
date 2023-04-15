@@ -73,6 +73,14 @@ export class DMManager extends InitializeBase {
                             embedBuilder.setTitle( response.title );
                         }
 
+                        if ( response.thumbnail ) {
+                            embedBuilder.setThumbnail( response.thumbnail );
+                        }
+
+                        if ( response.image ) {
+                            embedBuilder.setImage( response.image );
+                        }
+
                         if ( response.description ) {
                             embedBuilder.setDescription( response.description );
                         }

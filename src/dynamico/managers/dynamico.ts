@@ -61,6 +61,8 @@ export class DynamicoManager extends InitializeBase {
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
 
+        await this.updateGuilds();
+
         await this.ensureBackwardCompatibility();
 
         const username = client.user.username,
@@ -164,6 +166,52 @@ export class DynamicoManager extends InitializeBase {
 
             this.logger.info( this.removeEmptyCategories,
                 `Category '${ category.categoryId }' is deleted from db.` );
+        }
+    }
+
+    public async updateGuilds() {
+        // Get all guilds.
+        const prisma = await PrismaInstance.getClient(),
+            guilds = await prisma.guild.findMany();
+
+        for ( const guild of guilds ) {
+            // Check if guild is active.
+            const guildCache = this.client?.guilds.cache.get( guild.guildId );
+
+            if ( ! guildCache ) {
+                // Set `isInGuild` to false.
+                await prisma.guild.update( {
+                    where: {
+                        id: guild.id
+                    }, data: {
+                        isInGuild: false,
+                        // Do not update `updatedAt` field.
+                        updatedAt: guild.updatedAt,
+                    },
+                } );
+
+                this.logger.info( this.updateGuilds,
+                    `Guild id: '${ guild.guildId }' is not active, set 'isInGuild' to false.` );
+
+                continue;
+            }
+
+            const name = guildCache.name;
+
+            // Update name.
+            await prisma.guild.update( {
+                where: {
+                    id: guild.id
+                },
+                data: {
+                    name,
+                    // Do not update `updatedAt` field.
+                    updatedAt: guild.updatedAt,
+                },
+            } );
+
+            this.logger.info( this.updateGuilds,
+                `Guild id: '${ guild.guildId }' is active, update name: '${ name }'` );
         }
     }
 

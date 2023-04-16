@@ -1,13 +1,19 @@
 import {
+    ButtonBuilder,
     ButtonInteraction,
     CommandInteraction,
     DMChannel,
     Interaction,
+    ModalBuilder,
     ModalSubmitInteraction,
     NonThreadGuildBasedChannel,
+    RoleSelectMenuBuilder,
     RoleSelectMenuInteraction,
     SelectMenuInteraction,
+    StringSelectMenuBuilder,
     StringSelectMenuInteraction,
+    TextInputBuilder,
+    UserSelectMenuBuilder,
     UserSelectMenuInteraction,
 } from "discord.js";
 
@@ -23,12 +29,12 @@ export enum E_UI_TYPES {
     DYNAMIC,
 }
 
-export interface UIGroupAttitude {
+export interface IUIGroupAttitude {
     belongsTo: string[];
     groups: string[];
 }
 
-export type BaseInteractionTypes = Interaction | CommandInteraction | DMChannel | NonThreadGuildBasedChannel;
+export type UIBaseInteractionTypes = Interaction | CommandInteraction | DMChannel | NonThreadGuildBasedChannel;
 
 export type UIInteractionTypes =
     | ButtonInteraction
@@ -38,6 +44,8 @@ export type UIInteractionTypes =
     | StringSelectMenuInteraction
     | ModalSubmitInteraction
 
-export type ContinuesInteractionTypes = Interaction | CommandInteraction | UIInteractionTypes;
+export type UICustomIdContextTypes = ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | RoleSelectMenuBuilder | TextInputBuilder | ModalBuilder;
+
+export type UIContinuesInteractionTypes = Interaction | CommandInteraction | UIInteractionTypes;
 
 // TODO: Check if `interface` may help with mixins.

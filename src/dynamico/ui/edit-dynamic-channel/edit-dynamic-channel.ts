@@ -5,7 +5,7 @@ import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 import EditMeta from "@dynamico/ui/edit-dynamic-channel/buttons/edit-meta";
 import EditPermissions from "@dynamico/ui/edit-dynamic-channel/buttons/edit-permissions";
 
-import { BaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import EditDynamicChannelEmbed from "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel-embed";
 
@@ -28,7 +28,7 @@ export class EditDynamicChannel extends UIComponentBase {
         } );
     }
 
-    protected async getEmbedTemplates( interaction?: BaseInteractionTypes ) {
+    protected async getEmbedTemplates( interaction?: UIBaseInteractionTypes ) {
         return [ new EditDynamicChannelEmbed ];
     }
 

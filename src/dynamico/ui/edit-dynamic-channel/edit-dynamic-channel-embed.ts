@@ -1,6 +1,6 @@
 import { PermissionsBitField, VoiceChannel, } from "discord.js";
 
-import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes } from "@dynamico/interfaces/ui";
 
 import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
@@ -57,7 +57,7 @@ export class EditDynamicChannelEmbed extends UIEmbedTemplate {
         };
     }
 
-    protected getTemplateLogic( interaction: BaseInteractionTypes ) {
+    protected getTemplateLogic( interaction: UIBaseInteractionTypes ) {
         interaction = interaction as VoiceChannel;
 
         const everyoneRole = interaction.permissionOverwrites.cache.get( interaction.guild.roles.everyone.id ),

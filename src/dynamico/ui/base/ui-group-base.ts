@@ -10,7 +10,7 @@ import UIBase from "@dynamico/ui/base/ui-base";
 
 import { guiManager } from "@dynamico/managers/gui";
 
-import { ContinuesInteractionTypes, UIGroupAttitude } from "@dynamico/interfaces/ui";
+import { UIContinuesInteractionTypes, IUIGroupAttitude } from "@dynamico/interfaces/ui";
 
 export class UIGroupBase extends UIBase {
     private static specificFlowInteraction: Map<string, any> = new Map();
@@ -27,7 +27,7 @@ export class UIGroupBase extends UIBase {
         return [];
     }
 
-    protected getExtendedAttitude( customId: string ): null | UIGroupAttitude {
+    protected getExtendedAttitude( customId: string ): null | IUIGroupAttitude {
         return null;
     }
 
@@ -35,7 +35,7 @@ export class UIGroupBase extends UIBase {
      * Function sendContinues() :: a method that sends a continues interaction message to the user.
      * It takes an interaction object and additional arguments as input and returns a promise.
      */
-    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse | void> {
+    public async sendContinues( interaction: UIContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse | void> {
         if ( ! interaction.channel ) {
             return guiManager.sendContinuesMessage( interaction, this, args );
         }

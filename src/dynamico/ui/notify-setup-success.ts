@@ -1,7 +1,7 @@
 import { MessageComponentInteraction } from "discord.js";
 
 import { UIEmbed } from "@dynamico/ui/base/ui-embed";
-import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes } from "@dynamico/interfaces/ui";
 import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
 
 import {
@@ -84,7 +84,7 @@ export class NotifySetupSuccess extends UIEmbed {
         };
     }
 
-    protected async getFieldsLogic( interaction: BaseInteractionTypes, args: any ) {
+    protected async getFieldsLogic( interaction: UIBaseInteractionTypes, args: any ) {
         const interactionAs = ( interaction as MessageComponentInteraction ),
             badwords = await guildGetBadwordsFormatted( interactionAs.guildId?.toString() ?? "" );
 

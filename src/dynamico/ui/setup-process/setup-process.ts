@@ -5,7 +5,7 @@ import UIWizardBase from "@dynamico/ui/base/ui-wizard-base";
 import SetMasterConfig from "@dynamico/ui/set-master-config/set-master-config";
 import SetBadwordsConfig from "@dynamico/ui/set-badwords-config/set-badwords-config";
 
-import { ContinuesInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { UIContinuesInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import {
     guiManager,
@@ -55,7 +55,7 @@ export class SetupProcess extends UIWizardBase {
         ];
     }
 
-    protected async onFinish( interaction: ContinuesInteractionTypes ) {
+    protected async onFinish( interaction: UIContinuesInteractionTypes ) {
         const logger = this.getLogger(),
             guildId = interaction.guildId as string;
 
@@ -72,7 +72,7 @@ export class SetupProcess extends UIWizardBase {
             );
         }
 
-        const args = this.getSharedArgs( interaction.user.id );
+        const args = this.getSharedArgs( this.getId( interaction ) );
 
         logger.debug( this.onFinish, "", args );
 

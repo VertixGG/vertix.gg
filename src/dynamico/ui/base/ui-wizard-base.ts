@@ -1,10 +1,10 @@
-import { Interaction } from "discord.js";
+import {  Interaction } from "discord.js";
 
 import {
-    BaseInteractionTypes,
-    ContinuesInteractionTypes,
-    DYNAMICO_UI_WIZARD,
+    UIBaseInteractionTypes,
+    UIContinuesInteractionTypes,
     E_UI_TYPES,
+    DYNAMICO_UI_WIZARD,
 } from "@dynamico/interfaces/ui";
 
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
@@ -12,7 +12,8 @@ import Buttons from "@dynamico/ui/base/ui-wizard/buttons";
 
 import Logger from "@internal/modules/logger";
 
-const MINIMUM_COMPONENTS = 2;
+const UI_WIZARD_MINIMUM_COMPONENTS = 2,
+    UI_WIZARD_INITIAL_DEFINITION = "initial";
 
 /**
  * A base class for creating wizard-like UI components. This class is designed to be extended
@@ -22,7 +23,7 @@ const MINIMUM_COMPONENTS = 2;
 export abstract class UIWizardBase extends UIComponentBase {
     protected static logger = new Logger( this );
 
-    protected currentInteractions: { [ interactionId: string ]: ContinuesInteractionTypes } = {};
+    protected currentInteractions: { [ interactionId: string ]: UIContinuesInteractionTypes } = {};
 
     /**
      * An object that contains data shared between steps of the wizard. This data can be used
@@ -47,8 +48,8 @@ export abstract class UIWizardBase extends UIComponentBase {
     public constructor() {
         super();
 
-        if ( this.getStepComponents().length < MINIMUM_COMPONENTS ) {
-            throw new Error( `Wizard must have at least '${ MINIMUM_COMPONENTS }' components` );
+        if ( this.getStepComponents().length < UI_WIZARD_MINIMUM_COMPONENTS ) {
+            throw new Error( `Wizard must have at least '${ UI_WIZARD_MINIMUM_COMPONENTS }' components` );
         }
     }
 
@@ -81,12 +82,16 @@ export abstract class UIWizardBase extends UIComponentBase {
         return ( this.constructor as typeof UIWizardBase ).logger;
     }
 
-    public async getMessage( interaction: BaseInteractionTypes, args: any = {} ) {
-        const userId = this.getId( interaction );
+    /**
+     * Function getMessage() :: Responsible for return full message object that will be sent to the user.
+     */
+    public async getMessage( interaction: UIBaseInteractionTypes, args: any = {} ) {
+        const isInitial = UI_WIZARD_INITIAL_DEFINITION === args.step,
+            id = this.getId( interaction );
 
-        let step = this.getStep( userId );
+        let step = this.getStep( id );
 
-        if ( "initial" === args.step ) {
+        if ( isInitial ) {
             delete args.step;
 
             args._step = 0;
@@ -103,33 +108,49 @@ export abstract class UIWizardBase extends UIComponentBase {
             _step: step,
             _end: this.getStepComponents().length - 1,
 
-            ... this.getSharedArgs( userId ?? "" ),
+            ... this.getSharedArgs( id ),
             ... args,
         };
 
         this.setStep( interaction, step );
 
-        this.setSharedArgs( userId, ensureArgs );
+        this.setSharedArgs( id, ensureArgs );
 
         return super.getMessage( interaction, ensureArgs );
     }
 
-    public async getElements( interaction?: BaseInteractionTypes, args?: any ): Promise<any[]> {
-        const userId = this.getId( interaction );
+    /**
+     * Function getElements() :: Responsible for return full elements object that will be sent to the user.
+     */
+    public async getElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<any[]> {
+        const id = this.getId( interaction ),
+            step = this.getStep( id ),
+            components = this.staticComponentsInstances[ step ];
 
-        return [
-            ... await this.staticComponentsInstances[ this.getStep( userId ) ].getElements( interaction, args ),
+        this.getLogger().debug( this.getElements,
+            `Get elements for step: '${ step }' interaction '${ id }'` );
+
+        const elements = [
+            ... await components.getElements( interaction, args ),
             ... await this.getDynamicElements( interaction, args ),
         ];
+
+        this.getLogger().debug( this.getElements,
+            `Elements for step: '${ step }' interaction '${ id }'`, elements );
+
+        return elements;
     }
 
-    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ) {
+    /**
+     * Function getEmbeds() :: Responsible for return full embeds object that will be sent to the user.
+     */
+    public async getEmbeds( interaction?: UIBaseInteractionTypes | null, args?: any ) {
         if ( ! interaction ) {
             return super.getEmbeds( interaction, args );
         }
 
-        const userId = this.getId( interaction ),
-            embeds = await this.staticComponentsInstances[ this.getStep( userId ) ]
+        const id = this.getId( interaction ),
+            embeds = await this.staticComponentsInstances[ this.getStep( id ) ]
                 .getEmbeds( interaction, args );
 
         if ( embeds?.length ) {
@@ -139,9 +160,28 @@ export abstract class UIWizardBase extends UIComponentBase {
         return [];
     }
 
+    // TODO: Try private.
+    public getId( interaction: undefined | UIBaseInteractionTypes, isInitial = false ) {
+        if ( typeof interaction !== "object" ) {
+            throw new Error( "Interaction is not defined" );
+        }
+
+        // TODO was `user.id`.
+        const id = ( interaction as Interaction ).id;
+
+        if ( ! id ) {
+            throw new Error( "Interaction is not defined" );
+        }
+
+        return id;
+    }
+
+    /**
+     * Function getStepComponents() :: Returns an array of UI components that will be used as steps.
+     */
     protected abstract getStepComponents(): typeof UIComponentBase[];
 
-    protected abstract onFinish( interaction: ContinuesInteractionTypes ): Promise<any>;
+    protected abstract onFinish( interaction: UIContinuesInteractionTypes ): Promise<any>;
 
     protected getInternalComponents() {
         return this.getStepComponents();
@@ -153,10 +193,12 @@ export abstract class UIWizardBase extends UIComponentBase {
         ];
     }
 
-    protected async pulse( interaction: ContinuesInteractionTypes, args: any ): Promise<void> {
-        this.setSharedArgs( interaction.user.id, args );
+    protected async pulse( interaction: UIContinuesInteractionTypes, args: any ): Promise<void> {
+        const id = this.getId( interaction );
 
-        let step = this.getStep( interaction.user.id );
+        this.setSharedArgs( id, args );
+
+        let step = this.getStep( id );
 
         if ( args.action === "next" ) {
             step++;
@@ -185,48 +227,42 @@ export abstract class UIWizardBase extends UIComponentBase {
                 this.sharedArgs[ interactionId ] = {};
             }
 
-            this.sharedArgs[ interactionId ][ this.getStepComponents()[ this.getStep( interactionId ) ].getName() ] = args;
+            const step = this.getStep( interactionId ),
+                component = this.getStepComponents()[ step ],
+                componentName = component?.getName();
+
+            this.getLogger().debug( this.setSharedArgs,
+                `Set shared args for step: '${ step }' interaction '${ interactionId }' and component '${ componentName }'`
+            );
+
+            this.sharedArgs[ interactionId ][ componentName ] = args;
         }
     }
 
-    private setStep( interaction: BaseInteractionTypes, step: number ) {
-        const userId = this.getId( interaction );
+    private setStep( interaction: UIBaseInteractionTypes, step: number ) {
+        const id = this.getId( interaction );
 
         if ( -1 === step ) {
-            delete this.currentInteractions[ userId ];
-            delete this.sharedSteps[ userId ];
-            delete this.sharedArgs[ userId ];
+            delete this.currentInteractions[ id ];
+            delete this.sharedSteps[ id ];
+            delete this.sharedArgs[ id ];
 
             return;
         }
 
         // In case of new interaction. ensure that previous interaction is deleted.
-        if ( 0 === step && "object" === typeof this.currentInteractions[ userId ] ) {
+        if ( 0 === step && "object" === typeof this.currentInteractions[ id ] ) {
             this.setStep( interaction, -1 );
 
             return;
         }
 
-        this.currentInteractions[ userId ] = interaction as Interaction;
-        this.sharedSteps[ userId ] = step;
+        this.currentInteractions[ id ] = interaction as Interaction;
+        this.sharedSteps[ id ] = step;
     }
 
     private getStep( interactionId: string ) {
         return this.sharedSteps [ interactionId ] ?? 0;
-    }
-
-    private getId( interaction: undefined | BaseInteractionTypes ) {
-        if ( typeof interaction !== "object" ) {
-            throw new Error( "Interaction is not defined" );
-        }
-
-        const userId = ( interaction as Interaction ).user.id;
-
-        if ( ! userId ) {
-            throw new Error( "Interaction is not defined" );
-        }
-
-        return userId;
     }
 }
 

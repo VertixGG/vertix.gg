@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 
-import { BaseInteractionTypes, DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, DYNAMICO_UI_TEMPLATE } from "@dynamico/interfaces/ui";
 
 import { UI_TEMPLATE_WRAPPER_END, UI_TEMPLATE_WRAPPER_START } from "@dynamico/ui/base/ui-utils";
 
@@ -13,7 +13,7 @@ export abstract class UIEmbedTemplate extends ObjectBase {
         return DYNAMICO_UI_TEMPLATE;
     }
 
-    public async compose( interaction?: BaseInteractionTypes | null, args?: any ): Promise<any> {
+    public async compose( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<any> {
         const template = this.getTemplateInputs(),
             logic = await this.getTemplateLogic( interaction, args ),
             logicParsed = { ... logic, ... this.extractVariables( logic, this.getTemplateOptions() ) };
@@ -21,7 +21,7 @@ export abstract class UIEmbedTemplate extends ObjectBase {
         return this.compile( template, logicParsed );
     }
 
-    public async build( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder> {
+    public async build( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder> {
         const template = await this.compose( interaction, args ),
             embed = new EmbedBuilder();
 
@@ -61,7 +61,7 @@ export abstract class UIEmbedTemplate extends ObjectBase {
     /**
      * Function getTemplateLogic() :: The fields should be fully identical to the options.
      */
-    protected abstract getTemplateLogic( interaction?: BaseInteractionTypes | null, args?: any ): any;
+    protected abstract getTemplateLogic( interaction?: UIBaseInteractionTypes | null, args?: any ): any;
 
     private extractVariables( templateLogic: any, templateOptions: any ) {
         const variables = templateOptions,

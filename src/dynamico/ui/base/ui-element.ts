@@ -19,7 +19,7 @@ import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import { guiManager } from "@dynamico/managers";
 
-import { BaseInteractionTypes, DYNAMICO_UI_ELEMENT } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, DYNAMICO_UI_ELEMENT, UICustomIdContextTypes } from "@dynamico/interfaces/ui";
 
 import Logger from "@internal/modules/logger";
 
@@ -28,7 +28,7 @@ import { ForceMethodImplementation } from "@internal/errors";
 export default class UIElement extends UIGroupBase {
     protected static logger: Logger = new Logger( this );
 
-    protected interaction?: BaseInteractionTypes;
+    protected interaction?: UIBaseInteractionTypes;
 
     protected parent?: UIElement;
 
@@ -38,7 +38,7 @@ export default class UIElement extends UIGroupBase {
         return DYNAMICO_UI_ELEMENT;
     }
 
-    public constructor( interaction?: BaseInteractionTypes, args? : any  ) {
+    public constructor( interaction?: UIBaseInteractionTypes, args? : any  ) {
         super( interaction, args );
 
         if ( this.getName() === UIElement.getName() ) {
@@ -54,7 +54,7 @@ export default class UIElement extends UIGroupBase {
         }
     }
 
-    public async build( interaction?: BaseInteractionTypes, args?: any ) {
+    public async build( interaction?: UIBaseInteractionTypes, args?: any ) {
         UIElement.logger.debug( this.build, `Building UIElement: '${ this.getName() }'` );
 
         const builders = await this.getBuilders( interaction, args ),
@@ -137,17 +137,21 @@ export default class UIElement extends UIGroupBase {
         return modal;
     }
 
-    protected async getBuilders( interaction?: BaseInteractionTypes, args?: any ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
+    protected async getBuilders( interaction?: UIBaseInteractionTypes, args?: any ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 
-    protected load( interaction?: BaseInteractionTypes ) {
+    protected load( interaction?: UIBaseInteractionTypes ) {
         return this.build( interaction, this.args );
     }
 
-    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | RoleSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function, extraData = "" ) {
+    protected setCustomId( context: UICustomIdContextTypes, unique: string ) {
+        context.setCustomId( unique );
+    }
+
+    private setCallback( context: UICustomIdContextTypes, callback: Function, extraData = "" ) {
         const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" ) + ( extraData ? `>${ extraData }` : "" );
 
-        context.setCustomId( unique );
+        this.setCustomId( context, unique );
     }
 }

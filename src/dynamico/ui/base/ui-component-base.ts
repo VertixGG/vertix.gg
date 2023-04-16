@@ -4,7 +4,7 @@ import {
     EmbedBuilder,
 } from "discord.js";
 
-import { BaseInteractionTypes, E_UI_TYPES, UIGroupAttitude, } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, E_UI_TYPES, IUIGroupAttitude, } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
 import UIGroupBase from "@dynamico/ui/base/ui-group-base";
@@ -33,7 +33,7 @@ export class UIComponentBase extends UIGroupBase {
      * Function constructor() :: constructor function for the UIComponentBase class.
      * It initializes the components..
      */
-    public constructor( interaction?: BaseInteractionTypes | null, args?: any ) {
+    public constructor( interaction?: UIBaseInteractionTypes | null, args?: any ) {
         super();
 
         if ( args?._parent ) {
@@ -44,11 +44,11 @@ export class UIComponentBase extends UIGroupBase {
         this.staticElementsInstances = [];
     }
 
-    public async getDynamicElements( interaction?: BaseInteractionTypes, args?: any ): Promise<any[]> {
+    public async getDynamicElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<any[]> {
         return this.buildDynamicElements( interaction, args );
     }
 
-    public async getElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+    public async getElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
         const elements: UIElement[] = [];
 
         elements.push( ... await this.buildComponentElements( interaction, args ) );
@@ -57,7 +57,7 @@ export class UIComponentBase extends UIGroupBase {
         return elements;
     }
 
-    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder[]> {
+    public async getEmbeds( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder[]> {
         let embeds = [],
             staticThis = this.getStaticThis(),
             dynamicEmbeds = staticThis.dynamicEmbeds,
@@ -94,7 +94,7 @@ export class UIComponentBase extends UIGroupBase {
         ];
     }
 
-    public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
+    public async getMessage( interaction: UIBaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
         const builtComponents = await this.getActionRows( interaction, args ),
             embeds = await this.getEmbeds( interaction, args ),
             result: BaseMessageOptions = {};
@@ -114,7 +114,7 @@ export class UIComponentBase extends UIGroupBase {
         return ( this.constructor as typeof UIComponentBase );
     }
 
-    protected getExtendedAttitude( customId: string ): UIGroupAttitude | null {
+    protected getExtendedAttitude( customId: string ): IUIGroupAttitude | null {
         // Try to find a attitude via customId.
         const namespace = customId.split( ":" )?.[ 0 ],
             // Try to find the namespace in internal components.
@@ -176,7 +176,7 @@ export class UIComponentBase extends UIGroupBase {
     /**
      * Function pulse() :: a method that is being called from within the inner components.
      */
-    protected async pulse?( interaction: BaseInteractionTypes, args: any ) {
+    protected async pulse?( interaction: UIBaseInteractionTypes, args: any ) {
         // If there is parent pulse method, call it.
         if ( this.parent?.pulse ) {
             await this.parent.pulse( interaction, args );
@@ -249,7 +249,7 @@ export class UIComponentBase extends UIGroupBase {
         }
     }
 
-    private async buildElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+    private async buildElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
         const elements = [];
 
         // Static elements.
@@ -263,7 +263,7 @@ export class UIComponentBase extends UIGroupBase {
         return elements;
     }
 
-    private async buildDynamicElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+    private async buildDynamicElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
         const elements = [],
             staticThis = this.getStaticThis(),
             dynamicElements = staticThis.dynamicElements;
@@ -276,7 +276,7 @@ export class UIComponentBase extends UIGroupBase {
         return elements;
     }
 
-    private async buildComponentElements( interaction?: BaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+    private async buildComponentElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
         const elements: any[] = [];
 
         await Promise.all( this.staticComponentsInstances?.map( async ( component ) => {
@@ -290,7 +290,7 @@ export class UIComponentBase extends UIGroupBase {
         return elements;
     }
 
-    private async createDynamicComponents( interaction?: BaseInteractionTypes, args?: any ): Promise<UIComponentBase[]> {
+    private async createDynamicComponents( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIComponentBase[]> {
         const result: any[] = [],
             staticThis = this.getStaticThis(),
             dynamicComponents = staticThis.dynamicComponents;
@@ -308,7 +308,7 @@ export class UIComponentBase extends UIGroupBase {
         return result;
     }
 
-    private async createElements( elements: typeof UIElement[], interaction?: BaseInteractionTypes, args: any = {} ): Promise<UIElement[]> {
+    private async createElements( elements: typeof UIElement[], interaction?: UIBaseInteractionTypes, args: any = {} ): Promise<UIElement[]> {
         const result: any = [];
 
         for ( const component of elements ) {
@@ -324,7 +324,7 @@ export class UIComponentBase extends UIGroupBase {
         return result;
     }
 
-    private async getActionRows( interaction?: BaseInteractionTypes, args?: any ): Promise<ActionRowBuilder<any>[]> {
+    private async getActionRows( interaction?: UIBaseInteractionTypes, args?: any ): Promise<ActionRowBuilder<any>[]> {
         const elements = [];
 
         elements.push( ... await this.getElements( interaction, args ) );

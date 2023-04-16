@@ -9,8 +9,8 @@ import {
 } from "discord.js";
 
 import {
-    BaseInteractionTypes,
-    ContinuesInteractionTypes,
+    UIBaseInteractionTypes,
+    UIContinuesInteractionTypes,
     DYNAMICO_UI_BASE,
     DYNAMICO_UI_ELEMENT,
     E_UI_TYPES,
@@ -39,7 +39,7 @@ export class UIBase extends ObjectBase {
         throw new ForceMethodImplementation( this, this.name );
     }
 
-    public constructor( interaction?: BaseInteractionTypes | null, args?: any ) {
+    public constructor( interaction?: UIBaseInteractionTypes | null, args?: any ) {
         super( args );
 
         if ( this.getName() === DYNAMICO_UI_ELEMENT ) {
@@ -84,7 +84,7 @@ export class UIBase extends ObjectBase {
      * Function sendContinues() :: a method that sends a continues interaction message to the user.
      * It takes an interaction object and additional arguments as input and returns a promise.
      */
-    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse|void> {
+    public async sendContinues( interaction: UIContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse|void> {
         return guiManager.sendContinuesMessage( interaction, this, args );
     }
 
@@ -106,7 +106,7 @@ export class UIBase extends ObjectBase {
         await user.send( message );
     }
 
-    public async getMessage( interaction: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
+    public async getMessage( interaction: UIBaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
         throw new ForceMethodImplementation( this, this.getMessage.name );
     }
 
@@ -122,7 +122,7 @@ export class UIBase extends ObjectBase {
     /**
      * The method should wait for the entity(s) to be constructed and initialized.
      */
-    protected load( interaction?: BaseInteractionTypes | null ): Promise<void> {
+    protected load( interaction?: UIBaseInteractionTypes | null ): Promise<void> {
         throw new ForceMethodImplementation( this, this.load.name );
     }
 }

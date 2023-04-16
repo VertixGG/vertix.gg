@@ -91,9 +91,13 @@ export class DMManager extends InitializeBase {
 
                         ( channel as TextBasedChannel ).send( {
                             embeds: [ embedBuilder ]
+                        } ).catch( async () => {
+                            await message.reply( "Message was not sent!" );
+                        } )
+                        .then( async () => {
+                            await message.reply( "Message sent!" );
                         } );
 
-                        await message.reply( "Message sent!" );
                     } catch ( e: any ) {
                         await message.reply( e.message as string );
                     }

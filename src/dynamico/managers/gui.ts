@@ -5,7 +5,6 @@ import {
     APIMessageActionRowComponent,
     ButtonInteraction,
     CommandInteraction,
-    EmbedBuilder,
     InteractionReplyOptions,
     InteractionResponse,
     JSONEncodable,
@@ -16,7 +15,7 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import { ContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
 
 import Debugger from "@dynamico/utils/debugger";
 
@@ -37,6 +36,8 @@ interface ContinuesInteractionArgs {
     embeds?: ( JSONEncodable<APIEmbed> | APIEmbed )[],
     components?: ComponentTypes[]
 }
+
+export const GUI_ID_LOGICAL_SEPARATOR = ":";
 
 export class GUIManager extends InitializeBase {
     private static instance: GUIManager;
@@ -88,10 +89,10 @@ export class GUIManager extends InitializeBase {
     }
 
     public storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "" ) {
-        let unique = sourceUI.getName() + ":" + callback.name.replace( "bound ", "" );
+        let unique = sourceUI.getName() + GUI_ID_LOGICAL_SEPARATOR + callback.name.replace( "bound ", "" );
 
         if ( suffix ) {
-            unique = unique + ":" + suffix;
+            unique = unique + GUI_ID_LOGICAL_SEPARATOR + suffix;
         }
 
         if ( unique.length > 100 ) {
@@ -100,6 +101,7 @@ export class GUIManager extends InitializeBase {
             unique = unique.replace( "Dynamico/", "" );
 
             if ( unique.length > 100 ) {
+                // TODO: Check if exist in logs.
                 this.logger.error( this.storeCallback, `Callback '${ unique }' is still too long` );
 
                 unique = unique.substring( 0, 100 );
@@ -140,21 +142,10 @@ export class GUIManager extends InitializeBase {
         };
     }
 
-    public createEmbed( title: string, content?: string ) {
-        const embed = new EmbedBuilder()
-            .setTitle( title );
-
-        if ( content ) {
-            embed.setDescription( content );
-        }
-
-        return embed;
-    }
-
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse | void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse | void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<InteractionResponse | void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<InteractionResponse | void> {
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes, message: string ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<InteractionResponse | void> {
         // Validate interaction type.
         const isInstanceTypeOfContinuesInteraction = interaction instanceof ButtonInteraction ||
             interaction instanceof SelectMenuInteraction ||
@@ -242,7 +233,7 @@ export class GUIManager extends InitializeBase {
         }
     }
 
-    public async deleteContinuesInteraction( interaction: ContinuesInteractionTypes ) {
+    public async deleteContinuesInteraction( interaction: UIContinuesInteractionTypes ) {
         if ( ! interaction.channel ) {
             return;
         }

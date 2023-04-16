@@ -1,5 +1,9 @@
 import { GUILD_DEFAULT_BADWORDS, GUILD_DEFAULT_BADWORDS_SEPARATOR } from "@dynamico/constants/guild";
 
+/**
+ * Function badwordsSomeUsed() :: Determine if a word contains any of the badwords and
+ * return the first badword found.
+ */
 export const badwordsSomeUsed = ( word: string, badwords: string[] ): string | null => {
     let usedBadword: string | null = null;
 
@@ -13,6 +17,9 @@ export const badwordsSomeUsed = ( word: string, badwords: string[] ): string | n
     return usedBadword;
 };
 
+/**
+ * Function badwordsNormalizeArray() :: Normalize the badwords array, removing the empty and extra spaces.
+ */
 export const badwordsNormalizeArray = ( badwords: string[] | undefined ): string[] => {
     let result: string[] = [];
 

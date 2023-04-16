@@ -47,6 +47,7 @@ export default class Buttons extends UIElement {
         return result;
     }
 
+    // TODO: Find better solution child -> parent communication.
     private async pulseParent( interaction: Interaction, args?: any ) {
         const initialArgs = this.args;
 

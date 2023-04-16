@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 
-import { BaseInteractionTypes, DYNAMICO_UI_EMBED, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, DYNAMICO_UI_EMBED, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
 import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
@@ -24,7 +24,7 @@ export class UIEmbed extends UIGroupBase {
         return E_UI_TYPES.DYNAMIC;
     }
 
-    public async getMessage( interaction: BaseInteractionTypes, args?: any ) {
+    public async getMessage( interaction: UIBaseInteractionTypes, args?: any ) {
        const embed = await this.buildEmbed( interaction, args );
 
         return {
@@ -34,7 +34,7 @@ export class UIEmbed extends UIGroupBase {
         };
     }
 
-    public async buildEmbed( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder> {
+    public async buildEmbed( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder> {
         const name = this.getName() + "-embed",
             title = this.getTitle(),
             description = this.getDescription(),
@@ -69,7 +69,7 @@ export class UIEmbed extends UIGroupBase {
                 return result;
             }
 
-            protected getTemplateLogic( interaction?: BaseInteractionTypes, args?: any ): any {
+            protected getTemplateLogic( interaction?: UIBaseInteractionTypes, args?: any ): any {
                 let result: any = {};
 
                 fields.forEach( field => {
@@ -125,7 +125,7 @@ export class UIEmbed extends UIGroupBase {
      * Function getFieldsLogic() :: The logic behind the fields.
      * When variables are used, they should be in the format of `UI_TEMPLATE_WRAPPER_START{variable}UI_TEMPLATE_WRAPPER_END`. without any extra character(s).
      */
-    protected async getFieldsLogic( interaction?: BaseInteractionTypes | null, args?: any ): Promise<{ [ key: string ]: string } | any> {
+    protected async getFieldsLogic( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<{ [ key: string ]: string } | any> {
         return [];
     }
 

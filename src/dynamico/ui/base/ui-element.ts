@@ -15,11 +15,14 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
+import ObjectBase from "../../../bases/object-base";
 import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import { guiManager } from "@dynamico/managers";
 
 import { UIBaseInteractionTypes, DYNAMICO_UI_ELEMENT, UICustomIdContextTypes } from "@dynamico/interfaces/ui";
+
+import { GUI_ID_LOGICAL_SEPARATOR } from "@dynamico/managers/gui";
 
 import Logger from "@internal/modules/logger";
 
@@ -145,13 +148,37 @@ export default class UIElement extends UIGroupBase {
         return this.build( interaction, this.args );
     }
 
-    protected setCustomId( context: UICustomIdContextTypes, unique: string ) {
-        context.setCustomId( unique );
+    protected storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "", extraData = "" ) {
+        if ( this.interaction?.id ) {
+            if ( suffix.length ) {
+                suffix = this.interaction.id + GUI_ID_LOGICAL_SEPARATOR + suffix;
+            } else {
+                suffix = this.interaction.id;
+            }
+        }
+
+        // TODO This is temporary fix for wizard unique id.
+        const argsId = this.args?._id;
+        if ( argsId?.length ) {
+            if ( suffix.length ) {
+                suffix += GUI_ID_LOGICAL_SEPARATOR;
+            }
+
+            suffix += argsId;
+        }
+
+        if ( extraData.length ) {
+            if ( suffix.length ) {
+                suffix += GUI_ID_LOGICAL_SEPARATOR;
+            }
+
+            suffix += ">" + extraData;
+        }
+
+        return guiManager.storeCallback( this, callback, suffix );
     }
 
     private setCallback( context: UICustomIdContextTypes, callback: Function, extraData = "" ) {
-        const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" ) + ( extraData ? `>${ extraData }` : "" );
-
-        this.setCustomId( context, unique );
+        context.setCustomId( this.storeCallback( this, callback, "", extraData ) );
     }
 }

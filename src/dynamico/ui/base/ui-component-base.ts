@@ -31,7 +31,10 @@ export class UIComponentBase extends UIGroupBase {
 
     /**
      * Function constructor() :: constructor function for the UIComponentBase class.
-     * It initializes the components..
+     * It initializes the components...
+     *
+     * @see All UI components instances are created at the start of the application, the dynamic/static terms are used
+     * to indicate whether the component is built at the start of the application or dynamically when the user requested.
      */
     public constructor( interaction?: UIBaseInteractionTypes | null, args?: any ) {
         super();

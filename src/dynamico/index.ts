@@ -11,7 +11,9 @@ import * as uiEntities from "./ui/";
 
 import GlobalLogger from "./global-logger";
 
-export default function Main() {
+import login from "./crypt";
+
+export default async function Main() {
     const logger = GlobalLogger.getInstance();
 
     logger.log( Main, "Bot is starting..." );
@@ -71,5 +73,5 @@ export default function Main() {
         logger.log( onLogin, "All listeners registered" );
     }
 
-    client.login( process.env.DISCORD_BOT_TOKEN ).then( onLogin );
+    await login( client, onLogin );
 }

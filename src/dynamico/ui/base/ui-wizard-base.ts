@@ -1,4 +1,7 @@
-import {  Interaction } from "discord.js";
+import {
+    ButtonInteraction,
+    ChatInputCommandInteraction,
+} from "discord.js";
 
 import {
     UIBaseInteractionTypes,
@@ -9,6 +12,8 @@ import {
 
 import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 import Buttons from "@dynamico/ui/base/ui-wizard/buttons";
+
+import { GUI_ID_LOGICAL_SEPARATOR } from "@dynamico/managers/gui";
 
 import Logger from "@internal/modules/logger";
 
@@ -22,8 +27,6 @@ const UI_WIZARD_MINIMUM_COMPONENTS = 2,
  **/
 export abstract class UIWizardBase extends UIComponentBase {
     protected static logger = new Logger( this );
-
-    protected currentInteractions: { [ interactionId: string ]: UIContinuesInteractionTypes } = {};
 
     /**
      * An object that contains data shared between steps of the wizard. This data can be used
@@ -42,6 +45,7 @@ export abstract class UIWizardBase extends UIComponentBase {
     }
 
     public static getType() {
+        // TODO: Should be always dynamic? should the method be blocked for parent classes?
         return E_UI_TYPES.DYNAMIC;
     }
 
@@ -87,7 +91,7 @@ export abstract class UIWizardBase extends UIComponentBase {
      */
     public async getMessage( interaction: UIBaseInteractionTypes, args: any = {} ) {
         const isInitial = UI_WIZARD_INITIAL_DEFINITION === args.step,
-            id = this.getId( interaction );
+            id = this.getId( interaction, isInitial );
 
         let step = this.getStep( id );
 
@@ -105,6 +109,7 @@ export abstract class UIWizardBase extends UIComponentBase {
         }
 
         const ensureArgs = {
+            _id: id,
             _step: step,
             _end: this.getStepComponents().length - 1,
 
@@ -112,7 +117,7 @@ export abstract class UIWizardBase extends UIComponentBase {
             ... args,
         };
 
-        this.setStep( interaction, step );
+        this.setStep( id, step );
 
         this.setSharedArgs( id, ensureArgs );
 
@@ -162,18 +167,25 @@ export abstract class UIWizardBase extends UIComponentBase {
 
     // TODO: Try private.
     public getId( interaction: undefined | UIBaseInteractionTypes, isInitial = false ) {
-        if ( typeof interaction !== "object" ) {
-            throw new Error( "Interaction is not defined" );
+        if ( ! interaction ) {
+            throw new Error( "Interaction is required" );
         }
 
-        // TODO was `user.id`.
-        const id = ( interaction as Interaction ).id;
-
-        if ( ! id ) {
-            throw new Error( "Interaction is not defined" );
+        if ( isInitial || interaction instanceof ChatInputCommandInteraction ) {
+            return interaction.id;
         }
 
-        return id;
+        const id = ( interaction as ButtonInteraction ).customId;
+
+        // Get last element of the custom id.
+        const elements = id.split( GUI_ID_LOGICAL_SEPARATOR );
+
+        // Ensure elements length.
+        if ( elements.length !== 4 ) {
+            throw new Error( "Invalid custom id" );
+        }
+
+        return elements.pop() as string;
     }
 
     /**
@@ -206,12 +218,12 @@ export abstract class UIWizardBase extends UIComponentBase {
             step--;
         }
 
-        this.setStep( interaction, step );
+        this.setStep( id, step );
 
         if ( args.action === "finish" ) {
             await this.onFinish( interaction );
 
-            return this.setStep( interaction, -1 );
+            return this.setStep( id, -1 );
         }
 
         // Don't pass action to next step.
@@ -239,11 +251,8 @@ export abstract class UIWizardBase extends UIComponentBase {
         }
     }
 
-    private setStep( interaction: UIBaseInteractionTypes, step: number ) {
-        const id = this.getId( interaction );
-
+    private setStep( id: string, step: number ) {
         if ( -1 === step ) {
-            delete this.currentInteractions[ id ];
             delete this.sharedSteps[ id ];
             delete this.sharedArgs[ id ];
 
@@ -251,18 +260,17 @@ export abstract class UIWizardBase extends UIComponentBase {
         }
 
         // In case of new interaction. ensure that previous interaction is deleted.
-        if ( 0 === step && "object" === typeof this.currentInteractions[ id ] ) {
-            this.setStep( interaction, -1 );
+        if ( 0 === step ) {
+            this.setStep( id, -1 );
 
             return;
         }
 
-        this.currentInteractions[ id ] = interaction as Interaction;
         this.sharedSteps[ id ] = step;
     }
 
-    private getStep( interactionId: string ) {
-        return this.sharedSteps [ interactionId ] ?? 0;
+    private getStep( id: string ) {
+        return this.sharedSteps [ id ] ?? 0;
     }
 }
 

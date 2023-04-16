@@ -32,6 +32,10 @@ export default class EditBadwordsButton extends UIElement {
             .get( EditBadwordsModal.getName() );
 
         if ( undefined !== typeof this.args.badwords ) {
+            if ( this.args._id?.length ) {
+                component.setArg( "_id", this.args._id );
+            }
+
             component.setArg( "badwords", this.args.badwords );
         }
 

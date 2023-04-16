@@ -110,16 +110,12 @@ export class GUIManager extends InitializeBase {
 
         this.debugger.log( this.storeCallback, `Storing callback '${ unique }'` );
 
-        unique = this.removeExtraData( unique );
-
         this.callbacks.set( unique, callback );
 
         return unique;
     }
 
     public async getCallback( unique: string, middleware: ( ( interaction: UIInteractionTypes ) => Promise<boolean> )[] ) {
-        unique = this.removeExtraData( unique );
-
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {
@@ -245,11 +241,6 @@ export class GUIManager extends InitializeBase {
                 .catch( ( e ) => this.logger.warn( this.deleteContinuesInteraction, "", e ) )
                 .then( () => this.continuesInteractions.delete( interaction?.channel?.id + interaction.user.id ) );
         }
-    }
-
-    private removeExtraData( uniqueId: string ) {
-        // Remove every character after '>' including '>' itself.
-        return uniqueId.replace( />(.*)/g, "" );
     }
 }
 

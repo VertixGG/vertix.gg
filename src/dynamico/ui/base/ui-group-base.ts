@@ -132,7 +132,9 @@ export class UIGroupBase extends UIBase {
             return;
         }
 
-        await specificFlowInteraction.edit( await this.getMessage( interaction, args ) )
+        const message = await this.getMessage( interaction, args );
+
+        await specificFlowInteraction.edit( message )
             .then( () => {
                 msgInteraction.deferUpdate?.();
             } )

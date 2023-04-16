@@ -32,6 +32,10 @@ export default class EditTemplateButton extends UIElement {
             .get( EditTemplateModal.getName() );
 
         if ( undefined !== typeof this.args.channelNameTemplate ) {
+            if ( this.args._id?.length ) {
+                component.setArg( "_id", this.args._id );
+            }
+
             component.setArg( "channelNameTemplate", this.args.channelNameTemplate );
         }
 

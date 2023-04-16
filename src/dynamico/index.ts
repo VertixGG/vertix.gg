@@ -11,7 +11,7 @@ import * as uiEntities from "./ui/";
 
 import GlobalLogger from "./global-logger";
 
-import login from "./crypt";
+import login from "./login";
 
 export default async function Main() {
     const logger = GlobalLogger.getInstance();

@@ -12,7 +12,9 @@ import GlobalLogger from "@dynamico/global-logger";
 function entryPoint() {
     GlobalLogger.getInstance().info( entryPoint, "Database is connected" );
 
-    botInitialize();
+    botInitialize().then( () => {
+        GlobalLogger.getInstance().info( entryPoint, "Bot is initialized" );
+    } );
 }
 
 Prisma.getConnectPromise().then( entryPoint );

@@ -16,8 +16,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
 
     private dataSourceModel: ModelType;
 
-    public constructor() {
-        super();
+    public constructor( shouldDebugCache = false ) {
+        super( shouldDebugCache );
 
         this.debugger = new Debugger( this );
 

@@ -13,8 +13,7 @@ import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
-// https://github.com/CoffeBuffet/dynamico/pull/44/
-const VERSION_PHASE_4 = "0.0.1";
+const VERSION_PHASE_4 = "0.0.1"; // https://github.com/CoffeBuffet/dynamico/pull/44/
 
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
@@ -35,6 +34,10 @@ export class DynamicoManager extends InitializeBase {
 
     public static getVersion() {
         return VERSION_PHASE_4;
+    }
+
+    public static isDebugOn( debugType: string, entityName: string ) {
+        return !! process.env[ `DEBUG_${ debugType }` ]?.includes( entityName );
     }
 
     public getClient() {

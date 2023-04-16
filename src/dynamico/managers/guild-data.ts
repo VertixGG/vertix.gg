@@ -1,6 +1,7 @@
 import GuildModel from "../models/guild";
 
 import { ManagerDataBase } from "@dynamico/bases/manager-data-base";
+import DynamicoManager from "@dynamico/managers/dynamico";
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
     private static instance: GuildDataManager;
@@ -14,6 +15,10 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
 
     public static getName() {
         return "Dynamico/Managers/GuildData";
+    }
+
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", GuildDataManager.getName() ) ) {
+        super( shouldDebugCache );
     }
 
     public removeFromCache( ownerId: string ) {

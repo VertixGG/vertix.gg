@@ -26,6 +26,8 @@ import PermissionsManager from "@dynamico/managers/permissions";
 
 import Debugger from "@dynamico/utils/debugger";
 
+import DynamicoManager from "@dynamico/managers/dynamico";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
@@ -49,11 +51,11 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return ChannelManager.instance;
     }
 
-    public static getName(): string {
+    public static getName() {
         return "Dynamico/Managers/Channel";
     }
 
-    public constructor( shouldDebugCache = !! process.env.debug_cache_channel || false ) {
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", ChannelManager.getName() ) ) {
         super( shouldDebugCache );
 
         this.debugger = new Debugger( this );

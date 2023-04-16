@@ -1,5 +1,3 @@
-import process from "process";
-
 import fetch from "cross-fetch";
 
 import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
@@ -11,8 +9,12 @@ import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-ui-modal";
 
 import { guiManager } from "@dynamico/managers";
+
 import { guildUsedSomeBadword } from "@dynamico/utils/guild";
+
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+
+import { gToken } from "@dynamico/login";
 
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
@@ -86,7 +88,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
                 const result = await fetch( "https://discord.com/api/v10/" + Routes.channel( interaction.channel.id ), {
                     method: "PATCH",
                     headers: {
-                        "Authorization": `Bot ${ process.env.DISCORD_BOT_TOKEN }`,
+                        "Authorization": `Bot ${ gToken }`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify( {

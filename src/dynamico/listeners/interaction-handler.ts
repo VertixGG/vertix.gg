@@ -1,5 +1,3 @@
-import * as process from "process";
-
 import {
     ButtonInteraction,
     Client,
@@ -44,8 +42,8 @@ export function interactionHandler( client: Client ) {
             await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction );
         } else if ( interaction.isRoleSelectMenu() ) {
             await handleRoleSelectMenuInteraction( client, interaction as RoleSelectMenuInteraction );
-        } else if ( process.env.env_mode === "discord" ) {
-            globalLogger.log( interactionHandler, "", interaction );
+        } else {
+            globalLogger.debug( interactionHandler, "", interaction );
         }
     } );
 };

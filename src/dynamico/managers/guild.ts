@@ -7,6 +7,8 @@ import GuildModel from "../models/guild";
 import { masterChannelManager } from "@dynamico/managers/index";
 import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
+import DynamicoManager from "@dynamico/managers/dynamico";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 import GuildDelegate = Prisma.GuildDelegate;
@@ -29,7 +31,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
         return GuildManager.instance;
     }
 
-    public constructor( shouldDebugCache = !! process.env.debug_cache_guild || false ) {
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", GuildManager.getName() ) ) {
         super( shouldDebugCache );
 
         this.guildModel = GuildModel.getInstance();

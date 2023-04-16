@@ -53,6 +53,8 @@ import { masterChannelGetSettingsData, masterChannelSetSettingsData } from "@dyn
 
 import Debugger from "@dynamico/utils/debugger";
 
+import DynamicoManager from "@dynamico/managers/dynamico";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 export class MasterChannelManager extends ManagerCacheBase<any> {
@@ -72,7 +74,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         return MasterChannelManager.instance;
     }
 
-    public constructor( shouldDebugCache = !! process.env.debug_cache_master_channel || false ) {
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", MasterChannelManager.getName() ) ) {
         super( shouldDebugCache );
 
         this.debugger = new Debugger( this );

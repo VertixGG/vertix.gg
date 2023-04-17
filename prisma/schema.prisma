@@ -15,16 +15,18 @@ enum E_INTERNAL_CHANNEL_TYPES {
 }
 
 model Guild {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  guildId        String   @unique
-  name           String
+  guildId           String      @unique
+  name              String
   // ---
-  isInGuild      Boolean
-  masterChannels Int[]
+  isInGuild         Boolean
   // ---
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  data              GuildData[] @relation("GuildData")
+  // ---
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  updatedAtInternal DateTime?
 }
 
 model Category {
@@ -69,8 +71,30 @@ model ChannelData {
   object    Json?
   values    String[]
   // ---
+  version   String?
+  // ---
   ownerId   String   @db.ObjectId
   channel   Channel  @relation("ChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, key])
+}
+
+model GuildData {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  key       String
+  type      String   @default("default")
+  // ---
+  object    Json?
+  values    String[]
+  // ---
+  version   String?
+  // ---
+  ownerId   String   @db.ObjectId
+  guild     Guild    @relation("GuildData", fields: [ownerId], references: [id], onDelete: Cascade)
   // ---
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,5 +1,3 @@
-import * as process from "process";
-
 import chalk from "chalk";
 
 import { Client, Partials } from "discord.js";
@@ -11,7 +9,11 @@ import * as uiEntities from "./ui/";
 
 import GlobalLogger from "./global-logger";
 
-export default function Main() {
+import login from "./login";
+
+import DynamicoManager from "@dynamico/managers/dynamico";
+
+export default async function Main() {
     const logger = GlobalLogger.getInstance();
 
     logger.log( Main, "Bot is starting..." );
@@ -25,33 +27,49 @@ export default function Main() {
             "GuildInvites",
             "Guilds",
             "GuildVoiceStates",
+            "DirectMessages",
         ],
         partials: [
             Partials.Channel,
         ]
     } );
 
-    // DiscordJS Debug mode.
-    if ( process.env.debug_mode === "discord" ) {
+    if ( DynamicoManager.isDebugOn( "DISCORD", "" ) ) {
         const debug = ( ... args: any[] ) => {
-            logger.debug( chalk.red( "API" ), "", args );
+            logger.debug( chalk.red( "DISCORD" ), "", args );
         };
 
-        client
-            .on( "debug", debug )
-            .on( "warn", debug )
-            .on( "error", debug )
-            .on( "shardError", debug );
+        [
+            "debug",
+            "warn",
+            "error",
+            "shardError",
+        ].forEach( ( event ) => {
+            if ( DynamicoManager.isDebugOn( "DISCORD", event ) ) {
+                client.on( event, debug );
+            }
+        } );
+    }
 
-        client.rest
-            .on( "restDebug", debug )
-            .on( "handlerSweep", debug )
-            .on( "hashSweep", debug )
-            .on( "invalidRequestWarning", debug )
-            .on( "newListener", debug )
-            .on( "rateLimited", debug )
-            .on( "removeListener", debug )
-            .on( "response", debug );
+    if ( DynamicoManager.isDebugOn( "DISCORD_REST", "" ) ) {
+        const debug = ( ... args: any[] ) => {
+            logger.debug( chalk.red( "DISCORD REST" ), "", args );
+        };
+
+        [
+            "restDebug",
+            "handlerSweep",
+            "hashSweep",
+            "invalidRequestWarning",
+            "newListener",
+            "rateLimited",
+            "removeListener",
+            "response",
+        ].forEach( ( event ) => {
+            if ( DynamicoManager.isDebugOn( "DISCORD_REST", event ) ) {
+                client.rest.on( event, debug );
+            }
+        } );
     }
 
     async function onLogin() {
@@ -70,5 +88,5 @@ export default function Main() {
         logger.log( onLogin, "All listeners registered" );
     }
 
-    client.login( process.env.DISCORD_BOT_TOKEN ).then( onLogin );
+    await login( client, onLogin );
 }

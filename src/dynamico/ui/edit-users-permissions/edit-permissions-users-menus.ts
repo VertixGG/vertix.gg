@@ -11,18 +11,19 @@ import UIElement from "@dynamico/ui/base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import { masterChannelManager, guiManager } from "@dynamico/managers";
+import { guiManager, masterChannelManager } from "@dynamico/managers";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
-export default class UsersMenus extends UIElement {
+export default class EditPermissionsUsersMenus extends UIElement {
     public static getName() {
-        return "Dynamico/UI/EditUserPermissions/UsersMenus";
+        return "Dynamico/UI/EditUserPermissions/EditPermissionsUsersMenus";
     }
 
     public static getType() {
         return E_UI_TYPES.DYNAMIC;
     }
 
-    protected async getBuilders( interaction: Interaction ) {
+    protected async getBuilders( interaction: Interaction, args: any ) {
         const grantMenu = this.getUserMenuBuilder( this.grantUser.bind( this ) ),
             removeMenu = this.getMenuBuilder( this.removeUser.bind( this ) );
 
@@ -32,19 +33,16 @@ export default class UsersMenus extends UIElement {
 
         removeMenu.setPlaceholder( "👇 Remove User From List" );
 
-        const members: { label: string; value: string; }[] = [];
-
-        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+        const members: { label: string; value: string; emoji: string }[] = [],
+            masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
-            UsersMenus.logger.warn( this.getBuilders,
+            EditPermissionsUsersMenus.logger.warn( this.getBuilders,
                 `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
 
             if ( interaction.isRepliable() ) {
-                await guiManager.get( "Dynamico/UI/GlobalResponse")
-                    .sendContinues( interaction as SelectMenuInteraction, {
-                        globalResponse: "%{masterChannelNotExist}%"
-                    } );
+                await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
+                    .sendContinues( interaction as SelectMenuInteraction, {} );
             }
 
             return [];
@@ -56,7 +54,6 @@ export default class UsersMenus extends UIElement {
         if ( interaction.channel && ChannelType.GuildVoice === interaction.channel.type ) {
             // Loop through the allowed users and add them to the description.
             for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
-                // Skip self.
                 if ( role.id === interaction.user.id ) {
                     continue;
                 }
@@ -77,6 +74,7 @@ export default class UsersMenus extends UIElement {
                     members.push( {
                         label: member.displayName + ` #${ member.user.discriminator }`,
                         value: member.id,
+                        emoji: "👤",
                     } );
                 }
             }
@@ -87,6 +85,7 @@ export default class UsersMenus extends UIElement {
             members.push( {
                 label: "No users found",
                 value: "no-users-found",
+                emoji: "👤",
             } );
         }
 
@@ -111,28 +110,47 @@ export default class UsersMenus extends UIElement {
                 editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
 
             // If user tries to add himself, then we just ignore it.
-            if ( member?.id === interaction.user.id ) {
+            const memberId = member?.id;
+            if ( memberId === interaction.user.id || memberId === interaction.client.user.id ) {
                 await editPermissionsComponent.sendContinues( interaction, {
-                    title: "%{cannotAddYourSelf}%",
+                    title: uiUtilsWrapAsTemplate( "nothingChanged" ),
+                } );
+
+                return;
+            }
+
+            // If user is already in the list, then we just ignore it.
+            if ( channel.permissionOverwrites.cache.has( memberId as string ) ) {
+                await editPermissionsComponent.sendContinues( interaction, {
+                    title: uiUtilsWrapAsTemplate( "nothingChanged" ),
+                    username: member?.username,
                 } );
 
                 return;
             }
 
             if ( member ) {
-                // TODO: Move options to constants.
-                await channel.permissionOverwrites.create( member, {
-                    ViewChannel: true,
-                    Connect: true,
-                    ReadMessageHistory: true,
-                } );
+                try {
+                    await channel.permissionOverwrites.create( member, {
+                        ViewChannel: true,
+                        Connect: true,
+                        ReadMessageHistory: true,
+                    } );
 
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: "%{canNowConnect}%",
-                    username: member.username,
-                } );
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: uiUtilsWrapAsTemplate( "canNowConnect" ),
+                        username: member.username,
+                    } );
 
-                return;
+                    return;
+                } catch ( e ) {
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: uiUtilsWrapAsTemplate( "couldNotAddUser" ),
+                        username: member.username,
+                    } );
+
+                    UIElement.logger.error( this.grantUser, "", e );
+                }
             }
 
             await editPermissionsComponent.sendContinues( interaction, {
@@ -158,7 +176,7 @@ export default class UsersMenus extends UIElement {
                 await channel.permissionOverwrites.delete( member );
 
                 await editPermissionsComponent.sendContinues( interaction, {
-                    title: "%{removedFromYourList}%",
+                    title: uiUtilsWrapAsTemplate( "removedFromYourList" ),
                     username: member.username,
                 } );
             } else {

@@ -1,5 +1,6 @@
 import {
     Guild,
+    Interaction,
     PermissionOverwriteOptions,
     PermissionsBitField,
     VoiceBasedChannel,
@@ -127,13 +128,42 @@ export default class PermissionsManager extends InitializeBase {
 
         // Get user permissions that are defined in the voice channel.
         const channelPermissions = context.permissionOverwrites.cache.get( userId ),
-            permissionField = new PermissionsBitField( channelPermissions?.allow.bitfield );
+            permissionFieldAllow = new PermissionsBitField( channelPermissions?.allow.bitfield );
 
-        permissionField.toArray().forEach( ( permission ) => {
+        permissionFieldAllow.toArray().forEach( ( permission ) => {
             delete resultMissingPermissions[ permission ];
         } );
 
         return Object.keys( resultMissingPermissions );
+    }
+
+    public validateAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
+        if ( ! interaction.guild ) {
+            this.logger.error( this.validateAdminPermission,
+                `Interaction id: '${ interaction.id }' is not a guild interaction.` );
+            return false;
+        }
+
+        const hasPermission = interaction.guild.ownerId === interaction.user.id ||
+            interaction.memberPermissions?.has( PermissionsBitField.Flags.Administrator ) || false;
+
+        if ( logFunctionOwner && ! hasPermission ) {
+            this.logger.warn( logFunctionOwner,
+                `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', user: '${ interaction.user.id }' is not the guild owner`
+            );
+        }
+
+        return hasPermission;
+    }
+
+    public isSelfAdministratorRole( guild: Guild ): boolean {
+        const botMember = guild.members.cache.get( guild.client.user.id );
+
+        if ( ! botMember ) {
+            return false;
+        }
+
+        return botMember.permissions.has( PermissionsBitField.Flags.Administrator );
     }
 
     /**
@@ -147,7 +177,6 @@ export default class PermissionsManager extends InitializeBase {
         }
 
         return this.getMissingChannelPermissions( permissions, context );
-
     }
 
     /**

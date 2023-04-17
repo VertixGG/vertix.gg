@@ -2,26 +2,45 @@ import { Guild } from "discord.js";
 
 import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from ".prisma/client";
 
-import {
-    IChannelDataCreateArgs,
-    IChannelDataGetArgs,
-    IChannelDataSelectUniqueArgs,
-    IChannelDataUpsertArgs
-} from "@dynamico/interfaces/channel";
+import { ModelDataBase } from "@dynamico/bases/model-data-base";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
 
-import ModelBase from "@internal/bases/model-base";
+import PrismaInstance from "@internal/prisma";
 
 export interface ChannelResult extends Channel {
     isMasterCreate: boolean;
     isDynamic: boolean;
 }
 
-export class ChannelModel extends ModelBase {
-    private static instance: ChannelModel;
+const client = PrismaInstance.getClient(),
+    model = client.$extends( {
+    result: {
+        channel: {
+            isMasterCreate: {
+                needs: {
+                    internalType: true,
+                    channelId: true,
+                    guildId: true,
+                },
+                compute( model ) {
+                    return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL;
+                }
+            },
+            isDynamic: {
+                needs: {
+                    internalType: true,
+                },
+                compute( model ) {
+                    return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
+                }
+            }
+        }
+    }
+} ).channel;
 
-    private readonly model;
+export class ChannelModel extends ModelDataBase<typeof model, typeof client.channelData> {
+    private static instance: ChannelModel;
 
     public static getName(): string {
         return "Dynamico/Models/Channel";
@@ -35,90 +54,13 @@ export class ChannelModel extends ModelBase {
         return ChannelModel.instance;
     }
 
-    public constructor() {
-        super();
-
-        this.model = this.prisma.$extends( {
-            result: {
-                channel: {
-                    isMasterCreate: {
-                        needs: {
-                            internalType: true,
-                            channelId: true,
-                            guildId: true,
-                        },
-                        compute( model ) {
-                            return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL;
-                        }
-                    },
-                    isDynamic: {
-                        needs: {
-                            internalType: true,
-                        },
-                        compute( model ) {
-                            return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
-                        }
-                    }
-                }
-            }
-        } ).channel;
-    }
-
     public async create( args: Prisma.ChannelCreateArgs ) {
         this.logger.info( this.create,
             `Creating channel '${ args.data.channelId }' for guild '${ args.data.guildId }'` );
 
         this.debugger.dumpDown( this.create, args.data );
 
-        return this.model.create( args );
-    }
-
-    public async createChannelData( args: IChannelDataCreateArgs ) {
-        const data = this.getInternalNormalizedData( args );
-
-        this.debugger.dumpDown( this.createChannelData, { data, args } );
-
-        return this.prisma.channelData.create( {
-            data: {
-                ... data,
-                ownerId: args.ownerId,
-                key: args.key,
-            }
-        } );
-    }
-
-    public async setChannelData( args: IChannelDataUpsertArgs ) {
-        if ( null === args.default ) {
-            return this.logger.error( this.setChannelData,
-                `Cannot set channel data for '${ args.key }' to null.` );
-        }
-
-        const createArgs: IChannelDataCreateArgs = {
-            ownerId: args.ownerId,
-            key: args.key,
-            value: args.default,
-        };
-
-        return this.prisma.channelData.update( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
-                },
-            },
-            data: this.getInternalNormalizedData( createArgs )
-        } );
-    }
-
-    public async deleteChannelData( args: IChannelDataSelectUniqueArgs ) {
-        return this.prisma.channelData.delete( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
-                },
-            },
-        } );
+        return this.ownerModel.create( args );
     }
 
     public async delete( guild: Guild, channelId?: string | null ) {
@@ -127,7 +69,7 @@ export class ChannelModel extends ModelBase {
                 `Deleting channel '${ channelId }' for guild '${ guild.name }' guildId: '${ guild.id }'` );
 
             if ( await this.isExisting( guild, channelId ) ) {
-                return this.model.delete( {
+                return this.ownerModel.delete( {
                     where: {
                         channelId
                     },
@@ -141,14 +83,31 @@ export class ChannelModel extends ModelBase {
         this.logger.info( this.delete,
             `Deleting all channels for guild '${ guild.name }' guildId: '${ guild.id }'` );
 
-        return this.model.deleteMany( { where: { guildId: guild.id } } );
+        return this.ownerModel.deleteMany( { where: { guildId: guild.id } } );
     }
 
-    public async get( guildId: string, channelId: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
+    public async get( guildId: string, channelId?: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
         const args: any = {
             where: {
                 guildId,
-                channelId,
+            }
+        };
+
+        if ( channelId ) {
+            args.where.channelId = channelId;
+        }
+
+        if ( internalType ) {
+            args.where.internalType = internalType;
+        }
+
+        return await this.ownerModel.findFirst( args );
+    }
+
+    public async getAll( guildId: string, internalType?: E_INTERNAL_CHANNEL_TYPES, includeData?: boolean ) {
+        const args: any = {
+            where: {
+                guildId,
             }
         };
 
@@ -156,50 +115,17 @@ export class ChannelModel extends ModelBase {
             args.where.internalType = internalType;
         }
 
-        return await this.model.findFirst( args );
-    }
-
-    public async getChannelDataByChannelId( args: IChannelDataGetArgs ) {
-        this.debugger.log( this.getChannelDataByChannelId, "Getting channel data for channel:", args );
-
-        return this.model.findUnique( {
-            where: {
-                id: args.ownerId,
-            },
-            include: {
-                data: { where: { key: args.key } },
-            }
-        } );
-    }
-
-    public getInternalNormalizedData( args: IChannelDataCreateArgs ) {
-        const data: any = {};
-
-        if ( "string" === typeof args.value ) {
-            data.type = "string";
-        } else if ( Array.isArray( args.value ) ) {
-            data.type = "array";
-        } else if ( "object" === typeof args.value ) {
-            data.type = "object";
+        if ( includeData ) {
+            args.include = {
+                data: true
+            };
         }
 
-        switch ( data.type ) {
-            case "object":
-                data.object = args.value;
-                break;
-            case "array":
-                data.values = args.value;
-                break;
-            default:
-            case "string":
-                data.values = [ args.value ];
-        }
-
-        return data;
+        return await this.ownerModel.findMany( args );
     }
 
     public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {
-        const total = await this.model.count( {
+        const total = await this.ownerModel.count( {
             where: {
                 guildId,
                 internalType,
@@ -213,12 +139,12 @@ export class ChannelModel extends ModelBase {
         return total;
     }
 
-    public async isReachedMasterLimit( guildId: string ) {
-        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS;
+    public async isReachedMasterLimit( guildId: string, limit = DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS ) {
+        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
     }
 
     public async isMasterCreate( channelId: string, guildId: string ) {
-        const result = await this.model.findFirst( {
+        const result = await this.ownerModel.findFirst( {
             where: {
                 channelId,
                 guildId,
@@ -229,7 +155,7 @@ export class ChannelModel extends ModelBase {
     }
 
     public async isDynamic( channelId: string, guildId: string ) {
-        const result = await this.model.findFirst( {
+        const result = await this.ownerModel.findFirst( {
             where: {
                 channelId,
                 guildId,
@@ -246,7 +172,19 @@ export class ChannelModel extends ModelBase {
             where.channelId = channelId;
         }
 
-        return !! await this.model.findFirst( { where } );
+        return !! await this.ownerModel.findFirst( { where } );
+    }
+
+    protected getOwnerModel() {
+        return model;
+    }
+
+    protected getDataModel()  {
+        return client.channelData;
+    }
+
+    protected getOwnerIdFieldName(): string {
+        return "channelId";
     }
 }
 

@@ -1,9 +1,13 @@
 import { ForceMethodBase } from "../errors/force-method-implementation";
 
 export abstract class ObjectBase {
-    protected name: string;
+    protected name: string = "__UNDEFINED_NAME__";
 
-    public constructor() {
+    protected readonly args: { [ key: string ]: any };
+
+    public constructor( args?: any ) {
+        this.args = args || {};
+
         this.name = this.getName();
     }
 

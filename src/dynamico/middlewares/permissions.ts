@@ -1,4 +1,4 @@
-import { ChannelType, VoiceChannel } from "discord.js";
+import { ChannelType, Interaction, VoiceChannel } from "discord.js";
 
 import { guiManager } from "@dynamico/managers";
 
@@ -19,7 +19,20 @@ const permissionManager = PermissionsManager.getInstance(),
 export default async function permissionsMiddleware( interaction: UIInteractionTypes ) {
     let result = false;
 
-    if ( interaction.guild && ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type ) {
+    if ( ! interaction.guild ) {
+        globalLogger.error( permissionsMiddleware,
+            `Guild is not available for guildId:'${ interaction.guildId }' interaction: '${ interaction.id }'`
+        );
+        return false;
+    }
+
+    const isChannelTypeSupported = ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type;
+
+    if ( isChannelTypeSupported ) {
+        if ( permissionManager.isSelfAdministratorRole( interaction.guild ) ) {
+            return true;
+        }
+
         const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
             requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             missingPermissions = [
@@ -37,9 +50,12 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
                 permissions: missingPermissions,
             } );
         }
+    } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu() ) {
+        return permissionManager.validateAdminPermission( interaction, permissionsMiddleware );
     } else {
+        const type = ( interaction as Interaction ).type || "unknown";
         globalLogger.warn( permissionsMiddleware,
-            `Unsupported interaction type: '{ ${ interaction.type } }'`
+            `Unsupported interaction type: '{ ${ type } }'`
         );
     }
 

@@ -1,13 +1,25 @@
 import { ChannelType, EmbedBuilder } from "discord.js";
 
-import { channelManager, masterChannelManager } from "@dynamico/managers";
+import { channelManager, masterChannelManager, permissionsManager } from "@dynamico/managers";
+
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+
 import GlobalLogger from "@dynamico/global-logger";
 
+const globalLogger = GlobalLogger.getInstance();
+
 export default async function authMiddleware( interaction: UIInteractionTypes ) {
+    if ( ( ! interaction.channel?.type && ChannelType.GuildText !== interaction.channel?.type ) || ! interaction.guildId || ! interaction.guild  ) {
+        globalLogger.error( authMiddleware,
+            `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', is not unexpected`
+        );
+        return false;
+    }
+
     // Only the channel owner can pass the middleware
-    if ( interaction.channel?.type && ChannelType.GuildVoice === interaction.channel.type && interaction.guildId ) {
+    if ( ChannelType.GuildVoice === interaction.channel.type ) {
         const channel = await channelManager.getChannel( interaction.guildId, interaction.channel.id, true );
 
         if ( channel?.userOwnerId === interaction.user.id ) {
@@ -25,14 +37,20 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
 
         embed.setTitle( "🤷 Oops, this is not your channel" );
         embed.setDescription( message );
-        embed.setColor( 0xFF8C00 );
+        embed.setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
         await interaction.reply( {
             embeds: [ embed ],
             ephemeral: true,
         } ).catch( ( e ) => {
-            GlobalLogger.getInstance().warn( authMiddleware, "", e );
+            globalLogger.warn( authMiddleware, "", e );
         } );
+    } else if ( ChannelType.GuildText === interaction.channel.type ) {
+        return permissionsManager.validateAdminPermission( interaction, authMiddleware );
+    } else {
+        globalLogger.error( authMiddleware,
+            `guildId: '${ interaction.guildId }' interaction channel type is not supported: '${ interaction.channel?.type.toString() }'`
+        );
     }
 
     return false;

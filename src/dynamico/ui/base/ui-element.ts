@@ -1,9 +1,13 @@
 import {
     ActionRowBuilder,
     ButtonBuilder,
+    ButtonInteraction,
+    ChatInputCommandInteraction,
     ComponentBuilder,
     ModalBuilder,
     ModalSubmitInteraction,
+    RoleSelectMenuBuilder,
+    RoleSelectMenuInteraction,
     SelectMenuInteraction,
     StringSelectMenuBuilder,
     TextInputBuilder,
@@ -11,20 +15,25 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import UIBase from "@dynamico/ui/base/ui-base";
+import ObjectBase from "../../../bases/object-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import { guiManager } from "@dynamico/managers";
 
-import { BaseInteractionTypes, CallbackUIType, DYNAMICO_UI_ELEMENT, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, DYNAMICO_UI_ELEMENT, UICustomIdContextTypes } from "@dynamico/interfaces/ui";
+
+import { GUI_ID_LOGICAL_SEPARATOR } from "@dynamico/managers/gui";
 
 import Logger from "@internal/modules/logger";
 
 import { ForceMethodImplementation } from "@internal/errors";
 
-export default class UIElement extends UIBase {
+export default class UIElement extends UIGroupBase {
     protected static logger: Logger = new Logger( this );
 
-    public interaction?: BaseInteractionTypes;
+    protected interaction?: UIBaseInteractionTypes;
+
+    protected parent?: UIElement;
 
     private builtRows: ActionRowBuilder<any>[] = [];
 
@@ -32,12 +41,8 @@ export default class UIElement extends UIBase {
         return DYNAMICO_UI_ELEMENT;
     }
 
-    public static getType(): E_UI_TYPES {
-        throw new ForceMethodImplementation( this, this.getType.name );
-    }
-
-    public constructor( interaction?: BaseInteractionTypes ) {
-        super( interaction );
+    public constructor( interaction?: UIBaseInteractionTypes, args? : any  ) {
+        super( interaction, args );
 
         if ( this.getName() === UIElement.getName() ) {
             return;
@@ -46,16 +51,49 @@ export default class UIElement extends UIBase {
         if ( interaction ) {
             this.interaction = interaction;
         }
+
+        if ( args._parent ) {
+            this.parent = args._parent;
+        }
     }
 
-    protected load( interaction?: BaseInteractionTypes ) {
-        return this.build( interaction );
+    public async build( interaction?: UIBaseInteractionTypes, args?: any ) {
+        UIElement.logger.debug( this.build, `Building UIElement: '${ this.getName() }'` );
+
+        const builders = await this.getBuilders( interaction, args ),
+            builtComponents: ActionRowBuilder<any>[] = [];
+
+        // Loop through the builders and build them.
+        const isMultiRow = Array.isArray( builders[ 0 ] );
+
+        if ( isMultiRow ) {
+            for ( const row of builders ) {
+                const actionRow = new ActionRowBuilder<any>();
+
+                builtComponents.push( actionRow.addComponents( row as ComponentBuilder[] ) );
+            }
+        } else {
+            const actionRow = new ActionRowBuilder<any>();
+
+            builtComponents.push( actionRow.addComponents( builders as ComponentBuilder[] ) );
+        }
+
+        // Set row type according to the type of the component.
+        builtComponents.forEach( ( row ) => {
+            row.data.type = 1;
+        } );
+
+        this.builtRows = builtComponents;
     }
 
-    protected getButtonBuilder( callback: CallbackUIType ) {
+    public getBuiltRows() {
+        return this.builtRows;
+    }
+
+    protected getButtonBuilder( callback: ( inteaction: ButtonInteraction ) => Promise<void>, extraData = "" ) {
         const button = new ButtonBuilder();
 
-        this.setCallback( button, callback );
+        this.setCallback( button, callback, extraData );
 
         return button;
     }
@@ -76,7 +114,15 @@ export default class UIElement extends UIBase {
         return menu;
     }
 
-    protected getInputBuilder( callback?: CallbackUIType ) {
+    protected getRoleMenuBuilder( callback: ( interaction: RoleSelectMenuInteraction ) => Promise<void> ) {
+        const menu = new RoleSelectMenuBuilder();
+
+        this.setCallback( menu, callback );
+
+        return menu;
+    }
+
+    protected getInputBuilder( callback?: ( interaction: ChatInputCommandInteraction ) => Promise<void> ) {
         const input = new TextInputBuilder();
 
         if ( callback ) {
@@ -94,46 +140,45 @@ export default class UIElement extends UIBase {
         return modal;
     }
 
-    protected async getBuilders( interaction?: BaseInteractionTypes ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
+    protected async getBuilders( interaction?: UIBaseInteractionTypes, args?: any ): Promise<ComponentBuilder[] | ComponentBuilder[][] | ModalBuilder[]> {
         throw new ForceMethodImplementation( this, this.getBuilders.name );
     }
 
-    public async build( interaction?: BaseInteractionTypes ) {
-        UIElement.logger.debug( this.build, `Building UI '${ this.getName() }'` );
+    protected load( interaction?: UIBaseInteractionTypes ) {
+        return this.build( interaction, this.args );
+    }
 
-        const builders = await this.getBuilders( interaction ),
-            builtComponents: ActionRowBuilder<any>[] = [];
-
-        // Loop through the builders and build them.
-        const isMultiRow = Array.isArray( builders[ 0 ] );
-
-        if ( isMultiRow ) {
-            for ( const row of builders ) {
-                const actionRow = new ActionRowBuilder<any>();
-
-               builtComponents.push( actionRow.addComponents( row as ComponentBuilder[] ) );
+    protected storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "", extraData = "" ) {
+        if ( this.interaction?.id ) {
+            if ( suffix.length ) {
+                suffix = this.interaction.id + GUI_ID_LOGICAL_SEPARATOR + suffix;
+            } else {
+                suffix = this.interaction.id;
             }
-        } else {
-            const actionRow = new ActionRowBuilder<any>();
-
-            builtComponents.push( actionRow.addComponents( builders as ComponentBuilder[] ) );
         }
 
-        // Set row type according to the type of the component.
-        builtComponents.forEach( ( row ) => {
-            row.data.type = 1;
-        } );
+        // TODO This is temporary fix for wizard unique id.
+        const argsId = this.args?._id;
+        if ( argsId?.length ) {
+            if ( suffix.length ) {
+                suffix += GUI_ID_LOGICAL_SEPARATOR;
+            }
 
-        this.builtRows = builtComponents;
+            suffix += argsId;
+        }
+
+        if ( extraData.length ) {
+            if ( suffix.length ) {
+                suffix += GUI_ID_LOGICAL_SEPARATOR;
+            }
+
+            suffix += ">" + extraData;
+        }
+
+        return guiManager.storeCallback( this, callback, suffix );
     }
 
-    public getBuiltRows() {
-        return this.builtRows;
-    }
-
-    private setCallback( context: ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | TextInputBuilder | ModalBuilder, callback: Function ) {
-        const unique = guiManager.storeCallback( this, callback, this.interaction?.id || "" );
-
-        context.setCustomId( unique );
+    private setCallback( context: UICustomIdContextTypes, callback: Function, extraData = "" ) {
+        context.setCustomId( this.storeCallback( this, callback, "", extraData ) );
     }
 }

@@ -1,34 +1,97 @@
-import { Colors } from "discord.js";
+import { MessageComponentInteraction } from "discord.js";
 
-import { UITemplateComponentEmbed } from "@dynamico/ui/base/ui-template-component-embed";
+import { UIEmbed } from "@dynamico/ui/base/ui-embed";
+import { UIBaseInteractionTypes } from "@dynamico/interfaces/ui";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
 
-export class NotifySetupSuccess extends UITemplateComponentEmbed {
+import {
+    GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
+} from "@dynamico/constants/guild";
+
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
+export class NotifySetupSuccess extends UIEmbed {
+    private vars: any = {};
+
     public static getName() {
         return "Dynamico/UI/NotifySetupSuccess";
     }
 
+    public static belongsTo() {
+        return [
+            "Dynamico/UI/SetupProcess",
+        ];
+    }
+
+    public constructor() {
+        super();
+
+        this.vars = {
+            masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
+            masterCategoryName: uiUtilsWrapAsTemplate( "masterCategoryName" ),
+
+            dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
+
+            badwords: uiUtilsWrapAsTemplate( "badwords" ),
+            badwordsValue: uiUtilsWrapAsTemplate( "badwordsValue" ),
+            badwordsPlaceholder: uiUtilsWrapAsTemplate( "badwordsPlaceholder" ),
+            badwordsOptionValue: uiUtilsWrapAsTemplate( "badwordsOptionValue" ),
+        };
+    }
+
     protected getTitle() {
-        return "Dynamico has been set up successfully !";
+        return "🛠️ Dynamico has been set up successfully!";
     }
 
     protected getDescription() {
-        return "**Category**: %{masterCategoryName}%\n" +
-            "**Create Channel**: <#%{masterChannelId}%>\n";
+        const templates = {
+            masterChannelId: "<#" + this.vars.masterChannelId + ">",
+            dynamicChannelNameTemplate: "`" + this.vars.dynamicChannelNameTemplate + "`",
+            badwords: this.vars.badwords,
+        };
+
+        return "**Master Channel Created:**\n" +
+            `Master Channel: ${ templates.masterChannelId }\n` +
+            `Dynamic Channels Name: ${ templates.dynamicChannelNameTemplate }\n\n` +
+            "**Bad Words:**\n" +
+            templates.badwords + "\n\n";
     }
 
     protected getColor(): number {
-        return Colors.Blue;
+        return 0xFFD700;
     }
 
     protected getFields() {
         return [
-            "masterCategoryName",
+            // Args.
             "masterChannelId",
+            "masterCategoryName",
+
+            "dynamicChannelNameTemplate",
+
+            // Logic.
+            "badwords",
+            "badwordsValue",
         ];
     }
 
-    protected getFieldsLogic( interaction?: null ) {
-        return {};
+    protected getFieldOptions() {
+        return {
+            badwords: {
+                [ this.vars.badwordsOptionValue ]: "`" + this.vars.badwordsValue + "`",
+                [ this.vars.badwordsPlaceholder ]: GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
+            }
+        };
+    }
+
+    protected async getFieldsLogic( interaction: UIBaseInteractionTypes, args: any ) {
+        const interactionAs = ( interaction as MessageComponentInteraction ),
+            badwords = await guildGetBadwordsFormatted( interactionAs.guildId?.toString() ?? "" );
+
+        return {
+            badwords: badwords.length ? this.vars.badwordsOptionValue : this.vars.badwordsPlaceholder,
+            badwordsValue: badwords,
+        };
     }
 }
 

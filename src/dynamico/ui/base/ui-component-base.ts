@@ -1,131 +1,110 @@
 import {
     ActionRowBuilder,
     BaseMessageOptions,
-    CommandInteraction,
     EmbedBuilder,
-    Interaction,
-    ModalBuilder,
-    User,
 } from "discord.js";
 
-import {
-    BaseInteractionTypes,
-    ContinuesInteractionTypes,
-    E_UI_TYPES,
-    EmbedsTypes,
-} from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, E_UI_TYPES, IUIGroupAttitude, } from "@dynamico/interfaces/ui";
 
 import UIElement from "@dynamico/ui/base/ui-element";
-import UITemplate from "@dynamico/ui/base/ui-template";
-import UIBase from "@dynamico/ui/base/ui-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
+import UIEmbed from "@dynamico/ui/base/ui-embed";
 
-import guiManager from "@dynamico/managers/gui";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
-import { ForceMethodImplementation } from "@internal/errors";
+import Logger from "@internal/modules/logger";
 
-export class UIComponentBase extends UIBase {
-    protected static staticComponents: typeof UIElement[] = [];
-    protected static dynamicComponents: typeof UIElement[] = [];
+export class UIComponentBase extends UIGroupBase {
+    protected static logger: Logger = new Logger( this );
 
-    protected static embeds: EmbedsTypes = null;
+    protected static dynamicElements: typeof UIElement[] = [];
+    protected static dynamicComponents: typeof UIComponentBase[] = [];
+    protected static dynamicEmbeds: typeof UIEmbed[] = [];
 
-    protected staticComponents: UIElement[];
+    protected staticElementsInstances: UIElement[];
+    protected staticComponentsInstances: UIComponentBase[];
+    protected staticEmbedsInstances: UIEmbed[] = [];
 
-    public constructor() {
+    protected embedsTemplates: UIEmbedTemplate[] = [];
+
+    private parent?: UIComponentBase;
+
+    /**
+     * Function constructor() :: constructor function for the UIComponentBase class.
+     * It initializes the components...
+     *
+     * @see All UI components instances are created at the start of the application, the dynamic/static terms are used
+     * to indicate whether the component is built at the start of the application or dynamically when the user requested.
+     */
+    public constructor( interaction?: UIBaseInteractionTypes | null, args?: any ) {
         super();
 
-        this.staticComponents = [];
-    }
-
-    protected load() {
-        return this.storeStaticComponents();
-    }
-
-    public async sendContinues( interaction: ContinuesInteractionTypes | CommandInteraction, args: any ) {
-        return await guiManager.getInstance().sendContinuesMessage( interaction, this, args );
-    }
-
-    public async sendFollowUp( interaction: CommandInteraction, args: any ) {
-        return await interaction.followUp( await this.getMessage( interaction, args ) );
-    }
-
-    public async sendUser( user: User, args: any ) {
-        const message = await this.getMessage( await user.createDM(), args );
-
-        await user.send( message );
-    }
-
-    public async storeStaticComponents() {
-        const embeds = this.getStaticEmbeds(),
-            components = await this.getInternalComponents() as typeof UIElement[];
-
-        if ( ! embeds && ! components ) {
-            throw new Error( "UI Cannot be empty." );
+        if ( args?._parent ) {
+            this.parent = args._parent;
         }
 
-        // Filter static components which are instanceof StaticUIBase.
-        const staticComponents = components?.filter( ( component ) => E_UI_TYPES.STATIC === component.getType() ),
-            dynamicComponents = components?.filter( ( component ) => E_UI_TYPES.DYNAMIC === component.getType() ),
-            staticThis = ( this.constructor as typeof UIComponentBase );
-
-        if ( staticComponents?.length ) {
-            staticThis.staticComponents = staticComponents;
-
-            this.staticComponents.push( ... await this.createComponents( staticComponents ) );
-        }
-
-        if ( dynamicComponents?.length ) {
-            staticThis.dynamicComponents = dynamicComponents;
-        }
-
-        if ( embeds ) {
-            staticThis.embeds = embeds;
-        }
+        this.staticComponentsInstances = [];
+        this.staticElementsInstances = [];
     }
 
-    public async getEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): Promise<EmbedsTypes> {
-        const staticThis = ( this.constructor as typeof UIComponentBase );
-
-        let result: any = [];
-
-        if ( staticThis.embeds ) {
-            result = result.push( ... staticThis.embeds );
-        }
-
-        const dynamicEmbeds = this.getDynamicEmbeds( interaction, args ),
-            isUITemplates = dynamicEmbeds?.length ? dynamicEmbeds[0] instanceof UITemplate : false;
-
-        // TODO UIEmbedTemplate + Validate.
-        if ( isUITemplates && ( interaction || null === interaction ) ) {
-            for ( const uiTemplateObject of dynamicEmbeds as UITemplate[] ) {
-                const template = await uiTemplateObject.compose( interaction, args ),
-                    embed = new EmbedBuilder();
-
-                if ( template.title ) {
-                    embed.setTitle( template.title );
-                }
-
-                if ( template.description ) {
-                    embed.setDescription( template.description );
-                }
-
-                if ( template.color ) {
-                    embed.setColor( parseInt( template.color ) );
-                }
-
-                result.push( embed );
-            }
-        } else if ( Array.isArray( dynamicEmbeds ) && dynamicEmbeds?.length ) {
-            result.push( ... dynamicEmbeds );
-        }
-
-        return result;
+    public async getDynamicElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<any[]> {
+        return this.buildDynamicElements( interaction, args );
     }
 
-    public async getMessage( interaction?: BaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
-        const builtComponents = await this.getActionRows( interaction ),
-            result: any = { components: builtComponents },
-            embeds = await this.getEmbeds( interaction, args );
+    public async getElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+        const elements: UIElement[] = [];
+
+        elements.push( ... await this.buildComponentElements( interaction, args ) );
+        elements.push( ... await this.buildElements( interaction, args ) );
+
+        return elements;
+    }
+
+    public async getEmbeds( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<EmbedBuilder[]> {
+        let embeds = [],
+            staticThis = this.getStaticThis(),
+            dynamicEmbeds = staticThis.dynamicEmbeds,
+            templateEmbeds = this.embedsTemplates;
+
+        // Static embeds.
+        if ( this.staticEmbedsInstances?.length ) {
+            embeds.push( ... this.staticEmbedsInstances );
+        }
+
+        // Dynamic embeds.
+        if ( dynamicEmbeds?.length ) {
+            dynamicEmbeds.forEach( ( EmbedClass ) => {
+                embeds.push( new EmbedClass( interaction, args ) );
+            } );
+        }
+
+        // Template embeds.
+        const builtTemplatesEmbeds: EmbedBuilder[] = [];
+
+        if ( templateEmbeds?.length ) {
+            await Promise.all(
+                templateEmbeds.map( async ( embed ) => {
+                    builtTemplatesEmbeds.push( await embed.build( interaction, args ) );
+                } )
+            );
+        }
+
+        return [
+            ... await Promise.all(
+                embeds.map( async ( embed ) => await embed.buildEmbed( interaction, args ) )
+            ),
+            ... builtTemplatesEmbeds,
+        ];
+    }
+
+    public async getMessage( interaction: UIBaseInteractionTypes, args?: any ): Promise<BaseMessageOptions> {
+        const builtComponents = await this.getActionRows( interaction, args ),
+            embeds = await this.getEmbeds( interaction, args ),
+            result: BaseMessageOptions = {};
+
+        if ( builtComponents?.length ) {
+            result.components = builtComponents;
+        }
 
         if ( embeds?.length ) {
             result.embeds = embeds;
@@ -134,51 +113,211 @@ export class UIComponentBase extends UIBase {
         return result;
     }
 
-    // TODO: Find better solution, ui-component-base should not know about modals.
-    public async getModal?( interaction?: Interaction ): Promise<ModalBuilder>;
-
-    protected getStaticEmbeds(): EmbedsTypes {
-        return null;
+    protected getStaticThis(): typeof UIComponentBase {
+        return ( this.constructor as typeof UIComponentBase );
     }
 
-    protected getDynamicEmbeds( interaction?: BaseInteractionTypes | null, args?: any ): EmbedsTypes {
-        return null;
-    }
+    protected getExtendedAttitude( customId: string ): IUIGroupAttitude | null {
+        // Try to find a attitude via customId.
+        const namespace = customId.split( ":" )?.[ 0 ],
+            // Try to find the namespace in internal components.
+            internalElement = this.getInternalElements().find( ( element ) => element.getName() === namespace );
 
-    protected getInternalComponents(): any { // TODO: any > UIBase.
-        throw new ForceMethodImplementation( this, this.getInternalComponents.name );
-    }
+        if ( internalElement ) {
+            // # Critical.
+            const belongsTo = internalElement.belongsTo(),
+                groups = internalElement.groups();
 
-    private async getActionRows( interaction?: BaseInteractionTypes ): Promise<ActionRowBuilder<any>[]> {
-        const components: any[] = [],
-            staticThis = ( this.constructor as typeof UIComponentBase );
-
-        if ( this.staticComponents?.length ) {
-            components.push( ... this.staticComponents );
-        }
-
-        if ( staticThis.dynamicComponents?.length ) {
-            components.push( ... await this.createComponents( staticThis.dynamicComponents, interaction ) );
-        }
-
-        const builtComponents = [];
-
-        for ( const component of components ) {
-            const builtComponent = component.getBuiltRows();
-
-            if ( builtComponent ) {
-                builtComponents.push( ... builtComponent );
+            if ( belongsTo.length || groups.length ) {
+                return {
+                    belongsTo,
+                    groups
+                };
             }
         }
 
-        return builtComponents;
+        return null;
     }
 
-    private async createComponents( components: typeof UIElement[], interaction?: BaseInteractionTypes ): Promise<UIElement[]> {
+    /**
+     * Function getInternalComponents() :: a method that returns the internal components for the UI.
+     * It is an abstract method that needs to be implemented by the child class.
+     */
+    protected getInternalComponents(): typeof UIComponentBase[] {
+        return [];
+    }
+
+    /**
+     * Function getInternalElements() :: a method that returns the internal elements for the UI.
+     * It is an abstract method that needs to be implemented by the child class.
+     */
+    protected getInternalElements(): typeof UIElement[] {
+        return [];
+    }
+
+    /**
+     * Function getInternalEmbeds() :: a method that returns the internal embeds for the UI.
+     * It is an abstract method that needs to be implemented by the child class.
+     */
+    protected getInternalEmbeds(): typeof UIEmbed[] {
+        return [];
+    }
+
+    protected async getEmbedTemplates(): Promise<UIEmbedTemplate[]> {
+        return [];
+    }
+
+    /**
+     * Function load() :: a method that loads the UI.
+     */
+    protected async load() {
+        UIComponentBase.logger.debug( this.load, `Loading UIComponent: '${ this.getName() }'` );
+
+        return await this.storeEntities();
+    }
+
+    /**
+     * Function pulse() :: a method that is being called from within the inner components.
+     */
+    protected async pulse?( interaction: UIBaseInteractionTypes, args: any ) {
+        // If there is parent pulse method, call it.
+        if ( this.parent?.pulse ) {
+            await this.parent.pulse( interaction, args );
+        }
+    }
+
+    /**
+     * Function storeEntities() :: a method that stores UI entities.
+     */
+    private async storeEntities() {
+        const embeds = this.getInternalEmbeds(),
+            embedsTemplates = await this.getEmbedTemplates(),
+            elements = this.getInternalElements(),
+            components = this.getInternalComponents(),
+            // ---
+            staticElements = elements?.filter( ( element ) => E_UI_TYPES.STATIC === element.getType() ),
+            staticComponents = components?.filter( ( component ) => E_UI_TYPES.STATIC === component.getType() ),
+            staticEmbeds = embeds?.filter( ( embed ) => E_UI_TYPES.STATIC === embed.getType() ),
+            // ---
+            dynamicElements = elements?.filter( ( element ) => E_UI_TYPES.DYNAMIC === element.getType() ),
+            dynamicComponents = components?.filter( ( component ) => E_UI_TYPES.DYNAMIC === component.getType() ),
+            dynamicEmbeds = embeds?.filter( ( embed ) => E_UI_TYPES.DYNAMIC === embed.getType() ),
+            // ---
+            staticThis = this.getStaticThis();
+
+        // Static elements.
+        if ( staticElements?.length ) {
+            this.staticElementsInstances.push( ... await this.createElements( staticElements ) );
+        }
+
+        // Dynamic elements.
+        if ( dynamicElements?.length ) {
+            staticThis.dynamicElements = dynamicElements;
+        }
+
+        // Static components.
+        if ( staticComponents?.length ) {
+            staticComponents.forEach( ( ComponentClass ) => {
+                this.staticComponentsInstances.push( new ComponentClass( null, { _parent: this } ) );
+            } );
+        }
+
+        // Static embeds.
+        if ( staticEmbeds?.length ) {
+            staticEmbeds.forEach( ( EmbedClass ) => {
+                this.staticEmbedsInstances.push( new EmbedClass( null, { _parent: this } ) );
+            } );
+        }
+
+        // Dynamic components.
+        if ( dynamicComponents?.length ) {
+            staticThis.dynamicComponents = dynamicComponents;
+        }
+
+        // Dynamic embeds.
+        if ( dynamicEmbeds?.length ) {
+            staticThis.dynamicEmbeds = dynamicEmbeds;
+        }
+
+        // Template embeds.
+        if ( embedsTemplates?.length ) {
+            this.embedsTemplates = embedsTemplates;
+        }
+
+        // If every variable is empty, throw an error.
+        const all = [ staticElements, staticComponents, staticEmbeds, dynamicElements, dynamicComponents, dynamicEmbeds, embedsTemplates ];
+
+        if ( ! ( this instanceof UIEmbed ) && all.every( ( instance ) => ! instance?.length ) ) {
+            throw new Error( "No UI elements were found." );
+        }
+    }
+
+    private async buildElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+        const elements = [];
+
+        // Static elements.
+        if ( this.staticElementsInstances?.length ) {
+            elements.push( ... this.staticElementsInstances );
+        }
+
+        // Dynamic elements.
+        elements.push( ... await this.buildDynamicElements( interaction, args ) );
+
+        return elements;
+    }
+
+    private async buildDynamicElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+        const elements = [],
+            staticThis = this.getStaticThis(),
+            dynamicElements = staticThis.dynamicElements;
+
+        // Dynamic elements.
+        if ( dynamicElements?.length ) {
+            elements.push( ... await this.createElements( dynamicElements, interaction, args ) );
+        }
+
+        return elements;
+    }
+
+    private async buildComponentElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIElement[]> {
+        const elements: any[] = [];
+
+        await Promise.all( this.staticComponentsInstances?.map( async ( component ) => {
+            elements.push( ... await component.buildElements( interaction, args ) );
+        } ) );
+
+        await Promise.all( ( await this.createDynamicComponents( interaction, args ) ).map( async ( component ) => {
+            elements.push( ... await component.buildElements( interaction, args ) );
+        } ) );
+
+        return elements;
+    }
+
+    private async createDynamicComponents( interaction?: UIBaseInteractionTypes, args?: any ): Promise<UIComponentBase[]> {
+        const result: any[] = [],
+            staticThis = this.getStaticThis(),
+            dynamicComponents = staticThis.dynamicComponents;
+
+        if ( dynamicComponents?.length ) {
+            await Promise.all( dynamicComponents.map( async ( DynamicComponent ) => {
+                const component = new DynamicComponent();
+
+                await component.waitUntilLoaded();
+
+                result.push( component );
+            } ) );
+        }
+
+        return result;
+    }
+
+    private async createElements( elements: typeof UIElement[], interaction?: UIBaseInteractionTypes, args: any = {} ): Promise<UIElement[]> {
         const result: any = [];
 
-        for ( const component of components ) {
-            const instance = new component( interaction );
+        for ( const component of elements ) {
+            args._parent = this;
+
+            const instance = new component( interaction, args );
 
             await instance.waitUntilLoaded();
 
@@ -186,6 +325,24 @@ export class UIComponentBase extends UIBase {
         }
 
         return result;
+    }
+
+    private async getActionRows( interaction?: UIBaseInteractionTypes, args?: any ): Promise<ActionRowBuilder<any>[]> {
+        const elements = [];
+
+        elements.push( ... await this.getElements( interaction, args ) );
+
+        const builtElements = [];
+
+        for ( const uiElements of elements ) {
+            const builtComponent = uiElements.getBuiltRows();
+
+            if ( Array.isArray( builtComponent ) ) {
+                builtElements.push( ... builtComponent );
+            }
+        }
+
+        return builtElements;
     }
 }
 

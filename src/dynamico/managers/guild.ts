@@ -1,17 +1,22 @@
 import { Client, Guild } from "discord.js";
 
-import MasterChannelManager from "./master-channel";
+import { Prisma } from ".prisma/client";
 
 import GuildModel from "../models/guild";
 
-import InitializeBase from "@internal/bases/initialize-base";
+import { dmManager, masterChannelManager } from "@dynamico/managers/index";
 
-export class GuildManager extends InitializeBase {
+import DynamicoManager from "@dynamico/managers/dynamico";
+
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
+
+import GuildDelegate = Prisma.GuildDelegate;
+import RejectPerOperation = Prisma.RejectPerOperation;
+
+export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperation>> {
     private static instance: GuildManager;
 
     private guildModel: GuildModel;
-
-    private masterChannelManager: MasterChannelManager;
 
     public static getName(): string {
         return "Dynamico/Managers/Guild";
@@ -25,12 +30,10 @@ export class GuildManager extends InitializeBase {
         return GuildManager.instance;
     }
 
-    public constructor() {
-        super();
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", GuildManager.getName() ) ) {
+        super( shouldDebugCache );
 
         this.guildModel = GuildModel.getInstance();
-
-        this.masterChannelManager = MasterChannelManager.getInstance();
     }
 
     public async onJoin( client: Client, guild: Guild ) {
@@ -48,11 +51,13 @@ export class GuildManager extends InitializeBase {
     public async onLeave( client: Client, guild: Guild ) {
         this.logger.info( this.onLeave, `Dynamico Left guild '${ guild.name }' guildId: '${ guild.id }'` );
 
+        await dmManager.sendLeaveMessageToOwner( guild );
+
         // Updating that the bot is no longer in the guild.
         await this.guildModel.update( guild, false );
 
         // Remove leftovers of the guild.
-        await this.masterChannelManager.removeLeftOvers( guild );
+        await masterChannelManager.removeLeftOvers( guild );
     }
 }
 

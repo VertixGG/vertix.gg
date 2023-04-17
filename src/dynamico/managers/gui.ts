@@ -5,7 +5,6 @@ import {
     APIMessageActionRowComponent,
     ButtonInteraction,
     CommandInteraction,
-    EmbedBuilder,
     InteractionReplyOptions,
     InteractionResponse,
     JSONEncodable,
@@ -16,11 +15,12 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import { ContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
 
 import Debugger from "@dynamico/utils/debugger";
 
-import UIComponentBase from "@dynamico/ui/base/ui-component-base";
+import UIBase from "@dynamico/ui/base/ui-base";
+import UIGroupBase from "@dynamico/ui/base/ui-group-base";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
@@ -37,10 +37,12 @@ interface ContinuesInteractionArgs {
     components?: ComponentTypes[]
 }
 
+export const GUI_ID_LOGICAL_SEPARATOR = ":";
+
 export class GUIManager extends InitializeBase {
     private static instance: GUIManager;
 
-    private userInterfaces = new Map<string, UIComponentBase>;
+    private userInterfaces = new Map<string, UIBase|UIGroupBase>;
     private callbacks = new Map<string, Function>;
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
@@ -63,7 +65,7 @@ export class GUIManager extends InitializeBase {
         this.debugger = new Debugger( this );
     }
 
-    public register( ui: typeof UIComponentBase ) {
+    public register( ui: typeof UIBase ) {
         const uiName = ui.getName();
 
         if ( this.userInterfaces.has( uiName ) ) {
@@ -75,21 +77,22 @@ export class GUIManager extends InitializeBase {
         this.logger.info( this.register, `Registered user interface '${ uiName }'` );
     }
 
-    public get( name: string ) {
+    public get( name: string, force = false ): UIBase|UIGroupBase {
         const result = this.userInterfaces.get( name );
 
-        if ( ! result ) {
+        if ( ! force && ! result ) {
             throw new Error( `User interface '${ name }' does not exist` );
         }
 
-        return result;
+        // Since `force` is used, we can safely assume that `result` is not negative.
+        return result as UIBase|UIGroupBase;
     }
 
     public storeCallback( sourceUI: ObjectBase, callback: Function, suffix = "" ) {
-        let unique = sourceUI.getName() + ":" + callback.name.replace( "bound ", "" );
+        let unique = sourceUI.getName() + GUI_ID_LOGICAL_SEPARATOR + callback.name.replace( "bound ", "" );
 
         if ( suffix ) {
-            unique = unique + ":" + suffix;
+            unique = unique + GUI_ID_LOGICAL_SEPARATOR + suffix;
         }
 
         if ( unique.length > 100 ) {
@@ -98,6 +101,7 @@ export class GUIManager extends InitializeBase {
             unique = unique.replace( "Dynamico/", "" );
 
             if ( unique.length > 100 ) {
+                // TODO: Check if exist in logs.
                 this.logger.error( this.storeCallback, `Callback '${ unique }' is still too long` );
 
                 unique = unique.substring( 0, 100 );
@@ -111,12 +115,12 @@ export class GUIManager extends InitializeBase {
         return unique;
     }
 
-    public async getCallback( unique: string, middleware: (( interaction: UIInteractionTypes ) => Promise<boolean>)[] ) {
+    public async getCallback( unique: string, middleware: ( ( interaction: UIInteractionTypes ) => Promise<boolean> )[] ) {
         const result = this.callbacks.get( unique );
 
         if ( ! result ) {
             return () => {
-                this.logger.error(  this.getCallback, `Callback '${ unique }' does not exist` );
+                this.logger.error( this.getCallback, `Callback '${ unique }' does not exist` );
 
                 return true;
             };
@@ -134,21 +138,10 @@ export class GUIManager extends InitializeBase {
         };
     }
 
-    public createEmbed( title: string, content?: string ) {
-        const embed = new EmbedBuilder()
-            .setTitle( title );
-
-        if ( content ) {
-            embed.setDescription( content );
-        }
-
-        return embed;
-    }
-
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes|CommandInteraction, component: UIComponentBase, args?: any ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, message: string ): Promise<void>;
-    public async sendContinuesMessage( interaction: ContinuesInteractionTypes, context: ContinuesInteractionArgs | UIComponentBase | string, args?: any ): Promise<void> {
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes | CommandInteraction, component: UIBase, args?: any ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes, args: ContinuesInteractionArgs ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes, message: string ): Promise<InteractionResponse | void>;
+    public async sendContinuesMessage( interaction: UIContinuesInteractionTypes, context: ContinuesInteractionArgs | UIBase | string, args?: any ): Promise<InteractionResponse | void> {
         // Validate interaction type.
         const isInstanceTypeOfContinuesInteraction = interaction instanceof ButtonInteraction ||
             interaction instanceof SelectMenuInteraction ||
@@ -173,7 +166,7 @@ export class GUIManager extends InitializeBase {
 
             if ( typeof context === "string" ) {
                 message = context;
-            } else if ( context instanceof UIComponentBase ) {
+            } else if ( context instanceof UIBase ) {
                 replyArgs = await context.getMessage( interaction, args );
                 replyArgs.ephemeral = true;
             } else {
@@ -197,16 +190,17 @@ export class GUIManager extends InitializeBase {
                 replyArgs.components = components;
             }
 
-            const isInteractionExist = this.continuesInteractions.has( interaction.channel.id );
+            const sharedId = interaction.channel.id + interaction.user.id,
+                isInteractionExist = this.continuesInteractions.has( sharedId );
 
             if ( ! isInteractionExist ) {
                 // Validate interaction
                 if ( interaction.isRepliable() ) {
-                    interaction.reply( replyArgs )
+                    return interaction.reply( replyArgs )
                         .catch( e => this.logger.warn( this.sendContinuesMessage, "", e ) )
                         .then( defer => {
                             if ( defer && interaction.channel ) {
-                                this.continuesInteractions.set( interaction.channel.id, defer );
+                                this.continuesInteractions.set( sharedId, defer );
                             }
 
                             return defer;
@@ -216,22 +210,40 @@ export class GUIManager extends InitializeBase {
                 return;
             }
 
-            const defer = this.continuesInteractions.get( interaction.channel.id );
+            const defer = this.continuesInteractions.get( sharedId );
 
-            if ( defer && defer.interaction.isRepliable() ) {
+            if ( defer?.interaction.isRepliable() ) {
                 const warn = ( e: any ) => this.logger.warn( this.sendContinuesMessage, "", e );
-                defer.interaction.deleteReply().catch( warn ).then( async () => {
-                    interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
+                return defer.interaction.deleteReply().catch( warn ).then( async () => {
+                    return interaction.reply( replyArgs ).catch( warn ).then( newDefer => {
                         if ( interaction.channel && newDefer ) {
-                            this.continuesInteractions.set( interaction.channel.id, newDefer );
+                            this.continuesInteractions.set( sharedId, newDefer );
                         } else {
                             warn( "Interaction channel or defer is undefined" );
                         }
+
+                        return newDefer;
                     } );
                 } );
             }
         }
     }
+
+    public async deleteContinuesInteraction( interaction: UIContinuesInteractionTypes ) {
+        if ( ! interaction.channel ) {
+            return;
+        }
+
+        const defer = this.continuesInteractions.get( interaction.channel.id + interaction.user.id );
+
+        if ( defer?.interaction.isRepliable() ) {
+            return defer.interaction.deleteReply()
+                .catch( ( e ) => this.logger.warn( this.deleteContinuesInteraction, "", e ) )
+                .then( () => this.continuesInteractions.delete( interaction?.channel?.id + interaction.user.id ) );
+        }
+    }
 }
 
 export default GUIManager;
+
+export const guiManager = GUIManager.getInstance();

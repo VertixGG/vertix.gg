@@ -2,12 +2,14 @@ import { Guild } from "discord.js";
 
 import { Prisma } from "@prisma/client";
 
-import ModelBase from "@internal/bases/model-base";
+import { ModelDataBase } from "@dynamico/bases/model-data-base";
 
-export class GuildModel extends ModelBase {
+import PrismaInstance from "@internal/prisma";
+
+const client = PrismaInstance.getClient();
+
+export class GuildModel extends ModelDataBase<typeof client.guild, typeof client.guildData> {
     private static instance: GuildModel;
-
-    private model: Prisma.GuildDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
         return "Dynamico/Models/Guild";
@@ -21,10 +23,8 @@ export class GuildModel extends ModelBase {
         return GuildModel.instance;
     }
 
-    public constructor() {
-        super();
-
-        this.model = this.prisma.guild;
+    public async get( guildId: string ) {
+        return this.prisma.guild.findUnique( { where: { guildId } } );
     }
 
     public async create( guild: Guild ) {
@@ -43,13 +43,13 @@ export class GuildModel extends ModelBase {
         let result;
 
         try {
-            result = await this.model.update( {
+            result = await this.prisma.guild.update( {
                 where: { guildId: guild.id },
                 data: { isInGuild }
             } );
         } catch ( e ) {
             if ( e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025" ) {
-                return this.logger.warn( this.update,"Guild not found in database" );
+                return this.logger.warn( this.update, "Guild not found in database" );
             }
 
             throw e;
@@ -62,6 +62,18 @@ export class GuildModel extends ModelBase {
         return this.prisma.guild.findUnique( {
             where: { guildId: guild.id }
         } );
+    }
+
+    protected getDataModel(): typeof client.guildData {
+        return client.guildData;
+    }
+
+    protected getOwnerModel(): typeof client.guild {
+        return client.guild;
+    }
+
+    protected getOwnerIdFieldName(): string {
+        return "guildId";
     }
 }
 

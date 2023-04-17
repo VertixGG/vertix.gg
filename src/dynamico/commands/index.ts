@@ -1,10 +1,12 @@
 import { ICommand } from "@dynamico/interfaces/command";
 
+import { Config } from "@dynamico/commands/config";
 import { Setup } from "@dynamico/commands/setup";
 
 import Logger from "@internal/modules/logger";
 
 export const Commands: ICommand[] = [
+    Config,
     Setup,
 ];
 

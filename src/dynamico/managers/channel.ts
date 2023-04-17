@@ -7,6 +7,8 @@ import {
     VoiceState,
 } from "discord.js";
 
+import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+
 import MasterChannelManager from "./master-channel";
 
 import {
@@ -22,6 +24,10 @@ import ChannelDataManager from "@dynamico/managers/channel-data";
 
 import PermissionsManager from "@dynamico/managers/permissions";
 
+import Debugger from "@dynamico/utils/debugger";
+
+import DynamicoManager from "@dynamico/managers/dynamico";
+
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
@@ -29,6 +35,8 @@ const UNKNOWN_DISPLAY_NAME = "Unknown User",
 
 export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     private static instance: ChannelManager;
+
+    private debugger: Debugger;
 
     private channelModel: ChannelModel;
 
@@ -43,12 +51,14 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return ChannelManager.instance;
     }
 
-    public static getName(): string {
+    public static getName() {
         return "Dynamico/Managers/Channel";
     }
 
-    public constructor() {
-        super();
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", ChannelManager.getName() ) ) {
+        super( shouldDebugCache );
+
+        this.debugger = new Debugger( this );
 
         this.channelModel = ChannelModel.getInstance();
 
@@ -186,6 +196,22 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return result;
     }
 
+    public async getMasterCreateChannels( guildId: string, includeData = false ) {
+        this.logger.info( this.getMasterCreateChannels,
+            `Getting master create channel(s) from guildId: '${ guildId }'`
+        );
+
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL, includeData );
+    }
+
+    public async getDynamicChannels( guildId: string, includeData = false ) {
+        this.logger.info( this.getMasterCreateChannels,
+            `Getting dynamic channel(s) from guildId: '${ guildId }'`
+        );
+
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL, includeData );
+    }
+
     /**
      * Function create() :: Creates a new channel for a guild.
      */
@@ -231,7 +257,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
         ChannelDataManager.getInstance().removeFromCache( channel.id );
 
-        await this.channelModel.delete( guild, channel.id );
+        this.channelModel.delete( guild, channel.id )
+            .catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
         // Some channels are not deletable, so we need to catch the error.
         channel.delete()
@@ -252,7 +279,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
     }
 
-    public removeFromCache( channelId: string ) {
+    protected removeFromCache( channelId: string ) {
         this.debugger.log( this.removeFromCache, `Removing channel '${ channelId }' from cache.` );
 
         // Remove from cache.

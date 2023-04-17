@@ -76,6 +76,10 @@ export default class Logger extends ObjectBase {
     }
 
     private output( prefix: string, caller: ICaller, message: string, ... params: any[] ): void {
+        if ( process.env.DISABLE_LOGGER ) {
+            return;
+        }
+
         const source = this.owner.getName() + "::" + this.getCallerName( caller );
 
         let messagePrefix = "";

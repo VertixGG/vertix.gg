@@ -5,13 +5,17 @@ import UIComponentBase from "@dynamico/ui/base/ui-component-base";
 import EditMeta from "@dynamico/ui/edit-dynamic-channel/buttons/edit-meta";
 import EditPermissions from "@dynamico/ui/edit-dynamic-channel/buttons/edit-permissions";
 
-import Primary from "@dynamico/ui/edit-dynamic-channel/embeds/primary";
+import { UIBaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import { BaseInteractionTypes } from "@dynamico/interfaces/ui";
+import EditDynamicChannelEmbed from "@dynamico/ui/edit-dynamic-channel/edit-dynamic-channel-embed";
 
 export class EditDynamicChannel extends UIComponentBase {
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel";
+    }
+
+    public static getType() {
+        return E_UI_TYPES.STATIC;
     }
 
     public constructor() {
@@ -24,11 +28,11 @@ export class EditDynamicChannel extends UIComponentBase {
         } );
     }
 
-    protected getDynamicEmbeds( interaction?: BaseInteractionTypes ) {
-        return [ new Primary ];
+    protected async getEmbedTemplates( interaction?: UIBaseInteractionTypes ) {
+        return [ new EditDynamicChannelEmbed ];
     }
 
-    protected getInternalComponents() {
+    protected getInternalElements() {
         return [
             EditMeta,
             EditPermissions,

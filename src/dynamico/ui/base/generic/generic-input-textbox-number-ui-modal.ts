@@ -1,6 +1,6 @@
-import { GenericInputUIModal } from "./generic-input-ui-modal";
+import { GenericInputTextboxUIModal } from "./generic-input-textbox-ui-modal";
 
-export abstract class GenericInputNumberUIModal extends GenericInputUIModal {
+export abstract class GenericInputTextboxNumberUIModal extends GenericInputTextboxUIModal {
     protected getSubmitCondition( input: string ): boolean {
         if ( super.getSubmitCondition( input ) ) {
             return true;

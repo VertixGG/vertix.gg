@@ -4,38 +4,62 @@ import {
     OverwriteType
 } from "discord.js";
 
-import UITemplate from "@dynamico/ui/base/ui-template";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
 
 import GlobalLogger from "@dynamico/global-logger";
 
 import { masterChannelManager } from "@dynamico/managers";
 
-export class Primary extends UITemplate {
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+
+export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
+    private vars: any = {};
+
     public static getName() {
-        return "Dynamico/UI/EditUserPermissions/Embeds/Primary";
+        return "Dynamico/UI/EditUserPermissions/EditUserPermissionsEmbed";
+    }
+
+    public constructor() {
+        super();
+
+        this.vars = {
+            private: uiUtilsWrapAsTemplate( "private" ),
+            public: uiUtilsWrapAsTemplate( "public" ),
+            mange: uiUtilsWrapAsTemplate( "mange" ),
+            nothingChanged: uiUtilsWrapAsTemplate( "nothingChanged" ),
+            canNowConnect: uiUtilsWrapAsTemplate( "canNowConnect" ),
+            removedFromYourList: uiUtilsWrapAsTemplate( "removedFromYourList" ),
+            couldNotAddUser: uiUtilsWrapAsTemplate( "couldNotAddUser" ),
+
+            title: uiUtilsWrapAsTemplate( "title" ),
+            userId: uiUtilsWrapAsTemplate( "userId" ),
+            userIds: uiUtilsWrapAsTemplate( "userIds" ),
+
+            username: uiUtilsWrapAsTemplate( "username" ),
+        };
     }
 
     protected getTemplateOptions(): any {
         return {
             title: {
-                "%{private}%": "🚫 Your channel is private now!",
-                "%{public}%": "🌐 Your channel is public now!",
-                "%{mange}%": "👥 Manage users access for your dynamic channel",
-                "%{cannotAddYourSelf}%": "You cannot add yourself",
-                "%{canNowConnect}%": "☝ %{username}% can now connect to your channel",
-                "%{removedFromYourList}%": "👇 %{username}% removed from your list",
+                [ this.vars.private ]: "🚫 Your channel is private now!",
+                [ this.vars.mange ]: "👥 Manage users access for your dynamic channel",
+                [ this.vars.nothingChanged ]: "🤷 Hmm.. nothing changed",
+                [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
+                [ this.vars.removedFromYourList ] : `👇 ${ this.vars.username } removed from your list`,
+                [ this.vars.couldNotAddUser ]: `Could not add user ${ this.vars.username }`,
             }
         };
     }
 
     protected getTemplateInputs() {
-        let description = "Allowed:\n" + "%{userIds}%" + "\n\nWho should have access to your channel?";
+        let description = "Allowed:\n" + this.vars.userIds + "\n\nWho should have access to your channel?";
 
         return {
             type: "embed",
-            title: "%{title}%",
+            title: this.vars.title,
             description,
-            userWrapper: "<@%{userId}%>",
+            userWrapper: `<@${ this.vars.userId }>`,
             separator: ", ",
         };
     }
@@ -105,4 +129,4 @@ export class Primary extends UITemplate {
     }
 }
 
-export default Primary;
+export default EditUsersPermissionsEmbed;

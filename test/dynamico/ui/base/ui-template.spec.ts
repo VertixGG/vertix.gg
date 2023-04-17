@@ -1,31 +1,52 @@
-import UITemplate from "@dynamico/ui/base/ui-template";
+import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 describe( "Dynamico/UI/UITemplate", () => {
     it( "Should pass sanity test", async function () {
         // Arrange
-        const template = new class extends UITemplate {
-            public getName() {
+        const template = new class extends UIEmbedTemplate {
+            private vars: any = {};
+
+            public static getName() {
                 return "test-template";
+            }
+
+            public constructor() {
+                super();
+
+                this.vars = {
+                    name: uiUtilsWrapAsTemplate( "name" ),
+                    limit: uiUtilsWrapAsTemplate( "limit" ),
+                    state: uiUtilsWrapAsTemplate( "state" ),
+                    value: uiUtilsWrapAsTemplate( "value" ),
+
+                    limitValue: uiUtilsWrapAsTemplate( "limitValue" ),
+                    unlimited: uiUtilsWrapAsTemplate( "unlimited" ),
+
+                    public: uiUtilsWrapAsTemplate( "public" ),
+                    private: uiUtilsWrapAsTemplate( "private" ),
+                };
             }
 
             protected getTemplateOptions() {
                 return {
                     limit: {
-                        "%{value}%": "%{limitValue}%",
-                        "%{unlimited}%": "Unlimited",
+                        [ this.vars.value ]: this.vars.limitValue,
+                        [ this.vars.unlimited ]: "Unlimited",
                     },
                     state: {
-                        "%{public}%": "🌐 **Public**",
-                        "%{private}%": "🚫 **Private**",
+                        [ this.vars.public ]: "🌐 **Public**",
+                        [ this.vars.private ]: "🚫 **Private**",
                     },
                 };
             }
 
             protected getTemplateInputs() {
                 const description =
-                    "Name: '%{name}%'," +
-                    "Limit: '%{limit}%'," +
-                    "State: '%{state}%'";
+                    `Name: '${ this.vars.name }',` +
+                    `Limit: '${ this.vars.limit }',` +
+                    `State: '${ this.vars.state }'`;
 
                 return {
                     type: "embed",
@@ -40,8 +61,8 @@ describe( "Dynamico/UI/UITemplate", () => {
 
                 return {
                     name: "test",
-                    limit: 0 === Math.round( Math.random() ) ? "%{unlimited}%" : "%{value}%",
-                    state: 0 === limitValue ? "%{private}%" : "%{public}%",
+                    limit: 0 === Math.round( Math.random() ) ? this.vars.unlimited : this.vars.value,
+                    state: 0 === limitValue ? this.vars.private : this.vars.public,
                     limitValue
                 };
             }
@@ -69,15 +90,15 @@ describe( "Dynamico/UI/UITemplate", () => {
 
     it( "Should stay alive, try to make it crash", async function () {
         // Arrange.
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
             public static getName() {
                 return "test-template";
             }
 
             protected getTemplateInputs() {
                 return {
-                    template: "%{allowed}%",
-                    items: "%{items}%",
+                    template: uiUtilsWrapAsTemplate( "allowed" ),
+                    items: uiUtilsWrapAsTemplate( "items" ),
                 };
             };
 
@@ -101,15 +122,15 @@ describe( "Dynamico/UI/UITemplate", () => {
 
     it( "Should able to handle comma cases", async function () {
         // Arrange.
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
             public static getName() {
                 return "test-template";
             }
 
             protected getTemplateInputs() {
                 return {
-                    template: "%{userIds}%",
-                    userWrapper: "<#%{userId}%>",
+                    template: uiUtilsWrapAsTemplate( "userIds" ),
+                    userWrapper: `<#${ uiUtilsWrapAsTemplate( "userId" ) }>`,
                     separator: ", " // This is a comma.
                 };
             };
@@ -147,7 +168,7 @@ describe( "Dynamico/UI/UITemplate", () => {
     } );
 
     it( "Should be able to support global responses", async function () {
-        const template = new class extends UITemplate {
+        const template = new class extends UIEmbedTemplate {
 
             public static getName() {
                 return "test-template";
@@ -156,13 +177,13 @@ describe( "Dynamico/UI/UITemplate", () => {
             protected getTemplateOptions() {
                 return {
                     descriptions: {
-                        "%{masterChannelNotExist}%": "Master channel does not exist",
+                        [ uiUtilsWrapAsTemplate( "masterChannelNotExist" ) ]: "Master channel does not exist",
                     },
                     titles: {
-                        "%{masterChannelNotExist}%": "🤷 Oops, an issue has occurred",
+                        [ uiUtilsWrapAsTemplate( "masterChannelNotExist" ) ]: "🤷 Oops, an issue has occurred",
                     },
                     colors: {
-                        "%{masterChannelNotExist}%": 0xFF8C00,
+                        [ uiUtilsWrapAsTemplate( "masterChannelNotExist") ]: DYNAMICO_DEFAULT_COLOR_ORANGE_RED,
                     },
                 };
             }
@@ -170,9 +191,9 @@ describe( "Dynamico/UI/UITemplate", () => {
             protected getTemplateInputs() {
                 return {
                     type: "embed",
-                    title: "%{titles}%",
-                    description: "%{descriptions}%",
-                    color: "%{colors}%",
+                    title: uiUtilsWrapAsTemplate( "titles" ),
+                    description: uiUtilsWrapAsTemplate( "descriptions" ),
+                    color: uiUtilsWrapAsTemplate( "colors" ),
                 };
             }
 
@@ -187,12 +208,12 @@ describe( "Dynamico/UI/UITemplate", () => {
 
         // Act.
         const result = await template.compose( null, {
-            globalResponse: "%{masterChannelNotExist}%",
+            globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
         } );
 
         // Assert.
         expect( result.title ).toBe( "🤷 Oops, an issue has occurred" );
         expect( result.description ).toBe( "Master channel does not exist" );
-        expect( result.color ).toBe( 0xFF8C00.toString() );
+        expect( result.color ).toBe( DYNAMICO_DEFAULT_COLOR_ORANGE_RED.toString() );
     } );
 } );

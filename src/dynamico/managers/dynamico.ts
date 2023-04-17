@@ -8,13 +8,18 @@ import { Commands } from "@dynamico/commands";
 import CategoryManager from "@dynamico/managers/category";
 import ChannelManager from "@dynamico/managers/channel";
 
+import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
+
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
+
+const VERSION_PHASE_4 = "0.0.1"; // https://github.com/CoffeBuffet/dynamico/pull/44/
 
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
 
-    private client: Client | null = null;
+    // TODO: Remove undefined.
+    private client: Client | undefined;
 
     public static getInstance() {
         if ( ! DynamicoManager.instance ) {
@@ -26,6 +31,18 @@ export class DynamicoManager extends InitializeBase {
 
     public static getName() {
         return "Dynamico/Managers/Dynamico";
+    }
+
+    public static getVersion() {
+        return VERSION_PHASE_4;
+    }
+
+    public static isDebugOn( debugType: string, entityName: string ) {
+        return !! process.env[ `DEBUG_${ debugType }` ]?.includes( entityName );
+    }
+
+    public getClient() {
+        return this.client;
     }
 
     public async onReady( client: Client ) {
@@ -48,6 +65,10 @@ export class DynamicoManager extends InitializeBase {
         await this.removeMasterChannels( client );
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
+
+        await this.updateGuilds();
+
+        await this.ensureBackwardCompatibility();
 
         const username = client.user.username,
             id = client.user.id;
@@ -150,6 +171,69 @@ export class DynamicoManager extends InitializeBase {
 
             this.logger.info( this.removeEmptyCategories,
                 `Category '${ category.categoryId }' is deleted from db.` );
+        }
+    }
+
+    public async updateGuilds() {
+        // Get all guilds.
+        const prisma = await PrismaInstance.getClient(),
+            guilds = await prisma.guild.findMany();
+
+        for ( const guild of guilds ) {
+            // Check if guild is active.
+            const guildCache = this.client?.guilds.cache.get( guild.guildId ),
+                name = guildCache?.name || guild.name,
+                isInGuild = !! guildCache;
+
+            await prisma.guild.update( {
+                where: {
+                    id: guild.id
+                },
+                data: {
+                    name,
+                    isInGuild,
+                    // Do not update `updatedAt` field.
+                    updatedAt: guild.updatedAt,
+                    updatedAtInternal: new Date(),
+                },
+            } );
+
+            this.logger.info( this.updateGuilds,
+                `Guild id: '${ guild.guildId }' is updated, name: '${ name }', isInGuild: '${ isInGuild }'.` );
+        }
+    }
+
+    private async ensureBackwardCompatibility() {
+        await this.replaceTemplatesPrefixSuffix();
+    }
+
+    /**
+     * Function replaceTemplatesPrefixSuffix() :: Replace the old template prefix and suffix '%{', '%}' to the new one '{{', '}}'
+     * From version `null` to version `0.0.1`.
+     */
+    private async replaceTemplatesPrefixSuffix() {
+        const dataManagers = [ guildDataManager, channelDataManager ];
+
+        for ( const dataManager of dataManagers ) {
+            const allData = await dataManager.getAllData();
+
+            for ( const data of allData ) {
+                if ( null === data.version ) {
+                    if ( data.object && "settings" === data.key ) {
+                        // Assign new one.
+                        data.object.dynamicChannelNameTemplate = "{user}'s Channel";
+
+                        // Describe version.
+                        data.version = VERSION_PHASE_4;
+
+                        await dataManager.setData( {
+                            ownerId: data.ownerId,
+                            key: data.key,
+                            default: data.object,
+                        } );
+                    }
+                }
+            }
         }
     }
 }

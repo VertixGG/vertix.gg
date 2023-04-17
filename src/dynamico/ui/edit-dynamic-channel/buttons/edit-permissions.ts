@@ -1,13 +1,10 @@
-import {
-    ButtonStyle,
-    ChannelType,
-    Interaction,
-    VoiceChannel
-} from "discord.js";
+import { ButtonStyle, ChannelType, Interaction, VoiceChannel } from "discord.js";
+
+import UIElement from "@dynamico/ui/base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/interfaces/ui";
 
-import UIElement from "@dynamico/ui/base/ui-element";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
 import { guiManager } from "@dynamico/managers";
 
@@ -24,8 +21,7 @@ export default class EditPermissions extends UIElement {
         const publicButton = this.getButtonBuilder( this.makeChannelPublic.bind( this ) ),
             privateButton = this.getButtonBuilder( this.makeChannelPrivate.bind( this ) ),
             usersButton = this.getButtonBuilder( this.displayManageUsers.bind( this ) ),
-            specialButton = this.getButtonBuilder( async () => {
-            } );
+            specialButton = this.getButtonBuilder( async () => {} );
 
         publicButton
             .setStyle( ButtonStyle.Secondary )
@@ -58,19 +54,14 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
-            // Set connect permissions for @everyone to '/'.
+            // Set permissions for @everyone to '/'.
             await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
+                ViewChannel: null,
                 Connect: null,
             } );
 
-            // TODO: Can be static.
-            const embed = guiManager.createEmbed( "🌐 Your channel is public now!" );
-
-            embed.setColor(0x1E90FF);
-
-            await guiManager.sendContinuesMessage( interaction, {
-                embeds: [ embed ]
-            } );
+            await guiManager.get( "Dynamico/UI/EditUsersPermissions/EditUsersChannelPublicEmbed" )
+                .sendContinues( interaction, {} );
         }
     }
 
@@ -78,14 +69,13 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.guildId && interaction.isButton() ) {
             const dynamicChannel = interaction.channel as VoiceChannel;
 
-            // If user didn't set any basic roles, then we apply the changes on @everyone.
-            // TODO: If user set basic roles, then we apply all the changes for each basicRole, except for @everyone.
             await dynamicChannel.permissionOverwrites.edit( interaction.guildId, {
+                ViewChannel: null,
                 Connect: false,
             } );
 
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
-                title: "%{private}%",
+                title: uiUtilsWrapAsTemplate( "private" ),
             } );
         }
     }
@@ -93,7 +83,7 @@ export default class EditPermissions extends UIElement {
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
-                title: "%{mange}%",
+                title: uiUtilsWrapAsTemplate( "mange" ),
             } );
         }
     }

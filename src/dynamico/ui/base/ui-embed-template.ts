@@ -8,6 +8,7 @@ import { ObjectBase } from "@internal/bases/object-base";
 
 const UI_TEMPLATE_WRAPPER_REGEX = new RegExp( UI_TEMPLATE_WRAPPER_START + "(.+?)" + UI_TEMPLATE_WRAPPER_END, "g" );
 
+// TODO: Replace with `UIEmbed` class.
 export abstract class UIEmbedTemplate extends ObjectBase {
     public static getName() {
         return DYNAMICO_UI_TEMPLATE;

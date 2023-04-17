@@ -133,7 +133,6 @@ export default class EditPermissionsUsersMenus extends UIElement {
 
             if ( member ) {
                 try {
-                    // TODO: Move options to constants.
                     await channel.permissionOverwrites.create( member, {
                         ViewChannel: true,
                         Connect: true,

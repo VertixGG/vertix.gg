@@ -1,5 +1,5 @@
-# cd previous directory
-cd ..
+# cd to project root
+cd "$(dirname "$0")/.."
 
 # Create dist folder
 mkdir -p dist

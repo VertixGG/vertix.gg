@@ -1,10 +1,10 @@
 import { Colors } from "discord.js";
 
-import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
-
 import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
+
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
 
+// TODO: Remove the component, use `UIEmbed` standalone.
 export default class GlobalResponsesEmbed extends UIEmbedTemplate {
     private vars: any = {};
 
@@ -16,7 +16,6 @@ export default class GlobalResponsesEmbed extends UIEmbedTemplate {
         super();
 
         this.vars = {
-            masterChannelNotExist: uiUtilsWrapAsTemplate( "masterChannelNotExist" ), // TODO: Not a global message.
             somethingWentWrong: uiUtilsWrapAsTemplate( "somethingWentWrong" ),
 
             titles: uiUtilsWrapAsTemplate( "titles" ),
@@ -28,15 +27,12 @@ export default class GlobalResponsesEmbed extends UIEmbedTemplate {
     protected getTemplateOptions() {
         return {
             descriptions: {
-                [ this.vars.masterChannelNotExist ]: "Master channel does not exist",
                 [ this.vars.somethingWentWrong ]: "Something went wrong",
             },
             titles: {
-                [ this.vars.masterChannelNotExist ]: "🤷 Oops, an issue has occurred",
                 [ this.vars.somethingWentWrong ]: "🤷 Oops, an issue has occurred",
             },
             colors: {
-                [ this.vars.masterChannelNotExist ]: DYNAMICO_DEFAULT_COLOR_ORANGE_RED,
                 [ this.vars.somethingWentWrong ]: Colors.Red,
             },
         };

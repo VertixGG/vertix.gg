@@ -271,10 +271,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                 `Could not find dynamic channel in database, guildId: ${ guildId }, channelId: ${ dynamicChannelId }` );
 
             if ( interaction ) {
-                await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                    .sendContinues( interaction as SelectMenuInteraction, {
-                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
-                    } );
+                await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
+                    .sendContinues( interaction as SelectMenuInteraction, {} );
             }
 
             return;
@@ -285,10 +283,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                 `Could not find master channel in database, guildId: ${ guildId }, dynamic channelId: ${ dynamicChannelId }` );
 
             if ( interaction ) {
-                await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                    .sendContinues( interaction as SelectMenuInteraction, {
-                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" ),
-                    } );
+                await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
+                    .sendContinues( interaction as SelectMenuInteraction, {} );
             }
 
             return;
@@ -317,10 +313,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                 `Could not find master channel, guildId: ${ guildId }, dynamic channelId: ${ dynamicChannelId }` );
 
             if ( interaction ) {
-                await guiManager.get( "Dynamico/UI/GlobalResponse" )
-                    .sendContinues( interaction as SelectMenuInteraction, {
-                        globalResponse: uiUtilsWrapAsTemplate( "masterChannelNotExist" )
-                    } );
+                await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
+                    .sendContinues( interaction as SelectMenuInteraction, {} );
             }
 
             return;

@@ -125,10 +125,6 @@ export class DMManager extends InitializeBase {
             "**Your reply to this message will be directly sent to the developers.**");
 
         await this.sendToOwner( guild, { embeds: [ embed ] } );
-
-        await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ))?.send( { embeds: [ embed ] } ).catch( () => {
-            this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to guild owner: '${ guild.ownerId }' guildId: '${ guild.id }'` );
-        } );
     }
 
     public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {

@@ -76,7 +76,7 @@ export default class Logger extends ObjectBase {
     }
 
     private output( prefix: string, caller: ICaller, message: string, ... params: any[] ): void {
-        if ( process.env.disable_logger ) {
+        if ( process.env.DISABLE_LOGGER ) {
             return;
         }
 

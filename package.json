@@ -5,16 +5,14 @@
 	"author": "Leonid Vinikov <leonidvinikov@gmail.com>",
 	"main": "index.ts",
 	"scripts": {
-		"build": "export env_mode=production && scripts/build.sh",
-		"debug-discord": "export env_mode=discord && ts-node src/index.ts",
-		"debug-prisma": "export env_mode=prisma && ts-node src/index.ts",
+		"build": "scripts/build.sh",
 		"eslint": "npx eslint --ext .ts .",
 		"eslint:fix": "npx eslint --fix --ext .ts .",
 		"release": "bash ./scripts/release.sh",
 		"release-test-env": "bash ./scripts/release-test-env.sh",
 		"start": "ts-node src/index.ts",
 		"start-transpile": "npx ts-node --transpile-only src/index.ts",
-		"test": "export disable_logger=true && jest --runInBand --detectOpenHandles --coverage",
+		"test": "export DISABLE_LOGGER=true && jest --runInBand --detectOpenHandles --coverage",
 		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js"
 	},
 	"dependencies": {

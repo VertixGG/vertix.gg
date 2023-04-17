@@ -10,8 +10,9 @@
 		"eslint:fix": "npx eslint --fix --ext .ts .",
 		"release": "bash ./scripts/release.sh",
 		"release-test-env": "bash ./scripts/release-test-env.sh",
-		"start": "ts-node src/index.ts",
-		"start-transpile": "npx ts-node --transpile-only src/index.ts",
+		"start": "node -r dotenv/config index.min.js dotenv_config_path=.env",
+		"start-dev": "ts-node src/index.ts",
+		"start-dev-transpile": "npx ts-node --transpile-only src/index.ts",
 		"test": "export DISABLE_LOGGER=true && jest --runInBand --detectOpenHandles --coverage",
 		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js"
 	},
@@ -20,6 +21,7 @@
 		"chalk": "4.1.2",
 		"cross-fetch": "^3.1.5",
 		"discord.js": "^14.8.0",
+		"dotenv": "^16.0.3",
 		"moment": "^2.29.4",
 		"ts-mixer": "^6.0.3"
 	},

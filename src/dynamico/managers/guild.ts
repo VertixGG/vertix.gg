@@ -1,11 +1,10 @@
-import { Client, EmbedBuilder, Guild } from "discord.js";
+import { Client, Guild } from "discord.js";
 
 import { Prisma } from ".prisma/client";
 
 import GuildModel from "../models/guild";
 
-import { masterChannelManager } from "@dynamico/managers/index";
-import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
+import { dmManager, masterChannelManager } from "@dynamico/managers/index";
 
 import DynamicoManager from "@dynamico/managers/dynamico";
 
@@ -52,18 +51,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
     public async onLeave( client: Client, guild: Guild ) {
         this.logger.info( this.onLeave, `Dynamico Left guild '${ guild.name }' guildId: '${ guild.id }'` );
 
-        const embed = new EmbedBuilder();
-
-        embed.setColor( DYNAMICO_DEFAULT_COLOR_BRAND );
-        embed.setTitle( "Hello there! 👋" );
-        embed.setDescription( "I noticed that I've been removed from your server.\n" +
-            "If there was anything wrong with my functionality or if there's something I could improve upon, please let me know!\n" +
-            "\n" +
-            "**Your reply to this message will be directly sent to the developers.**");
-
-        await ( await client.users.fetch( guild.ownerId ))?.send( { embeds: [ embed ] } ).catch( ( e ) => {
-            this.logger.error( this.onLeave, `Failed to send message to guild owner: '${ guild.ownerId }' guildId: '${ guild.id }'` );
-        } );
+        await dmManager.sendLeaveMessageToOwner( guild );
 
         // Updating that the bot is no longer in the guild.
         await this.guildModel.update( guild, false );

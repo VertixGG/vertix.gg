@@ -18,6 +18,7 @@ const VERSION_PHASE_4 = "0.0.1"; // https://github.com/CoffeBuffet/dynamico/pull
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
 
+    // TODO: Remove undefined.
     private client: Client | undefined;
 
     public static getInstance() {

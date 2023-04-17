@@ -50,8 +50,8 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
         await guiManager
             .sendContinuesMessage( interaction,
-                `The channel name must be between ${ MIN_INPUT_LENGTH } and ${ MAX_INPUT_LENGTH } characters long
-                ` );
+                `The channel name must be between ${ MIN_INPUT_LENGTH } and ${ MAX_INPUT_LENGTH } characters long`
+            );
     }
 
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction ) {

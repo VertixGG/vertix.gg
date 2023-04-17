@@ -35,7 +35,7 @@ import {
 
 import {
     categoryManager,
-    channelManager,
+    channelManager, dmManager,
     dynamicoManager,
     guiManager,
     permissionsManager
@@ -166,16 +166,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                         botName: newState.guild.client.user.username,
                     } );
 
-                // Get guild owner.
-                const guildOwner = await newState.guild.members.cache.get( newState.guild.ownerId );
-
                 // Send DM message to the user with missing permissions.
-                await guildOwner?.send( message ).catch( ( e ) => {
-                    this.logger.error( this.onJoinMasterCreateChannel,
-                        `Failed to send message to guild owner '${ guildOwner.displayName }'` );
-
-                    this.logger.error( this.onJoinMasterCreateChannel, "", e );
-                } );
+                await dmManager.sendToOwner( newState.guild, message );
 
                 return;
             }

@@ -1,8 +1,14 @@
-import { EmbedBuilder, Message, TextBasedChannel } from "discord.js";
+import fetch from "cross-fetch";
+
+import { EmbedBuilder, Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 
 import { dynamicoManager } from "@dynamico/managers";
 
-import { DYNAMICO_DEFAULT_SURVEY_COLLECTOR_ID, DYNAMICO_OWNERS_IDS } from "@dynamico/constants/dynamico";
+import {
+    DYNAMICO_DEFAULT_COLOR_BRAND,
+    DYNAMICO_DEFAULT_SURVEY_COLLECTOR_ID,
+    DYNAMICO_OWNERS_IDS
+} from "@dynamico/constants/dynamico";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -106,6 +112,29 @@ export class DMManager extends InitializeBase {
                 }
             }
         }
+    }
+
+    public async sendLeaveMessageToOwner( guild: Guild ) {
+        const embed = new EmbedBuilder();
+
+        embed.setColor( DYNAMICO_DEFAULT_COLOR_BRAND );
+        embed.setTitle( "Hello there! 👋" );
+        embed.setDescription( "I noticed that I've been removed from your server.\n" +
+            "If there was anything wrong with my functionality or if there's something I could improve upon, please let me know!\n" +
+            "\n" +
+            "**Your reply to this message will be directly sent to the developers.**");
+
+        await this.sendToOwner( guild, { embeds: [ embed ] } );
+
+        await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ))?.send( { embeds: [ embed ] } ).catch( () => {
+            this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to guild owner: '${ guild.ownerId }' guildId: '${ guild.id }'` );
+        } );
+    }
+
+    public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {
+        await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ))?.send( message ).catch( () => {
+            this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to guild owner: '${ guild.ownerId }' guildId: '${ guild.id }'` );
+        } );
     }
 }
 

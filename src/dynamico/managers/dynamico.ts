@@ -8,7 +8,7 @@ import { Commands } from "@dynamico/commands";
 import CategoryManager from "@dynamico/managers/category";
 import ChannelManager from "@dynamico/managers/channel";
 
-import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
+import { channelDataManager } from "@dynamico/managers/index";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
@@ -204,34 +204,30 @@ export class DynamicoManager extends InitializeBase {
     }
 
     private async ensureBackwardCompatibility() {
-        await this.replaceTemplatesPrefixSuffix();
+        await this.replaceDynamicChannelNameTemplate();
     }
 
     /**
-     * Function replaceTemplatesPrefixSuffix() :: Replace the old template prefix and suffix '%{', '%}' to the new one '{{', '}}'
+     * Function replaceDynamicChannelNameTemplate() :: Replace the old template prefix and suffix '%{', '%}' to the new one '{{', '}}'
      * From version `null` to version `0.0.1`.
      */
-    private async replaceTemplatesPrefixSuffix() {
-        const dataManagers = [ guildDataManager, channelDataManager ];
+    private async replaceDynamicChannelNameTemplate() {
+        const allData = await channelDataManager.getAllData();
 
-        for ( const dataManager of dataManagers ) {
-            const allData = await dataManager.getAllData();
+        for ( const data of allData ) {
+            if ( null === data.version ) {
+                if ( data.object && "settings" === data.key ) {
+                    // Assign new one.
+                    data.object.dynamicChannelNameTemplate = "{user}'s Channel";
 
-            for ( const data of allData ) {
-                if ( null === data.version ) {
-                    if ( data.object && "settings" === data.key ) {
-                        // Assign new one.
-                        data.object.dynamicChannelNameTemplate = "{user}'s Channel";
+                    // Describe version.
+                    data.version = VERSION_PHASE_4;
 
-                        // Describe version.
-                        data.version = VERSION_PHASE_4;
-
-                        await dataManager.setData( {
-                            ownerId: data.ownerId,
-                            key: data.key,
-                            default: data.object,
-                        } );
-                    }
+                    await channelDataManager.setData( {
+                        ownerId: data.ownerId,
+                        key: data.key,
+                        default: data.object,
+                    } );
                 }
             }
         }

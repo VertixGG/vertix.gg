@@ -6,7 +6,8 @@ const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
     DEFAULT_INFO_PREFIX = chalk.blue( "[INFO]"),
     DEFAULT_DEBUG_PREFIX = chalk.grey( "[DEBUG]" ),
     DEFAULT_WARN_PREFIX = chalk.yellow( "[WARN]" ),
-    DEFAULT_ERROR_PREFIX = chalk.red( "[ERROR]" );
+    DEFAULT_ERROR_PREFIX = chalk.red( "[ERROR]" ),
+    DEFAULT_ADMIN_PREFIX = chalk.yellow( "[ADMIN]" );
 
 export type ICaller = Function | String;
 
@@ -53,6 +54,10 @@ export default class Logger extends ObjectBase {
 
     public error( caller: ICaller, message: string, ... params: any[] ): void {
         this.output( DEFAULT_ERROR_PREFIX, caller, message, ... params );
+    }
+
+    public admin( caller: ICaller, message: string, ... params: any[] ): void {
+        this.output( DEFAULT_ADMIN_PREFIX, caller, message, ... params );
     }
 
     private getTime(): string {

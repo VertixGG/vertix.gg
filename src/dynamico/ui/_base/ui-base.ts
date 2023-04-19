@@ -115,7 +115,7 @@ export class UIBase extends ObjectBase {
      * It is an optional method that needs to be implemented by the child class.
      * TODO: Find better solution, ui-component-base should not know about modals.
      */
-    public async getModal?( interaction?: Interaction, args?: any ): Promise<ModalBuilder>;
+    public async getModal?( interaction?: Interaction ): Promise<ModalBuilder>;
 
     protected initialize?() {};
 

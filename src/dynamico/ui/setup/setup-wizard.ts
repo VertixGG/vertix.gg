@@ -14,8 +14,13 @@ import {
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 import { badwordsSplitOrDefault } from "@dynamico/utils/badwords";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
+
+import Logger from "@internal/modules/logger";
 
 export class SetupWizard extends UIWizardBase {
+    protected static dedicatedLogger = new Logger( this );
+
     public static getName() {
         return "Dynamico/UI/SetupWizard";
     }
@@ -56,7 +61,7 @@ export class SetupWizard extends UIWizardBase {
     }
 
     protected async onFinish( interaction: UIContinuesInteractionTypes ) {
-        const logger = this.getLogger(),
+        const logger = SetupWizard.dedicatedLogger,
             guildId = interaction.guildId as string;
 
         if ( ! interaction.guild ) {
@@ -90,7 +95,7 @@ export class SetupWizard extends UIWizardBase {
             );
         }
 
-        const { masterCategory, masterCreateChannel } = result;
+        const { masterCreateChannel } = result;
 
         if ( ! masterCreateChannel ) {
             logger.error( this.onFinish,
@@ -105,9 +110,15 @@ export class SetupWizard extends UIWizardBase {
 
         logger.info( this.onFinish, `GuildId: '${ guildId }' has been set up successfully` );
 
+        const badwords = await guildGetBadwordsFormatted( interaction.guildId?.toString() ?? "" );
+
+        logger.admin( this.onFinish,
+            `🛠️ Setup has performed - "${ args.channelNameTemplate }", "${ badwords }" (${ interaction.guild.name })`
+        );
+
         await guiManager.get( "Dynamico/UI/SetupSuccessEmbed" )
             .sendContinues( interaction, {
-                masterCategoryName: masterCategory.name,
+                badwords,
                 masterChannelId: masterCreateChannel.id,
                 dynamicChannelNameTemplate: args.channelNameTemplate,
             } );

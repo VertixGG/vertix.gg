@@ -4,9 +4,6 @@ import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
 
-// TODO: This embed considered to be best practice, all embeds should be like this.
-// TODO: If it possible, make an common logic for all embeds.
-
 export class MasterConfigEmbed extends UIEmbed {
     private vars: any;
 

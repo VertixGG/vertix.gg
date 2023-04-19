@@ -44,7 +44,7 @@ import {
 import CategoryModel from "@dynamico/models/category";
 import ChannelModel from "@dynamico/models/channel";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import { badwordsNormalizeArray } from "@dynamico/utils/badwords";
 import { guildGetSettings, guildSetBadwords } from "@dynamico/utils/guild";

@@ -15,12 +15,12 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import Debugger from "@dynamico/utils/debugger";
 
-import UIBase from "@dynamico/ui/base/ui-base";
-import UIGroupBase from "@dynamico/ui/base/ui-group-base";
+import UIBase from "@dynamico/ui/_base/ui-base";
+import UIGroupBase from "@dynamico/ui/_base/ui-group-base";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";

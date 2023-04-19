@@ -4,7 +4,7 @@ import { channelManager, masterChannelManager, permissionsManager } from "@dynam
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
-import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import GlobalLogger from "@dynamico/global-logger";
 

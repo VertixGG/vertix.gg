@@ -1,9 +1,9 @@
 import { PermissionsBitField, VoiceChannel, } from "discord.js";
 
-import { UIBaseInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
-import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { UIEmbedTemplate } from "@dynamico/ui/_base/ui-embed-template";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 export class EditDynamicChannelEmbed extends UIEmbedTemplate {
     private vars: any = {};

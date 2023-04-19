@@ -4,13 +4,13 @@ import {
     OverwriteType
 } from "discord.js";
 
-import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
+import UIEmbedTemplate from "@dynamico/ui/_base/ui-embed-template";
 
 import GlobalLogger from "@dynamico/global-logger";
 
 import { masterChannelManager } from "@dynamico/managers";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     private vars: any = {};

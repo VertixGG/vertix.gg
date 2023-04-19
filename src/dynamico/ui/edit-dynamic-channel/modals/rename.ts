@@ -5,8 +5,8 @@ import { Routes } from "discord-api-types/v10";
 
 import MasterChannelManager from "@dynamico/managers/master-channel";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
-import { GenericInputTextboxUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-ui-modal";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
+import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-ui-modal";
 
 import { guiManager } from "@dynamico/managers";
 

@@ -34,13 +34,7 @@ export const Setup: ICommand = {
             );
         }
 
-        // wizardManager.start( interaction, "Dynamico/UI/SetupProcess", {
-        //    step: "initial",
-        //    channelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-        //    badwords: await guildGetBadwordsFormatted( guildId ),
-        // } );
-
-        await guiManager.get( "Dynamico/UI/SetupProcess" )
+        await guiManager.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 step: "initial",
                 channelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,

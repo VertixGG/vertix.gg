@@ -1,4 +1,4 @@
-import { UIEmbed } from "@dynamico/ui/base/ui-embed";
+import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 

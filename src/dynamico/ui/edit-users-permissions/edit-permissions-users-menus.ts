@@ -7,12 +7,12 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import UIElement from "@dynamico/ui/base/ui-element";
+import UIElement from "@dynamico/ui/_base/ui-element";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { guiManager, masterChannelManager } from "@dynamico/managers";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 export default class EditPermissionsUsersMenus extends UIElement {
     public static getName() {

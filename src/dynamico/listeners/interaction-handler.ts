@@ -14,7 +14,7 @@ import { Commands } from "../commands";
 
 import { guiManager } from "@dynamico/managers";
 
-import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import GlobalLogger from "@dynamico/global-logger";
 

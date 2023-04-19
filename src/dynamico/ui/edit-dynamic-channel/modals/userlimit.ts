@@ -1,8 +1,8 @@
 import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 
-import { GenericInputTextboxNumberUIModal } from "@dynamico/ui/base/generic/generic-input-textbox-number-ui-modal";
+import { GenericInputTextboxNumberUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-number-ui-modal";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { guiManager } from "@dynamico/managers";
 

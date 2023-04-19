@@ -1,8 +1,8 @@
 import { Colors } from "discord.js";
 
-import { UIEmbedTemplate } from "@dynamico/ui/base/ui-embed-template";
+import { UIEmbedTemplate } from "@dynamico/ui/_base/ui-embed-template";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 // TODO: Remove the component, use `UIEmbed` standalone.
 export default class GlobalResponsesEmbed extends UIEmbedTemplate {

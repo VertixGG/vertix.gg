@@ -1,7 +1,7 @@
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
-import { UIEmbed } from "@dynamico/ui/base/ui-embed";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 export class NotifyPermissions extends UIEmbed {
     private vars: any = {};
@@ -33,7 +33,7 @@ export class NotifyPermissions extends UIEmbed {
         return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getFields() {
+    protected getLogicFields() {
         return [
             "botName",
             "permissions",

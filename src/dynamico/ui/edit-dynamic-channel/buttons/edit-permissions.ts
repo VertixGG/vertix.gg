@@ -1,10 +1,10 @@
 import { ButtonStyle, ChannelType, Interaction, VoiceChannel } from "discord.js";
 
-import UIElement from "@dynamico/ui/base/ui-element";
+import UIElement from "@dynamico/ui/_base/ui-element";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import { guiManager } from "@dynamico/managers";
 

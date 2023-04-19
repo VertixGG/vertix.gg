@@ -1,5 +1,5 @@
-import { UIEmbed } from "@dynamico/ui/base/ui-embed";
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 export class EditUserChannelPublic extends UIEmbed {
     public static getName() {
@@ -18,7 +18,7 @@ export class EditUserChannelPublic extends UIEmbed {
         return "";
     }
 
-    protected getFields() {
+    protected getLogicFields() {
         return [];
     }
 

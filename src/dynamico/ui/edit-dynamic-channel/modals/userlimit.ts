@@ -8,12 +8,16 @@ import { guiManager } from "@dynamico/managers";
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
+import Logger from "@internal/modules/logger";
+
 const MIN_USER_LIMIT = 0,
     MAX_USER_LIMIT = 99,
     MAX_USER_LIMIT_LENGTH = 2,
     MIN_USER_LIMIT_LENGTH = 1;
 
 export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
+    protected static dedicatedLogger = new Logger( this );
+
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Modal/Userlimit";
     }
@@ -55,6 +59,12 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
             .setTitle( `🙅 User limit must be between ${ MIN_USER_LIMIT } and ${ MAX_USER_LIMIT }` )
             .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
+        if ( ChannelType.GuildVoice === interaction.channel?.type ) {
+            UserlimitModal.dedicatedLogger.admin( this.onModalSubmit,
+                `🤷 User Limit input is incorrect - "${ (interaction).channel?.name }" (${ interaction.guild?.name })`
+            );
+        }
+
         await guiManager.sendContinuesMessage( interaction, {
             embeds: [ embed ],
         } );
@@ -63,6 +73,10 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
     protected async onModalSafeSubmit( interaction: ModalSubmitInteraction, input: string ) {
         if ( ChannelType.GuildVoice === interaction.channel?.type ) {
             const parsedInput = parseInt( input );
+
+            UserlimitModal.dedicatedLogger.admin( this.onModalSubmit,
+                `✋ Dynamic Channel user limit has been changed from ${ interaction.channel.userLimit } to ${ parsedInput } - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+            );
 
             await interaction.channel.setUserLimit( parsedInput );
 

@@ -16,10 +16,13 @@ import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico"
 
 import { gToken } from "@dynamico/login";
 
+import Logger from "@internal/modules/logger";
+
 const MIN_INPUT_LENGTH = 1,
     MAX_INPUT_LENGTH = 100;
 
 export default class RenameModal extends GenericInputTextboxUIModal {
+    protected static dedicatedLogger = new Logger( this );
 
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Modal/Rename";
@@ -69,9 +72,14 @@ export default class RenameModal extends GenericInputTextboxUIModal {
         switch ( interaction.channel.type ) {
             case ChannelType.GuildText:
             case ChannelType.GuildVoice:
-                const usedBadword = await guildUsedSomeBadword( interaction.guildId as string, input );
+                const currentChannelName = interaction.channel.name,
+                    usedBadword = await guildUsedSomeBadword( interaction.guildId as string, input );
 
                 if ( usedBadword ) {
+                    RenameModal.dedicatedLogger.admin( this.onSuccessfulRename,
+                        `🙅 Bad words function has been activated  - "${ currentChannelName }" (${ interaction.guild?.name })`
+                    );
+
                     const embed = new EmbedBuilder()
                         .setTitle( "🙅 Failed to rename your channel" )
                         .setDescription(
@@ -101,7 +109,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
                     break;
                 }
 
-                await this.onSuccessfulRename( interaction, input );
+                await this.onSuccessfulRename( interaction, currentChannelName, input );
         }
     }
 
@@ -112,6 +120,12 @@ export default class RenameModal extends GenericInputTextboxUIModal {
 
         if ( masterChannel ) {
             message = `\n\n<#${ masterChannel.id }>\n`;
+        }
+
+        if ( interaction.channel?.type === ChannelType.GuildVoice ) {
+            RenameModal.dedicatedLogger.admin( this.onSuccessfulRename,
+                `🙅 Channel rename rate limit has been activated - "${ interaction.channel?.name }" (${ interaction.guild?.name })`
+            );
         }
 
         const embed = new EmbedBuilder()
@@ -127,9 +141,13 @@ export default class RenameModal extends GenericInputTextboxUIModal {
         } );
     }
 
-    private async onSuccessfulRename( interaction: ModalSubmitInteraction, channelName: string ) {
+    private async onSuccessfulRename( interaction: ModalSubmitInteraction, oldChannelName: string, newChannelName: string ) {
+        RenameModal.dedicatedLogger.admin( this.onSuccessfulRename,
+            `✏️ Dynamic Channel name has been changed - "${ oldChannelName } -> "${ newChannelName }" (${ interaction.guild?.name })`
+        );
+
         const embed = new EmbedBuilder()
-            .setTitle( `✏️ Your channel's name has changed to '${ channelName }'` )
+            .setTitle( `✏️ Your channel's name has changed to '${ newChannelName }'` )
             .setColor( 0x32CD32 );
 
         await guiManager.sendContinuesMessage( interaction, {

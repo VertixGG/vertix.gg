@@ -30,7 +30,6 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
     DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
-    DEFAULT_DATA_MASTER_CHANNEL_SETTINGS
 } from "@dynamico/constants/master-channel";
 
 import {
@@ -49,7 +48,10 @@ import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 import { badwordsNormalizeArray } from "@dynamico/utils/badwords";
 import { guildGetSettings, guildSetBadwords } from "@dynamico/utils/guild";
 
-import { masterChannelGetSettingsData, masterChannelSetSettingsData } from "@dynamico/utils/master-channel";
+import {
+    masterChannelGetDynamicChannelNameTemplate,
+    masterChannelSetSettingsData
+} from "@dynamico/utils/master-channel";
 
 import Debugger from "@dynamico/utils/debugger";
 
@@ -203,6 +205,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         // If the channel is empty, delete it.
         if ( args.oldState.channel?.members.size === 0 ) {
+            this.logger.admin( this.onLeaveDynamicChannel,
+                `➖ Dynamic channel has been deleted - "${ oldState.channel?.name }" (${ guild.name })`
+            );
+
             await channelManager.delete( {
                 guild,
                 channel: args.oldState.channel,
@@ -357,15 +363,15 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             return;
         }
 
-        const data = await masterChannelGetSettingsData( masterChannelDB.id, DEFAULT_DATA_MASTER_CHANNEL_SETTINGS );
+        const dynamicChannelTemplateName = await masterChannelGetDynamicChannelNameTemplate( masterChannelDB.id );
 
-        if ( ! data ) {
+        if ( ! dynamicChannelTemplateName ) {
             this.logger.error( this.createDynamic,
                 `Could not find master channel data in database, guildId: ${ guild.id }, master channelId: ${ masterChannel.id }` );
             return;
         }
 
-        const dynamicChannelName = data.object.dynamicChannelNameTemplate.replace(
+        const dynamicChannelName = dynamicChannelTemplateName.replace(
             DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
             displayName
         );
@@ -400,6 +406,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             // ---
             permissionOverwrites,
         } );
+
+        this.logger.admin( this.createDynamic,
+            `➕  Dynamic channel has been created - "${ dynamicChannelName }" (${ guild.name })`
+        );
 
         // Move the user to new created channel.
         await newState.setChannel( channel.id );
@@ -506,6 +516,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( hasReachedLimit ) {
             this.debugger.log( this.checkLimit, `GuildId: ${ guildId } has reached master limit.` );
+
+            this.logger.admin( this.checkLimit,
+            `💰 Master Channels Limitation function has been activated max(${ limit }) (${ interaction.guild?.name })`
+            );
 
             await guiManager.get( "Dynamico/UI/NotifyMaxMasterChannels" )
                 .sendContinues( interaction, { maxFreeMasterChannels: limit } );

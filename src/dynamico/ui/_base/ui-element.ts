@@ -90,7 +90,7 @@ export default class UIElement extends UIGroupBase {
         return this.builtRows;
     }
 
-    protected getButtonBuilder( callback: ( inteaction: ButtonInteraction ) => Promise<void>, extraData = "" ) {
+    protected getButtonBuilder( callback: ( interaction: ButtonInteraction ) => Promise<void>, extraData = "" ) {
         const button = new ButtonBuilder();
 
         this.setCallback( button, callback, extraData );

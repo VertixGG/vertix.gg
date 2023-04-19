@@ -6,9 +6,6 @@ import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 import { GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/guild";
 import { DEFAULT_MASTER_CHANNEL_CREATE_NONE_NAME } from "@dynamico/constants/master-channel";
 
-// TODO: This embed considered to be best practice, all embeds should be like this.
-// TODO: If it possible, make an common logic for all embeds.
-
 export class ConfigEmbed extends UIEmbed {
     private vars: any;
 

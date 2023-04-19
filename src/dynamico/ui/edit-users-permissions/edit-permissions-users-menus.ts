@@ -14,7 +14,11 @@ import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { guiManager, masterChannelManager } from "@dynamico/managers";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
+import Logger from "@internal/modules/logger";
+
 export default class EditPermissionsUsersMenus extends UIElement {
+    protected static dedicatedLogger = new Logger( this );
+
     public static getName() {
         return "Dynamico/UI/EditUserPermissions/EditPermissionsUsersMenus";
     }
@@ -109,21 +113,25 @@ export default class EditPermissionsUsersMenus extends UIElement {
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] ),
                 editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
 
-            // If user tries to add himself, then we just ignore it.
-            const memberId = member?.id;
-            if ( memberId === interaction.user.id || memberId === interaction.client.user.id ) {
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: uiUtilsWrapAsTemplate( "nothingChanged" ),
-                } );
+            let nothingChanged = false;
 
-                return;
+            const memberId = member?.id;
+
+            if ( memberId === interaction.user.id || memberId === interaction.client.user.id ) {
+                // If user tries to add himself, then we just ignore it.
+                nothingChanged = true;
+            } else if ( channel.permissionOverwrites.cache.has( memberId as string ) ) {
+                // If user is already in the list, then we just ignore it.
+                nothingChanged = true;
             }
 
-            // If user is already in the list, then we just ignore it.
-            if ( channel.permissionOverwrites.cache.has( memberId as string ) ) {
+            if ( nothingChanged ) {
+                EditPermissionsUsersMenus.logger.admin( this.grantUser,
+                    `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name })`
+                );
+
                 await editPermissionsComponent.sendContinues( interaction, {
                     title: uiUtilsWrapAsTemplate( "nothingChanged" ),
-                    username: member?.username,
                 } );
 
                 return;
@@ -137,6 +145,10 @@ export default class EditPermissionsUsersMenus extends UIElement {
                         ReadMessageHistory: true,
                     } );
 
+                    EditPermissionsUsersMenus.logger.admin( this.grantUser,
+                        `🤷 Grant user access did nothing - "${ channel.name }" (${ channel.guild.name })`
+                    );
+
                     await editPermissionsComponent.sendContinues( interaction, {
                         title: uiUtilsWrapAsTemplate( "canNowConnect" ),
                         username: member.username,
@@ -149,7 +161,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
                         username: member.username,
                     } );
 
-                    UIElement.logger.error( this.grantUser, "", e );
+                    EditPermissionsUsersMenus.dedicatedLogger.error( this.grantUser, "", e );
                 }
             }
 
@@ -174,6 +186,10 @@ export default class EditPermissionsUsersMenus extends UIElement {
             // TODO: Properly some of the logic repeated.
             if ( member ) {
                 await channel.permissionOverwrites.delete( member );
+
+                EditPermissionsUsersMenus.logger.admin( this.removeUser,
+                    `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name })`
+                );
 
                 await editPermissionsComponent.sendContinues( interaction, {
                     title: uiUtilsWrapAsTemplate( "removedFromYourList" ),

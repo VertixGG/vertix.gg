@@ -8,7 +8,11 @@ import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import { guiManager } from "@dynamico/managers";
 
+import Logger from "@internal/modules/logger";
+
 export default class EditPermissions extends UIElement {
+    protected static dedicatedLogger = new Logger( this );
+
     public static getName() {
         return "Dynamico/UI/EditDynamicChannel/Buttons/EditPermissions";
     }
@@ -60,6 +64,10 @@ export default class EditPermissions extends UIElement {
                 Connect: null,
             } );
 
+            EditPermissions.dedicatedLogger.admin( this.makeChannelPrivate,
+                `🌐 Dynamic Channel has been set to public - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+            );
+
             await guiManager.get( "Dynamico/UI/EditUsersPermissions/EditUsersChannelPublicEmbed" )
                 .sendContinues( interaction, {} );
         }
@@ -74,6 +82,10 @@ export default class EditPermissions extends UIElement {
                 Connect: false,
             } );
 
+            EditPermissions.dedicatedLogger.admin( this.makeChannelPrivate,
+                `🚫 Dynamic Channel has been set to private - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+            );
+
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
                 title: uiUtilsWrapAsTemplate( "private" ),
             } );
@@ -82,6 +94,10 @@ export default class EditPermissions extends UIElement {
 
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
+            EditPermissions.dedicatedLogger.admin( this.displayManageUsers,
+                `👥 Manage Users button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+            );
+
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
                 title: uiUtilsWrapAsTemplate( "mange" ),
             } );

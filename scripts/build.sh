@@ -19,5 +19,14 @@ tsup-node src/index.ts
 # Minify
 terser dist/index.js --comments false -o dist/index.min.js
 
+sleep 1
+
+# Remove old executable
+rm -f dist/dynamico-bot
+
+# Create executable
+pkg .
+
 # Clean up
 rm dist/index.js
+rm dist/index.min.js

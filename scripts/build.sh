@@ -13,6 +13,12 @@ cp ./prisma/schema.prisma dist/prisma/schema.prisma
 # Copy package.json to dist folder
 cp ./package.json dist/package.json
 
+# Copy `run_loop.sh` to dist folder
+cp ./scripts/run-loop.sh ./dist/run-loop.sh
+
+# Chmod run-loop.sh
+chmod +x ./dist/run-loop.sh
+
 # Bundle
 tsup-node src/index.ts
 

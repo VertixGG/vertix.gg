@@ -3,18 +3,33 @@
  * @see https://discord.com/api/oauth2/authorize?client_id=1079487067932868608&permissions=286346256&scope=bot%20applications.commands - LegendAI
  * @see https://discord.com/api/oauth2/authorize?client_id=1091272387493908561&permissions=286346256&scope=bot%20applications.commands - Ancient AI
  */
+import path from "path";
+import process from "process";
 
-import botInitialize from "./dynamico";
-import Prisma from "./prisma";
+import dotenv from "dotenv";
 
 import GlobalLogger from "@dynamico/global-logger";
 
 function entryPoint() {
     GlobalLogger.getInstance().info( entryPoint, "Database is connected" );
 
-    botInitialize().then( () => {
-        GlobalLogger.getInstance().info( entryPoint, "Bot is initialized" );
+    import( "./dynamico" ).then( ( { default: botInitialize } ) => {
+        botInitialize().then( () => {
+            GlobalLogger.getInstance().info( entryPoint, "Bot is initialized" );
+        } );
     } );
 }
 
-Prisma.getConnectPromise().then( entryPoint );
+function main() {
+    dotenv.config( { path: path.join( process.cwd(), ".env" ) } );
+
+    //GlobalLogger.getInstance().info( main, "Environment variables are loaded:", process.env );
+
+    import( "./prisma" ).then( ( { default: Prisma } ) => {
+        Prisma.getConnectPromise().then( entryPoint );
+    } );
+}
+
+console.log( "Starting..."  );
+
+setTimeout( main, 0 );

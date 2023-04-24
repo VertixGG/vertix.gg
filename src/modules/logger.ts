@@ -7,7 +7,7 @@ const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
     DEFAULT_DEBUG_PREFIX = chalk.grey( "[DEBUG]" ),
     DEFAULT_WARN_PREFIX = chalk.yellow( "[WARN]" ),
     DEFAULT_ERROR_PREFIX = chalk.red( "[ERROR]" ),
-    DEFAULT_ADMIN_PREFIX = chalk.yellow( "[ADMIN]" );
+    DEFAULT_ADMIN_PREFIX = chalk.yellowBright( "[ADMIN]" );
 
 export type ICaller = Function | String;
 

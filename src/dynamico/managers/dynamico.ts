@@ -66,6 +66,7 @@ export class DynamicoManager extends InitializeBase {
         await this.removeEmptyChannels( client );
         await this.removeEmptyCategories( client );
 
+        // TODO: Should run on background.
         await this.updateGuilds();
 
         await this.ensureBackwardCompatibility();
@@ -156,7 +157,9 @@ export class DynamicoManager extends InitializeBase {
 
             if ( ChannelType.GuildCategory === categoryCache?.type ) {
                 if ( 0 === categoryCache.children.cache.size ) {
-                    await CategoryManager.getInstance().delete( categoryCache );
+                    await CategoryManager.getInstance().delete( categoryCache ).catch( ( error ) => {
+                        this.logger.error( this.removeEmptyCategories, "", error );
+                    } );
                 }
 
                 continue;
@@ -185,7 +188,7 @@ export class DynamicoManager extends InitializeBase {
                 name = guildCache?.name || guild.name,
                 isInGuild = !! guildCache;
 
-            await prisma.guild.update( {
+            prisma.guild.update( {
                 where: {
                     id: guild.id
                 },

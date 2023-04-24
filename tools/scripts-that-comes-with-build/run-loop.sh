@@ -6,6 +6,7 @@ timezone=$(date +%z)
 
 # Find the highest existing log file number and add 1 to get the next log file number
 log_num=$(ls -1 dynamico.*.log 2>/dev/null | sed 's/dynamico\.//;s/\.log//' | sort -n | tail -1)
+
 if [ -n "$log_num" ]; then
   log_num=$((log_num + 1))
 else
@@ -15,7 +16,9 @@ fi
 while true; do
   # Run the process and redirect its output to the current log file
   log_file_name="dynamico.$log_num.log"
+
   ./dynamico-bot 2>&1 | tee "dynamico.$log_num.log" &
+
   pid=$!
 
   # Wait for the process to exit

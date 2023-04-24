@@ -185,7 +185,9 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
                     } );
 
                 // Send DM message to the user with missing permissions.
-                await dmManager.sendToOwner( newState.guild, message );
+                if ( newState.member?.id ) {
+                    await dmManager.sendToUser( newState.member.id, message );
+                }
 
                 return;
             }
@@ -209,6 +211,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
     }
 
+    // TODO Where is onJoinDynamicChannel()?
     /**
      * onLeaveDynamicChannel() :: Called when a user leaves a dynamic channel.
      */

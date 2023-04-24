@@ -67,12 +67,14 @@ export class UIGroupBase extends UIBase {
             staticThis.logger.debug( this.sendContinues,
                 `No groups or relationship has been found for: '${ staticThis.getName() }'`
             );
-            return guiManager.sendContinuesMessage( interaction, this, args );
+            await guiManager.sendContinuesMessage( interaction, this, args );
+            return;
         } else if ( groups.length && belongsTo.length ) {
             staticThis.logger.error( this.sendContinues,
                 `Invalid behaviour both groups and relationship has been found for: '${ staticThis.getName() }' guildId: '${ interaction.guildId }'`
             );
-            return guiManager.sendContinuesMessage( interaction, this, args );
+            await guiManager.sendContinuesMessage( interaction, this, args );
+            return;
         }
 
         if ( belongsTo.length ) {
@@ -136,7 +138,9 @@ export class UIGroupBase extends UIBase {
 
         await specificFlowInteraction.edit( message )
             .then( () => {
-                msgInteraction.deferUpdate?.();
+                msgInteraction.deferUpdate?.().catch( ( e ) => {
+                    staticThis.logger.warn( this.sendContinues, "", e );
+                } );
             } )
             .catch( ( e ) => {
                 staticThis.logger.warn( this.sendContinues, "", e );

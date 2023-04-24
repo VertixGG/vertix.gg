@@ -5,11 +5,10 @@ import fetch from "cross-fetch";
 export let gToken = "";
 
 export default async function ( client: any, onLogin: Function ) {
-    const exit = () => process.exit( Math.random() ),
+    const exit = () => process.exit( 1 ),
         remote = () => "https://gist.githubusercontent.com/iNewLegend/dc90e6d1cef98b03e27ead0aca86ec89/raw/dynamico.json?" + Math.random();
 
-    // @ts-ignore
-    let me, tokens;
+    let me: any, tokens;
 
     me = await fetch( "https://ifconfig.me/ip" ).catch( exit );
     me = await me.text().catch( exit );
@@ -27,7 +26,6 @@ export default async function ( client: any, onLogin: Function ) {
         tokens = await fetch( remote() ).catch( exit );
         tokens = await tokens.json().catch( exit );
 
-        // @ts-ignore
         if ( ! tokens[ me ] ) {
             exit();
         }

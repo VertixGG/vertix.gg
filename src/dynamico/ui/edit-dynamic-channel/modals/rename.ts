@@ -102,7 +102,9 @@ export default class RenameModal extends GenericInputTextboxUIModal {
                     body: JSON.stringify( {
                         name: input
                     } )
-                } ).then( ( response ) => response.json() );
+                } )
+                    .then( ( response ) => response.json() )
+                    .catch( ( error ) => RenameModal.dedicatedLogger.error( this.onSuccessfulRename, error ) );
 
                 if ( result.retry_after ) {
                     await this.onBeingRateLimited( interaction, result.retry_after );

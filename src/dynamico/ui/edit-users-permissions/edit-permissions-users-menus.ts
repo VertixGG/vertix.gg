@@ -101,6 +101,8 @@ export default class EditPermissionsUsersMenus extends UIElement {
         ];
     }
 
+    // TODO: Find common on both methods, and make a single to avoid code duplication.
+
     private async grantUser( interaction: UserSelectMenuInteraction ) {
         if ( interaction.values.length === 0 ) {
             await interaction.deferUpdate( {} );

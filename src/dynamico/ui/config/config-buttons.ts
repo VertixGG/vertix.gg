@@ -141,7 +141,7 @@ export class ConfigButtons extends UIElement {
     private async onBadwordsModified( interaction: ButtonInteraction, args: any ) {
         const oldBadwords = await guildGetBadwordsFormatted( interaction.guildId as string ),
             newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( args.badwords ) )
-            .map( ( word ) => word.trim() );
+                .map( ( word ) => word.trim() );
 
         await guildSetBadwords( interaction.guild as Guild, newBadwords );
 

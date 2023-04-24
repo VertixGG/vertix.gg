@@ -5,7 +5,7 @@ export abstract class ObjectBase {
 
     protected readonly args: { [ key: string ]: any };
 
-    public constructor( args?: any ) {
+    protected constructor( args?: any ) {
         this.args = args || {};
 
         this.name = this.getName();

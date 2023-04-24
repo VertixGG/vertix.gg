@@ -13,11 +13,11 @@ cp ./prisma/schema.prisma dist/prisma/schema.prisma
 # Copy package.json to dist folder
 cp ./package.json dist/package.json
 
-# Copy `run_loop.sh` to dist folder
-cp ./scripts/run-loop.sh ./dist/run-loop.sh
+# Take all '.sh' files in `./tools/scripts-that-comes-with-build` and copy them to `./dist`
+cp ./tools/scripts-that-comes-with-build/*.sh ./dist/
 
-# Chmod run-loop.sh
-chmod +x ./dist/run-loop.sh
+# Apply chmod +x to them.
+chmod +x ./dist/*.sh
 
 # Bundle
 tsup-node src/index.ts
@@ -25,7 +25,8 @@ tsup-node src/index.ts
 # Minify
 terser dist/index.js --comments false -o dist/index.min.js
 
-sleep 1
+# Required?
+#sleep 1
 
 # Remove old executable
 rm -f dist/dynamico-bot

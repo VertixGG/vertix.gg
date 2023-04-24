@@ -21,14 +21,14 @@ export class NotifyMaxMasterChannels extends UIEmbed {
         return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getLogicFields() {
+    protected getArgsFields() {
         return [
             "maxFreeMasterChannels",
         ];
     }
 
-    protected async getFieldsLogic( interaction?: null ) {
-        return {};
+    protected getLogicFields() {
+        return [];
     }
 }
 

@@ -18,6 +18,10 @@ export class NotifyMasterChannelNotExist extends UIEmbed {
     protected getColor(): number {
         return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
     }
+
+    protected getLogicFields() {
+        return [];
+    }
 }
 
 export default NotifyMasterChannelNotExist;

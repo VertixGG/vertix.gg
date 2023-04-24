@@ -72,7 +72,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             channelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
 
         this.logger.info( this.onJoin,
-            `User '${ displayName }' joined channel '${ channelName }' guildId: '${ oldState.guild.id }'` );
+            `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' joined to channel: '${ channelName }'`
+        );
 
         await this.onEnterGeneric( {
             oldState,
@@ -88,7 +89,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             newChannelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
 
         this.logger.log( this.onSwitch,
-            `User '${ displayName }' switched from channel '${ oldChannelName }' to channel '${ newChannelName }' guildId: '${ oldState.guild.id }'` );
+            `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' switched from channel: '${ oldChannelName }' to channel: '${ newChannelName }'`
+        );
 
         await this.onEnterGeneric( {
             oldState,
@@ -108,7 +110,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             channelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
 
         this.logger.info( this.onLeave,
-            `User '${ displayName }' left channel from guild: '${ oldState.guild.name }' guildId: '${ oldState.guild.id }'` );
+            `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' left channel guild: '${ oldState.guild.name }'`
+        );
 
         await this.onLeaveGeneric( {
             oldState,
@@ -140,7 +143,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     }
 
     public async onChannelDelete( channel: DMChannel | NonThreadGuildBasedChannel ) {
-        this.logger.info( this.onChannelDelete, `Channel '${ channel.id }' was deleted` );
+        this.debugger.log( this.onChannelDelete, `Channel id: '${ channel.id }' was deleted` );
 
         switch ( channel.type ) {
             case ChannelType.GuildVoice:
@@ -148,8 +151,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
                 const channelId = channel.id,
                     guildId = channel.guildId;
 
-                this.debugger.log( this.onChannelDelete,
-                    `Channel '${ channelId }' was deleted from guildId: '${ guildId }'` );
+                this.logger.info( this.onChannelDelete,
+                    `Guild id: '${ guildId }' - Channel id: '${ channelId }' was deleted` );
 
                 if ( await this.channelModel.isMasterCreate( channelId, guildId ) ) {
                     await this.channelModel.delete( channel.guild, channelId );
@@ -162,7 +165,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     }
 
     public async onChannelUpdate( oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel ) {
-        this.logger.info( this.onChannelUpdate, `Channel '${ oldChannel.id }' was updated` );
+        this.logger.info( this.onChannelUpdate, `Channel id '${ oldChannel.id }' was updated` );
 
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
@@ -175,7 +178,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
     public async getChannel( guildId: string, channelId: string, cache = false ) {
         this.debugger.log( this.getChannel,
-            `Getting channel '${ channelId }' from guildId: '${ guildId }', cache: '${ cache }'`
+            `Guild id: '${ guildId }' - Getting channel id: '${ channelId }' cache: '${ cache }'`
         );
 
         // If in cache, return it.
@@ -197,16 +200,16 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     }
 
     public async getMasterCreateChannels( guildId: string, includeData = false ) {
-        this.logger.info( this.getMasterCreateChannels,
-            `Getting master create channel(s) from guildId: '${ guildId }'`
+        this.logger.debug( this.getMasterCreateChannels,
+            `Guild id: '${ guildId }' - Getting master create channel(s)`
         );
 
         return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL, includeData );
     }
 
     public async getDynamicChannels( guildId: string, includeData = false ) {
-        this.logger.info( this.getMasterCreateChannels,
-            `Getting dynamic channel(s) from guildId: '${ guildId }'`
+        this.logger.debug( this.getDynamicChannels,
+            `Guild id: '${ guildId }' - Getting dynamic channel(s)`
         );
 
         return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL, includeData );
@@ -219,8 +222,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
         this.logger.info( this.create,
-            `Creating channel for guild '${ guild.name }' guildId: '${ guild.id }' with the following properties: ` +
-            `With name: '${ name }' ownerId: '${ userOwnerId }' internalType: '${ internalType }' ` +
+            `Guild id: '${ guild.id }' - Creating channel for guild: '${ guild.name }' with the following properties: ` +
+            `name: '${ name }' ownerId: '${ userOwnerId }' internalType: '${ internalType }' ` +
             `ownerChannelId: '${ args.ownerChannelId }'`
         );
 
@@ -235,7 +238,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             };
 
         this.debugger.log( this.create,
-            `Channel '${ channel.id }' was created for guildId: '${ guild.id }'`
+            `Guild id: '${ guild.id }' - Channel id '${ channel.id }' was created`
         );
 
         if ( channel.parentId ) {
@@ -253,7 +256,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         const { channel, guild } = args;
 
         this.logger.info( this.delete,
-            `Deleting channel '${ channel.name }' for guild '${ guild.name }' guildId: '${ guild.id }'` );
+            `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' guild: '${ guild.name }'`
+        );
 
         ChannelDataManager.getInstance().removeFromCache( channel.id );
 
@@ -271,7 +275,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
         if ( ! message ) {
             this.logger.warn( this.editPrimaryMessage,
-                `Failed to find message in channel: '${ channel.id }' guildId: '${ channel.guildId }'` );
+                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
             return;
         }
 
@@ -280,7 +284,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     }
 
     protected removeFromCache( channelId: string ) {
-        this.debugger.log( this.removeFromCache, `Removing channel '${ channelId }' from cache.` );
+        this.debugger.log( this.removeFromCache, `Removing channel id: '${ channelId }' from cache.` );
 
         // Remove from cache.
         this.deleteCache( channelId );

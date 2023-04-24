@@ -21,7 +21,6 @@ export class Debugger extends ObjectBase {
         this.shouldDebug = shouldDebug;
 
         this.logger = new Logger( owner );
-        this.logger.addMessagePrefix( chalk.magenta( "DBG" ) );
 
         if ( prefix ) {
             this.logger.addMessagePrefix( prefix );

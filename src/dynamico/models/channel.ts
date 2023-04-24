@@ -56,7 +56,8 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
 
     public async create( args: Prisma.ChannelCreateArgs ) {
         this.logger.info( this.create,
-            `Creating channel '${ args.data.channelId }' for guildId '${ args.data.guildId }'` );
+            `Guild id: '${ args.data.guildId }' - Creating entry for channel id: '${ args.data.channelId }''`
+        );
 
         this.debugger.dumpDown( this.create, args.data );
 
@@ -66,7 +67,8 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
     public async delete( guild: Guild, channelId?: string | null ) {
         if ( channelId ) {
             this.logger.info( this.delete,
-                `Deleting channel '${ channelId }' for guild '${ guild.name }' guildId: '${ guild.id }'` );
+                `Guild id: '${ guild.id }' - Deleting entry of channel id: '${ channelId }' guild: '${ guild.name }'`
+            );
 
             if ( await this.isExisting( guild, channelId ) ) {
                 return this.ownerModel.delete( {
@@ -81,7 +83,8 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         }
 
         this.logger.info( this.delete,
-            `Deleting all channels for guild '${ guild.name }' guildId: '${ guild.id }'` );
+            `Guild id: '${ guild.id }' - Deleting all channels for guild: '${ guild.name }'`
+        );
 
         return this.ownerModel.deleteMany( { where: { guildId: guild.id } } );
     }
@@ -133,7 +136,7 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         } );
 
         this.debugger.log( this.getMasterTotal,
-            `Total master channels for guildId: '${ guildId }' is '${ total }'`
+            `Guild id: '${ guildId }' - Total master channels for is '${ total }'`
         );
 
         return total;

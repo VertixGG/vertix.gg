@@ -37,7 +37,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
     }
 
     public async onJoin( client: Client, guild: Guild ) {
-        this.logger.info( this.onJoin, `Dynamico joined guild: '${ guild.name }' guildId: '${ guild.id }'` );
+        this.logger.info( this.onJoin, `Guild id: '${ guild.id }' - Dynamico joined guild: '${ guild.name }'` );
         this.logger.admin( this.onJoin,
             `😍 Dynamico has been invited to a new guild - "${ guild.name }" (${ guild.memberCount })`
         );
@@ -52,7 +52,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
     }
 
     public async onLeave( client: Client, guild: Guild ) {
-        this.logger.info( this.onLeave, `Dynamico Left guild '${ guild.name }' guildId: '${ guild.id }'` );
+        this.logger.info( this.onLeave, `Guild id: '${ guild.id }' - Dynamico left guild: '${ guild.name }'` );
         this.logger.admin( this.onLeave,
             `😭 Dynamico has been kicked from a guild - "${ guild.name }" (${ guild.memberCount })`
         );

@@ -48,7 +48,7 @@ export function interactionHandler( client: Client ) {
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
     globalLogger.log( handleSlashCommand,
-        `Slash command: '${ interaction.commandName }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
+        `Guild id: '${ interaction.guildId }' - Slash command: '${ interaction.commandName }' were used by '${ interaction.user.username }`
     );
 
     if ( ! interaction.guild ) {
@@ -63,7 +63,7 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 
     if ( missingPermissions.length ) {
         globalLogger.log( handleSlashCommand,
-            `User: '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }' guildId: '${ interaction.guildId }'`
+            `Guild id: '${ interaction.guildId }' - User: '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'`
         );
 
         globalLogger.admin( handleSlashCommand,
@@ -105,7 +105,7 @@ const getCallback = async ( interaction: UIInteractionTypes ) => {
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
     globalLogger.log( handleButton,
-        `Button id: '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
+        `Guild id: '${ interaction.guildId }' - ButtonInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );
@@ -113,7 +113,7 @@ async function handleButton( client: Client, interaction: ButtonInteraction ) {
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
     globalLogger.log( handleModalSubmit,
-        `Modal submit id: '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
+        `Guild id: '${ interaction.guildId }' - ModalSubmitInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );
@@ -121,7 +121,7 @@ async function handleModalSubmit( client: Client, interaction: ModalSubmitIntera
 
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
     globalLogger.log( handleUserSelectMenuInteraction,
-        `UserSelectMenuInteraction|SelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
+        `Guild Id: '${ interaction.guildId } - UserSelectMenuInteraction | SelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );
@@ -129,7 +129,7 @@ async function handleUserSelectMenuInteraction( client: Client, interaction: Use
 
 async function handleRoleSelectMenuInteraction( client: Client, interaction: RoleSelectMenuInteraction ) {
     globalLogger.log( handleRoleSelectMenuInteraction,
-        `RoleSelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
+        `Guild Id: '${ interaction.guildId } - RoleSelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );

@@ -117,7 +117,8 @@ export class DynamicoManager extends InitializeBase {
             } );
 
             this.logger.info( this.removeEmptyChannels,
-                `Channel '${ channel.channelId }' is deleted from db.` );
+                `Channel id: '${ channel.channelId }' is deleted from db.`
+            );
         }
     }
 
@@ -141,8 +142,9 @@ export class DynamicoManager extends InitializeBase {
                     }
                 } );
 
-                this.logger.info( this.removeEmptyChannels,
-                    `Master channel '${ channel.channelId }' is deleted from db.` );
+                this.logger.info( this.removeMasterChannels,
+                    `Master channel id: '${ channel.channelId }' is deleted from db.`
+                );
             }
         }
     }
@@ -173,7 +175,8 @@ export class DynamicoManager extends InitializeBase {
             } );
 
             this.logger.info( this.removeEmptyCategories,
-                `Category '${ category.categoryId }' is deleted from db.` );
+                `Category id: '${ category.categoryId }' is deleted from database`
+            );
         }
     }
 
@@ -201,7 +204,8 @@ export class DynamicoManager extends InitializeBase {
                 },
             } ).then( () => {
                 this.logger.info( this.updateGuilds,
-                    `guildId: '${ guild.guildId }' is updated, name: '${ name }', isInGuild: '${ isInGuild }'.` );
+                    `Guild id: '${ guild.guildId }' - Updated, name: '${ name }', isInGuild: '${ isInGuild }'`
+                );
             } );
         }
     }

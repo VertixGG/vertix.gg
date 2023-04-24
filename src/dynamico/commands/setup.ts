@@ -30,7 +30,7 @@ export const Setup: ICommand = {
 
         if ( ! await masterChannelManager.checkLimit( interaction, guildId ) ) {
             return commandsLogger.warn( name,
-                `guildId: '${ guildId }' has not been set up, master channel creation failed`
+                `Guild id: '${ guildId }' - Master channel creation failed`
             );
         }
 

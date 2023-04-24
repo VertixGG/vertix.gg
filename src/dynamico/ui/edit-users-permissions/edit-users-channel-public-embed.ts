@@ -18,12 +18,12 @@ export class EditUserChannelPublic extends UIEmbed {
         return "";
     }
 
-    protected getLogicFields() {
-        return [];
-    }
-
     protected getColor(): number {
         return 0x1E90FF;
+    }
+
+    protected getLogicFields() {
+        return [];
     }
 }
 

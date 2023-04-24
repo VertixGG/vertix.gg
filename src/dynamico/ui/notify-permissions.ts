@@ -33,11 +33,15 @@ export class NotifyPermissions extends UIEmbed {
         return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getLogicFields() {
+    protected getArgsFields() {
         return [
             "botName",
             "permissions",
         ];
+    }
+
+    protected getLogicFields() {
+        return [];
     }
 
     protected async getFieldsLogic( interaction?: null, args?: { permissions: string[] } ) {

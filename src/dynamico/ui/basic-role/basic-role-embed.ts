@@ -26,10 +26,14 @@ export class BasicRoleEmbed extends UIEmbed {
             uiUtilsWrapAsTemplate( "basicRoles" );
     }
 
-    protected getLogicFields() {
+    protected getArgsFields() {
         return [
             "basicRoles",
         ];
+    }
+
+    protected getLogicFields() {
+        return [];
     }
 
     protected async getFieldsLogic( interaction?: Interaction, args?: any ) {

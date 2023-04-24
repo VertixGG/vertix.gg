@@ -14,6 +14,10 @@ export abstract class UIEmbedTemplate extends ObjectBase {
         return DYNAMICO_UI_TEMPLATE;
     }
 
+    public constructor() {
+        super();
+    }
+
     public async compose( interaction?: UIBaseInteractionTypes | null, args?: any ): Promise<any> {
         const template = this.getTemplateInputs(),
             logic = await this.getTemplateLogic( interaction, args ),

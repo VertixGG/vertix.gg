@@ -36,6 +36,18 @@ export class MasterConfigEmbed extends UIEmbed {
             "`" + this.vars.channelNameTemplateState + "`";
     }
 
+    protected getArgsFields() {
+        return [
+            "channelNameTemplate",
+        ];
+    }
+
+    protected getLogicFields() {
+        return [
+            "channelNameTemplateState",
+        ];
+    }
+
     protected getFieldOptions(): any {
         return {
             channelNameTemplateState: {
@@ -43,16 +55,6 @@ export class MasterConfigEmbed extends UIEmbed {
                [ this.vars.channelNameTemplateDefault ]: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
             }
         };
-    }
-
-    protected getLogicFields() {
-        return [
-            // Args.
-            "channelNameTemplate",
-
-            // Logic.
-            "channelNameTemplateState",
-        ];
     }
 
     protected async getFieldsLogic( interaction?: null, args?: any ) {

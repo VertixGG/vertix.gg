@@ -6,7 +6,6 @@ import { dynamicoManager } from "@dynamico/managers";
 
 import {
     DYNAMICO_DEFAULT_COLOR_BRAND,
-    DYNAMICO_DEFAULT_SURVEY_COLLECTOR_ID,
     DYNAMICO_OWNERS_IDS
 } from "@dynamico/constants/dynamico";
 
@@ -29,25 +28,27 @@ export class DMManager extends InitializeBase {
 
     public async onMessage( message: Message ) {
         this.logger.debug( this.onMessage,
-            `Received message from '${ message.author.tag }', content: '${ message.content }'` );
+            `Received message from '${ message.author.tag }', content: '${ message.content }', guildId: ${ message.guildId }` );
 
         if ( DYNAMICO_OWNERS_IDS.includes( message.author.id ) ) {
             return this.onOwnerMessage( message );
         }
 
-        const target = await dynamicoManager.getClient()?.users.fetch( DYNAMICO_DEFAULT_SURVEY_COLLECTOR_ID );
+        // Do not send messages to the survey collector.
 
-        if ( target ) {
-            const embedBuilder = new EmbedBuilder();
-
-            embedBuilder.setTitle( "Message from " + message.author.tag );
-            embedBuilder.setDescription( message.content );
-            embedBuilder.setColor( "Random" );
-
-            await target.send( {
-                embeds: [ embedBuilder ]
-            } );
-        }
+        // const target = await dynamicoManager.getClient()?.users.fetch( DYNAMICO_DEFAULT_SURVEY_COLLECTOR_ID );
+        //
+        // if ( target ) {
+        //     const embedBuilder = new EmbedBuilder();
+        //
+        //     embedBuilder.setTitle( "Message from " + message.author.tag );
+        //     embedBuilder.setDescription( message.content );
+        //     embedBuilder.setColor( "Random" );
+        //
+        //     await target.send( {
+        //         embeds: [ embedBuilder ]
+        //     } );
+        // }
     }
 
     public async onOwnerMessage( message: Message ) {
@@ -130,6 +131,12 @@ export class DMManager extends InitializeBase {
     public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {
         await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ))?.send( message ).catch( () => {
             this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to guild owner: '${ guild.ownerId }' guildId: '${ guild.id }'` );
+        } );
+    }
+
+    public async sendToUser( userId: string, message: MessageCreateOptions ) {
+        await ( await dynamicoManager.getClient()?.users.fetch( userId ))?.send( message ).catch( () => {
+            this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to user: '${ userId }'` );
         } );
     }
 }

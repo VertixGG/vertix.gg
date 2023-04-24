@@ -48,10 +48,10 @@ export default class PermissionsManager extends InitializeBase {
 
     public async onChannelPermissionsUpdate( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
         this.logger.info( this.onChannelPermissionsUpdate,
-            `Channel '${ oldChannel.id }' permissions were updated.` );
+            `Channel '${ oldChannel.id }' permissions were updated, guildId: '${ oldChannel.guildId }'` );
 
         // Print debug new permissions.
-        this.debugger.log( this.onChannelPermissionsUpdate, `New permissions for channel '${ oldChannel.id }'` );
+        this.debugger.log( this.onChannelPermissionsUpdate, `New permissions for channel '${ oldChannel.id }', guildId: '${ oldChannel.guildId }'` );
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newChannel.permissionOverwrites );
 
         const newMessage = await guiManager
@@ -64,7 +64,7 @@ export default class PermissionsManager extends InitializeBase {
 
         if ( ! channel ) {
             return this.logger.error( this.onChannelPermissionsUpdate,
-                `Channel '${ newChannel.id }' was not found in the database.` );
+                `Channel '${ newChannel.id }', guildId: '${ oldChannel.guildId }'  was not found in the database.` );
         }
 
         if ( channel.isMasterCreate || channel.isDynamic ) {
@@ -140,7 +140,7 @@ export default class PermissionsManager extends InitializeBase {
     public validateAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
         if ( ! interaction.guild ) {
             this.logger.error( this.validateAdminPermission,
-                `Interaction id: '${ interaction.id }' is not a guild interaction.` );
+                `Interaction id: '${ interaction.id }', guildId: '${ interaction.guildId }' is not a guild interaction.` );
             return false;
         }
 
@@ -185,7 +185,7 @@ export default class PermissionsManager extends InitializeBase {
      */
     private async resetBotUserPermissions( channel: VoiceChannel, channelResult: ChannelResult ) {
         this.logger.info( this.resetBotUserPermissions,
-            `Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'` );
+            `Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }' guildId: '${ channel.guildId }'` );
 
         const requiredPermissionsOptions = permissionsConvertBitfieldToOverwriteOptions(
             DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow

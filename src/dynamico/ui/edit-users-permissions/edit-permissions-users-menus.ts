@@ -127,7 +127,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
 
             if ( nothingChanged ) {
                 EditPermissionsUsersMenus.logger.admin( this.grantUser,
-                    `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name })`
+                    `🤷 Grant user access did nothing - "${ channel.name }" (${ channel.guild.name })`
                 );
 
                 await editPermissionsComponent.sendContinues( interaction, {
@@ -146,7 +146,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
                     } );
 
                     EditPermissionsUsersMenus.logger.admin( this.grantUser,
-                        `🤷 Grant user access did nothing - "${ channel.name }" (${ channel.guild.name })`
+                        `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name })`
                     );
 
                     await editPermissionsComponent.sendContinues( interaction, {
@@ -164,10 +164,6 @@ export default class EditPermissionsUsersMenus extends UIElement {
                     EditPermissionsUsersMenus.dedicatedLogger.error( this.grantUser, "", e );
                 }
             }
-
-            await editPermissionsComponent.sendContinues( interaction, {
-                title: `Could not find user with id '${ interaction.values[ 0 ] }'`,
-            } );
         }
     }
 
@@ -183,22 +179,28 @@ export default class EditPermissionsUsersMenus extends UIElement {
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] ),
                 editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
 
-            // TODO: Properly some of the logic repeated.
             if ( member ) {
-                await channel.permissionOverwrites.delete( member );
+                try {
+                    await channel.permissionOverwrites.delete( member );
 
-                EditPermissionsUsersMenus.logger.admin( this.removeUser,
-                    `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name })`
-                );
+                    EditPermissionsUsersMenus.logger.admin( this.removeUser,
+                        `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name })`
+                    );
 
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: uiUtilsWrapAsTemplate( "removedFromYourList" ),
-                    username: member.username,
-                } );
-            } else {
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: `Could not find user with id '${ interaction.values[ 0 ] }'`,
-                } );
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: uiUtilsWrapAsTemplate( "removedFromYourList" ),
+                        username: member.username,
+                    } );
+
+                    return;
+                } catch ( e ) {
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: uiUtilsWrapAsTemplate( "couldNotRemoveUser" ),
+                        username: member.username,
+                    } );
+
+                    EditPermissionsUsersMenus.dedicatedLogger.error( this.removeUser, "", e );
+                }
             }
         }
     }

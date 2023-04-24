@@ -44,7 +44,7 @@ export class UIGroupBase extends UIBase {
             staticThis = this.constructor as typeof UIGroupBase;
 
         staticThis.debugger.log( this.sendContinues,
-            `Sending continues interaction message to user: '${ interaction.user.username }'`
+            `Sending continues interaction message to user: '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
         );
 
         let groups = staticThis.groups(),
@@ -70,7 +70,7 @@ export class UIGroupBase extends UIBase {
             return guiManager.sendContinuesMessage( interaction, this, args );
         } else if ( groups.length && belongsTo.length ) {
             staticThis.logger.error( this.sendContinues,
-                `Invalid behaviour both groups and relationship has been found for: '${ staticThis.getName() }'`
+                `Invalid behaviour both groups and relationship has been found for: '${ staticThis.getName() }' guildId: '${ interaction.guildId }'`
             );
             return guiManager.sendContinuesMessage( interaction, this, args );
         }
@@ -103,7 +103,7 @@ export class UIGroupBase extends UIBase {
 
             if ( ! isRelated ) {
                 staticThis.logger.error( this.sendContinues,
-                    `Invalid behaviour, '${ this.getName() }' with customId: '${ msgInteraction.customId }' not belonging to any group.`
+                    `Invalid behaviour, '${ this.getName() }' with customId: '${ msgInteraction.customId }', guildId: '${ msgInteraction.guildId }' not belonging to any group.`
                 );
                 staticThis.logger.error( this.sendContinues, "belongsTo", belongsTo );
 

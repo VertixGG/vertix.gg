@@ -30,6 +30,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
             canNowConnect: uiUtilsWrapAsTemplate( "canNowConnect" ),
             removedFromYourList: uiUtilsWrapAsTemplate( "removedFromYourList" ),
             couldNotAddUser: uiUtilsWrapAsTemplate( "couldNotAddUser" ),
+            cloudNotRemoveUser: uiUtilsWrapAsTemplate( "cloudNotRemoveUser" ),
 
             title: uiUtilsWrapAsTemplate( "title" ),
             userId: uiUtilsWrapAsTemplate( "userId" ),
@@ -48,6 +49,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
                 [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
                 [ this.vars.removedFromYourList ] : `👇 ${ this.vars.username } removed from your list`,
                 [ this.vars.couldNotAddUser ]: `Could not add user ${ this.vars.username }`,
+                [ this.vars.cloudNotRemoveUser ]: `Could not remove user ${ this.vars.username }`,
             }
         };
     }

@@ -66,14 +66,13 @@ export class SetupWizard extends UIWizardBase {
 
         if ( ! interaction.guild ) {
             return logger.error( this.onFinish,
-                `GuildId: ${ guildId } has not been set up, guild not found`
+                `guildId: '${ guildId }' has not been set up, guild not found`
             );
         }
 
         if ( ! await masterChannelManager.checkLimit( interaction as CommandInteraction, guildId ) ) {
-            // TODO: Use custom logger.
             return logger.warn( this.onFinish,
-                `GuildId: ${ guildId } has not been set up, max limit is reached.`
+                `guildId: '${ guildId }' has not been set up, max limit is reached.`
             );
         }
 
@@ -91,7 +90,7 @@ export class SetupWizard extends UIWizardBase {
 
         if ( ! result ) {
             return logger.error( this.onFinish,
-                `GuildId: ${ guildId } has not been set up, master channel creation failed`
+                `guildId: '${ guildId }' has not been set up, master channel creation failed`
             );
         }
 
@@ -99,7 +98,7 @@ export class SetupWizard extends UIWizardBase {
 
         if ( ! masterCreateChannel ) {
             logger.error( this.onFinish,
-                `GuildId: ${ guildId } has not been set up, master channel creation failed`
+                `guildId: '${ guildId }' has not been set up, master channel creation failed`
             );
 
             return await guiManager.get( "Dynamico/UI/GlobalResponse" )
@@ -108,7 +107,7 @@ export class SetupWizard extends UIWizardBase {
                 } );
         }
 
-        logger.info( this.onFinish, `GuildId: '${ guildId }' has been set up successfully` );
+        logger.info( this.onFinish, `guildId: '${ guildId }' has been set up successfully` );
 
         const badwords = await guildGetBadwordsFormatted( interaction.guildId?.toString() ?? "" );
 

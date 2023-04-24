@@ -13,7 +13,7 @@ const globalLogger = GlobalLogger.getInstance();
 export default async function authMiddleware( interaction: UIInteractionTypes ) {
     if ( ( ! interaction.channel?.type && ChannelType.GuildText !== interaction.channel?.type ) || ! interaction.guildId || ! interaction.guild  ) {
         globalLogger.error( authMiddleware,
-            `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', is not unexpected`
+            `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Unexpected behavior`
         );
         return false;
     }
@@ -49,7 +49,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
         return permissionsManager.validateAdminPermission( interaction, authMiddleware );
     } else {
         globalLogger.error( authMiddleware,
-            `guildId: '${ interaction.guildId }' interaction channel type is not supported: '${ interaction.channel?.type.toString() }'`
+            `Guild id: '${ interaction.guildId }' - Interaction channel type is not supported: '${ interaction.channel?.type.toString() }'`
         );
     }
 

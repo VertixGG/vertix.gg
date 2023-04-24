@@ -28,7 +28,8 @@ export class DMManager extends InitializeBase {
 
     public async onMessage( message: Message ) {
         this.logger.debug( this.onMessage,
-            `Received message from '${ message.author.tag }', content: '${ message.content }', guildId: ${ message.guildId }` );
+            `Guild Id: '${ message.guild?.id }' - Received message from '${ message.author.tag }' content: '${ message.content }'`
+        );
 
         if ( DYNAMICO_OWNERS_IDS.includes( message.author.id ) ) {
             return this.onOwnerMessage( message );
@@ -130,13 +131,13 @@ export class DMManager extends InitializeBase {
 
     public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {
         await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ))?.send( message ).catch( () => {
-            this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to guild owner: '${ guild.ownerId }' guildId: '${ guild.id }'` );
+            this.logger.error( this.sendToOwner, `Guild id: '${ guild.id } - Failed to send message to guild ownerId: '${ guild.ownerId }'` );
         } );
     }
 
     public async sendToUser( userId: string, message: MessageCreateOptions ) {
         await ( await dynamicoManager.getClient()?.users.fetch( userId ))?.send( message ).catch( () => {
-            this.logger.error( this.sendLeaveMessageToOwner, `Failed to send message to user: '${ userId }'` );
+            this.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` );
         } );
     }
 }

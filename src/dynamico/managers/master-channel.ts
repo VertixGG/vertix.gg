@@ -91,11 +91,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             { guild } = newState;
 
         this.logger.info( this.onJoinMasterCreateChannel,
-            `User '${ displayName }' joined master channel '${ channelName }' guildId: '${ guild.id }'` );
+            `Guild id: '${ guild.id }' - User '${ displayName }' joined master channel: '${ channelName }'` );
 
         if ( ! newState.channel ) {
-            this.logger.error( this.onJoinMasterCreateChannel,
-                `Could not find channel '${ channelName }'` );
+            this.logger.error( this.onJoinMasterCreateChannel, `Could not find channel: '${ channelName }'` );
 
             return;
         }
@@ -174,7 +173,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             if ( missingPermissions.length ) {
                 this.logger.warn( this.onJoinMasterCreateChannel,
-                    `User '${ displayName }' connected to master channel '${ channelName }' but is missing permissions, guildId: '${ guild.id }'` );
+                    `Guild id: '${ guild.id }' - User '${ displayName }' connected to master channel name: '${ channelName }' but is missing permissions`
+                );
 
                 const uniqueMissingPermissions = [ ... new Set( missingPermissions ) ];
 
@@ -205,7 +205,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             await dynamicChannel?.send( message );
         } catch ( e ) {
             this.logger.error( this.onJoinMasterCreateChannel,
-                `Failed to create dynamic channel for user '${ displayName }'` );
+                `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'` );
 
             this.logger.error( this.onJoinMasterCreateChannel, "", e );
         }
@@ -220,7 +220,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             { guild } = oldState;
 
         this.logger.info( this.onLeaveDynamicChannel,
-            `User '${ displayName }' left dynamic channel '${ channelName }' guildId: '${ guild.id }'` );
+            `Guild id: '${ guild.id }' - User '${ displayName }' left dynamic channel '${ channelName }'`
+        );
 
         // If the channel is empty, delete it.
         if ( args.oldState.channel?.members.size === 0 ) {
@@ -279,7 +280,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
      * Function getByDynamicChannel() :: Returns the master channel by the guildID & dynamic channel id.
      */
     public async getByDynamicChannelId( guildId: string, dynamicChannelId: string, cache: boolean = false, interaction: Interaction | null = null ): Promise<VoiceChannel | void> {
-        this.logger.log( this.getByDynamicChannelId, `guildId: '${ guildId }', dynamic channel id: '${ dynamicChannelId }', cache: '${ cache }'` );
+        this.logger.log( this.getByDynamicChannelId, `Guild id: '${ guildId }' - Dynamic channel id: '${ dynamicChannelId }' cache: '${ cache }'` );
 
         if ( cache ) {
             const cached = this.getCache( `getByDynamicChannel-${ dynamicChannelId }` );
@@ -292,8 +293,9 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         const dynamicChannelDB = await channelManager.getChannel( guildId, dynamicChannelId, true );
 
         if ( ! dynamicChannelDB ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Could not find dynamic channel in database, guildId: '${ guildId }', channelId: '${ dynamicChannelId }'` );
+            this.logger.error( this.getByDynamicChannelId,
+                `Guild id: '${ guildId }' - Could not find dynamic channel in database channel id: '${ dynamicChannelId }'`
+            );
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
@@ -304,8 +306,9 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         }
 
         if ( ! dynamicChannelDB.ownerChannelId ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Could not find master channel in database, guildId: '${ guildId }', dynamic channelId: '${ dynamicChannelId }'` );
+            this.logger.error( this.getByDynamicChannelId,
+                `Guild id: '${ guildId }' - Could not find dynamic channel in database channel id: '${ dynamicChannelId }'`
+            );
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
@@ -321,9 +324,10 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         const promise = new Promise( ( resolve ) => {
             masterChannelPromise?.catch( ( e ) => {
-                this.logger.error( this.getByDynamicChannel,
-                    `Could not fetch master channel, guildId: '${ guildId }', dynamic channelId: '${ dynamicChannelId }'` );
-                this.logger.error( this.getByDynamicChannel, "", e );
+                this.logger.error( this.getByDynamicChannelId,
+                    `Guild id: '${ guildId }' - Could not find dynamic channel in database channel id: '${ dynamicChannelId }'`
+                );
+                this.logger.error( this.getByDynamicChannelId, "", e );
                 resolve( null );
             } ).then( ( result ) => {
                 masterChannel = result;
@@ -335,7 +339,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! masterChannel ) {
             this.logger.warn( this.getByDynamicChannel,
-                `Could not find master channel, guildId: '${ guildId }', dynamic channelId: '${ dynamicChannelId }'` );
+                `Could not find master channel, guildId: '${ guildId }', dynamic channel id: '${ dynamicChannelId }'` );
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
@@ -378,7 +382,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.createDynamic,
-                `Could not find master channel in database, guildId: ${ guild.id }, master channelId: ${ masterChannel.id }` );
+                `GuildId: ${ guild.id } - Could not find master channel in database master channel id: ${ masterChannel.id }` );
             return;
         }
 
@@ -386,7 +390,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! dynamicChannelTemplateName ) {
             this.logger.error( this.createDynamic,
-                `Could not find master channel data in database, guildId: ${ guild.id }, master channelId: ${ masterChannel.id }` );
+                `Guild id: ${ guild.id } - Could not find master channel data in database,  master channel id: ${ masterChannel.id }` );
             return;
         }
 
@@ -534,7 +538,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             hasReachedLimit = await ChannelModel.getInstance().isReachedMasterLimit( guildId, limit );
 
         if ( hasReachedLimit ) {
-            this.debugger.log( this.checkLimit, `guildId: '${ guildId }' has reached master limit: '${ limit }'` );
+            this.debugger.log( this.checkLimit, `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'` );
 
             this.logger.admin( this.checkLimit,
                 `💰 Master Channels Limitation function has been activated max(${ limit }) (${ interaction.guild?.name })`

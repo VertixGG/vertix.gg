@@ -21,7 +21,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
 
     if ( ! interaction.guild ) {
         globalLogger.error( permissionsMiddleware,
-            `Guild is not available for guildId:'${ interaction.guildId }' interaction: '${ interaction.id }'`
+            `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Guild is not available`
         );
         return false;
     }
@@ -47,7 +47,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
                 `🔒 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
             );
 
-            globalLogger.log( permissionsMiddleware, `guildId: '${ interaction.guildId }' required permissions:`, missingPermissions );
+            globalLogger.log( permissionsMiddleware, `Guild id: '${ interaction.guildId }' - Required permissions:`, missingPermissions );
 
             await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
                 botName: interaction.client.user.username,

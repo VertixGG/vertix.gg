@@ -40,7 +40,8 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
     public async setData( args: IDataUpdateArgs ) {
         if ( null === args.default ) {
             return this.logger.error( this.setData,
-                `Cannot set data for '${ args.key }' to null.` );
+                `Cannot set data for: '${ args.key }' to null.`
+            );
         }
 
         const createArgs: IDataCreateArgs = {
@@ -63,7 +64,7 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
             } );
         } catch ( e ) {
             this.logger.warn( this.setData,
-                `Issue for data with key: '${ args.key }' ownerId: '${ args.ownerId }'`
+                `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'`
             );
 
             return e;

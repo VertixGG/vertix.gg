@@ -43,7 +43,7 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
     }
 
     protected deleteCacheWithPrefix( prefix: string ): void {
-        this.logger.log( this.deleteCacheWithPrefix, `Deleting cache with prefix: '${ prefix }'` );
+        this.logger.log( this.deleteCacheWithPrefix, `Deleting cache prefix: '${ prefix }'` );
 
         for ( const key of this.cache.keys() ) {
             if ( key.startsWith( prefix ) ) {

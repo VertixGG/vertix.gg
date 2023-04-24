@@ -56,7 +56,7 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
 
     public async create( args: Prisma.ChannelCreateArgs ) {
         this.logger.info( this.create,
-            `Creating channel '${ args.data.channelId }' for guild '${ args.data.guildId }'` );
+            `Creating channel '${ args.data.channelId }' for guildId '${ args.data.guildId }'` );
 
         this.debugger.dumpDown( this.create, args.data );
 

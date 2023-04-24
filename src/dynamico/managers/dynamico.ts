@@ -196,10 +196,10 @@ export class DynamicoManager extends InitializeBase {
                     updatedAt: guild.updatedAt,
                     updatedAtInternal: new Date(),
                 },
+            } ).then( () => {
+                this.logger.info( this.updateGuilds,
+                    `guildId: '${ guild.guildId }' is updated, name: '${ name }', isInGuild: '${ isInGuild }'.` );
             } );
-
-            this.logger.info( this.updateGuilds,
-                `Guild id: '${ guild.guildId }' is updated, name: '${ name }', isInGuild: '${ isInGuild }'.` );
         }
     }
 

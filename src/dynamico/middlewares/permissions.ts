@@ -43,7 +43,11 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
         result = ! missingPermissions.length;
 
         if ( missingPermissions.length ) {
-            globalLogger.warn( permissionsMiddleware, "Required permissions:", missingPermissions );
+            globalLogger.admin( permissionsMiddleware,
+                `🔒 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+            );
+
+            globalLogger.log( permissionsMiddleware, `guildId: '${ interaction.guildId }' required permissions:`, missingPermissions );
 
             await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
                 botName: interaction.client.user.username,

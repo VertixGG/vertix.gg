@@ -23,9 +23,7 @@ import permissionsMiddleware from "@dynamico/middlewares/permissions";
 
 import PermissionsManager from "@dynamico/managers/permissions";
 
-import {
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS
-} from "@dynamico/constants/master-channel";
+import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@dynamico/constants/master-channel";
 
 const globalLogger = GlobalLogger.getInstance(),
     permissionManager = PermissionsManager.getInstance();
@@ -50,7 +48,7 @@ export function interactionHandler( client: Client ) {
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
     globalLogger.log( handleSlashCommand,
-        `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'`
+        `Slash command: '${ interaction.commandName }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
     );
 
     if ( ! interaction.guild ) {
@@ -64,9 +62,13 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
     );
 
     if ( missingPermissions.length ) {
-        globalLogger.log( handleSlashCommand, `
-            User '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'
-        ` );
+        globalLogger.log( handleSlashCommand,
+            `User: '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }' guildId: '${ interaction.guildId }'`
+        );
+
+        globalLogger.admin( handleSlashCommand,
+            `🔒 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+        );
 
         const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
             .getMessage( interaction, {
@@ -102,8 +104,8 @@ const getCallback = async ( interaction: UIInteractionTypes ) => {
 };
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
-    globalLogger.info( handleButton,
-        `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+    globalLogger.log( handleButton,
+        `Button id: '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
     );
 
     await getCallback( interaction );
@@ -111,7 +113,7 @@ async function handleButton( client: Client, interaction: ButtonInteraction ) {
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
     globalLogger.log( handleModalSubmit,
-        `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+        `Modal submit id: '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
     );
 
     await getCallback( interaction );
@@ -119,7 +121,7 @@ async function handleModalSubmit( client: Client, interaction: ModalSubmitIntera
 
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
     globalLogger.log( handleUserSelectMenuInteraction,
-        `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+        `UserSelectMenuInteraction|SelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
     );
 
     await getCallback( interaction );
@@ -127,7 +129,7 @@ async function handleUserSelectMenuInteraction( client: Client, interaction: Use
 
 async function handleRoleSelectMenuInteraction( client: Client, interaction: RoleSelectMenuInteraction ) {
     globalLogger.log( handleRoleSelectMenuInteraction,
-        `RoleSelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+        `RoleSelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }' guildId: '${ interaction.guildId }'`
     );
 
     await getCallback( interaction );

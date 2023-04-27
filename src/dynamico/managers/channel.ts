@@ -256,7 +256,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         const { channel, guild } = args;
 
         this.logger.info( this.delete,
-            `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' guild: '${ guild.name }'`
+            `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' channel id: '${ channel.id }' guild: '${ guild.name }'`
         );
 
         await this.channelModel.delete( guild, channel.id )

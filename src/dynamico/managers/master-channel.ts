@@ -339,7 +339,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! masterChannel ) {
             this.logger.warn( this.getByDynamicChannel,
-                `Could not find master channel, guildId: '${ guildId }', dynamic channel id: '${ dynamicChannelId }'` );
+                `Guild id: '${ guildId }' - Could not find master channel, dynamic channel id: '${ dynamicChannelId }'` );
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
@@ -359,7 +359,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
      * Function getByDynamicChannel() :: Returns the master channel by the dynamic channel according the interaction.
      */
     public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
-        this.logger.info( this.getByDynamicChannel, `Interaction: '${ interaction.id }', cache: '${ cache }', guildId: '${ interaction.guildId }'` );
+        this.logger.info( this.getByDynamicChannel, `Guild id: '${ interaction.guildId }' - Interaction: '${ interaction.id }', cache: '${ cache }'` );
 
         if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId || ! interaction.channelId ) {
             this.logger.error( this.getByDynamicChannel,
@@ -382,7 +382,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.createDynamic,
-                `GuildId: ${ guild.id } - Could not find master channel in database master channel id: ${ masterChannel.id }` );
+                `Guild id: ${ guild.id } - Could not find master channel in database master channel id: ${ masterChannel.id }` );
             return;
         }
 
@@ -400,7 +400,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         );
 
         this.logger.info( this.createDynamic,
-            `Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }' guildId: '${ guild.id }'` );
+            `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
         const categoryChannel = masterChannel.parent,
             inheritedProperties = this.getDefaultInheritedProperties( masterChannel ),
@@ -497,7 +497,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         const { guild, parent } = args;
 
         this.logger.info( this.createCreateChannel,
-            `Creating master channel for guild '${ guild.name }', guildId: '${ guild.id }', ownerId: '${ args.guild.ownerId }'` );
+            `Guild id: '${ guild.id }' - Creating master channel for guild: '${ guild.name }' ownerId: '${ args.guild.ownerId }'` );
 
         this.debugger.log( this.createCreateChannel, "badwords", args.badwords );
 
@@ -555,7 +555,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
      * Function removeLeftOvers() :: Removes leftovers of a guild.
      */
     public async removeLeftOvers( guild: Guild ) {
-        this.logger.info( this.removeLeftOvers, `Removing leftovers of guild '${ guild.name }' guildId: '${ guild.id }'` );
+        this.logger.info( this.removeLeftOvers, `Guild id: '${ guild.id }' - Removing leftovers of guild '${ guild.name }'` );
 
         // TODO Relations are deleted automatically??
         await CategoryModel.getInstance().delete( guild.id );

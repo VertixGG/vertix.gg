@@ -259,15 +259,18 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' guild: '${ guild.name }'`
         );
 
-        ChannelDataManager.getInstance().removeFromCache( channel.id );
-
-        this.channelModel.delete( guild, channel.id )
+        await this.channelModel.delete( guild, channel.id )
             .catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
+        ChannelDataManager.getInstance().removeFromCache( channel.id );
+
         // Some channels are not deletable, so we need to catch the error.
-        channel.delete()
-            .catch( ( e ) => this.logger.error( this.delete, "", e ) )
+        const result = channel.delete();
+
+        result.catch( ( e ) => this.logger.error( this.delete, "", e ) )
             .finally( () => this.removeFromCache( channel.id ) );
+
+        return result;
     }
 
     public async editPrimaryMessage( newMessage: MessageEditOptions, channel: VoiceChannel ) {

@@ -64,7 +64,7 @@ export default class PermissionsManager extends InitializeBase {
         const channel = await channelManager.getChannel( newChannel.guildId, newChannel.id, true );
 
         if ( ! channel ) {
-            return this.logger.error( this.onChannelPermissionsUpdate,
+            return this.logger.debug( this.onChannelPermissionsUpdate,
                 `Guild id: '${ oldChannel.guildId }', channel id: '${ newChannel.id }' - Not found in the database`
             );
         }

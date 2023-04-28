@@ -55,7 +55,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
             } );
         }
     } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu() ) {
-        return permissionManager.validateAdminPermission( interaction, permissionsMiddleware );
+        return permissionManager.hasAdminPermission( interaction, permissionsMiddleware );
     } else {
         const type = ( interaction as Interaction ).type || "unknown";
         globalLogger.warn( permissionsMiddleware,

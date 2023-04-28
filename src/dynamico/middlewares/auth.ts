@@ -46,7 +46,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
             globalLogger.warn( authMiddleware, "", e );
         } );
     } else if ( ChannelType.GuildText === interaction.channel.type ) {
-        return permissionsManager.validateAdminPermission( interaction, authMiddleware );
+        return permissionsManager.hasAdminPermission( interaction, authMiddleware );
     } else {
         globalLogger.error( authMiddleware,
             `Guild id: '${ interaction.guildId }' - Interaction channel type is not supported: '${ interaction.channel?.type.toString() }'`

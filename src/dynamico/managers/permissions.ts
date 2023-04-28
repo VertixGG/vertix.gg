@@ -2,6 +2,7 @@ import {
     Guild,
     Interaction,
     PermissionOverwriteOptions,
+    PermissionResolvable,
     PermissionsBitField,
     VoiceBasedChannel,
     VoiceChannel
@@ -13,7 +14,7 @@ import Debugger from "@dynamico/utils/debugger";
 
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS, } from "@dynamico/constants/master-channel";
 
-import { channelManager, guiManager, } from "@dynamico/managers";
+import { channelManager, dynamicoManager, guiManager, } from "@dynamico/managers";
 
 import { permissionsConvertBitfieldToOverwriteOptions } from "@dynamico/utils/permissions";
 
@@ -139,9 +140,24 @@ export default class PermissionsManager extends InitializeBase {
         return Object.keys( resultMissingPermissions );
     }
 
-    public validateAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
+    public async hasMemberPermissions( guildId: string, userId: string, permissions: PermissionResolvable ) {
+        const guild = dynamicoManager.getClient()?.guilds.cache.get( guildId );
+
+        if ( ! guild ) {
+            this.logger.error( this.hasMemberPermissions,
+                `Guild id: '${ guildId }' - Guild not found`
+            );
+            return false;
+        }
+
+        const member = await guild.members.fetch( userId );
+
+        return member.permissions.has( permissions );
+    }
+
+    public hasAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
         if ( ! interaction.guild ) {
-            this.logger.error( this.validateAdminPermission,
+            this.logger.error( this.hasAdminPermission,
                 `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Is not a guild interaction.`
             );
             return false;

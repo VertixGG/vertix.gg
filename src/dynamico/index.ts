@@ -2,7 +2,7 @@ import chalk from "chalk";
 
 import { Client, Partials } from "discord.js";
 
-import { guiManager } from "./managers/";
+import { guiManager, topGGManager } from "./managers/";
 
 import * as handlers from "./listeners/";
 import * as uiEntities from "./ui/";
@@ -86,6 +86,8 @@ export default async function Main() {
         }
 
         logger.log( onLogin, "All listeners registered" );
+
+        await topGGManager.handshake();
     }
 
     await login( client, onLogin );

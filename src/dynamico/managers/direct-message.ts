@@ -11,24 +11,24 @@ import {
 
 import InitializeBase from "@internal/bases/initialize-base";
 
-export class DMManager extends InitializeBase {
-    private static instance: DMManager;
+export class DirectMessageManager extends InitializeBase {
+    private static instance: DirectMessageManager;
 
     public static getInstance() {
-        if ( ! DMManager.instance ) {
-            DMManager.instance = new DMManager();
+        if ( ! DirectMessageManager.instance ) {
+            DirectMessageManager.instance = new DirectMessageManager();
         }
 
-        return DMManager.instance;
+        return DirectMessageManager.instance;
     }
 
     public static getName() {
-        return "Managers/DMManager";
+        return "Managers/DirectMessage";
     }
 
     public async onMessage( message: Message ) {
         this.logger.debug( this.onMessage,
-            `Guild Id: '${ message.guild?.id }' - Received message from '${ message.author.tag }' content: '${ message.content }'`
+            `Received message from '${ message.author.tag }' content: '${ message.content }'`
         );
 
         if ( DYNAMICO_OWNERS_IDS.includes( message.author.id ) ) {
@@ -142,4 +142,4 @@ export class DMManager extends InitializeBase {
     }
 }
 
-export default DMManager;
+export default DirectMessageManager;

@@ -1,4 +1,4 @@
-import { ChannelType, EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 
 import { channelManager, masterChannelManager, permissionsManager } from "@dynamico/managers";
 
@@ -46,7 +46,24 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
             globalLogger.warn( authMiddleware, "", e );
         } );
     } else if ( ChannelType.GuildText === interaction.channel.type ) {
-        return permissionsManager.hasAdminPermission( interaction, authMiddleware );
+        const result = permissionsManager.hasMemberAdminPermission( interaction, authMiddleware );
+
+        if ( ! result ) {
+            const embed = new EmbedBuilder();
+
+            embed.setTitle( "🤷 Oops, something wrong" );
+            embed.setDescription( "You don't have the permissions to perform this action." );
+            embed.setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
+
+            await interaction.reply( {
+                embeds: [ embed ],
+                ephemeral: true,
+            } ).catch( ( e ) => {
+                globalLogger.warn( authMiddleware, "", e );
+            } );
+        }
+
+        return result;
     } else {
         globalLogger.error( authMiddleware,
             `Guild id: '${ interaction.guildId }' - Interaction channel type is not supported: '${ interaction.channel?.type.toString() }'`

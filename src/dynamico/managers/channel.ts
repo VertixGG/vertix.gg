@@ -165,7 +165,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     }
 
     public async onChannelUpdate( oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel ) {
-        this.logger.info( this.onChannelUpdate, `Channel id '${ oldChannel.id }' was updated` );
+        this.logger.log( this.onChannelUpdate, `Channel id '${ oldChannel.id }' was updated` );
 
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
@@ -262,15 +262,9 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         await this.channelModel.delete( guild, channel.id )
             .catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
-        ChannelDataManager.getInstance().removeFromCache( channel.id );
-
         // Some channels are not deletable, so we need to catch the error.
-        const result = channel.delete();
-
-        result.catch( ( e ) => this.logger.error( this.delete, "", e ) )
+        await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) )
             .finally( () => this.removeFromCache( channel.id ) );
-
-        return result;
     }
 
     public async editPrimaryMessage( newMessage: MessageEditOptions, channel: VoiceChannel ) {

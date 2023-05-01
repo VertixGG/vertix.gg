@@ -155,9 +155,9 @@ export default class PermissionsManager extends InitializeBase {
         return member.permissions.has( permissions );
     }
 
-    public hasAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
+    public hasMemberAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
         if ( ! interaction.guild ) {
-            this.logger.error( this.hasAdminPermission,
+            this.logger.error( this.hasMemberAdminPermission,
                 `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Is not a guild interaction.`
             );
             return false;

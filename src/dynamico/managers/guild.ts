@@ -1,4 +1,5 @@
 import { Client, Guild } from "discord.js";
+import { AuditLogEvent, ChannelType, Client, Guild } from "discord.js";
 
 import { Prisma } from ".prisma/client";
 
@@ -37,7 +38,13 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
     }
 
     public async onJoin( client: Client, guild: Guild ) {
-        this.logger.info( this.onJoin, `Guild id: '${ guild.id }' - Dynamico joined guild: '${ guild.name }'` );
+        // Find who invited the bot.
+        const logs = await guild.fetchAuditLogs().catch( ( e ) => {
+                this.logger.warn( this.onJoin, `Guild id: '${ guild.id }' - Error fetching audit logs:`, e );
+            } ),
+            entry = logs?.entries.find( entry => entry.action === AuditLogEvent.BotAdd && entry.targetId === client.user?.id );
+
+        this.logger.info( this.onJoin, `Guild id: '${ guild.id }' - Dynamico joined guild: '${ guild.name }' was invited by: '${ entry?.executor?.username }'` );
         this.logger.admin( this.onJoin,
             `😍 Dynamico has been invited to a new guild - "${ guild.name }" (${ guild.memberCount })`
         );
@@ -48,6 +55,37 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
             await this.guildModel.update( guild, true );
         } else {
             await this.guildModel.create( guild );
+        }
+
+        if ( entry?.executor?.id ) {
+            const user = await client.users.fetch( entry.executor.id );
+
+            const defaultChannel = guild?.systemChannel || guild?.channels.cache.find( ( channel ) => {
+                return channel.type === ChannelType.GuildText;
+            } );
+
+            if ( ! defaultChannel || defaultChannel.type !== ChannelType.GuildText ) {
+                this.logger.warn( this.onJoin,
+                    `Guild id: '${ guild.id }' - Default channel not found`
+                );
+                return;
+            }
+
+            // Mention the user.
+            await defaultChannel.send( {
+                content: `<@${ user.id }>`,
+            } ).catch( ( e ) => {
+                this.logger.warn( this.onJoin, "", e );
+
+                return;
+            } );
+
+            const message = await guiManager.get( "Dynamico/UI/StarterComponent" )
+                .getMessage( defaultChannel, {
+                    userId: user.id,
+                } );
+
+            await defaultChannel.send( message );
         }
     }
 

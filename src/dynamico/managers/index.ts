@@ -1,7 +1,7 @@
 import CategoryManager from "@dynamico/managers/category";
 import ChannelDataManager from "@dynamico/managers/channel-data";
 import ChannelManager from "@dynamico/managers/channel";
-import DMManager from "@dynamico/managers/dm-manager";
+import DirectMessageManager from "@dynamico/managers/direct-message";
 import DynamicoManager from "@dynamico/managers/dynamico";
 import GuildDataManager from "@dynamico/managers/guild-data";
 import GuildManager from "@dynamico/managers/guild";
@@ -13,7 +13,7 @@ import TopGGManager from "@dynamico/managers/top-gg";
 export const categoryManager = CategoryManager.getInstance();
 export const channelDataManager = ChannelDataManager.getInstance();
 export const channelManager = ChannelManager.getInstance();
-export const dmManager = DMManager.getInstance();
+export const dmManager = DirectMessageManager.getInstance();
 export const dynamicoManager = DynamicoManager.getInstance();
 export const guildDataManager = GuildDataManager.getInstance();
 export const guildManager = GuildManager.getInstance();

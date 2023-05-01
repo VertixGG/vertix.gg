@@ -2,6 +2,7 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonInteraction,
+    ButtonStyle,
     ChatInputCommandInteraction,
     ComponentBuilder,
     ModalBuilder,
@@ -15,7 +16,6 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import ObjectBase from "../../../bases/object-base";
 import UIGroupBase from "@dynamico/ui/_base/ui-group-base";
 
 import { guiManager } from "@dynamico/managers";
@@ -23,6 +23,8 @@ import { guiManager } from "@dynamico/managers";
 import { UIBaseInteractionTypes, DYNAMICO_UI_ELEMENT, UICustomIdContextTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import { GUI_ID_LOGICAL_SEPARATOR } from "@dynamico/managers/gui";
+
+import ObjectBase from "@internal/bases/object-base";
 
 import Logger from "@internal/modules/logger";
 
@@ -94,6 +96,14 @@ export default class UIElement extends UIGroupBase {
         const button = new ButtonBuilder();
 
         this.setCallback( button, callback, extraData );
+
+        return button;
+    }
+
+    protected getButtonLinkBuilder() {
+        const button = new ButtonBuilder();
+
+        button.setStyle( ButtonStyle.Link );
 
         return button;
     }

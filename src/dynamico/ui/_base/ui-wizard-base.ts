@@ -91,13 +91,14 @@ export abstract class UIWizardBase extends UIComponentBase {
      */
     public async getMessage( interaction: UIBaseInteractionTypes, args: any = {} ) {
         const isInitial = UI_WIZARD_INITIAL_DEFINITION === args.step,
-            id = this.getId( interaction, isInitial );
+            id = this.getId( interaction, { ... args, _isInitial: isInitial } );
 
         let step = this.getStep( id );
 
         if ( isInitial ) {
             delete args.step;
 
+            args._isInitial = isInitial;
             args._step = 0;
 
             step = 0;
@@ -128,7 +129,7 @@ export abstract class UIWizardBase extends UIComponentBase {
      * Function getElements() :: Responsible for return full elements object that will be sent to the user.
      */
     public async getElements( interaction?: UIBaseInteractionTypes, args?: any ): Promise<any[]> {
-        const id = this.getId( interaction ),
+        const id = this.getId( interaction, args ),
             step = this.getStep( id ),
             components = this.staticComponentsInstances[ step ];
 
@@ -154,7 +155,7 @@ export abstract class UIWizardBase extends UIComponentBase {
             return super.getEmbeds( interaction, args );
         }
 
-        const id = this.getId( interaction ),
+        const id = this.getId( interaction, args ),
             embeds = await this.staticComponentsInstances[ this.getStep( id ) ]
                 .getEmbeds( interaction, args );
 
@@ -166,7 +167,9 @@ export abstract class UIWizardBase extends UIComponentBase {
     }
 
     // TODO: Try private.
-    public getId( interaction: undefined | UIBaseInteractionTypes, isInitial = false ) {
+    public getId( interaction: undefined | UIBaseInteractionTypes, args: any = {} ) {
+        const isInitial = args._isInitial;
+
         if ( ! interaction ) {
             throw new Error( "Interaction is required" );
         }

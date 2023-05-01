@@ -1,11 +1,10 @@
-import { Client, Guild } from "discord.js";
 import { AuditLogEvent, ChannelType, Client, Guild } from "discord.js";
 
 import { Prisma } from ".prisma/client";
 
 import GuildModel from "../models/guild";
 
-import { dmManager, masterChannelManager } from "@dynamico/managers/index";
+import { dmManager, guiManager, masterChannelManager, topGGManager } from "@dynamico/managers/index";
 
 import DynamicoManager from "@dynamico/managers/dynamico";
 
@@ -87,6 +86,8 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
 
             await defaultChannel.send( message );
         }
+
+        setTimeout( () => topGGManager.updateStats() );
     }
 
     public async onLeave( client: Client, guild: Guild ) {
@@ -102,6 +103,8 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
 
         // Remove leftovers of the guild.
         await masterChannelManager.removeLeftOvers( guild );
+
+        setTimeout( () => topGGManager.updateStats() );
     }
 }
 

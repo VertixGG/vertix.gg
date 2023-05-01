@@ -1,8 +1,8 @@
-### cd to project root
+# cd to project root
 cd "$(dirname "$0")/.."
 
-## generate a random password
-password=$(date +%s | openssl rand -base64 64)
+# generate a random password
+password=$(date +%s | openssl rand -base64 32)
 
 # generate random abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 file name
 zipFileName=$(openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1).zip

@@ -12,7 +12,7 @@ import {
 
 import { Commands } from "../commands";
 
-import { guiManager } from "@dynamico/managers";
+import { guiManager, permissionsManager } from "@dynamico/managers";
 
 import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
@@ -48,7 +48,7 @@ export function interactionHandler( client: Client ) {
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
     globalLogger.log( handleSlashCommand,
-        `Guild id: '${ interaction.guildId }' - Slash command: '${ interaction.commandName }' were used by '${ interaction.user.username }`
+        `Guild id: '${ interaction.guildId }' - Slash command: '${ interaction.commandName }' were used by '${ interaction.user.username }'`
     );
 
     if ( ! interaction.guild ) {
@@ -56,32 +56,34 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
         return;
     }
 
-    const missingPermissions = permissionManager.getMissingPermissions(
-        DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
-        interaction.guild
-    );
-
-    if ( missingPermissions.length ) {
-        globalLogger.log( handleSlashCommand,
-            `Guild id: '${ interaction.guildId }' - User: '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'`
+    if ( ! permissionsManager.isSelfAdministratorRole( interaction.guild ) ) {
+        const missingPermissions = permissionManager.getMissingPermissions(
+            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+            interaction.guild
         );
 
-        globalLogger.admin( handleSlashCommand,
-            `🔒 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
-        );
+        if ( missingPermissions.length ) {
+            globalLogger.log( handleSlashCommand,
+                `Guild id: '${ interaction.guildId }' - User: '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'`
+            );
 
-        const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
-            .getMessage( interaction, {
-                permissions: missingPermissions,
-                botName: interaction.guild.client.user.username,
+            globalLogger.admin( handleSlashCommand,
+                `🔒 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+            );
+
+            const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+                .getMessage( interaction, {
+                    permissions: missingPermissions,
+                    botName: interaction.guild.client.user.username,
+                } );
+
+            await interaction.reply( {
+                ... message,
+                ephemeral: true,
             } );
 
-        await interaction.reply( {
-            ... message,
-            ephemeral: true,
-        } );
-
-        return;
+            return;
+        }
     }
 
     const slashCommand = Commands.find( c => c.name === interaction.commandName );

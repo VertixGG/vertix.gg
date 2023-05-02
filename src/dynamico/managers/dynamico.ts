@@ -13,7 +13,8 @@ import { channelDataManager } from "@dynamico/managers/index";
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
-const VERSION_PHASE_4 = "0.0.1"; // https://github.com/CoffeBuffet/dynamico/pull/44/
+const VERSION_PHASE_4 = "0.0.1", // https://github.com/CoffeBuffet/dynamico/pull/44/
+    VERSION_PHASE_5 = "0.0.2"; // https://github.com/CoffeBuffet/dynamico/pull/49/
 
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
@@ -34,7 +35,7 @@ export class DynamicoManager extends InitializeBase {
     }
 
     public static getVersion() {
-        return VERSION_PHASE_4;
+        return VERSION_PHASE_5;
     }
 
     public static isDebugOn( debugType: string, entityName: string ) {

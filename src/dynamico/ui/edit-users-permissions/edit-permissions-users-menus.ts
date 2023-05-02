@@ -41,14 +41,6 @@ export default class EditPermissionsUsersMenus extends UIElement {
             masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
-            EditPermissionsUsersMenus.logger.warn( this.getBuilders,
-                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
-
-            if ( interaction.isRepliable() ) {
-                await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendContinues( interaction as SelectMenuInteraction, {} );
-            }
-
             return [];
         }
 

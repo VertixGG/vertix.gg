@@ -60,8 +60,8 @@ export default class EditPermissions extends UIElement {
 
         usersButton
             .setStyle( ButtonStyle.Secondary )
-            .setEmoji( "👥" )
-            .setLabel( "Manage Users" );
+            .setEmoji( "🔒" )
+            .setLabel( "Access" );
 
         resetButton
             .setStyle( ButtonStyle.Secondary )
@@ -121,7 +121,7 @@ export default class EditPermissions extends UIElement {
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
             EditPermissions.dedicatedLogger.admin( this.displayManageUsers,
-                `👥 Manage Users button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `🔒 Access button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
             await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
@@ -133,8 +133,8 @@ export default class EditPermissions extends UIElement {
     private async resetChannel( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
             // Check if user voted.
-            EditPermissions.dedicatedLogger.admin( this.displayManageUsers,
-                `🔄 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+            EditPermissions.dedicatedLogger.admin( this.resetChannel,
+                `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
             if ( ! await topGGManager.isVoted( interaction.user.id ) ) {
@@ -210,7 +210,7 @@ export default class EditPermissions extends UIElement {
             } );
 
             EditPermissions.dedicatedLogger.admin( this.resetChannel,
-                `🔄 Dynamic Channel has been reset - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `🔄 Dynamic Channel has been reset to default settings - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
             const currentData = getCurrent( interaction ),

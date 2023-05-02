@@ -148,13 +148,13 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             // Dynamico leaking permissions on the role level.
             if ( missingPermissionsRoleLevel.length ) {
                 this.logger.admin( this.onJoinMasterCreateChannel,
-                    `🔒 Dynamico missing permissions - "${ missingPermissionsRoleLevel.join( ", " ) }" (${ guild.name })`
+                    `🔐 Dynamico missing permissions - "${ missingPermissionsRoleLevel.join( ", " ) }" (${ guild.name })`
                 );
             }
 
             if ( missingPermissionsChannelLevel.length ) {
                 this.logger.admin( this.onJoinMasterCreateChannel,
-                    `🔒 Master Channel missing permissions - "${ missingPermissionsChannelLevel.join( ", " ) }" (${ guild.name })`
+                    `🔐 Master Channel missing permissions - "${ missingPermissionsChannelLevel.join( ", " ) }" (${ guild.name })`
                 );
             }
 

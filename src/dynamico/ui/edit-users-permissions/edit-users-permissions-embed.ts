@@ -40,7 +40,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
         return {
             title: {
                 [ this.vars.private ]: "🚫 Your channel is private now!",
-                [ this.vars.mange ]: "👥 Manage users access for your dynamic channel",
+                [ this.vars.mange ]: "🔒 Manage users access for your dynamic channel",
                 [ this.vars.nothingChanged ]: "🤷 Hmm.. nothing changed",
                 [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
                 [ this.vars.removedFromYourList ] : `👇 ${ this.vars.username } removed from your list`,

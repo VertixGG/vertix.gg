@@ -116,7 +116,11 @@ export default class RenameModal extends GenericInputTextboxUIModal {
     }
 
     private async onBeingRateLimited( interaction: ModalSubmitInteraction, retryAfter: number ) {
-        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannel( interaction );
+        if ( interaction.channel?.type !== ChannelType.GuildVoice ) {
+            return;
+        }
+
+        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannelId( interaction.channel.guildId, interaction.channel.id, false );
 
         let message = ".\n";
 
@@ -124,11 +128,9 @@ export default class RenameModal extends GenericInputTextboxUIModal {
             message = `\n\n<#${ masterChannel.id }>\n`;
         }
 
-        if ( interaction.channel?.type === ChannelType.GuildVoice ) {
-            RenameModal.dedicatedLogger.admin( this.onSuccessfulRename,
-                `🙅 Channel rename rate limit has been activated - "${ interaction.channel?.name }" (${ interaction.guild?.name })`
-            );
-        }
+        RenameModal.dedicatedLogger.admin( this.onBeingRateLimited,
+            `🙅 Channel rename rate limit has been activated - "${ interaction.channel?.name }" (${ interaction.guild?.name })`
+        );
 
         const embed = new EmbedBuilder()
             .setTitle( "🙅 You renamed your channel too fast!" )

@@ -28,18 +28,16 @@ export class TopGGManager extends InitializeBase {
         return "Dynamico/Managers/TopGG";
     }
 
+    public static getVoteUrl() {
+        return process.env.TOP_GG_VOTE_URL ?? "404_URL_NOT_FOUND";
+    }
+
+    public getVoteUrl() {
+        return TopGGManager.getVoteUrl();
+    }
+
     public async updateStats() {
-        if ( ! process.env.TOP_GG_TOKEN ) {
-            return;
-        }
-
-        if ( ! this.isHandshakeDone ) {
-            this.logger.error( this.updateStats, "Handshake is not done yet" );
-            return;
-        }
-
-        if ( ! this.client.user ) {
-            this.logger.error( this.updateStats, "Client user is not ready" );
+        if ( ! this.workingMiddleware() ) {
             return;
         }
 
@@ -52,6 +50,18 @@ export class TopGGManager extends InitializeBase {
         } ).catch( ( e ) => {
             this.logger.error( this.updateStats, "", e );
         } );
+    }
+
+    public async isVoted( userId: string ) {
+        if ( ! this.workingMiddleware() ) {
+            return false;
+        }
+
+        const result = await this.api.hasVoted( userId );
+
+        this.logger.debug( this.isVoted, `User id: '${ userId }' isVoted: '${ result }'` );
+
+        return result;
     }
 
     public handshake() {
@@ -74,6 +84,24 @@ export class TopGGManager extends InitializeBase {
         } ).catch( ( e ) => {
             this.logger.error( this.handshake, "", e );
         } );
+    }
+
+    private workingMiddleware() {
+        if ( ! process.env.TOP_GG_TOKEN ) {
+            return false;
+        }
+
+        if ( ! this.isHandshakeDone ) {
+            this.logger.error( this.workingMiddleware, "Handshake is not done yet" );
+            return false;
+        }
+
+        if ( ! this.client.user ) {
+            this.logger.error( this.workingMiddleware, "Client user is not ready" );
+            return false;
+        }
+
+        return true;
     }
 }
 

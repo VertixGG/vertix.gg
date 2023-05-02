@@ -1,4 +1,4 @@
-import { ChannelType, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
 
 import { channelManager, masterChannelManager, permissionsManager } from "@dynamico/managers";
 
@@ -20,20 +20,22 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
 
     // Only the channel owner can pass the middleware
     if ( ChannelType.GuildVoice === interaction.channel.type ) {
+        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction, true );
+
+        if ( ! masterChannel ) {
+            return false;
+        }
+
         const channel = await channelManager.getChannel( interaction.guildId, interaction.channel.id, true );
 
         if ( channel?.userOwnerId === interaction.user.id ) {
             return true;
         }
 
-        const embed = new EmbedBuilder(),
-            masterChannel = await masterChannelManager.getByDynamicChannel( interaction, true );
+        const embed = new EmbedBuilder();
 
-        let message = "You should open your own dynamic channel and try again";
-
-        if ( masterChannel ) {
-            message = `${ message }:\n<#${ masterChannel.id }>`;
-        }
+        let message = "You should open your own dynamic channel and try again\n" +
+            `<#${ masterChannel.id }>`;
 
         embed.setTitle( "🤷 Oops, this is not your channel" );
         embed.setDescription( message );

@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 import { PermissionOverwriteManager, PermissionOverwrites } from "discord.js";
 
 import { ObjectBase } from "@internal/bases";

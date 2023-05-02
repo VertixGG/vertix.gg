@@ -37,7 +37,7 @@ import {
     channelManager,
     dmManager,
     dynamicoManager,
-    guiManager,
+    guiManager, masterChannelManager,
     permissionsManager
 } from "@dynamico/managers";
 
@@ -278,6 +278,8 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
     /**
      * Function getByDynamicChannel() :: Returns the master channel by the guildID & dynamic channel id.
+     *
+     * TODO: Full rewrite.
      */
     public async getByDynamicChannelId( guildId: string, dynamicChannelId: string, cache: boolean = false, interaction: Interaction | null = null ): Promise<VoiceChannel | void> {
         this.logger.log( this.getByDynamicChannelId, `Guild id: '${ guildId }' - Dynamic channel id: '${ dynamicChannelId }' cache: '${ cache }'` );
@@ -299,7 +301,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendContinues( interaction as SelectMenuInteraction, {} );
+                    .sendReply( interaction as SelectMenuInteraction, {} );
             }
 
             return;
@@ -312,7 +314,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendContinues( interaction as SelectMenuInteraction, {} );
+                    .sendReply( interaction as SelectMenuInteraction, {} );
             }
 
             return;
@@ -343,7 +345,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
 
             if ( interaction ) {
                 await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendContinues( interaction as SelectMenuInteraction, {} );
+                    .sendReply( interaction as SelectMenuInteraction, {} );
             }
 
             return;
@@ -367,7 +369,58 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
             return;
         }
 
-        return this.getByDynamicChannelId( interaction.guildId, interaction.channelId, cache, interaction );
+        return await this.getByDynamicChannelId( interaction.guildId, interaction.channelId, cache, interaction );
+    }
+
+    public isPrivate( context: Interaction | VoiceChannel ) {
+        let channel = context instanceof VoiceChannel ? context : context.channel;
+
+        if ( ! channel || channel.type !== ChannelType.GuildVoice ) {
+            this.logger.error( this.isPrivate, "Interaction channel is not a voice channel" );
+
+            return false;
+        }
+
+        return channel.permissionOverwrites.cache.get( channel.guild?.roles?.everyone.id ?? "" )
+            ?.deny.has( PermissionsBitField.Flags.Connect );
+    }
+
+    public async getAllowedUserIds( interaction: Interaction ) {
+        if ( ! interaction.channel || interaction.channel.type !== ChannelType.GuildVoice ) {
+            this.logger.error( this.getAllowedUserIds,
+                `Interaction channel is not a voice channel. Channel type: ${interaction.type}`
+            );
+
+            return [];
+        }
+
+        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+
+        if ( ! masterChannel ) {
+            this.logger.warn( this.getAllowedUserIds,
+                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
+
+            return [];
+        }
+
+        const masterChannelCache = interaction.client.channels.cache.get( masterChannel.id ),
+            allowed = [];
+
+        for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
+            if ( role.type !== OverwriteType.Member ) {
+                continue;
+            }
+
+            // Show only users that are not in the master channel permission overwrites.
+            if ( masterChannelCache?.type === ChannelType.GuildVoice &&
+                masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {
+                continue;
+            }
+
+            allowed.push( role.id );
+        }
+
+        return allowed;
     }
 
     /**

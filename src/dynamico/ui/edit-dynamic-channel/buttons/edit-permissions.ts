@@ -1,12 +1,10 @@
 import fetch from "cross-fetch";
 
 import {
-    ButtonInteraction,
     ButtonStyle,
     ChannelType,
     EmbedBuilder,
     Interaction,
-    SelectMenuInteraction,
     VoiceChannel
 } from "discord.js";
 import { Routes } from "discord-api-types/v10";
@@ -17,15 +15,16 @@ import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
-import { guiManager, masterChannelManager, topGGManager } from "@dynamico/managers";
+import { channelManager, guiManager, masterChannelManager, topGGManager } from "@dynamico/managers";
 
 import {
-    DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
     DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/master-channel";
 
 import { gToken } from "@dynamico/login";
+
+import { masterChannelGetDynamicChannelNameTemplate } from "@dynamico/utils/master-channel";
 
 import Logger from "@internal/modules/logger";
 
@@ -137,7 +136,7 @@ export default class EditPermissions extends UIElement {
                 `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
-            if ( ! await topGGManager.isVoted( interaction.user.id ) ) {
+            if ( await topGGManager.isVoted( interaction.user.id ) ) {
                 // Tell the user to vote.
                 const embed = new EmbedBuilder(),
                     voteUrl = topGGManager.getVoteUrl();
@@ -152,6 +151,22 @@ export default class EditPermissions extends UIElement {
                 return;
             }
 
+            // TODO: Repeated logic - Create a function for this.
+            // Find master channel.
+            const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+
+            if ( ! masterChannel ) {
+                return;
+            }
+
+            const masterChannelDB = await channelManager.getChannel( interaction.guildId as string, masterChannel.id, true );
+
+            if ( ! masterChannelDB ) {
+                EditPermissions.dedicatedLogger.error( this.resetChannel,
+                    `Guild id: ${ interaction.guildId } - Could not find master channel in database master channel id: ${ masterChannel.id }` );
+                return;
+            }
+
             const getCurrent = ( interaction: any ) => {
                     return {
                         name: interaction.channel.name,
@@ -160,7 +175,19 @@ export default class EditPermissions extends UIElement {
                     };
                 },
                 previousData = getCurrent( interaction ),
-                previousAllowedUsers = await masterChannelManager.getAllowedUserIds( interaction );
+                previousAllowedUsers = await masterChannelManager.getAllowedUserIds( interaction ),
+                dynamicChannelTemplateName = await masterChannelGetDynamicChannelNameTemplate( masterChannelDB.id );
+
+            if ( ! dynamicChannelTemplateName ) {
+                EditPermissions.dedicatedLogger.error( this.resetChannel,
+                    `Guild id: ${ interaction.guildId } - Could not find master channel data in database,  master channel id: ${ masterChannel.id }` );
+                return;
+            }
+
+            const dynamicChannelName = dynamicChannelTemplateName.replace(
+                DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
+                interaction.channel.members.get( interaction.user.id )?.displayName || "Unknown"
+            );
 
             let isBeingRateLimited = false;
 
@@ -172,10 +199,7 @@ export default class EditPermissions extends UIElement {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify( {
-                    name: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME.replace(
-                        DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
-                        interaction.channel.members.get( interaction.user.id )?.displayName || "Unknown"
-                    ),
+                    name: dynamicChannelName,
                 } )
             } )
                 .then( ( response ) => response.json() )
@@ -183,13 +207,6 @@ export default class EditPermissions extends UIElement {
 
             if ( result.retry_after ) {
                 isBeingRateLimited = true;
-            }
-
-            // Find master channel.
-            const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
-
-            if ( ! masterChannel ) {
-                return;
             }
 
             // Take defaults from master channel.

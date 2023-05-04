@@ -136,7 +136,7 @@ export default class EditPermissions extends UIElement {
                 `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
-            if ( await topGGManager.isVoted( interaction.user.id ) ) {
+            if ( ! await topGGManager.isVoted( interaction.user.id ) ) {
                 // Tell the user to vote.
                 const embed = new EmbedBuilder(),
                     voteUrl = topGGManager.getVoteUrl();

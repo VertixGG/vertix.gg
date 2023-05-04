@@ -86,7 +86,14 @@ export class UIEmbed extends UIGroupBase {
             }
         };
 
-        return uiTemplate.build( interaction, args );
+        const result = await uiTemplate.build( interaction, args ),
+            image = this.getImage();
+
+        if ( image ) {
+            result.setImage( image );
+        }
+
+        return result;
     }
 
     protected async load() {
@@ -105,6 +112,10 @@ export class UIEmbed extends UIGroupBase {
 
     protected getColor(): number {
         throw new ForceMethodImplementation( this, this.getColor.name );
+    }
+
+    protected getImage() {
+        return "";
     }
 
     /**

@@ -45,6 +45,10 @@ export class StarterEmbed extends UIEmbed {
             "https://discord.gg/Dynamico";
     }
 
+    protected getImage(): string {
+        return "https://i.imgur.com/uMBvQ1j.gif";
+    }
+
     protected getArgsFields(): string[] {
         return [];
     }

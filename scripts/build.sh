@@ -1,6 +1,8 @@
 # cd to project root
 cd "$(dirname "$0")/.."
 
+bash ./scripts/local-prisma-ensure-version.sh
+
 # Create dist folder
 mkdir -p dist
 
@@ -24,9 +26,6 @@ tsup-node src/index.ts
 
 # Minify
 terser dist/index.js --comments false -o dist/index.min.js
-
-# Required?
-#sleep 1
 
 # Remove old executable
 rm -f dist/dynamico-bot

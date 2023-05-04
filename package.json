@@ -13,6 +13,7 @@
 		"release-test-env": "scripts/build.sh && bash ./scripts/release-test-env.sh",
 		"start": "node -r dotenv/config index.min.js dotenv_config_path=.env",
 		"start-dev": "ts-node src/index.ts",
+		"start-dev-debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts",
 		"start-dev-transpile": "npx ts-node --transpile-only src/index.ts",
 		"test": "export DISABLE_LOGGER=true && jest --runInBand --detectOpenHandles --coverage",
 		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js"

@@ -27,29 +27,13 @@ export class DirectMessageManager extends InitializeBase {
     }
 
     public async onMessage( message: Message ) {
-        this.logger.debug( this.onMessage,
-            `Received message from '${ message.author.tag }' content: '${ message.content }'`
+        this.logger.admin( this.onMessage,
+            `💬 Dynamico received DM from '${ message.author.tag }' content: '${ message.content }'`
         );
 
         if ( DYNAMICO_OWNERS_IDS.includes( message.author.id ) ) {
             return this.onOwnerMessage( message );
         }
-
-        // Do not send messages to the survey collector.
-
-        // const target = await dynamicoManager.getClient()?.users.fetch( DYNAMICO_DEFAULT_SURVEY_COLLECTOR_ID );
-        //
-        // if ( target ) {
-        //     const embedBuilder = new EmbedBuilder();
-        //
-        //     embedBuilder.setTitle( "Message from " + message.author.tag );
-        //     embedBuilder.setDescription( message.content );
-        //     embedBuilder.setColor( "Random" );
-        //
-        //     await target.send( {
-        //         embeds: [ embedBuilder ]
-        //     } );
-        // }
     }
 
     public async onOwnerMessage( message: Message ) {
@@ -102,9 +86,9 @@ export class DirectMessageManager extends InitializeBase {
                         } ).catch( async () => {
                             await message.reply( "Message was not sent!" );
                         } )
-                        .then( async () => {
-                            await message.reply( "Message sent!" );
-                        } );
+                            .then( async () => {
+                                await message.reply( "Message sent!" );
+                            } );
 
                     } catch ( e: any ) {
                         await message.reply( e.message as string );
@@ -120,23 +104,21 @@ export class DirectMessageManager extends InitializeBase {
         const embed = new EmbedBuilder();
 
         embed.setColor( DYNAMICO_DEFAULT_COLOR_BRAND );
-        embed.setTitle( "Hello there! 👋" );
-        embed.setDescription( "I noticed that I've been removed from your server.\n" +
-            "If there was anything wrong with my functionality or if there's something I could improve upon, please let me know!\n" +
-            "\n" +
-            "**Your reply to this message will be directly sent to the developers.**");
+        embed.setTitle( "We hope everything alright 🙏" );
+        embed.setDescription( "If there was anything wrong with **Dynamico** functionality or if there's something we could improve upon, please let us know!\n" +
+            "Join our [Community Support](https://discord.gg/Dynamico) and we will be glad to assist with anything you need." );
 
         await this.sendToOwner( guild, { embeds: [ embed ] } );
     }
 
     public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {
-        await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ))?.send( message ).catch( () => {
+        await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ) )?.send( message ).catch( () => {
             this.logger.error( this.sendToOwner, `Guild id: '${ guild.id } - Failed to send message to guild ownerId: '${ guild.ownerId }'` );
         } );
     }
 
     public async sendToUser( userId: string, message: MessageCreateOptions ) {
-        await ( await dynamicoManager.getClient()?.users.fetch( userId ))?.send( message ).catch( () => {
+        await ( await dynamicoManager.getClient()?.users.fetch( userId ) )?.send( message ).catch( () => {
             this.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` );
         } );
     }

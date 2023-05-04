@@ -63,12 +63,14 @@ export class DynamicoManager extends InitializeBase {
 
         await client.application.commands.set( Commands );
 
-        await this.removeMasterChannels( client );
-        await this.removeEmptyChannels( client );
-        await this.removeEmptyCategories( client );
+        setTimeout( () => {
+            this.removeNonExistMasterChannelsFromDB( client );
+            this.removeEmptyChannels( client );
+            this.removeEmptyCategories( client );
 
-        // TODO: Should run on background.
-        await this.updateGuilds();
+            // TODO: Should run on background.
+            this.updateGuilds();
+        } );
 
         await this.ensureBackwardCompatibility();
 
@@ -123,7 +125,7 @@ export class DynamicoManager extends InitializeBase {
         }
     }
 
-    public async removeMasterChannels( client: Client ) {
+    public async removeNonExistMasterChannelsFromDB( client: Client ) {
         // Remove non-existing master channels.
         const prisma = await PrismaInstance.getClient(),
             masterChannels = await prisma.channel.findMany( {
@@ -143,7 +145,7 @@ export class DynamicoManager extends InitializeBase {
                     }
                 } );
 
-                this.logger.info( this.removeMasterChannels,
+                this.logger.info( this.removeNonExistMasterChannelsFromDB,
                     `Master channel id: '${ channel.channelId }' is deleted from db.`
                 );
             }

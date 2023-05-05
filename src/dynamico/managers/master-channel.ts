@@ -37,7 +37,8 @@ import {
     channelManager,
     dmManager,
     dynamicoManager,
-    guiManager, masterChannelManager,
+    guiManager,
+    masterChannelManager,
     permissionsManager
 } from "@dynamico/managers";
 
@@ -355,6 +356,25 @@ export class MasterChannelManager extends ManagerCacheBase<any> {
         this.setCache( `getByDynamicChannel-${ dynamicChannelId }`, masterChannel );
 
         return masterChannel;
+    }
+
+    public async getChannelAndDBbyDynamicChannel( interaction: Interaction, cache: boolean = false ) {
+        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction, cache );
+
+        if ( ! masterChannel ) {
+            return false;
+        }
+
+        const masterChannelDB = await channelManager.getChannel( interaction.guildId as string, masterChannel.id, cache );
+
+        if ( ! masterChannelDB ) {
+            return false;
+        }
+
+        return {
+            channel: masterChannel,
+            db: masterChannelDB
+        };
     }
 
     /**

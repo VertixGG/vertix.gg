@@ -15,7 +15,7 @@ import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
-import { channelManager, guiManager, masterChannelManager, topGGManager } from "@dynamico/managers";
+import { guiManager, masterChannelManager, topGGManager } from "@dynamico/managers";
 
 import {
     DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
@@ -151,19 +151,12 @@ export default class EditPermissions extends UIElement {
                 return;
             }
 
-            // TODO: Repeated logic - Create a function for this.
             // Find master channel.
-            const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+            const master = await masterChannelManager.getChannelAndDBbyDynamicChannel( interaction, true );
 
-            if ( ! masterChannel ) {
-                return;
-            }
-
-            const masterChannelDB = await channelManager.getChannel( interaction.guildId as string, masterChannel.id, true );
-
-            if ( ! masterChannelDB ) {
+            if ( ! master ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,
-                    `Guild id: ${ interaction.guildId } - Could not find master channel in database master channel id: ${ masterChannel.id }` );
+                    `Guild id: ${ interaction.guildId } - Could not find master channel in database master interaction id: ${ interaction.id }` );
                 return;
             }
 
@@ -176,11 +169,11 @@ export default class EditPermissions extends UIElement {
                 },
                 previousData = getCurrent( interaction ),
                 previousAllowedUsers = await masterChannelManager.getAllowedUserIds( interaction ),
-                dynamicChannelTemplateName = await masterChannelGetDynamicChannelNameTemplate( masterChannelDB.id );
+                dynamicChannelTemplateName = await masterChannelGetDynamicChannelNameTemplate( master.db.id );
 
             if ( ! dynamicChannelTemplateName ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,
-                    `Guild id: ${ interaction.guildId } - Could not find master channel data in database,  master channel id: ${ masterChannel.id }` );
+                    `Guild id: ${ interaction.guildId } - Could not find master channel data in database,  master channel id: ${ master.channel.id }` );
                 return;
             }
 
@@ -210,8 +203,8 @@ export default class EditPermissions extends UIElement {
             }
 
             // Take defaults from master channel.
-            const inheritedProperties = masterChannelManager.getDefaultInheritedProperties( masterChannel ),
-                inheritedPermissions = masterChannelManager.getDefaultInheritedPermissions( masterChannel ),
+            const inheritedProperties = masterChannelManager.getDefaultInheritedProperties( master.channel ),
+                inheritedPermissions = masterChannelManager.getDefaultInheritedPermissions( master.channel ),
                 permissionOverwrites = [
                     ... inheritedPermissions,
                     {
@@ -252,7 +245,7 @@ export default class EditPermissions extends UIElement {
                 description += "\n\n" +
                     "Rename was not made due to rate limit.\n" +
                     `Please wait **${ result.retry_after.toFixed( 0 ) }** or open a new channel:\n`;
-                description += `<#${ masterChannel.id }>`;
+                description += `<#${ master.channel.id }>`;
             }
 
             const embed = new EmbedBuilder()

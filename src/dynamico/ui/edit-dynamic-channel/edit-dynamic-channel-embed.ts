@@ -68,7 +68,7 @@ export class EditDynamicChannelEmbed extends UIEmbedTemplate {
         return {
             name: interaction.name,
             limit: 0 === limitValue ? this.vars.unlimited : this.vars.value,
-            state: dynamicChannelManager.isPrivateState( interaction ) ?
+            state: dynamicChannelManager.isChannelPrivateState( interaction ) ?
                 this.vars.private :
                 this.vars.public,
 

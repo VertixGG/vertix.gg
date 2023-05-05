@@ -20,10 +20,7 @@ import {
     dynamicChannelManager
 } from "@dynamico/managers";
 
-import {
-    DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
-    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-} from "@dynamico/constants/dynamic-channel";
+import { DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE } from "@dynamico/constants/dynamic-channel";
 
 import { gToken } from "@dynamico/login";
 
@@ -167,11 +164,11 @@ export default class EditPermissions extends UIElement {
                     return {
                         name: interaction.channel.name,
                         userLimit: interaction.channel.userLimit === 0 ? "Unlimited" : interaction.channel.userLimit,
-                        state: dynamicChannelManager.isPrivateState( interaction.channel ) ? "🚫 Private" : "🌐 Public",
+                        state: dynamicChannelManager.isChannelPrivateState( interaction.channel ) ? "🚫 Private" : "🌐 Public",
                     };
                 },
                 previousData = getCurrent( interaction ),
-                previousAllowedUsers = await dynamicChannelManager.getAllowedUserIds( interaction ),
+                previousAllowedUsers = await dynamicChannelManager.getChannelAllowedUserIds( interaction ),
                 dynamicChannelTemplateName = await masterChannelManager.getChannelNameTemplate( master.db.id );
 
             if ( ! dynamicChannelTemplateName ) {
@@ -205,35 +202,24 @@ export default class EditPermissions extends UIElement {
                 isBeingRateLimited = true;
             }
 
-            // Take defaults from master channel.
-            const inheritedProperties = masterChannelManager.getDefaultInheritedProperties( master.channel ),
-                inheritedPermissions = masterChannelManager.getDefaultInheritedPermissions( master.channel ),
-                permissionOverwrites = [
-                    ... inheritedPermissions,
-                    {
-                        id: interaction.user.id,
-                        ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-                    }
-                ];
-
             // Edit channel.
-            await interaction.channel.edit( {
-                ... inheritedProperties,
-                permissionOverwrites,
-            } );
+            await interaction.channel.edit(
+                // Take defaults from master channel.
+                await masterChannelManager.getChannelDefaultProperties( interaction.user.id, master.channel )
+            );
 
             EditPermissions.dedicatedLogger.admin( this.resetChannel,
                 `🔄 Dynamic Channel has been reset to default settings - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
             const currentData = getCurrent( interaction ),
-                currentAllowedUsers = await dynamicChannelManager.getAllowedUserIds( interaction );
+                currentAllowedUsers = await dynamicChannelManager.getChannelAllowedUserIds( interaction );
 
             let description = "Settings has been reset to default:\n\n" +
                 `Name: **${ currentData.name }**` + ( currentData.name === previousData.name ? " (Unchanged)" : "" ) + "\n" +
                 `User limit: ✋**${ currentData.userLimit }**` + ( currentData.userLimit === previousData.userLimit ? " (Unchanged)" : "" ) + "\n" +
                 `State: **${ currentData.state }**` + ( currentData.state === previousData.state ? " (Unchanged)" : "" ) + "\n" +
-                "Allowed: " +  ( await dynamicChannelManager.getAllowedUserIds( interaction )).map( ( userId ) => {
+                "Allowed: " +  ( await dynamicChannelManager.getChannelAllowedUserIds( interaction )).map( ( userId ) => {
                     return `<@${ userId }> ,`;
                 } );
 

@@ -82,7 +82,7 @@ export class SetupWizard extends UIWizardBase {
         args.badwords = badwordsSplitOrDefault( args.badwords );
 
         const result = await masterChannelManager
-                .createDefaultMasters( interaction as CommandInteraction, interaction.user.id, {
+                .createDefaultMasterChannel( interaction as CommandInteraction, interaction.user.id, {
                     dynamicChannelNameTemplate: args.channelNameTemplate || null,
                     badwords: args.badwords,
                 } );

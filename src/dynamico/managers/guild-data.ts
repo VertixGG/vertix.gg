@@ -23,7 +23,8 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
 
     public removeFromCache( ownerId: string ) {
         this.logger.info( this.removeFromCache,
-            `Removing guild data from cache for ownerId: '${ ownerId }'` );
+            `Removing guild data from cache for ownerId: '${ ownerId }'`
+        );
 
         this.deleteCacheWithPrefix( ownerId );
     }

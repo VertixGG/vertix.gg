@@ -32,8 +32,9 @@ export class CategoryManager extends InitializeBase {
     public async onDelete( category: CategoryChannel ) {
         const { guild, name } = category;
 
-        this.logger.info( this.create,
-            `Deleting category for guild '${ guild.name }' guildId: '${ guild.id }' with name '${ name }'` );
+        this.logger.info( this.onDelete,
+            `Guild id: '${ guild.id }' - Deleting category name: '${ name }' guild: '${ guild.name }'`
+        );
 
         // Delete the channel from the database.
         await this.categoryModel.delete( guild.id, category.id );
@@ -43,7 +44,8 @@ export class CategoryManager extends InitializeBase {
         const { name, guild } = args;
 
         this.logger.info( this.create,
-            `Creating category for guild '${ guild.name }' guildId: '${ guild.id }' with name '${ name }'` );
+            `Guild id: '${ guild.id }' - Creating category name: '${ name }' guild: '${ guild.name }`
+        );
 
         // Create the channel at discord.
         const category = await guild.channels.create( {
@@ -65,8 +67,9 @@ export class CategoryManager extends InitializeBase {
     public async delete( category: CategoryChannel ) {
         const { guild, name } = category;
 
-        this.logger.info( this.create,
-            `Deleting category for guild '${ guild.name }' guildId: '${ guild.id }' with name '${ name }'` );
+        this.logger.info( this.delete,
+            `Guild id: '${ guild.id }' - Deleting category name: '${ name }' guild: '${ guild.name }'
+            ` );
 
         // Delete the channel from the database.
         await this.categoryModel.delete( guild.id, category.id );

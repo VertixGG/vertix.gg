@@ -2,6 +2,7 @@ import {
     Guild,
     Interaction,
     PermissionOverwriteOptions,
+    PermissionResolvable,
     PermissionsBitField,
     VoiceBasedChannel,
     VoiceChannel
@@ -13,7 +14,7 @@ import Debugger from "@dynamico/utils/debugger";
 
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS, } from "@dynamico/constants/master-channel";
 
-import { channelManager, guiManager, } from "@dynamico/managers";
+import { channelManager, dynamicoManager, guiManager, } from "@dynamico/managers";
 
 import { permissionsConvertBitfieldToOverwriteOptions } from "@dynamico/utils/permissions";
 
@@ -48,10 +49,11 @@ export default class PermissionsManager extends InitializeBase {
 
     public async onChannelPermissionsUpdate( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
         this.logger.info( this.onChannelPermissionsUpdate,
-            `Channel '${ oldChannel.id }' permissions were updated.` );
+            `Guild id: '${ oldChannel.guildId }', channel id: '${ oldChannel.id }' - Permissions were updated`
+        );
 
         // Print debug new permissions.
-        this.debugger.log( this.onChannelPermissionsUpdate, `New permissions for channel '${ oldChannel.id }'` );
+        this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldChannel.guildId }' - New permissions for channel id: '${ oldChannel.id }'` );
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newChannel.permissionOverwrites );
 
         const newMessage = await guiManager
@@ -63,8 +65,9 @@ export default class PermissionsManager extends InitializeBase {
         const channel = await channelManager.getChannel( newChannel.guildId, newChannel.id, true );
 
         if ( ! channel ) {
-            return this.logger.error( this.onChannelPermissionsUpdate,
-                `Channel '${ newChannel.id }' was not found in the database.` );
+            return this.logger.debug( this.onChannelPermissionsUpdate,
+                `Guild id: '${ oldChannel.guildId }', channel id: '${ newChannel.id }' - Not found in the database`
+            );
         }
 
         if ( channel.isMasterCreate || channel.isDynamic ) {
@@ -137,10 +140,26 @@ export default class PermissionsManager extends InitializeBase {
         return Object.keys( resultMissingPermissions );
     }
 
-    public validateAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
+    public async hasMemberPermissions( guildId: string, userId: string, permissions: PermissionResolvable ) {
+        const guild = dynamicoManager.getClient()?.guilds.cache.get( guildId );
+
+        if ( ! guild ) {
+            this.logger.error( this.hasMemberPermissions,
+                `Guild id: '${ guildId }' - Guild not found`
+            );
+            return false;
+        }
+
+        const member = await guild.members.fetch( userId );
+
+        return member.permissions.has( permissions );
+    }
+
+    public hasMemberAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
         if ( ! interaction.guild ) {
-            this.logger.error( this.validateAdminPermission,
-                `Interaction id: '${ interaction.id }' is not a guild interaction.` );
+            this.logger.error( this.hasMemberAdminPermission,
+                `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Is not a guild interaction.`
+            );
             return false;
         }
 
@@ -149,7 +168,7 @@ export default class PermissionsManager extends InitializeBase {
 
         if ( logFunctionOwner && ! hasPermission ) {
             this.logger.warn( logFunctionOwner,
-                `guildId: '${ interaction.guildId }' interaction id: '${ interaction.id }', user: '${ interaction.user.id }' is not the guild owner`
+                `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - User: '${ interaction.user.id }' is not the guild owner`
             );
         }
 
@@ -185,7 +204,8 @@ export default class PermissionsManager extends InitializeBase {
      */
     private async resetBotUserPermissions( channel: VoiceChannel, channelResult: ChannelResult ) {
         this.logger.info( this.resetBotUserPermissions,
-            `Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'` );
+            `Guild id: '${ channel.guildId }' - Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'`
+        );
 
         const requiredPermissionsOptions = permissionsConvertBitfieldToOverwriteOptions(
             DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow

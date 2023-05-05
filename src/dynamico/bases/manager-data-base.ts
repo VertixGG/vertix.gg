@@ -31,7 +31,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
             cacheKey = `${ ownerId }-${ key }`;
 
         this.logger.info( this.getData,
-            `Getting data for ownerId: '${ ownerId }', key: '${ key }'` );
+            `Getting data for ownerId: '${ ownerId }' key: '${ key }'`
+        );
 
         // Get from cache.
         if ( cache ) {
@@ -48,7 +49,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
 
         if ( ! dbData ) {
             this.logger.debug( this.getData,
-                `Could not find data for ownerId: '${ args.ownerId }' with key: '${ args.key }'`
+                `Could not find data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
             );
             return;
         }
@@ -77,7 +78,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
             return;
         }
 
-        message += ` data for ownerId: '${ args.ownerId }', type: '${ data.type }' key: '${ args.key }' with values:\n`;
+        message += ` data for ownerId: '${ args.ownerId }', type: '${ data.type }' key: '${ args.key }' values:\n`;
 
         this.debugger.log( this.getData, message, data.object || data.values );
 
@@ -91,7 +92,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         args = await this.normalizeArgs( args, isOwnerIdSourceId );
 
         this.logger.info( this.setData,
-            `Setting data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
+            `Setting data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
+        );
 
         args.cache = true;
 
@@ -104,11 +106,13 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         // If exist, replace.
         if ( dbData ) {
             this.logger.debug( this.setData,
-                `Data for ownerId: '${ args.ownerId }', key: '${ args.key }' already exist, replacing...` );
+                `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' already exist, replacing...`
+            );
 
             if ( ! args.default ) {
                 this.logger.error( this.setData,
-                    `Data for ownerId: '${ args.ownerId }', key: '${ args.key }' already exist, but no default value was provided, aborting...` );
+                    `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' already exist, but no default value was provided, aborting...`
+                );
                 return;
             }
 
@@ -124,7 +128,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         // If not exist, create.
         if ( null !== args.default ) {
             this.logger.debug( this.setData,
-                `Data for ownerId: '${ args.ownerId }', key: '${ args.key }' does not exist, creating...` );
+                `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' does not exist, creating...`
+            );
 
             // `dataSourceModel.createData` calls, `dataSourceModel.getInternalNormalizedData` internally.
             const data = await this.dataSourceModel.createData( {
@@ -145,7 +150,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
             cacheKey = `${ ownerId }-${ key }`;
 
         this.logger.info( this.updateData,
-            `Updating data for ownerId: '${ args.ownerId }', key: '${ args.key }'`
+            `Updating data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
         );
 
         // Set cache.
@@ -158,7 +163,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         args = await this.normalizeArgs( args, isOwnerIdSourceId );
 
         this.logger.info( this.deleteData,
-            `Deleting data for ownerId: '${ args.ownerId }', key: '${ args.key }'` );
+            `Deleting data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
+        );
 
         this.removeFromCache( args.ownerId );
 
@@ -196,7 +202,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
 
         if ( ! owner ) {
             this.logger.error( this.getIdByOwnerSourceId,
-                `Could not find owner with sourceId: '${ ownerId }' return the ownerId instead.`
+                `Could not find owner sourceId: '${ ownerId }' return the ownerId instead.`
             );
             return ownerId;
         }

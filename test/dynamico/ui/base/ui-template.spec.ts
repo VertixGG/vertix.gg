@@ -1,5 +1,5 @@
-import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import UIEmbedTemplate from "@dynamico/ui/_base/ui-embed-template";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 describe( "Dynamico/UI/UITemplate", () => {

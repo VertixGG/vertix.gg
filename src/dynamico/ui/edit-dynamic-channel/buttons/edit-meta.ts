@@ -6,11 +6,11 @@ import {
 import RenameModal from "../modals/rename";
 import UserlimitModal from "../modals/userlimit";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { guiManager } from "@dynamico/managers";
 
-import UIElement from "@dynamico/ui/base/ui-element";
+import UIElement from "@dynamico/ui/_base/ui-element";
 
 export default class EditMeta extends UIElement {
 

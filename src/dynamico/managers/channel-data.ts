@@ -23,7 +23,8 @@ export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
 
     public removeFromCache( ownerId: string ) {
         this.logger.info( this.removeFromCache,
-            `Removing channel data from cache for ownerId: '${ ownerId }'` );
+            `Removing channel data from cache for ownerId: '${ ownerId }'`
+        );
 
         this.deleteCacheWithPrefix( ownerId );
     }

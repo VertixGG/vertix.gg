@@ -1,16 +1,12 @@
 import {
-    ChannelType,
     Interaction,
-    OverwriteType
 } from "discord.js";
 
-import UIEmbedTemplate from "@dynamico/ui/base/ui-embed-template";
-
-import GlobalLogger from "@dynamico/global-logger";
+import UIEmbedTemplate from "@dynamico/ui/_base/ui-embed-template";
 
 import { masterChannelManager } from "@dynamico/managers";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     private vars: any = {};
@@ -30,6 +26,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
             canNowConnect: uiUtilsWrapAsTemplate( "canNowConnect" ),
             removedFromYourList: uiUtilsWrapAsTemplate( "removedFromYourList" ),
             couldNotAddUser: uiUtilsWrapAsTemplate( "couldNotAddUser" ),
+            cloudNotRemoveUser: uiUtilsWrapAsTemplate( "cloudNotRemoveUser" ),
 
             title: uiUtilsWrapAsTemplate( "title" ),
             userId: uiUtilsWrapAsTemplate( "userId" ),
@@ -43,11 +40,12 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
         return {
             title: {
                 [ this.vars.private ]: "🚫 Your channel is private now!",
-                [ this.vars.mange ]: "👥 Manage users access for your dynamic channel",
+                [ this.vars.mange ]: "🔒 Manage users access for your dynamic channel",
                 [ this.vars.nothingChanged ]: "🤷 Hmm.. nothing changed",
                 [ this.vars.canNowConnect ]: `☝ ${ this.vars.username } can now connect to your channel`,
                 [ this.vars.removedFromYourList ] : `👇 ${ this.vars.username } removed from your list`,
                 [ this.vars.couldNotAddUser ]: `Could not add user ${ this.vars.username }`,
+                [ this.vars.cloudNotRemoveUser ]: `Could not remove user ${ this.vars.username }`,
             }
         };
     }
@@ -65,7 +63,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     }
 
     protected async getTemplateLogic( interaction: Interaction, args: any ) {
-        const allowed = await this.getAllowedUserIds( interaction ),
+        const allowed = await masterChannelManager.getAllowedUserIds( interaction ),
             { separator, userWrapper } = this.getTemplateInputs();
 
         let userIds = "";
@@ -88,44 +86,6 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
 
             userIds
         };
-    }
-
-    private async getAllowedUserIds( interaction: Interaction ) {
-        if ( ! interaction.channel || interaction.channel.type !== ChannelType.GuildVoice ) {
-            GlobalLogger.getInstance().error( this.getName(),
-                `Interaction channel is not a voice channel. Channel type: ${interaction.type}`
-            );
-
-            return [];
-        }
-
-        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
-
-        if ( ! masterChannel ) {
-            GlobalLogger.getInstance().warn( this.getName(),
-                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
-
-            return [];
-        }
-
-        const masterChannelCache = interaction.client.channels.cache.get( masterChannel.id ),
-            allowed = [];
-
-        for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
-            if ( role.type !== OverwriteType.Member ) {
-                continue;
-            }
-
-            // Show only users that are not in the master channel permission overwrites.
-            if ( masterChannelCache?.type === ChannelType.GuildVoice &&
-                masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {
-                continue;
-            }
-
-            allowed.push( role.id );
-        }
-
-        return allowed;
     }
 }
 

@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 import { PermissionOverwriteManager, PermissionOverwrites } from "discord.js";
 
 import { ObjectBase } from "@internal/bases";
@@ -21,7 +19,6 @@ export class Debugger extends ObjectBase {
         this.shouldDebug = shouldDebug;
 
         this.logger = new Logger( owner );
-        this.logger.addMessagePrefix( chalk.magenta( "DBG" ) );
 
         if ( prefix ) {
             this.logger.addMessagePrefix( prefix );

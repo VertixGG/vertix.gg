@@ -49,7 +49,7 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
             } );
         } catch ( e ) {
             if ( e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025" ) {
-                return this.logger.warn( this.update, "Guild not found in database" );
+                return this.logger.warn( this.update, `Guild id: '${ guild.id }' - Not found in database` );
             }
 
             throw e;

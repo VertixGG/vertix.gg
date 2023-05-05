@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"include": [
-		"**/*.spec.ts",
+		"**/*.ts",
 	],
 	"ts-node": {
 		"moduleTypes": {
@@ -16,7 +16,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@internal/*": ["../src/*"],
-			"@dynamico/*": ["../src/dynamico/*"],
+			"@dynamico/*": ["../src/dynamico/*"]
 		}
 	}
 }

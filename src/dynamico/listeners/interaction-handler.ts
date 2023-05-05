@@ -12,9 +12,9 @@ import {
 
 import { Commands } from "../commands";
 
-import { guiManager } from "@dynamico/managers";
+import { guiManager, permissionsManager } from "@dynamico/managers";
 
-import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import GlobalLogger from "@dynamico/global-logger";
 
@@ -23,9 +23,7 @@ import permissionsMiddleware from "@dynamico/middlewares/permissions";
 
 import PermissionsManager from "@dynamico/managers/permissions";
 
-import {
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS
-} from "@dynamico/constants/master-channel";
+import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@dynamico/constants/master-channel";
 
 const globalLogger = GlobalLogger.getInstance(),
     permissionManager = PermissionsManager.getInstance();
@@ -50,7 +48,7 @@ export function interactionHandler( client: Client ) {
 
 const handleSlashCommand = async ( client: Client, interaction: CommandInteraction ): Promise<void> => {
     globalLogger.log( handleSlashCommand,
-        `Slash command '${ interaction.commandName }' was used by '${ interaction.user.username }'`
+        `Guild id: '${ interaction.guildId }' - Slash command: '${ interaction.commandName }' were used by '${ interaction.user.username }'`
     );
 
     if ( ! interaction.guild ) {
@@ -58,28 +56,34 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
         return;
     }
 
-    const missingPermissions = permissionManager.getMissingPermissions(
-        DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
-        interaction.guild
-    );
+    if ( ! permissionsManager.isSelfAdministratorRole( interaction.guild ) ) {
+        const missingPermissions = permissionManager.getMissingPermissions(
+            DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+            interaction.guild
+        );
 
-    if ( missingPermissions.length ) {
-        globalLogger.log( handleSlashCommand, `
-            User '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'
-        ` );
+        if ( missingPermissions.length ) {
+            globalLogger.log( handleSlashCommand,
+                `Guild id: '${ interaction.guildId }' - User: '${ interaction.user.username }' does not have permission to use command '${ interaction.commandName }'`
+            );
 
-        const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
-            .getMessage( interaction, {
-                permissions: missingPermissions,
-                botName: interaction.guild.client.user.username,
+            globalLogger.admin( handleSlashCommand,
+                `🔐 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+            );
+
+            const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+                .getMessage( interaction, {
+                    permissions: missingPermissions,
+                    botName: interaction.guild.client.user.username,
+                } );
+
+            await interaction.reply( {
+                ... message,
+                ephemeral: true,
             } );
 
-        await interaction.reply( {
-            ... message,
-            ephemeral: true,
-        } );
-
-        return;
+            return;
+        }
     }
 
     const slashCommand = Commands.find( c => c.name === interaction.commandName );
@@ -102,8 +106,8 @@ const getCallback = async ( interaction: UIInteractionTypes ) => {
 };
 
 async function handleButton( client: Client, interaction: ButtonInteraction ) {
-    globalLogger.info( handleButton,
-        `Button id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+    globalLogger.log( handleButton,
+        `Guild id: '${ interaction.guildId }' - ButtonInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );
@@ -111,7 +115,7 @@ async function handleButton( client: Client, interaction: ButtonInteraction ) {
 
 async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
     globalLogger.log( handleModalSubmit,
-        `Modal submit id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+        `Guild id: '${ interaction.guildId }' - ModalSubmitInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );
@@ -119,7 +123,7 @@ async function handleModalSubmit( client: Client, interaction: ModalSubmitIntera
 
 async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
     globalLogger.log( handleUserSelectMenuInteraction,
-        `UserSelectMenuInteraction|SelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+        `Guild Id: '${ interaction.guildId } - UserSelectMenuInteraction | SelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );
@@ -127,7 +131,7 @@ async function handleUserSelectMenuInteraction( client: Client, interaction: Use
 
 async function handleRoleSelectMenuInteraction( client: Client, interaction: RoleSelectMenuInteraction ) {
     globalLogger.log( handleRoleSelectMenuInteraction,
-        `RoleSelectMenuInteraction id '${ interaction.customId }' was used by '${ interaction.user.username }'`
+        `Guild Id: '${ interaction.guildId } - RoleSelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
 
     await getCallback( interaction );

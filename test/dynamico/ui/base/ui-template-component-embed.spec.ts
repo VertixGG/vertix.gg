@@ -1,5 +1,5 @@
-import { UIEmbed } from "@dynamico/ui/base/ui-embed";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
@@ -34,9 +34,14 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
                 return DYNAMICO_DEFAULT_COLOR_ORANGE_RED;
             }
 
-            protected getFields() {
+            protected getArgsFields() {
                 return [
                     "botName",
+                ];
+            }
+
+            protected getLogicFields() {
+                return [
                     "permissions",
                 ];
             }
@@ -116,7 +121,7 @@ describe( "Dynamico/UI/UITemplateComponentEmbed", () => {
                 };
             }
 
-            protected getFields() {
+            protected getLogicFields() {
                 return [
                     "test",
                     "limit",

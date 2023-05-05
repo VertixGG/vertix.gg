@@ -1,9 +1,9 @@
-import UIComponentBase from "@dynamico/ui/base/ui-component-base";
+import UIComponentBase from "@dynamico/ui/_base/ui-component-base";
 
 import EditUsersPermissionsEmbed from "@dynamico/ui/edit-users-permissions/edit-users-permissions-embed";
 import EditPermissionsUsersMenuMenus from "@dynamico/ui/edit-users-permissions/edit-permissions-users-menus";
 
-import { UIBaseInteractionTypes, E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { UIBaseInteractionTypes, E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { guiManager } from "@dynamico/managers";
 

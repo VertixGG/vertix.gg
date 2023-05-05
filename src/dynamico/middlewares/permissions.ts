@@ -1,8 +1,13 @@
-import { ChannelType, Interaction, VoiceChannel } from "discord.js";
+import {
+    ChannelType,
+    EmbedBuilder,
+    Interaction,
+    VoiceChannel
+} from "discord.js";
 
-import { guiManager } from "@dynamico/managers";
+import { guiManager, permissionsManager } from "@dynamico/managers";
 
-import { UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import GlobalLogger from "@dynamico/global-logger";
 
@@ -12,6 +17,7 @@ import {
 } from "@dynamico/constants/master-channel";
 
 import PermissionsManager from "@dynamico/managers/permissions";
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 const permissionManager = PermissionsManager.getInstance(),
     globalLogger = GlobalLogger.getInstance();
@@ -21,7 +27,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
 
     if ( ! interaction.guild ) {
         globalLogger.error( permissionsMiddleware,
-            `Guild is not available for guildId:'${ interaction.guildId }' interaction: '${ interaction.id }'`
+            `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Guild is not available`
         );
         return false;
     }
@@ -43,7 +49,11 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
         result = ! missingPermissions.length;
 
         if ( missingPermissions.length ) {
-            globalLogger.warn( permissionsMiddleware, "Required permissions:", missingPermissions );
+            globalLogger.admin( permissionsMiddleware,
+                `🔐 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+            );
+
+            globalLogger.log( permissionsMiddleware, `Guild id: '${ interaction.guildId }' - Required permissions:`, missingPermissions );
 
             await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
                 botName: interaction.client.user.username,
@@ -51,7 +61,24 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
             } );
         }
     } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu() ) {
-        return permissionManager.validateAdminPermission( interaction, permissionsMiddleware );
+        const result = permissionsManager.hasMemberAdminPermission( interaction, permissionsMiddleware );
+
+        if ( ! result ) {
+            const embed = new EmbedBuilder();
+
+            embed.setTitle( "🤷 Oops, something wrong" );
+            embed.setDescription( "You don't have the permissions to perform this action." );
+            embed.setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
+
+            await interaction.reply( {
+                embeds: [ embed ],
+                ephemeral: true,
+            } ).catch( ( e ) => {
+                globalLogger.warn( permissionsMiddleware, "", e );
+            } );
+        }
+
+        return result;
     } else {
         const type = ( interaction as Interaction ).type || "unknown";
         globalLogger.warn( permissionsMiddleware,

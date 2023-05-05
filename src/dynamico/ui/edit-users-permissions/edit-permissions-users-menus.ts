@@ -7,14 +7,18 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import UIElement from "@dynamico/ui/base/ui-element";
+import UIElement from "@dynamico/ui/_base/ui-element";
 
-import { E_UI_TYPES } from "@dynamico/interfaces/ui";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { guiManager, masterChannelManager } from "@dynamico/managers";
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/base/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
+
+import Logger from "@internal/modules/logger";
 
 export default class EditPermissionsUsersMenus extends UIElement {
+    protected static dedicatedLogger = new Logger( this );
+
     public static getName() {
         return "Dynamico/UI/EditUserPermissions/EditPermissionsUsersMenus";
     }
@@ -37,14 +41,6 @@ export default class EditPermissionsUsersMenus extends UIElement {
             masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
-            EditPermissionsUsersMenus.logger.warn( this.getBuilders,
-                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
-
-            if ( interaction.isRepliable() ) {
-                await guiManager.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendContinues( interaction as SelectMenuInteraction, {} );
-            }
-
             return [];
         }
 
@@ -97,6 +93,8 @@ export default class EditPermissionsUsersMenus extends UIElement {
         ];
     }
 
+    // TODO: Find common on both methods, and make a single to avoid code duplication.
+
     private async grantUser( interaction: UserSelectMenuInteraction ) {
         if ( interaction.values.length === 0 ) {
             await interaction.deferUpdate( {} );
@@ -109,21 +107,25 @@ export default class EditPermissionsUsersMenus extends UIElement {
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] ),
                 editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
 
-            // If user tries to add himself, then we just ignore it.
-            const memberId = member?.id;
-            if ( memberId === interaction.user.id || memberId === interaction.client.user.id ) {
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: uiUtilsWrapAsTemplate( "nothingChanged" ),
-                } );
+            let nothingChanged = false;
 
-                return;
+            const memberId = member?.id;
+
+            if ( memberId === interaction.user.id || memberId === interaction.client.user.id ) {
+                // If user tries to add himself, then we just ignore it.
+                nothingChanged = true;
+            } else if ( channel.permissionOverwrites.cache.has( memberId as string ) ) {
+                // If user is already in the list, then we just ignore it.
+                nothingChanged = true;
             }
 
-            // If user is already in the list, then we just ignore it.
-            if ( channel.permissionOverwrites.cache.has( memberId as string ) ) {
+            if ( nothingChanged ) {
+                EditPermissionsUsersMenus.logger.admin( this.grantUser,
+                    `🤷 Grant user access did nothing - "${ channel.name }" (${ channel.guild.name })`
+                );
+
                 await editPermissionsComponent.sendContinues( interaction, {
                     title: uiUtilsWrapAsTemplate( "nothingChanged" ),
-                    username: member?.username,
                 } );
 
                 return;
@@ -137,6 +139,10 @@ export default class EditPermissionsUsersMenus extends UIElement {
                         ReadMessageHistory: true,
                     } );
 
+                    EditPermissionsUsersMenus.logger.admin( this.grantUser,
+                        `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name })`
+                    );
+
                     await editPermissionsComponent.sendContinues( interaction, {
                         title: uiUtilsWrapAsTemplate( "canNowConnect" ),
                         username: member.username,
@@ -149,13 +155,9 @@ export default class EditPermissionsUsersMenus extends UIElement {
                         username: member.username,
                     } );
 
-                    UIElement.logger.error( this.grantUser, "", e );
+                    EditPermissionsUsersMenus.dedicatedLogger.error( this.grantUser, "", e );
                 }
             }
-
-            await editPermissionsComponent.sendContinues( interaction, {
-                title: `Could not find user with id '${ interaction.values[ 0 ] }'`,
-            } );
         }
     }
 
@@ -171,18 +173,28 @@ export default class EditPermissionsUsersMenus extends UIElement {
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] ),
                 editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
 
-            // TODO: Properly some of the logic repeated.
             if ( member ) {
-                await channel.permissionOverwrites.delete( member );
+                try {
+                    await channel.permissionOverwrites.delete( member );
 
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: uiUtilsWrapAsTemplate( "removedFromYourList" ),
-                    username: member.username,
-                } );
-            } else {
-                await editPermissionsComponent.sendContinues( interaction, {
-                    title: `Could not find user with id '${ interaction.values[ 0 ] }'`,
-                } );
+                    EditPermissionsUsersMenus.logger.admin( this.removeUser,
+                        `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name })`
+                    );
+
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: uiUtilsWrapAsTemplate( "removedFromYourList" ),
+                        username: member.username,
+                    } );
+
+                    return;
+                } catch ( e ) {
+                    await editPermissionsComponent.sendContinues( interaction, {
+                        title: uiUtilsWrapAsTemplate( "couldNotRemoveUser" ),
+                        username: member.username,
+                    } );
+
+                    EditPermissionsUsersMenus.dedicatedLogger.error( this.removeUser, "", e );
+                }
             }
         }
     }

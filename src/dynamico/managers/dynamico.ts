@@ -8,12 +8,13 @@ import { Commands } from "@dynamico/commands";
 import CategoryManager from "@dynamico/managers/category";
 import ChannelManager from "@dynamico/managers/channel";
 
-import { channelDataManager, guildDataManager } from "@dynamico/managers/index";
+import { channelDataManager } from "@dynamico/managers/index";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
 
-const VERSION_PHASE_4 = "0.0.1"; // https://github.com/CoffeBuffet/dynamico/pull/44/
+const VERSION_PHASE_4 = "0.0.1", // https://github.com/CoffeBuffet/dynamico/pull/44/
+    VERSION_PHASE_5 = "0.0.2"; // https://github.com/CoffeBuffet/dynamico/pull/49/
 
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
@@ -34,7 +35,7 @@ export class DynamicoManager extends InitializeBase {
     }
 
     public static getVersion() {
-        return VERSION_PHASE_4;
+        return VERSION_PHASE_5;
     }
 
     public static isDebugOn( debugType: string, entityName: string ) {
@@ -62,11 +63,14 @@ export class DynamicoManager extends InitializeBase {
 
         await client.application.commands.set( Commands );
 
-        await this.removeMasterChannels( client );
-        await this.removeEmptyChannels( client );
-        await this.removeEmptyCategories( client );
+        setTimeout( () => {
+            this.removeNonExistMasterChannelsFromDB( client );
+            this.removeEmptyChannels( client );
+            this.removeEmptyCategories( client );
 
-        await this.updateGuilds();
+            // TODO: Should run on background.
+            this.updateGuilds();
+        } );
 
         await this.ensureBackwardCompatibility();
 
@@ -116,11 +120,12 @@ export class DynamicoManager extends InitializeBase {
             } );
 
             this.logger.info( this.removeEmptyChannels,
-                `Channel '${ channel.channelId }' is deleted from db.` );
+                `Channel id: '${ channel.channelId }' is deleted from db.`
+            );
         }
     }
 
-    public async removeMasterChannels( client: Client ) {
+    public async removeNonExistMasterChannelsFromDB( client: Client ) {
         // Remove non-existing master channels.
         const prisma = await PrismaInstance.getClient(),
             masterChannels = await prisma.channel.findMany( {
@@ -140,8 +145,9 @@ export class DynamicoManager extends InitializeBase {
                     }
                 } );
 
-                this.logger.info( this.removeEmptyChannels,
-                    `Master channel '${ channel.channelId }' is deleted from db.` );
+                this.logger.info( this.removeNonExistMasterChannelsFromDB,
+                    `Master channel id: '${ channel.channelId }' is deleted from db.`
+                );
             }
         }
     }
@@ -156,7 +162,9 @@ export class DynamicoManager extends InitializeBase {
 
             if ( ChannelType.GuildCategory === categoryCache?.type ) {
                 if ( 0 === categoryCache.children.cache.size ) {
-                    await CategoryManager.getInstance().delete( categoryCache );
+                    await CategoryManager.getInstance().delete( categoryCache ).catch( ( error ) => {
+                        this.logger.error( this.removeEmptyCategories, "", error );
+                    } );
                 }
 
                 continue;
@@ -170,7 +178,8 @@ export class DynamicoManager extends InitializeBase {
             } );
 
             this.logger.info( this.removeEmptyCategories,
-                `Category '${ category.categoryId }' is deleted from db.` );
+                `Category id: '${ category.categoryId }' is deleted from database`
+            );
         }
     }
 
@@ -185,7 +194,7 @@ export class DynamicoManager extends InitializeBase {
                 name = guildCache?.name || guild.name,
                 isInGuild = !! guildCache;
 
-            await prisma.guild.update( {
+            prisma.guild.update( {
                 where: {
                     id: guild.id
                 },
@@ -196,42 +205,39 @@ export class DynamicoManager extends InitializeBase {
                     updatedAt: guild.updatedAt,
                     updatedAtInternal: new Date(),
                 },
+            } ).then( () => {
+                this.logger.info( this.updateGuilds,
+                    `Guild id: '${ guild.guildId }' - Updated, name: '${ name }', isInGuild: '${ isInGuild }'`
+                );
             } );
-
-            this.logger.info( this.updateGuilds,
-                `Guild id: '${ guild.guildId }' is updated, name: '${ name }', isInGuild: '${ isInGuild }'.` );
         }
     }
 
     private async ensureBackwardCompatibility() {
-        await this.replaceTemplatesPrefixSuffix();
+        await this.replaceDynamicChannelNameTemplate();
     }
 
     /**
-     * Function replaceTemplatesPrefixSuffix() :: Replace the old template prefix and suffix '%{', '%}' to the new one '{{', '}}'
+     * Function replaceDynamicChannelNameTemplate() :: Replace the old template prefix and suffix '%{', '%}' to the new one '{{', '}}'
      * From version `null` to version `0.0.1`.
      */
-    private async replaceTemplatesPrefixSuffix() {
-        const dataManagers = [ guildDataManager, channelDataManager ];
+    private async replaceDynamicChannelNameTemplate() {
+        const allData = await channelDataManager.getAllData();
 
-        for ( const dataManager of dataManagers ) {
-            const allData = await dataManager.getAllData();
+        for ( const data of allData ) {
+            if ( null === data.version ) {
+                if ( data.object && "settings" === data.key ) {
+                    // Assign new one.
+                    data.object.dynamicChannelNameTemplate = "{user}'s Channel";
 
-            for ( const data of allData ) {
-                if ( null === data.version ) {
-                    if ( data.object && "settings" === data.key ) {
-                        // Assign new one.
-                        data.object.dynamicChannelNameTemplate = "{user}'s Channel";
+                    // Describe version.
+                    data.version = VERSION_PHASE_4;
 
-                        // Describe version.
-                        data.version = VERSION_PHASE_4;
-
-                        await dataManager.setData( {
-                            ownerId: data.ownerId,
-                            key: data.key,
-                            default: data.object,
-                        } );
-                    }
+                    await channelDataManager.setData( {
+                        ownerId: data.ownerId,
+                        key: data.key,
+                        default: data.object,
+                    } );
                 }
             }
         }

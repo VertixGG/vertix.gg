@@ -4,25 +4,27 @@
 	"license": "MIT",
 	"author": "Leonid Vinikov <leonidvinikov@gmail.com>",
 	"main": "index.ts",
+	"bin": "dist/index.min.js",
 	"scripts": {
 		"build": "scripts/build.sh",
 		"eslint": "npx eslint --ext .ts .",
 		"eslint:fix": "npx eslint --fix --ext .ts .",
-		"release": "bash ./scripts/release.sh",
-		"release-test-env": "bash ./scripts/release-test-env.sh",
+		"release": "scripts/build.sh && bash ./scripts/release.sh",
+		"release-test-env": "scripts/build.sh && bash ./scripts/release-test-env.sh",
 		"start": "node -r dotenv/config index.min.js dotenv_config_path=.env",
 		"start-dev": "ts-node src/index.ts",
+		"start-dev-debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts",
 		"start-dev-transpile": "npx ts-node --transpile-only src/index.ts",
 		"test": "export DISABLE_LOGGER=true && jest --runInBand --detectOpenHandles --coverage",
 		"test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.11.0",
+		"@top-gg/sdk": "^3.1.5",
 		"chalk": "4.1.2",
 		"cross-fetch": "^3.1.5",
 		"discord.js": "^14.8.0",
 		"dotenv": "^16.0.3",
-		"moment": "^2.29.4",
 		"ts-mixer": "^6.0.3"
 	},
 	"devDependencies": {
@@ -42,5 +44,11 @@
 		"tsconfig-paths": "^4.1.2",
 		"tsup": "^6.7.0",
 		"typescript": "^4.9.5"
+	},
+	"pkg": {
+		"targets": [
+			"node18-linux"
+		],
+		"outputPath": "dist"
 	}
 }

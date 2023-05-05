@@ -23,7 +23,7 @@ export const Config: ICommand = {
     run: async ( client: Client, interaction: CommandInteraction ) => {
         const guildId = interaction.guildId as string;
 
-        await guiManager.get( "Dynamico/UI/Configure" )
+        await guiManager.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: await guildGetBadwordsFormatted( guildId ),
                 masterChannels: await channelManager.getMasterCreateChannels( guildId, true )

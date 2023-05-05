@@ -1,10 +1,10 @@
-import UIComponentBase from "@dynamico/ui/base/ui-component-base";
+import UIComponentBase from "@dynamico/ui/_base/ui-component-base";
 
 import GlobalResponsesEmbed from "@dynamico/ui/global-responses/global-responses-embed";
 
 import {
     E_UI_TYPES,
-} from "@dynamico/interfaces/ui";
+} from "@dynamico/ui/_base/ui-interfaces";
 
 export class GlobalResponse extends UIComponentBase {
     public static getType() {

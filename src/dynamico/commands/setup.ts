@@ -30,17 +30,11 @@ export const Setup: ICommand = {
 
         if ( ! await masterChannelManager.checkLimit( interaction, guildId ) ) {
             return commandsLogger.warn( name,
-                `GuildId: ${ guildId } has not been set up, master channel creation failed`
+                `Guild id: '${ guildId }' - Master channel creation failed`
             );
         }
 
-        // wizardManager.start( interaction, "Dynamico/UI/SetupProcess", {
-        //    step: "initial",
-        //    channelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-        //    badwords: await guildGetBadwordsFormatted( guildId ),
-        // } );
-
-        await guiManager.get( "Dynamico/UI/SetupProcess" )
+        await guiManager.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 step: "initial",
                 channelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,

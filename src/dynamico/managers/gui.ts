@@ -15,12 +15,12 @@ import {
     UserSelectMenuInteraction,
 } from "discord.js";
 
-import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/interfaces/ui";
+import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import Debugger from "@dynamico/utils/debugger";
 
-import UIBase from "@dynamico/ui/base/ui-base";
-import UIGroupBase from "@dynamico/ui/base/ui-group-base";
+import UIBase from "@dynamico/ui/_base/ui-base";
+import UIGroupBase from "@dynamico/ui/_base/ui-group-base";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
@@ -74,7 +74,7 @@ export class GUIManager extends InitializeBase {
 
         this.userInterfaces.set( uiName, new ui() );
 
-        this.logger.info( this.register, `Registered user interface '${ uiName }'` );
+        this.logger.info( this.register, `Registered user interface name: '${ uiName }'` );
     }
 
     public get( name: string, force = false ): UIBase|UIGroupBase {
@@ -96,13 +96,13 @@ export class GUIManager extends InitializeBase {
         }
 
         if ( unique.length > 100 ) {
-            this.logger.warn( this.storeCallback, `Callback '${ unique }' is too long` );
+            this.logger.warn( this.storeCallback, `Callback: '${ unique }' is too long` );
 
             unique = unique.replace( "Dynamico/", "" );
 
             if ( unique.length > 100 ) {
                 // TODO: Check if exist in logs.
-                this.logger.error( this.storeCallback, `Callback '${ unique }' is still too long` );
+                this.logger.error( this.storeCallback, `Callback: '${ unique }' is still too long` );
 
                 unique = unique.substring( 0, 100 );
             }
@@ -120,7 +120,7 @@ export class GUIManager extends InitializeBase {
 
         if ( ! result ) {
             return () => {
-                this.logger.error( this.getCallback, `Callback '${ unique }' does not exist` );
+                this.logger.error( this.getCallback, `Callback: '${ unique }' does not exist` );
 
                 return true;
             };

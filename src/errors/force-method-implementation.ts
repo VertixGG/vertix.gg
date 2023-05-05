@@ -3,7 +3,7 @@ import ObjectBase from "../bases/object-base";
 export class ForceMethodBase extends Error {
     public constructor( className: string, methodName: string ) {
         super(
-            `ForeMethod implementation: at '${ className }' method: '${ methodName }'`
+            `ForceMethod implementation: at '${ className }' method: '${ methodName }'`
         );
     }
 }
@@ -11,7 +11,7 @@ export class ForceMethodBase extends Error {
 export class ForceMethodImplementation extends Error {
     public constructor( context: ObjectBase | typeof ObjectBase, methodName: string ) {
         super(
-            `ForeMethod implementation: at '${ context.getName() }' method: '${ methodName }'`
+            `ForceMethod implementation: at '${ context.getName() }' method: '${ methodName }'`
         );
     }
 }

@@ -21,9 +21,9 @@ import {
 } from "@dynamico/managers";
 
 import {
-    DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
+    DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-} from "@dynamico/constants/master-channel";
+} from "@dynamico/constants/dynamic-channel";
 
 import { gToken } from "@dynamico/login";
 
@@ -181,7 +181,7 @@ export default class EditPermissions extends UIElement {
             }
 
             const dynamicChannelName = dynamicChannelTemplateName.replace(
-                DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
+                DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
                 interaction.channel.members.get( interaction.user.id )?.displayName || "Unknown"
             );
 

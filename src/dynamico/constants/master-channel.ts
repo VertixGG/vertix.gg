@@ -1,6 +1,6 @@
 import { OverwriteType, PermissionsBitField } from "discord.js";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
+import { DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE } from "@dynamico/constants/dynamic-channel";
 
 const { Flags } = PermissionsBitField;
 
@@ -9,14 +9,10 @@ export const DEFAULT_MASTER_CATEGORY_NAME = "🌀 Dynamic Channels",
     DEFAULT_MASTER_CHANNEL_CREATE_NONE_NAME = "🚫 No Master Channels",
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS = 3;
 
-export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
-    allow: [
-        Flags.MoveMembers,
-        Flags.ViewChannel,
-        Flags.Connect,
-        Flags.ReadMessageHistory,
-        Flags.ManageChannels, // Temporarily.
-    ],
+export const DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME = DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE + "'s Channel";
+
+export const DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS = {
+    dynamicChannelNameTemplate: DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
 };
 
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
@@ -47,9 +43,3 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
     deny: [ Flags.SendMessages ],
 };
 
-export const DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE = uiUtilsWrapAsTemplate( "user" );
-export const DEFAULT_DATA_DYNAMIC_CHANNEL_NAME = DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE + "'s Channel";
-
-export const DEFAULT_DATA_MASTER_CHANNEL_SETTINGS = {
-    dynamicChannelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
-};

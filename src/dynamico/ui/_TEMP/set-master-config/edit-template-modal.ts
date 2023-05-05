@@ -5,7 +5,7 @@ import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-i
 
 import { guiManager } from "@dynamico/managers";
 
-import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
+import { DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME } from "@dynamico/constants/master-channel";
 
 const MIN_INPUT_LENGTH = 0,
     MAX_INPUT_LENGTH = 50;
@@ -25,7 +25,7 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
     }
 
     protected getInputPlaceholder(): string {
-        return DEFAULT_DATA_DYNAMIC_CHANNEL_NAME;
+        return DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME;
     }
 
     protected async getValue() {
@@ -72,7 +72,7 @@ export class EditTemplateModal extends GenericInputTextboxUIModal {
         await guiManager.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 _step: 0,
-                channelNameTemplate: input || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+                channelNameTemplate: input || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
             } );
     }
 }

@@ -6,7 +6,7 @@ import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { guiManager } from "@dynamico/managers";
 
-import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
+import { DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME } from "@dynamico/constants/master-channel";
 import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
 
 export class StarterElement extends UIElement {
@@ -43,7 +43,7 @@ export class StarterElement extends UIElement {
        await guiManager.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 step: "initial",
-                channelNameTemplate: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+                channelNameTemplate: DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
                 badwords: await guildGetBadwordsFormatted( interaction.guildId as string ),
             } );
     }

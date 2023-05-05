@@ -20,7 +20,7 @@ import {
 } from "@dynamico/utils/badwords";
 
 import {
-    DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+    DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
 } from "@dynamico/constants/master-channel";
 
 import { channelDataManager, channelManager, guiManager, masterChannelManager } from "@dynamico/managers";
@@ -111,7 +111,7 @@ export class ConfigButtons extends UIElement {
     private async onNameModified( interaction: ButtonInteraction, args: any ) {
         const masterChannelId = this.args.masterChannels[ args.channelIndex - 1 ].id,
             previousName = await masterChannelManager.getChannelNameTemplate( masterChannelId ),
-            newName = args.channelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME;
+            newName = args.channelNameTemplate || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME;
 
         await channelDataManager.setSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
 

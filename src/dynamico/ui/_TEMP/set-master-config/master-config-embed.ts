@@ -2,7 +2,7 @@ import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
-import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
+import { DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME } from "@dynamico/constants/master-channel";
 
 export class MasterConfigEmbed extends UIEmbed {
     private vars: any;
@@ -52,7 +52,7 @@ export class MasterConfigEmbed extends UIEmbed {
         return {
             channelNameTemplateState: {
                [ this.vars.channelNameTemplate ]: this.vars.channelNameTemplate,
-               [ this.vars.channelNameTemplateDefault ]: DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
+               [ this.vars.channelNameTemplateDefault ]: DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
             }
         };
     }

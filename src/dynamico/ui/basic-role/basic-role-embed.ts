@@ -4,7 +4,7 @@ import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
 import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
-import { guildGetBasicRolesFormatted } from "@dynamico/utils/guild";
+import { guildGetBasicRolesFormatted } from "@dynamico/utils/verified-roles";
 
 export class BasicRoleEmbed extends UIEmbed {
     public static getName() {

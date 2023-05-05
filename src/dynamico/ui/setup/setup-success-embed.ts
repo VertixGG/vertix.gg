@@ -1,10 +1,11 @@
 import { UIEmbed } from "@dynamico/ui/_base/ui-embed";
 
 import {
-    GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
-} from "@dynamico/constants/guild";
+    DEFAULT_BADWORDS_PLACEHOLDER,
+} from "@dynamico/constants/badwords";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
+import { DYNAMICO_DEFAULT_COLOR_YELLOW } from "@dynamico/constants/dynamico";
 
 export class SetupSuccessEmbed extends UIEmbed {
     private vars: any = {};
@@ -52,7 +53,7 @@ export class SetupSuccessEmbed extends UIEmbed {
     }
 
     protected getColor(): number {
-        return 0xFFD700;
+        return DYNAMICO_DEFAULT_COLOR_YELLOW;
     }
 
     protected getArgsFields(): string[] {
@@ -73,7 +74,7 @@ export class SetupSuccessEmbed extends UIEmbed {
         return {
             badwordsState: {
                 [ this.vars.badwords ]: "`" + this.vars.badwords + "`",
-                [ this.vars.badwordsPlaceholder ]: GUILD_DEFAULT_BADWORDS_PLACEHOLDER,
+                [ this.vars.badwordsPlaceholder ]: DEFAULT_BADWORDS_PLACEHOLDER,
             }
         };
     }

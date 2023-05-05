@@ -4,7 +4,7 @@ import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-ui-modal";
 
 import { guiManager } from "@dynamico/managers";
-import { GUILD_DEFAULT_BADWORDS_PLACEHOLDER } from "@dynamico/constants/guild";
+import { DEFAULT_BADWORDS_PLACEHOLDER } from "@dynamico/constants/badwords";
 
 const MIN_INPUT_LENGTH = 0,
     MAX_INPUT_LENGTH = 2500;
@@ -24,7 +24,7 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
     }
 
     protected getInputPlaceholder(): string {
-        return GUILD_DEFAULT_BADWORDS_PLACEHOLDER;
+        return DEFAULT_BADWORDS_PLACEHOLDER;
     }
 
     protected getInputStyle() {

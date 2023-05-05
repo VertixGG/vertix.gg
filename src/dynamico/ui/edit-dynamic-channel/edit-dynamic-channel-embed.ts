@@ -3,8 +3,10 @@ import { VoiceChannel } from "discord.js";
 import { UIBaseInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import { UIEmbedTemplate } from "@dynamico/ui/_base/ui-embed-template";
+
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
-import { masterChannelManager } from "@dynamico/managers";
+
+import { dynamicChannelManager } from "@dynamico/managers";
 
 export class EditDynamicChannelEmbed extends UIEmbedTemplate {
     private vars: any = {};
@@ -66,7 +68,7 @@ export class EditDynamicChannelEmbed extends UIEmbedTemplate {
         return {
             name: interaction.name,
             limit: 0 === limitValue ? this.vars.unlimited : this.vars.value,
-            state: masterChannelManager.isPrivate( interaction ) ?
+            state: dynamicChannelManager.isPrivateState( interaction ) ?
                 this.vars.private :
                 this.vars.public,
 

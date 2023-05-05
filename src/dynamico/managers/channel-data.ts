@@ -1,6 +1,7 @@
 import ChannelModel from "../models/channel";
 
 import { ManagerDataBase } from "@dynamico/bases/manager-data-base";
+
 import DynamicoManager from "@dynamico/managers/dynamico";
 
 export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
@@ -27,6 +28,10 @@ export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
         );
 
         this.deleteCacheWithPrefix( ownerId );
+    }
+
+    protected getSettingsKey() {
+        return "settings";
     }
 
     protected getDataSourceModel() {

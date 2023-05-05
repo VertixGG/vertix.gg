@@ -89,7 +89,11 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return this.ownerModel.deleteMany( { where: { guildId: guild.id } } );
     }
 
-    public async get( guildId: string, channelId?: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
+    public async getById( id: string ) {
+        return await this.ownerModel.findUnique( { where: { id } } );
+    }
+
+    public async getGuildChannel( guildId: string, channelId?: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
         const args: any = {
             where: {
                 guildId,

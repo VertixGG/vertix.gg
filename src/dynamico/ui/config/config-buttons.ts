@@ -12,15 +12,18 @@ import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
-import { guildGetBadwordsFormatted, guildSetBadwords } from "@dynamico/utils/guild";
-import { badwordsNormalizeArray, badwordsSplitOrDefault } from "@dynamico/utils/badwords";
-import { masterChannelGetDynamicChannelNameTemplate, masterChannelSetSettingsData } from "@dynamico/utils/master-channel";
+import {
+    badwordsNormalizeArray,
+    badwordsSplitOrDefault,
+    guildGetBadwordsFormatted,
+    guildSetBadwords
+} from "@dynamico/utils/badwords";
 
 import {
     DEFAULT_DATA_DYNAMIC_CHANNEL_NAME,
 } from "@dynamico/constants/master-channel";
 
-import { channelManager, guiManager } from "@dynamico/managers";
+import { channelDataManager, channelManager, guiManager, masterChannelManager } from "@dynamico/managers";
 
 import Logger from "@internal/modules/logger";
 
@@ -107,10 +110,10 @@ export class ConfigButtons extends UIElement {
 
     private async onNameModified( interaction: ButtonInteraction, args: any ) {
         const masterChannelId = this.args.masterChannels[ args.channelIndex - 1 ].id,
-            previousName = await masterChannelGetDynamicChannelNameTemplate( masterChannelId, true ),
+            previousName = await masterChannelManager.getChannelNameTemplate( masterChannelId ),
             newName = args.channelNameTemplate || DEFAULT_DATA_DYNAMIC_CHANNEL_NAME;
 
-        await masterChannelSetSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
+        await channelDataManager.setSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
 
         ConfigButtons.dedicatedLogger.admin( this.onNameModified,
             `🔧 Dynamic Channels Name has been modified - "${ previousName }" -> "${ newName }" (${ interaction.guild?.name })`

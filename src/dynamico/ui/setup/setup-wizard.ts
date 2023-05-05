@@ -13,8 +13,7 @@ import {
 } from "@dynamico/managers";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
-import { badwordsSplitOrDefault } from "@dynamico/utils/badwords";
-import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
+import { badwordsSplitOrDefault, guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
 
 import Logger from "@internal/modules/logger";
 

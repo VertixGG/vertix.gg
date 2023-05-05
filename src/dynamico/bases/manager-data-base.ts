@@ -88,6 +88,15 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         return data;
     }
 
+    public async getSettingsData( ownerId: string, defaultSettings: any, cache = false, isOwnerIdSourceId = false ) {
+        return await this.getData( {
+            ownerId,
+            key: this.getSettingsKey(),
+            cache,
+            default: defaultSettings,
+        }, isOwnerIdSourceId );
+    }
+
     public async setData( args: IDataUpdateArgs, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId );
 
@@ -145,6 +154,14 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
         }
     }
 
+    public async setSettingsData( ownerId: string, settings: any ) {
+        return await this.setData( {
+            ownerId,
+            key: this.getSettingsKey(),
+            default: settings,
+        } );
+    }
+
     public async updateData( args: IDataUpdateArgs, dbData: DataResult ) {
         const { ownerId, key } = args,
             cacheKey = `${ ownerId }-${ key }`;
@@ -183,6 +200,8 @@ export abstract class ManagerDataBase<ModelType extends IDataModel> extends Mana
      * Function getDataSourceModel() :: is used to determine the data source model since the current class is abstract/wrapper.
      */
     protected abstract getDataSourceModel(): ModelType;
+
+    protected abstract getSettingsKey(): string;
 
     private async normalizeArgs( args: any, isOwnerIdSourceId: boolean ) {
         if ( isOwnerIdSourceId ) {

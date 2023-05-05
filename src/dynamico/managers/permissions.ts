@@ -62,7 +62,7 @@ export default class PermissionsManager extends InitializeBase {
 
         await channelManager.editPrimaryMessage( newMessage, newChannel );
 
-        const channel = await channelManager.getChannel( newChannel.guildId, newChannel.id, true );
+        const channel = await channelManager.getGuildChannelDB( newChannel.guildId, newChannel.id, true );
 
         if ( ! channel ) {
             return this.logger.debug( this.onChannelPermissionsUpdate,

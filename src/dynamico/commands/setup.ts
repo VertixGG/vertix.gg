@@ -11,7 +11,7 @@ import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-ch
 
 import { commandsLogger } from "@dynamico/commands/index";
 
-import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
 
 import { ICommand } from "@dynamico/interfaces/command";
 

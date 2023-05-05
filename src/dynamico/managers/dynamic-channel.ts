@@ -19,12 +19,13 @@ import { channelManager, masterChannelManager } from "@dynamico/managers/index";
 
 import {
     DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
-    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@dynamico/constants/dynamic-channel";
 
 import { DynamicoManager } from "@dynamico/managers/dynamico";
 
 import { IChannelLeaveGenericArgs } from "@dynamico/interfaces/channel";
+
+import { Debugger } from "@dynamico/utils/debugger";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -35,8 +36,10 @@ interface IMasterChannelCreateDynamicArgs {
     displayName: string,
 }
 
-export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channel> {
+export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Channel> {
     private static instance: DynamicChannelManager;
+
+    private debugger: Debugger;
 
     public static getName() {
         return "Dynamico/Managers/DynamicChannel";
@@ -52,6 +55,8 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
 
     public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", DynamicChannelManager.getName() ) ) {
         super( shouldDebugCache );
+
+        this.debugger = new Debugger( this );
     }
 
     public async onJoinDynamicChannel( args: IChannelLeaveGenericArgs ) {
@@ -63,7 +68,6 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
         );
 
         if ( newState.channel ) {
-            // Check if owner left the channel.
             if ( await this.isChannelOwner( newState.member?.id, guild.id, newState.channel?.id ) ) {
                 await this.onOwnerJoinDynamicChannel( oldState.member as GuildMember, newState.channel );
             }
@@ -96,7 +100,6 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
                 return;
             }
 
-            // Check if owner left the channel.
             if ( await this.isChannelOwner( oldState.member?.id, guild.id, channel.id ) ) {
                 await this.onOwnerLeaveDynamicChannel( oldState.member as GuildMember, channel );
             }
@@ -115,8 +118,46 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
         );
     }
 
+    public async getChannelAllowedUserIds( interaction: Interaction ) {
+        if ( ! interaction.channel || interaction.channel.type !== ChannelType.GuildVoice ) {
+            this.logger.error( this.getChannelAllowedUserIds,
+                `Interaction channel is not a voice channel. Channel type: ${ interaction.type }`
+            );
+
+            return [];
+        }
+
+        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+
+        if ( ! masterChannel ) {
+            this.logger.warn( this.getChannelAllowedUserIds,
+                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
+
+            return [];
+        }
+
+        const masterChannelCache = interaction.client.channels.cache.get( masterChannel.id ),
+            allowed = [];
+
+        for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
+            if ( role.type !== OverwriteType.Member ) {
+                continue;
+            }
+
+            // Show only users that are not in the master channel permission overwrites.
+            if ( masterChannelCache?.type === ChannelType.GuildVoice &&
+                masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {
+                continue;
+            }
+
+            allowed.push( role.id );
+        }
+
+        return allowed;
+    }
+
     /**
-     * Function create() :: Creates a new dynamic channel for a user.
+     * Function createDynamicChannel() :: Creates a new dynamic channel for a user.
      */
     public async createDynamicChannel( args: IMasterChannelCreateDynamicArgs ) {
         const { displayName, guild, newState } = args,
@@ -147,17 +188,6 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
         this.logger.info( this.createDynamicChannel,
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
-        const categoryChannel = masterChannel.parent,
-            inheritedProperties = masterChannelManager.getDefaultInheritedProperties( masterChannel ),
-            inheritedPermissions = masterChannelManager.getDefaultInheritedPermissions( masterChannel ),
-            permissionOverwrites = [
-                ... inheritedPermissions,
-                {
-                    id: newState.id,
-                    ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-                }
-            ];
-
         // Create channel for the user.
         const { channel } = await channelManager.create( {
             guild,
@@ -167,12 +197,10 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
             ownerChannelId: masterChannel.id,
             // ---
             type: ChannelType.GuildVoice,
-            parent: categoryChannel,
+            parent: masterChannel.parent,
             internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
             // ---
-            ... inheritedProperties,
-            // ---
-            permissionOverwrites,
+            ... masterChannelManager.getChannelDefaultProperties( newState.id, masterChannel ),
         } );
 
         this.logger.admin( this.createDynamicChannel,
@@ -185,49 +213,11 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
         return channel;
     }
 
-    public async getAllowedUserIds( interaction: Interaction ) {
-        if ( ! interaction.channel || interaction.channel.type !== ChannelType.GuildVoice ) {
-            this.logger.error( this.getAllowedUserIds,
-                `Interaction channel is not a voice channel. Channel type: ${interaction.type}`
-            );
-
-            return [];
-        }
-
-        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
-
-        if ( ! masterChannel ) {
-            this.logger.warn( this.getAllowedUserIds,
-                `Master channel does not exist for dynamic channel '${ interaction.channel?.id }'` );
-
-            return [];
-        }
-
-        const masterChannelCache = interaction.client.channels.cache.get( masterChannel.id ),
-            allowed = [];
-
-        for ( const role of interaction.channel.permissionOverwrites?.cache?.values() || [] ) {
-            if ( role.type !== OverwriteType.Member ) {
-                continue;
-            }
-
-            // Show only users that are not in the master channel permission overwrites.
-            if ( masterChannelCache?.type === ChannelType.GuildVoice &&
-                masterChannelCache.permissionOverwrites.cache.has( role.id ) ) {
-                continue;
-            }
-
-            allowed.push( role.id );
-        }
-
-        return allowed;
-    }
-
-    public isPrivateState( context: Interaction | VoiceChannel ) {
+    public isChannelPrivateState( context: Interaction | VoiceChannel ) {
         let channel = context instanceof VoiceChannel ? context : context.channel;
 
         if ( ! channel || channel.type !== ChannelType.GuildVoice ) {
-            this.logger.error( this.isPrivateState, "Interaction channel is not a voice channel" );
+            this.logger.error( this.isChannelPrivateState, "Interaction channel is not a voice channel" );
 
             return false;
         }
@@ -236,10 +226,10 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
             ?.deny.has( PermissionsBitField.Flags.Connect );
     }
 
-    public async isChannelOwner( ownerId: string|undefined, guildId: string, channelId: string ) {
-        if ( ! ownerId ) {
+    public async isChannelOwner( ownerId: string | undefined, guildId: string | undefined, channelId: string ) {
+        if ( ! ownerId || ! guildId ) {
             this.logger.error( this.isChannelOwner,
-                `Guild id: ${ guildId } - Could not find owner id` );
+                `Guild id: ${ guildId } - Could not find owner id: '${ ownerId }'` );
             return false;
         }
 

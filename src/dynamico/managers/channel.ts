@@ -130,7 +130,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
         if ( newState.channelId ) {
             if ( await this.isMaster( newState.channelId, newState.guild.id ) ) {
-                await masterChannelManager.onJoinMasterCreateChannel( args );
+                await masterChannelManager.onJoinMasterChannel( args );
             } else if ( await this.isDynamic( newState.channelId, newState.guild.id ) ) {
                 await dynamicChannelManager.onJoinDynamicChannel( args );
             }
@@ -236,12 +236,12 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL, includeData );
     }
 
-    public async getDynamicChannels( guildId: string, includeData = false ) {
+    public async getDynamicChannels( guildId: string ) {
         this.logger.debug( this.getDynamicChannels,
             `Guild id: '${ guildId }' - Getting dynamic channel(s)`
         );
 
-        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL, includeData );
+        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL );
     }
 
     /**

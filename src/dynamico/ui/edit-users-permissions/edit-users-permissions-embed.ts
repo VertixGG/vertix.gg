@@ -63,7 +63,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     }
 
     protected async getTemplateLogic( interaction: Interaction, args: any ) {
-        const allowed = await dynamicChannelManager.getAllowedUserIds( interaction ),
+        const allowed = await dynamicChannelManager.getChannelAllowedUserIds( interaction ),
             { separator, userWrapper } = this.getTemplateInputs();
 
         let userIds = "";

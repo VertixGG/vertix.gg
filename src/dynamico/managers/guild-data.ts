@@ -1,7 +1,14 @@
 import GuildModel from "../models/guild";
 
-import { ManagerDataBase } from "@dynamico/bases/manager-data-base";
 import DynamicoManager from "@dynamico/managers/dynamico";
+
+import { ManagerDataBase } from "@dynamico/bases/manager-data-base";
+
+import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@dynamico/constants/master-channel";
+
+interface IGuildSettings {
+    maxMasterChannels: number;
+}
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
     private static instance: GuildDataManager;
@@ -21,12 +28,33 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         super( shouldDebugCache );
     }
 
+    public async getAllSettings( guildId: string ): Promise<IGuildSettings> {
+        const data = await this.getSettingsData(
+            guildId,
+            null,
+            false,
+            true
+        );
+
+        if ( data?.object ) {
+            return data.object;
+        }
+
+        return {
+            maxMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
+        };
+    }
+
     public removeFromCache( ownerId: string ) {
         this.logger.info( this.removeFromCache,
             `Removing guild data from cache for ownerId: '${ ownerId }'`
         );
 
         this.deleteCacheWithPrefix( ownerId );
+    }
+
+    protected getSettingsKey() {
+        return "settings";
     }
 
     protected getDataSourceModel() {

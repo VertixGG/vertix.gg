@@ -1,4 +1,12 @@
-import { GUILD_DEFAULT_BADWORDS, GUILD_DEFAULT_BADWORDS_SEPARATOR } from "@dynamico/constants/guild";
+import { Guild } from "discord.js";
+
+import {
+    DEFAULT_BADWORDS,
+    DEFAULT_BADWORDS_INITIAL_VALUE,
+    DEFAULT_BADWORDS_SEPARATOR
+} from "@dynamico/constants/badwords";
+
+import { guildDataManager } from "@dynamico/managers";
 
 /**
  * Function badwordsSomeUsed() :: Determine if a word contains any of the badwords and
@@ -36,8 +44,54 @@ export const badwordsNormalizeArray = ( badwords: string[] | undefined ): string
 
 export const badwordsSplitOrDefault = ( badwords: string | undefined ) => {
     if ( "string" === typeof badwords ) {
-        return badwords.split( GUILD_DEFAULT_BADWORDS_SEPARATOR.trim() );
+        return badwords.split( DEFAULT_BADWORDS_SEPARATOR.trim() );
     }
 
-    return GUILD_DEFAULT_BADWORDS;
+    return DEFAULT_BADWORDS;
+};
+
+export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => {
+    const badwordsDB = await guildDataManager.getData( {
+        ownerId: guildId,
+        key: "badwords",
+        default: null,
+        cache: true,
+    }, true );
+
+    if ( badwordsDB?.values ) {
+        return badwordsDB.values;
+    }
+
+    return DEFAULT_BADWORDS;
+};
+
+export const guildUsedSomeBadword = async ( guildId: string, word: string ): Promise<string | null> => {
+    return badwordsSomeUsed( word, await guildGetBadwords( guildId ) );
+};
+
+export const guildGetBadwordsFormatted = async ( guildId: string ): Promise<string> => {
+    return (
+        ( await guildGetBadwords( guildId ) ).join( DEFAULT_BADWORDS_SEPARATOR ) || DEFAULT_BADWORDS_INITIAL_VALUE
+    );
+};
+
+export const guildSetBadwords = async ( guild: Guild, badwords: string[] | undefined ): Promise<void> => {
+    if ( ! badwords?.length ) {
+        try {
+            await guildDataManager.deleteData( {
+                ownerId: guild.id,
+                key: "badwords",
+            }, true );
+        } catch ( e ) {
+            // Ignore
+        }
+
+        return;
+    }
+
+    await guildDataManager.setData( {
+        ownerId: guild.id,
+        key: "badwords",
+        default: badwords,
+    }, true );
 };

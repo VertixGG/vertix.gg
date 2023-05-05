@@ -3,7 +3,7 @@ import { Interaction } from "discord.js";
 import { UIEmbedTemplate } from "@dynamico/ui/_base/ui-embed-template";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
-import { GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/guild";
+import { DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/badwords";
 import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
 
 export class BadwordsEmbed extends UIEmbedTemplate {
@@ -29,7 +29,7 @@ export class BadwordsEmbed extends UIEmbedTemplate {
         return {
             current: {
                 [ this.vars.value ]: "`" + this.vars.badwords + "`",
-                [ this.vars.default ]: `${ GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE }`,
+                [ this.vars.default ]: `${ DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE }`,
             }
         };
     }

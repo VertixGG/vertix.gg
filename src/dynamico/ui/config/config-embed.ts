@@ -3,7 +3,7 @@ import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import { DYNAMICO_DEFAULT_COLOR_BRAND } from "@dynamico/constants/dynamico";
-import { GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/guild";
+import { DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE } from "@dynamico/constants/badwords";
 import { DEFAULT_MASTER_CHANNEL_CREATE_NONE_NAME } from "@dynamico/constants/master-channel";
 
 export class ConfigEmbed extends UIEmbed {
@@ -62,7 +62,7 @@ export class ConfigEmbed extends UIEmbed {
         return {
             badwordsState: {
                 [ this.vars.badwords ]: "`" + this.vars.badwords + "`",
-                [ this.vars.badwordsDefault ]: GUILD_DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE,
+                [ this.vars.badwordsDefault ]: DEFAULT_BADWORDS_INITIAL_DISPLAY_VALUE,
             },
             masterChannelsState: {
                 [ this.vars.masterChannels ]: this.vars.masterChannels,

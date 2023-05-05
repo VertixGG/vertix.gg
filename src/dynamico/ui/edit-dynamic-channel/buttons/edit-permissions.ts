@@ -9,13 +9,16 @@ import {
 } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 
-import UIElement from "@dynamico/ui/_base/ui-element";
-
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
-import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
+import UIElement from "@dynamico/ui/_base/ui-element";
 
-import { guiManager, masterChannelManager, topGGManager } from "@dynamico/managers";
+import {
+    guiManager,
+    masterChannelManager,
+    topGGManager,
+    dynamicChannelManager
+} from "@dynamico/managers";
 
 import {
     DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
@@ -24,7 +27,7 @@ import {
 
 import { gToken } from "@dynamico/login";
 
-import { masterChannelGetDynamicChannelNameTemplate } from "@dynamico/utils/master-channel";
+import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import Logger from "@internal/modules/logger";
 
@@ -164,12 +167,12 @@ export default class EditPermissions extends UIElement {
                     return {
                         name: interaction.channel.name,
                         userLimit: interaction.channel.userLimit === 0 ? "Unlimited" : interaction.channel.userLimit,
-                        state: masterChannelManager.isPrivate( interaction.channel ) ? "🚫 Private" : "🌐 Public",
+                        state: dynamicChannelManager.isPrivateState( interaction.channel ) ? "🚫 Private" : "🌐 Public",
                     };
                 },
                 previousData = getCurrent( interaction ),
-                previousAllowedUsers = await masterChannelManager.getAllowedUserIds( interaction ),
-                dynamicChannelTemplateName = await masterChannelGetDynamicChannelNameTemplate( master.db.id );
+                previousAllowedUsers = await dynamicChannelManager.getAllowedUserIds( interaction ),
+                dynamicChannelTemplateName = await masterChannelManager.getChannelNameTemplate( master.db.id );
 
             if ( ! dynamicChannelTemplateName ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,
@@ -224,13 +227,13 @@ export default class EditPermissions extends UIElement {
             );
 
             const currentData = getCurrent( interaction ),
-                currentAllowedUsers = await masterChannelManager.getAllowedUserIds( interaction );
+                currentAllowedUsers = await dynamicChannelManager.getAllowedUserIds( interaction );
 
             let description = "Settings has been reset to default:\n\n" +
                 `Name: **${ currentData.name }**` + ( currentData.name === previousData.name ? " (Unchanged)" : "" ) + "\n" +
                 `User limit: ✋**${ currentData.userLimit }**` + ( currentData.userLimit === previousData.userLimit ? " (Unchanged)" : "" ) + "\n" +
                 `State: **${ currentData.state }**` + ( currentData.state === previousData.state ? " (Unchanged)" : "" ) + "\n" +
-                "Allowed: " +  ( await masterChannelManager.getAllowedUserIds( interaction )).map( ( userId ) => {
+                "Allowed: " +  ( await dynamicChannelManager.getAllowedUserIds( interaction )).map( ( userId ) => {
                     return `<@${ userId }> ,`;
                 } );
 

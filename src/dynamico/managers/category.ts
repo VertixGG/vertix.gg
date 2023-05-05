@@ -1,10 +1,13 @@
-import { CategoryChannel, ChannelType } from "discord.js";
-
-import { ICategoryCreateArgs } from "../interfaces/category";
+import { CategoryChannel, ChannelType, Guild } from "discord.js";
 
 import CategoryModel from "@dynamico/models/category";
 
 import InitializeBase from "@internal/bases/initialize-base";
+
+export interface ICategoryCreateArgs {
+    name: string,
+    guild: Guild,
+}
 
 export class CategoryManager extends InitializeBase {
     private static instance: CategoryManager;

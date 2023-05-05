@@ -8,7 +8,7 @@ import {
 import { channelManager, guiManager } from "@dynamico/managers";
 
 import { ICommand } from "@dynamico/interfaces/command";
-import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
 
 const name = "config";
 

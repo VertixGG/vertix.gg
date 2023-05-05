@@ -1,6 +1,9 @@
 import {
+    CategoryChannel,
+    CategoryCreateChannelOptions,
     ChannelType,
     DMChannel,
+    Guild,
     MessageEditOptions,
     NonThreadGuildBasedChannel,
     VoiceChannel,
@@ -9,29 +12,37 @@ import {
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
-import MasterChannelManager from "./master-channel";
-
 import {
-    IChannelCreateArgs,
-    IChannelDeleteArgs,
     IChannelEnterGenericArgs,
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
 import ChannelModel, { ChannelResult } from "@dynamico/models/channel";
 
-import ChannelDataManager from "@dynamico/managers/channel-data";
+import { dynamicChannelManager, masterChannelManager, permissionsManager } from "@dynamico/managers/index";
 
-import PermissionsManager from "@dynamico/managers/permissions";
+import ChannelDataManager from "@dynamico/managers/channel-data";
+import DynamicoManager from "@dynamico/managers/dynamico";
 
 import Debugger from "@dynamico/utils/debugger";
-
-import DynamicoManager from "@dynamico/managers/dynamico";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
 const UNKNOWN_DISPLAY_NAME = "Unknown User",
     UNKNOWN_CHANNEL_NAME = "Unknown Channel";
+
+interface IChannelCreateArgs extends CategoryCreateChannelOptions {
+    guild: Guild,
+    parent? : CategoryChannel;
+    userOwnerId: string,
+    ownerChannelId?: string,
+    internalType: E_INTERNAL_CHANNEL_TYPES,
+}
+
+interface IChannelDeleteArgs {
+    guild: Guild,
+    channel: NonThreadGuildBasedChannel,
+}
 
 export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     private static instance: ChannelManager;
@@ -39,9 +50,6 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     private debugger: Debugger;
 
     private channelModel: ChannelModel;
-
-    private masterChannelManager: MasterChannelManager;
-    private permissionsManager: PermissionsManager;
 
     public static getInstance(): ChannelManager {
         if ( ! ChannelManager.instance ) {
@@ -61,10 +69,6 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         this.debugger = new Debugger( this );
 
         this.channelModel = ChannelModel.getInstance();
-
-        this.permissionsManager = PermissionsManager.getInstance();
-
-        this.masterChannelManager = MasterChannelManager.getInstance();
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {
@@ -124,8 +128,12 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     public async onEnterGeneric( args: IChannelEnterGenericArgs ) {
         const { oldState, newState } = args;
 
-        if ( newState.channelId && await this.channelModel.isMasterCreate( newState.channelId, newState.guild.id ) ) {
-            await this.masterChannelManager.onJoinMasterCreateChannel( args );
+        if ( newState.channelId ) {
+            if ( await this.isMaster( newState.channelId, newState.guild.id ) ) {
+                await masterChannelManager.onJoinMasterCreateChannel( args );
+            } else if ( await this.isDynamic( newState.channelId, newState.guild.id ) ) {
+                await dynamicChannelManager.onJoinDynamicChannel( args );
+            }
         }
 
         // If the user switched channels.
@@ -138,7 +146,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         const { oldState, newState } = args;
 
         if ( oldState.channelId && await this.channelModel.isDynamic( oldState.channelId, newState.guild.id ) ) {
-            await this.masterChannelManager.onLeaveDynamicChannel( args );
+            await dynamicChannelManager.onLeaveDynamicChannel( args );
         }
     }
 
@@ -170,14 +178,35 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
             if ( ( oldChannel as VoiceChannel ).permissionOverwrites !== ( newChannel as VoiceChannel ).permissionOverwrites ) {
-                await this.permissionsManager
+                await permissionsManager
                     .onChannelPermissionsUpdate( oldChannel as VoiceChannel, newChannel as VoiceChannel );
             }
         }
     }
 
-    public async getChannel( guildId: string, channelId: string, cache = false ) {
-        this.debugger.log( this.getChannel,
+    public async getById( id: string, cache = true ) {
+        this.debugger.log( this.getById, `Getting channel id: '${ id }'` );
+
+        // If in cache, return it.
+        if ( cache ) {
+            const result = this.getCache( id );
+
+            if ( result ) {
+                return result;
+            }
+        }
+
+        const result = await this.channelModel.getById( id );
+
+        if ( result ) {
+            this.setCache( id, result );
+        }
+
+        return result;
+    }
+
+    public async getGuildChannelDB( guildId: string, channelId: string, cache = false ) {
+        this.debugger.log( this.getGuildChannelDB,
             `Guild id: '${ guildId }' - Getting channel id: '${ channelId }' cache: '${ cache }'`
         );
 
@@ -190,7 +219,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             }
         }
 
-        const result = await this.channelModel.get( guildId, channelId );
+        const result = await this.channelModel.getGuildChannel( guildId, channelId );
 
         if ( result ) {
             this.setCache( channelId, result );
@@ -278,6 +307,14 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
         return message.edit( newMessage ).catch(
             ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
+    }
+
+    public async isMaster(channelId: string, guildId: string, cache = true ) {
+        return ( await this.getGuildChannelDB( guildId, channelId, cache ) )?.isMasterCreate;
+    }
+
+    public async isDynamic(channelId: string, guildId: string, cache = true ) {
+        return ( await this.getGuildChannelDB( guildId, channelId, cache ) )?.isDynamic;
     }
 
     protected removeFromCache( channelId: string ) {

@@ -10,11 +10,11 @@ import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-i
 
 import { guiManager } from "@dynamico/managers";
 
-import { guildUsedSomeBadword } from "@dynamico/utils/guild";
-
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 import { gToken } from "@dynamico/login";
+
+import { guildUsedSomeBadword } from "@dynamico/utils/badwords";
 
 import Logger from "@internal/modules/logger";
 

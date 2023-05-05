@@ -4,11 +4,10 @@ import { E_UI_TYPES, UIBaseInteractionTypes } from "@dynamico/ui/_base/ui-interf
 
 import UIElement from "@dynamico/ui/_base/ui-element";
 
-import { guildGetBadwordsFormatted } from "@dynamico/utils/guild";
-
 import { guiManager } from "@dynamico/managers";
 
 import { DEFAULT_DATA_DYNAMIC_CHANNEL_NAME } from "@dynamico/constants/master-channel";
+import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
 
 export class StarterElement extends UIElement {
     public static getName() {

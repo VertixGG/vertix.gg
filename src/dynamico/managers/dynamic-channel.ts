@@ -2,7 +2,9 @@ import {
     Channel,
     ChannelType,
     Guild,
-    Interaction, OverwriteType,
+    GuildMember,
+    Interaction,
+    OverwriteType,
     PermissionsBitField,
     VoiceBasedChannel,
     VoiceChannel,
@@ -14,10 +16,11 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import { ChannelResult } from "@dynamico/models/channel";
 
 import { channelManager, masterChannelManager } from "@dynamico/managers/index";
+
 import {
-    DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
+    DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-} from "@dynamico/constants/master-channel";
+} from "@dynamico/constants/dynamic-channel";
 
 import { DynamicoManager } from "@dynamico/managers/dynamico";
 
@@ -52,12 +55,19 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
     }
 
     public async onJoinDynamicChannel( args: IChannelLeaveGenericArgs ) {
-        const { oldState, displayName, channelName } = args,
+        const { oldState, newState, displayName, channelName } = args,
             { guild } = oldState;
 
         this.logger.info( this.onJoinDynamicChannel,
             `Guild id: '${ guild.id }' - User '${ displayName }' join dynamic channel '${ channelName }'`
         );
+
+        if ( newState.channel ) {
+            // Check if owner left the channel.
+            if ( await this.isChannelOwner( newState.member?.id, guild.id, newState.channel?.id ) ) {
+                await this.onOwnerJoinDynamicChannel( oldState.member as GuildMember, newState.channel );
+            }
+        }
     }
 
     /**
@@ -72,16 +82,37 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
         );
 
         // If the channel is empty, delete it.
-        if ( args.oldState.channel?.members.size === 0 ) {
-            this.logger.admin( this.onLeaveDynamicChannel,
-                `➖ Dynamic channel has been deleted - "${ oldState.channel?.name }" (${ guild.name })`
-            );
+        if ( args.oldState.channel ) {
+            const channel = args.oldState.channel;
 
-            await channelManager.delete( {
-                guild,
-                channel: args.oldState.channel,
-            } );
+            if ( channel.members.size === 0 ) {
+                this.logger.admin( this.onLeaveDynamicChannel,
+                    `➖ Dynamic channel has been deleted - "${ channel.name }" (${ guild.name })`
+                );
+
+                await channelManager.delete( { guild, channel, } );
+
+                // CRITICAL.
+                return;
+            }
+
+            // Check if owner left the channel.
+            if ( await this.isChannelOwner( oldState.member?.id, guild.id, channel.id ) ) {
+                await this.onOwnerLeaveDynamicChannel( oldState.member as GuildMember, channel );
+            }
         }
+    }
+
+    public async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
+        this.logger.info( this.onOwnerJoinDynamicChannel,
+            `Guild id: '${ channel.guild.id }' - Owner: '${ owner.displayName }' join dynamic channel: '${ channel.name }'`
+        );
+    }
+
+    public async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
+        this.logger.info( this.onOwnerLeaveDynamicChannel,
+            `Guild id: '${ channel.guild.id }' - Owner: '${ owner.displayName }' left dynamic channel: '${ channel.name }'`
+        );
     }
 
     /**
@@ -109,7 +140,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
         }
 
         const dynamicChannelName = dynamicChannelTemplateName.replace(
-            DEFAULT_DATA_USER_DYNAMIC_CHANNEL_TEMPLATE,
+            DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
             displayName
         );
 
@@ -203,6 +234,26 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult|Channe
 
         return channel.permissionOverwrites.cache.get( channel.guild?.roles?.everyone.id ?? "" )
             ?.deny.has( PermissionsBitField.Flags.Connect );
+    }
+
+    public async isChannelOwner( ownerId: string|undefined, guildId: string, channelId: string ) {
+        if ( ! ownerId ) {
+            this.logger.error( this.isChannelOwner,
+                `Guild id: ${ guildId } - Could not find owner id` );
+            return false;
+        }
+
+        // Check if owner left the channel.
+        const dynamicChannelDB = await channelManager.getGuildChannelDB( guildId, channelId, true );
+
+        if ( ! dynamicChannelDB ) {
+            this.logger.error( this.isChannelOwner,
+                `Guild id: ${ guildId } - Could not find dynamic channel in database, dynamic channel id: ${ channelId }`
+            );
+            return false;
+        }
+
+        return dynamicChannelDB.userOwnerId === ownerId;
     }
 }
 

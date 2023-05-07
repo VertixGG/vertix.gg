@@ -1,10 +1,10 @@
 import process from "process";
 
-import { Client } from "discord.js";
+import { Client, EmbedBuilder } from "discord.js";
 
 import { Api } from "@top-gg/sdk";
 
-import { dynamicoManager } from "@dynamico/managers/index";
+import { dynamicoManager, topGGManager } from "@dynamico/managers/index";
 
 import { InitializeBase } from "@internal/bases";
 
@@ -36,6 +36,16 @@ export class TopGGManager extends InitializeBase {
         return TopGGManager.getVoteUrl();
     }
 
+    public getVoteEmbed() {
+        const embed = new EmbedBuilder(),
+            voteUrl = topGGManager.getVoteUrl();
+
+        embed.setTitle( "👑 Vote for us to unlock this feature!" );
+        embed.setDescription( `This is a premium feature, but you can unlock it for free! [**Vote for us on top.gg!**](${ voteUrl })` );
+
+        return embed;
+    }
+
     public async updateStats() {
         if ( ! this.workingMiddleware() ) {
             return;
@@ -57,7 +67,10 @@ export class TopGGManager extends InitializeBase {
             return false;
         }
 
-        const result = await this.api.hasVoted( userId );
+        const result = await this.api.hasVoted( userId ).catch( ( e ) => {
+            this.logger.error( this.isVoted, "", e );
+            return false;
+        } );
 
         this.logger.debug( this.isVoted, `User id: '${ userId }' isVoted: '${ result }'` );
 

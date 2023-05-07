@@ -1,4 +1,6 @@
 import process from "process";
+import * as fs from "fs";
+import * as path from "path";
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import { ChannelType, Client } from "discord.js";
@@ -15,6 +17,16 @@ import PrismaInstance from "@internal/prisma";
 
 const VERSION_PHASE_4 = "0.0.1", // https://github.com/CoffeBuffet/dynamico/pull/44/
     VERSION_PHASE_5 = "0.0.2"; // https://github.com/CoffeBuffet/dynamico/pull/49/
+
+interface PackageJson {
+    version: string;
+
+    [ key: string ]: any;
+}
+
+const packageJsonPath = path.resolve( __dirname, "../../../package.json" );
+const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
+const packageJson: PackageJson = JSON.parse( packageJsonString );
 
 export class DynamicoManager extends InitializeBase {
     private static instance: DynamicoManager;
@@ -38,8 +50,18 @@ export class DynamicoManager extends InitializeBase {
         return VERSION_PHASE_5;
     }
 
+    public static getBuildVersion() {
+        return packageJson.version;
+    }
+
     public static isDebugOn( debugType: string, entityName: string ) {
         return !! process.env[ `DEBUG_${ debugType }` ]?.includes( entityName );
+    }
+
+    public constructor() {
+        super();
+
+        this.printVersion();
     }
 
     public getClient() {
@@ -64,9 +86,7 @@ export class DynamicoManager extends InitializeBase {
         await client.application.commands.set( Commands );
 
         setTimeout( () => {
-            this.removeNonExistMasterChannelsFromDB( client );
-            this.removeEmptyChannels( client );
-            this.removeEmptyCategories( client );
+            this.handleChannels( client );
 
             // TODO: Should run on background.
             this.updateGuilds();
@@ -79,6 +99,23 @@ export class DynamicoManager extends InitializeBase {
 
         this.logger.log( this.onReady,
             `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.` );
+    }
+
+
+    public handleChannels( client: Client ) {
+        const promises = [
+            this.removeNonExistMasterChannelsFromDB( client ),
+            this.removeEmptyChannels( client ),
+            this.removeEmptyCategories( client ),
+        ];
+
+        Promise.all( promises ).then( () => {
+            this.logger.info( this.handleChannels, "All channels are handled." );
+
+            dynamicChannelManager.getClaimChannelManager().handleAbandonedChannels( client ).then( () => {
+                this.logger.info( this.handleChannels, "Abandoned channels are handled." );
+            } );
+        } );
     }
 
     private async removeEmptyChannels( client: Client ) {
@@ -241,6 +278,12 @@ export class DynamicoManager extends InitializeBase {
                 }
             }
         }
+    }
+
+    private printVersion() {
+        this.logger.info( this.printVersion,
+            `Version: '${ DynamicoManager.getVersion() }' Build version: ${ DynamicoManager.getBuildVersion() }'`
+        );
     }
 }
 

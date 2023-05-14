@@ -3,12 +3,11 @@ import fetch from "cross-fetch";
 import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 
-import MasterChannelManager from "@dynamico/managers/master-channel";
+import { GUIManager } from "@dynamico/managers/gui";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-ui-modal";
-
-import { guiManager } from "@dynamico/managers";
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
@@ -57,7 +56,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await guiManager
+        await GUIManager.$
             .sendContinuesMessage( interaction, "The channel name must be between 1 and 100 characters long" );
     }
 
@@ -65,7 +64,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
-            await guiManager.sendContinuesMessage( interaction, "An error has occurred" );
+            await GUIManager.$.sendContinuesMessage( interaction, "An error has occurred" );
             return;
         }
 
@@ -87,7 +86,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
                         )
                         .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
-                    await guiManager.sendContinuesMessage( interaction, {
+                    await GUIManager.$.sendContinuesMessage( interaction, {
                         embeds: [ embed ]
                     } );
                     return;
@@ -120,7 +119,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
             return;
         }
 
-        const masterChannel = await MasterChannelManager.getInstance().getByDynamicChannelId( interaction.channel.guildId, interaction.channel.id, false );
+        const masterChannel = await MasterChannelManager.$.getByDynamicChannelId( interaction.channel.guildId, interaction.channel.id, false );
 
         let message = ".\n";
 
@@ -140,7 +139,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
             )
             .setColor( DYNAMICO_DEFAULT_COLOR_ORANGE_RED );
 
-        await guiManager.sendContinuesMessage( interaction, {
+        await GUIManager.$.sendContinuesMessage( interaction, {
             embeds: [ embed ]
         } );
     }
@@ -154,7 +153,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
             .setTitle( `✏️ Your channel's name has changed to '${ newChannelName }'` )
             .setColor( 0x32CD32 );
 
-        await guiManager.sendContinuesMessage( interaction, {
+        await GUIManager.$.sendContinuesMessage( interaction, {
             embeds: [ embed ]
         } );
     }

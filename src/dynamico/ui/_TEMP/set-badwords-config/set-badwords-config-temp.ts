@@ -1,3 +1,5 @@
+import { GUIManager } from "@dynamico/managers/gui";
+
 import UIComponentBase from "@dynamico/ui/_base/ui-component-base";
 
 import EditBadwordsButton from "@dynamico/ui/_TEMP/set-badwords-config/edit-badwords-button";
@@ -5,7 +7,6 @@ import EditBadwordsButton from "@dynamico/ui/_TEMP/set-badwords-config/edit-badw
 import { BadwordsConfigEmbed } from "@dynamico/ui/_TEMP/set-badwords-config/badwords-config-embed";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-import { guiManager } from "@dynamico/managers";
 
 export class SetBadwordsConfigTemp extends UIComponentBase {
     public static getName() {
@@ -21,7 +22,7 @@ export class SetBadwordsConfigTemp extends UIComponentBase {
 
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            guiManager.register( require( "./edit-badwords-modal" ).default );
+            GUIManager.$.register( require( "./edit-badwords-modal" ).default );
         } );
     }
 

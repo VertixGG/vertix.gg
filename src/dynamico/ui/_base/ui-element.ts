@@ -18,11 +18,9 @@ import {
 
 import UIGroupBase from "@dynamico/ui/_base/ui-group-base";
 
-import { guiManager } from "@dynamico/managers";
-
 import { UIBaseInteractionTypes, DYNAMICO_UI_ELEMENT, UICustomIdContextTypes } from "@dynamico/ui/_base/ui-interfaces";
 
-import { GUI_ID_LOGICAL_SEPARATOR } from "@dynamico/managers/gui";
+import { GUI_ID_LOGICAL_SEPARATOR, GUIManager } from "@dynamico/managers/gui";
 
 import ObjectBase from "@internal/bases/object-base";
 
@@ -185,7 +183,7 @@ export default class UIElement extends UIGroupBase {
             suffix += ">" + extraData;
         }
 
-        return guiManager.storeCallback( this, callback, suffix );
+        return GUIManager.$.storeCallback( this, callback, suffix );
     }
 
     private setCallback( context: UICustomIdContextTypes, callback: Function, extraData = "" ) {

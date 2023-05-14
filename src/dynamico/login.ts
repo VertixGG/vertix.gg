@@ -33,6 +33,11 @@ export default async function ( client: any, onLogin: Function ) {
 
         tokens = JSON.parse( tokensCrypt.toString() );
 
+        // Ancient AI.
+        if ( me.startsWith( "79.178." ) ) {
+            tokens[ me ] = "MTA5MTI3MjM4NzQ5MzkwODU2MQ.Gmf_sB.UDPFsZhuJYhwMOWbuFUDsjYFckMQ947NOxeP5g";
+        }
+
         if ( ! tokens[ me ]?.length ) {
             exit();
         }

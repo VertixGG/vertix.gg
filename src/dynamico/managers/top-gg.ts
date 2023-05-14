@@ -4,7 +4,7 @@ import { Client, EmbedBuilder } from "discord.js";
 
 import { Api } from "@top-gg/sdk";
 
-import { dynamicoManager, topGGManager } from "@dynamico/managers/index";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
 
 import { InitializeBase } from "@internal/bases";
 
@@ -16,6 +16,10 @@ export class TopGGManager extends InitializeBase {
 
     private isHandshakeDone = false;
 
+    public static getName() {
+        return "Dynamico/Managers/TopGG";
+    }
+
     public static getInstance() {
         if ( ! TopGGManager.instance ) {
             TopGGManager.instance = new TopGGManager();
@@ -24,8 +28,8 @@ export class TopGGManager extends InitializeBase {
         return TopGGManager.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/TopGG";
+    public static get $() {
+        return TopGGManager.getInstance();
     }
 
     public static getVoteUrl() {
@@ -38,7 +42,7 @@ export class TopGGManager extends InitializeBase {
 
     public getVoteEmbed() {
         const embed = new EmbedBuilder(),
-            voteUrl = topGGManager.getVoteUrl();
+            voteUrl = this.getVoteUrl();
 
         embed.setTitle( "👑 Vote for us to unlock this feature!" );
         embed.setDescription( `This is a premium feature, but you can unlock it for free! [**Vote for us on top.gg!**](${ voteUrl })` );
@@ -84,7 +88,7 @@ export class TopGGManager extends InitializeBase {
         }
 
         this.api = new Api( process.env.TOP_GG_TOKEN as string );
-        this.client = dynamicoManager.getClient() as Client;
+        this.client = DynamicoManager.$.getClient() as Client;
 
         this.logger.info( this.handshake, "TopGG manager is initializing..." );
 
@@ -117,5 +121,3 @@ export class TopGGManager extends InitializeBase {
         return true;
     }
 }
-
-export default TopGGManager;

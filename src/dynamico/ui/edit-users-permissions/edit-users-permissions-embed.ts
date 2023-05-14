@@ -2,11 +2,11 @@ import {
     Interaction,
 } from "discord.js";
 
+import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
+
 import UIEmbedTemplate from "@dynamico/ui/_base/ui-embed-template";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
-
-import { dynamicChannelManager } from "@dynamico/managers";
 
 export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     private vars: any = {};
@@ -63,7 +63,7 @@ export class EditUsersPermissionsEmbed extends UIEmbedTemplate {
     }
 
     protected async getTemplateLogic( interaction: Interaction, args: any ) {
-        const allowed = await dynamicChannelManager.getChannelAllowedUserIds( interaction ),
+        const allowed = await DynamicChannelManager.$.getChannelAllowedUserIds( interaction ),
             { separator, userWrapper } = this.getTemplateInputs();
 
         let userIds = "";

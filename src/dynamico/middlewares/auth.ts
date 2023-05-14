@@ -1,6 +1,7 @@
 import { ChannelType, EmbedBuilder } from "discord.js";
 
-import { masterChannelManager, permissionsManager } from "@dynamico/managers";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { PermissionsManager } from "@dynamico/managers/permissions";
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
@@ -8,7 +9,7 @@ import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import GlobalLogger from "@dynamico/global-logger";
 
-const globalLogger = GlobalLogger.getInstance();
+const globalLogger = GlobalLogger.$;
 
 export default async function authMiddleware( interaction: UIInteractionTypes ) {
     if ( ( ! interaction.channel?.type && ChannelType.GuildText !== interaction.channel?.type ) || ! interaction.guildId || ! interaction.guild  ) {
@@ -20,7 +21,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
 
     // Only the channel owner can pass the middleware
     if ( ChannelType.GuildVoice === interaction.channel.type ) {
-        const master = await masterChannelManager.getChannelAndDBbyDynamicChannel( interaction, true );
+        const master = await MasterChannelManager.$.getChannelAndDBbyDynamicChannel( interaction, true );
 
         if ( ! master ) {
             return false;
@@ -46,7 +47,7 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
             globalLogger.warn( authMiddleware, "", e );
         } );
     } else if ( ChannelType.GuildText === interaction.channel.type ) {
-        const result = permissionsManager.hasMemberAdminPermission( interaction, authMiddleware );
+        const result = PermissionsManager.$.hasMemberAdminPermission( interaction, authMiddleware );
 
         if ( ! result ) {
             const embed = new EmbedBuilder();

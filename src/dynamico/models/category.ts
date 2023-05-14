@@ -19,6 +19,10 @@ export class CategoryModel extends ModelBase {
         return CategoryModel.instance;
     }
 
+    public static get $() {
+        return CategoryModel.getInstance();
+    }
+
     public constructor() {
         super();
 
@@ -40,4 +44,3 @@ export class CategoryModel extends ModelBase {
     }
 }
 
-export default CategoryModel;

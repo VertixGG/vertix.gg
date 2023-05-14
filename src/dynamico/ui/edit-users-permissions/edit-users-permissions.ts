@@ -1,11 +1,11 @@
 import UIComponentBase from "@dynamico/ui/_base/ui-component-base";
 
+import { GUIManager } from "@dynamico/managers/gui";
+
 import EditUsersPermissionsEmbed from "@dynamico/ui/edit-users-permissions/edit-users-permissions-embed";
 import EditPermissionsUsersMenuMenus from "@dynamico/ui/edit-users-permissions/edit-permissions-users-menus";
 
 import { UIBaseInteractionTypes, E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-
-import { guiManager } from "@dynamico/managers";
 
 export class EditUsersPermissions extends UIComponentBase {
     public static getName() {
@@ -21,7 +21,7 @@ export class EditUsersPermissions extends UIComponentBase {
 
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            guiManager.register( require( "./edit-users-channel-public-embed" ).default );
+            GUIManager.$.register( require( "./edit-users-channel-public-embed" ).default );
         } );
     }
 

@@ -5,10 +5,9 @@ import {
 
 import RenameModal from "../modals/rename";
 import UserlimitModal from "../modals/userlimit";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-
-import { guiManager } from "@dynamico/managers";
 
 import UIElement from "@dynamico/ui/_base/ui-element";
 
@@ -41,7 +40,7 @@ export default class EditMeta extends UIElement {
 
     private async renameChannel( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
-            const component = guiManager
+            const component = GUIManager.$
                 .get( RenameModal.getName() );
 
             if ( component && component.getModal ) {
@@ -52,7 +51,7 @@ export default class EditMeta extends UIElement {
 
     private async limitChannel( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
-            const component = guiManager
+            const component = GUIManager.$
                 .get( UserlimitModal.getName() );
 
             if ( component && component.getModal ) {

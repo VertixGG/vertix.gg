@@ -1,9 +1,10 @@
 import { Interaction, ModalSubmitInteraction, TextInputStyle } from "discord.js";
 
+import { GUIManager } from "@dynamico/managers/gui";
+
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-ui-modal";
 
-import { guiManager } from "@dynamico/managers";
 import { DEFAULT_BADWORDS_PLACEHOLDER } from "@dynamico/constants/badwords";
 
 const MIN_INPUT_LENGTH = 0,
@@ -48,7 +49,7 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await guiManager
+        await GUIManager.$
             .sendContinuesMessage( interaction,
                 `The channel name must be between ${ MIN_INPUT_LENGTH } and ${ MAX_INPUT_LENGTH } characters long`
             );
@@ -58,7 +59,7 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
-            await guiManager.sendContinuesMessage( interaction, "An error has occurred" );
+            await GUIManager.$.sendContinuesMessage( interaction, "An error has occurred" );
             return;
         }
 
@@ -73,7 +74,7 @@ export class EditBadwordsModal extends GenericInputTextboxUIModal {
         }
 
         // TODO: should be callback or commands.on.
-        await guiManager.get( "Dynamico/UI/SetupWizard" )
+        await GUIManager.$.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 _step: 1,
                 badwords: input,

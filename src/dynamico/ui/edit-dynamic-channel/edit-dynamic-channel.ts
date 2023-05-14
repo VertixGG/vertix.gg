@@ -1,4 +1,4 @@
-import { guiManager } from "@dynamico/managers";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import UIComponentBase from "@dynamico/ui/_base/ui-component-base";
 
@@ -23,8 +23,8 @@ export class EditDynamicChannel extends UIComponentBase {
 
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            guiManager.register( require( "./modals/rename" ).default );
-            guiManager.register( require( "./modals/userlimit" ).default );
+            GUIManager.$.register( require( "./modals/rename" ).default );
+            GUIManager.$.register( require( "./modals/userlimit" ).default );
         } );
     }
 

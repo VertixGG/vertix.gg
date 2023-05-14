@@ -1,10 +1,10 @@
 import { ButtonInteraction, ButtonStyle } from "discord.js";
 
+import { GUIManager } from "@dynamico/managers/gui";
+
 import { E_UI_TYPES, UIBaseInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import UIElement from "@dynamico/ui/_base/ui-element";
-
-import { guiManager } from "@dynamico/managers";
 
 import { DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME } from "@dynamico/constants/master-channel";
 import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
@@ -40,7 +40,7 @@ export class StarterElement extends UIElement {
     }
 
     private async onSetupButtonClick( interaction: ButtonInteraction ) {
-       await guiManager.get( "Dynamico/UI/SetupWizard" )
+       await GUIManager.$.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 step: "initial",
                 channelNameTemplate: DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,

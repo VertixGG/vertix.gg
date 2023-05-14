@@ -13,19 +13,17 @@ import {
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
+import { DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE } from "@dynamico/constants/dynamic-channel";
+
 import { ChannelResult } from "@dynamico/models/channel";
 
-import { channelManager, masterChannelManager } from "@dynamico/managers/index";
-
-import {
-    DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE,
-} from "@dynamico/constants/dynamic-channel";
-
+import { ChannelManager } from "@dynamico/managers/channel";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
 import { DynamicoManager } from "@dynamico/managers/dynamico";
 
 import { IChannelLeaveGenericArgs } from "@dynamico/interfaces/channel";
 
-import { Debugger } from "@dynamico/utils/debugger";
+import { Debugger } from "@internal/modules/debugger";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -39,7 +37,7 @@ interface IMasterChannelCreateDynamicArgs {
 export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Channel> {
     private static instance: DynamicChannelManager;
 
-    private debugger: Debugger;
+    private readonly debugger: Debugger;
 
     public static getName() {
         return "Dynamico/Managers/DynamicChannel";
@@ -51,6 +49,10 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
         }
 
         return DynamicChannelManager.instance;
+    }
+
+    public static get $() {
+        return DynamicChannelManager.getInstance();
     }
 
     public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", DynamicChannelManager.getName() ) ) {
@@ -94,9 +96,9 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
                     `➖ Dynamic channel has been deleted - "${ channel.name }" (${ guild.name })`
                 );
 
-                await channelManager.delete( { guild, channel, } );
+                await ChannelManager.$.delete( { guild, channel, } );
 
-                // CRITICAL.
+                // CRITICAL:
                 return;
             }
 
@@ -127,7 +129,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
             return [];
         }
 
-        const masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+        const masterChannel = await MasterChannelManager.$.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
             this.logger.warn( this.getChannelAllowedUserIds,
@@ -164,7 +166,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
             masterChannel = newState.channel as VoiceBasedChannel,
             userOwnerId = newState.member?.id;
 
-        const masterChannelDB = await channelManager.getGuildChannelDB( guild.id, masterChannel.id, true );
+        const masterChannelDB = await ChannelManager.$.getGuildChannelDB( guild.id, masterChannel.id, true );
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.createDynamicChannel,
@@ -172,7 +174,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
             return;
         }
 
-        const dynamicChannelTemplateName = await masterChannelManager.getChannelNameTemplate( masterChannelDB.id );
+        const dynamicChannelTemplateName = await MasterChannelManager.$.getChannelNameTemplate( masterChannelDB.id );
 
         if ( ! dynamicChannelTemplateName ) {
             this.logger.error( this.createDynamicChannel,
@@ -189,7 +191,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
         // Create channel for the user.
-        const { channel } = await channelManager.create( {
+        const { channel } = await ChannelManager.$.create( {
             guild,
             name: dynamicChannelName,
             // ---
@@ -200,7 +202,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
             parent: masterChannel.parent,
             internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
             // ---
-            ... masterChannelManager.getChannelDefaultProperties( newState.id, masterChannel ),
+            ... MasterChannelManager.$.getChannelDefaultProperties( newState.id, masterChannel ),
         } );
 
         this.logger.admin( this.createDynamicChannel,
@@ -208,7 +210,11 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
         );
 
         // Move the user to new created channel.
-        await newState.setChannel( channel.id );
+        newState.setChannel( channel.id ).then( () => {
+            this.logger.log( this.createDynamicChannel,
+                `Guild id: '${ guild.id }' - User '${ displayName }' moved to dynamic channel '${ dynamicChannelName }'`
+            );
+        } );
 
         return channel;
     }
@@ -227,6 +233,9 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
     }
 
     public async isChannelOwner( ownerId: string | undefined, guildId: string | undefined, channelId: string ) {
+        this.logger.debug( this.isChannelOwner,
+            `Guild id: ${ guildId } - Checking if owner id: '${ ownerId }' is owner of channel id: ${ channelId }` );
+
         if ( ! ownerId || ! guildId ) {
             this.logger.error( this.isChannelOwner,
                 `Guild id: ${ guildId } - Could not find owner id: '${ ownerId }'` );
@@ -234,7 +243,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
         }
 
         // Check if owner left the channel.
-        const dynamicChannelDB = await channelManager.getGuildChannelDB( guildId, channelId, true );
+        const dynamicChannelDB = await ChannelManager.$.getGuildChannelDB( guildId, channelId, true );
 
         if ( ! dynamicChannelDB ) {
             this.logger.error( this.isChannelOwner,
@@ -246,5 +255,3 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
         return dynamicChannelDB.userOwnerId === ownerId;
     }
 }
-
-export default DynamicChannelManager;

@@ -4,7 +4,7 @@ import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
-import { guiManager } from "@dynamico/managers";
+import { GUIManager } from "@dynamico/managers/gui";
 
 export class TemplateButton extends UIElement {
     public static getName() {
@@ -26,7 +26,7 @@ export class TemplateButton extends UIElement {
     }
 
     private async onClick( interaction: ButtonInteraction ) {
-        const component = guiManager.get( "Dynamico/UI/TemplateModal" );
+        const component = GUIManager.$.get( "Dynamico/UI/TemplateModal" );
 
         if ( undefined !== typeof this.args.channelNameTemplate ) {
             if ( this.args._id?.length ) {

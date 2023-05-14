@@ -8,24 +8,30 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import ChannelModel, { ChannelResult } from "../models/channel";
-
-import Debugger from "@dynamico/utils/debugger";
+import { ChannelModel, ChannelResult } from "@dynamico//models/channel";
 
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS, } from "@dynamico/constants/master-channel";
 
-import { channelManager, dynamicoManager, guiManager, } from "@dynamico/managers";
-
 import { permissionsConvertBitfieldToOverwriteOptions } from "@dynamico/utils/permissions";
+
+import { GUIManager } from "@dynamico/managers/gui";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
+import { ChannelManager } from "@dynamico/managers/channel";
+
+import Debugger from "@internal/modules/debugger";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
 
-export default class PermissionsManager extends InitializeBase {
+export class PermissionsManager extends InitializeBase {
     private static instance: PermissionsManager;
 
     private channelModel: ChannelModel;
 
     private debugger: Debugger;
+
+    public static getName() {
+        return "Dynamico/Managers/Permissions";
+    }
 
     public static getInstance(): PermissionsManager {
         if ( ! PermissionsManager.instance ) {
@@ -35,8 +41,8 @@ export default class PermissionsManager extends InitializeBase {
         return PermissionsManager.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/Permissions";
+    public static get $() {
+        return PermissionsManager.getInstance();
     }
 
     public constructor() {
@@ -56,13 +62,13 @@ export default class PermissionsManager extends InitializeBase {
         this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldChannel.guildId }' - New permissions for channel id: '${ oldChannel.id }'` );
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newChannel.permissionOverwrites );
 
-        const newMessage = await guiManager
+        const newMessage = await GUIManager.$
             .get( "Dynamico/UI/EditDynamicChannel" )
             .getMessage( newChannel );
 
-        await channelManager.editPrimaryMessage( newMessage, newChannel );
+        await ChannelManager.$.editPrimaryMessage( newMessage, newChannel );
 
-        const channel = await channelManager.getGuildChannelDB( newChannel.guildId, newChannel.id, true );
+        const channel = await ChannelManager.$.getGuildChannelDB( newChannel.guildId, newChannel.id, true );
 
         if ( ! channel ) {
             return this.logger.debug( this.onChannelPermissionsUpdate,
@@ -141,7 +147,7 @@ export default class PermissionsManager extends InitializeBase {
     }
 
     public async hasMemberPermissions( guildId: string, userId: string, permissions: PermissionResolvable ) {
-        const guild = dynamicoManager.getClient()?.guilds.cache.get( guildId );
+        const guild = DynamicoManager.$.getClient()?.guilds.cache.get( guildId );
 
         if ( ! guild ) {
             this.logger.error( this.hasMemberPermissions,

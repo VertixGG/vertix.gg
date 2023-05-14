@@ -3,7 +3,7 @@ import { ModalSubmitInteraction } from "discord.js";
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-ui-modal";
 
-import { guiManager } from "@dynamico/managers";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME } from "@dynamico/constants/master-channel";
 
@@ -45,7 +45,7 @@ export class TemplateModal extends GenericInputTextboxUIModal {
     }
 
     protected async onInputValueInvalid( interaction: ModalSubmitInteraction ) {
-        await guiManager
+        await GUIManager.$
             .sendContinuesMessage( interaction, `The channel name must be between ${ MIN_INPUT_LENGTH } and ${ MAX_INPUT_LENGTH } characters long` );
     }
 
@@ -53,7 +53,7 @@ export class TemplateModal extends GenericInputTextboxUIModal {
         const input = this.getInputFieldValue( interaction );
 
         if ( ! interaction.channel ) {
-            await guiManager.sendContinuesMessage( interaction, "An error has occurred" );
+            await GUIManager.$.sendContinuesMessage( interaction, "An error has occurred" );
             return;
         }
 
@@ -68,7 +68,7 @@ export class TemplateModal extends GenericInputTextboxUIModal {
         }
 
         // TODO: should be callback or commands.on.
-        await guiManager.get( "Dynamico/UI/SetupWizard" )
+        await GUIManager.$.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 _step: 0,
                 channelNameTemplate: input || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,

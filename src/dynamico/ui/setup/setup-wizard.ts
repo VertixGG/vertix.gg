@@ -1,16 +1,14 @@
 import { CommandInteraction } from "discord.js";
 
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { GUIManager } from "@dynamico/managers/gui";
+
 import UIWizardBase from "@dynamico/ui/_base/ui-wizard-base";
 
 import { UIContinuesInteractionTypes, E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import { TemplateComponent } from "@dynamico/ui/template/template-component";
 import { BadwordsComponent } from "@dynamico/ui/badwords/badwords-component";
-
-import {
-    guiManager,
-    masterChannelManager
-} from "@dynamico/managers";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 import { badwordsSplitOrDefault, guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
@@ -46,8 +44,8 @@ export class SetupWizard extends UIWizardBase {
         super();
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            guiManager.register( require( "../badwords/badwords-modal" ).BadwordsModal );
-            guiManager.register( require( "../template/template-modal" ).TemplateModal );
+            GUIManager.$.register( require( "../badwords/badwords-modal" ).BadwordsModal );
+            GUIManager.$.register( require( "../template/template-modal" ).TemplateModal );
         } );
     }
 
@@ -69,7 +67,7 @@ export class SetupWizard extends UIWizardBase {
             );
         }
 
-        if ( ! await masterChannelManager.checkLimit( interaction as CommandInteraction, guildId ) ) {
+        if ( ! await MasterChannelManager.$.checkLimit( interaction as CommandInteraction, guildId ) ) {
             return logger.warn( this.onFinish,
                 `Guild id: '${ guildId }' - Has not been set up, max limit is reached.`
             );
@@ -81,7 +79,7 @@ export class SetupWizard extends UIWizardBase {
 
         args.badwords = badwordsSplitOrDefault( args.badwords );
 
-        const result = await masterChannelManager
+        const result = await MasterChannelManager.$
                 .createDefaultMasterChannel( interaction as CommandInteraction, interaction.user.id, {
                     dynamicChannelNameTemplate: args.channelNameTemplate || null,
                     badwords: args.badwords,
@@ -100,7 +98,7 @@ export class SetupWizard extends UIWizardBase {
                 `Guild id: '${ guildId }' - Has not been set up, master channel creation failed`
             );
 
-            return await guiManager.get( "Dynamico/UI/GlobalResponse" )
+            return await GUIManager.$.get( "Dynamico/UI/GlobalResponse" )
                 .sendContinues( interaction, {
                     globalResponse: uiUtilsWrapAsTemplate( "somethingWentWrong" ),
                 } );
@@ -114,7 +112,7 @@ export class SetupWizard extends UIWizardBase {
             `🛠️ Setup has performed - "${ args.channelNameTemplate }", "${ badwords }" (${ interaction.guild.name })`
         );
 
-        await guiManager.get( "Dynamico/UI/SetupSuccessEmbed" )
+        await GUIManager.$.get( "Dynamico/UI/SetupSuccessEmbed" )
             .sendContinues( interaction, {
                 badwords,
                 masterChannelId: masterCreateChannel.id,

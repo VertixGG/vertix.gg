@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 
-import { guildDataManager } from "@dynamico/managers";
+import { GuildDataManager } from "@dynamico/managers/guild-data";
 
 import { rolesGetEveryoneRoleMention } from "@dynamico/utils/roles";
 
@@ -9,7 +9,7 @@ export const GUILD_DEFAULT_BASIC_ROLE_PREFIX = "<@&",
     GUILD_DEFAULT_BASIC_ROLE_SEPARATOR = ", ";
 
 export const guildGetBasicRolesIds = async ( guildId: string ): Promise<string[]> => {
-    const basicRolesIdsDB = await guildDataManager.getData( {
+    const basicRolesIdsDB = await GuildDataManager.$.getData( {
         ownerId: guildId,
         key: "basicRolesIds",
         default: null,

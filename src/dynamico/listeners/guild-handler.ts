@@ -1,13 +1,13 @@
 import { Client } from "discord.js";
 
-import { guildManager } from "../managers";
+import { GuildManager } from "@dynamico/managers/guild";
 
 export function guildHandler ( client: Client ) {
     client.on( "guildCreate", async ( guild ) => {
-        await guildManager.onJoin( client, guild );
+        await GuildManager.$.onJoin( client, guild );
     } );
 
     client.on( "guildDelete", async ( guild ) => {
-        await guildManager.onLeave( client, guild );
+        await GuildManager.$.onLeave( client, guild );
     } );
 }

@@ -17,10 +17,10 @@ import {
 
 import { UIContinuesInteractionTypes, UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
-import Debugger from "@dynamico/utils/debugger";
-
 import UIBase from "@dynamico/ui/_base/ui-base";
 import UIGroupBase from "@dynamico/ui/_base/ui-group-base";
+
+import Debugger from "@internal/modules/debugger";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import ObjectBase from "@internal/bases/object-base";
@@ -47,6 +47,10 @@ export class GUIManager extends InitializeBase {
     private continuesInteractions = new Map<string, InteractionResponse>;
     private debugger: Debugger;
 
+    public static getName() {
+        return "Dynamico/Managers/GUI";
+    }
+
     public static getInstance() {
         if ( ! this.instance ) {
             this.instance = new GUIManager();
@@ -55,8 +59,8 @@ export class GUIManager extends InitializeBase {
         return this.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/GUI";
+    public static get $(): GUIManager {
+        return this.getInstance();
     }
 
     public constructor() {
@@ -243,7 +247,3 @@ export class GUIManager extends InitializeBase {
         }
     }
 }
-
-export default GUIManager;
-
-export const guiManager = GUIManager.getInstance();

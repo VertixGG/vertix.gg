@@ -1,6 +1,6 @@
 import { CategoryChannel, ChannelType, Guild } from "discord.js";
 
-import CategoryModel from "@dynamico/models/category";
+import { CategoryModel } from "@dynamico/models/category";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
@@ -24,6 +24,10 @@ export class CategoryManager extends InitializeBase {
         }
 
         return CategoryManager.instance;
+    }
+
+    public static get $() {
+        return CategoryManager.getInstance();
     }
 
     public constructor() {
@@ -81,5 +85,3 @@ export class CategoryManager extends InitializeBase {
         await category.delete();
     }
 }
-
-export default CategoryManager;

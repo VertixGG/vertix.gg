@@ -11,11 +11,11 @@ import dotenv from "dotenv";
 import GlobalLogger from "@dynamico/global-logger";
 
 function entryPoint() {
-    GlobalLogger.getInstance().info( entryPoint, "Database is connected" );
+    GlobalLogger.$.info( entryPoint, "Database is connected" );
 
     import( "./dynamico" ).then( ( { default: botInitialize } ) => {
         botInitialize().then( () => {
-            GlobalLogger.getInstance().info( entryPoint, "Bot is initialized" );
+            GlobalLogger.$.info( entryPoint, "Bot is initialized" );
         } );
     } );
 }
@@ -23,7 +23,7 @@ function entryPoint() {
 function main() {
     dotenv.config( { path: path.join( process.cwd(), ".env" ) } );
 
-    //GlobalLogger.getInstance().info( main, "Environment variables are loaded:", process.env );
+    //GlobalLogger.$.info( main, "Environment variables are loaded:", process.env );
 
     import( "./prisma" ).then( ( { default: Prisma } ) => {
         Prisma.getConnectPromise().then( entryPoint );

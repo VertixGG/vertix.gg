@@ -6,7 +6,7 @@ import { UIEmbedTemplate } from "@dynamico/ui/_base/ui-embed-template";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
-import { dynamicChannelManager } from "@dynamico/managers";
+import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
 
 export class EditDynamicChannelEmbed extends UIEmbedTemplate {
     private vars: any = {};
@@ -68,7 +68,7 @@ export class EditDynamicChannelEmbed extends UIEmbedTemplate {
         return {
             name: interaction.name,
             limit: 0 === limitValue ? this.vars.unlimited : this.vars.value,
-            state: dynamicChannelManager.isChannelPrivateState( interaction ) ?
+            state: DynamicChannelManager.$.isChannelPrivateState( interaction ) ?
                 this.vars.private :
                 this.vars.public,
 

@@ -16,9 +16,9 @@ import {
     E_UI_TYPES,
 } from "@dynamico/ui/_base/ui-interfaces";
 
-import { guiManager } from "@dynamico/managers/gui";
+import { GUIManager } from "@dynamico/managers/gui";
 
-import Debugger from "@dynamico/utils/debugger";
+import Debugger from "@internal/modules/debugger";
 
 import Logger from "@internal/modules/logger";
 
@@ -85,7 +85,7 @@ export class UIBase extends ObjectBase {
      * It takes an interaction object and additional arguments as input and returns a promise.
      */
     public async sendContinues( interaction: UIContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse|void> {
-        return guiManager.sendContinuesMessage( interaction, this, args );
+        return GUIManager.$.sendContinuesMessage( interaction, this, args );
     }
 
     /**

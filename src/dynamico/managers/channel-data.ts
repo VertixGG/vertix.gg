@@ -1,11 +1,15 @@
-import ChannelModel from "../models/channel";
+import { ChannelModel } from "@dynamico/models";
 
 import { ManagerDataBase } from "@dynamico/bases/manager-data-base";
 
-import DynamicoManager from "@dynamico/managers/dynamico";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
 
 export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
     private static instance: ChannelDataManager;
+
+    public static getName() {
+        return "Dynamico/Managers/ChannelData";
+    }
 
     public static getInstance(): ChannelDataManager {
         if ( ! ChannelDataManager.instance ) {
@@ -14,8 +18,8 @@ export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
         return ChannelDataManager.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/ChannelData";
+    public static get $() {
+        return ChannelDataManager.getInstance();
     }
 
     public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", ChannelDataManager.getName() ) ) {
@@ -38,5 +42,3 @@ export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
         return ChannelModel.getInstance();
     }
 }
-
-export default ChannelDataManager;

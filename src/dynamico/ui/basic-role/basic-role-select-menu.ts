@@ -1,8 +1,8 @@
 import { Interaction, RoleSelectMenuInteraction } from "discord.js";
 
-import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
+import { GUIManager } from "@dynamico/managers/gui";
 
-import { guiManager } from "@dynamico/managers";
+import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import UIElement from "@dynamico/ui/_base/ui-element";
 
@@ -34,7 +34,7 @@ export class BasicRoleSelectMenu extends UIElement {
             `Selected roles: '${ interaction.values.join( ", " ) }'`
         );
 
-        await guiManager.get( "Dynamico/UI/SetupWizard" )
+        await GUIManager.$.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 _step: 2,
                 basicRoles: interaction.values.length ? interaction.values : undefined,

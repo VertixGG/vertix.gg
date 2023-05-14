@@ -5,7 +5,8 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { guiManager, permissionsManager } from "@dynamico/managers";
+import { PermissionsManager } from "@dynamico/managers/permissions";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
@@ -16,11 +17,9 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS
 } from "@dynamico/constants/master-channel";
 
-import PermissionsManager from "@dynamico/managers/permissions";
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
-const permissionManager = PermissionsManager.getInstance(),
-    globalLogger = GlobalLogger.getInstance();
+const globalLogger = GlobalLogger.$;
 
 export default async function permissionsMiddleware( interaction: UIInteractionTypes ) {
     let result = false;
@@ -35,15 +34,15 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
     const isChannelTypeSupported = ChannelType.GuildVoice === ( interaction.channel as VoiceChannel ).type;
 
     if ( isChannelTypeSupported ) {
-        if ( permissionManager.isSelfAdministratorRole( interaction.guild ) ) {
+        if ( PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
             return true;
         }
 
         const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
             requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             missingPermissions = [
-                ... permissionManager.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel ),
-                ... permissionManager.getMissingPermissions( requiredRolePermissions, interaction.guild ),
+                ... PermissionsManager.$.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel ),
+                ... PermissionsManager.$.getMissingPermissions( requiredRolePermissions, interaction.guild ),
             ];
 
         result = ! missingPermissions.length;
@@ -55,13 +54,13 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
 
             globalLogger.log( permissionsMiddleware, `Guild id: '${ interaction.guildId }' - Required permissions:`, missingPermissions );
 
-            await guiManager.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
+            await GUIManager.$.get( "Dynamico/UI/NotifyPermissions" ).sendContinues( interaction, {
                 botName: interaction.client.user.username,
                 permissions: missingPermissions,
             } );
         }
     } else if ( interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu() ) {
-        const result = permissionsManager.hasMemberAdminPermission( interaction, permissionsMiddleware );
+        const result = PermissionsManager.$.hasMemberAdminPermission( interaction, permissionsMiddleware );
 
         if ( ! result ) {
             const embed = new EmbedBuilder();

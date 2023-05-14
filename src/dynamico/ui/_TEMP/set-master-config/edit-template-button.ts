@@ -1,12 +1,12 @@
 import { ButtonInteraction, ButtonStyle, Interaction } from "discord.js";
 
+import { GUIManager } from "@dynamico/managers/gui";
+
 import EditTemplateModal from "@dynamico/ui/_TEMP/set-master-config/edit-template-modal";
 
 import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-
-import { guiManager } from "@dynamico/managers";
 
 export default class EditTemplateButton extends UIElement {
     public static getName() {
@@ -28,7 +28,7 @@ export default class EditTemplateButton extends UIElement {
     }
 
     private async onClick( interaction: ButtonInteraction ) {
-        const component = guiManager
+        const component = GUIManager.$
             .get( EditTemplateModal.getName() );
 
         if ( undefined !== typeof this.args.channelNameTemplate ) {

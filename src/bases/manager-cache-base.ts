@@ -1,4 +1,4 @@
-import Debugger from "@dynamico/utils/debugger";
+import Debugger from "@internal/modules/debugger";
 
 import InitializeBase from "@internal/bases/initialize-base";
 

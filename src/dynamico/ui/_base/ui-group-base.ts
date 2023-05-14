@@ -8,7 +8,7 @@ import {
 
 import UIBase from "@dynamico/ui/_base/ui-base";
 
-import { guiManager } from "@dynamico/managers/gui";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { UIContinuesInteractionTypes, IUIGroupAttitude } from "@dynamico/ui/_base/ui-interfaces";
 
@@ -37,7 +37,7 @@ export class UIGroupBase extends UIBase {
      */
     public async sendContinues( interaction: UIContinuesInteractionTypes | CommandInteraction, args: any ): Promise<InteractionResponse | void> {
         if ( ! interaction.channel ) {
-            return guiManager.sendContinuesMessage( interaction, this, args );
+            return GUIManager.$.sendContinuesMessage( interaction, this, args );
         }
 
         const msgInteraction = interaction as MessageComponentInteraction,
@@ -67,13 +67,13 @@ export class UIGroupBase extends UIBase {
             staticThis.logger.debug( this.sendContinues,
                 `No groups or relationship has been found for: '${ staticThis.getName() }'`
             );
-            await guiManager.sendContinuesMessage( interaction, this, args );
+            await GUIManager.$.sendContinuesMessage( interaction, this, args );
             return;
         } else if ( groups.length && belongsTo.length ) {
             staticThis.logger.error( this.sendContinues,
                 `Guild id: '${ interaction.guildId }' - Invalid behaviour both groups and relationship has been found for: '${ staticThis.getName() }'`
             );
-            await guiManager.sendContinuesMessage( interaction, this, args );
+            await GUIManager.$.sendContinuesMessage( interaction, this, args );
             return;
         }
 
@@ -81,7 +81,7 @@ export class UIGroupBase extends UIBase {
             let isRelated = false;
 
             for ( const namespace of belongsTo ) {
-                const owner = guiManager.get( namespace );
+                const owner = GUIManager.$.get( namespace );
 
                 if ( ! ( owner instanceof UIGroupBase ) ) {
                     continue;
@@ -92,7 +92,7 @@ export class UIGroupBase extends UIBase {
                 if ( relatedGroups.includes( this.getName() ) ) {
                     isRelated = true;
 
-                    // # Critical.
+                    // # CRITICAL:
                     groups = owner.getGroups();
 
                     // Log the connection.
@@ -109,7 +109,7 @@ export class UIGroupBase extends UIBase {
                 );
                 staticThis.logger.error( this.sendContinues, "belongsTo", belongsTo );
 
-                return guiManager.sendContinuesMessage( interaction, this, args );
+                return GUIManager.$.sendContinuesMessage( interaction, this, args );
             }
         }
 

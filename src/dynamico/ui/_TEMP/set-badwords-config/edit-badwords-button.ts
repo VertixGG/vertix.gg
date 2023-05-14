@@ -1,10 +1,10 @@
 import { ButtonInteraction, ButtonStyle, Interaction } from "discord.js";
 
+import { GUIManager } from "@dynamico/managers/gui";
+
 import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-
-import { guiManager } from "@dynamico/managers";
 
 import EditBadwordsModal from "@dynamico/ui/_TEMP/set-badwords-config/edit-badwords-modal";
 
@@ -28,7 +28,7 @@ export default class EditBadwordsButton extends UIElement {
     }
 
     private async onClick( interaction: ButtonInteraction ) {
-        const component = guiManager
+        const component = GUIManager.$
             .get( EditBadwordsModal.getName() );
 
         if ( undefined !== typeof this.args.badwords ) {

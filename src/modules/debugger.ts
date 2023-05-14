@@ -1,16 +1,22 @@
+import * as util from "util";
+
 import { PermissionOverwriteManager, PermissionOverwrites } from "discord.js";
+
+import chalk from "chalk";
 
 import { ObjectBase } from "@internal/bases";
 
 import Logger from "@internal/modules/logger";
 
 export class Debugger extends ObjectBase {
-    private shouldDebug = true;
+    private readonly shouldDebug: boolean;
 
-    private logger: Logger;
+    private logger!: Logger;
+
+    declare private finalizationRegistry;
 
     public static getName() {
-        return "Dynamico/Utils/Debugger";
+        return "internal/modules/debugger";
     }
 
     public constructor( owner: ObjectBase | typeof ObjectBase, prefix?: string, shouldDebug = true ) {
@@ -18,10 +24,30 @@ export class Debugger extends ObjectBase {
 
         this.shouldDebug = shouldDebug;
 
-        this.logger = new Logger( owner );
+        if ( shouldDebug ) {
+            this.logger = new Logger( owner );
 
-        if ( prefix ) {
-            this.logger.addMessagePrefix( prefix );
+            if ( prefix ) {
+                this.logger.addMessagePrefix( prefix );
+            }
+        }
+    }
+
+    public enableCleanupDebug( handle: ObjectBase, id: string = "" ) {
+        if ( this.isDebugging() ) {
+            if ( ! this.finalizationRegistry ) {
+                this.finalizationRegistry = new FinalizationRegistry( ( id: string ) => {
+                    this.log( this.constructor, `FinalizationRegistry: ${ id }` );
+                } );
+            }
+
+            if ( ! id ) {
+                id = handle.getName() + ":" + handle.getUniqueId();
+            }
+
+            this.log( this.enableCleanupDebug, `Initialized: '${ id }'` );
+
+            this.finalizationRegistry.register( handle, id );
         }
     }
 
@@ -42,7 +68,9 @@ export class Debugger extends ObjectBase {
             return;
         }
 
-        this.log( source, `${ objectName ? objectName + ":" : "" } ` + "🔽", object );
+        this.log( source, `${ objectName ? objectName + ":" : "" } ` + "🔽" + "\n" +
+            chalk.hex( "FFA500" )( util.inspect( object, false, null, true ) )
+        );
     }
 
     public debugPermission( source: Function, overwrite: PermissionOverwrites ) {
@@ -70,6 +98,9 @@ export class Debugger extends ObjectBase {
         }
     }
 
+    public isDebugging() {
+        return this.shouldDebug;
+    }
 }
 
 export default Debugger;

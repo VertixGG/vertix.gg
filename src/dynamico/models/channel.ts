@@ -54,6 +54,10 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return ChannelModel.instance;
     }
 
+    public static get $() {
+        return ChannelModel.getInstance();
+    }
+
     public async create( args: Prisma.ChannelCreateArgs ) {
         this.logger.info( this.create,
             `Guild id: '${ args.data.guildId }' - Creating entry for channel id: '${ args.data.channelId }''`
@@ -194,5 +198,3 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return "channelId";
     }
 }
-
-export default ChannelModel;

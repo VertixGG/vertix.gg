@@ -2,17 +2,21 @@ import fetch from "cross-fetch";
 
 import { EmbedBuilder, Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 
-import { dynamicoManager } from "@dynamico/managers";
-
 import {
     DYNAMICO_DEFAULT_COLOR_BRAND,
     DYNAMICO_OWNERS_IDS
 } from "@dynamico/constants/dynamico";
 
+import { DynamicoManager } from "@dynamico/managers/dynamico";
+
 import InitializeBase from "@internal/bases/initialize-base";
 
 export class DirectMessageManager extends InitializeBase {
     private static instance: DirectMessageManager;
+
+    public static getName() {
+        return "Managers/DirectMessage";
+    }
 
     public static getInstance() {
         if ( ! DirectMessageManager.instance ) {
@@ -22,8 +26,8 @@ export class DirectMessageManager extends InitializeBase {
         return DirectMessageManager.instance;
     }
 
-    public static getName() {
-        return "Managers/DirectMessage";
+    public static get $() {
+        return DirectMessageManager.getInstance();
     }
 
     public async onMessage( message: Message ) {
@@ -46,7 +50,7 @@ export class DirectMessageManager extends InitializeBase {
                     return await message.reply( "Syntax: !embed <#channel_id> <https://message_url.com>" );
                 }
 
-                const channel = await dynamicoManager.getClient()?.channels.fetch( command[ 1 ] );
+                const channel = await DynamicoManager.$.getClient()?.channels.fetch( command[ 1 ] );
 
                 if ( channel && channel.isTextBased() ) {
                     try {
@@ -112,16 +116,14 @@ export class DirectMessageManager extends InitializeBase {
     }
 
     public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {
-        await ( await dynamicoManager.getClient()?.users.fetch( guild.ownerId ) )?.send( message ).catch( () => {
+        await ( await DynamicoManager.$.getClient()?.users.fetch( guild.ownerId ) )?.send( message ).catch( () => {
             this.logger.error( this.sendToOwner, `Guild id: '${ guild.id } - Failed to send message to guild ownerId: '${ guild.ownerId }'` );
         } );
     }
 
     public async sendToUser( userId: string, message: MessageCreateOptions ) {
-        await ( await dynamicoManager.getClient()?.users.fetch( userId ) )?.send( message ).catch( () => {
+        await ( await DynamicoManager.$.getClient()?.users.fetch( userId ) )?.send( message ).catch( () => {
             this.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` );
         } );
     }
 }
-
-export default DirectMessageManager;

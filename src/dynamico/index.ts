@@ -2,8 +2,6 @@ import chalk from "chalk";
 
 import { Client, Partials } from "discord.js";
 
-import { guiManager, topGGManager } from "./managers/";
-
 import * as handlers from "./listeners/";
 import * as uiEntities from "./ui/";
 
@@ -11,15 +9,17 @@ import GlobalLogger from "./global-logger";
 
 import login from "./login";
 
-import DynamicoManager from "@dynamico/managers/dynamico";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
+import { GUIManager } from "@dynamico/managers/gui";
+import { TopGGManager } from "@dynamico/managers/top-gg";
 
 export default async function Main() {
-    const logger = GlobalLogger.getInstance();
+    const logger = GlobalLogger.$;
 
     logger.log( Main, "Bot is starting..." );
 
     // Register UI.
-    Object.values( uiEntities ).forEach( ( entry ) => guiManager.register( entry ) );
+    Object.values( uiEntities ).forEach( ( entry ) => GUIManager.$.register( entry ) );
 
     const client = new Client( {
         intents: [
@@ -87,7 +87,7 @@ export default async function Main() {
 
         logger.log( onLogin, "All listeners registered" );
 
-        await topGGManager.handshake();
+        await TopGGManager.$.handshake();
     }
 
     await login( client, onLogin );

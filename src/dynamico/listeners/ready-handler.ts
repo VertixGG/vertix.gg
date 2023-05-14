@@ -1,12 +1,12 @@
 import { Client } from "discord.js";
 
-import DynamicoManager from "@dynamico/managers/dynamico";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
 
 export async function readyHandler( client: Client ) {
     return new Promise( ( resolve ) => {
         const initialClient = client,
             botReady = async () => {
-                await DynamicoManager.getInstance().onReady( client );
+                await DynamicoManager.$.onReady( client );
 
                 resolve( true );
             };

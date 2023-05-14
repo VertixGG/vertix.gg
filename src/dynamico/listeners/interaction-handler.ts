@@ -12,8 +12,6 @@ import {
 
 import { Commands } from "../commands";
 
-import { guiManager, permissionsManager } from "@dynamico/managers";
-
 import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
 
 import GlobalLogger from "@dynamico/global-logger";
@@ -21,12 +19,13 @@ import GlobalLogger from "@dynamico/global-logger";
 import authMiddleware from "@dynamico/middlewares/auth";
 import permissionsMiddleware from "@dynamico/middlewares/permissions";
 
-import PermissionsManager from "@dynamico/managers/permissions";
+import { PermissionsManager } from "@dynamico/managers/permissions";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@dynamico/constants/master-channel";
 
-const globalLogger = GlobalLogger.getInstance(),
-    permissionManager = PermissionsManager.getInstance();
+const globalLogger = GlobalLogger.$,
+    permissionManager = PermissionsManager.$;
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -56,7 +55,7 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
         return;
     }
 
-    if ( ! permissionsManager.isSelfAdministratorRole( interaction.guild ) ) {
+    if ( ! PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
         const missingPermissions = permissionManager.getMissingPermissions(
             DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
             interaction.guild
@@ -71,7 +70,7 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
                 `🔐 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
             );
 
-            const message = await guiManager.get( "Dynamico/UI/NotifyPermissions" )
+            const message = await GUIManager.$.get( "Dynamico/UI/NotifyPermissions" )
                 .getMessage( interaction, {
                     permissions: missingPermissions,
                     botName: interaction.guild.client.user.username,
@@ -97,7 +96,7 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
 };
 
 const getCallback = async ( interaction: UIInteractionTypes ) => {
-    const result = await guiManager.getCallback( interaction.customId, [
+    const result = await GUIManager.$.getCallback( interaction.customId, [
         authMiddleware,
         permissionsMiddleware,
     ] );

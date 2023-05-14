@@ -13,18 +13,16 @@ import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
 import UIElement from "@dynamico/ui/_base/ui-element";
 
-import {
-    guiManager,
-    masterChannelManager,
-    topGGManager,
-    dynamicChannelManager
-} from "@dynamico/managers";
-
 import { DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE } from "@dynamico/constants/dynamic-channel";
 
 import { gToken } from "@dynamico/login";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
+
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { GUIManager } from "@dynamico/managers/gui";
+import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
+import { TopGGManager } from "@dynamico/managers/top-gg";
 
 import Logger from "@internal/modules/logger";
 
@@ -93,7 +91,7 @@ export default class EditPermissions extends UIElement {
                 `🌐 Dynamic Channel has been set to public - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
-            await guiManager.get( "Dynamico/UI/EditUsersPermissions/EditUsersChannelPublicEmbed" )
+            await GUIManager.$.get( "Dynamico/UI/EditUsersPermissions/EditUsersChannelPublicEmbed" )
                 .sendContinues( interaction, {} );
         }
     }
@@ -111,7 +109,7 @@ export default class EditPermissions extends UIElement {
                 `🚫 Dynamic Channel has been set to private - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
-            await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
+            await GUIManager.$.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
                 title: uiUtilsWrapAsTemplate( "private" ),
             } );
         }
@@ -123,7 +121,7 @@ export default class EditPermissions extends UIElement {
                 `🔒 Access button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
-            await guiManager.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
+            await GUIManager.$.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
                 title: uiUtilsWrapAsTemplate( "mange" ),
             } );
         }
@@ -136,23 +134,16 @@ export default class EditPermissions extends UIElement {
                 `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
             );
 
-            if ( ! await topGGManager.isVoted( interaction.user.id ) ) {
-                // Tell the user to vote.
-                const embed = new EmbedBuilder(),
-                    voteUrl = topGGManager.getVoteUrl();
-
-                embed.setTitle( "👑 Vote for us to unlock this feature!" );
-                embed.setDescription( `This is a premium feature, but you can unlock it for free! [**Vote for us on top.gg!**](${ voteUrl })` );
-
-                await guiManager.sendContinuesMessage( interaction, {
-                    embeds: [ embed ]
+            if ( ! await TopGGManager.$.isVoted( interaction.user.id ) ) {
+                await GUIManager.$.sendContinuesMessage( interaction, {
+                    embeds: [ TopGGManager.$.getVoteEmbed() ]
                 } );
 
                 return;
             }
 
             // Find master channel.
-            const master = await masterChannelManager.getChannelAndDBbyDynamicChannel( interaction, true );
+            const master = await MasterChannelManager.$.getChannelAndDBbyDynamicChannel( interaction, true );
 
             if ( ! master ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,
@@ -164,12 +155,12 @@ export default class EditPermissions extends UIElement {
                     return {
                         name: interaction.channel.name,
                         userLimit: interaction.channel.userLimit === 0 ? "Unlimited" : interaction.channel.userLimit,
-                        state: dynamicChannelManager.isChannelPrivateState( interaction.channel ) ? "🚫 Private" : "🌐 Public",
+                        state: DynamicChannelManager.$.isChannelPrivateState( interaction.channel ) ? "🚫 Private" : "🌐 Public",
                     };
                 },
                 previousData = getCurrent( interaction ),
-                previousAllowedUsers = await dynamicChannelManager.getChannelAllowedUserIds( interaction ),
-                dynamicChannelTemplateName = await masterChannelManager.getChannelNameTemplate( master.db.id );
+                previousAllowedUsers = await DynamicChannelManager.$.getChannelAllowedUserIds( interaction ),
+                dynamicChannelTemplateName = await MasterChannelManager.$.getChannelNameTemplate( master.db.id );
 
             if ( ! dynamicChannelTemplateName ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,
@@ -205,7 +196,7 @@ export default class EditPermissions extends UIElement {
             // Edit channel.
             await interaction.channel.edit(
                 // Take defaults from master channel.
-                await masterChannelManager.getChannelDefaultProperties( interaction.user.id, master.channel )
+                await MasterChannelManager.$.getChannelDefaultProperties( interaction.user.id, master.channel )
             );
 
             EditPermissions.dedicatedLogger.admin( this.resetChannel,
@@ -213,13 +204,13 @@ export default class EditPermissions extends UIElement {
             );
 
             const currentData = getCurrent( interaction ),
-                currentAllowedUsers = await dynamicChannelManager.getChannelAllowedUserIds( interaction );
+                currentAllowedUsers = await DynamicChannelManager.$.getChannelAllowedUserIds( interaction );
 
             let description = "Settings has been reset to default:\n\n" +
                 `Name: **${ currentData.name }**` + ( currentData.name === previousData.name ? " (Unchanged)" : "" ) + "\n" +
                 `User limit: ✋**${ currentData.userLimit }**` + ( currentData.userLimit === previousData.userLimit ? " (Unchanged)" : "" ) + "\n" +
                 `State: **${ currentData.state }**` + ( currentData.state === previousData.state ? " (Unchanged)" : "" ) + "\n" +
-                "Allowed: " +  ( await dynamicChannelManager.getChannelAllowedUserIds( interaction )).map( ( userId ) => {
+                "Allowed: " +  ( await DynamicChannelManager.$.getChannelAllowedUserIds( interaction )).map( ( userId ) => {
                     return `<@${ userId }> ,`;
                 } );
 
@@ -241,7 +232,7 @@ export default class EditPermissions extends UIElement {
                 .setTitle( "🔄 Dynamic Channel has been reset to default settings!" )
                 .setDescription( description );
 
-            await guiManager.sendContinuesMessage( interaction, {
+            await GUIManager.$.sendContinuesMessage( interaction, {
                 embeds: [ embed ]
             } );
         }

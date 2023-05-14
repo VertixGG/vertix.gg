@@ -29,14 +29,18 @@ export default class PrismaInstance extends ObjectBase {
         return PrismaInstance.instance;
     }
 
+    public static get $() {
+        return PrismaInstance.getInstance();
+    }
+
     public static getConnectPromise(): Promise<void> {
-        const prisma = ( this as typeof PrismaInstance ).getInstance();
+        const prisma = ( this as typeof PrismaInstance ).$;
 
         return prisma.connectPromise;
     }
 
     public static getClient(): PrismaClient {
-        const prisma = ( this as typeof PrismaInstance ).getInstance();
+        const prisma = ( this as typeof PrismaInstance ).$;
 
         return prisma.client;
     }

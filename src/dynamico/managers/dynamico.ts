@@ -5,18 +5,14 @@ import * as path from "path";
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import { ChannelType, Client } from "discord.js";
 
-import { Commands } from "@dynamico/commands";
+import { CategoryManager } from "@dynamico/managers/category";
+import { ChannelDataManager } from "@dynamico/managers/channel-data";
+import { ChannelManager } from "@dynamico/managers/channel";
 
-import CategoryManager from "@dynamico/managers/category";
-import ChannelManager from "@dynamico/managers/channel";
-
-import { channelDataManager } from "@dynamico/managers/index";
+import { CURRENT_VERSION, VERSION_PHASE_4 } from "@dynamico/constants/version";
 
 import InitializeBase from "@internal/bases/initialize-base";
 import PrismaInstance from "@internal/prisma";
-
-const VERSION_PHASE_4 = "0.0.1", // https://github.com/CoffeBuffet/dynamico/pull/44/
-    VERSION_PHASE_5 = "0.0.2"; // https://github.com/CoffeBuffet/dynamico/pull/49/
 
 interface PackageJson {
     version: string;
@@ -34,6 +30,10 @@ export class DynamicoManager extends InitializeBase {
     // TODO: Remove undefined.
     private client: Client | undefined;
 
+    public static getName() {
+        return "Dynamico/Managers/Dynamico";
+    }
+
     public static getInstance() {
         if ( ! DynamicoManager.instance ) {
             DynamicoManager.instance = new DynamicoManager();
@@ -42,12 +42,12 @@ export class DynamicoManager extends InitializeBase {
         return DynamicoManager.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/Dynamico";
+    public static get $() {
+        return DynamicoManager.getInstance();
     }
 
     public static getVersion() {
-        return VERSION_PHASE_5;
+        return CURRENT_VERSION;
     }
 
     public static getBuildVersion() {
@@ -83,6 +83,8 @@ export class DynamicoManager extends InitializeBase {
             return;
         }
 
+        const { Commands } = ( await import( "@dynamico/commands" ) );
+
         await client.application.commands.set( Commands );
 
         setTimeout( () => {
@@ -101,7 +103,6 @@ export class DynamicoManager extends InitializeBase {
             `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.` );
     }
 
-
     public handleChannels( client: Client ) {
         const promises = [
             this.removeNonExistMasterChannelsFromDB( client ),
@@ -111,10 +112,6 @@ export class DynamicoManager extends InitializeBase {
 
         Promise.all( promises ).then( () => {
             this.logger.info( this.handleChannels, "All channels are handled." );
-
-            dynamicChannelManager.getClaimChannelManager().handleAbandonedChannels( client ).then( () => {
-                this.logger.info( this.handleChannels, "Abandoned channels are handled." );
-            } );
         } );
     }
 
@@ -137,7 +134,7 @@ export class DynamicoManager extends InitializeBase {
 
             if ( channelCache?.members && channelCache.isVoiceBased() ) {
                 if ( 0 === channelCache.members.size ) {
-                    await ChannelManager.getInstance().delete( {
+                    await ChannelManager.$.delete( {
                         channel: channelCache,
                         guild: guildCache,
                     } );
@@ -199,7 +196,7 @@ export class DynamicoManager extends InitializeBase {
 
             if ( ChannelType.GuildCategory === categoryCache?.type ) {
                 if ( 0 === categoryCache.children.cache.size ) {
-                    await CategoryManager.getInstance().delete( categoryCache ).catch( ( error ) => {
+                    await CategoryManager.$.delete( categoryCache ).catch( ( error: any ) => {
                         this.logger.error( this.removeEmptyCategories, "", error );
                     } );
                 }
@@ -259,7 +256,7 @@ export class DynamicoManager extends InitializeBase {
      * From version `null` to version `0.0.1`.
      */
     private async replaceDynamicChannelNameTemplate() {
-        const allData = await channelDataManager.getAllData();
+        const allData = await ChannelDataManager.$.getAllData();
 
         for ( const data of allData ) {
             if ( null === data.version ) {
@@ -270,7 +267,7 @@ export class DynamicoManager extends InitializeBase {
                     // Describe version.
                     data.version = VERSION_PHASE_4;
 
-                    await channelDataManager.setData( {
+                    await ChannelDataManager.$.setData( {
                         ownerId: data.ownerId,
                         key: data.key,
                         default: data.object,
@@ -286,5 +283,3 @@ export class DynamicoManager extends InitializeBase {
         );
     }
 }
-
-export default DynamicoManager;

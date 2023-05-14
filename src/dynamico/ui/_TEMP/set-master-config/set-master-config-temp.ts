@@ -1,3 +1,5 @@
+import { GUIManager } from "@dynamico/managers/gui";
+
 import UIComponentBase from "@dynamico/ui/_base/ui-component-base";
 
 import EditTemplateButton from "@dynamico/ui/_TEMP/set-master-config/edit-template-button";
@@ -5,7 +7,6 @@ import EditTemplateButton from "@dynamico/ui/_TEMP/set-master-config/edit-templa
 import MasterConfigEmbed from "@dynamico/ui/_TEMP/set-master-config/master-config-embed";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-import { guiManager } from "@dynamico/managers";
 
 export class SetMasterConfigTemp extends UIComponentBase {
     public static getName() {
@@ -21,7 +22,7 @@ export class SetMasterConfigTemp extends UIComponentBase {
 
         // TODO: This is probably not the best way to do this.
         setTimeout( () => {
-            guiManager.register( require( "./edit-template-modal" ).default );
+            GUIManager.$.register( require( "./edit-template-modal" ).default );
         } );
     }
 

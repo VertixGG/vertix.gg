@@ -6,7 +6,7 @@ import {
     DEFAULT_BADWORDS_SEPARATOR
 } from "@dynamico/constants/badwords";
 
-import { guildDataManager } from "@dynamico/managers";
+import { GuildDataManager } from "@dynamico/managers/guild-data";
 
 /**
  * Function badwordsSomeUsed() :: Determine if a word contains any of the badwords and
@@ -51,7 +51,7 @@ export const badwordsSplitOrDefault = ( badwords: string | undefined ) => {
 };
 
 export const guildGetBadwords = async ( guildId: string ): Promise<string[]> => {
-    const badwordsDB = await guildDataManager.getData( {
+    const badwordsDB = await GuildDataManager.$.getData( {
         ownerId: guildId,
         key: "badwords",
         default: null,
@@ -78,7 +78,7 @@ export const guildGetBadwordsFormatted = async ( guildId: string ): Promise<stri
 export const guildSetBadwords = async ( guild: Guild, badwords: string[] | undefined ): Promise<void> => {
     if ( ! badwords?.length ) {
         try {
-            await guildDataManager.deleteData( {
+            await GuildDataManager.$.deleteData( {
                 ownerId: guild.id,
                 key: "badwords",
             }, true );
@@ -89,7 +89,7 @@ export const guildSetBadwords = async ( guild: Guild, badwords: string[] | undef
         return;
     }
 
-    await guildDataManager.setData( {
+    await GuildDataManager.$.setData( {
         ownerId: guild.id,
         key: "badwords",
         default: badwords,

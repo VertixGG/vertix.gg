@@ -7,11 +7,13 @@ import {
     VoiceChannel
 } from "discord.js";
 
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { GUIManager } from "@dynamico/managers/gui";
+
 import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
-import { guiManager, masterChannelManager } from "@dynamico/managers";
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
 import Logger from "@internal/modules/logger";
@@ -38,7 +40,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
         removeMenu.setPlaceholder( "👇 Remove User From List" );
 
         const members: { label: string; value: string; emoji: string }[] = [],
-            masterChannel = await masterChannelManager.getByDynamicChannel( interaction );
+            masterChannel = await MasterChannelManager.$.getByDynamicChannel( interaction );
 
         if ( ! masterChannel ) {
             return [];
@@ -105,7 +107,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
         if ( ChannelType.GuildVoice === interaction.channel?.type ) {
             const channel = interaction.channel as VoiceChannel,
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] ),
-                editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
+                editPermissionsComponent = GUIManager.$.get( "Dynamico/UI/EditUserPermissions" );
 
             let nothingChanged = false;
 
@@ -171,7 +173,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
         if ( ChannelType.GuildVoice === interaction.channel?.type && interaction ) {
             const channel = interaction.channel as VoiceChannel,
                 member = interaction.client.users.cache.get( interaction.values[ 0 ] ),
-                editPermissionsComponent = guiManager.get( "Dynamico/UI/EditUserPermissions" );
+                editPermissionsComponent = GUIManager.$.get( "Dynamico/UI/EditUserPermissions" );
 
             if ( member ) {
                 try {

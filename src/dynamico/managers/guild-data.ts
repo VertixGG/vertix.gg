@@ -1,6 +1,6 @@
-import GuildModel from "../models/guild";
+import { GuildModel } from "../models/guild";
 
-import DynamicoManager from "@dynamico/managers/dynamico";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
 
 import { ManagerDataBase } from "@dynamico/bases/manager-data-base";
 
@@ -13,6 +13,10 @@ interface IGuildSettings {
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
     private static instance: GuildDataManager;
 
+    public static getName() {
+        return "Dynamico/Managers/GuildData";
+    }
+
     public static getInstance(): GuildDataManager {
         if ( ! GuildDataManager.instance ) {
             GuildDataManager.instance = new GuildDataManager();
@@ -20,8 +24,8 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return GuildDataManager.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/GuildData";
+    public static get $() {
+        return GuildDataManager.getInstance();
     }
 
     public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", GuildDataManager.getName() ) ) {
@@ -61,5 +65,3 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return GuildModel.getInstance();
     }
 }
-
-export default GuildDataManager;

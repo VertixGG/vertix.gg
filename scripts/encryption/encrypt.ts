@@ -21,3 +21,5 @@ export async function encryptData( inputFile: string, outputFile: string ) {
 }
 
 encryptData( process.argv[ 2 ], process.argv[ 3 ] );
+
+//npx ts-node encrypt.ts test.json dynamico.crypt

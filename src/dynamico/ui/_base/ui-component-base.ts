@@ -124,7 +124,7 @@ export class UIComponentBase extends UIGroupBase {
             internalElement = this.getInternalElements().find( ( element ) => element.getName() === namespace );
 
         if ( internalElement ) {
-            // # Critical.
+            // # CRITICAL:
             const belongsTo = internalElement.belongsTo(),
                 groups = internalElement.groups();
 

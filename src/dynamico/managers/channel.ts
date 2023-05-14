@@ -17,14 +17,15 @@ import {
     IChannelLeaveGenericArgs
 } from "../interfaces/channel";
 
-import ChannelModel, { ChannelResult } from "@dynamico/models/channel";
+import { ChannelDataManager } from "@dynamico/managers/channel-data";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
+import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { PermissionsManager } from "@dynamico/managers/permissions";
 
-import { dynamicChannelManager, masterChannelManager, permissionsManager } from "@dynamico/managers/index";
+import { ChannelModel, ChannelResult } from "@dynamico/models/channel";
 
-import ChannelDataManager from "@dynamico/managers/channel-data";
-import DynamicoManager from "@dynamico/managers/dynamico";
-
-import Debugger from "@dynamico/utils/debugger";
+import Debugger from "@internal/modules/debugger";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -51,6 +52,10 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
     private channelModel: ChannelModel;
 
+    public static getName() {
+        return "Dynamico/Managers/Channel";
+    }
+
     public static getInstance(): ChannelManager {
         if ( ! ChannelManager.instance ) {
             ChannelManager.instance = new ChannelManager();
@@ -59,8 +64,8 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return ChannelManager.instance;
     }
 
-    public static getName() {
-        return "Dynamico/Managers/Channel";
+    public static get $() {
+        return ChannelManager.getInstance();
     }
 
     public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", ChannelManager.getName() ) ) {
@@ -130,9 +135,9 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
 
         if ( newState.channelId ) {
             if ( await this.isMaster( newState.channelId, newState.guild.id ) ) {
-                await masterChannelManager.onJoinMasterChannel( args );
+                await MasterChannelManager.$.onJoinMasterChannel( args );
             } else if ( await this.isDynamic( newState.channelId, newState.guild.id ) ) {
-                await dynamicChannelManager.onJoinDynamicChannel( args );
+                await DynamicChannelManager.$.onJoinDynamicChannel( args );
             }
         }
 
@@ -146,7 +151,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         const { oldState, newState } = args;
 
         if ( oldState.channelId && await this.channelModel.isDynamic( oldState.channelId, newState.guild.id ) ) {
-            await dynamicChannelManager.onLeaveDynamicChannel( args );
+            await DynamicChannelManager.$.onLeaveDynamicChannel( args );
         }
     }
 
@@ -178,7 +183,7 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
             if ( ( oldChannel as VoiceChannel ).permissionOverwrites !== ( newChannel as VoiceChannel ).permissionOverwrites ) {
-                await permissionsManager
+                await PermissionsManager.$
                     .onChannelPermissionsUpdate( oldChannel as VoiceChannel, newChannel as VoiceChannel );
             }
         }
@@ -323,8 +328,6 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         // Remove from cache.
         this.deleteCache( channelId );
 
-        ChannelDataManager.getInstance().removeFromCache( channelId );
+        ChannelDataManager.$.removeFromCache( channelId );
     }
 }
-
-export default ChannelManager;

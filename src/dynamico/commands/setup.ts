@@ -5,7 +5,8 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import { guiManager, masterChannelManager } from "@dynamico/managers";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME } from "@dynamico/constants/master-channel";
 
@@ -28,13 +29,13 @@ export const Setup: ICommand = {
     run: async ( client: Client, interaction: CommandInteraction ) => {
         const guildId = interaction.guildId as string;
 
-        if ( ! await masterChannelManager.checkLimit( interaction, guildId ) ) {
+        if ( ! await MasterChannelManager.$.checkLimit( interaction, guildId ) ) {
             return commandsLogger.warn( name,
                 `Guild id: '${ guildId }' - Master channel creation failed`
             );
         }
 
-        await guiManager.get( "Dynamico/UI/SetupWizard" )
+        await GUIManager.$.get( "Dynamico/UI/SetupWizard" )
             .sendContinues( interaction, {
                 step: "initial",
                 channelNameTemplate: DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,

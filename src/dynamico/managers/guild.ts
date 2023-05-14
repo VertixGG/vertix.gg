@@ -2,11 +2,13 @@ import { AuditLogEvent, ChannelType, Client, Guild } from "discord.js";
 
 import { Prisma } from ".prisma/client";
 
-import GuildModel from "../models/guild";
+import { GuildModel } from "../models/guild";
 
-import { dmManager, guiManager, masterChannelManager, topGGManager } from "@dynamico/managers/index";
-
-import DynamicoManager from "@dynamico/managers/dynamico";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
+import { TopGGManager } from "@dynamico/managers/top-gg";
+import { DirectMessageManager } from "@dynamico/managers/direct-message";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
@@ -28,6 +30,10 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
         }
 
         return GuildManager.instance;
+    }
+
+    public static get $() {
+        return GuildManager.getInstance();
     }
 
     public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", GuildManager.getName() ) ) {
@@ -79,7 +85,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
                 return;
             } );
 
-            const message = await guiManager.get( "Dynamico/UI/StarterComponent" )
+            const message = await GUIManager.$.get( "Dynamico/UI/StarterComponent" )
                 .getMessage( defaultChannel, {
                     userId: user.id,
                 } );
@@ -87,7 +93,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
             await defaultChannel.send( message );
         }
 
-        setTimeout( () => topGGManager.updateStats() );
+        setTimeout( () => TopGGManager.$.updateStats() );
     }
 
     public async onLeave( client: Client, guild: Guild ) {
@@ -96,16 +102,14 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
             `😭 Dynamico has been kicked from a guild - "${ guild.name }" (${ guild.memberCount })`
         );
 
-        await dmManager.sendLeaveMessageToOwner( guild );
+        await DirectMessageManager.$.sendLeaveMessageToOwner( guild );
 
         // Updating that the bot is no longer in the guild.
         await this.guildModel.update( guild, false );
 
         // Remove leftovers of the guild.
-        await masterChannelManager.removeLeftOvers( guild );
+        await MasterChannelManager.$.removeLeftOvers( guild );
 
-        setTimeout( () => topGGManager.updateStats() );
+        setTimeout( () => TopGGManager.$.updateStats() );
     }
 }
-
-export default GuildManager;

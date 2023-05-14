@@ -8,7 +8,7 @@ import {
     IOwnerInnerModel
 } from "@dynamico/interfaces/data";
 
-import DynamicoManager from "@dynamico/managers/dynamico";
+import { CURRENT_VERSION } from "@dynamico/constants/version";
 
 import { ModelBase } from "@internal/bases";
 
@@ -28,7 +28,7 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
             ... this.getInternalNormalizedData( args ),
 
             // # CRITICAL: This is the version of the data.
-            version: DynamicoManager.getVersion(),
+            version: CURRENT_VERSION,
         };
 
         this.debugger.dumpDown( this.createData, { data, args } );

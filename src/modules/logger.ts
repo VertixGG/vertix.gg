@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { ObjectBase } from "../bases/object-base";
 
 const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
-    DEFAULT_INFO_PREFIX = chalk.blue( "[INFO]"),
+    DEFAULT_INFO_PREFIX = chalk.blue( "[INFO]" ),
     DEFAULT_DEBUG_PREFIX = chalk.grey( "[DEBUG]" ),
     DEFAULT_WARN_PREFIX = chalk.yellow( "[WARN]" ),
     DEFAULT_ERROR_PREFIX = chalk.red( "[ERROR]" ),
@@ -11,7 +11,7 @@ const DEFAULT_LOG_PREFIX = chalk.blackBright( "[LOG]" ),
 
 export type ICaller = Function | String;
 
-const registeredNames:any = {};
+const registeredNames: any = {};
 
 export default class Logger extends ObjectBase {
     private owner: ObjectBase | typeof ObjectBase;
@@ -30,9 +30,18 @@ export default class Logger extends ObjectBase {
         }
 
         this.owner = owner;
+
+        if ( process.env.DISABLE_LOGGER ) {
+            this.log = () => {};
+            this.info = () => {};
+            this.debug = () => {};
+            this.warn = () => {};
+            this.error = () => {};
+            this.admin = () => {};
+        }
     }
 
-    public addMessagePrefix( prefix: string) {
+    public addMessagePrefix( prefix: string ) {
         this.messagePrefixes.push( prefix );
     }
 
@@ -81,10 +90,6 @@ export default class Logger extends ObjectBase {
     }
 
     private output( prefix: string, caller: ICaller, message: string, ... params: any[] ): void {
-        if ( process.env.DISABLE_LOGGER ) {
-            return;
-        }
-
         const source = this.owner.getName() + "::" + this.getCallerName( caller );
 
         let messagePrefix = "";

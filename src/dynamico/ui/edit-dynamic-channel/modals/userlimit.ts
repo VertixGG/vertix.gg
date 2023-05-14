@@ -4,7 +4,7 @@ import { GenericInputTextboxNumberUIModal } from "@dynamico/ui/_base/generic/gen
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 
-import { guiManager } from "@dynamico/managers";
+import { GUIManager } from "@dynamico/managers/gui";
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
@@ -65,7 +65,7 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
             );
         }
 
-        await guiManager.sendContinuesMessage( interaction, {
+        await GUIManager.$.sendContinuesMessage( interaction, {
             embeds: [ embed ],
         } );
     }
@@ -85,7 +85,7 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
                     .setTitle( `✋ Your channel's user limit has changed to ${ limitValue }` )
                     .setColor( 0x32CD32 );
 
-            await guiManager.sendContinuesMessage( interaction, {
+            await GUIManager.$.sendContinuesMessage( interaction, {
                 embeds: [ embed ]
             } );
         }

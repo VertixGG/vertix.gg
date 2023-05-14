@@ -23,6 +23,10 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return GuildModel.instance;
     }
 
+    public static get $() {
+        return GuildModel.getInstance();
+    }
+
     public async get( guildId: string ) {
         return this.prisma.guild.findUnique( { where: { guildId } } );
     }
@@ -76,5 +80,3 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return "guildId";
     }
 }
-
-export default GuildModel;

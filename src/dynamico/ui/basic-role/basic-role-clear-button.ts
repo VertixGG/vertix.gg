@@ -1,10 +1,10 @@
 import { ButtonStyle, Interaction } from "discord.js";
 
+import { GUIManager } from "@dynamico/managers/gui";
+
 import UIElement from "@dynamico/ui/_base/ui-element";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
-
-import { guiManager } from "@dynamico/managers";
 
 export class BasicRoleClearButton extends UIElement {
     public static getName() {
@@ -27,7 +27,7 @@ export class BasicRoleClearButton extends UIElement {
 
     private async onClick( interaction: Interaction ) {
         if ( interaction.channel && interaction.isButton() ) {
-            await guiManager.get( "Dynamico/UI/SetupWizard" )
+            await GUIManager.$.get( "Dynamico/UI/SetupWizard" )
                 .sendContinues( interaction, {
                     _step: 2,
                     basicRoles: undefined,

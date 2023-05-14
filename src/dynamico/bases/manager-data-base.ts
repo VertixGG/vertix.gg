@@ -7,7 +7,7 @@ import {
     IDataUpdateArgs
 } from "@dynamico/interfaces/data";
 
-import Debugger from "@dynamico/utils/debugger";
+import Debugger from "@internal/modules/debugger";
 
 import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 

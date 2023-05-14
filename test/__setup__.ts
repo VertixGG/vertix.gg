@@ -1,5 +1,13 @@
+export {};
+
+declare global {
+    var FinalizationRegistry: any;
+}
+
 beforeAll( async () => {
-    // Do something.
+    globalThis.FinalizationRegistry = jest.fn( () => ( {
+        register: jest.fn(),
+    } ) );
 } );
 
 beforeEach( async () => {
@@ -7,8 +15,6 @@ beforeEach( async () => {
 } );
 
 afterEach( () => {
-    jest.resetModules();
-    jest.restoreAllMocks();
 } );
 
 afterAll( () => {

@@ -4,40 +4,38 @@ import {
     Events
 } from "discord.js";
 
-import {
-    categoryManager,
-    channelManager,
-    dmManager,
-} from "@dynamico/managers";
+import { CategoryManager } from "@dynamico/managers/category";
+import { ChannelManager } from "@dynamico/managers/channel";
+import { DirectMessageManager } from "@dynamico/managers/direct-message";
 
 export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, async ( oldState, newState ) => {
         if ( ! oldState.channelId && newState.channelId ) {
             // User joined a channel
-            await channelManager.onJoin( oldState, newState );
+            await ChannelManager.$.onJoin( oldState, newState );
         } else if ( oldState.channelId && ! newState.channelId ) {
             // User left a channel
-            await channelManager.onLeave( oldState, newState );
+            await ChannelManager.$.onLeave( oldState, newState );
         } else if ( oldState.channelId && newState.channelId ) {
             // User switched channels
-            await channelManager.onSwitch( oldState, newState );
+            await ChannelManager.$.onSwitch( oldState, newState );
         }
     } );
 
     client.on( Events.ChannelDelete, async ( channel ) => {
         // If it was handled by the channel manager, return
-        if ( await channelManager.onChannelDelete( channel ) ) {
+        if ( await ChannelManager.$.onChannelDelete( channel ) ) {
             return;
         }
 
         if ( channel.type === ChannelType.GuildCategory ) {
-            await categoryManager.onDelete( channel );
+            await CategoryManager.$.onDelete( channel );
             return;
         }
     } );
 
     client.on( Events.ChannelUpdate, async ( oldChannel, newChannel ) => {
-        await channelManager.onChannelUpdate( oldChannel, newChannel );
+        await ChannelManager.$.onChannelUpdate( oldChannel, newChannel );
     } );
 
     client.on( Events.MessageCreate, async ( message ) => {
@@ -49,6 +47,6 @@ export function channelHandler( client: Client ) {
             return;
         }
 
-        await dmManager.onMessage( message );
+        await DirectMessageManager.$.onMessage( message );
     } );
 }

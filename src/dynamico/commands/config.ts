@@ -5,7 +5,8 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import { channelManager, guiManager } from "@dynamico/managers";
+import { GUIManager } from "@dynamico/managers/gui";
+import { ChannelManager } from "@dynamico/managers/channel";
 
 import { ICommand } from "@dynamico/interfaces/command";
 import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
@@ -23,10 +24,10 @@ export const Config: ICommand = {
     run: async ( client: Client, interaction: CommandInteraction ) => {
         const guildId = interaction.guildId as string;
 
-        await guiManager.get( "Dynamico/UI/ConfigComponent" )
+        await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: await guildGetBadwordsFormatted( guildId ),
-                masterChannels: await channelManager.getMasterCreateChannels( guildId, true )
+                masterChannels: await ChannelManager.$.getMasterCreateChannels( guildId, true )
             } );
     }
 };

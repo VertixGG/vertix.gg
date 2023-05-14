@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import Debugger from "@dynamico/utils/debugger";
+import Debugger from "@internal/modules/debugger";
 
 import PrismaBase from "@internal/bases/prisma-base";
 

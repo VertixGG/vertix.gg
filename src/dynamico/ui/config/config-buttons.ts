@@ -23,7 +23,10 @@ import {
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
 } from "@dynamico/constants/master-channel";
 
-import { channelDataManager, channelManager, guiManager, masterChannelManager } from "@dynamico/managers";
+import { GUIManager } from "@dynamico/managers/gui";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { ChannelDataManager } from "@dynamico/managers/channel-data";
+import { ChannelManager } from "@dynamico/managers/channel";
 
 import Logger from "@internal/modules/logger";
 
@@ -94,7 +97,7 @@ export class ConfigButtons extends UIElement {
     private async onNameModifyClick( interaction: ButtonInteraction, args: IConfigButtonsArgs ) {
         // Extract anything after '>' from `interaction.customId`.
         const channelIndex = parseInt( interaction.customId.split( ">" )[ 1 ] ),
-            component = guiManager
+            component = GUIManager.$
                 .get( "Dynamico/UI/Temp/SetMasterConfig/EditTemplateModal" );
 
         component.setArg( "onTemplateModified", this.onNameModified.bind( this ) );
@@ -110,24 +113,24 @@ export class ConfigButtons extends UIElement {
 
     private async onNameModified( interaction: ButtonInteraction, args: any ) {
         const masterChannelId = this.args.masterChannels[ args.channelIndex - 1 ].id,
-            previousName = await masterChannelManager.getChannelNameTemplate( masterChannelId ),
+            previousName = await MasterChannelManager.$.getChannelNameTemplate( masterChannelId ),
             newName = args.channelNameTemplate || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME;
 
-        await channelDataManager.setSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
+        await ChannelDataManager.$.setSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
 
         ConfigButtons.dedicatedLogger.admin( this.onNameModified,
             `🔧 Dynamic Channels Name has been modified - "${ previousName }" -> "${ newName }" (${ interaction.guild?.name })`
         );
 
-        await guiManager.get( "Dynamico/UI/ConfigComponent" )
+        await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: args.badwords || await guildGetBadwordsFormatted( interaction.guildId as string ),
-                masterChannels: await channelManager.getMasterCreateChannels( interaction.guildId as string, true )
+                masterChannels: await ChannelManager.$.getMasterCreateChannels( interaction.guildId as string, true )
             } );
     }
 
     private async onModifyBadwordsClick( interaction: ButtonInteraction, args: IConfigButtonsArgs ) {
-        const component = guiManager
+        const component = GUIManager.$
             .get( "Dynamico/UI/Temp/SetBadwordsConfig/EditBadwordsModal" );
 
         if ( undefined !== typeof this.args.badwords ) {
@@ -152,10 +155,10 @@ export class ConfigButtons extends UIElement {
             `🔧 Bad Words filter has been modified - "${ oldBadwords }" -> "${ newBadwords }" (${ interaction.guild?.name })`
         );
 
-        await guiManager.get( "Dynamico/UI/ConfigComponent" )
+        await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: await guildGetBadwordsFormatted( interaction.guildId as string ),
-                masterChannels: await channelManager.getMasterCreateChannels( interaction.guildId as string, true )
+                masterChannels: await ChannelManager.$.getMasterCreateChannels( interaction.guildId as string, true )
             } );
     }
 }

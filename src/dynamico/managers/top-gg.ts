@@ -6,14 +6,21 @@ import { Api } from "@top-gg/sdk";
 
 import { DynamicoManager } from "@dynamico/managers/dynamico";
 
-import { InitializeBase } from "@internal/bases";
+import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 
-export class TopGGManager extends InitializeBase {
+const TOP_GG_WORKER_INTERVAL = 1000 * 60 * 30, // 30 minutes
+    TOP_GG_VOTE_INTERVAL = 1000 * 60 * 60 * 12; // 12 hours
+
+export class TopGGManager extends ManagerCacheBase<Date> {
     private static instance: TopGGManager;
 
     private api!: Api;
     private client!: Client;
 
+    private readonly workerInterval: number;
+    private readonly voteInterval: number;
+
+    private isTryingHandshakeOnce = false;
     private isHandshakeDone = false;
 
     public static getName() {
@@ -36,6 +43,17 @@ export class TopGGManager extends InitializeBase {
         return process.env.TOP_GG_VOTE_URL ?? "404_URL_NOT_FOUND";
     }
 
+    public constructor(
+        shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", TopGGManager.getName() ),
+        workerInterval = TOP_GG_WORKER_INTERVAL,
+        voteInterval = TOP_GG_VOTE_INTERVAL
+    ) {
+        super();
+
+        this.workerInterval = workerInterval;
+        this.voteInterval = voteInterval;
+    }
+
     public getVoteUrl() {
         return TopGGManager.getVoteUrl();
     }
@@ -50,12 +68,12 @@ export class TopGGManager extends InitializeBase {
         return embed;
     }
 
-    public async updateStats() {
+    public updateStats() {
         if ( ! this.workingMiddleware() ) {
             return;
         }
 
-        this.api.postStats( {
+        return this.api.postStats( {
             serverCount: this.client.guilds.cache.size,
             shardId: this.client.shard?.ids[ 0 ] ?? 0,
             shardCount: this.client.shard?.count ?? 1,
@@ -66,9 +84,19 @@ export class TopGGManager extends InitializeBase {
         } );
     }
 
-    public async isVoted( userId: string ) {
+    public async isVoted( userId: string, cache = true ) {
         if ( ! this.workingMiddleware() ) {
             return false;
+        }
+
+        if ( cache ) {
+            // Try to get cache.
+            const cache = this.getCache( userId );
+
+            // If cache is not expired, return true.
+            if ( cache && ( new Date().getTime() - cache.getTime() ) < this.voteInterval ) {
+                return true;
+            }
         }
 
         const result = await this.api.hasVoted( userId ).catch( ( e ) => {
@@ -77,6 +105,11 @@ export class TopGGManager extends InitializeBase {
         } );
 
         this.logger.debug( this.isVoted, `User id: '${ userId }' isVoted: '${ result }'` );
+
+        // Set cache only if user voted.
+        if ( result ) {
+            this.setCache( userId, new Date() );
+        }
 
         return result;
     }
@@ -90,15 +123,28 @@ export class TopGGManager extends InitializeBase {
         this.api = new Api( process.env.TOP_GG_TOKEN as string );
         this.client = DynamicoManager.$.getClient() as Client;
 
-        this.logger.info( this.handshake, "TopGG manager is initializing..." );
+        if ( ! this.isTryingHandshakeOnce ) {
+            this.isTryingHandshakeOnce = true;
+
+            this.logger.info( this.handshake, "TopGG manager is initializing..." );
+
+            setInterval( this.worker.bind( this ), this.workerInterval );
+        }
+
+        this.api = new Api( process.env.TOP_GG_TOKEN as string );
+        this.client = DynamicoManager.getInstance().getClient() as Client;
+
+        this.logger.info( this.handshake, "TopGG manager is trying to handshake with top.gg API..." );
 
         this.api.getStats( this.client?.user?.id as string ).then( async ( stats ) => {
-            this.logger.info( this.handshake, "TopGG self stats:", stats );
+            this.logger.info( this.handshake, "TopGG handshake complete, stats:", stats );
 
             this.isHandshakeDone = true;
 
             await this.updateStats();
         } ).catch( ( e ) => {
+            this.isHandshakeDone = false;
+
             this.logger.error( this.handshake, "", e );
         } );
     }
@@ -119,5 +165,9 @@ export class TopGGManager extends InitializeBase {
         }
 
         return true;
+    }
+
+    private worker() {
+        this.handshake();
     }
 }

@@ -15,10 +15,14 @@ import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
 import GuildDelegate = Prisma.GuildDelegate;
 import RejectPerOperation = Prisma.RejectPerOperation;
 
+const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 5; // 5 minutes.
+
 export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperation>> {
     private static instance: GuildManager;
 
     private guildModel: GuildModel;
+
+    private readonly updateStatsBound: OmitThisParameter<() => void>;
 
     public static getName(): string {
         return "Dynamico/Managers/Guild";
@@ -40,6 +44,8 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
         super( shouldDebugCache );
 
         this.guildModel = GuildModel.getInstance();
+
+        this.updateStatsBound = this.updateStats.bind( this );
     }
 
     public async onJoin( client: Client, guild: Guild ) {
@@ -93,7 +99,7 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
             await defaultChannel.send( message );
         }
 
-        setTimeout( () => TopGGManager.$.updateStats() );
+        this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
     public async onLeave( client: Client, guild: Guild ) {
@@ -110,6 +116,12 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
         // Remove leftovers of the guild.
         await MasterChannelManager.$.removeLeftOvers( guild );
 
-        setTimeout( () => TopGGManager.$.updateStats() );
+        this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
+    }
+
+    private updateStats() {
+        TopGGManager.$.updateStats();
+
+        this.logger.debug( this.updateStats, "Stats updated via debounce" );
     }
 }

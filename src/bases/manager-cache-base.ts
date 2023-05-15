@@ -28,7 +28,7 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
         return result;
     }
 
-    protected setCache( key: string, value: any ): void {
+    protected setCache( key: string, value: CacheResult ): void {
         this.logger.log( this.setCache, `Setting cache for key: '${ key }'` );
 
         this.cacheDebugger.dumpDown( this.setCache, value );

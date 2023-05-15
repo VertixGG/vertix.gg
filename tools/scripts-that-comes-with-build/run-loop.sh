@@ -25,7 +25,7 @@ while true; do
   wait $pid
 
   # Send email with log file attachment
-  log_file_content=$(cat "$log_file_name" | tail -n 50 | base64)
+  log_file_content=$(cat "$log_file_name" | tail -n 400 | base64)
   curl --request POST \
     --url https://api.sendgrid.com/v3/mail/send \
     --header "Authorization: Bearer $SENDGRID_API_KEY" \

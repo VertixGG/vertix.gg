@@ -49,7 +49,7 @@ export default async function permissionsMiddleware( interaction: UIInteractionT
 
         if ( missingPermissions.length ) {
             globalLogger.admin( permissionsMiddleware,
-                `🔐 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+                `🔐 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
             );
 
             globalLogger.log( permissionsMiddleware, `Guild id: '${ interaction.guildId }' - Required permissions:`, missingPermissions );

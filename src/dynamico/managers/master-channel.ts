@@ -153,13 +153,13 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
             // Dynamico leaking permissions on the role level.
             if ( missingPermissionsRoleLevel.length ) {
                 this.logger.admin( this.onJoinMasterChannel,
-                    `🔐 Dynamico missing permissions - "${ missingPermissionsRoleLevel.join( ", " ) }" (${ guild.name })`
+                    `🔐 Dynamico missing permissions - "${ missingPermissionsRoleLevel.join( ", " ) }" (${ guild.name }) (${ guild.memberCount })`
                 );
             }
 
             if ( missingPermissionsChannelLevel.length ) {
                 this.logger.admin( this.onJoinMasterChannel,
-                    `🔐 Master Channel missing permissions - "${ missingPermissionsChannelLevel.join( ", " ) }" (${ guild.name })`
+                    `🔐 Master Channel missing permissions - "${ missingPermissionsChannelLevel.join( ", " ) }" (${ guild.name }) (${ guild.memberCount })`
                 );
             }
 
@@ -471,7 +471,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
             this.debugger.log( this.checkLimit, `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'` );
 
             this.logger.admin( this.checkLimit,
-                `💰 Master Channels Limitation function has been activated max(${ limit }) (${ interaction.guild?.name })`
+                `💰 Master Channels Limitation function has been activated max(${ limit }) (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             await GUIManager.$.get( "Dynamico/UI/NotifyMaxMasterChannels" )

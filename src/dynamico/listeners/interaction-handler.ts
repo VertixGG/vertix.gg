@@ -67,7 +67,7 @@ const handleSlashCommand = async ( client: Client, interaction: CommandInteracti
             );
 
             globalLogger.admin( handleSlashCommand,
-                `🔐 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name })`
+                `🔐 Dynamico missing permissions for "/${ interaction.commandName }" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
             );
 
             const message = await GUIManager.$.get( "Dynamico/UI/NotifyPermissions" )

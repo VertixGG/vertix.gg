@@ -123,7 +123,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
 
             if ( nothingChanged ) {
                 EditPermissionsUsersMenus.logger.admin( this.grantUser,
-                    `🤷 Grant user access did nothing - "${ channel.name }" (${ channel.guild.name })`
+                    `🤷 Grant user access did nothing - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
                 );
 
                 await editPermissionsComponent.sendContinues( interaction, {
@@ -142,7 +142,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
                     } );
 
                     EditPermissionsUsersMenus.logger.admin( this.grantUser,
-                        `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name })`
+                        `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name }) (${ interaction.guild?.memberCount })`
                     );
 
                     await editPermissionsComponent.sendContinues( interaction, {
@@ -180,7 +180,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
                     await channel.permissionOverwrites.delete( member );
 
                     EditPermissionsUsersMenus.logger.admin( this.removeUser,
-                        `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name })`
+                        `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name }) (${ interaction.guild?.memberCount })`
                     );
 
                     await editPermissionsComponent.sendContinues( interaction, {

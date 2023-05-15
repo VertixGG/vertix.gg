@@ -61,7 +61,7 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
 
         if ( ChannelType.GuildVoice === interaction.channel?.type ) {
             UserlimitModal.dedicatedLogger.admin( this.onModalSubmit,
-                `🤷 User Limit input is incorrect - "${ (interaction).channel?.name }" (${ interaction.guild?.name })`
+                `🤷 User Limit input is incorrect - "${ (interaction).channel?.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
         }
 
@@ -75,7 +75,7 @@ export default class UserlimitModal extends GenericInputTextboxNumberUIModal {
             const parsedInput = parseInt( input );
 
             UserlimitModal.dedicatedLogger.admin( this.onModalSubmit,
-                `✋ Dynamic Channel user limit has been changed from ${ interaction.channel.userLimit } to ${ parsedInput } - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `✋ Dynamic Channel user limit has been changed from ${ interaction.channel.userLimit } to ${ parsedInput } - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             await interaction.channel.setUserLimit( parsedInput );

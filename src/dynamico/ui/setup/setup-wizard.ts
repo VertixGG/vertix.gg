@@ -109,7 +109,7 @@ export class SetupWizard extends UIWizardBase {
         const badwords = await guildGetBadwordsFormatted( interaction.guildId?.toString() ?? "" );
 
         logger.admin( this.onFinish,
-            `🛠️ Setup has performed - "${ args.channelNameTemplate }", "${ badwords }" (${ interaction.guild.name })`
+            `🛠️ Setup has performed - "${ args.channelNameTemplate }", "${ badwords }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
         );
 
         await GUIManager.$.get( "Dynamico/UI/SetupSuccessEmbed" )

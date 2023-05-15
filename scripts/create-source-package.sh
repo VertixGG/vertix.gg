@@ -11,7 +11,7 @@ zipFileName=$(openssl rand -base64 32 | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -
 zip -r -e -P "$password" "$zipFileName" . -x "*node_modules/*" "*.git/*" "*.idea/*" "*.test/*" ".env" "dist/*" "coverage/*"
 
 # upload
-scp -P 7777 "$zipFileName" inewlegend@192.168.0.205:/home/inewlegend/Desktop/WWW/"$zipFileName"
+scp -P 7777 "$zipFileName" inewlegend@inewlegend.com:/home/inewlegend/Desktop/WWW/"$zipFileName"
 
 # remove the zip file
 rm -f "$zipFileName"

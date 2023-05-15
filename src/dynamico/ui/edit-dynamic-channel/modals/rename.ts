@@ -76,7 +76,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
 
                 if ( usedBadword ) {
                     RenameModal.dedicatedLogger.admin( this.onSuccessfulRename,
-                        `🙅 Bad words function has been activated  - "${ currentChannelName }" (${ interaction.guild?.name })`
+                        `🙅 Bad words function has been activated  - "${ currentChannelName }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
                     );
 
                     const embed = new EmbedBuilder()
@@ -128,7 +128,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
         }
 
         RenameModal.dedicatedLogger.admin( this.onBeingRateLimited,
-            `🙅 Channel rename rate limit has been activated - "${ interaction.channel?.name }" (${ interaction.guild?.name })`
+            `🙅 Channel rename rate limit has been activated - "${ interaction.channel?.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
         );
 
         const embed = new EmbedBuilder()
@@ -146,7 +146,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
 
     private async onSuccessfulRename( interaction: ModalSubmitInteraction, oldChannelName: string, newChannelName: string ) {
         RenameModal.dedicatedLogger.admin( this.onSuccessfulRename,
-            `✏️ Dynamic Channel name has been changed - "${ oldChannelName } -> "${ newChannelName }" (${ interaction.guild?.name })`
+            `✏️ Dynamic Channel name has been changed - "${ oldChannelName } -> "${ newChannelName }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
         );
 
         const embed = new EmbedBuilder()

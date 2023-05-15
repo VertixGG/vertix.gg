@@ -119,7 +119,7 @@ export class ConfigButtons extends UIElement {
         await ChannelDataManager.$.setSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
 
         ConfigButtons.dedicatedLogger.admin( this.onNameModified,
-            `🔧 Dynamic Channels Name has been modified - "${ previousName }" -> "${ newName }" (${ interaction.guild?.name })`
+            `🔧 Dynamic Channels Name has been modified - "${ previousName }" -> "${ newName }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
         );
 
         await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
@@ -152,7 +152,7 @@ export class ConfigButtons extends UIElement {
         await guildSetBadwords( interaction.guild as Guild, newBadwords );
 
         ConfigButtons.dedicatedLogger.admin( this.onBadwordsModified,
-            `🔧 Bad Words filter has been modified - "${ oldBadwords }" -> "${ newBadwords }" (${ interaction.guild?.name })`
+            `🔧 Bad Words filter has been modified - "${ oldBadwords }" -> "${ newBadwords }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
         );
 
         await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )

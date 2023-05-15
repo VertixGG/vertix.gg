@@ -93,7 +93,7 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
 
             if ( channel.members.size === 0 ) {
                 this.logger.admin( this.onLeaveDynamicChannel,
-                    `➖ Dynamic channel has been deleted - "${ channel.name }" (${ guild.name })`
+                    `➖ Dynamic channel has been deleted - "${ channel.name }" (${ guild.name }) (${ guild.memberCount })`
                 );
 
                 await ChannelManager.$.delete( { guild, channel, } );
@@ -206,11 +206,11 @@ export class DynamicChannelManager extends ManagerCacheBase<ChannelResult | Chan
         } );
 
         this.logger.admin( this.createDynamicChannel,
-            `➕  Dynamic channel has been created - "${ dynamicChannelName }" (${ guild.name })`
+            `➕  Dynamic channel has been created - "${ dynamicChannelName }" (${ guild.name }) (${ guild.memberCount })`
         );
 
         // Move the user to new created channel.
-        newState.setChannel( channel.id ).then( () => {
+        await newState.setChannel( channel.id ).then( () => {
             this.logger.log( this.createDynamicChannel,
                 `Guild id: '${ guild.id }' - User '${ displayName }' moved to dynamic channel '${ dynamicChannelName }'`
             );

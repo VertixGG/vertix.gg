@@ -2,6 +2,7 @@ import { ChannelType, EmbedBuilder } from "discord.js";
 
 import { MasterChannelManager } from "@dynamico/managers/master-channel";
 import { PermissionsManager } from "@dynamico/managers/permissions";
+import { ChannelManager } from "@dynamico/managers/channel";
 
 import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
@@ -21,20 +22,22 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
 
     // Only the channel owner can pass the middleware
     if ( ChannelType.GuildVoice === interaction.channel.type ) {
-        const master = await MasterChannelManager.$.getChannelAndDBbyDynamicChannel( interaction, true );
+        const master = await MasterChannelManager.$.getByDynamicChannel( interaction, true );
 
         if ( ! master ) {
             return false;
         }
 
-        if ( master.db?.userOwnerId === interaction.user.id ) {
+        const dynamicChannelDB = await ChannelManager.$.getGuildChannelDB( interaction.guildId, interaction.channel.id, true );
+
+        if ( dynamicChannelDB?.userOwnerId === interaction.user.id ) {
             return true;
         }
 
         const embed = new EmbedBuilder();
 
         let message = "You should open your own dynamic channel and try again\n" +
-            `<#${ master.channel.id }>`;
+            `<#${ master.id }>`;
 
         embed.setTitle( "🤷 Oops, this is not your channel" );
         embed.setDescription( message );

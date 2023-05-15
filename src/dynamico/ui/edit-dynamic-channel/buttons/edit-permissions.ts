@@ -88,7 +88,7 @@ export default class EditPermissions extends UIElement {
             } );
 
             EditPermissions.dedicatedLogger.admin( this.makeChannelPrivate,
-                `🌐 Dynamic Channel has been set to public - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `🌐 Dynamic Channel has been set to public - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             await GUIManager.$.get( "Dynamico/UI/EditUsersPermissions/EditUsersChannelPublicEmbed" )
@@ -106,7 +106,7 @@ export default class EditPermissions extends UIElement {
             } );
 
             EditPermissions.dedicatedLogger.admin( this.makeChannelPrivate,
-                `🚫 Dynamic Channel has been set to private - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `🚫 Dynamic Channel has been set to private - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             await GUIManager.$.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
@@ -118,7 +118,7 @@ export default class EditPermissions extends UIElement {
     private async displayManageUsers( interaction: Interaction ) {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
             EditPermissions.dedicatedLogger.admin( this.displayManageUsers,
-                `🔒 Access button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `🔒 Access button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             await GUIManager.$.get( "Dynamico/UI/EditUserPermissions" ).sendContinues( interaction, {
@@ -131,7 +131,7 @@ export default class EditPermissions extends UIElement {
         if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
             // Check if user voted.
             EditPermissions.dedicatedLogger.admin( this.resetChannel,
-                `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             if ( ! await TopGGManager.$.isVoted( interaction.user.id ) ) {
@@ -147,7 +147,8 @@ export default class EditPermissions extends UIElement {
 
             if ( ! master ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,
-                    `Guild id: ${ interaction.guildId } - Could not find master channel in database master interaction id: ${ interaction.id }` );
+                    `Guild id: ${ interaction.guildId } - Could not find master channel in database master interaction id: ${ interaction.id } (${ interaction.guild?.memberCount })`
+                );
                 return;
             }
 
@@ -200,7 +201,7 @@ export default class EditPermissions extends UIElement {
             );
 
             EditPermissions.dedicatedLogger.admin( this.resetChannel,
-                `🔄 Dynamic Channel has been reset to default settings - "${ interaction.channel.name }" (${ interaction.guild?.name })`
+                `🔄 Dynamic Channel has been reset to default settings - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
             const currentData = getCurrent( interaction ),

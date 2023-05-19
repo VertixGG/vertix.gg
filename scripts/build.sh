@@ -12,8 +12,11 @@ mkdir -p dist/prisma
 # copy schema.prisma to dist/prisma folder
 cp ./prisma/schema.prisma dist/prisma/schema.prisma
 
-# Run `update-package-version.sh` to build number
-bash ./scripts/update-package-version.sh
+# Check if the argument for updating the package version is provided
+if [[ "$1" == "--update-package-version" ]]; then
+  # Run `update-package-version.sh` to update the package version
+  bash ./scripts/update-package-version.sh
+fi
 
 # Copy package.json to dist folder
 cp ./package.json dist/package.json
@@ -40,7 +43,7 @@ terser dist/index.js --comments false -o dist/index.min.js
 rm -f dist/dynamico-bot
 
 # Create executable
-pkg .
+pkg . -C GZip
 
 # Clean up
 rm dist/index.js

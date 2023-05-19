@@ -1,7 +1,7 @@
 /**
  * @see https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots
+ * @see https://discord.com/api/oauth2/authorize?client_id=1091272387493908561&permissions=286346256&scope=bot%20applications.commands - Dynamico Beta
  * @see https://discord.com/api/oauth2/authorize?client_id=1079487067932868608&permissions=286346256&scope=bot%20applications.commands - LegendAI
- * @see https://discord.com/api/oauth2/authorize?client_id=1091272387493908561&permissions=286346256&scope=bot%20applications.commands - Ancient AI
  */
 import path from "path";
 import process from "process";
@@ -25,8 +25,8 @@ function main() {
 
     //GlobalLogger.$.info( main, "Environment variables are loaded:", process.env );
 
-    import( "./prisma" ).then( ( { default: Prisma } ) => {
-        Prisma.getConnectPromise().then( entryPoint );
+    import( "./prisma" ).then( ( { PrismaInstance } ) => {
+        PrismaInstance.$.connect().then( entryPoint );
     } );
 }
 

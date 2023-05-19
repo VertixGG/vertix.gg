@@ -40,7 +40,7 @@ export class CategoryManager extends InitializeBase {
         const { guild, name } = category;
 
         this.logger.info( this.onDelete,
-            `Guild id: '${ guild.id }' - Deleting category name: '${ name }' guild: '${ guild.name }'`
+            `Guild id: '${ guild.id }' - Deleting category name: '${ name }', guild: '${ guild.name }'`
         );
 
         // Delete the channel from the database.
@@ -51,7 +51,7 @@ export class CategoryManager extends InitializeBase {
         const { name, guild } = args;
 
         this.logger.info( this.create,
-            `Guild id: '${ guild.id }' - Creating category name: '${ name }' guild: '${ guild.name }`
+            `Guild id: '${ guild.id }' - Creating category name: '${ name }', guild: '${ guild.name }`
         );
 
         // Create the channel at discord.
@@ -75,8 +75,8 @@ export class CategoryManager extends InitializeBase {
         const { guild, name } = category;
 
         this.logger.info( this.delete,
-            `Guild id: '${ guild.id }' - Deleting category name: '${ name }' guild: '${ guild.name }'
-            ` );
+            `Guild id: '${ guild.id }' - Deleting category name: '${ name }', guild: '${ guild.name }'`
+        );
 
         // Delete the channel from the database.
         await this.categoryModel.delete( guild.id, category.id );

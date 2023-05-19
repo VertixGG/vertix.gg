@@ -7,7 +7,7 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { ChannelManager } from "@dynamico/managers/channel";
 import { GUIManager } from "@dynamico/managers/gui";
 
 import UIElement from "@dynamico/ui/_base/ui-element";
@@ -29,7 +29,7 @@ export default class EditPermissionsUsersMenus extends UIElement {
         return E_UI_TYPES.DYNAMIC;
     }
 
-    protected async getBuilders( interaction: Interaction, args: any ) {
+    protected async getBuilders( interaction: Interaction<"cached">, args: any ) {
         const grantMenu = this.getUserMenuBuilder( this.grantUser.bind( this ) ),
             removeMenu = this.getMenuBuilder( this.removeUser.bind( this ) );
 
@@ -40,7 +40,8 @@ export default class EditPermissionsUsersMenus extends UIElement {
         removeMenu.setPlaceholder( "👇 Remove User From List" );
 
         const members: { label: string; value: string; emoji: string }[] = [],
-            masterChannel = await MasterChannelManager.$.getByDynamicChannel( interaction );
+            masterChannel = await ChannelManager.$
+                .getMasterChannelByDynamicChannelId( interaction.channelId as string );
 
         if ( ! masterChannel ) {
             return [];

@@ -16,11 +16,10 @@ import { permissionsConvertBitfieldToOverwriteOptions } from "@dynamico/utils/pe
 
 import { GUIManager } from "@dynamico/managers/gui";
 import { DynamicoManager } from "@dynamico/managers/dynamico";
-import { ChannelManager } from "@dynamico/managers/channel";
-
-import Debugger from "@internal/modules/debugger";
+import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
+import { Debugger } from "@internal/modules/debugger";
 
 export class PermissionsManager extends InitializeBase {
     private static instance: PermissionsManager;
@@ -53,35 +52,37 @@ export class PermissionsManager extends InitializeBase {
         this.debugger = new Debugger( this );
     }
 
-    public async onChannelPermissionsUpdate( oldChannel: VoiceChannel, newChannel: VoiceChannel ) {
+    public async onChannelPermissionsUpdate( oldState: VoiceChannel, newState: VoiceChannel ) {
         this.logger.info( this.onChannelPermissionsUpdate,
-            `Guild id: '${ oldChannel.guildId }', channel id: '${ oldChannel.id }' - Permissions were updated`
+            `Guild id: '${ oldState.guildId }', channel id: '${ oldState.id }' - Permissions were updated`
         );
 
         // Print debug new permissions.
-        this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldChannel.guildId }' - New permissions for channel id: '${ oldChannel.id }'` );
-        this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newChannel.permissionOverwrites );
+        this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldState.guildId }' - New permissions for channel id: '${ oldState.id }'` );
+        this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newState.permissionOverwrites );
 
         const newMessage = await GUIManager.$
             .get( "Dynamico/UI/EditDynamicChannel" )
-            .getMessage( newChannel );
+            .getMessage( newState );
 
-        await ChannelManager.$.editPrimaryMessage( newMessage, newChannel );
+        await DynamicChannelManager.$.editPrimaryMessageDebounce( newMessage, newState );
 
-        const channel = await ChannelManager.$.getGuildChannelDB( newChannel.guildId, newChannel.id, true );
+        // const channel = await ChannelManager.$.getGuildChannelDB( newState.guildId, newState.id, true );
+
+        const channel = await ChannelModel.$.getByChannelId( newState.id, true );
 
         if ( ! channel ) {
             return this.logger.debug( this.onChannelPermissionsUpdate,
-                `Guild id: '${ oldChannel.guildId }', channel id: '${ newChannel.id }' - Not found in the database`
+                `Guild id: '${ oldState.guildId }', channel id: '${ newState.id }' - Not found in the database`
             );
         }
 
-        if ( channel.isMasterCreate || channel.isDynamic ) {
-            const botId = newChannel.client.user.id,
-                isBotPermissionsRemovedFromChannel = ! newChannel.permissionOverwrites.cache.get( botId );
+        if ( channel.isMaster || channel.isDynamic ) {
+            const botId = newState.client.user.id,
+                isBotPermissionsRemovedFromChannel = ! newState.permissionOverwrites.cache.get( botId );
 
             if ( isBotPermissionsRemovedFromChannel ) {
-                await this.resetBotUserPermissions( newChannel, channel );
+                await this.resetBotUserPermissions( newState, channel );
             }
         }
     }

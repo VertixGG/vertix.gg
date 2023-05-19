@@ -194,5 +194,4 @@ export class DirectMessageManager extends InitializeBase {
 
         return embedBuilder;
     }
-
 }

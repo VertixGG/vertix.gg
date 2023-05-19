@@ -4,7 +4,7 @@ import { ChannelType, EmbedBuilder, ModalSubmitInteraction } from "discord.js";
 import { Routes } from "discord-api-types/v10";
 
 import { GUIManager } from "@dynamico/managers/gui";
-import { MasterChannelManager } from "@dynamico/managers/master-channel";
+import { ChannelManager } from "@dynamico/managers/channel";
 
 import { E_UI_TYPES } from "@dynamico/ui/_base/ui-interfaces";
 import { GenericInputTextboxUIModal } from "@dynamico/ui/_base/generic/generic-input-textbox-ui-modal";
@@ -119,7 +119,7 @@ export default class RenameModal extends GenericInputTextboxUIModal {
             return;
         }
 
-        const masterChannel = await MasterChannelManager.$.getByDynamicChannelId( interaction.channel.guildId, interaction.channel.id, false );
+        const masterChannel = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( interaction.channel.id );
 
         let message = ".\n";
 

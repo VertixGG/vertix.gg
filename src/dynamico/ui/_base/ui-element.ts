@@ -28,7 +28,7 @@ import Logger from "@internal/modules/logger";
 
 import { ForceMethodImplementation } from "@internal/errors";
 
-export default class UIElement extends UIGroupBase {
+export class UIElement extends UIGroupBase {
     protected static logger: Logger = new Logger( this );
 
     protected interaction?: UIBaseInteractionTypes;
@@ -190,3 +190,5 @@ export default class UIElement extends UIGroupBase {
         context.setCustomId( this.storeCallback( this, callback, "", extraData ) );
     }
 }
+
+export default UIElement;

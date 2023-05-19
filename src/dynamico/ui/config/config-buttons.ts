@@ -26,7 +26,8 @@ import {
 import { GUIManager } from "@dynamico/managers/gui";
 import { MasterChannelManager } from "@dynamico/managers/master-channel";
 import { ChannelDataManager } from "@dynamico/managers/channel-data";
-import { ChannelManager } from "@dynamico/managers/channel";
+
+import { ChannelModel } from "@dynamico/models";
 
 import Logger from "@internal/modules/logger";
 
@@ -125,7 +126,7 @@ export class ConfigButtons extends UIElement {
         await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: args.badwords || await guildGetBadwordsFormatted( interaction.guildId as string ),
-                masterChannels: await ChannelManager.$.getMasterCreateChannels( interaction.guildId as string, true )
+                masterChannels: await ChannelModel.$.getMasters( interaction.guildId as string, true )
             } );
     }
 
@@ -158,7 +159,7 @@ export class ConfigButtons extends UIElement {
         await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: await guildGetBadwordsFormatted( interaction.guildId as string ),
-                masterChannels: await ChannelManager.$.getMasterCreateChannels( interaction.guildId as string, true )
+                masterChannels: await ChannelModel.$.getMasters( interaction.guildId as string, true )
             } );
     }
 }

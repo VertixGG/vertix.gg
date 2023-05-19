@@ -4,7 +4,7 @@ import {
     ChannelType,
     DMChannel,
     Guild,
-    MessageEditOptions,
+    GuildChannel,
     NonThreadGuildBasedChannel,
     VoiceChannel,
     VoiceState,
@@ -12,32 +12,30 @@ import {
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
-import {
-    IChannelEnterGenericArgs,
-    IChannelLeaveGenericArgs
-} from "../interfaces/channel";
+import { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "../interfaces/channel";
 
-import { ChannelDataManager } from "@dynamico/managers/channel-data";
 import { DynamicoManager } from "@dynamico/managers/dynamico";
 import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
-import { MasterChannelManager } from "@dynamico/managers/master-channel";
 import { PermissionsManager } from "@dynamico/managers/permissions";
+import { MasterChannelManager } from "@dynamico/managers/master-channel";
 
-import { ChannelModel, ChannelResult } from "@dynamico/models/channel";
+import { ChannelModel } from "@dynamico/models/channel";
 
-import Debugger from "@internal/modules/debugger";
+import { Debugger } from "@internal/modules/debugger";
 
-import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
-
-const UNKNOWN_DISPLAY_NAME = "Unknown User",
-    UNKNOWN_CHANNEL_NAME = "Unknown Channel";
+import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,
-    parent? : CategoryChannel;
+    parent?: CategoryChannel;
     userOwnerId: string,
     ownerChannelId?: string,
     internalType: E_INTERNAL_CHANNEL_TYPES,
+}
+
+interface IChannelUpdateArgs {
+    channel: GuildChannel,
+    userOwnerId: string,
 }
 
 interface IChannelDeleteArgs {
@@ -45,12 +43,10 @@ interface IChannelDeleteArgs {
     channel: NonThreadGuildBasedChannel,
 }
 
-export class ChannelManager extends ManagerCacheBase<ChannelResult> {
+export class ChannelManager extends InitializeBase {
     private static instance: ChannelManager;
 
     private debugger: Debugger;
-
-    private channelModel: ChannelModel;
 
     public static getName() {
         return "Dynamico/Managers/Channel";
@@ -68,17 +64,15 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         return ChannelManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", ChannelManager.getName() ) ) {
-        super( shouldDebugCache );
+    public constructor() {
+        super();
 
-        this.debugger = new Debugger( this );
-
-        this.channelModel = ChannelModel.getInstance();
+        this.debugger = new Debugger( this, "", DynamicoManager.isDebugOn( "MANAGER", ChannelManager.getName() ) );
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {
-        const displayName = newState.member?.displayName || UNKNOWN_DISPLAY_NAME,
-            channelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
+        const displayName = newState.member?.displayName as string,
+            channelName = newState.channel?.name as string;
 
         this.logger.info( this.onJoin,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' joined to channel: '${ channelName }'`
@@ -93,9 +87,9 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
     }
 
     public async onSwitch( oldState: VoiceState, newState: VoiceState ) {
-        const displayName = newState.member?.displayName || UNKNOWN_DISPLAY_NAME,
-            oldChannelName = oldState.channel?.name || UNKNOWN_CHANNEL_NAME,
-            newChannelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
+        const displayName = newState.member?.displayName as string,
+            oldChannelName = oldState.channel?.name as string,
+            newChannelName = newState.channel?.name as string;
 
         this.logger.log( this.onSwitch,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' switched from channel: '${ oldChannelName }' to channel: '${ newChannelName }'`
@@ -109,49 +103,45 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         } );
     }
 
-    /**
-     * Function onLeave() :: Called when a user leaves a channel,
-     *
-     * @note Does not goes anywhere else, mostly leave the guild.
-     */
+    public async onEnterGeneric( args: IChannelEnterGenericArgs ) {
+        const { oldState, newState } = args;
+
+        this.debugger.log( this.onEnterGeneric,
+            `Guild id: '${ oldState.guild.id }' - oldChannelId: '${ oldState.channelId }' - newChannelId: '${ newState.channelId }'` );
+
+        if ( ! newState.channelId ) {
+            this.logger.error( this.onEnterGeneric,
+                `Guild id: '${ oldState.guild.id }' - User: '${ args.displayName }' ` +
+                `joined to channel: '${ args.channelName }' but channel id is not found.` );
+            return;
+        }
+
+        if ( await ChannelModel.$.isMaster( newState.channelId ) ) {
+            await MasterChannelManager.$.onJoinMasterChannel( args );
+        } else if ( await ChannelModel.$.isDynamic( newState.channelId ) ) {
+            await DynamicChannelManager.$.onJoinDynamicChannel( args );
+        }
+
+        await this.onLeave( oldState, newState );
+    }
+
     public async onLeave( oldState: VoiceState, newState: VoiceState ) {
-        const displayName = newState.member?.displayName || UNKNOWN_DISPLAY_NAME,
-            channelName = newState.channel?.name || UNKNOWN_CHANNEL_NAME;
+        const displayName = newState.member?.displayName as string,
+            channelName = newState.channel?.name as string;
 
         this.logger.info( this.onLeave,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' left channel guild: '${ oldState.guild.name }'`
         );
 
-        await this.onLeaveGeneric( {
+        const leaveArgs: IChannelLeaveGenericArgs = {
             oldState,
             newState,
             displayName,
             channelName
-        } );
-    }
+        };
 
-    public async onEnterGeneric( args: IChannelEnterGenericArgs ) {
-        const { oldState, newState } = args;
-
-        if ( newState.channelId ) {
-            if ( await this.isMaster( newState.channelId, newState.guild.id ) ) {
-                await MasterChannelManager.$.onJoinMasterChannel( args );
-            } else if ( await this.isDynamic( newState.channelId, newState.guild.id ) ) {
-                await DynamicChannelManager.$.onJoinDynamicChannel( args );
-            }
-        }
-
-        // If the user switched channels.
-        if ( oldState.channelId !== newState.channelId ) {
-            await this.onLeaveGeneric( args );
-        }
-    }
-
-    public async onLeaveGeneric( args: IChannelLeaveGenericArgs ) {
-        const { oldState, newState } = args;
-
-        if ( oldState.channelId && await this.channelModel.isDynamic( oldState.channelId, newState.guild.id ) ) {
-            await DynamicChannelManager.$.onLeaveDynamicChannel( args );
+        if ( oldState.channelId && await ChannelModel.$.isDynamic( oldState.channelId ) ) {
+            await DynamicChannelManager.$.onLeaveDynamicChannel( leaveArgs );
         }
     }
 
@@ -167,18 +157,19 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
                 this.logger.info( this.onChannelDelete,
                     `Guild id: '${ guildId }' - Channel id: '${ channelId }' was deleted` );
 
-                if ( await this.channelModel.isMasterCreate( channelId, guildId ) ) {
-                    await this.channelModel.delete( channel.guild, channelId );
+                if ( await ChannelModel.$.isMaster( channelId ) ) {
+                    await this.delete( { channel, guild: channel.guild } );
                 }
 
                 return true;
         }
 
+        // TODO: Bad practice, should be removed.
         return false;
     }
 
     public async onChannelUpdate( oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel ) {
-        this.logger.log( this.onChannelUpdate, `Channel id '${ oldChannel.id }' was updated` );
+        this.logger.log( this.onChannelUpdate, `Channel id: '${ oldChannel.id }' was updated` );
 
         if ( ChannelType.GuildVoice === oldChannel.type && newChannel.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
@@ -189,69 +180,57 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
         }
     }
 
-    public async getById( id: string, cache = true ) {
-        this.debugger.log( this.getById, `Getting channel id: '${ id }'` );
+    public async getMasterChannelDBByDynamicChannelId( dynamicChannelId: string, cache = true ) {
+        this.logger.log( this.getMasterChannelDBByDynamicChannelId,
+            `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from database`
+        );
 
-        // If in cache, return it.
-        if ( cache ) {
-            const result = this.getCache( id );
+        const dynamicChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelId, cache );
 
-            if ( result ) {
-                return result;
-            }
+        if ( ! dynamicChannelDB || ! dynamicChannelDB.ownerChannelId ) {
+            return null;
         }
 
-        const result = await this.channelModel.getById( id );
+        return await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId, cache );
+    }
 
-        if ( result ) {
-            this.setCache( id, result );
+    public async getMasterChannelByDynamicChannelId( dynamicChannelId: string, cache = true ) {
+        this.logger.log( this.getMasterChannelByDynamicChannelId,
+            `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from database`
+        );
+
+        const masterChannelDB = await this.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
+
+        if ( ! masterChannelDB ) {
+            return null;
+        }
+
+        const result = await DynamicoManager.$.getClient()?.channels.fetch( masterChannelDB.channelId );
+
+        if ( ! result || result.type !== ChannelType.GuildVoice ) {
+            return null;
         }
 
         return result;
     }
 
-    public async getGuildChannelDB( guildId: string, channelId: string, cache = false ) {
-        this.debugger.log( this.getGuildChannelDB,
-            `Guild id: '${ guildId }' - Getting channel id: '${ channelId }' cache: '${ cache }'`
-        );
-
-        // If in cache, return it.
-        if ( cache ) {
-            const result = this.getCache( channelId );
-
-            if ( result ) {
-                return result;
-            }
+    public async getMasterChannelAndDBbyDynamicChannelId( dynamicChannelId: string, cache: boolean = true ) {
+        const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelId, cache );
+        if ( ! masterChannelDB ) {
+            return null;
         }
 
-        const result = await this.channelModel.getGuildChannel( guildId, channelId );
-
-        if ( result ) {
-            this.setCache( channelId, result );
+        const masterChannel = await DynamicoManager.$.getClient()?.channels.fetch( masterChannelDB.channelId );
+        if ( ! masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
+            return null;
         }
 
-        return result;
+        return {
+            channel: masterChannel,
+            db: masterChannelDB,
+        };
     }
 
-    public async getMasterCreateChannels( guildId: string, includeData = false ) {
-        this.logger.debug( this.getMasterCreateChannels,
-            `Guild id: '${ guildId }' - Getting master create channel(s)`
-        );
-
-        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL, includeData );
-    }
-
-    public async getDynamicChannels( guildId: string ) {
-        this.logger.debug( this.getDynamicChannels,
-            `Guild id: '${ guildId }' - Getting dynamic channel(s)`
-        );
-
-        return await this.channelModel.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL );
-    }
-
-    /**
-     * Function create() :: Creates a new channel for a guild.
-     */
     public async create( args: IChannelCreateArgs ) {
         const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
@@ -283,7 +262,21 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             data.ownerChannelId = ownerChannelId;
         }
 
-        return { channel, channelDB: await this.channelModel.create( { data } ) };
+        return { channel, db: await ChannelModel.$.create( { data } ) };
+    }
+
+    public async update( args: IChannelUpdateArgs ) {
+        const { channel, userOwnerId } = args;
+
+        this.logger.info( this.update,
+            `Guild id: '${ channel.guild.id }' - Updating channel: '${ channel.name }' channel id: '${ channel.id }' ` +
+            `guild: '${ channel.guild.name }' with the following properties: ownerId: '${ userOwnerId }'`
+        );
+
+        await ChannelModel.$.update( {
+            where: { channelId: channel.id },
+            data: { userOwnerId }
+        } );
     }
 
     public async delete( args: IChannelDeleteArgs ) {
@@ -293,41 +286,10 @@ export class ChannelManager extends ManagerCacheBase<ChannelResult> {
             `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' channel id: '${ channel.id }' guild: '${ guild.name }'`
         );
 
-        await this.channelModel.delete( guild, channel.id )
+        await ChannelModel.$.delete( guild, channel.id )
             .catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
         // Some channels are not deletable, so we need to catch the error.
-        await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) )
-            .finally( () => this.removeFromCache( channel.id ) );
-    }
-
-    public async editPrimaryMessage( newMessage: MessageEditOptions, channel: VoiceChannel ) {
-        const message = await channel.messages.cache.at( 0 );
-
-        if ( ! message ) {
-            this.logger.warn( this.editPrimaryMessage,
-                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
-            return;
-        }
-
-        return message.edit( newMessage ).catch(
-            ( e ) => this.logger.warn( this.editPrimaryMessage, "", e ) );
-    }
-
-    public async isMaster(channelId: string, guildId: string, cache = true ) {
-        return ( await this.getGuildChannelDB( guildId, channelId, cache ) )?.isMasterCreate;
-    }
-
-    public async isDynamic(channelId: string, guildId: string, cache = true ) {
-        return ( await this.getGuildChannelDB( guildId, channelId, cache ) )?.isDynamic;
-    }
-
-    protected removeFromCache( channelId: string ) {
-        this.debugger.log( this.removeFromCache, `Removing channel id: '${ channelId }' from cache.` );
-
-        // Remove from cache.
-        this.deleteCache( channelId );
-
-        ChannelDataManager.$.removeFromCache( channelId );
+        await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) );
     }
 }

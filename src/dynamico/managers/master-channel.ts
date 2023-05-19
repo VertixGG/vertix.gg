@@ -5,13 +5,10 @@ import {
     ChannelType,
     CommandInteraction,
     Guild,
-    Interaction,
     NonThreadGuildBasedChannel,
     OverwriteType,
     PermissionsBitField,
-    SelectMenuInteraction,
     VoiceBasedChannel,
-    VoiceChannel,
 } from "discord.js";
 
 import { IChannelEnterGenericArgs, } from "../interfaces/channel";
@@ -24,10 +21,11 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
+    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
 } from "@dynamico/constants/master-channel";
 
 import { CategoryModel } from "@dynamico/models/category";
-import { ChannelModel, ChannelResult } from "@dynamico/models/channel";
+import { ChannelModel } from "@dynamico/models/channel";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
@@ -46,8 +44,7 @@ import { GUIManager } from "@dynamico/managers/gui";
 import { PermissionsManager } from "@dynamico/managers/permissions";
 
 import { Debugger } from "@internal/modules/debugger";
-
-import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
+import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface IMasterChannelCreateDefaultMaster {
     dynamicChannelNameTemplate?: string,
@@ -61,7 +58,7 @@ interface IMasterChannelCreateArgs extends IMasterChannelCreateDefaultMaster {
     userOwnerId: string,
 }
 
-export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Replace any with correct type.
+export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
     private debugger: Debugger;
@@ -82,15 +79,12 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         return MasterChannelManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", MasterChannelManager.getName() ) ) {
-        super( shouldDebugCache );
+    public constructor() {
+        super();
 
-        this.debugger = new Debugger( this );
+        this.debugger = new Debugger( this, "", DynamicoManager.isDebugOn( "MANAGER", MasterChannelManager.getName() ) );
     }
 
-    /**
-     * Function onJoinMasterChannel() :: Called when a user joins the master channel(➕ New Channel).
-     */
     public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {
         const { displayName, channelName, oldState, newState } = args,
             { guild } = newState;
@@ -200,14 +194,27 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
 
         try {
             // Create a new dynamic channel for the user.
-            const dynamicChannel = await DynamicChannelManager.$.createDynamicChannel( { displayName, guild, oldState, newState, } ),
-                message = await GUIManager.$
-                    .get( "Dynamico/UI/EditDynamicChannel" )
-                    .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
+            const dynamic = await DynamicChannelManager.$.createDynamicChannel( {
+                displayName,
+                guild,
+                oldState,
+                newState,
+            } );
+
+            if ( ! dynamic ) {
+                this.logger.error( this.onJoinMasterChannel,
+                    `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'` );
+
+                return;
+            }
+
+            const message = await GUIManager.$
+                .get( "Dynamico/UI/EditDynamicChannel" )
+                .getMessage( newState.channel as NonThreadGuildBasedChannel ); // TODO: Remove `as`.
 
             message.content = "<@" + newState.member?.id + ">";
 
-            await dynamicChannel?.send( message );
+            await dynamic.channel?.send( message );
         } catch ( e ) {
             this.logger.error( this.onJoinMasterChannel,
                 `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'` );
@@ -216,10 +223,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         }
     }
 
-    /**
-     * Function getDefaultInheritedProperties() :: Returns the default inherited properties from the master channel.
-     * Take overview of the master channel.
-     */
     public getChannelDefaultInheritedProperties( masterChannel: VoiceBasedChannel ) {
         const { rtcRegion, bitrate, userLimit } = masterChannel,
             result: any = { bitrate, userLimit };
@@ -233,9 +236,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         return result;
     }
 
-    /**
-     * Function getDefaultInheritedPermissions() :: Returns the default inherited permissions from the master channel.
-     */
     public getChannelDefaultInheritedPermissions( masterChannel: VoiceBasedChannel ) {
         const { permissionOverwrites } = masterChannel,
             result = [];
@@ -256,142 +256,28 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         return result;
     }
 
+    public getChannelDefaultInheritedPermissionsWithUser( masterChannel: VoiceBasedChannel, userId: string ) {
+        const inheritedPermissions = this.getChannelDefaultInheritedPermissions( masterChannel );
+
+        return [
+            ... inheritedPermissions,
+            {
+                id: userId,
+                ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+            }
+        ];
+    }
+
     public getChannelDefaultProperties( userId: string, masterChannel: VoiceBasedChannel ) {
         const inheritedProperties = this.getChannelDefaultInheritedProperties( masterChannel ),
-            inheritedPermissions = this.getChannelDefaultInheritedPermissions( masterChannel ),
-            permissionOverwrites = [
-                ... inheritedPermissions,
-                {
-                    id: userId,
-                    ... DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-                }
-            ];
+            inheritedPermissions = this.getChannelDefaultInheritedPermissionsWithUser( masterChannel, userId );
 
         return {
             ... inheritedProperties,
-            permissionOverwrites,
+            permissionOverwrites: inheritedPermissions,
         };
     }
 
-    /**
-     * Function getByDynamicChannel() :: Returns the master channel by the guildID & dynamic channel id.
-     *
-     * TODO: Full rewrite.
-     */
-    public async getByDynamicChannelId( guildId: string, dynamicChannelId: string, cache: boolean = false, interaction: Interaction | null = null ): Promise<VoiceChannel | void> {
-        this.logger.log( this.getByDynamicChannelId, `Guild id: '${ guildId }' - Dynamic channel id: '${ dynamicChannelId }' cache: '${ cache }'` );
-
-        if ( cache ) {
-            const cached = this.getCache( `getByDynamicChannel-MasterChannelCached-ForId-${ dynamicChannelId }` );
-
-            if ( cached ) {
-                return cached;
-            }
-        }
-
-        const dynamicChannelDB = await ChannelManager.$.getGuildChannelDB( guildId, dynamicChannelId, true );
-
-        if ( ! dynamicChannelDB ) {
-            this.logger.error( this.getByDynamicChannelId,
-                `Guild id: '${ guildId }' - Could not find dynamic channel in database channel id: '${ dynamicChannelId }'`
-            );
-
-            if ( interaction ) {
-                await GUIManager.$.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendReply( interaction as SelectMenuInteraction, {} );
-            }
-
-            return;
-        }
-
-        if ( ! dynamicChannelDB.ownerChannelId ) {
-            this.logger.error( this.getByDynamicChannelId,
-                `Guild id: '${ guildId }' - Could not find dynamic channel in database channel id: '${ dynamicChannelId }'`
-            );
-
-            if ( interaction ) {
-                await GUIManager.$.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendReply( interaction as SelectMenuInteraction, {} );
-            }
-
-            return;
-        }
-
-        let masterChannel,
-            guild = await DynamicoManager.$.getClient()?.guilds.cache.get( guildId ),
-            masterChannelPromise = guild?.channels.fetch( dynamicChannelDB.ownerChannelId );
-
-        const promise = new Promise( ( resolve ) => {
-            masterChannelPromise?.catch( ( e ) => {
-                this.logger.error( this.getByDynamicChannelId,
-                    `Guild id: '${ guildId }' - Could not find dynamic channel in database channel id: '${ dynamicChannelId }'`
-                );
-                this.logger.error( this.getByDynamicChannelId, "", e );
-                resolve( null );
-            } ).then( ( result ) => {
-                masterChannel = result;
-                resolve( result );
-            } );
-        } );
-
-        await promise;
-
-        if ( ! masterChannel ) {
-            this.logger.warn( this.getByDynamicChannel,
-                `Guild id: '${ guildId }' - Could not find master channel, dynamic channel id: '${ dynamicChannelId }'` );
-
-            if ( interaction ) {
-                await GUIManager.$.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
-                    .sendReply( interaction as SelectMenuInteraction, {} );
-            }
-
-            return;
-        }
-
-        // Set cache, anyway.
-        this.setCache( `getByDynamicChannel-MasterChannelCached-ForId-${ dynamicChannelId }`, masterChannel );
-
-        return masterChannel;
-    }
-
-    public async getChannelAndDBbyDynamicChannel( interaction: Interaction, cache: boolean = false ): Promise<false | { channel: VoiceChannel, db: ChannelResult }> {
-        const masterChannel = await this.getByDynamicChannel( interaction, cache );
-
-        if ( ! masterChannel ) {
-            return false;
-        }
-
-        const masterChannelDB = await ChannelManager.$.getGuildChannelDB( interaction.guildId as string, masterChannel.id, cache );
-
-        if ( ! masterChannelDB ) {
-            return false;
-        }
-
-        return {
-            channel: masterChannel,
-            db: masterChannelDB,
-        };
-    }
-
-    /**
-     * Function getByDynamicChannel() :: Returns the master channel by the dynamic channel according the interaction.
-     */
-    public async getByDynamicChannel( interaction: Interaction, cache: boolean = false ) {
-        this.logger.info( this.getByDynamicChannel, `Guild id: '${ interaction.guildId }' - Interaction: '${ interaction.id }', cache: '${ cache }'` );
-
-        if ( ChannelType.GuildVoice !== interaction.channel?.type || ! interaction.guildId || ! interaction.channelId ) {
-            this.logger.error( this.getByDynamicChannel,
-                `Interaction is not a voice channel, interaction: '${ interaction.id }'` );
-            return;
-        }
-
-        // # NOTE: No `debugger.log` needed since of `getByDynamicChannelId` will do it.
-        return await this.getByDynamicChannelId( interaction.guildId, interaction.channelId, cache, interaction );
-    }
-
-    /**
-     * Function getChannelNameTemplate() :: Returns the dynamic channel name template.
-     */
     public async getChannelNameTemplate( ownerId: string, returnDefault?: boolean ) {
         const result = await ChannelDataManager.$.getSettingsData( ownerId, DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS, true ),
             name = result?.object?.dynamicChannelNameTemplate;
@@ -410,9 +296,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         return name;
     }
 
-    /**
-     * Function createMasterChannel() :: Creates a default master channel for a guild, part of setup process.
-     */
     public async createDefaultMasterChannel( interaction: CommandInteraction, userOwnerId: string, extraArgs: IMasterChannelCreateDefaultMaster = {} ) {
         const guild = interaction.guild as Guild;
 
@@ -450,9 +333,6 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         return false;
     }
 
-    /**
-     * Function createMasterCategory() :: Creates a new master category for a master channel(s).
-     */
     public async createDefaultMasterCategory( guild: Guild ) {
         return await CategoryManager.$.create( {
             guild,
@@ -460,12 +340,9 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         } );
     }
 
-    /**
-     * Function checkLimit() :: Validates if the guild has reached the master channel limit.
-     */
     public async checkLimit( interaction: CommandInteraction, guildId: string ) {
         const limit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
-            hasReachedLimit = await ChannelModel.$.isReachedMasterLimit( guildId, limit );
+            hasReachedLimit = await this.isReachedMasterLimit( guildId, limit );
 
         if ( hasReachedLimit ) {
             this.debugger.log( this.checkLimit, `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'` );
@@ -481,15 +358,16 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
         return ! hasReachedLimit;
     }
 
-    /**
-     * Function removeLeftOvers() :: Removes leftovers of a guild.
-     */
     public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Guild id: '${ guild.id }' - Removing leftovers of guild '${ guild.name }'` );
 
         // TODO Relations are deleted automatically??
         await CategoryModel.$.delete( guild.id );
         await ChannelModel.$.delete( guild );
+    }
+
+    public async isReachedMasterLimit( guildId: string, limit = DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS ) {
+        return await ChannelModel.$.getTypeCount( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
     }
 
     /**
@@ -523,7 +401,7 @@ export class MasterChannelManager extends ManagerCacheBase<any> { // TODO: Repla
 
         // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
 
-        await ChannelDataManager.$.setSettingsData( result.channelDB.id, {
+        await ChannelDataManager.$.setSettingsData( result.db.id, {
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
         } );
 

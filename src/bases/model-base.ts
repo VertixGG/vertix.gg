@@ -1,19 +1,37 @@
-import chalk from "chalk";
+import { PrismaClient } from "@prisma/client";
 
-import Debugger from "@internal/modules/debugger";
+import { Debugger } from "@internal/modules/debugger";
 
-import PrismaBase from "@internal/bases/prisma-base";
+import { CacheBase } from "@internal/bases/cache-base";
+import { InitializeBase } from "@internal/bases/initialize-base";
 
-export abstract class ModelBase extends PrismaBase {
+import { PrismaInstance } from "@internal/prisma";
+
+export abstract class ModelBaseCached<TCacheResult> extends CacheBase<TCacheResult> {
+    protected prisma: PrismaClient;
+
+    protected debugger: Debugger;
+
+    protected constructor( shouldDebugCache: boolean ) {
+        super( shouldDebugCache );
+
+        this.prisma = PrismaInstance.getClient();
+
+        this.debugger = new Debugger( this );
+    }
+}
+
+export abstract class ModelBase extends InitializeBase {
+    protected prisma: PrismaClient;
+
     protected debugger: Debugger;
 
     protected constructor() {
         super();
 
-        this.logger.addMessagePrefix( chalk.bold( chalk.cyan( "DB" ) ) );
+        this.prisma = PrismaInstance.getClient();
 
-        this.debugger = new Debugger( this, chalk.bold( chalk.cyan( "DB" ) ) );
+        this.debugger = new Debugger( this );
     }
 }
 
-export default ModelBase;

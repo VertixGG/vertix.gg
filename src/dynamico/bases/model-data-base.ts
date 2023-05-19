@@ -10,14 +10,21 @@ import {
 
 import { CURRENT_VERSION } from "@dynamico/constants/version";
 
-import { ModelBase } from "@internal/bases";
+import { ModelBaseCached } from "@internal/bases/model-base";
 
-export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataModel extends IDataInnerModel> extends ModelBase implements IDataModel {
-    protected ownerModel: OwnerModel;
-    protected dataModel: DataModel;
+export abstract class ModelDataBase<
+    TOwnerModel extends IOwnerInnerModel,
+    TDataModel extends IDataInnerModel,
+    TCacheResult = undefined,
+>
+    extends ModelBaseCached<TCacheResult> implements IDataModel
+{
 
-    protected constructor() {
-        super();
+    protected ownerModel: TOwnerModel;
+    protected dataModel: TDataModel;
+
+    protected constructor( shouldDebugCache = true ) {
+        super( shouldDebugCache );
 
         this.ownerModel = this.getOwnerModel();
         this.dataModel = this.getDataModel();
@@ -135,13 +142,14 @@ export abstract class ModelDataBase<OwnerModel extends IOwnerInnerModel, DataMod
     public getOwnerId( ownerId: string ): Promise<{ id: string }> {
         return this.ownerModel.findUnique( {
             where: {
-                [this.getOwnerIdFieldName()]: ownerId,
+                [ this.getOwnerIdFieldName() ]: ownerId,
             },
         } );
     }
 
     protected abstract getOwnerIdFieldName(): string;
 
-    protected abstract getOwnerModel(): OwnerModel;
-    protected abstract getDataModel(): DataModel;
+    protected abstract getOwnerModel(): TOwnerModel;
+
+    protected abstract getDataModel(): TDataModel;
 }

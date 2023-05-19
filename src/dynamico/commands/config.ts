@@ -6,7 +6,8 @@ import {
 } from "discord.js";
 
 import { GUIManager } from "@dynamico/managers/gui";
-import { ChannelManager } from "@dynamico/managers/channel";
+
+import { ChannelModel } from "@dynamico/models";
 
 import { ICommand } from "@dynamico/interfaces/command";
 import { guildGetBadwordsFormatted } from "@dynamico/utils/badwords";
@@ -27,7 +28,7 @@ export const Config: ICommand = {
         await GUIManager.$.get( "Dynamico/UI/ConfigComponent" )
             .sendContinues( interaction, {
                 badwords: await guildGetBadwordsFormatted( guildId ),
-                masterChannels: await ChannelManager.$.getMasterCreateChannels( guildId, true )
+                masterChannels: await ChannelModel.$.getMasters( guildId, true )
             } );
     }
 };

@@ -1,45 +1,49 @@
 import { Guild } from "discord.js";
 
-import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from ".prisma/client";
+import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@prisma/client";
 
 import { ModelDataBase } from "@dynamico/bases/model-data-base";
 
-import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@internal/dynamico/constants/master-channel";
+import { DynamicoManager } from "@dynamico/managers/dynamico";
+import { ChannelDataManager } from "@dynamico/managers/channel-data";
 
-import PrismaInstance from "@internal/prisma";
+import { PrismaInstance } from "@internal/prisma";
 
 export interface ChannelResult extends Channel {
-    isMasterCreate: boolean;
+    isMaster: boolean;
     isDynamic: boolean;
 }
 
-const client = PrismaInstance.getClient(),
-    model = client.$extends( {
-    result: {
-        channel: {
-            isMasterCreate: {
-                needs: {
-                    internalType: true,
-                    channelId: true,
-                    guildId: true,
+const extendedModel = Prisma.defineExtension( ( client ) => {
+    return client.$extends( {
+        result: {
+            channel: {
+                isMaster: {
+                    needs: {
+                        internalType: true,
+                        channelId: true,
+                        guildId: true,
+                    },
+                    compute( model ) {
+                        return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL;
+                    }
                 },
-                compute( model ) {
-                    return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL;
-                }
-            },
-            isDynamic: {
-                needs: {
-                    internalType: true,
-                },
-                compute( model ) {
-                    return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
+                isDynamic: {
+                    needs: {
+                        internalType: true,
+                    },
+                    compute( model ) {
+                        return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
+                    }
                 }
             }
         }
-    }
-} ).channel;
+    } );
+} );
 
-export class ChannelModel extends ModelDataBase<typeof model, typeof client.channelData> {
+const prisma = PrismaInstance.getClient().$extends( extendedModel );
+
+export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof prisma.channelData, ChannelResult> {
     private static instance: ChannelModel;
 
     public static getName(): string {
@@ -58,8 +62,12 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return ChannelModel.getInstance();
     }
 
+    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", ChannelModel.getName() ) ) {
+        super( shouldDebugCache );
+    }
+
     public async create( args: Prisma.ChannelCreateArgs ) {
-        this.logger.info( this.create,
+        this.logger.log( this.create,
             `Guild id: '${ args.data.guildId }' - Creating entry for channel id: '${ args.data.channelId }''`
         );
 
@@ -68,13 +76,33 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return this.ownerModel.create( args );
     }
 
+    public async update( args: Prisma.ChannelUpdateArgs, deleteCache = true ) {
+        if ( args.where.channelId ) {
+            this.logger.log( this.update, `Channel id: '${ args.where.channelId }'` );
+
+            this.deleteCacheByChannelId( args.where.channelId );
+        } else if ( args.where.id ) {
+            this.logger.log( this.update, `Object id: '${ args.where.id }'` );
+
+            this.deleteCacheByObjectId( args.where.id );
+        } else {
+            throw new Error( "Channel id or object id must be provided." );
+        }
+
+        this.debugger.dumpDown( this.update, args.data, "data" );
+
+        return this.ownerModel.update( args );
+    }
+
     public async delete( guild: Guild, channelId?: string | null ) {
         if ( channelId ) {
-            this.logger.info( this.delete,
+            this.logger.log( this.delete,
                 `Guild id: '${ guild.id }' - Deleting entry of channel id: '${ channelId }' guild: '${ guild.name }'`
             );
 
             if ( await this.isExisting( guild, channelId ) ) {
+                this.deleteCacheByChannelId( channelId );
+
                 return this.ownerModel.delete( {
                     where: {
                         channelId
@@ -86,33 +114,55 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
             }
         }
 
-        this.logger.info( this.delete,
+        this.deleteCacheByGuildId( guild.id );
+
+        this.logger.log( this.delete,
             `Guild id: '${ guild.id }' - Deleting all channels for guild: '${ guild.name }'`
         );
 
         return this.ownerModel.deleteMany( { where: { guildId: guild.id } } );
     }
 
-    public async getById( id: string ) {
-        return await this.ownerModel.findUnique( { where: { id } } );
+    public deleteCacheByObjectId( id: string ) {
+        this.debugger.log( this.deleteCacheByObjectId, `Removing channel object id: '${ id }' from cache.` );
+
+        // Get all that have the same channel id.
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( value.id === id ) {
+                // Remove from cache.
+                this.deleteCache( key );
+
+                ChannelDataManager.$.removeFromCache( value.id );
+            }
+        }
     }
 
-    public async getGuildChannel( guildId: string, channelId?: string, internalType?: E_INTERNAL_CHANNEL_TYPES ) {
-        const args: any = {
-            where: {
-                guildId,
+    public deleteCacheByChannelId( channelId: string ) {
+        this.debugger.log( this.deleteCacheByChannelId, `Removing channel id: '${ channelId }' from cache.` );
+
+        // Get all that have the same channel id.
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( value.channelId === channelId ) {
+                // Remove from cache.
+                this.deleteCache( key );
+
+                ChannelDataManager.$.removeFromCache( value.id );
             }
-        };
-
-        if ( channelId ) {
-            args.where.channelId = channelId;
         }
+    }
 
-        if ( internalType ) {
-            args.where.internalType = internalType;
+    public deleteCacheByGuildId( guildId: string ) {
+        this.logger.log( this.deleteCacheByGuildId, `Removing guild id: '${ guildId }' from cache.` );
+
+        // Get all that have the same guild id.
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( value.guildId === guildId ) {
+                // Remove from cache.
+                this.deleteCache( key );
+
+                ChannelDataManager.$.removeFromCache( value.id );
+            }
         }
-
-        return await this.ownerModel.findFirst( args );
     }
 
     public async getAll( guildId: string, internalType?: E_INTERNAL_CHANNEL_TYPES, includeData?: boolean ) {
@@ -135,7 +185,59 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
         return await this.ownerModel.findMany( args );
     }
 
-    public async getMasterTotal( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {
+    public async getMasters( guildId: string, includeData?: boolean ) {
+        return await this.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL, includeData );
+    }
+
+    public async getDynamics( guildId: string, includeData?: boolean ) {
+        return await this.getAll( guildId, E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL, includeData );
+    }
+
+    public async getByObjectId( id: string, cache = true ) {
+        this.debugger.log( this.getByObjectId, `Getting channel object id: '${ id }'` );
+
+        let result = null;
+
+        if ( cache ) {
+            result = this.getCache( id );
+        }
+
+        if ( ! result ) {
+            result = await this.ownerModel.findUnique( { where: { id } } );
+
+            if ( result ) {
+                this.setCache( id, result );
+            }
+        }
+
+        this.debugger.dumpDown( this.getByObjectId, result, "result" );
+
+        return result;
+    }
+
+    public async getByChannelId( channelId: string, cache = true ) {
+        this.debugger.log( this.getByChannelId, `Getting channel id: '${ channelId }'` );
+
+        let result = null;
+
+        if ( cache ) {
+            result = this.getCache( channelId );
+        }
+
+        if ( ! result ) {
+            result = await this.ownerModel.findFirst( { where: { channelId } } );
+
+            if ( result ) {
+                this.setCache( channelId, result );
+            }
+        }
+
+        this.debugger.dumpDown( this.getByChannelId, result, "result" );
+
+        return result;
+    }
+
+    public async getTypeCount( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {
         const total = await this.ownerModel.count( {
             where: {
                 guildId,
@@ -143,55 +245,63 @@ export class ChannelModel extends ModelDataBase<typeof model, typeof client.chan
             }
         } );
 
-        this.debugger.log( this.getMasterTotal,
+        this.debugger.log( this.getTypeCount,
             `Guild id: '${ guildId }' - Total master channels for is '${ total }'`
         );
 
         return total;
     }
 
-    public async isReachedMasterLimit( guildId: string, limit = DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS ) {
-        return await this.getMasterTotal( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
+    public async isMaster( channelId: string, cache = true ) {
+        this.logger.log( this.isMaster, `Channel id: '${ channelId }'` );
+
+        const result = !! ( await this.getByChannelId( channelId, cache ) )?.isMaster;
+
+        this.logger.log( this.isMaster, `Channel id: '${ channelId }' - isMaster: '${ result }'` );
+
+        return result;
     }
 
-    public async isMasterCreate( channelId: string, guildId: string ) {
-        const result = await this.ownerModel.findFirst( {
-            where: {
-                channelId,
-                guildId,
-            }
-        } );
+    public async isDynamic( channelId: string, cache = true ) {
+        this.logger.log( this.isDynamic, `Channel id: '${ channelId }'` );
 
-        return result?.isMasterCreate;
-    }
+        const result = !! ( await this.getByChannelId( channelId, cache ) )?.isDynamic;
 
-    public async isDynamic( channelId: string, guildId: string ) {
-        const result = await this.ownerModel.findFirst( {
-            where: {
-                channelId,
-                guildId,
-            }
-        } );
+        this.logger.log( this.isDynamic, `Channel id: '${ channelId }' - isDynamic: '${ result }'` );
 
-        return result?.isDynamic;
+        return result;
     }
 
     public async isExisting( guild: Guild, channelId?: string | null ) {
+        this.logger.log( this.isExisting,
+            `Guild id: '${ guild.id }' - Checking if channel id: '${ channelId }' exists`
+        );
+
         const where: any = { guildId: guild.id };
 
         if ( channelId ) {
             where.channelId = channelId;
         }
 
-        return !! await this.ownerModel.findFirst( { where } );
+        const result = !! await this.ownerModel.findFirst( { where } );
+
+        if ( ! result ) {
+            this.deleteCache( guild.id );
+        }
+
+        this.logger.log( this.isExisting,
+            `Guild id: '${ guild.id }' - Channel id: '${ channelId }' exists: '${ result }'`
+        );
+
+        return result;
     }
 
     protected getOwnerModel() {
-        return model;
+        return prisma.channel;
     }
 
-    protected getDataModel()  {
-        return client.channelData;
+    protected getDataModel() {
+        return prisma.channelData;
     }
 
     protected getOwnerIdFieldName(): string {

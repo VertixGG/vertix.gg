@@ -11,8 +11,8 @@ import { ChannelManager } from "@dynamico/managers/channel";
 
 import { CURRENT_VERSION, VERSION_PHASE_4 } from "@dynamico/constants/version";
 
-import InitializeBase from "@internal/bases/initialize-base";
-import PrismaInstance from "@internal/prisma";
+import { InitializeBase } from "@internal/bases/initialize-base";
+import { PrismaInstance } from "@internal/prisma";
 
 interface PackageJson {
     version: string;
@@ -128,11 +128,7 @@ export class DynamicoManager extends InitializeBase {
             const guildCache = client.guilds.cache.get( channel.guildId ),
                 channelCache = guildCache?.channels.cache.get( channel.channelId );
 
-            if ( ! guildCache || ! channelCache ) {
-                continue;
-            }
-
-            if ( channelCache?.members && channelCache.isVoiceBased() ) {
+            if ( guildCache && channelCache?.members && channelCache.isVoiceBased() ) {
                 if ( 0 === channelCache.members.size ) {
                     await ChannelManager.$.delete( {
                         channel: channelCache,

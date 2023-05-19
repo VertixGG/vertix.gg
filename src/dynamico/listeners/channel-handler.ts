@@ -11,19 +11,19 @@ import { DirectMessageManager } from "@dynamico/managers/direct-message";
 export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, async ( oldState, newState ) => {
         if ( ! oldState.channelId && newState.channelId ) {
-            // User joined a channel
+            // User joined a channel.
             await ChannelManager.$.onJoin( oldState, newState );
         } else if ( oldState.channelId && ! newState.channelId ) {
-            // User left a channel
+            // User left a channel.
             await ChannelManager.$.onLeave( oldState, newState );
-        } else if ( oldState.channelId && newState.channelId ) {
-            // User switched channels
+        } else if ( oldState.channelId && newState.channelId && oldState.channelId !== newState.channelId ) {
+            // User switched channels.
             await ChannelManager.$.onSwitch( oldState, newState );
         }
     } );
 
     client.on( Events.ChannelDelete, async ( channel ) => {
-        // If it was handled by the channel manager, return
+        // If it was handled by the channel manager, return.
         if ( await ChannelManager.$.onChannelDelete( channel ) ) {
             return;
         }

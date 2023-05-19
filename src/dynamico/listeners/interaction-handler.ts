@@ -32,13 +32,13 @@ export function interactionHandler( client: Client ) {
         if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
             await handleSlashCommand( client, interaction as CommandInteraction );
         } else if ( interaction.isButton() ) {
-            await handleButton( client, interaction as ButtonInteraction );
+            await handleButton( client, interaction as ButtonInteraction<"cached"> );
         } else if ( interaction.isModalSubmit() ) {
-            await handleModalSubmit( client, interaction );
+            await handleModalSubmit( client, interaction as ModalSubmitInteraction<"cached"> );
         } else if ( interaction.isUserSelectMenu() || interaction.isStringSelectMenu() ) {
-            await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction );
+            await handleUserSelectMenuInteraction( client, interaction as UserSelectMenuInteraction<"cached"> );
         } else if ( interaction.isRoleSelectMenu() ) {
-            await handleRoleSelectMenuInteraction( client, interaction as RoleSelectMenuInteraction );
+            await handleRoleSelectMenuInteraction( client, interaction as RoleSelectMenuInteraction<"cached"> );
         } else {
             globalLogger.debug( interactionHandler, "", interaction );
         }
@@ -104,7 +104,7 @@ const getCallback = async ( interaction: UIInteractionTypes ) => {
     result( interaction );
 };
 
-async function handleButton( client: Client, interaction: ButtonInteraction ) {
+async function handleButton( client: Client, interaction: ButtonInteraction<"cached"> ) {
     globalLogger.log( handleButton,
         `Guild id: '${ interaction.guildId }' - ButtonInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
@@ -112,7 +112,7 @@ async function handleButton( client: Client, interaction: ButtonInteraction ) {
     await getCallback( interaction );
 };
 
-async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction ) {
+async function handleModalSubmit( client: Client, interaction: ModalSubmitInteraction<"cached"> ) {
     globalLogger.log( handleModalSubmit,
         `Guild id: '${ interaction.guildId }' - ModalSubmitInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
@@ -120,7 +120,7 @@ async function handleModalSubmit( client: Client, interaction: ModalSubmitIntera
     await getCallback( interaction );
 }
 
-async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction | SelectMenuInteraction ) {
+async function handleUserSelectMenuInteraction( client: Client, interaction: UserSelectMenuInteraction<"cached"> | SelectMenuInteraction<"cached"> ) {
     globalLogger.log( handleUserSelectMenuInteraction,
         `Guild Id: '${ interaction.guildId } - UserSelectMenuInteraction | SelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );
@@ -128,7 +128,7 @@ async function handleUserSelectMenuInteraction( client: Client, interaction: Use
     await getCallback( interaction );
 }
 
-async function handleRoleSelectMenuInteraction( client: Client, interaction: RoleSelectMenuInteraction ) {
+async function handleRoleSelectMenuInteraction( client: Client, interaction: RoleSelectMenuInteraction<"cached"> ) {
     globalLogger.log( handleRoleSelectMenuInteraction,
         `Guild Id: '${ interaction.guildId } - RoleSelectMenuInteraction id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
     );

@@ -8,7 +8,7 @@ if ( ! logType ) {
 }
 
 function extractLog( log ) {
-	const originalDateTime = log.match( /\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/ )?.[ 0 ];
+	const originalDateTime = log.match( /\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}]/ )?.[ 0 ];
 
 	if ( ! originalDateTime ) {
 		return null;

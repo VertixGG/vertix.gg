@@ -1,3 +1,5 @@
+import * as util from "util";
+
 import process from "process";
 
 import { PrismaClient } from "@prisma/client";
@@ -8,14 +10,12 @@ import ObjectBase from "../bases/object-base";
 
 import Logger from "@internal/modules/logger";
 
-export default class PrismaInstance extends ObjectBase {
+export class PrismaInstance extends ObjectBase {
     private static instance: PrismaInstance;
 
     private logger: Logger;
 
     private client: PrismaClient;
-
-    private connectPromise: Promise<void>;
 
     public static getName() {
         return "Prisma/PrismaInstance";
@@ -31,12 +31,6 @@ export default class PrismaInstance extends ObjectBase {
 
     public static get $() {
         return PrismaInstance.getInstance();
-    }
-
-    public static getConnectPromise(): Promise<void> {
-        const prisma = ( this as typeof PrismaInstance ).$;
-
-        return prisma.connectPromise;
     }
 
     public static getClient(): PrismaClient {
@@ -73,14 +67,13 @@ export default class PrismaInstance extends ObjectBase {
             this.client.$on( "error", this.onError.bind( this ) ); // @ts-ignore
             this.client.$on( "query", this.onQuery.bind( this ) );
         }
+    }
 
+    public async connect() {
         this.logger.log( "constructor", "Connecting to database..." );
 
-        this.connectPromise = this.client.$connect();
-
-        this.connectPromise.catch( ( error ) => {
-            this.logger.error( "constructor", error );
-            process.exit( 1 );
+        return this.client.$connect().catch( ( error ) => {
+            this.logger.error( "constructor", "Failed to connect to database", error );
         } );
     }
 
@@ -93,7 +86,7 @@ export default class PrismaInstance extends ObjectBase {
     }
 
     private async onQuery( data: any ) {
-        this.logger.log( this.onQuery, data.query );
+        this.logger.log( this.onQuery, util.inspect( data, false, null, true ) );
     }
 
     private async onWarn( message: any ) {

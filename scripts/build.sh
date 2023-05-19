@@ -15,7 +15,7 @@ cp ./prisma/schema.prisma dist/prisma/schema.prisma
 # Check if the argument for updating the package version is provided
 if [[ "$1" == "--update-package-version" ]]; then
   # Run `update-package-version.sh` to update the package version
-  bash ./scripts/update-package-version.sh
+  ./scripts/update-package-version.sh
 fi
 
 # Copy package.json to dist folder

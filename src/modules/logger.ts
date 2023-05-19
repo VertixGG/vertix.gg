@@ -31,7 +31,7 @@ export default class Logger extends ObjectBase {
 
         this.owner = owner;
 
-        if ( process.env.DISABLE_LOGGER ) {
+        if ( process.env.DISABLE_LOGGER && "true" === process.env.DISABLE_LOGGER ) {
             this.log = () => {};
             this.info = () => {};
             this.debug = () => {};

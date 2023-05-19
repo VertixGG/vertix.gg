@@ -1,11 +1,9 @@
 import { Prisma } from "@prisma/client";
 
-import ModelBase from "@internal/bases/model-base";
+import { ModelBase } from "@internal/bases/model-base";
 
 export class CategoryModel extends ModelBase {
     private static instance: CategoryModel;
-
-    private model: Prisma.CategoryDelegate<Prisma.RejectPerOperation>;
 
     public static getName(): string {
         return "Dynamico/Models/Category";
@@ -23,14 +21,8 @@ export class CategoryModel extends ModelBase {
         return CategoryModel.getInstance();
     }
 
-    public constructor() {
-        super();
-
-        this.model = this.prisma.category;
-    }
-
     public async create( args: Prisma.CategoryCreateArgs ) {
-        return this.model.create( args );
+        return this.prisma.category.create( args );
     }
 
     public async delete( guildId: string, guildCategoryId?: string | null ) {
@@ -40,7 +32,7 @@ export class CategoryModel extends ModelBase {
             where.categoryId = guildCategoryId;
         }
 
-        return this.model.deleteMany( { where } );
+        return this.prisma.category.deleteMany( { where } );
     }
 }
 

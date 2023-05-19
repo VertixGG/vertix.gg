@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 
 import { ModelDataBase } from "@dynamico/bases/model-data-base";
 
-import PrismaInstance from "@internal/prisma";
+import { PrismaInstance } from "@internal/prisma";
 
 const client = PrismaInstance.getClient();
 

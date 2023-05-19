@@ -2,7 +2,7 @@ import Debugger from "@internal/modules/debugger";
 
 import InitializeBase from "@internal/bases/initialize-base";
 
-export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
+export abstract class CacheBase<CacheResult> extends InitializeBase {
     private cache: Map<string, CacheResult>;
 
     private cacheDebugger: Debugger;
@@ -16,7 +16,7 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
     }
 
     protected getCache( key: string ) {
-        this.logger.log( this.getCache, `Getting cache for key: '${ key }'` );
+        this.cacheDebugger.log( this.getCache, `Getting cache for key: '${ key }'` );
 
         const result = this.cache.get( key );
 
@@ -28,8 +28,12 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
         return result;
     }
 
+    protected getMap() {
+        return this.cache;
+    }
+
     protected setCache( key: string, value: CacheResult ): void {
-        this.logger.log( this.setCache, `Setting cache for key: '${ key }'` );
+        this.cacheDebugger.log( this.setCache, `Setting cache for key: '${ key }'` );
 
         this.cacheDebugger.dumpDown( this.setCache, value );
 
@@ -37,13 +41,13 @@ export abstract class ManagerCacheBase<CacheResult> extends InitializeBase {
     }
 
     protected deleteCache( key: string ): boolean {
-        this.logger.log( this.deleteCache, `Deleting cache for key: '${ key }'` );
+        this.cacheDebugger.log( this.deleteCache, `Deleting cache for key: '${ key }'` );
 
         return this.cache.delete( key );
     }
 
     protected deleteCacheWithPrefix( prefix: string ): void {
-        this.logger.log( this.deleteCacheWithPrefix, `Deleting cache prefix: '${ prefix }'` );
+        this.cacheDebugger.log( this.deleteCacheWithPrefix, `Deleting cache prefix: '${ prefix }'` );
 
         for ( const key of this.cache.keys() ) {
             if ( key.startsWith( prefix ) ) {

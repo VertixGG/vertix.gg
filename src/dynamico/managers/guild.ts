@@ -1,23 +1,17 @@
 import { AuditLogEvent, ChannelType, Client, Guild } from "discord.js";
 
-import { Prisma } from ".prisma/client";
-
 import { GuildModel } from "../models/guild";
 
-import { DynamicoManager } from "@dynamico/managers/dynamico";
 import { TopGGManager } from "@dynamico/managers/top-gg";
 import { DirectMessageManager } from "@dynamico/managers/direct-message";
 import { MasterChannelManager } from "@dynamico/managers/master-channel";
 import { GUIManager } from "@dynamico/managers/gui";
 
-import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
-
-import GuildDelegate = Prisma.GuildDelegate;
-import RejectPerOperation = Prisma.RejectPerOperation;
+import { InitializeBase } from "@internal/bases/initialize-base";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 5; // 5 minutes.
 
-export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperation>> {
+export class GuildManager extends InitializeBase {
     private static instance: GuildManager;
 
     private guildModel: GuildModel;
@@ -40,8 +34,8 @@ export class GuildManager extends ManagerCacheBase<GuildDelegate<RejectPerOperat
         return GuildManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = DynamicoManager.isDebugOn( "CACHE", GuildManager.getName() ) ) {
-        super( shouldDebugCache );
+    public constructor() {
+        super();
 
         this.guildModel = GuildModel.getInstance();
 

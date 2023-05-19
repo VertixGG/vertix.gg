@@ -37,12 +37,12 @@ export interface IUIGroupAttitude {
 export type UIBaseInteractionTypes = Interaction | CommandInteraction | DMChannel | NonThreadGuildBasedChannel;
 
 export type UIInteractionTypes =
-    | ButtonInteraction
-    | SelectMenuInteraction
-    | UserSelectMenuInteraction
-    | RoleSelectMenuInteraction
-    | StringSelectMenuInteraction
-    | ModalSubmitInteraction
+    | ButtonInteraction<"cached">
+    | SelectMenuInteraction<"cached">
+    | UserSelectMenuInteraction<"cached">
+    | RoleSelectMenuInteraction<"cached">
+    | StringSelectMenuInteraction<"cached">
+    | ModalSubmitInteraction<"cached">
 
 export type UICustomIdContextTypes = ButtonBuilder | StringSelectMenuBuilder | UserSelectMenuBuilder | RoleSelectMenuBuilder | TextInputBuilder | ModalBuilder;
 

@@ -1,12 +1,14 @@
-import { ChannelType, EmbedBuilder } from "discord.js";
-
-import { MasterChannelManager } from "@dynamico/managers/master-channel";
-import { PermissionsManager } from "@dynamico/managers/permissions";
-import { ChannelManager } from "@dynamico/managers/channel";
-
-import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
+import { ChannelType, EmbedBuilder, MessageComponentInteraction } from "discord.js";
 
 import { UIInteractionTypes } from "@dynamico/ui/_base/ui-interfaces";
+
+import { PermissionsManager } from "@dynamico/managers/permissions";
+import { ChannelManager } from "@dynamico/managers/channel";
+import { GUIManager } from "@dynamico/managers/gui";
+
+import { ChannelModel } from "@dynamico/models";
+
+import { DYNAMICO_DEFAULT_COLOR_ORANGE_RED } from "@dynamico/constants/dynamico";
 
 import GlobalLogger from "@dynamico/global-logger";
 
@@ -22,14 +24,17 @@ export default async function authMiddleware( interaction: UIInteractionTypes ) 
 
     // Only the channel owner can pass the middleware
     if ( ChannelType.GuildVoice === interaction.channel.type ) {
-        const master = await MasterChannelManager.$.getByDynamicChannel( interaction, true );
+        const master = await ChannelManager.$
+            .getMasterChannelByDynamicChannelId( interaction.channelId as string );
 
         if ( ! master ) {
+            await GUIManager.$.get( "Dynamico/UI/NotifyMasterChannelNotExist" )
+                .sendReply( interaction as MessageComponentInteraction, {} );
+
             return false;
         }
 
-        const dynamicChannelDB = await ChannelManager.$.getGuildChannelDB( interaction.guildId, interaction.channel.id, true );
-
+        const dynamicChannelDB = await ChannelModel.$.getByChannelId( interaction.channel.id );
         if ( dynamicChannelDB?.userOwnerId === interaction.user.id ) {
             return true;
         }

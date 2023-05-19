@@ -19,6 +19,7 @@ import { gToken } from "@dynamico/login";
 
 import { uiUtilsWrapAsTemplate } from "@dynamico/ui/_base/ui-utils";
 
+import { ChannelManager } from "@dynamico/managers/channel";
 import { MasterChannelManager } from "@dynamico/managers/master-channel";
 import { GUIManager } from "@dynamico/managers/gui";
 import { DynamicChannelManager } from "@dynamico/managers/dynamic-channel";
@@ -128,7 +129,7 @@ export default class EditPermissions extends UIElement {
     }
 
     private async resetChannel( interaction: Interaction ) {
-        if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() ) {
+        if ( interaction.channel?.type === ChannelType.GuildVoice && interaction.isButton() && interaction.guildId ) {
             // Check if user voted.
             EditPermissions.dedicatedLogger.admin( this.resetChannel,
                 `👑 Reset Channel button has been clicked - "${ interaction.channel.name }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
@@ -143,7 +144,8 @@ export default class EditPermissions extends UIElement {
             }
 
             // Find master channel.
-            const master = await MasterChannelManager.$.getChannelAndDBbyDynamicChannel( interaction, true );
+            const master = await ChannelManager.$
+                .getMasterChannelAndDBbyDynamicChannelId( interaction.channelId );
 
             if ( ! master ) {
                 EditPermissions.dedicatedLogger.error( this.resetChannel,

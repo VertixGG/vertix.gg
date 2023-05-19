@@ -6,12 +6,12 @@ import { Api } from "@top-gg/sdk";
 
 import { DynamicoManager } from "@dynamico/managers/dynamico";
 
-import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
+import { CacheBase } from "@internal/bases/cache-base";
 
 const TOP_GG_WORKER_INTERVAL = 1000 * 60 * 30, // 30 minutes
     TOP_GG_VOTE_INTERVAL = 1000 * 60 * 60 * 12; // 12 hours
 
-export class TopGGManager extends ManagerCacheBase<Date> {
+export class TopGGManager extends CacheBase<Date> {
     private static instance: TopGGManager;
 
     private api!: Api;

@@ -9,9 +9,11 @@ import {
 
 import Debugger from "@internal/modules/debugger";
 
-import { ManagerCacheBase } from "@internal/bases/manager-cache-base";
+import { CacheBase } from "@internal/bases/cache-base";
 
-export abstract class ManagerDataBase<ModelType extends IDataModel> extends ManagerCacheBase<DataResult> implements IDataManager {
+export abstract class ManagerDataBase<
+    ModelType extends IDataModel
+> extends CacheBase<DataResult> implements IDataManager {
     private debugger: Debugger;
 
     private dataSourceModel: ModelType;

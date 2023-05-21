@@ -76,21 +76,20 @@ export class GuildManager extends InitializeBase {
                 return;
             }
 
+            const message = await GUIManager.$.get( "Dynamico/UI/StarterComponent" )
+                .getMessage( defaultChannel, {
+                    userId: user.id,
+                } );
+
             // Mention the user.
             await defaultChannel.send( {
+                ... message,
                 content: `<@${ user.id }>`,
             } ).catch( ( e ) => {
                 this.logger.warn( this.onJoin, "", e );
 
                 return;
             } );
-
-            const message = await GUIManager.$.get( "Dynamico/UI/StarterComponent" )
-                .getMessage( defaultChannel, {
-                    userId: user.id,
-                } );
-
-            await defaultChannel.send( message );
         }
 
         this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );

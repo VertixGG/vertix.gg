@@ -254,6 +254,28 @@ export class DynamicChannelManager extends InitializeBase {
         return dynamic;
     }
 
+    public async createPrimaryMessage( channel: VoiceChannel, channelDB: ChannelResult ) {
+        this.logger.log( this.createPrimaryMessage,
+            `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - ` +
+            `Creating primary message for owner id: '${ channelDB.userOwnerId }'`
+        );
+
+        const message = await GUIManager.$
+            .get( "Dynamico/UI/EditDynamicChannel" )
+            .getMessage( channel );
+
+        message.content = "<@" + channelDB.userOwnerId + ">";
+
+        const messageCreated = await channel.send( message );
+
+        // TODO: Constant 'primaryMessageId'.
+        if ( messageCreated ) {
+            await ChannelDataManager.$.setSettingsData( channelDB.id, { primaryMessageId: messageCreated?.id } );
+        }
+
+        return messageCreated;
+    }
+
     public async editChannelOwner( newOwnerId: string, previousOwnerId: string, channel: VoiceChannel ) {
         if ( ! newOwnerId || ! previousOwnerId ) {
             this.logger.error( this.editChannelOwner,

@@ -166,6 +166,38 @@ export class DynamicChannelManager extends InitializeBase {
         return allowed;
     }
 
+    public async getPrimaryMessage( channel: VoiceChannel ) {
+        let source = "cache";
+
+        let message;
+
+        message = channel.messages.cache.at( 0 );
+
+        if ( ! this.isPrimaryMessage( message ) ) {
+            const channelDB = await ChannelModel.$.getByChannelId( channel.id );
+
+            if ( channelDB ) {
+                // ChannelDataManager.$.getSettingProperty( channelDB.id, "primaryMessageId" );
+                const result = await ChannelDataManager.$.getSettingsData( channelDB.id, null, true );
+
+                if ( result?.object?.primaryMessageId ) {
+                    message = channel.messages.cache.get( result.object.primaryMessageId );
+
+                    if ( ! this.isPrimaryMessage( message ) ) {
+                        source = "fetch";
+                        message = await channel.messages.fetch( result.object.primaryMessageId );
+                    }
+                }
+
+                this.logger.debug( this.getPrimaryMessage,
+                    `Guild id: '${ channel.guildId }' - Fetching primary message for channel id: '${ channel.id }' source: '${ source }'`
+                );
+            }
+        }
+
+        return message;
+    }
+
     public async createDynamicChannel( args: IMasterChannelCreateDynamicArgs ) {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,

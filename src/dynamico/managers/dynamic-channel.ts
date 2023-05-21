@@ -23,7 +23,7 @@ import { DEFAULT_DYNAMIC_CHANNEL_USER_TEMPLATE } from "@dynamico/constants/dynam
 
 import { IChannelLeaveGenericArgs } from "@dynamico/interfaces/channel";
 
-import { ChannelModel } from "@dynamico/models/channel";
+import { ChannelModel, ChannelResult } from "@dynamico/models/channel";
 
 import { ChannelManager } from "@dynamico/managers/channel";
 import { ChannelDataManager } from "@dynamico/managers/channel-data";

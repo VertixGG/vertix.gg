@@ -326,79 +326,6 @@ export class DynamicChannelManager extends InitializeBase {
         await DynamicChannelManager.$.editPrimaryMessageDebounce( newMessage, channel );
     }
 
-    public async getPrimaryMessage( channel: VoiceChannel ) {
-        let source = "cache";
-
-        let message;
-
-        message = channel.messages.cache.at( 0 );
-
-        if ( ! this.isPrimaryMessage( message ) ) {
-            const channelDB = await ChannelModel.$.getByChannelId( channel.id );
-
-            if ( channelDB ) {
-                // ChannelDataManager.$.getSettingProperty( channelDB.id, "primaryMessageId" );
-                const result = await ChannelDataManager.$.getSettingsData( channelDB.id, null, true );
-
-                if ( result?.object?.primaryMessageId ) {
-                    message = channel.messages.cache.get( result.object.primaryMessageId );
-
-                    if ( ! this.isPrimaryMessage( message ) ) {
-                        source = "fetch";
-                        message = await channel.messages.fetch( result.object.primaryMessageId );
-                    }
-                }
-
-                this.logger.debug( this.getPrimaryMessage,
-                    `Guild id: '${ channel.guildId }' - Fetching primary message for channel id: '${ channel.id }' source: '${ source }'`
-                );
-            }
-        }
-
-        return message;
-    }
-
-    public async setPrimaryMessageState( channel: VoiceChannel, state: boolean ) {
-        this.logger.log( this.setPrimaryMessageState,
-            `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - ` +
-            `Disabling primary message request, channel: '${ channel.name }, state: '${ state }'`
-        );
-
-        const message = await this.getPrimaryMessage( channel );
-
-        if ( ! message || ! this.isPrimaryMessage( message ) ) {
-            this.logger.warn( this.setPrimaryMessageState,
-                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
-            return;
-        }
-
-        // Loop over components and disable them.
-        const components = message.components,
-            newComponents = [];
-
-        for ( const component of components ) {
-            const newRow = new ActionRowBuilder<MessageActionRowComponentBuilder>();
-
-            for ( const messageComponent of component.components ) {
-                if ( ComponentType.Button === messageComponent.type ) {
-                    newRow.addComponents( new ButtonBuilder( { ... messageComponent.toJSON(), disabled: ! state } ) );
-                }
-            }
-
-            newComponents.push( newRow );
-        }
-
-        const newMessage: MessageEditOptions = {
-            components: newComponents,
-        };
-
-        await message.edit( newMessage )
-            .catch( ( e: any ) => this.logger.warn( this.editPrimaryMessage, "", e ) )
-            .then( () => this.logger.info( this.editPrimaryMessage,
-                `Guild id: '${ channel.guildId }' channel id: '${ channel.id }' - Editing primary message with id: '${ message.id }' succeeded`
-            ) );
-    }
-
     public async editPrimaryMessage( newMessage: MessageEditOptions, channel: VoiceChannel ) {
         this.logger.log( this.editPrimaryMessage,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Editing primary message request, channel: '${ channel.name }'`
@@ -459,6 +386,47 @@ export class DynamicChannelManager extends InitializeBase {
         timeoutId = setTimeout( callback, delay );
 
         this.editMessageDebounceMap.set( key, timeoutId );
+    }
+
+    public async setPrimaryMessageState( channel: VoiceChannel, state: boolean ) {
+        this.logger.log( this.setPrimaryMessageState,
+            `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - ` +
+            `Disabling primary message request, channel: '${ channel.name }, state: '${ state }'`
+        );
+
+        const message = await this.getPrimaryMessage( channel );
+
+        if ( ! message || ! this.isPrimaryMessage( message ) ) {
+            this.logger.warn( this.setPrimaryMessageState,
+                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
+            return;
+        }
+
+        // Loop over components and disable them.
+        const components = message.components,
+            newComponents = [];
+
+        for ( const component of components ) {
+            const newRow = new ActionRowBuilder<MessageActionRowComponentBuilder>();
+
+            for ( const messageComponent of component.components ) {
+                if ( ComponentType.Button === messageComponent.data.type ) {
+                    newRow.addComponents( new ButtonBuilder( { ... messageComponent.toJSON(), disabled: ! state } ) );
+                }
+            }
+
+            newComponents.push( newRow );
+        }
+
+        const newMessage: MessageEditOptions = {
+            components: newComponents,
+        };
+
+        await message.edit( newMessage )
+            .catch( ( e: any ) => this.logger.warn( this.editPrimaryMessage, "", e ) )
+            .then( () => this.logger.info( this.editPrimaryMessage,
+                `Guild id: '${ channel.guildId }' channel id: '${ channel.id }' - Editing primary message with id: '${ message.id }' succeeded`
+            ) );
     }
 
     public isPrimaryMessage( message: Message<true> | undefined ) {

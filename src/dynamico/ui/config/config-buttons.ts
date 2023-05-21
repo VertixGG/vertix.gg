@@ -25,7 +25,6 @@ import {
 
 import { GUIManager } from "@dynamico/managers/gui";
 import { MasterChannelManager } from "@dynamico/managers/master-channel";
-import { ChannelDataManager } from "@dynamico/managers/channel-data";
 
 import { ChannelModel } from "@dynamico/models";
 
@@ -117,7 +116,7 @@ export class ConfigButtons extends UIElement {
             previousName = await MasterChannelManager.$.getChannelNameTemplate( masterChannelId ),
             newName = args.channelNameTemplate || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME;
 
-        await ChannelDataManager.$.setSettingsData( masterChannelId, { dynamicChannelNameTemplate: newName } );
+        await MasterChannelManager.$.setChannelNameTemplate( masterChannelId, newName );
 
         ConfigButtons.dedicatedLogger.admin( this.onNameModified,
             `🔧 Dynamic Channels Name has been modified - "${ previousName }" -> "${ newName }" (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`

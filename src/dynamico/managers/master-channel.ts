@@ -20,6 +20,7 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
+    DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS_KEY_CHANNEL_TEMPLATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
     DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
 } from "@dynamico/constants/master-channel";
@@ -280,7 +281,7 @@ export class MasterChannelManager extends InitializeBase {
 
     public async getChannelNameTemplate( ownerId: string, returnDefault?: boolean ) {
         const result = await ChannelDataManager.$.getSettingsData( ownerId, DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS, true ),
-            name = result?.object?.dynamicChannelNameTemplate;
+            name = result?.object?.[ DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS_KEY_CHANNEL_TEMPLATE_NAME ];
 
         this.debugger.log( this.getChannelNameTemplate,
             `ownerId: '${ ownerId }' name: '${ name }'`
@@ -370,6 +371,16 @@ export class MasterChannelManager extends InitializeBase {
         return await ChannelModel.$.getTypeCount( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
     }
 
+    public async setChannelNameTemplate( ownerId: string, newName: string ) {
+        this.logger.log( this.setChannelNameTemplate,
+            `Master channel id: '${ ownerId }' - Setting channel name template: '${ newName }'`
+        );
+
+        await ChannelDataManager.$.setSettingsData( ownerId, {
+            [ DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS_KEY_CHANNEL_TEMPLATE_NAME ]: newName
+        } );
+    }
+
     /**
      * Function createMasterChannel() :: Creates channel master of create.
      */
@@ -401,9 +412,10 @@ export class MasterChannelManager extends InitializeBase {
 
         // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
 
-        await ChannelDataManager.$.setSettingsData( result.db.id, {
-            dynamicChannelNameTemplate: args.dynamicChannelNameTemplate || DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME,
-        } );
+        const newName = args[ DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS_KEY_CHANNEL_TEMPLATE_NAME ] ||
+            DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_TEMPLATE_NAME;
+
+        await MasterChannelManager.$.setChannelNameTemplate( result.db.id, newName );
 
         await guildSetBadwords( guild, args.badwords );
 

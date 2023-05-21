@@ -46,8 +46,7 @@ export abstract class ManagerDataBase<
         }
 
         // Get from database.
-        const dbData = await this.dataSourceModel.getData( args ).catch( () => {
-        } );
+        const dbData = await this.dataSourceModel.getData( args ).catch( () => {} );
 
         if ( ! dbData ) {
             this.logger.debug( this.getData,
@@ -203,6 +202,9 @@ export abstract class ManagerDataBase<
      */
     protected abstract getDataSourceModel(): ModelType;
 
+    /**
+     * Function getSettingsKey() :: is used to determine the settings key, it used as default key to store settings data.
+     */
     protected abstract getSettingsKey(): string;
 
     private async normalizeArgs( args: any, isOwnerIdSourceId: boolean ) {

@@ -1,6 +1,6 @@
-import Debugger from "@internal/modules/debugger";
+import { Debugger } from "@internal/modules/debugger";
 
-import InitializeBase from "@internal/bases/initialize-base";
+import { InitializeBase } from "@internal/bases/initialize-base";
 
 export abstract class CacheBase<CacheResult> extends InitializeBase {
     private cache: Map<string, CacheResult>;

@@ -102,3 +102,125 @@ model GuildData {
 
   @@unique([ownerId, key])
 }
+
+// Language.
+type Language {
+  name String
+  code String
+}
+
+// Elements language.
+
+type ElementButtonContent {
+  label   String
+  options Json?
+}
+
+model ElementButtonLanguage {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ElementButtonContent
+  // ---
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+// Elements inputs language.
+
+type ElementTextInputContentLanguage {
+  label       String
+  placeholder String?
+  value       String?
+}
+
+model ElementTextInputLanguage {
+  id        String                          @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ElementTextInputContentLanguage
+  // ---
+  createdAt DateTime                        @default(now())
+  updatedAt DateTime                        @updatedAt
+}
+
+// Element select menus language.
+
+type ElementSelectMenuOptionsLanguage {
+  label String
+  value String
+}
+
+type ElementSelectMenuLanguageContent {
+  placeholder String?
+
+  selectOptions ElementSelectMenuOptionsLanguage[]
+}
+
+model ElementSelectMenuLanguage {
+  id        String                           @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ElementSelectMenuLanguageContent
+  // ---
+  createdAt DateTime                         @default(now())
+  updatedAt DateTime                         @updatedAt
+}
+
+// Embeds Language.
+
+type EmbedContentLanguage {
+  title        String?
+  description  String?
+  options      Json?
+  arrayOptions Json?
+}
+
+model EmbedLanguage {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   EmbedContentLanguage
+  // ---
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+// Markdowns Language.
+
+type MarkdownContentLanguage {
+  content String
+  options Json?
+}
+
+model MarkdownLanguage {
+  id        String                  @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   MarkdownContentLanguage
+  // ---
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
+}
+
+// Modals Language.
+
+type ModalContentLanguage {
+  title String
+}
+
+model ModalLanguage {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ModalContentLanguage
+  // ---
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}

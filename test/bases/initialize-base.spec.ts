@@ -14,6 +14,7 @@ class MockInitializeBase extends InitializeBase {
     }
 }
 
+// TODO: Full name.
 describe( "InitializeBase", () => {
     describe( "debounce()", () => {
         let object: MockInitializeBase;

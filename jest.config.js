@@ -12,7 +12,7 @@ module.exports = {
 
 	moduleNameMapper: {
 		"^@internal/(.*)": "<rootDir>/src/$1",
-		"^@dynamico/(.*)": "<rootDir>/src/dynamico/$1",
+		"^@vertix/(.*)": "<rootDir>/src/vertix/$1",
 	},
 
 	logHeapUsage: true,

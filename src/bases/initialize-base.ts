@@ -28,5 +28,3 @@ export abstract class InitializeBase extends ObjectBase {
         };
     }
 }
-
-export default InitializeBase;

@@ -18,6 +18,9 @@ if [[ "$1" == "--update-package-version" ]]; then
   ./scripts/update-package-version.sh
 fi
 
+# copy `assets` folder to `dist`
+cp -r ./assets ./dist/assets
+
 # Copy package.json to dist folder
 cp ./package.json dist/package.json
 
@@ -40,7 +43,7 @@ tsup-node src/index.ts
 terser dist/index.js --comments false -o dist/index.min.js
 
 # Remove old executable
-rm -f dist/dynamico-bot
+rm -f dist/vertix-bot
 
 # Create executable
 pkg . -C GZip

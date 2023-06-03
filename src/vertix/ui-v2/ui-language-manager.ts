@@ -1,0 +1,791 @@
+import fs from "fs";
+import path from "path";
+
+import { ComponentType } from "discord.js";
+
+import {
+    UI_ELEMENTS_DEPTH,
+    UI_LANGUAGES_FILE_EXTENSION,
+    UI_LANGUAGES_INITIAL_ATTRIBUTES,
+    UI_LANGUAGES_INITIAL_CODE,
+    UI_LANGUAGES_INITIAL_FILE_NAME,
+    UI_LANGUAGES_INITIAL_FILE_PATH,
+    UI_LANGUAGES_PATH,
+    UIComponentTypeConstructor,
+    UIElementButtonLanguage,
+    UIElementButtonLanguageContent,
+    UIElementSelectMenuLanguage,
+    UIElementSelectMenuLanguageContent,
+    UIElementTextInputLanguage,
+    UIElementTextInputLanguageContent,
+    UIEmbedConstructor,
+    UIEmbedLanguage,
+    UIEmbedLanguageContent,
+    UIEntityConstructor,
+    UIEntityTypes,
+    UILanguageJSON,
+    UIMarkdownConstructor,
+    UIMarkdownLanguage,
+    UIMarkdownLanguageContent,
+    UIModalConstructor,
+    UIModalLanguage,
+    UIModalLanguageContent,
+} from "@vertix/ui-v2/_base/ui-definitions";
+
+import { EmbedLanguageModel } from "@vertix/models/embed-language";
+
+import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
+import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
+import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
+import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
+import { UIModalBase } from "@vertix/ui-v2/_base/ui-modal-base";
+import { UIElementButtonBase } from "@vertix/ui-v2/_base/elements/ui-element-button-base";
+import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-string-select-menu";
+import { UnknownElementTypeError } from "@vertix/ui-v2/_base/errors/unknown-element-type-error";
+
+import { ElementButtonLanguageModel } from "@vertix/models/element-button-language";
+import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-menu-language";
+
+import { LanguageUtils } from "@vertix/utils/language";
+
+import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";
+import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language";
+import { UIMarkdownBase } from "@vertix/ui-v2/_base/ui-markdown-base";
+import { MarkdownLanguageModel } from "@vertix/models/markdown-language";
+import { ModalLanguageModel } from "@vertix/models/modal-language-model";
+
+import { UIElementUserSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-user-select-menu";
+
+import { InitializeBase } from "@internal/bases/initialize-base";
+
+interface UILanguageManagerValidateOptions {
+    skipSameValues?: boolean;
+}
+
+// TODO: Reduce repeated code.
+export class UILanguageManager extends InitializeBase {
+    private static instance: UILanguageManager;
+
+    private uiAdditionalLanguages = new Map<string, UILanguageJSON>;
+
+    private uiInitialLanguage!: UILanguageJSON;
+
+    public static getName() {
+        return "Vertix/UI-V2/LanguageManager";
+    }
+
+    public static getInstance() {
+        if ( ! UILanguageManager.instance ) {
+            UILanguageManager.instance = new UILanguageManager();
+        }
+
+        return UILanguageManager.instance;
+    }
+
+    public static get $() {
+        return UILanguageManager.getInstance();
+    }
+
+    public getAdditionalLanguages() {
+        return this.uiAdditionalLanguages;
+    }
+
+    public getInitialLanguage() {
+        return this.uiInitialLanguage;
+    }
+
+    public async getButtonTranslatedContent( button: UIElementButtonBase, languageCode: string | undefined ): Promise<UIElementButtonLanguageContent> {
+        if ( ! languageCode || "en" === languageCode ) {
+            return button.getTranslatableContent();
+        }
+
+        const buttonLanguage = await ElementButtonLanguageModel.$.get( button.getName(), languageCode );
+
+        if ( ! buttonLanguage ) {
+            this.logger.error( this.getButtonTranslatedContent,
+                `Button language not found: '${ button.getName() }' - Language: '${ languageCode }'`
+            );
+            return button.getTranslatableContent();
+        }
+
+        return {
+            label: buttonLanguage.content.label,
+            options: buttonLanguage.content.options as any, // TODO: Not well.
+        };
+    }
+
+    public async getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu, languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
+        if ( ! languageCode || "en" === languageCode ) {
+            return selectMenu.getTranslatableContent();
+        }
+
+        const selectMenuLanguage = await ElementSelectMenuLanguageModel.$.get( selectMenu.getName(), languageCode );
+
+        if ( ! selectMenuLanguage ) {
+            this.logger.error( this.getSelectMenuTranslatedContent,
+                `Select menu language not found: '${ selectMenu.getName() }' - Language: '${ languageCode }'`
+            );
+            return selectMenu.getTranslatableContent();
+        }
+
+        return {
+            placeholder: selectMenuLanguage.content.placeholder || undefined,
+            selectOptions: selectMenuLanguage.content.selectOptions as any,
+        };
+    }
+
+    public async getTextInputTranslatedContent( textInput: UIElementInputBase, languageCode: string | undefined ): Promise<UIElementTextInputLanguageContent> {
+        if ( ! languageCode || "en" === languageCode ) {
+            return textInput.getTranslatableContent();
+        }
+
+        const textInputLanguage = await ElementTextInputLanguageModel.$.get( textInput.getName(), languageCode );
+
+        if ( ! textInputLanguage ) {
+            this.logger.error( this.getTextInputTranslatedContent,
+                `Text input language not found: '${ textInput.getName() }' - Language: '${ languageCode }'`
+            );
+            return textInput.getTranslatableContent();
+        }
+
+        return {
+            label: textInputLanguage.content.label,
+            placeholder: textInputLanguage.content.placeholder || undefined,
+            value: textInputLanguage.content.value || undefined,
+        };
+    }
+
+    public async getEmbedTranslatedContent( embed: UIEmbedBase, languageCode: string | undefined ): Promise<UIEmbedLanguageContent> {
+        if ( ! languageCode || "en" === languageCode ) {
+            return embed.getTranslatableContent();
+        }
+
+        const embedLanguage = await EmbedLanguageModel.$.get( embed.getName(), languageCode );
+
+        if ( ! embedLanguage ) {
+            this.logger.error( this.getEmbedTranslatedContent,
+                `Embed language not found: '${ embed.getName() }' - Language: '${ languageCode }'`
+            );
+            return embed.getTranslatableContent();
+        }
+
+        return {
+            title: embedLanguage.content.title || undefined,
+            description: embedLanguage.content.description || undefined,
+            options: embedLanguage.content.options as any,
+            arrayOptions: embedLanguage.content.arrayOptions as any,
+        };
+    }
+
+    public async getMarkdownTranslatedContent( markdown: UIMarkdownBase, languageCode: string | undefined ): Promise<UIMarkdownLanguageContent> {
+        if ( ! languageCode || "en" === languageCode ) {
+            return markdown.getTranslatableContent();
+        }
+
+        const markdownLanguage = await MarkdownLanguageModel.$.get( markdown.getName(), languageCode );
+
+        if ( ! markdownLanguage ) {
+            this.logger.error( this.getMarkdownTranslatedContent,
+                `Markdown language not found: '${ markdown.getName() }' - Language: '${ languageCode }'`
+            );
+            return markdown.getTranslatableContent();
+        }
+
+        return {
+            content: markdownLanguage.content.content,
+            options: markdownLanguage.content.options as any,
+        };
+    }
+
+    public async getModalTranslatedContent( modal: UIModalBase, languageCode: string | undefined ): Promise<UIModalLanguageContent> {
+        if ( ! languageCode || "en" === languageCode ) {
+            return modal.getTranslatableContent();
+        }
+
+        const modalLanguage = await ModalLanguageModel.$.get( modal.getName(), languageCode );
+
+        if ( ! modalLanguage ) {
+            this.logger.error( this.getModalTranslatedContent,
+                `Modal language not found: '${ modal.getName() }' - Language: '${ languageCode }'`
+            );
+            return modal.getTranslatableContent();
+        }
+
+        return {
+            title: modalLanguage.content.title,
+        };
+    }
+
+    public async register() {
+        // Ensure initial language.
+        if ( fs.existsSync( UI_LANGUAGES_INITIAL_FILE_PATH ) ) {
+            this.logger.info( this.register, `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' exists, validating...` );
+
+            this.readInitialLanguage();
+
+            // Load language files.
+            if ( ! await this.validateAvailableLanguages() ) {
+                throw new Error( "Failed to load language files" );
+            }
+
+            // TODO: Use checksum + db checksum to avoid extra validations.
+
+            // In case it exist it should be validated against hardcoded entities.
+            const entitiesLanguage = await this.extractEntitiesLanguage();
+
+            this.validateLanguage( this.uiInitialLanguage, {
+                ...UI_LANGUAGES_INITIAL_ATTRIBUTES,
+
+                ...entitiesLanguage,
+            }, {
+                skipSameValues: true,
+            } );
+
+            return;
+        }
+
+        await this.ensureInitialLanguage();
+
+        // Load language files.
+        if ( ! await this.validateAvailableLanguages() ) {
+            throw new Error( "Failed to load language files" );
+        }
+
+        // Import
+        let promises: Promise<void>[] = [];
+        this.uiAdditionalLanguages.forEach( ( language ) => {
+            promises.push( LanguageUtils.$.import( language ) );
+        } );
+        await Promise.all( promises );
+    }
+
+    private async ensureInitialLanguage() {
+        this.logger.info( this.ensureInitialLanguage, `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' does not exists, creating...` );
+
+        LanguageUtils.$.export( {
+            ...UI_LANGUAGES_INITIAL_ATTRIBUTES,
+
+            ...await this.extractEntitiesLanguage()
+
+        }, UI_LANGUAGES_INITIAL_FILE_PATH );
+
+        // Read initial language file.
+        this.readInitialLanguage();
+
+        this.logger.info( this.ensureInitialLanguage, "Initial language code 'en' created." );
+    }
+
+    private async validateAvailableLanguages() {
+        // Load initial language file.
+        const initialLanguagePath = UI_LANGUAGES_INITIAL_FILE_PATH,
+            initialLanguageContent = fs.readFileSync( initialLanguagePath, "utf8" ),
+            initialLanguage = JSON.parse( initialLanguageContent ) as UILanguageJSON;
+
+        // Get all languages from `assets/embeds-*.json` files.
+        const directoryPath = UI_LANGUAGES_PATH,
+            files = fs.readdirSync( directoryPath ),
+            regexPattern = RegExp( UI_LANGUAGES_FILE_EXTENSION + "$" );
+
+        const availableLanguages: UILanguageJSON[] = [];
+
+        files.forEach( file => {
+            // Skip initial language file.
+            if ( UI_LANGUAGES_INITIAL_FILE_NAME === file ) {
+                return;
+            }
+
+            const filePath = path.join( directoryPath, file );
+
+            // Check if the file name matches the regex pattern.
+            if ( regexPattern.test( file ) ) {
+                // Validate the file content.
+                const content = fs.readFileSync( filePath, "utf-8" ),
+                    currentLanguage = JSON.parse( content ) as UILanguageJSON;
+
+                this.validateLanguage( currentLanguage, initialLanguage );
+
+                availableLanguages.push( currentLanguage );
+
+                this.uiAdditionalLanguages.set( currentLanguage.code, currentLanguage );
+            }
+        } );
+
+        return true;
+    }
+
+    private validateLanguage( currentLanguage: UILanguageJSON, sourceOfTruth: UILanguageJSON, options: UILanguageManagerValidateOptions = {} ) {
+        // Validate elements counts.
+        if ( sourceOfTruth.elements.buttons.length !== currentLanguage.elements.buttons.length ) {
+            throw new Error( `Language code: '${ currentLanguage.code }' has different buttons count - '${ sourceOfTruth.elements.buttons.length }' !== '${ currentLanguage.elements.buttons.length }'` );
+        }
+
+        if ( sourceOfTruth.elements.textInputs.length !== currentLanguage.elements.textInputs.length ) {
+            throw new Error( `Language code: '${ currentLanguage.code }' has different text inputs count - '${ sourceOfTruth.elements.textInputs.length }' !== '${ currentLanguage.elements.textInputs.length }'` );
+        }
+
+        if ( sourceOfTruth.elements.selectMenus.length !== currentLanguage.elements.selectMenus.length ) {
+            throw new Error( `Language code: '${ currentLanguage.code }' has different select menus count - '${ sourceOfTruth.elements.selectMenus.length }' !== '${ currentLanguage.elements.selectMenus.length }'` );
+        }
+
+        // Validate embeds counts.
+        if ( sourceOfTruth.embeds.length !== currentLanguage.embeds.length ) {
+            throw new Error( `Language code: '${ currentLanguage.code }' has different embeds count - '${ sourceOfTruth.embeds.length }' !== '${ currentLanguage.embeds.length }'` );
+        }
+
+        // Validate markdowns counts.
+        if ( sourceOfTruth.markdowns.length !== currentLanguage.markdowns.length ) {
+            throw new Error( `Language code: '${ currentLanguage.code }' has different markdowns count - '${ sourceOfTruth.markdowns.length }' !== '${ currentLanguage.markdowns.length }'` );
+        }
+
+        // Validate modals counts.
+        if ( sourceOfTruth.modals.length !== currentLanguage.modals.length ) {
+            throw new Error( `Language code: '${ currentLanguage.code }' has different modals count - '${ sourceOfTruth.modals.length }' !== '${ currentLanguage.modals.length }'` );
+        }
+
+        this.validateElementsLanguage( currentLanguage, sourceOfTruth, options );
+        this.validateEmbedsLanguage( currentLanguage, sourceOfTruth, options );
+        this.validateMarkdownsLanguage( currentLanguage, sourceOfTruth, options );
+        this.validateMarkdownsLanguage( currentLanguage, sourceOfTruth, options );
+        this.validateModalsLanguage( currentLanguage, sourceOfTruth, options );
+    }
+
+    private async extractEntitiesLanguage() {
+        const allComponents: UIComponentTypeConstructor[] = [];
+
+        ( UIAdapterManager.$.getAll() ).forEach( ( adapter ) => {
+            const AdapterType = adapter as typeof UIAdapterBase;
+
+            // Check if component is already exist.
+            if ( allComponents.find( ( c ) => c.getName() === AdapterType.getComponent().getName() ) ) {
+                this.logger.warn( this.ensureInitialLanguage,
+                    `Component with name: '${ AdapterType.getComponent().getName() }' already exists, skipping...`
+                );
+                return;
+            }
+
+            allComponents.push( AdapterType.getComponent() );
+        } );
+
+        // TODO: Create utils for handling entities, use them where possible.
+        const allEntities: ( UIEntityTypes & UIEntityConstructor ) = [];
+
+        allComponents.forEach( ( component ) => {
+            const entities = component.getEntities();
+
+            // Ensure entities not already exist.
+            entities.forEach( ( entity ) => {
+                if ( allEntities.find( ( e ) => e.getName() === entity.getName() ) ) {
+                    this.logger.warn( this.ensureInitialLanguage,
+                        `Entity with name: '${ entity.getName() }' already exists, skipping...`
+                    );
+                    return;
+                }
+
+                allEntities.push( entity );
+            } );
+        } );
+
+        // Filter all embeds from entities.
+        const allElements = allEntities.filter( ( entity ) => "element" === entity.getType() ),
+            allEmbeds = allEntities.filter( ( entity ) => "embed" === entity.getType() ),
+            allMarkdowns = allEntities.filter( ( entity ) => "markdown" === entity.getType() ),
+            allModals = allEntities.filter( ( entity ) => "modal" === entity.getType() ),
+            allModalsElements = allModals.map( ( modal ) =>
+                ( modal as any as typeof UIModalBase ).getInputElements()
+            );
+
+        const elementsLanguage = await this.extractElementsLanguage(
+                [ ...allElements, ...allModalsElements.flat( UI_ELEMENTS_DEPTH ) ] as any
+            ), embedsLanguage = await this.extractEmbedsLanguage( allEmbeds as any ),
+            markdownsLanguage = await this.extractMarkdownLanguage( allMarkdowns as any ),
+            modalsLanguage = await this.extractModalsLanguage( allModals as any );
+
+        return {
+            elements: elementsLanguage,
+            embeds: embedsLanguage,
+            markdowns: markdownsLanguage,
+            modals: modalsLanguage
+        }
+    }
+
+    private async extractElementsLanguage( elements: { new(): UIElementBase<any> }[] ) {
+        const buttons: UIElementButtonLanguage[] = [],
+            textInputs: UIElementTextInputLanguage[] = [],
+            selectMenus: UIElementSelectMenuLanguage[] = [];
+
+        for ( const Element of elements ) {
+            const element = new Element();
+
+            await element.build();
+
+            const schema = element.getSchema();
+
+            switch ( schema.attributes.type ) {
+                case ComponentType.Button:
+                    buttons.push( {
+                        name: element.getName(),
+                        content: await element.getTranslatableContent(),
+                    } );
+                    break;
+
+                case ComponentType.TextInput:
+                    const result: UIElementTextInputLanguage = {
+                        name: element.getName(),
+                        content: {
+                            label: schema.attributes.label
+                        }
+                    };
+
+                    if ( schema.attributes.placeholder ) {
+                        result.content.placeholder = schema.attributes.placeholder;
+                    }
+
+                    if ( schema.attributes.value ) {
+                        result.content.value = schema.attributes.value;
+                    }
+
+                    textInputs.push( result );
+                    break;
+
+                case ComponentType.SelectMenu:
+                case ComponentType.UserSelect:
+                    const selectMenuResult: UIElementSelectMenuLanguage = {
+                        name: element.getName(),
+
+                        content: {}
+                    };
+
+                    if ( schema.attributes.options?.length ) {
+                        selectMenuResult.content.selectOptions = schema.attributes.options.map( ( option: any ) => {
+                            return {
+                                label: option.label,
+                                value: option.value,
+                            };
+                        } );
+                    }
+
+                    if ( schema.attributes.placeholder ) {
+                        selectMenuResult.content.placeholder = schema.attributes.placeholder;
+                    }
+
+                    selectMenus.push( selectMenuResult );
+                    break;
+
+                default:
+                    throw new UnknownElementTypeError( schema );
+            }
+        }
+
+        return {
+            buttons,
+            textInputs,
+            selectMenus,
+        };
+    }
+
+    private async extractEmbedsLanguage( embeds: UIEmbedConstructor ): Promise<UIEmbedLanguage[]> {
+        const result: UIEmbedLanguage[] = [];
+
+        for ( const Embed of embeds ) {
+            const embed = new Embed(),
+                data = await embed.getTranslatableContent();
+
+            // Avoid embeds with the same name + warn.
+            if ( result.find( ( e: any ) => e.name === embed.getName() ) ) {
+                this.logger.warn( this.ensureInitialLanguage,
+                    `Embed with name: '${ embed.getName() }' already exists, skipping...`
+                );
+                continue;
+            }
+
+            result.push( {
+                name: embed.getName(),
+                content: data,
+            } );
+        }
+
+        return result;
+    }
+
+    private async extractMarkdownLanguage( markdowns: UIMarkdownConstructor ) {
+        const result: UIMarkdownLanguage[] = [];
+
+        for ( const Markdown of markdowns ) {
+            const markdown = new Markdown(),
+                data = await markdown.getTranslatableContent();
+
+            // Avoid markdowns with the same name + warn.
+            if ( result.find( ( m: any ) => m.name === markdown.getName() ) ) {
+                this.logger.warn( this.ensureInitialLanguage,
+                    `Markdown with name: '${ markdown.getName() }' already exists, skipping...`
+                );
+                continue;
+            }
+
+            result.push( {
+                name: markdown.getName(),
+                content: data,
+            } );
+        }
+
+        return result;
+    }
+
+    private async extractModalsLanguage( modals: UIModalConstructor ) {
+        const result: UIModalLanguage[] = [];
+
+        for ( const Modal of modals ) {
+            const modal = new Modal();
+
+            // Avoid modals with the same name + warn.
+            if ( result.find( ( m: any ) => m.name === modal.getName() ) ) {
+                this.logger.warn( this.ensureInitialLanguage,
+                    `Modal with name: '${ modal.getName() }' already exists, skipping...`
+                );
+                continue;
+            }
+
+            result.push( {
+                name: modal.getName(),
+
+                content: await modal.getTranslatableContent(),
+            } );
+        }
+
+        return result;
+    }
+
+    private validateElementsLanguage( currentLanguage: UILanguageJSON, initialLanguage: UILanguageJSON, options: UILanguageManagerValidateOptions ) {
+        for ( const button of initialLanguage.elements.buttons ) {
+            const currentTestedButton = currentLanguage.elements.buttons.find( ( e: any ) => e.name === button.name );
+
+            if ( ! currentTestedButton ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' does not have button with name: '${ button.name }', if its changed you have to update language in files and db` );
+            }
+
+            const validLabel = this.validateString( button.content.label, currentTestedButton.content.label, options );
+
+            if ( validLabel !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' button with name: '${ button.name }' has invalid attribute: 'label' code: '${ validLabel }'.` );
+            }
+
+            // Check options length.
+            if ( Object.keys( button.content.options || {} ).length !== Object.keys( currentTestedButton.content.options || {} ).length ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' button with name: '${ button.name }' has different options count - '${ JSON.stringify( button.content.options ) }' !== '${ JSON.stringify( currentTestedButton.content.options ) }'.` );
+            }
+        }
+
+        for ( const textInput of initialLanguage.elements.textInputs ) {
+            const currentTestedTextInput = currentLanguage.elements.textInputs.find( ( e: any ) => e.name === textInput.name );
+
+            if ( ! currentTestedTextInput ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' does not have text input with name: '${ textInput.name }', if its changed you have to update language in files and db` );
+            }
+
+            const validLabel = this.validateString( textInput.content.label, currentTestedTextInput.content.label, options ),
+                validPlaceHolder = this.validateString( textInput.content.placeholder, currentTestedTextInput.content.placeholder, options );
+
+            if ( validLabel !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has invalid attribute: 'label' code: '${ validLabel }'.` );
+            }
+
+            // if ( validPlaceHolder !== "valid" ) {
+            //     throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has invalid attribute: 'placeholder' code: '${ validPlaceHolder }'.` );
+            // }
+
+            // Ensure value is the same as initial.
+            if ( textInput.content.value !== textInput.content.value ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has different value than initial language.` );
+            }
+        }
+
+        for ( const selectMenu of initialLanguage.elements.selectMenus ) {
+            const currentTestedSelectMenu = currentLanguage.elements.selectMenus.find( ( e: any ) => e.name === selectMenu.name );
+
+            if ( ! currentTestedSelectMenu ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' does not have select menu with name: '${ selectMenu.name }', if its changed you have to update language in files and db` );
+            }
+
+            // Validate placeholder.
+            const validPlaceHolder = this.validateString( selectMenu.content.placeholder, currentTestedSelectMenu.content.placeholder, options );
+
+            if ( validPlaceHolder !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has invalid attribute: 'placeholder' code: '${ validPlaceHolder }'.` );
+            }
+
+            // Validate selectOptions counts.
+            const a = Object.keys( selectMenu.content.selectOptions || { a: true } ).length,
+                b = Object.keys( currentTestedSelectMenu.content.selectOptions || { b: true } ).length;
+
+            if ( a !== b ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has different options count: '${ a } != ${ b }'` );
+            }
+
+            const selectMenuLabels = JSON.stringify( selectMenu.content.selectOptions?.map( ( i ) => i.label ) ),
+                currentSelectMenuLabels = JSON.stringify( currentTestedSelectMenu.content.selectOptions?.map( ( i ) => i.label ) );
+
+            if ( ! options.skipSameValues && typeof selectMenuLabels !== "undefined" && currentSelectMenuLabels !== "undefined" ) {
+                // Ensure labels are not the same.
+                if ( selectMenuLabels !== "[]" && currentSelectMenuLabels !== "[]" && selectMenuLabels !== "{}" && currentSelectMenuLabels !== "{}" && selectMenuLabels === currentSelectMenuLabels ) {
+                    throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has the same options as initial language.` );
+                }
+            }
+
+            // Ensure values are the same.
+            if ( selectMenu.content.selectOptions?.map( ( i ) => i.value ).join( "" ) !== currentTestedSelectMenu.content.selectOptions?.map( ( i ) => i.value ).join( "" ) ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has different options values.` );
+            }
+        }
+    }
+
+    private validateEmbedsLanguage( currentLanguage: UILanguageJSON, initialLanguage: UILanguageJSON, options: UILanguageManagerValidateOptions ) {
+        for ( const embed of initialLanguage.embeds ) {
+            const currentTestedEmbed = currentLanguage.embeds.find( ( e: any ) => e.name === embed.name );
+
+            if ( ! currentTestedEmbed ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' does not have embed with name: '${ embed.name }', if its changed you have to update language in files and db` );
+            }
+
+            const initialContent = embed.content,
+                currentContent = currentTestedEmbed.content;
+
+            const validTitle = this.validateString( initialContent.title, currentContent.title, options ),
+                validDescription = this.validateString( initialContent.description, currentContent.description, options );
+
+            if ( validTitle !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has invalid attribute: 'title' code: '${ validTitle }'.` );
+            }
+
+            if ( validDescription !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has invalid attribute: 'description' code: '${ validDescription }'.` );
+            }
+
+            // Validate selectOptions counts.
+            if ( Object.keys( initialContent.options || { a: true } ).length !== Object.keys( currentContent.options || { a: false } ).length ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has different options count` );
+            }
+
+            // Ensure not the same as initial.
+            if ( ! options.skipSameValues && initialContent.options && currentContent.options ) {
+                const initialOptions = JSON.stringify( initialContent.options ),
+                    options = JSON.stringify( currentContent.options );
+
+                if ( "{}" !== initialOptions && "{}" !== options && initialOptions === options ) {
+                    throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has the same options as initial language.` );
+                }
+            }
+
+            if ( "object" === typeof initialContent.arrayOptions ) {
+                const initialKeys = JSON.stringify( this.getKeysRecursive( initialContent.arrayOptions ) ),
+                    keys = JSON.stringify( this.getKeysRecursive( currentContent.arrayOptions ) );
+
+                // Validate array selectOptions keys.
+                if ( initialKeys !== keys ) {
+                    throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has different array options keys` );
+                }
+
+                // const initialArrayOptions = JSON.stringify( initialContent.arrayOptions ),
+                //     currentArrayOptions = JSON.stringify( currentContent.arrayOptions ),
+                //     isInitialEmpty = "{}" === initialArrayOptions || "[]" === initialArrayOptions,
+                //     isCurrentEmpty = "{}" === currentArrayOptions || "[]" === currentArrayOptions,
+                //     isInitialIncludeAlphabetical =  /[a-zA-Z]/.test(initialArrayOptions ) && !/{.*}/.test(Object.values( initialArrayOptions ) ),);
+                //
+                //
+                // // Ensure not the same as initial.
+                // if ( isInitialIncludeAlphabetical && ! isInitialEmpty && ! isCurrentEmpty && initialArrayOptions === currentArrayOptions ) {
+                //     throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has the same array selectOptions as initial language.` );
+                // }
+            }
+        }
+    }
+
+    private validateMarkdownsLanguage( currentLanguage: UILanguageJSON, initialLanguage: UILanguageJSON, options: UILanguageManagerValidateOptions ) {
+        for ( const markdown of initialLanguage.markdowns ) {
+            const currentTestedMarkdown = currentLanguage.markdowns.find( ( e: any ) => e.name === markdown.name );
+
+            if ( ! currentTestedMarkdown ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' does not have markdown with name: '${ markdown.name }', if its changed you have to update language in files and db` );
+            }
+
+            const initialContent = markdown.content,
+                currentContent = currentTestedMarkdown.content,
+                validContent = this.validateString( initialContent.content, currentContent.content, options );
+
+            if ( validContent !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' markdown with name: '${ markdown.name }' has invalid content, code: '${ validContent }'.` );
+            }
+
+            // Validate selectOptions counts.
+            if ( Object.keys( initialContent.options || { a: true } ).length !== Object.keys( currentContent.options || { a: false } ).length ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' markdown with name: '${ markdown.name }' has different options count - '${ Object.keys( initialContent.options || { a: true } ).length }' !== '${ Object.keys( currentContent.options || { a: false } ).length }'` );
+            }
+
+            // Ensure not the same as initial.
+            if ( initialContent.options && currentContent.options ) {
+                const initialOptions = JSON.stringify( initialContent.options ),
+                    options = JSON.stringify( currentContent.options );
+
+                if ( "{}" !== initialOptions && "{}" !== options && initialOptions === options ) {
+                    throw new Error( `Language code: '${ currentLanguage.code }' markdown with name: '${ markdown.name }' has same options.` );
+                }
+            }
+        }
+    }
+
+    private validateModalsLanguage( currentLanguage: UILanguageJSON, initialLanguage: UILanguageJSON, options: UILanguageManagerValidateOptions ) {
+        for ( const modal of initialLanguage.modals ) {
+            const currentTestedModal = currentLanguage.modals.find( ( e: any ) => e.name === modal.name );
+
+            if ( ! currentTestedModal ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' does not have modal with name: '${ modal.name }', if its changed you have to update language in files and db` );
+            }
+
+            this.validateString( modal.content.title, currentTestedModal.content.title, options );
+        }
+    }
+
+    private validateString( initial?: string, current?: string, options?: UILanguageManagerValidateOptions ): "valid" | "current-leaking" | "same" {
+        if ( ! initial && ! current ) {
+            return "valid";
+        }
+
+        if ( initial && ! current ) {
+            return "current-leaking";
+        }
+
+        if ( ! options?.skipSameValues && initial === current ) {
+            // If both start with { and end with } then it's a variable.
+            if ( initial && current && initial.startsWith( "{" ) && initial.endsWith( "}" ) && current.startsWith( "{" ) && current.endsWith( "}" ) ) {
+                return "valid";
+            }
+
+            return "same";
+        }
+
+        return "valid";
+    }
+
+    private readInitialLanguage() {
+        // Read initial language file.
+        const initialLanguage = fs.readFileSync( UI_LANGUAGES_INITIAL_FILE_PATH, "utf-8" );
+
+        this.uiInitialLanguage = JSON.parse( initialLanguage );
+    }
+
+    private getKeysRecursive = ( obj: any ) => {
+        let keys: any[] = [];
+
+        for ( let key in obj ) {
+            if ( obj.hasOwnProperty( key ) ) {
+                keys.push( key );
+
+                if ( typeof obj[ key ] === "object" && obj[ key ] !== null ) {
+                    const nestedKeys = this.getKeysRecursive( obj[ key ] );
+                    keys = keys.concat( nestedKeys.map( nestedKey => `${ key }.${ nestedKey }` ) );
+                }
+            }
+        }
+
+        return keys;
+    };
+}

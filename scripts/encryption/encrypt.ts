@@ -7,13 +7,13 @@ const algorithm = "aes-256-cbc";
 const iv = Buffer.alloc( 16, 0 ); // Initialization vector
 
 export async function encryptData( inputFile: string, outputFile: string ) {
-    // Read the input data from the file
+    // Read the input content from the file
     const inputBuffer = await readFile( inputFile );
 
     // Create a cipher object with the encryption key and IV
     const cipher = createCipheriv( algorithm, encryptionKey, iv );
 
-    // Encrypt the input data and write it to the output file
+    // Encrypt the input content and write it to the output file
     const encryptedData = Buffer.concat( [ cipher.update( inputBuffer ), cipher.final() ] );
     await writeFile( outputFile, encryptedData );
 
@@ -22,4 +22,4 @@ export async function encryptData( inputFile: string, outputFile: string ) {
 
 encryptData( process.argv[ 2 ], process.argv[ 3 ] );
 
-//npx ts-node encrypt.ts test.json dynamico.crypt
+//npx ts-node encrypt.ts test.json vertix.crypt

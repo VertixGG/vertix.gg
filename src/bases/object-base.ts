@@ -4,11 +4,7 @@ export abstract class ObjectBase {
     private readonly id: string;
     private readonly name: string = "__UNDEFINED_NAME__";
 
-    protected readonly args: { [ key: string ]: any }; // TODO: Delete as soon as possible.
-
     protected constructor( args?: any ) {
-        this.args = args || {};
-
         this.name = this.getName();
 
         const timestamp = performance.now() * 1000000;

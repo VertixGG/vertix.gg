@@ -6,7 +6,7 @@ PORT=$((27017+$RS_INDEX))
 cat <<EOF > $RS_NAME.conf
 systemLog:
    destination: file
-   path: "var/log/mongodb/mongod.log"
+   path: "/var/log/mongodb/mongod.log"
    logAppend: true
 storage:
    dbPath: "$RS_NAME"

@@ -28,4 +28,8 @@ export class DynamicChannelPermissionsDenyMenu extends DynamicChannelStringMenuB
 
         return Promise.resolve( results );
     }
+
+    protected async isAvailable(): Promise<boolean> {
+        return this.uiArgs?.dynamicChannelButtonsIsAccessButtonAvailable || !! super.isAvailable?.();
+    }
 }

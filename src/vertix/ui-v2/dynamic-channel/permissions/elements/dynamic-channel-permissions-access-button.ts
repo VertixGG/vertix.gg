@@ -5,8 +5,12 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
         return "Vertix/UI-V2/DynamicChannelPermissionsAccessButton";
     }
 
-    public getId() {
+    public static getId() {
         return 5;
+    }
+
+    public getId() {
+        return DynamicChannelPermissionsAccessButton.getId();
     }
 
     public async getLabelForMenu(): Promise<string> {

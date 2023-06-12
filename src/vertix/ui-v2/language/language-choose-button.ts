@@ -11,7 +11,7 @@ export class LanguageChooseButton extends UIElementButtonBase {
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Choose Yours Language" );
+        return Promise.resolve( "Choose Your Language" );
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {

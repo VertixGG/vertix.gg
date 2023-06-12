@@ -217,6 +217,15 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async register() {
+        const tryImportAvailableLanguages = async () => {
+            // Import
+            let promises: Promise<void>[] = [];
+            this.uiAdditionalLanguages.forEach( ( language ) => {
+                promises.push( LanguageUtils.$.import( language ) );
+            } );
+            await Promise.all( promises );
+        };
+
         // Ensure initial language.
         if ( fs.existsSync( UI_LANGUAGES_INITIAL_FILE_PATH ) ) {
             this.logger.info( this.register, `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' exists, validating...` );
@@ -240,23 +249,16 @@ export class UILanguageManager extends InitializeBase {
             }, {
                 skipSameValues: true,
             } );
+        } else {
+            await this.ensureInitialLanguage();
 
-            return;
+            // Load language files.
+            if ( ! await this.validateAvailableLanguages() ) {
+                throw new Error( "Failed to load language files" );
+            }
         }
 
-        await this.ensureInitialLanguage();
-
-        // Load language files.
-        if ( ! await this.validateAvailableLanguages() ) {
-            throw new Error( "Failed to load language files" );
-        }
-
-        // Import
-        let promises: Promise<void>[] = [];
-        this.uiAdditionalLanguages.forEach( ( language ) => {
-            promises.push( LanguageUtils.$.import( language ) );
-        } );
-        await Promise.all( promises );
+        await tryImportAvailableLanguages();
     }
 
     private async ensureInitialLanguage() {

@@ -16,6 +16,8 @@ import {
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 
 import { DynamicChannelAdapterExuBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
+import { ChannelManager } from "@vertix/managers/channel-manager";
+import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 
 type DefaultInteraction =
     | UIDefaultStringSelectMenuChannelVoiceInteraction
@@ -89,7 +91,17 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep()?.name ) {
+            case "Vertix/UI-V2/DynamicChannelPermissionsStateHidden":
             case "Vertix/UI-V2/DynamicChannelPermissionsStatePrivate":
+                const masterChannelDB = await ChannelManager.$
+                    .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
+
+                if ( masterChannelDB ) {
+                    args.dynamicChannelButtonsTemplate = await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+                    args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
+                        ( buttonId: number ) => buttonId === DynamicChannelPermissionsAccessButton.getId()
+                    );
+                }
                 break;
 
             case "Vertix/UI-V2/DynamicChannelPermissionsGranted":

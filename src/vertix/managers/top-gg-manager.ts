@@ -83,7 +83,7 @@ export class TopGGManager extends CacheBase<Date> {
         }
 
         return this.api.postStats( {
-            serverCount: this.client.guilds.cache.size + 5,
+            serverCount: this.client.guilds.cache.size,
             shardId: this.client.shard?.ids[ 0 ] ?? 0,
             shardCount: this.client.shard?.count ?? 1,
         } ).then( () => {

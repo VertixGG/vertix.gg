@@ -7,6 +7,7 @@ import { VERTIX_OWNERS_IDS } from "@vertix/definitions/app";
 import { AppManager } from "@vertix/managers/app-manager";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
+import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 
 const OWNER_COMMAND_SYNTAX = {
     embed: "!embed <#channel_id> <https://message_url.com>",
@@ -126,14 +127,14 @@ export class DirectMessageManager extends InitializeBase {
     }
 
     public async sendLeaveMessageToOwner( guild: Guild ) {
-        // const embed = new EmbedBuilder();
-        //
-        // embed.setColor( VERTIX_DEFAULT_COLOR_BRAND );
-        // embed.setTitle( "We hope everything alright 🙏" );
-        // embed.setDescription( "If there was anything wrong with **Vertix** functionality or if there's something we could improve upon, please let us know!\n" +
-        //     "Join our [Community Support](https://discord.gg/Vertix) and we will be glad to assist with anything you need." );
-        //
-        // await this.sendToOwner( guild, { embeds: [ embed ] } );
+        const adapter = UIAdapterManager.$.get( "Vertix/UI-V2/FeedbackAdapter" );
+
+        if ( ! adapter ) {
+            this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );
+            return;
+        }
+
+        await adapter.sendToUser( guild.id, guild.ownerId, {} );
     }
 
     public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {

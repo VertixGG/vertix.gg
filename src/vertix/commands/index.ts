@@ -1,19 +1,9 @@
 import { ICommand } from "@vertix/interfaces/command";
 
 import { Setup } from "@vertix/commands/setup";
-
-import Logger from "@internal/modules/logger";
+import { Help } from "@vertix/commands/help";
 
 export const Commands: ICommand[] = [
     Setup,
+    Help,
 ];
-
-export const commandsLogger = new class CommandsLoggers extends Logger {
-    public static getName(): string {
-        return "Commands/Logger";
-    }
-
-    public constructor() {
-        super( CommandsLoggers );
-    }
-};

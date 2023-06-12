@@ -357,6 +357,11 @@ export class UILanguageManager extends InitializeBase {
         ( UIAdapterManager.$.getAll() ).forEach( ( adapter ) => {
             const AdapterType = adapter as typeof UIAdapterBase;
 
+            // TODO Temporary - Skip feedback adapter by name.
+            if ( AdapterType.getName() === "Vertix/UI-V2/FeedbackAdapter" ) {
+                return;
+            }
+
             // Check if component is already exist.
             if ( allComponents.find( ( c ) => c.getName() === AdapterType.getComponent().getName() ) ) {
                 this.logger.warn( this.ensureInitialLanguage,

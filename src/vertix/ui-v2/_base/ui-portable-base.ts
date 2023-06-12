@@ -134,6 +134,16 @@ export abstract class UIPortableBase<TSchema extends UIPortableSchemaBase = UIPo
         throw new ForceMethodImplementation( this, this.buildStaticEntities.name );
     }
 
+    protected async buildEntities( target: any, entities: UIEntityTypes, onlyStatic = true, args?: UIArgs ) {
+        for ( let i = 0; i < entities.length; i++ ) {
+            const result = await this.buildEntity( target[ i ], entities[ i ], onlyStatic, args );
+
+            if ( undefined !== result ) {
+                target[ i ] = result;
+            }
+        }
+    }
+
     protected async buildEntity( current: UIEntityBase | UIPortableBase, EntityClass: EntityPossibleTypes, onlyStatic = false, args?: UIArgs ) {
         const EntityClassType = EntityClass as typeof UIEntityBase | typeof UIPortableBase,
             EntityClassAsConstructor = EntityClass as EntityPossibleConstructorTypes;

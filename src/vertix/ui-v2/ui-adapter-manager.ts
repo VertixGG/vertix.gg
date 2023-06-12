@@ -89,6 +89,8 @@ export class UIAdapterManager extends InitializeBase {
 
             ( await import ("@vertix/ui-v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-adapter") ).DynamicChannelPremiumResetChannelAdapter,
 
+            ( await import ("@vertix/ui-v2/feedback/feedback-adapter") ).FeedbackAdapter,
+
             ( await import ("@vertix/ui-v2/language/language-adapter") ).LanguageAdapter,
 
             ( await import ("@vertix/ui-v2/setup/setup-adapter") ).SetupAdapter,

@@ -1,8 +1,15 @@
+import { ModalContentLanguage } from "@prisma/client";
+
 import { UIPortableBase } from "@vertix/ui-v2/_base/ui-portable-base";
 import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";
 
-import { UIArgs, UIModalLanguageContent, UIPortableSchemaBase, UIType } from "@vertix/ui-v2/_base/ui-definitions";
-import { ModalContentLanguage } from "@prisma/client";
+import {
+    UIArgs,
+    UIEntityTypes,
+    UIModalLanguageContent,
+    UIPortableSchemaBase,
+    UIType
+} from "@vertix/ui-v2/_base/ui-definitions";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
 
 interface UIModalSchema extends UIPortableSchemaBase {
@@ -80,24 +87,21 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
                 elements as typeof UIElementInputBase[][] :
                 [ elements as typeof UIElementInputBase[] ];
 
+        const isEmpty = isMultiRow ? ! elementsRows.length : elementsRows.every( row => ! row.length );
+
+        if ( isEmpty ) {
+            this.uiInputElements.length = 0;
+            return;
+        }
+
         let y = 0;
         for ( const elementsRow of elementsRows ) {
-            let x = 0;
-
             if ( undefined === this.uiInputElements[ y ] ) {
                 this.uiInputElements[ y ] = [];
             }
 
-            for ( const Element of elementsRow ) {
-                this.uiInputElements[ y ][ x ] =
-                    await this.buildEntity(
-                        this.uiInputElements[ y ][ x ],
-                        Element,
-                        onlyStatic,
-                        args
-                    ) as UIElementInputBase;
-                x++;
-            }
+            await this.buildEntities( this.uiInputElements[ y ], elementsRow as UIEntityTypes, onlyStatic, args );
+            y++;
         }
     }
 

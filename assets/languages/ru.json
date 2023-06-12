@@ -7,49 +7,57 @@
 			{
 				"name": "Vertix/UI-V2/ClaimStartButton",
 				"content": {
-					"label": "завоевать канал"
+					"label": "завоевать канал",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/ClaimVoteAddButton",
 				"content": {
-					"label": "голосовать за {displayName}"
+					"label": "голосовать за {displayName}",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/ClaimVoteStepInButton",
 				"content": {
-					"label": "конкурировать"
+					"label": "конкурировать",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/TemplateModifyButton",
 				"content": {
-					"label": "Изменить название каналов"
+					"label": "Изменить название каналов",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/ConfigModifyButtonsButton",
 				"content": {
-					"label": "Изменить кнопки"
+					"label": "Изменить кнопки",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DoneButton",
 				"content": {
-					"label": "✔ Готово"
+					"label": "✔ Готово",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/ConfigModifyButtonsEffectImmediatelyButton",
 				"content": {
-					"label": "Немедленно"
+					"label": "Немедленно",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/ConfigModifyButtonsEffectNewlyButton",
 				"content": {
-					"label": "Только для новых"
+					"label": "Только для новых",
+					"options": {}
 				}
 			},
 			{
@@ -64,19 +72,22 @@
 			{
 				"name": "Vertix/UI-V2/DynamicChannelMetaRenameButton",
 				"content": {
-					"label": "Переименовать"
+					"label": "Переименовать",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelMetaLimitButton",
 				"content": {
-					"label": "Лимит"
+					"label": "Лимит",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelMetaClearChatButton",
 				"content": {
-					"label": "Очистить чат"
+					"label": "Очистить чат",
+					"options": {}
 				}
 			},
 			{
@@ -102,55 +113,64 @@
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsAccessButton",
 				"content": {
-					"label": "Доступ"
+					"label": "Доступ",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton",
 				"content": {
-					"label": "Сбросить канал"
+					"label": "Сбросить канал",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton",
 				"content": {
-					"label": "Завоевать канал"
+					"label": "Завоевать канал",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/SetupMasterCreateButton",
 				"content": {
-					"label": "Создать мастер-канал"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/SetupBadwordsModifyButton",
-				"content": {
-					"label": "Изменить запрещенные слова"
+					"label": "Создать мастер-канал",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/LanguageChooseButton",
 				"content": {
-					"label": "Выбрать язык"
+					"label": "Выбрать язык",
+					"options": {}
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/SetupBadwordsModifyButton",
+				"content": {
+					"label": "Изменить запрещенные слова",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/WizardBackButton",
 				"content": {
-					"label": "◀ Назад"
+					"label": "◀ Назад",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/WizardNextButton",
 				"content": {
-					"label": "Далее ▶"
+					"label": "Далее ▶",
+					"options": {}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/WizardFinishButton",
 				"content": {
-					"label": "✔ Готово"
+					"label": "✔ Готово",
+					"options": {}
 				}
 			},
 			{
@@ -168,7 +188,8 @@
 			{
 				"name": "Vertix/UI-V2/WelcomeSetupButton",
 				"content": {
-					"label": "Настройка"
+					"label": "Настройка",
+					"options": {}
 				}
 			}
 		],
@@ -679,17 +700,21 @@
 			"name": "Vertix/UI-V2/DynamicChannelPermissionsPrivateEmbed",
 			"content": {
 				"title": "🚫  Канал теперь закрытый",
-				"description": "{allowedUsersDisplay}\nКто имеет привилегию доступа к вашему каналу?",
+				"description": "Пожалуйста, обратите внимание, что в канал могут входить только разрешенные пользователи.\n\n{allowedUsersDisplay}\n{message}",
 				"options": {
+					"message": {
+						"{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
+						"{messageAccessNotAvailable}": "Нет возможности предоставить доступ к вашему каналу для новых участников.\n\nЭто связано с тем, что администратор отключил\nкнопку **(👥 Доступ)**."
+					},
 					"allowedUsersDisplay": {
-						"{allowedUsersDefault}": "В ваш канал может войти только разрешенные пользователи, в данный момент, кроме вас, никто другой не имеет доступа.\n",
+						"{allowedUsersDefault}": "На данный момент у вас есть доступ только вы.\n",
 						"{allowedUsers}": "**_Разрешенные пользователи_**: \n{allowedUsers}\n"
 					}
 				},
 				"arrayOptions": {
 					"allowedUsers": {
-						"format": "<@{value}>{separator}",
-						"separator": ", "
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
 					}
 				}
 			}
@@ -707,10 +732,14 @@
 			"name": "Vertix/UI-V2/DynamicChannelPermissionsHiddenEmbed",
 			"content": {
 				"title": "🙈  Канал теперь скрытый",
-				"description": "Пожалуйста, обратите внимание, что только предоставленные пользователи могут видеть ваш канал сейчас.\n\n{allowedUsersDisplay}\nВы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
+				"description": "Пожалуйста, обратите внимание, что канал виден только разрешенным пользователям.\n\n{allowedUsersDisplay}\n{message}",
 				"options": {
+					"message": {
+						"{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
+						"{messageAccessNotAvailable}": "Нет возможности предоставить доступ к вашему каналу для новых участников.\n\nЭто связано с тем, что администратор отключил\nкнопку **(👥 Доступ)**."
+					},
 					"allowedUsersDisplay": {
-						"{allowedUsersDefault}": "В данный момент кроме вас никто другой не имеет доступа.\n",
+						"{allowedUsersDefault}": "На данный момент у вас есть доступ только вы.\n",
 						"{allowedUsers}": "**_Разрешенные пользователи_**: \n{allowedUsers}\n"
 					}
 				},

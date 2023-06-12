@@ -8,6 +8,10 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
         separator: uiUtilsWrapAsTemplate( "separator" ),
         value: uiUtilsWrapAsTemplate( "value" ),
 
+        message: uiUtilsWrapAsTemplate( "message" ),
+        messageDefault: uiUtilsWrapAsTemplate( "messageDefault" ),
+        messageAccessNotAvailable: uiUtilsWrapAsTemplate( "messageAccessNotAvailable" ),
+
         allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
         allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
         allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" ),
@@ -34,19 +38,28 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return "Please be aware that only granted users can see your channel now.\n\n" +
+        return "Please be aware that only granted users can see your channel.\n\n" +
             DynamicChannelPermissionsHiddenEmbed.vars.allowedUsersDisplay + "\n" +
-            "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.";
+            DynamicChannelPermissionsHiddenEmbed.vars.message;
     }
 
     protected getOptions() {
         const {
+            messageDefault,
+            messageAccessNotAvailable,
+
             allowedUsers,
             allowedUsersDefault,
         } = DynamicChannelPermissionsHiddenEmbed.vars;
 
         return {
-            allowedUsersDisplay: {
+            "message": {
+                [ messageDefault ]: "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                [ messageAccessNotAvailable ]: "There is no way to grant access to your channel for new members.\n\n" +
+                "This is because the **(👥 Access)** Button has been disabled by the administrator",
+            },
+
+            "allowedUsersDisplay": {
                 [ allowedUsersDefault ]: "Currently no other user has access except you.\n",
                 [ allowedUsers ]: "**_Allowed users_**: \n" + `${ allowedUsers }\n`,
             }
@@ -66,6 +79,9 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
 
     protected getLogic( args: UIArgs ) {
         const result: any = {}, {
+            messageDefault,
+            messageAccessNotAvailable,
+
             allowedUsers,
             allowedUsersDefault,
         } = DynamicChannelPermissionsHiddenEmbed.vars;
@@ -75,6 +91,12 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
             result.allowedUsersDisplay = allowedUsers;
         } else {
             result.allowedUsersDisplay = allowedUsersDefault;
+        }
+
+        if ( args.dynamicChannelButtonsIsAccessButtonAvailable ) {
+            result.message = messageDefault;
+        } else {
+            result.message = messageAccessNotAvailable;
         }
 
         return result;

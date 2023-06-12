@@ -8,6 +8,10 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
         separator: uiUtilsWrapAsTemplate( "separator" ),
         value: uiUtilsWrapAsTemplate( "value" ),
 
+        message: uiUtilsWrapAsTemplate( "message" ),
+        messageDefault: uiUtilsWrapAsTemplate( "messageDefault" ),
+        messageAccessNotAvailable: uiUtilsWrapAsTemplate( "messageAccessNotAvailable" ),
+
         allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
         allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
         allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" ),
@@ -34,11 +38,9 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        const { allowedUsersDisplay } = DynamicChannelPermissionsPrivateEmbed.vars;
-
-        return allowedUsersDisplay +
-            "\n" +
-            "Who should have the privilege to access your channel?";
+        return "Please be aware that only granted users can enter your channel.\n\n" +
+            DynamicChannelPermissionsPrivateEmbed.vars.allowedUsersDisplay + "\n" +
+            DynamicChannelPermissionsPrivateEmbed.vars.message;
     }
 
     protected getArrayOptions() {
@@ -54,20 +56,32 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
 
     protected getOptions() {
         const {
+            messageDefault,
+            messageAccessNotAvailable,
+
             allowedUsers,
             allowedUsersDefault,
         } = DynamicChannelPermissionsPrivateEmbed.vars;
 
         return {
-            allowedUsersDisplay: {
-                [ allowedUsersDefault ]: "Only granted users can enter your channel, currently no other user has access except you.\n",
-                [ allowedUsers ]: "\n**_Allowed users_**: \n" + `${ allowedUsers }\n`,
+            "message": {
+                [ messageDefault ]: "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                [ messageAccessNotAvailable ]: "There is no way to grant access to your channel for new members.\n\n" +
+                "This is because the **(👥 Access)** Button has been disabled by the administrator",
+            },
+
+            "allowedUsersDisplay": {
+                [ allowedUsersDefault ]: "Currently no other user has access except you.\n",
+                [ allowedUsers ]: "**_Allowed users_**: \n" + `${ allowedUsers }\n`,
             }
         };
     }
 
     protected getLogic( args: UIArgs ) {
         const result: any = {}, {
+            messageDefault,
+            messageAccessNotAvailable,
+
             allowedUsers,
             allowedUsersDefault,
         } = DynamicChannelPermissionsPrivateEmbed.vars;
@@ -77,6 +91,12 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
             result.allowedUsersDisplay = allowedUsers;
         } else {
             result.allowedUsersDisplay = allowedUsersDefault;
+        }
+
+        if ( args.dynamicChannelButtonsIsAccessButtonAvailable ) {
+            result.message = messageDefault;
+        } else {
+            result.message = messageAccessNotAvailable;
         }
 
         return result;

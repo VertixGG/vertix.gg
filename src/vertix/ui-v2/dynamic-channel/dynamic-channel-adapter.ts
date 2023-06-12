@@ -118,7 +118,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         const masterChannelDB = await ChannelManager.$
             .getMasterChannelDBByDynamicChannelId( channel.id );
 
-        const results: any = {
+        return {
             channelName: channel.name,
             userLimit: ( channel as VoiceChannel ).userLimit,
 
@@ -126,14 +126,8 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
             isHidden: DynamicChannelManager.$.getChannelVisibilityState( channel ) === "hidden",
 
             channelId: channel.id,
+
+            dynamicChannelButtonsTemplate: masterChannelDB ? await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false ) : [],
         };
-
-        if ( masterChannelDB ) {
-            results.buttons = await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false ) || [];
-        } else {
-            results.buttons = [];
-        }
-
-        return results;
     }
 }

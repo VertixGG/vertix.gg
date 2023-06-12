@@ -123,11 +123,8 @@ export class SetupEmbed extends UIEmbedBase {
             masterChannelsPromise = ( args?.masterChannels || [] ).map( async ( channel, index ) => {
                 const data = channel?.data?.[ 0 ],
                     usedButtons = data?.object?.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-                    usedEmojis = ( await Promise.all(
-                        usedButtons.map( async ( buttonId: number ) =>
-                            DynamicChannelElementsGroup.getAllItems().find(
-                                ( i ) => i.getId() == buttonId )?.getEmoji()
-                        ) ) ).join( ", " );
+                    usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis( usedButtons ) )
+                        .join( ", " );
 
                 return {
                     index: index + 1,

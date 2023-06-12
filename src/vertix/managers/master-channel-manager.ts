@@ -459,10 +459,20 @@ export class MasterChannelManager extends InitializeBase {
         } );
     }
 
-    public async setChannelButtonsTemplate( ownerId: string, newButtons: number[] ) {
+    public async setChannelButtonsTemplate( ownerId: string, newButtons: number[], shouldAdminLog = true ) {
         this.logger.log( this.setChannelButtonsTemplate,
             `Master channel id: '${ ownerId }' - Setting channel name template: '${ newButtons }'`
         );
+
+        if ( shouldAdminLog ) {
+            const previousButtons = await this.getChannelButtonsTemplate( ownerId, true ),
+                previousUsedEmojis = await DynamicChannelElementsGroup.getUsedEmojis( previousButtons ),
+                newUsedEmojis = await DynamicChannelElementsGroup.getUsedEmojis( newButtons );
+
+            this.logger.admin( this.setChannelButtonsTemplate,
+                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId  }", "${ previousUsedEmojis }" => "${ newUsedEmojis }"`
+            );
+        }
 
         await ChannelDataManager.$.setSettingsData( ownerId, {
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons
@@ -516,9 +526,9 @@ export class MasterChannelManager extends InitializeBase {
         const usedButtons = DynamicChannelElementsGroup.getAllItems().filter( ( item ) => {
                 return newButtons.includes( item.getId() );
             } ),
-            usedEmojis = ( await Promise.all(
-                usedButtons.map( async ( item ) => await item.getEmoji() )
-            ) ).join( "," );
+            usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis(
+                usedButtons.map( ( item ) => item.getId()
+            ) ) ).join( "," );
 
         this.logger.admin( this.createMasterChannelInternal,
             `🛠️  Setup has performed - "${ newName }", "${ usedEmojis }" (${ guild.name }) (${ guild?.memberCount })`

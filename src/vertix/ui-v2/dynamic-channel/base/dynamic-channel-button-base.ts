@@ -37,8 +37,10 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     }
 
     protected async isAvailable(): Promise<boolean> {
-        if ( this.uiArgs?.buttons?.length ) {
-            return this.uiArgs.buttons.some( ( i: any ) => parseInt( i ) === this.getId() );
+        if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
+            return this.uiArgs.dynamicChannelButtonsTemplate.some(
+                ( i: any ) => parseInt( i ) === this.getId()
+            );
         }
 
         return false;

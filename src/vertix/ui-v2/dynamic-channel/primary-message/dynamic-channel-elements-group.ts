@@ -61,6 +61,14 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
     public static getAllItems() {
         return DynamicChannelElementsGroup.allItems;
     }
+
+    public static async getUsedEmojis( usedButtons: number[] ) {
+        return Promise.all(
+            this.getAllItems()
+                .filter( item => usedButtons.includes( item.getId() ) )
+                .map( async ( item ) => item.getEmoji() )
+        );
+    }
 }
 
 // TODO: Find better place for this.

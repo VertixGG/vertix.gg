@@ -195,7 +195,9 @@ export abstract class UIAdapterBase<
     public async build( args: UIArgs, from: UIAdapterBuildSource = "unknown", context: string | TInteraction | TChannel | Message<true> ) {
         await this.getComponent().waitUntilInitialized();
 
-        if ( ! args._language ) {
+        const ownerId = "string" === typeof context ? context : context.guildId;
+
+        if ( ownerId && ! args._language ) {
             // TODO: Move to hook.
             const language = await GuildDataManager.$.getData( {
                 ownerId: "string" === typeof context ? context : context.guildId,

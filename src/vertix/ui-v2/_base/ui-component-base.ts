@@ -229,7 +229,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         for ( const Modal of modals ) {
             this.uiModals[ i ] =
                 await this.buildEntity(
-                    this.uiEmbeds[ i ],
+                    this.uiModals[ i ],
                     Modal,
                     onlyStatic,
                     args
@@ -242,16 +242,6 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         const markdowns = this.getCurrentMarkdowns().getItems( args );
 
         await this.buildEntities( this.uiMarkdowns, markdowns as UIEntityTypes, onlyStatic, args );
-    }
-
-    protected async buildEntities( target: any, entities: UIEntityTypes, onlyStatic = true, args?: UIArgs ) {
-        for ( let i = 0; i < entities.length; i++ ) {
-            const result = await this.buildEntity( target[ i ], entities[ i ], onlyStatic, args );
-
-            if ( undefined !== result ) {
-                target[ i ] = result;
-            }
-        }
     }
 
     private getStaticThis(): typeof UIComponentBase {

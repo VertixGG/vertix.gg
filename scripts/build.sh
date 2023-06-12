@@ -19,12 +19,12 @@ if [[ "$1" == "--update-package-version" ]]; then
 fi
 
 # copy `assets` folder to `dist`
-cp -r ./assets ./dist/assets
+cp -r ./assets ./dist/
 
 # Copy package.json to dist folder
 cp ./package.json dist/package.json
 
-# Take all '.sh' files in `./tools/scripts-that-comes-with-build` and copy them to `./dist`
+# Take all files in `./tools/scripts-that-comes-with-build` and copy them to `./dist`
 cp ./tools/scripts-that-comes-with-build/* ./dist/
 
 # Copy `package.json to `./dist`

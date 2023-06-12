@@ -20,6 +20,5 @@ export const Setup: ICommand = {
 
     run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
         UIAdapterManager.$.get( "Vertix/UI-V2/SetupAdapter" )?.ephemeral( interaction );
-       // await UIManager.$.get( "Vertix/UI-V2/WelcomeAdapter" )?.send( interaction.channel as VoiceChannel );
     }
 };

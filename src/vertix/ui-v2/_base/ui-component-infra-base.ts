@@ -111,7 +111,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
 
     protected static getFlatElements( elements = this.getElements() ): typeof UIElementBase[] {
         return (
-            ( this.getTypesInternal( "element", elements, true ) as UIElementsTypes).flat( UI_ELEMENTS_DEPTH )
+            ( this.getTypesInternal( "element", elements, true ) as UIElementsTypes ).flat( UI_ELEMENTS_DEPTH )
         );
     }
 

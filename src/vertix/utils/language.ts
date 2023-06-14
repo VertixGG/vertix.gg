@@ -1,8 +1,6 @@
 import fs from "fs";
 import path from "path";
 
-import { UI_LANGUAGES_PATH, UILanguageJSON } from "@vertix/ui-v2/_base/ui-definitions";
-
 import { EmbedLanguageModel } from "@vertix/models/embed-language";
 import { ElementButtonLanguageModel } from "@vertix/models/element-button-language";
 import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language";
@@ -10,6 +8,8 @@ import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-me
 import { MarkdownLanguageModel } from "@vertix/models/markdown-language";
 
 import { ModalLanguageModel } from "@vertix/models/modal-language-model";
+
+import { UI_LANGUAGES_PATH, UILanguageJSON } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
 

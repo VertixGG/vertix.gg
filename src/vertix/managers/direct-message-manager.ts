@@ -6,8 +6,9 @@ import { VERTIX_OWNERS_IDS } from "@vertix/definitions/app";
 
 import { AppManager } from "@vertix/managers/app-manager";
 
-import { InitializeBase } from "@internal/bases/initialize-base";
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
+
+import { InitializeBase } from "@internal/bases/initialize-base";
 
 const OWNER_COMMAND_SYNTAX = {
     embed: "!embed <#channel_id> <https://message_url.com>",

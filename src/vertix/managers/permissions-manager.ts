@@ -62,7 +62,7 @@ export class PermissionsManager extends InitializeBase {
         this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldState.guildId }' - New permissions for channel id: '${ oldState.id }'` );
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newState.permissionOverwrites );
 
-        const channel = await ChannelModel.$.getByChannelId( newState.id, true )
+        const channel = await ChannelModel.$.getByChannelId( newState.id, true );
 
         if ( ! channel ) {
             return this.logger.debug( this.onChannelPermissionsUpdate,

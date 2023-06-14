@@ -20,7 +20,6 @@ export class GuildMock {
 
     public channels: GuildChannelManager;
 
-
     public constructor( client: ClientMock, data: RawGuildData | any = {} ) {
         this.client = client;
         this.data = data;

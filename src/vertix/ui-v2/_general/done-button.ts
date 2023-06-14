@@ -11,7 +11,7 @@ export class DoneButton extends UIElementButtonBase {
     }
 
     protected async getLabel() {
-        return "✔ Done";
+        return "✓ Done";
     }
 
     protected async getStyle(): Promise<UIButtonStyleTypes> {

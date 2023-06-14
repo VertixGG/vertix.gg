@@ -470,7 +470,7 @@ export class MasterChannelManager extends InitializeBase {
                 newUsedEmojis = await DynamicChannelElementsGroup.getUsedEmojis( newButtons );
 
             this.logger.admin( this.setChannelButtonsTemplate,
-                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId  }", "${ previousUsedEmojis }" => "${ newUsedEmojis }"`
+                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId }", "${ previousUsedEmojis }" => "${ newUsedEmojis }"`
             );
         }
 
@@ -528,7 +528,7 @@ export class MasterChannelManager extends InitializeBase {
             } ),
             usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis(
                 usedButtons.map( ( item ) => item.getId()
-            ) ) ).join( "," );
+                ) ) ).join( "," );
 
         this.logger.admin( this.createMasterChannelInternal,
             `🛠️  Setup has performed - "${ newName }", "${ usedEmojis }" (${ guild.name }) (${ guild?.memberCount })`

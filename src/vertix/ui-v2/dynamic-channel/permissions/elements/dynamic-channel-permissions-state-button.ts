@@ -11,10 +11,10 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public async getLabelForMenu(): Promise<string> {
-        return "🚫 / 🌐 Toggle State";
+        return "Public/Private"; // - ( 🚫 / 🌐 )
     }
 
-    protected async getLabel() {
+    public async getLabel() {
         return uiUtilsWrapAsTemplate( "displayText" );
     }
 

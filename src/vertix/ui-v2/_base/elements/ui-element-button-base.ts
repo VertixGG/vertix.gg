@@ -8,19 +8,19 @@ import {
 
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
 
-import {
-    UIArgs,
-    UIBaseTemplateOptions,
-    UIButtonStyleTypes,
-    UIElementButtonLanguageContent
-} from "@vertix/ui-v2/_base/ui-definitions";
+import { UIArgs, UIBaseTemplateOptions, UIButtonStyleTypes } from "@vertix/ui-v2/_base/ui-definitions";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+import { UIElementButtonLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementButtonBase extends UIElementBase<APIButtonComponentWithCustomId> {
     private content: UIElementButtonLanguageContent | undefined;
 
     public static getName() {
         return "Vertix/UI-V2/UIElementButtonBase";
+    }
+
+    public static getComponentType(): ComponentType {
+        return ComponentType.Button;
     }
 
     public async build( uiArgs?: UIArgs ) {
@@ -30,10 +30,16 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
     }
 
     public async getTranslatableContent(): Promise<UIElementButtonLanguageContent> {
-        return {
-            label: await this.getLabel(),
-            options: this.getOptions(),
-        };
+        const result: UIElementButtonLanguageContent = {
+                label: await this.getLabel(),
+            },
+            options = this.getOptions();
+
+        if ( Object.keys( options ).length ) {
+            result.options = options;
+        }
+
+        return result;
     }
 
     protected abstract getLabel(): Promise<string>;
@@ -67,7 +73,7 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
                 throw new Error( "Invalid style" );
         }
 
-        const type = Number( ComponentType.Button ),
+        const type = Number( UIElementButtonBase.getComponentType() ),
             label = await this.getLabelInternal(),
             emoji = await this.getEmoji?.(),
             disabled = await this.isDisabled?.(),

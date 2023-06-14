@@ -15,6 +15,7 @@ import { IChannelEnterGenericArgs, } from "../interfaces/channel";
 
 import {
     DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
@@ -22,9 +23,9 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
-    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
 } from "@vertix/definitions/master-channel";
 
@@ -52,6 +53,7 @@ interface IMasterChannelCreateCommonArgs {
 
     dynamicChannelNameTemplate?: string,
     dynamicChannelButtonsTemplate?: number[],
+    dynamicChannelMentionable?: boolean,
 }
 
 interface IMasterChannelCreateInternalArgs extends IMasterChannelCreateCommonArgs {
@@ -360,12 +362,34 @@ export class MasterChannelManager extends InitializeBase {
         return buttons;
     }
 
+    public async getChannelMentionable( ownerId: string, returnDefault?: boolean ) {
+        const result = await ChannelDataManager.$.getSettingsData(
+                ownerId,
+                returnDefault ? DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS : null,
+                true
+            );
+
+        let mentionable = result?.object?.[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
+
+        // TODO: Temporary fix, find out why default not working.
+        if ( mentionable === undefined ) {
+            mentionable = DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE;
+        }
+
+        this.debugger.dumpDown( this.getChannelMentionable,
+            mentionable,
+            `ownerId: '${ ownerId }' returnDefault: '${ returnDefault }' - mentionable: `
+        );
+
+        return mentionable;
+    }
+
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
         const result: IMasterChannelCreateResult = {
             code: MasterChannelCreateResultCode.Error,
         };
 
-        if ( ! await this.checkLimit( args.guildId ) ) {
+        if ( await this.isReachedMasterLimit( args.guildId ) ) {
             result.code = MasterChannelCreateResultCode.LimitReached;
             result.maxMasterChannels = ( await GuildDataManager.$.getAllSettings( args.guildId ) ).maxMasterChannels;
 
@@ -392,6 +416,7 @@ export class MasterChannelManager extends InitializeBase {
         this.debugger.dumpDown( this.createMasterChannel, {
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
+            dynamicChannelMentionable: args.dynamicChannelMentionable,
         }, "options" );
 
         const master = await this.createMasterChannelInternal( {
@@ -419,34 +444,33 @@ export class MasterChannelManager extends InitializeBase {
         } );
     }
 
-    public async checkLimit( guildId: string ) {
-        const limit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
-            hasReachedLimit = await this.isReachedMasterLimit( guildId, limit );
+    public async isReachedMasterLimit( guildId: string, definedLimit?: number ) {
+        const limit = "number" === typeof definedLimit ?
+                definedLimit : ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
+            hasReachedLimit =
+                await ChannelModel.$.getTypeCount( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
 
         if ( hasReachedLimit ) {
-            this.debugger.log( this.checkLimit, `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'` );
+            this.debugger.log( this.isReachedMasterLimit, `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'` );
 
             const guild = AppManager.$.getClient().guilds.cache.get( guildId ) ||
                 await AppManager.$.getClient().guilds.fetch( guildId );
 
-            this.logger.admin( this.checkLimit,
+            this.logger.admin( this.isReachedMasterLimit,
                 `💰 Master Channels Limitation function has been activated max(${ limit }) (${ guild?.name }) (${ guild?.memberCount })`
             );
         }
 
-        return ! hasReachedLimit;
+        return hasReachedLimit;
     }
 
     public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Guild id: '${ guild.id }' - Removing leftovers of guild '${ guild.name }'` );
 
         // TODO Relations are deleted automatically??
+        // TODO: They should be deleted only when they not exist.
         await CategoryModel.$.delete( guild.id );
         await ChannelModel.$.delete( guild.id );
-    }
-
-    public async isReachedMasterLimit( guildId: string, limit = DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS ) {
-        return await ChannelModel.$.getTypeCount( guildId, E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) >= limit;
     }
 
     public async setChannelNameTemplate( ownerId: string, newName: string ) {
@@ -476,6 +500,22 @@ export class MasterChannelManager extends InitializeBase {
 
         await ChannelDataManager.$.setSettingsData( ownerId, {
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons
+        } );
+    }
+
+    public async setChannelMentionable( ownerId: string, mentionable: boolean, shouldAdminLog = true ) {
+        this.logger.log( this.setChannelMentionable,
+            `Master channel id: '${ ownerId }' - Setting channel mentionable: '${ mentionable }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin( this.setChannelMentionable,
+                `📌  Dynamic Channel mentionable modified  - ownerId: "${ ownerId }", "${ mentionable }"`
+            );
+        }
+
+        await ChannelDataManager.$.setSettingsData( ownerId, {
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: mentionable
         } );
     }
 
@@ -515,11 +555,14 @@ export class MasterChannelManager extends InitializeBase {
         const newName = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ] ||
                 DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
             newButtons = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] ||
-                DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE;
+                DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+            newMentionable = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] === "boolean" ?
+                args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] : DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE;
 
         await ChannelDataManager.$.setSettingsData( result.db.id, {
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]: newName,
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons,
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: newMentionable,
         } );
 
         // TODO: Duplicate code.

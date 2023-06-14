@@ -1,8 +1,9 @@
 import { APISelectMenuOption, APIStringSelectComponent, ComponentType } from "discord.js";
 
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
-import { UIArgs, UIBaseTemplateOptions, UIElementSelectMenuLanguageContent } from "@vertix/ui-v2/_base/ui-definitions";
+import { UIArgs, UIBaseTemplateOptions } from "@vertix/ui-v2/_base/ui-definitions";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+import { UIElementSelectMenuLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringSelectComponent> {
     private content: UIElementSelectMenuLanguageContent | undefined;
@@ -11,17 +12,46 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         return "Vertix/UI-V2/UIElementStringSelectMenu";
     }
 
+    public static getComponentType() {
+        return ComponentType.StringSelect;
+    }
+
     public async build( uiArgs?: UIArgs ) {
+        // TODO: Find better way to do this.
+        this.uiArgs = uiArgs;
+
         this.content = await UILanguageManager.$.getSelectMenuTranslatedContent( this, uiArgs?._language );
 
         return super.build( uiArgs );
     }
 
     public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
-        return {
-            placeholder: await this.getPlaceholder?.(),
-            selectOptions: await this.getSelectOptions(),
-        };
+        const translateAbleSelectEntries = await Promise.all( (
+            await this.getSelectOptions() ).map( async ( option ) => {
+                return {
+                    label:option.label,
+                };
+            } )
+        );
+
+        const result: UIElementSelectMenuLanguageContent = {},
+            placeholder = await this.getPlaceholder?.(),
+            selectOptions = await this.getSelectOptions(),
+            options = this.getOptions();
+
+        if ( placeholder ) {
+            result.placeholder = placeholder;
+        }
+
+        if ( selectOptions.length ) {
+            result.selectOptions = translateAbleSelectEntries;
+        }
+
+        if ( Object.keys( options ).length ) {
+            result.options = options;
+        }
+
+        return result;
     }
 
     protected abstract getSelectOptions(): Promise<APISelectMenuOption[]>;
@@ -53,7 +83,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
             disabled = await this.isDisabled?.(),
             options = await this.getOptionsInternal() || [],
             result = {
-                type: ComponentType.StringSelect,
+                type: UIElementStringSelectMenu.getComponentType(),
                 custom_id,
                 options,
             } as APIStringSelectComponent;
@@ -62,7 +92,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
             result.placeholder = placeholder;
         }
 
-        if ( min_values ) {
+        if ( min_values || 0 === min_values ) {
             result.min_values = min_values;
         }
 
@@ -83,38 +113,46 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         return {};
     }
 
-    protected async getLogic(): Promise<{ [ key: string ]: any }> {
+    protected getDataFor( option: APISelectMenuOption ): { [ key: string ]: any } {
         return {};
     }
 
     private async getOptionsInternal() {
-        const options = this.getOptions(),
-            logic = await this.getLogic(),
+        const options = this.content?.options || this.getOptions(),
             hardCodedSelectOptions = await this.getSelectOptions(),
-            translatedSelectOptions = (this.content?.selectOptions || [] ) as APISelectMenuOption[];
+            translatedSelectOptions = ( this.content?.selectOptions || [] ) as APISelectMenuOption[];
 
-        // If using translation then, default values not taken in account.
+        let mergedOptions: APISelectMenuOption[] = [];
+
+        // If using translation then, merge the hard coded options with the translated options.
         if ( hardCodedSelectOptions.length && translatedSelectOptions.length ) {
-            hardCodedSelectOptions.forEach( ( option, index ) => {
-                if ( ! translatedSelectOptions[ index ] ) {
-                    return;
+            mergedOptions = hardCodedSelectOptions.map( ( option, index ) => {
+                const translatedOption = translatedSelectOptions[ index ];
+
+                if ( translatedOption ) {
+                    option.label = translatedOption.label;
                 }
-                translatedSelectOptions[ index ].default = option.default;
+
+                return option;
             } );
         }
 
-        const selectOptions= translatedSelectOptions.length ? translatedSelectOptions : hardCodedSelectOptions;
+        const selectOptions = mergedOptions.length ? mergedOptions : hardCodedSelectOptions;
 
-        if ( Object.keys( options ).length === 0 && Object.keys( logic ).length === 0 ) {
+        if ( Object.keys( options ).length === 0 ) {
             return selectOptions;
         }
 
-        const result = this.composeTemplate(
-            { selectOptions },
-            await this.getLogic(),
-            options,
-        );
+        return selectOptions.map( ( option ) => {
+            const result = this.composeTemplate(
+                { label: option.label },
+                this.getDataFor( option ),
+                options,
+            );
 
-        return result.selectOptions;
+            option.label = result.label;
+
+            return option;
+        } );
     }
 }

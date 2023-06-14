@@ -20,6 +20,10 @@ export class ButtonsSelectMenu extends UIElementStringSelectMenu {
         return "🎚 Select Buttons";
     }
 
+    protected async getMinValues() {
+        return 1;
+    }
+
     protected async getMaxValues() {
         return allItems.length;
     }
@@ -29,10 +33,13 @@ export class ButtonsSelectMenu extends UIElementStringSelectMenu {
             return {
                 label: await item.getLabelForMenu(),
                 value: item.getId().toString(),
+                emoji: await item.getEmoji() as any,
                 default: ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ).includes( item.getId() ),
             };
         } );
 
-        return await Promise.all( values );
+        return ( await Promise.all( values ) ).sort( ( a, b ) =>
+            parseInt( a.value ) - parseInt( b.value )
+        );
     }
 }

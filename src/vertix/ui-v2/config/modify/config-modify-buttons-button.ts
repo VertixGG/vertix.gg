@@ -16,7 +16,7 @@ export class ConfigModifyButtonsButton extends UIElementButtonBase {
     }
 
     protected async getLabel() {
-        return "Modify Buttons";
+        return "Modify Dynamic Buttons";
     }
 
     protected async getEmoji(): Promise<string> {

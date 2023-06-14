@@ -36,8 +36,11 @@ export default class ConfigModifyButtonsEffectEmbed extends UIEmbedBase {
         return `Modifying buttons will impact the dynamic channels created by __Master Channel #${ index }__.\n\n` +
             "There are have two options:\n\n" +
             "- Affect changes immediately to all channels\n" +
-            "- Apply changes only to newly created _Dynamic Channels_.\n\n" +
-            "**__Current enabled buttons__**:\n\n";
+            "- Apply changes only to newly created _Dynamic Channels_.";
+    }
+
+    protected getFooter() {
+        return "Current enabled buttons at the menu below";
     }
 
     protected getLogic( args: UIArgs ) {

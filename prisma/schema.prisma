@@ -132,7 +132,6 @@ model ElementButtonLanguage {
 type ElementTextInputContentLanguage {
   label       String
   placeholder String?
-  value       String?
 }
 
 model ElementTextInputLanguage {
@@ -150,13 +149,14 @@ model ElementTextInputLanguage {
 
 type ElementSelectMenuOptionsLanguage {
   label String
-  value String
 }
 
 type ElementSelectMenuLanguageContent {
   placeholder String?
 
   selectOptions ElementSelectMenuOptionsLanguage[]
+
+  options Json?
 }
 
 model ElementSelectMenuLanguage {
@@ -175,6 +175,7 @@ model ElementSelectMenuLanguage {
 type EmbedContentLanguage {
   title        String?
   description  String?
+  footer       String?
   options      Json?
   arrayOptions Json?
 }

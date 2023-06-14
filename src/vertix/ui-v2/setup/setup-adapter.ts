@@ -21,6 +21,10 @@ import { SetupComponent } from "@vertix/ui-v2/setup/setup-component";
 import { LanguageSelectMenu } from "@vertix/ui-v2/language/language-select-menu";
 
 import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix/utils/badwords";
+import {
+    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
+} from "@vertix/definitions/master-channel";
 
 type DefaultInteraction =
     UIDefaultButtonChannelTextInteraction
@@ -121,7 +125,10 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             return;
         }
 
-        this.uiManager.get( "Vertix/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {} );
+        this.uiManager.get( "Vertix/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
+            dynamicChannelButtonsTemplate: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+            dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+        } );
 
         // Delete Args since left to another adapter.
         this.deleteArgs( interaction );

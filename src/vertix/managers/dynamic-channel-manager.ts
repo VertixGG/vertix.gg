@@ -379,17 +379,27 @@ export class DynamicChannelManager extends InitializeBase {
         return dynamic;
     }
 
-    public async createPrimaryMessage( channel: VoiceChannel, channelDB: ChannelResult ) {
+    public async createPrimaryMessage( channel: VoiceChannel, dynamicChannelDB: ChannelResult ) {
         this.logger.log( this.createPrimaryMessage,
             `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - ` +
-            `Creating primary message for owner id: '${ channelDB.userOwnerId }'`
+            `Creating primary message for owner id: '${ dynamicChannelDB.userOwnerId }'`
         );
 
+        const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId as string );
+
+        const sendArgs = {
+            ownerId: dynamicChannelDB.userOwnerId,
+        } as any;
+
+        if ( masterChannelDB ) {
+            sendArgs.dynamicChannelMentionable = await MasterChannelManager.$.getChannelMentionable( masterChannelDB.id, true );
+        }
+
         const messageCreated = await UIAdapterManager.$.get( "Vertix/UI-V2/DynamicChannelAdapter" )
-            ?.send( channel, { ownerId: channelDB.userOwnerId } );
+            ?.send( channel, sendArgs );
 
         if ( messageCreated ) {
-            await ChannelDataManager.$.setSettingsData( channelDB.id, { [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: messageCreated?.id } );
+            await ChannelDataManager.$.setSettingsData( dynamicChannelDB.id, { [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: messageCreated?.id } );
         }
 
         return messageCreated;
@@ -621,21 +631,31 @@ export class DynamicChannelManager extends InitializeBase {
 
         if ( ! this.isPrimaryMessage( message ) ) {
             this.logger.error( this.editPrimaryMessage,
-                `Guild id: '${ channel.guildId }' - Message in channel id: '${ channel.id }' is not a mention` );
+                `Guild id: '${ channel.guildId }' - Cannot find primary message in channel id: '${ channel.id }'` );
             return;
         }
 
         // If the owner not matching the owner from db, then we need to update the message.
-        const channelDB = await ChannelModel.$.getByChannelId( channel.id );
+        const dynamicChannelDB = await ChannelModel.$.getByChannelId( channel.id );
 
-        if ( ! channelDB ) {
+        if ( ! dynamicChannelDB ) {
             this.logger.error( this.editPrimaryMessage,
                 `Guild id: '${ channel.guildId }' - Failed to find channel id: '${ channel.id }' in database` );
             return;
         }
 
+        const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId as string );
+
+        const editMessageArgs = {
+            ownerId: dynamicChannelDB.userOwnerId,
+        } as any;
+
+        if ( masterChannelDB ) {
+            editMessageArgs.dynamicChannelMentionable = await MasterChannelManager.$.getChannelMentionable( masterChannelDB.id, true );
+        }
+
         await UIAdapterManager.$.get( "Vertix/UI-V2/DynamicChannelAdapter" )
-            ?.editMessage( message, { ownerId: channelDB.userOwnerId } )
+            ?.editMessage( message, editMessageArgs )
             .catch( ( e: any ) => this.logger.error( this.editPrimaryMessage, "", e ) )
             .then( () => this.logger.info( this.editPrimaryMessage,
                 `Guild id: '${ channel.guildId }' channel id: '${ channel.id }' - Editing primary message with id: '${ message.id }' succeeded`
@@ -930,8 +950,9 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public isPrimaryMessage( message: Message<true> | undefined ) {
-        // TODO: Find better solution - If the message is not a mention, then we got the wrong message.
-        return !! message?.content.match( /^<@\d+>$/ );
+        // TODO: Find better way to check if message is primary.
+        return message?.author?.id === AppManager.$.getClient().user.id  &&
+            message?.embeds?.[ 0 ]?.title?.at(0) === "༄";
     }
 
     public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {

@@ -129,7 +129,7 @@ export class ChannelManager extends InitializeBase {
         const displayName = newState.member?.displayName as string,
             channelName = newState.channel?.name as string;
 
-        this.logger.info( this.onLeave,
+        this.logger.log( this.onLeave,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' left channel guild: '${ oldState.guild.name }'`
         );
 

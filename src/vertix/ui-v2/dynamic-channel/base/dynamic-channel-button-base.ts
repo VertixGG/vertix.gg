@@ -18,6 +18,8 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     // TODO: Add unique verification.
     public abstract getId(): number;
 
+    public abstract getLabel(): Promise<string>;
+
     public abstract getEmoji(): Promise<string>;
 
     public abstract getLabelForMenu(): Promise<string>;

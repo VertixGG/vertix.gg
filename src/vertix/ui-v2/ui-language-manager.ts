@@ -5,31 +5,12 @@ import { ComponentType } from "discord.js";
 
 import {
     UI_ELEMENTS_DEPTH,
-    UI_LANGUAGES_FILE_EXTENSION,
-    UI_LANGUAGES_INITIAL_ATTRIBUTES,
-    UI_LANGUAGES_INITIAL_CODE,
-    UI_LANGUAGES_INITIAL_FILE_NAME,
-    UI_LANGUAGES_INITIAL_FILE_PATH,
-    UI_LANGUAGES_PATH,
     UIComponentTypeConstructor,
-    UIElementButtonLanguage,
-    UIElementButtonLanguageContent,
-    UIElementSelectMenuLanguage,
-    UIElementSelectMenuLanguageContent,
-    UIElementTextInputLanguage,
-    UIElementTextInputLanguageContent,
     UIEmbedConstructor,
-    UIEmbedLanguage,
-    UIEmbedLanguageContent,
     UIEntityConstructor,
     UIEntityTypes,
-    UILanguageJSON,
     UIMarkdownConstructor,
-    UIMarkdownLanguage,
-    UIMarkdownLanguageContent,
     UIModalConstructor,
-    UIModalLanguage,
-    UIModalLanguageContent,
 } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { EmbedLanguageModel } from "@vertix/models/embed-language";
@@ -56,6 +37,28 @@ import { ModalLanguageModel } from "@vertix/models/modal-language-model";
 
 import { UIElementUserSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-user-select-menu";
 
+import {
+    UI_LANGUAGES_FILE_EXTENSION,
+    UI_LANGUAGES_INITIAL_ATTRIBUTES,
+    UI_LANGUAGES_INITIAL_CODE,
+    UI_LANGUAGES_INITIAL_FILE_NAME,
+    UI_LANGUAGES_INITIAL_FILE_PATH,
+    UI_LANGUAGES_PATH,
+    UIElementButtonLanguage,
+    UIElementButtonLanguageContent,
+    UIElementSelectMenuLanguage,
+    UIElementSelectMenuLanguageContent,
+    UIElementTextInputLanguage,
+    UIElementTextInputLanguageContent,
+    UIEmbedLanguage,
+    UIEmbedLanguageContent,
+    UILanguageJSON,
+    UIMarkdownLanguage,
+    UIMarkdownLanguageContent,
+    UIModalLanguage,
+    UIModalLanguageContent
+} from "@vertix/ui-v2/_base/ui-language-definitions";
+
 import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface UILanguageManagerValidateOptions {
@@ -66,7 +69,7 @@ interface UILanguageManagerValidateOptions {
 export class UILanguageManager extends InitializeBase {
     private static instance: UILanguageManager;
 
-    private uiAdditionalLanguages = new Map<string, UILanguageJSON>;
+    private uiAvailableLanguages = new Map<string, UILanguageJSON>();
 
     private uiInitialLanguage!: UILanguageJSON;
 
@@ -86,8 +89,8 @@ export class UILanguageManager extends InitializeBase {
         return UILanguageManager.getInstance();
     }
 
-    public getAdditionalLanguages() {
-        return this.uiAdditionalLanguages;
+    public getAvailableLanguages() {
+        return this.uiAvailableLanguages;
     }
 
     public getInitialLanguage() {
@@ -131,6 +134,7 @@ export class UILanguageManager extends InitializeBase {
         return {
             placeholder: selectMenuLanguage.content.placeholder || undefined,
             selectOptions: selectMenuLanguage.content.selectOptions as any,
+            options: selectMenuLanguage.content.options as any,
         };
     }
 
@@ -151,7 +155,6 @@ export class UILanguageManager extends InitializeBase {
         return {
             label: textInputLanguage.content.label,
             placeholder: textInputLanguage.content.placeholder || undefined,
-            value: textInputLanguage.content.value || undefined,
         };
     }
 
@@ -172,6 +175,7 @@ export class UILanguageManager extends InitializeBase {
         return {
             title: embedLanguage.content.title || undefined,
             description: embedLanguage.content.description || undefined,
+            footer: embedLanguage.content.footer || undefined,
             options: embedLanguage.content.options as any,
             arrayOptions: embedLanguage.content.arrayOptions as any,
         };
@@ -220,43 +224,52 @@ export class UILanguageManager extends InitializeBase {
         const tryImportAvailableLanguages = async () => {
             // Import
             let promises: Promise<void>[] = [];
-            this.uiAdditionalLanguages.forEach( ( language ) => {
+
+            this.uiAvailableLanguages.forEach( ( language ) => {
                 promises.push( LanguageUtils.$.import( language ) );
             } );
+
             await Promise.all( promises );
         };
 
-        // Ensure initial language.
+        this.getLanguageFilesPaths().forEach( filePath => {
+            // Validate the file content.
+            const content = fs.readFileSync( filePath, "utf-8" ),
+                currentLanguage = JSON.parse( content ) as UILanguageJSON;
+
+            this.uiAvailableLanguages.set( currentLanguage.code, currentLanguage );
+        } );
+
+        // TODO: Use checksum + db checksum to avoid extra validations.
         if ( fs.existsSync( UI_LANGUAGES_INITIAL_FILE_PATH ) ) {
             this.logger.info( this.register, `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' exists, validating...` );
 
             this.readInitialLanguage();
 
             // Load language files.
-            if ( ! await this.validateAvailableLanguages() ) {
-                throw new Error( "Failed to load language files" );
-            }
-
-            // TODO: Use checksum + db checksum to avoid extra validations.
+            await this.validateAvailableLanguages();
 
             // In case it exist it should be validated against hardcoded entities.
-            const entitiesLanguage = await this.extractEntitiesLanguage();
+            const entitiesLanguage = await this.extractEntitiesLanguage(),
+                sourceOfTruth = {
+                    ... UI_LANGUAGES_INITIAL_ATTRIBUTES,
+                    ... entitiesLanguage,
+                };
 
-            this.validateLanguage( this.uiInitialLanguage, {
-                ...UI_LANGUAGES_INITIAL_ATTRIBUTES,
-
-                ...entitiesLanguage,
-            }, {
+            this.validateLanguage( this.getInitialLanguage(), sourceOfTruth, {
                 skipSameValues: true,
             } );
-        } else {
-            await this.ensureInitialLanguage();
 
-            // Load language files.
-            if ( ! await this.validateAvailableLanguages() ) {
-                throw new Error( "Failed to load language files" );
-            }
+            await tryImportAvailableLanguages();
+
+            return;
         }
+
+        // Ensure initial language.
+        await this.ensureInitialLanguage();
+
+        // Load language files.
+        await this.validateAvailableLanguages();
 
         await tryImportAvailableLanguages();
     }
@@ -265,9 +278,9 @@ export class UILanguageManager extends InitializeBase {
         this.logger.info( this.ensureInitialLanguage, `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' does not exists, creating...` );
 
         LanguageUtils.$.export( {
-            ...UI_LANGUAGES_INITIAL_ATTRIBUTES,
+            ... UI_LANGUAGES_INITIAL_ATTRIBUTES,
 
-            ...await this.extractEntitiesLanguage()
+            ... await this.extractEntitiesLanguage()
 
         }, UI_LANGUAGES_INITIAL_FILE_PATH );
 
@@ -278,41 +291,11 @@ export class UILanguageManager extends InitializeBase {
     }
 
     private async validateAvailableLanguages() {
-        // Load initial language file.
-        const initialLanguagePath = UI_LANGUAGES_INITIAL_FILE_PATH,
-            initialLanguageContent = fs.readFileSync( initialLanguagePath, "utf8" ),
-            initialLanguage = JSON.parse( initialLanguageContent ) as UILanguageJSON;
+        this.getAvailableLanguages().forEach( currentLanguage => {
+            this.validateLanguage( currentLanguage, this.uiInitialLanguage );
 
-        // Get all languages from `assets/embeds-*.json` files.
-        const directoryPath = UI_LANGUAGES_PATH,
-            files = fs.readdirSync( directoryPath ),
-            regexPattern = RegExp( UI_LANGUAGES_FILE_EXTENSION + "$" );
-
-        const availableLanguages: UILanguageJSON[] = [];
-
-        files.forEach( file => {
-            // Skip initial language file.
-            if ( UI_LANGUAGES_INITIAL_FILE_NAME === file ) {
-                return;
-            }
-
-            const filePath = path.join( directoryPath, file );
-
-            // Check if the file name matches the regex pattern.
-            if ( regexPattern.test( file ) ) {
-                // Validate the file content.
-                const content = fs.readFileSync( filePath, "utf-8" ),
-                    currentLanguage = JSON.parse( content ) as UILanguageJSON;
-
-                this.validateLanguage( currentLanguage, initialLanguage );
-
-                availableLanguages.push( currentLanguage );
-
-                this.uiAdditionalLanguages.set( currentLanguage.code, currentLanguage );
-            }
+            this.uiAvailableLanguages.set( currentLanguage.code, currentLanguage );
         } );
-
-        return true;
     }
 
     private validateLanguage( currentLanguage: UILanguageJSON, sourceOfTruth: UILanguageJSON, options: UILanguageManagerValidateOptions = {} ) {
@@ -402,7 +385,7 @@ export class UILanguageManager extends InitializeBase {
             );
 
         const elementsLanguage = await this.extractElementsLanguage(
-                [ ...allElements, ...allModalsElements.flat( UI_ELEMENTS_DEPTH ) ] as any
+                [ ... allElements, ... allModalsElements.flat( UI_ELEMENTS_DEPTH ) ] as any
             ), embedsLanguage = await this.extractEmbedsLanguage( allEmbeds as any ),
             markdownsLanguage = await this.extractMarkdownLanguage( allMarkdowns as any ),
             modalsLanguage = await this.extractModalsLanguage( allModals as any );
@@ -412,22 +395,19 @@ export class UILanguageManager extends InitializeBase {
             embeds: embedsLanguage,
             markdowns: markdownsLanguage,
             modals: modalsLanguage
-        }
+        };
     }
 
-    private async extractElementsLanguage( elements: { new(): UIElementBase<any> }[] ) {
+    private async extractElementsLanguage( elements: { new(): UIElementBase<any> }[] | typeof UIElementBase [] ) {
         const buttons: UIElementButtonLanguage[] = [],
             textInputs: UIElementTextInputLanguage[] = [],
             selectMenus: UIElementSelectMenuLanguage[] = [];
 
         for ( const Element of elements ) {
-            const element = new Element();
+            const ElementConstructor = Element as { new(): UIElementBase<any> },
+                element = new ElementConstructor();
 
-            await element.build();
-
-            const schema = element.getSchema();
-
-            switch ( schema.attributes.type ) {
+            switch ( ( Element as typeof UIElementBase ).getComponentType() ) {
                 case ComponentType.Button:
                     buttons.push( {
                         name: element.getName(),
@@ -436,50 +416,28 @@ export class UILanguageManager extends InitializeBase {
                     break;
 
                 case ComponentType.TextInput:
-                    const result: UIElementTextInputLanguage = {
+                    const content = await element.getTranslatableContent();
+
+                    if ( ! Object.keys( content ).length ) {
+                        break;
+                    }
+
+                    textInputs.push( {
                         name: element.getName(),
-                        content: {
-                            label: schema.attributes.label
-                        }
-                    };
-
-                    if ( schema.attributes.placeholder ) {
-                        result.content.placeholder = schema.attributes.placeholder;
-                    }
-
-                    if ( schema.attributes.value ) {
-                        result.content.value = schema.attributes.value;
-                    }
-
-                    textInputs.push( result );
+                        content
+                    } );
                     break;
 
                 case ComponentType.SelectMenu:
                 case ComponentType.UserSelect:
-                    const selectMenuResult: UIElementSelectMenuLanguage = {
+                    selectMenus.push( {
                         name: element.getName(),
-
-                        content: {}
-                    };
-
-                    if ( schema.attributes.options?.length ) {
-                        selectMenuResult.content.selectOptions = schema.attributes.options.map( ( option: any ) => {
-                            return {
-                                label: option.label,
-                                value: option.value,
-                            };
-                        } );
-                    }
-
-                    if ( schema.attributes.placeholder ) {
-                        selectMenuResult.content.placeholder = schema.attributes.placeholder;
-                    }
-
-                    selectMenus.push( selectMenuResult );
+                        content: await element.getTranslatableContent(),
+                    } );
                     break;
 
                 default:
-                    throw new UnknownElementTypeError( schema );
+                    throw new UnknownElementTypeError( await element.build() );
             }
         }
 
@@ -590,19 +548,18 @@ export class UILanguageManager extends InitializeBase {
             }
 
             const validLabel = this.validateString( textInput.content.label, currentTestedTextInput.content.label, options ),
-                validPlaceHolder = this.validateString( textInput.content.placeholder, currentTestedTextInput.content.placeholder, options );
+                validPlaceHolder = this.validateString( textInput.content.placeholder, currentTestedTextInput.content.placeholder, {
+                    ...options,
+                    // Avoid checking same values for placeholder.
+                    skipSameValues: true,
+                } );
 
             if ( validLabel !== "valid" ) {
                 throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has invalid attribute: 'label' code: '${ validLabel }'.` );
             }
 
-            // if ( validPlaceHolder !== "valid" ) {
-            //     throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has invalid attribute: 'placeholder' code: '${ validPlaceHolder }'.` );
-            // }
-
-            // Ensure value is the same as initial.
-            if ( textInput.content.value !== textInput.content.value ) {
-                throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has different value than initial language.` );
+            if ( validPlaceHolder !== "valid" ) {
+                throw new Error( `Language code: '${ currentLanguage.code }' text input with name: '${ textInput.name }' has invalid attribute: 'placeholder' code: '${ validPlaceHolder }'.` );
             }
         }
 
@@ -626,21 +583,6 @@ export class UILanguageManager extends InitializeBase {
 
             if ( a !== b ) {
                 throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has different options count: '${ a } != ${ b }'` );
-            }
-
-            const selectMenuLabels = JSON.stringify( selectMenu.content.selectOptions?.map( ( i ) => i.label ) ),
-                currentSelectMenuLabels = JSON.stringify( currentTestedSelectMenu.content.selectOptions?.map( ( i ) => i.label ) );
-
-            if ( ! options.skipSameValues && typeof selectMenuLabels !== "undefined" && currentSelectMenuLabels !== "undefined" ) {
-                // Ensure labels are not the same.
-                if ( selectMenuLabels !== "[]" && currentSelectMenuLabels !== "[]" && selectMenuLabels !== "{}" && currentSelectMenuLabels !== "{}" && selectMenuLabels === currentSelectMenuLabels ) {
-                    throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has the same options as initial language.` );
-                }
-            }
-
-            // Ensure values are the same.
-            if ( selectMenu.content.selectOptions?.map( ( i ) => i.value ).join( "" ) !== currentTestedSelectMenu.content.selectOptions?.map( ( i ) => i.value ).join( "" ) ) {
-                throw new Error( `Language code: '${ currentLanguage.code }' select menu with name: '${ selectMenu.name }' has different options values.` );
             }
         }
     }
@@ -690,18 +632,6 @@ export class UILanguageManager extends InitializeBase {
                 if ( initialKeys !== keys ) {
                     throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has different array options keys` );
                 }
-
-                // const initialArrayOptions = JSON.stringify( initialContent.arrayOptions ),
-                //     currentArrayOptions = JSON.stringify( currentContent.arrayOptions ),
-                //     isInitialEmpty = "{}" === initialArrayOptions || "[]" === initialArrayOptions,
-                //     isCurrentEmpty = "{}" === currentArrayOptions || "[]" === currentArrayOptions,
-                //     isInitialIncludeAlphabetical =  /[a-zA-Z]/.test(initialArrayOptions ) && !/{.*}/.test(Object.values( initialArrayOptions ) ),);
-                //
-                //
-                // // Ensure not the same as initial.
-                // if ( isInitialIncludeAlphabetical && ! isInitialEmpty && ! isCurrentEmpty && initialArrayOptions === currentArrayOptions ) {
-                //     throw new Error( `Language code: '${ currentLanguage.code }' embed with name: '${ embed.name }' has the same array selectOptions as initial language.` );
-                // }
             }
         }
     }
@@ -777,6 +707,31 @@ export class UILanguageManager extends InitializeBase {
         const initialLanguage = fs.readFileSync( UI_LANGUAGES_INITIAL_FILE_PATH, "utf-8" );
 
         this.uiInitialLanguage = JSON.parse( initialLanguage );
+    }
+
+    private getLanguageFilesPaths( skipInitial = true ): string[] {
+        const result: string[] = [];
+
+        // Get all languages from `assets/embeds-*.json` files.
+        const directoryPath = UI_LANGUAGES_PATH,
+            files = fs.readdirSync( directoryPath ),
+            regexPattern = RegExp( UI_LANGUAGES_FILE_EXTENSION + "$" );
+
+        files.forEach( file => {
+            // Skip initial language file.
+            if ( skipInitial && UI_LANGUAGES_INITIAL_FILE_NAME === file ) {
+                return;
+            }
+
+            const filePath = path.join( directoryPath, file );
+
+            // Check if the file name matches the regex pattern.
+            if ( regexPattern.test( file ) ) {
+                result.push( filePath );
+            }
+        } );
+
+        return result;
     }
 
     private getKeysRecursive = ( obj: any ) => {

@@ -1,14 +1,12 @@
 import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
 
-import {
-    UIArgs,
-    UIInstancesTypes,
-    UI_IMAGE_EMPTY_LINE_URL
-} from "@vertix/ui-v2/_base/ui-definitions";
-
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
-
 import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
+
+import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+
+import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
+import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
+import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export class LanguageEmbed extends UIEmbedBase {
     private static vars = {
@@ -44,14 +42,18 @@ export class LanguageEmbed extends UIEmbedBase {
     }
 
     protected getOptions() {
-        // TODO: There should be one source of truth for languages.
-        return {
-            currentLanguage: {
-                en: "English",
-                ru: "Russian",
-                he: "Hebrew",
-            }
-        };
+        const initialAttrs = UI_LANGUAGES_INITIAL_ATTRIBUTES,
+            result: { currentLanguage: { [ code: string ]: string } } = {
+                currentLanguage: {
+                    [ initialAttrs.code ]: initialAttrs.name
+                }
+            };
+
+        UILanguageManager.$.getAvailableLanguages().forEach( ( { code, name } ) => {
+            result.currentLanguage[ code ] = name;
+        } );
+
+        return result;
     }
 
     protected getLogic( args: UIArgs ) {

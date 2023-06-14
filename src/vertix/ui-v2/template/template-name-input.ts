@@ -26,7 +26,7 @@ export class TemplateNameInput extends UIElementInputBase {
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.dynamicChannelNameTemplate || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE;
+        return this.uiArgs?.dynamicChannelNameTemplate || this.content?.placeholder ||  DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE;
     }
 
     protected async getMinLength(): Promise<number> {

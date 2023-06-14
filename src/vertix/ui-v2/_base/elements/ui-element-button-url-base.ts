@@ -7,6 +7,10 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
         return "Vertix/UI-V2/UIElementButtonUrlBase";
     }
 
+    public static getComponentType() {
+        return ComponentType.Button;
+    }
+
     public async getTranslatableContent(): Promise<any> {
         return {
             label: await this.getLabel(),
@@ -20,7 +24,7 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
     protected async isDisabled?(): Promise<boolean>;
 
     protected async getAttributes() {
-        const type = Number( ComponentType.Button ),
+        const type = Number( UIElementButtonUrlBase.getComponentType() ),
             label = await this.getLabel(),
             style = Number( ButtonStyle.Link ),
             disabled = await this.isDisabled?.(),

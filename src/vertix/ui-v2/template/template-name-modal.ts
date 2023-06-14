@@ -10,7 +10,7 @@ export class TemplateNameModal extends UIModalBase {
     }
 
     public static getInstanceType() {
-        return UIInstancesTypes.Static;
+        return UIInstancesTypes.Dynamic;
     }
 
     public static getInputElements() {

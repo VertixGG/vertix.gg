@@ -2,14 +2,19 @@ import { APITextInputComponent, ComponentType, TextInputStyle } from "discord.js
 
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
 
-import { UIArgs, UIElementTextInputLanguageContent, UIInputStyleTypes } from "@vertix/ui-v2/_base/ui-definitions";
+import { UIArgs, UIInputStyleTypes } from "@vertix/ui-v2/_base/ui-definitions";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+import { UIElementTextInputLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementInputBase extends UIElementBase<APITextInputComponent> {
-    private content: UIElementTextInputLanguageContent | undefined;
+    protected content: UIElementTextInputLanguageContent | undefined;
 
     public static getName() {
         return "Vertix/UI-V2/UIElementInputBase";
+    }
+
+    public static getComponentType(): ComponentType {
+        return ComponentType.TextInput;
     }
 
     public async build( uiArgs?: UIArgs ) {
@@ -19,11 +24,16 @@ export abstract class UIElementInputBase extends UIElementBase<APITextInputCompo
     }
 
     public async getTranslatableContent(): Promise<UIElementTextInputLanguageContent> {
-        return {
+        const result: UIElementTextInputLanguageContent = {
             label: await this.getLabel(),
-            placeholder: await this.getPlaceholder?.(),
-            value: await this.getValue?.(),
-        };
+        },
+            placeholder = await this.getPlaceholder?.();
+
+        if ( placeholder ) {
+            result.placeholder = placeholder;
+        }
+
+        return result;
     }
 
     protected abstract getStyle(): Promise<UIInputStyleTypes>;
@@ -34,20 +44,20 @@ export abstract class UIElementInputBase extends UIElementBase<APITextInputCompo
 
     protected async getValue?(): Promise<string>;
 
-    protected async getMinLength?(): Promise<number|undefined>;
+    protected async getMinLength?(): Promise<number | undefined>;
 
-    protected async getMaxLength?(): Promise<number|undefined>;
+    protected async getMaxLength?(): Promise<number | undefined>;
 
     protected async isRequired?(): Promise<boolean>;
 
     protected async getCustomId?(): Promise<string>;
 
     protected async getAttributes() {
-        const type = Number( ComponentType.TextInput),
+        const type = Number( UIElementInputBase.getComponentType() ),
             custom_id = await this.getCustomId?.() || "",
             label = this.content?.label || await this.getLabel(),
             placeholder = this.content?.placeholder || await this.getPlaceholder?.(),
-            value = this.content?.value || await this.getValue?.(),
+            value = await this.getValue?.(),
             min_length = await this.getMinLength?.() || 0,
             max_length = await this.getMaxLength?.(),
             required = await this.isRequired?.() || false;

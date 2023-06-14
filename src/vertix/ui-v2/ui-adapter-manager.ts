@@ -94,7 +94,8 @@ export class UIAdapterManager extends InitializeBase {
             ( await import ("@vertix/ui-v2/language/language-adapter") ).LanguageAdapter,
 
             ( await import ("@vertix/ui-v2/setup/setup-adapter") ).SetupAdapter,
-            ( await import ("@vertix/ui-v2/setup/setup-new-wizard-adapter") ).SetupNewWizardAdapter,
+
+            ( await import ("@vertix/ui-v2/setup-new/setup-new-wizard-adapter") ).SetupNewWizardAdapter,
 
             ( await import ("@vertix/ui-v2/welcome/welcome-adapter") ).WelcomeAdapter,
         ];

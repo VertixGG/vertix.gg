@@ -11,10 +11,10 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
     }
 
     public async getLabelForMenu(): Promise<string> {
-        return "🙈 / 🐵 Toggle Visibility";
+        return "Shown/Hidden"; //  - ( 🙈 / 🐵 )
     }
 
-    protected async getLabel(): Promise<string> {
+    public async getLabel(): Promise<string> {
         return uiUtilsWrapAsTemplate( "displayText" );
     }
 

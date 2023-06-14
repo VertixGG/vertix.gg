@@ -1,13 +1,11 @@
+import { APIEmbedField } from "discord.js";
+
 import { UITemplateBase } from "@vertix/ui-v2/_base/ui-template-base";
 
-import {
-    UIArgs, UIBaseTemplateOptions,
-    UIEmbedArrayOptions,
-    UIEmbedLanguageContent,
-    UIType
-} from "@vertix/ui-v2/_base/ui-definitions";
+import { UIArgs, UIBaseTemplateOptions, UIEmbedArrayOptions, UIType } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+import { UIEmbedLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIEmbedBase extends UITemplateBase {
     private content: UIEmbedLanguageContent | undefined;
@@ -32,15 +30,39 @@ export abstract class UIEmbedBase extends UITemplateBase {
      * Note: The method called on start-up process, the args are not available during this time.
      */
     public async getTranslatableContent(): Promise<UIEmbedLanguageContent> {
-        return {
-            title: this.getTitle(),
-            description: this.getDescription(),
-            options: {
-                ... this.getInternalOptions(),
-                ... this.getOptions()
+        const assumed = {
+                title: this.getTitle(),
+                description: this.getDescription(),
+                footer: this.getFooter(),
+                options: {
+                    ... this.getInternalOptions(),
+                    ... this.getOptions()
+                },
+                arrayOptions: this.getArrayOptions(),
             },
-            arrayOptions: this.getArrayOptions(),
-        };
+            result: UIEmbedLanguageContent = {};
+
+        if ( assumed.title.length ) {
+            result.title = assumed.title;
+        }
+
+        if ( assumed.description.length ) {
+            result.description = assumed.description;
+        }
+
+        if ( assumed.footer.length ) {
+            result.footer = assumed.footer;
+        }
+
+        if ( Object.keys( assumed.options ).length ) {
+            result.options = assumed.options;
+        }
+
+        if ( Object.keys( assumed.arrayOptions ).length ) {
+            result.arrayOptions = assumed.arrayOptions;
+        }
+
+        return result;
     }
 
     protected async getAttributes() {
@@ -62,6 +84,10 @@ export abstract class UIEmbedBase extends UITemplateBase {
             attributes.description = content.description;
         }
 
+        if ( content?.footer?.length ) {
+            attributes.footer = content.footer;
+        }
+
         if ( thumbnail.length ) {
             attributes.thumbnail = thumbnail;
         }
@@ -81,11 +107,19 @@ export abstract class UIEmbedBase extends UITemplateBase {
             content?.arrayOptions || {},
         );
 
-        return this.composeTemplate(
+        const template = this.composeTemplate(
             attributes,
             data,
             content?.options || {},
         );
+
+        if ( template.footer?.length ) {
+            template.footer = {
+                text: template.footer,
+            };
+        }
+
+        return template;
     }
 
     protected getColor(): number {
@@ -97,6 +131,14 @@ export abstract class UIEmbedBase extends UITemplateBase {
     }
 
     protected getDescription(): string {
+        return "";
+    }
+
+    protected getFields(): APIEmbedField[] {
+        return [];
+    }
+
+    protected getFooter(): string {
         return "";
     }
 

@@ -1,10 +1,12 @@
 import * as fs from "fs";
 
-import { UIArgs, UIBaseTemplateOptions, UIMarkdownLanguageContent, UIType } from "@vertix/ui-v2/_base/ui-definitions";
+import { UIArgs, UIBaseTemplateOptions, UIType } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UITemplateBase } from "@vertix/ui-v2/_base/ui-template-base";
 
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+
+import { UIMarkdownLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 import { ForceMethodImplementation } from "@internal/errors/force-method-implementation";
 
@@ -48,11 +50,18 @@ export abstract class UIMarkdownBase extends UITemplateBase {
         return super.build( uiArgs );
     }
 
-    public async getTranslatableContent() {
-        return {
+    public async getTranslatableContent(): Promise<UIMarkdownLanguageContent> {
+        const result: UIMarkdownLanguageContent = {
             content: ( this.constructor as typeof UIMarkdownBase ).content,
-            options: this.getOptions(),
         };
+
+        const options = this.getOptions();
+
+        if ( Object.keys( options ).length ) {
+            result.options = options;
+        }
+
+        return result;
     }
 
     protected abstract generateLink( content: string ): Promise<string>;

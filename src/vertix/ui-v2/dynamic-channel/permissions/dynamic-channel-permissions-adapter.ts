@@ -91,19 +91,6 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep()?.name ) {
-            case "Vertix/UI-V2/DynamicChannelPermissionsStateHidden":
-            case "Vertix/UI-V2/DynamicChannelPermissionsStatePrivate":
-                const masterChannelDB = await ChannelManager.$
-                    .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
-
-                if ( masterChannelDB ) {
-                    args.dynamicChannelButtonsTemplate = await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
-                    args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
-                        ( buttonId: number ) => buttonId === DynamicChannelPermissionsAccessButton.getId()
-                    );
-                }
-                break;
-
             case "Vertix/UI-V2/DynamicChannelPermissionsGranted":
                 args.userGrantedDisplayName = argsFromManager.userGrantedDisplayName;
                 break;
@@ -111,9 +98,16 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             case "Vertix/UI-V2/DynamicChannelPermissionsDenied":
                 args.userDeniedDisplayName = argsFromManager.userDeniedDisplayName;
                 break;
+        }
 
-            case "Vertix/UI-V2/DynamicChannelPermissionsAccess":
-                break;
+        const masterChannelDB = await ChannelManager.$
+            .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
+
+        if ( masterChannelDB ) {
+            args.dynamicChannelButtonsTemplate = await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+            args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
+                ( buttonId: number ) => buttonId === DynamicChannelPermissionsAccessButton.getId()
+            );
         }
 
         args.allowedUsers = await DynamicChannelManager.$.getAllowedUsersTags( interaction.channel );

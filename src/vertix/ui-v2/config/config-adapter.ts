@@ -6,7 +6,7 @@ import {
     UIDefaultStringSelectMenuChannelTextInteraction
 } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
-import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { ConfigComponent } from "@vertix/ui-v2/config/config-component";
 
@@ -21,6 +21,7 @@ import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import {
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE
 } from "@vertix/definitions/master-channel";
 
@@ -35,6 +36,7 @@ type Interactions =
 
 /**
  * TODO: `ConfigAdapter` should handle only '/config' command, the rest logic should be handled by setup-wizard.
+ * TODO: Anyways, it should be refactored.
  */
 export class ConfigAdapter extends AdminAdapterExuBase<VoiceChannel, Interactions> {
     public static getName() {
@@ -99,6 +101,7 @@ export class ConfigAdapter extends AdminAdapterExuBase<VoiceChannel, Interaction
 
             args.dynamicChannelNameTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ];
             args.dynamicChannelButtonsTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+            args.dynamicChannelMentionable = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
         } else {
             args.masterChannels = await ChannelModel.$.getMasters( interaction.guild?.id || "", true );
         }
@@ -140,6 +143,11 @@ export class ConfigAdapter extends AdminAdapterExuBase<VoiceChannel, Interaction
             this.onButtonsEffectNewlyButtonClicked
         );
 
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "Vertix/UI-V2/ConfigExtrasSelectMenu",
+            this.onConfigExtrasSelected
+        );
+
         this.bindButton<UIDefaultButtonChannelTextInteraction>( "Vertix/UI-V2/DoneButton", this.onDoneButtonClicked );
     }
 
@@ -164,6 +172,7 @@ export class ConfigAdapter extends AdminAdapterExuBase<VoiceChannel, Interaction
                 masterChannelId: masterChannelDB?.channelId, // TODO: Possible null.
                 dynamicChannelNameTemplate: masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ],
                 dynamicChannelButtonsTemplate: masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ],
+                dynamicChannelMentionable: masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ],
 
                 // verifiedRoles: [
                 //     "@Basic Role",
@@ -211,6 +220,7 @@ export class ConfigAdapter extends AdminAdapterExuBase<VoiceChannel, Interaction
 
         args.dynamicChannelNameTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ];
         args.dynamicChannelButtonsTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+        args.dynamicChannelMentionable = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
 
         this.getArgsManager().setArgs( this, interaction, args );
 
@@ -270,5 +280,26 @@ export class ConfigAdapter extends AdminAdapterExuBase<VoiceChannel, Interaction
         }
 
         this.deleteArgs( interaction );
+    }
+
+    private async onConfigExtrasSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+        const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
+            values = interaction.values;
+
+        values.forEach( ( value ) => {
+            const parted = value.split( UI_GENERIC_SEPARATOR );
+
+            switch ( parted[ 0 ] ) {
+                case "dynamicChannelMentionable":
+                    args.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
+                    break;
+            }
+        } );
+
+        await MasterChannelManager.$.setChannelMentionable( args.ChannelDBId, args.dynamicChannelMentionable );
+
+        this.getArgsManager().setArgs( this, interaction, args );
+
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/ConfigModifyMaster" );
     }
 }

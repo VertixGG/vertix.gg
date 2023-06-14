@@ -6,13 +6,9 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import {
-    UIAdapterBuildSource,
-    UIArgs,
-} from "@vertix/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import {
-    UIAdapterReplyContext,
     UIDefaultButtonChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction
@@ -22,21 +18,22 @@ import { UIWizardAdapterBase } from "@vertix/ui-v2/_base/ui-wizard-adapter-base"
 import { UIWizardComponentBase } from "@vertix/ui-v2/_base/ui-wizard-component-base";
 import { UIEmbedsGroupBase } from "@vertix/ui-v2/_base/ui-embeds-group-base";
 
-import { TemplateComponent } from "@vertix/ui-v2/template/template-component";
-import { ButtonsComponent } from "@vertix/ui-v2/buttons/buttons-component";
+import { SetupStep1Component } from "@vertix/ui-v2/setup-new/step-1/setup-step-1-component";
+import { SetupStep2Component } from "@vertix/ui-v2/setup-new/step-2/setup-step-2-component";
 
 import { SetupMasterCreateButton } from "@vertix/ui-v2/setup/setup-master-create-button";
-
-import {
-    DynamicChannelElementsGroup
-} from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { SomethingWentWrongEmbed } from "@vertix/ui-v2/_general/something-went-wrong-embed";
 import { SetupMaxMasterChannelsEmbed } from "@vertix/ui-v2/setup/setup-max-master-channels-embed";
 
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 
-type Interactions = UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction | UIDefaultStringSelectMenuChannelTextInteraction;
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE } from "@vertix/definitions/master-channel";
+
+type Interactions =
+    UIDefaultButtonChannelTextInteraction
+    | UIDefaultModalChannelTextInteraction
+    | UIDefaultStringSelectMenuChannelTextInteraction;
 
 export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
     public static getName() {
@@ -51,8 +48,8 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
             public static getComponents() {
                 return [
-                    TemplateComponent,
-                    ButtonsComponent,
+                    SetupStep1Component,
+                    SetupStep2Component,
                 ];
             }
 
@@ -116,6 +113,26 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             "Vertix/UI-V2/ButtonsSelectMenu",
             this.onButtonsSelected
         );
+
+        // Config buttons menu.
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "Vertix/UI-V2/ConfigExtrasSelectMenu",
+            this.onConfigExtrasSelected
+        );
+
+        // this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+        //     "Vertix/UI-V2/ButtonsAddSelectMenu",
+        //     async ( interaction ) => {
+        //         await this.onButtonSelected( interaction, "added" );
+        //     }
+        // );
+        //
+        // this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+        //     "Vertix/UI-V2/ButtonsRemoveSelectMenu",
+        //     async ( interaction ) => {
+        //         await this.onButtonSelected( interaction, "remove" );
+        //     }
+        // );
     }
 
     protected async getStartArgs( channel: BaseGuildTextChannel ) {
@@ -134,22 +151,11 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         return result;
     }
 
-    protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, interaction?: Interactions ): Promise<void> {
-        if ( args && ! args.dynamicChannelButtonsTemplate ) {
-            const args: UIArgs = {};
-
-            args.dynamicChannelButtonsTemplate = DynamicChannelElementsGroup.getAllItems().map(
-                ( item ) => item.getId()
-            );
-
-            this.getArgsManager().setArgs( this, interaction as UIAdapterReplyContext, args );
-        }
-    }
-
     protected async onBeforeFinish( interaction: UIDefaultButtonChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction ),
             templateName: string = args.dynamicChannelNameTemplate,
-            templateButtons: number[] = args.dynamicChannelButtonsTemplate;
+            templateButtons: number[] = args.dynamicChannelButtonsTemplate,
+            mentionable: boolean = args.dynamicChannelMentionable;
 
         const result = await MasterChannelManager.$.createMasterChannel( {
             guildId: interaction.guildId,
@@ -158,6 +164,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
             dynamicChannelNameTemplate: templateName,
             dynamicChannelButtonsTemplate: templateButtons,
+            dynamicChannelMentionable: mentionable,
         } );
 
         switch ( result.code ) {
@@ -187,7 +194,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/TemplateComponent" );
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep1Component" );
     }
 
     private async onTemplateNameModalSubmit( interaction: UIDefaultModalChannelTextInteraction ) {
@@ -197,7 +204,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelNameTemplate: value,
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/TemplateComponent" );
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep1Component" );
     }
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -205,6 +212,47 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelButtonsTemplate: interaction.values.map( ( i ) => parseInt( i ) )
         } );
 
-        await interaction.deferUpdate();
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
+    }
+
+    private async onButtonSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction, state: "added" | "remove" ) {
+        const selectedButtonId = interaction.values[ 0 ],
+            args = this.getArgsManager().getArgs( this, interaction ),
+            buttons = args.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE;
+
+        if ( state === "added" ) {
+            if ( ! buttons.includes( parseInt( selectedButtonId ) ) ) {
+                buttons.push( parseInt( selectedButtonId ) );
+            }
+        } else {
+            if ( buttons.includes( parseInt( selectedButtonId ) ) ) {
+                buttons.splice( buttons.indexOf( parseInt( selectedButtonId ) ), 1 );
+            }
+        }
+
+        this.getArgsManager().setArgs( this, interaction, {
+            dynamicChannelButtonsTemplate: buttons,
+        } );
+
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
+    }
+
+    private async onConfigExtrasSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+        const argsToSet: UIArgs = {},
+            values = interaction.values;
+
+        values.forEach( ( value ) => {
+            const parted = value.split( UI_GENERIC_SEPARATOR );
+
+            switch ( parted[ 0 ] ) {
+                case "dynamicChannelMentionable":
+                    argsToSet.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
+                    break;
+            }
+        } );
+
+        this.getArgsManager().setArgs( this, interaction, argsToSet );
+
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
     }
 }

@@ -1,21 +1,21 @@
-import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
+import { ButtonsEmbed } from "@vertix/ui-v2/buttons/buttons-embed";
 
-import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
+import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 
-export class ConfigModifyEmbed extends UIEmbedBase {
+export class ConfigModifyEmbed extends ButtonsEmbed {
     private static vars: any = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
-
         index: uiUtilsWrapAsTemplate( "index" ),
         masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
 
+        configUserMention: uiUtilsWrapAsTemplate( "configUserMention" ),
+        configUserMentionEnabled: uiUtilsWrapAsTemplate( "configUserMentionEnabled" ),
+        configUserMentionDisabled: uiUtilsWrapAsTemplate( "configUserMentionDisabled" ),
+
         dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
-        dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" ),
 
         verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
     };
@@ -32,6 +32,10 @@ export class ConfigModifyEmbed extends UIEmbedBase {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
+    protected getImage(): string {
+        return UI_IMAGE_EMPTY_LINE_URL;
+    }
+
     protected getTitle() {
         return `🔧  Modify Master Channel #${ ConfigModifyEmbed.vars.index }`;
     }
@@ -39,32 +43,31 @@ export class ConfigModifyEmbed extends UIEmbedBase {
     protected getDescription() {
         return "Configure master channel according to your preferences.\n\n" +
 
-            "__Current Configuration__:\n\n" +
-            `- Name: <#${ ConfigModifyEmbed.vars.masterChannelId }>\n` +
-            `- Channel ID: \`${ ConfigModifyEmbed.vars.masterChannelId }\`\n` +
-            `- Dynamic Channels Name: \`${ ConfigModifyEmbed.vars.dynamicChannelNameTemplate }\`\n` +
-            "- Buttons:\n" +
-            ConfigModifyEmbed.vars.dynamicChannelButtonsTemplate;
+            `▹ Name: <#${ ConfigModifyEmbed.vars.masterChannelId }>\n` +
+            `▹ Channel ID: \`${ ConfigModifyEmbed.vars.masterChannelId }\`\n` +
+            `▹ Dynamic Channels Name: \`${ ConfigModifyEmbed.vars.dynamicChannelNameTemplate }\`\n\n` +
+
+            "**_🎚 Buttons Interface_**\n\n" +
+            super.getDescription() + "\n\n" +
+
+            "**_⚙️ Configuration_**\n\n" +
+            "> 📌 Mention user in primary message: " + ConfigModifyEmbed.vars.configUserMention;
     }
 
-    protected getArrayOptions() {
-        // TODO: Use real data.
+    protected getFooter() {
+        return "Note: Changing user mention will not affect already created dynamic channels.";
+    }
+
+    protected getOptions() {
+        const {
+            configUserMentionEnabled,
+            configUserMentionDisabled,
+        } = ConfigModifyEmbed.vars;
+
         return {
-            dynamicChannelButtonsTemplate: {
-                format: `  -  **${ ConfigModifyEmbed.vars.value }**${ ConfigModifyEmbed.vars.separator }`,
-                separator: "\n",
-                options: {
-                    0: "✏️ Rename",
-                    1: "✋ User Limit",
-                    2: "🧹 Clear Chat",
-
-                    3: "🚫 Private / 🌐 Public ",
-                    4: "🙈 Hidden / 🐵 Shown",
-                    5: "👥 Access",
-
-                    6: "🔃 Reset Channel",
-                    7: "😈 Claim Channel",
-                }
+            configUserMention: {
+                [ configUserMentionEnabled ]: "\`🟢∙On`",
+                [ configUserMentionDisabled ]: "\`🔴∙Off`",
             },
         };
     }
@@ -73,8 +76,11 @@ export class ConfigModifyEmbed extends UIEmbedBase {
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,
+
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
+            configUserMention: args.dynamicChannelMentionable ? ConfigModifyEmbed.vars.configUserMentionEnabled : ConfigModifyEmbed.vars.configUserMentionDisabled,
+
+            ... super.getLogic( args ),
         };
     }
 }

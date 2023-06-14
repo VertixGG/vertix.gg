@@ -1,6 +1,9 @@
-import { UI_LANGUAGES_INITIAL_ATTRIBUTES, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
+import { UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
+import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-string-select-menu"
+    ;
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
-import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-string-select-menu";
+
+import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export class LanguageSelectMenu extends UIElementStringSelectMenu {
     public static getName() {
@@ -23,7 +26,7 @@ export class LanguageSelectMenu extends UIElementStringSelectMenu {
                 default: ( this.uiArgs?._language ? this.uiArgs?._language === initialLanguage.code : true ),
             } ];
 
-        const languages = UILanguageManager.$.getAdditionalLanguages();
+        const languages = UILanguageManager.$.getAvailableLanguages();
 
         languages.forEach( ( language ) => {
             result.push( {

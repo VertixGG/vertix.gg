@@ -16,10 +16,10 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     public async getLabelForMenu(): Promise<string> {
-        return await this.getEmoji() + " " + await this.getLabel();
+        return await this.getLabel();
     }
 
-    protected async getLabel(): Promise<string> {
+    public async getLabel(): Promise<string> {
         return "Claim Channel";
     }
 

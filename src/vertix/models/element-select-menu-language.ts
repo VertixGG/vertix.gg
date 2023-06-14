@@ -14,6 +14,7 @@ async function withContent() {
                 select: {
                     selectOptions: true,
                     placeholder: true,
+                    options: true,
                 }
             },
         }

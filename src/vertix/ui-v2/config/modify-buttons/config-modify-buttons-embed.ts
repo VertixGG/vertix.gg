@@ -33,8 +33,11 @@ export class ConfigModifyButtonsEmbed extends UIEmbedBase {
     protected getDescription(): string {
         return "Select which buttons you wish to be visible for your members.\n\n" +
             "Only selected buttons will be enabled/visible at\n" +
-            "_Dynamic Channels_ that created by this master channel.\n\n" +
-            "**__Current enabled buttons__**:\n\n";
+            "_Dynamic Channels_ that created by this master channel.\n\n";
+    }
+
+    protected getFooter() {
+        return "Current enabled buttons at the menu below";
     }
 
     protected getLogic( args: UIArgs ) {

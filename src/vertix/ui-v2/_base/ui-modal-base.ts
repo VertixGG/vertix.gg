@@ -6,11 +6,11 @@ import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-inpu
 import {
     UIArgs,
     UIEntityTypes,
-    UIModalLanguageContent,
     UIPortableSchemaBase,
     UIType
 } from "@vertix/ui-v2/_base/ui-definitions";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+import { UIModalLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 interface UIModalSchema extends UIPortableSchemaBase {
     attributes: {

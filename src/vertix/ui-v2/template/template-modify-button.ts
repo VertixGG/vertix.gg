@@ -16,7 +16,7 @@ export class TemplateModifyButton extends UIElementButtonBase {
     }
 
     protected async getLabel() {
-        return "Modify Channels Name";
+        return "Modify Channel Name";
     }
 
     protected async getEmoji(): Promise<string> {

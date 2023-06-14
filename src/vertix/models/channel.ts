@@ -1,5 +1,3 @@
-import { Guild } from "discord.js";
-
 import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@prisma/client";
 
 import { ModelDataBase } from "@vertix/bases/model-data-base";

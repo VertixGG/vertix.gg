@@ -1,14 +1,19 @@
 import { APIUserSelectComponent, ComponentType } from "discord.js";
 
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
-import { UIArgs, UIElementSelectMenuLanguageContent } from "@vertix/ui-v2/_base/ui-definitions";
+import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
+import { UIElementSelectMenuLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementUserSelectMenu extends UIElementBase<APIUserSelectComponent> {
     private content: UIElementSelectMenuLanguageContent | undefined;
 
     public static getName() {
         return "Vertix/UI-V2/UIElementUserSelectMenu";
+    }
+
+    public static getComponentType(): ComponentType {
+        return ComponentType.UserSelect;
     }
 
     public async build( uiArgs?: UIArgs ) {
@@ -49,7 +54,7 @@ export abstract class UIElementUserSelectMenu extends UIElementBase<APIUserSelec
             max_values = await this.getMaxValues?.(),
             disabled = await this.isDisabled?.(),
             result = {
-                type: ComponentType.UserSelect,
+                type: UIElementUserSelectMenu.getComponentType(),
                 custom_id,
             } as APIUserSelectComponent;
 

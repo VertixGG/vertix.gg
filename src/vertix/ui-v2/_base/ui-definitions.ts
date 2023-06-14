@@ -1,5 +1,3 @@
-import process from "process";
-
 import { Message } from "discord.js";
 
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
@@ -17,17 +15,6 @@ export enum UIInstancesTypes {
     Static = "Static",
     Dynamic = "Dynamic"
 }
-
-export const UI_LANGUAGES_PATH = process.cwd() + "/assets/languages/",
-    UI_LANGUAGES_FILE_EXTENSION = ".json",
-    UI_LANGUAGES_INITIAL_CODE = "en",
-    UI_LANGUAGES_INITIAL_FILE_NAME = UI_LANGUAGES_INITIAL_CODE + UI_LANGUAGES_FILE_EXTENSION,
-    UI_LANGUAGES_INITIAL_FILE_PATH = UI_LANGUAGES_PATH + UI_LANGUAGES_INITIAL_FILE_NAME,
-    UI_LANGUAGES_INITIAL_ATTRIBUTES = {
-        code: "en",
-        name: "English",
-        flag: "🇺🇸",
-    };
 
 // TODO: Check if required, and when.
 export const UI_ELEMENTS_DEPTH = 2,
@@ -133,90 +120,6 @@ export interface UIEmbedArrayOptions {
 }
 
 /* Language */
-
-export interface UIModalLanguageContent {
-    title: string,
-}
-
-export interface UIModalLanguage {
-    name: string,
-    content: UIModalLanguageContent,
-}
-
-export interface UIMarkdownLanguageContent {
-    content: string,
-    options?: UIBaseTemplateOptions,
-}
-
-export interface UIMarkdownLanguage {
-    name: string,
-    content: UIMarkdownLanguageContent,
-}
-
-export interface UIEmbedLanguageContent {
-    title?: string,
-    description?: string,
-    options?: UIBaseTemplateOptions,
-    arrayOptions?: UIEmbedArrayOptions,
-}
-
-export interface UIEmbedLanguage {
-    name: string,
-    content: UIEmbedLanguageContent,
-}
-
-/* Used for all menus currently */
-export interface UIElementSelectMenuLanguageContent {
-    placeholder?: string,
-
-    selectOptions?: {
-        label: string,
-        value: string,
-    }[],
-}
-
-export interface UIElementSelectMenuLanguage {
-    name: string,
-    content: UIElementSelectMenuLanguageContent,
-}
-
-export interface UIElementTextInputLanguageContent {
-    label: string,
-    placeholder?: string,
-    value?: string,
-}
-
-export interface UIElementTextInputLanguage {
-    name: string,
-    content: UIElementTextInputLanguageContent,
-}
-
-export interface UIElementButtonLanguageContent {
-    label: string,
-    options?: UIBaseTemplateOptions,
-}
-
-export interface UIElementButtonLanguage {
-    name: string,
-    content: UIElementButtonLanguageContent,
-}
-
-export interface UIElementsLanguage {
-    buttons: UIElementButtonLanguage[],
-    textInputs: UIElementTextInputLanguage[],
-    selectMenus: UIElementSelectMenuLanguage[],
-}
-
-export interface UILanguageJSON {
-    code: string,
-    name: string,
-    flag: string,
-
-    elements: UIElementsLanguage,
-    embeds: UIEmbedLanguage[],
-    markdowns: UIMarkdownLanguage[],
-    modals: UIModalLanguage[],
-}
 
 export interface UICreateComponentArgs {
     elementsGroupType?: typeof UIElementsGroupBase;

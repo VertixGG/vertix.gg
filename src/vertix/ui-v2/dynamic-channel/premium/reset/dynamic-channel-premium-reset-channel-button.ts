@@ -10,10 +10,10 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public async getLabelForMenu(): Promise<string> {
-        return await this.getEmoji() + " " + await this.getLabel();
+        return await this.getLabel();
     }
 
-    protected getLabel(): Promise<string> {
+    public getLabel(): Promise<string> {
         return Promise.resolve( "Reset Channel" );
     }
 

@@ -7,10 +7,12 @@ import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager"
 import { DynamicChannelComponent } from "@vertix/ui-v2/dynamic-channel/dynamic-channel-component";
 import { DynamicChannelVoteManager } from "@vertix/managers/dynamic-channel-vote-manager";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
-import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { ChannelManager } from "@vertix/managers/channel-manager";
 
 import { DynamicChannelAdapterBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-base";
+import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
+
+import { MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE, } from "@vertix/definitions/master-channel";
 
 export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
     public static getName() {
@@ -58,7 +60,9 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         const result = super.getMessage();
 
         if ( "send" === from || "edit" === from || "edit-message" === from ) {
-            result.content = "<@" + argsFromManager.ownerId + ">";
+            if ( argsFromManager.dynamicChannelMentionable ) {
+                result.content = "<@" + argsFromManager.ownerId + ">";
+            }
         }
 
         return result;
@@ -115,19 +119,24 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
     }
 
     private async getAllArgs( channel: VoiceChannel ) {
-        const masterChannelDB = await ChannelManager.$
-            .getMasterChannelDBByDynamicChannelId( channel.id );
+        const args: UIArgs = {
+                channelName: channel.name,
+                userLimit: ( channel as VoiceChannel ).userLimit,
 
-        return {
-            channelName: channel.name,
-            userLimit: ( channel as VoiceChannel ).userLimit,
+                isPrivate: DynamicChannelManager.$.getChannelState( channel ) === "private",
+                isHidden: DynamicChannelManager.$.getChannelVisibilityState( channel ) === "hidden",
 
-            isPrivate: DynamicChannelManager.$.getChannelState( channel ) === "private",
-            isHidden: DynamicChannelManager.$.getChannelVisibilityState( channel ) === "hidden",
+                channelId: channel.id,
+            },
+            masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
-            channelId: channel.id,
+        if ( masterChannelDB ) {
+            const masterChannelData =
+                await ChannelDataManager.$.getSettingsData( masterChannelDB.id, false );
 
-            dynamicChannelButtonsTemplate: masterChannelDB ? await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false ) : [],
-        };
+            args.dynamicChannelButtonsTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+        }
+
+        return args;
     }
 }

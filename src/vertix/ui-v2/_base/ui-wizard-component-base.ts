@@ -56,7 +56,16 @@ export class UIWizardComponentBase extends UIComponentBase {
                 public static getItems( args: UIArgs ) { // For one modal submit it called so many times.
                     const currentElements: any[][] = [];
 
-                    currentElements.push( [ ...component.getElements() ] );
+                    // TODO: Fix this, avoid non multi-dimensional arrays.
+                    const elements = component.getElements();
+
+                    if ( Array.isArray( elements[ 0 ] ) ) {
+                        elements.forEach( ( row ) => {
+                            currentElements.push( row as any );
+                        } );
+                    } else {
+                        currentElements.push( [ elements] as any );
+                    }
 
                     if ( args ) {
                         const currentIndex = components.findIndex( ( i ) => i.getName() === args._step );

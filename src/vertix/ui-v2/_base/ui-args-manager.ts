@@ -1,11 +1,13 @@
+import { GuildChannel, Message } from "discord.js";
+
 import { UIBase } from "@vertix/ui-v2/_base/ui-base";
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
-import { UIAdapterReplyContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
+import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
+
 import { ArgsNotFoundError } from "@vertix/ui-v2/_base/errors/args-not-found-error";
 
 import { Debugger } from "@internal/modules/debugger";
 import { Logger } from "@internal/modules/logger";
-import { GuildChannel, Message } from "discord.js";
 
 export class UIArgsManager extends UIBase {
     private prefixName: string;
@@ -37,7 +39,7 @@ export class UIArgsManager extends UIBase {
     }
 
     // TODO: Remove this method, it should be handled by initiator
-    public getArgsId( context: GuildChannel | UIAdapterReplyContext | Message<true> ): string {
+    public getArgsId( context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): string {
         let id;
 
         if ( context instanceof GuildChannel ) {
@@ -65,7 +67,7 @@ export class UIArgsManager extends UIBase {
         return this.data[ self.getName() ]?.[ id ]?.args;
     }
 
-    public getArgs( self: UIBase, context: UIAdapterReplyContext | Message<true> ): UIArgs {
+    public getArgs( self: UIBase, context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): UIArgs {
         const argsId = this.getArgsId( context ),
             args = this.getArgsById( self, argsId );
 
@@ -121,7 +123,7 @@ export class UIArgsManager extends UIBase {
         };
     }
 
-    public setArgs( self: UIBase, interaction: Message<true> | UIAdapterReplyContext | GuildChannel, args: UIArgs ) {
+    public setArgs( self: UIBase, interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext, args: UIArgs ) {
         const argsId = this.getArgsId( interaction ),
             appliedArgs = this.getArgsById( self, argsId );
 

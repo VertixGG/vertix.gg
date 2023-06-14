@@ -4,7 +4,6 @@ import {
     ChannelType,
     ComponentType,
     GuildMember,
-    Interaction,
     Message,
     MessageEditOptions,
     OverwriteType,
@@ -965,21 +964,6 @@ export class DynamicChannelManager extends InitializeBase {
         );
 
         return false;
-    }
-
-    // TODO: getChnnelState.
-    // Remove `interaction` only channel is alowed.
-    public isChannelPrivateState( context: Interaction | VoiceChannel ) {
-        let channel = context instanceof VoiceChannel ? context : context.channel;
-
-        if ( ! channel || channel.type !== ChannelType.GuildVoice ) {
-            this.logger.error( this.isChannelPrivateState, "Interaction channel is not a voice channel" );
-
-            return false;
-        }
-
-        return channel.permissionOverwrites.cache.get( channel.guild?.roles?.everyone.id ?? "" )
-            ?.deny.has( PermissionsBitField.Flags.Connect );
     }
 
     public async isChannelOwner( ownerId: string | undefined, channelId: string ) {

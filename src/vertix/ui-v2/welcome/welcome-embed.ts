@@ -36,7 +36,6 @@ export class WelcomeEmbed extends UIEmbedBase {
             "- Click on \"`(➕ Create Master Channel)`\".\n" +
             "- Modify default channel names or click \"`(▶ Next)`\" to proceed.\n" +
             "- Choose channel buttons or continue with all features, then click \"`(✔ Finish)`\".\n\n" +
-            "Congratulations! Your master channel has been created. 🎉\n\n" +
             "You can always modify the configurations by using the `/setup` command.\n\n" +
 
             "**Dynamic Channels and Master Channel**\n" +

@@ -218,7 +218,6 @@ describe( "Vertix/UI-V2/UI-Utils", function () {
             ] );
         } );
 
-
         it( "5,5,5, 4 per row should be 4,4,4,4,4", function () {
             // Arrange.
             const elements: UIElementBase<any>[][] = [

@@ -8,7 +8,7 @@
 import path from "path";
 import process from "process";
 
-import dotenv from "dotenv";
+import { config } from "dotenv";
 
 import GlobalLogger from "@vertix/global-logger";
 
@@ -23,7 +23,7 @@ function entryPoint() {
 }
 
 function main() {
-    dotenv.config( { path: path.join( process.cwd(), ".env" ) } );
+    config( { path: path.join( process.cwd(), ".env" ) } );
 
     import( "./prisma" ).then( ( { PrismaInstance } ) => {
         PrismaInstance.$.connect().then( entryPoint );

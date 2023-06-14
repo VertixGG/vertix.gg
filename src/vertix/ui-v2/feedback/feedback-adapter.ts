@@ -1,4 +1,4 @@
-import { ChannelType, ModalSubmitInteraction, PermissionsBitField } from "discord.js";
+import { ModalSubmitInteraction } from "discord.js";
 
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 import { FeedbackComponent } from "@vertix/ui-v2/feedback/feedback-component";

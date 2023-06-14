@@ -1,6 +1,5 @@
 import { UIEmbedElapsedTimeBase } from "@vertix/ui-v2/_base/ui-embed-time-elapsed-base";
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
-import assert from "assert";
 
 class UIEmbedElapsedTimeBaseMock extends UIEmbedElapsedTimeBase {
     public static getName() {

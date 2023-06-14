@@ -1,5 +1,6 @@
-import { ModelBaseCached } from "@internal/bases/model-base";
 import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
+
+import { ModelBaseCached } from "@internal/bases/model-base";
 
 export interface TModelHelper<T> {
     findFirst( ... args: any[] ): T;
@@ -44,20 +45,16 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
         this.logger.log( this.create, `Language code: '${ languageCode }' - Language name: '${ languageName }'` );
         this.debugger.dumpDown( this.create, content );
 
-        try {
-            return ( this.getModel() as TModelHelper<TPayloadWithContent> ).create( {
-                data: {
-                    name,
-                    language: {
-                        name: languageName,
-                        code: languageCode,
-                    },
-                    content
+        return ( this.getModel() as TModelHelper<TPayloadWithContent> ).create( {
+            data: {
+                name,
+                language: {
+                    name: languageName,
+                    code: languageCode,
                 },
-            } );
-        } catch ( e ) {
-            debugger;
-        }
+                content
+            },
+        } );
     }
 
     public async getCount( code: string ) {

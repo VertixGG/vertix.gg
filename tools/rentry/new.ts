@@ -5,7 +5,6 @@ if ( process.argv.length < 5 ) {
     process.exit( 1 );
 }
 
-
 async function main() {
     const result = await RentryManager.$.new(
         process.argv[ 2 ],

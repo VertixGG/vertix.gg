@@ -127,13 +127,13 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     public markChannelAsClaimable( channel: VoiceBasedChannel ) {
-        this.debugger.log( this.markChannelAsClaimable, `Channel id: '${ channel.id }' - Marking channel as claimable.` );
+        this.debugger.log( this.markChannelAsClaimable, `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Marking channel as claimable.` );
 
         this.claimableChannels[ channel.id ] = channel;
     }
 
     public unmarkChannelAsClaimable( channel: VoiceBasedChannel ) {
-        this.debugger.log( this.unmarkChannelAsClaimable, `Channel id: '${ channel.id }' - Unmarking channel as claimable.` )
+        this.debugger.log( this.unmarkChannelAsClaimable, `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Unmarking channel as claimable.` );
 
         delete this.claimableChannels[ channel.id ];
     }

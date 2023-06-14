@@ -38,10 +38,6 @@ export const DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS = {
     [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
 };
 
-// TODO
-// Big servers will have 4, or maybe big server will have1? I don't know. yet.
-// Maybe big communities will have 3, when small communities will have 10
-
 /* Default Permissions */
 
 export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField( [

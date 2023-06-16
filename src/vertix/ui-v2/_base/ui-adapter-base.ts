@@ -33,6 +33,7 @@ import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { UIArgsManager } from "@vertix/ui-v2/_base/ui-args-manager";
 import { GuildDataManager } from "@vertix/managers/guild-data-manager";
 import { DirectMessageManager } from "@vertix/managers/direct-message-manager";
+import { AppManager } from "@vertix/managers/app-manager";
 
 import { UIRegenerateButton } from "@vertix/ui-v2/_base/regenerate/ui-regenerate-button";
 
@@ -60,7 +61,11 @@ export abstract class UIAdapterBase<
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterEntityBase {
     private static adapterLogger: Logger = new Logger( this );
-    private static adapterDebugger: Debugger = new Debugger( this, "", true );
+    private static adapterDebugger: Debugger = new Debugger(
+        this,
+        "",
+        AppManager.isDebugOn( "UI", UIAdapterBase.getName() )
+    );
 
     private static validatedOnce = false;
 

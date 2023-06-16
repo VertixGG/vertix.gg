@@ -13,29 +13,28 @@ import {
     UIModalConstructor,
 } from "@vertix/ui-v2/_base/ui-definitions";
 
-import { EmbedLanguageModel } from "@vertix/models/embed-language";
-
 import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
-import { UIModalBase } from "@vertix/ui-v2/_base/ui-modal-base";
 import { UIElementButtonBase } from "@vertix/ui-v2/_base/elements/ui-element-button-base";
 import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-string-select-menu";
+import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";
+import { UIElementUserSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-user-select-menu";
+import { UIElementRoleSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-role-select-menu";
+import { UIMarkdownBase } from "@vertix/ui-v2/_base/ui-markdown-base";
+import { UIModalBase } from "@vertix/ui-v2/_base/ui-modal-base";
+
 import { UnknownElementTypeError } from "@vertix/ui-v2/_base/errors/unknown-element-type-error";
 
 import { ElementButtonLanguageModel } from "@vertix/models/element-button-language";
 import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-menu-language";
-
-import { LanguageUtils } from "@vertix/utils/language";
-
-import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";
 import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language";
-import { UIMarkdownBase } from "@vertix/ui-v2/_base/ui-markdown-base";
+import { EmbedLanguageModel } from "@vertix/models/embed-language";
 import { MarkdownLanguageModel } from "@vertix/models/markdown-language";
 import { ModalLanguageModel } from "@vertix/models/modal-language-model";
 
-import { UIElementUserSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-user-select-menu";
+import { LanguageUtils } from "@vertix/utils/language";
 
 import {
     UI_LANGUAGES_FILE_EXTENSION,
@@ -117,7 +116,7 @@ export class UILanguageManager extends InitializeBase {
         };
     }
 
-    public async getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu, languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
+    public async getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu | UIElementRoleSelectMenu, languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
         if ( ! languageCode || "en" === languageCode ) {
             return selectMenu.getTranslatableContent();
         }
@@ -391,10 +390,14 @@ export class UILanguageManager extends InitializeBase {
             modalsLanguage = await this.extractModalsLanguage( allModals as any );
 
         return {
-            elements: elementsLanguage,
-            embeds: embedsLanguage,
-            markdowns: markdownsLanguage,
-            modals: modalsLanguage
+            elements: {
+                buttons: elementsLanguage.buttons.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
+                textInputs: elementsLanguage.textInputs.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
+                selectMenus: elementsLanguage.selectMenus.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
+            },
+            embeds: embedsLanguage.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
+            markdowns: markdownsLanguage.sort( ( a, b ) => a.name.localeCompare( b.name )),
+            modals: modalsLanguage.sort( ( a, b ) => a.name.localeCompare( b.name ) ),
         };
     }
 
@@ -430,6 +433,7 @@ export class UILanguageManager extends InitializeBase {
 
                 case ComponentType.SelectMenu:
                 case ComponentType.UserSelect:
+                case ComponentType.RoleSelect:
                     selectMenus.push( {
                         name: element.getName(),
                         content: await element.getTranslatableContent(),
@@ -549,7 +553,7 @@ export class UILanguageManager extends InitializeBase {
 
             const validLabel = this.validateString( textInput.content.label, currentTestedTextInput.content.label, options ),
                 validPlaceHolder = this.validateString( textInput.content.placeholder, currentTestedTextInput.content.placeholder, {
-                    ...options,
+                    ... options,
                     // Avoid checking same values for placeholder.
                     skipSameValues: true,
                 } );

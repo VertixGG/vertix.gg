@@ -13,7 +13,7 @@ const name = "setup";
 export const Setup: ICommand = {
     name,
 
-    description: "Setting Up Vertix",
+    description: "Displaying Vertix setup wizard in ephemeral mode.",
     type: ApplicationCommandType.ChatInput,
 
     defaultMemberPermissions: [ PermissionsBitField.Flags.Administrator ],

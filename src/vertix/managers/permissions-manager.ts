@@ -227,6 +227,24 @@ export class PermissionsManager extends InitializeBase {
         return this.getMissingChannelPermissions( permissions, context );
     }
 
+    public async editChannelRolesPermissions( channel: VoiceBasedChannel, roles: string[], permissions: PermissionOverwriteOptions ): Promise<void> {
+        return new Promise( ( resolve, reject ) => {
+            for ( const roleId of roles ) {
+                const role = channel.guild.roles.cache.get( roleId );
+
+                if ( ! role ) {
+                    this.logger.warn( this.editChannelRolesPermissions,
+                        `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Role id: '${ roleId }' not found` );
+                    continue;
+                }
+
+                channel.permissionOverwrites.edit( role, permissions ).catch( reject );
+            }
+
+            resolve();
+        } );
+    }
+
     private resetBotUserPermissionsDebounce( channel: VoiceChannel, channelResult: ChannelResult, delay = 1500 ) {
         this.logger.log( this.resetBotUserPermissionsDebounce,
             `Guild id: '${ channel.guildId }' - Requesting reset bot permissions for channel id: '${ channel.id }'`

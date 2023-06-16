@@ -62,8 +62,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     protected async onBeforeBuild( args: UIArgs, from: string, interaction?: DefaultInteraction ) {
         if ( "run" === from ) {
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "Vertix/UI-V2/SetupMasterModifyButton",
-                this.onModifyMasterChannelClicked
+                "Vertix/UI-V2/SetupMasterEditButton",
+                this.onEditMasterChannelClicked
             );
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
                 "Vertix/UI-V2/SetupMasterCreateButton",
@@ -71,8 +71,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             );
 
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "Vertix/UI-V2/SetupBadwordsModifyButton",
-                this.onModifyBadwordsClicked
+                "Vertix/UI-V2/SetupBadwordsEditButton",
+                this.onEditBadwordsClicked
             );
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
                 "Vertix/UI-V2/LanguageChooseButton",
@@ -86,7 +86,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         }
     }
 
-    private async onModifyMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onEditMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         const customIdParts = interaction.customId.split( UI_GENERIC_SEPARATOR ),
             masterChannelIndex = parseInt( customIdParts[ 2 ] ),
             masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, false );
@@ -98,7 +98,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         const masterChannelDB = masterChannels[ masterChannelIndex ];
 
-        await this.uiManager.get( "Vertix/UI-V2/ConfigAdapter" )?.runInitial( interaction, {
+        await this.uiManager.get( "Vertix/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
             masterChannelIndex,
             masterChannelDB
         } );
@@ -128,13 +128,18 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         this.uiManager.get( "Vertix/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
             dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+
+            dynamicChannelIncludeEveryoneRole: true,
+            dynamicChannelVerifiedRoles: [
+                interaction.guild.roles.everyone.id,
+            ],
         } );
 
         // Delete Args since left to another adapter.
         this.deleteArgs( interaction );
     }
 
-    private async onModifyBadwordsClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onEditBadwordsClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         await this.showModal( "Vertix/UI-V2/BadwordsModal", interaction );
     }
 

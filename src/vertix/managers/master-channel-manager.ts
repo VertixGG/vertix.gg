@@ -27,6 +27,7 @@ import {
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES,
 } from "@vertix/definitions/master-channel";
 
 import { CategoryModel } from "@vertix/models/category";
@@ -54,6 +55,7 @@ interface IMasterChannelCreateCommonArgs {
     dynamicChannelNameTemplate?: string,
     dynamicChannelButtonsTemplate?: number[],
     dynamicChannelMentionable?: boolean,
+    dynamicChannelVerifiedRoles?: string[],
 }
 
 interface IMasterChannelCreateInternalArgs extends IMasterChannelCreateCommonArgs {
@@ -384,6 +386,27 @@ export class MasterChannelManager extends InitializeBase {
         return mentionable;
     }
 
+    public async getChannelVerifiedRoles( ownerId: string, guildId: string ) {
+        const result = await ChannelDataManager.$.getSettingsData(
+                ownerId,
+                false,
+                true
+            );
+
+        let verifiedRoles = result?.object?.[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ];
+
+        if ( ! verifiedRoles?.length ) {
+            verifiedRoles = [ guildId ];
+        }
+
+        this.debugger.dumpDown( this.getChannelVerifiedRoles,
+            verifiedRoles,
+            `ownerId: '${ ownerId }' - verifiedRoles: `
+        );
+
+        return verifiedRoles;
+    }
+
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
         const result: IMasterChannelCreateResult = {
             code: MasterChannelCreateResultCode.Error,
@@ -417,6 +440,7 @@ export class MasterChannelManager extends InitializeBase {
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
             dynamicChannelMentionable: args.dynamicChannelMentionable,
+            dynamicChannelVerifiedRoles: args.dynamicChannelVerifiedRoles,
         }, "options" );
 
         const master = await this.createMasterChannelInternal( {
@@ -457,7 +481,7 @@ export class MasterChannelManager extends InitializeBase {
                 await AppManager.$.getClient().guilds.fetch( guildId );
 
             this.logger.admin( this.isReachedMasterLimit,
-                `💰 Master Channels Limitation function has been activated max(${ limit }) (${ guild?.name }) (${ guild?.memberCount })`
+                `💰 Master Channels limitation function has been activated max(${ limit }) (${ guild?.name }) (${ guild?.memberCount })`
             );
         }
 
@@ -519,6 +543,28 @@ export class MasterChannelManager extends InitializeBase {
         } );
     }
 
+    public async setChannelVerifiedRoles( guildId: string, ownerId: string, roles: string[], shouldAdminLog = true ) {
+        this.logger.log( this.setChannelVerifiedRoles,
+            `Guild id:${ guildId }, master channel id: '${ ownerId }' - Setting channel verified roles: '${ roles }'`
+        );
+
+        if ( ! roles.length ) {
+            roles.push( guildId );
+        }
+
+        if ( shouldAdminLog ) {
+            const previousRoles = await this.getChannelVerifiedRoles( ownerId, guildId );
+
+            this.logger.admin( this.setChannelVerifiedRoles,
+                `🛡️  Dynamic Channel verified roles modified  - guildId: "${ guildId }" ownerId: "${ ownerId }", "${ previousRoles }" => "${ roles }"`
+            );
+        }
+
+        await ChannelDataManager.$.setSettingsData( ownerId, {
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: roles
+        } );
+    }
+
     /**
      * Function createMasterChannel() :: Creates channel master of create.
      */
@@ -528,13 +574,28 @@ export class MasterChannelManager extends InitializeBase {
         this.logger.info( this.createMasterChannelInternal,
             `Guild id: '${ guild.id }' - Creating master channel for guild: '${ guild.name }' ownerId: '${ args.guild.ownerId }'` );
 
+        // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
+        const newName = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ] ||
+                DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+            newButtons = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] ||
+                DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+            newMentionable = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] === "boolean" ?
+                args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] : DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+            newVerifiedRoles = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
+                guild.roles.everyone.id
+            ];
+
+        const verifiedRolesWithPermissions = newVerifiedRoles.map( ( roleId ) => ( {
+            id: roleId,
+            ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+        } ) );
+
         const outOfBoxPermissionsOverwrites = [ {
             id: guild.client.user.id,
             ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-        }, {
-            id: guild.roles.everyone,
-            ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-        } ];
+        },
+            ... verifiedRolesWithPermissions
+        ];
 
         const result = await ChannelManager.$.create( {
             parent,
@@ -551,18 +612,11 @@ export class MasterChannelManager extends InitializeBase {
             return null;
         }
 
-        // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
-        const newName = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ] ||
-                DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-            newButtons = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] ||
-                DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-            newMentionable = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] === "boolean" ?
-                args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] : DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE;
-
         await ChannelDataManager.$.setSettingsData( result.db.id, {
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]: newName,
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons,
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: newMentionable,
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: newVerifiedRoles,
         } );
 
         // TODO: Duplicate code.
@@ -571,10 +625,17 @@ export class MasterChannelManager extends InitializeBase {
             } ),
             usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis(
                 usedButtons.map( ( item ) => item.getId()
-                ) ) ).join( "," );
+                ) ) ).join( "," ),
+            usedRoles = newVerifiedRoles.map( ( roleId ) => {
+                if ( roleId === guild.roles.everyone.id ) {
+                    return "@everyone";
+                }
+
+                return guild.roles.cache.get( roleId )?.name || roleId;
+            } ).join( "," );
 
         this.logger.admin( this.createMasterChannelInternal,
-            `🛠️  Setup has performed - "${ newName }", "${ usedEmojis }" (${ guild.name }) (${ guild?.memberCount })`
+            `🛠️  Setup has performed - "${ newName }", "${ usedEmojis }", "${ usedRoles }" (${ guild.name }) (${ guild?.memberCount })`
         );
 
         return result;

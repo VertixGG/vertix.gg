@@ -62,7 +62,7 @@ export abstract class UIElementUserSelectMenu extends UIElementBase<APIUserSelec
             result.placeholder = placeholder;
         }
 
-        if ( min_values ) {
+        if ( 0 === min_values || min_values ) {
             result.min_values = min_values;
         }
 

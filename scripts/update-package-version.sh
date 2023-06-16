@@ -17,7 +17,7 @@ const newVersion = `${major}.${minor}.${newPatchVersion}`;
 
 // Update the version in package.json
 packageJson.version = newVersion;
-const newPackageJsonString = JSON.stringify(packageJson, null, 2);
+const newPackageJsonString = JSON.stringify(packageJson, null, 2) + '\n';
 fs.writeFileSync(packageJsonPath, newPackageJsonString, { encoding: 'utf8' });
 
 // Output the new version

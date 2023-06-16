@@ -8,21 +8,6 @@ import { ObjectBase } from "@internal/bases";
 
 import Logger from "@internal/modules/logger";
 
-// TODO Maybe it should start work only in nodejs debug mode, if so then it should not be configurable via .env
-/*
-function interceptMethods(target: any) {
-  const originalMethods = Object.getOwnPropertyNames(target.prototype);
-
-  originalMethods.forEach((method: string) => {
-    const originalFn = target.prototype[method];
-    target.prototype[method] = function (...args: any[]) {
-      const result = originalFn.apply(this, args);
-      this.sharedMethod();
-      return result;
-    };
-  });
-}
- */
 export class Debugger extends ObjectBase {
     private readonly shouldDebug: boolean;
 

@@ -4,6 +4,7 @@ import {
     ButtonStyle,
     ComponentBuilder,
     ComponentType,
+    RoleSelectMenuBuilder,
     StringSelectMenuBuilder,
     TextInputBuilder,
     UserSelectMenuBuilder
@@ -191,6 +192,10 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
                         case ComponentType.UserSelect:
                             component = new UserSelectMenuBuilder( data );
+                            break;
+
+                        case ComponentType.RoleSelect:
+                            component = new RoleSelectMenuBuilder( data );
                             break;
 
                         default:

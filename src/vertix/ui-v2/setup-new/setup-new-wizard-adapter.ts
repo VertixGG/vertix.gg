@@ -6,12 +6,13 @@ import {
     PermissionsBitField,
 } from "discord.js";
 
-import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR, UIAdapterBuildSource, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
-    UIDefaultStringSelectMenuChannelTextInteraction
+    UIDefaultStringSelectMenuChannelTextInteraction,
+    UIDefaultStringSelectRolesChannelTextInteraction
 } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { UIWizardAdapterBase } from "@vertix/ui-v2/_base/ui-wizard-adapter-base";
@@ -20,6 +21,7 @@ import { UIEmbedsGroupBase } from "@vertix/ui-v2/_base/ui-embeds-group-base";
 
 import { SetupStep1Component } from "@vertix/ui-v2/setup-new/step-1/setup-step-1-component";
 import { SetupStep2Component } from "@vertix/ui-v2/setup-new/step-2/setup-step-2-component";
+import { SetupStep3Component } from "@vertix/ui-v2/setup-new/step-3/setup-step-3-component";
 
 import { SetupMasterCreateButton } from "@vertix/ui-v2/setup/setup-master-create-button";
 
@@ -50,6 +52,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
                 return [
                     SetupStep1Component,
                     SetupStep2Component,
+                    SetupStep3Component,
                 ];
             }
 
@@ -101,16 +104,16 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             this.onCreateMasterChannelClicked
         );
 
-        // Modify template name.
+        // Edit template name.
         this.bindModalWithButton<UIDefaultModalChannelTextInteraction>(
-            "Vertix/UI-V2/TemplateModifyButton",
-            "Vertix/UI-V2/TemplateNameModal",
+            "Vertix/UI-V2/ChannelNameTemplateEditButton",
+            "Vertix/UI-V2/ChannelNameTemplateModal",
             this.onTemplateNameModalSubmit
         );
 
         // Select buttons menu.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/ButtonsSelectMenu",
+            "Vertix/UI-V2/ChannelButtonsTemplateSelectMenu",
             this.onButtonsSelected
         );
 
@@ -133,6 +136,18 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         //         await this.onButtonSelected( interaction, "remove" );
         //     }
         // );
+
+        // Verified roles buttons menu.
+        this.bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+            "Vertix/UI-V2/VerifiedRolesMenu",
+            this.onVerifiedRolesSelected
+        );
+
+        // Verified roles everyone.
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "Vertix/UI-V2/VerifiedRolesEveryoneSelectMenu",
+            this.onVerifiedRolesEveryoneSelected
+        );
     }
 
     protected async getStartArgs( channel: BaseGuildTextChannel ) {
@@ -151,11 +166,19 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         return result;
     }
 
+    protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
+        // TODO: Create convenient solution.
+        args._wizardShouldDisableFinishButton =
+            "Vertix/UI-V2/SetupStep3Component" === this.getCurrentExecutionStep( context )?.name &&
+            ! args.dynamicChannelVerifiedRoles?.length;
+    }
+
     protected async onBeforeFinish( interaction: UIDefaultButtonChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction ),
             templateName: string = args.dynamicChannelNameTemplate,
             templateButtons: number[] = args.dynamicChannelButtonsTemplate,
-            mentionable: boolean = args.dynamicChannelMentionable;
+            mentionable: boolean = args.dynamicChannelMentionable,
+            verifiedRoles: string[] = args.dynamicChannelVerifiedRoles;
 
         const result = await MasterChannelManager.$.createMasterChannel( {
             guildId: interaction.guildId,
@@ -165,6 +188,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelNameTemplate: templateName,
             dynamicChannelButtonsTemplate: templateButtons,
             dynamicChannelMentionable: mentionable,
+            dynamicChannelVerifiedRoles: verifiedRoles,
         } );
 
         switch ( result.code ) {
@@ -198,7 +222,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     private async onTemplateNameModalSubmit( interaction: UIDefaultModalChannelTextInteraction ) {
-        const value = interaction.fields.getTextInputValue( "Vertix/UI-V2/SetupNewWizardAdapter:Vertix/UI-V2/TemplateNameInput" );
+        const value = interaction.fields.getTextInputValue( "Vertix/UI-V2/SetupNewWizardAdapter:Vertix/UI-V2/ChannelNameTemplateInput" );
 
         this.getArgsManager().setArgs( this, interaction, {
             dynamicChannelNameTemplate: value,
@@ -255,4 +279,51 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
     }
+
+    private async onVerifiedRolesSelected( interaction: UIDefaultStringSelectRolesChannelTextInteraction ) {
+        const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
+            roles = interaction.values;
+
+        if ( args.dynamicChannelIncludeEveryoneRole ) {
+            roles.push( interaction.guildId );
+        }
+
+        this.getArgsManager().setArgs( this, interaction, {
+            dynamicChannelVerifiedRoles: roles.sort(),
+        } );
+
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep3Component" );
+    }
+
+    private async onVerifiedRolesEveryoneSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+        const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
+            values = interaction.values;
+
+        values.forEach( ( value ) => {
+            const parted = value.split( UI_GENERIC_SEPARATOR );
+
+            switch ( parted[ 0 ] ) {
+                case "dynamicChannelIncludeEveryoneRole":
+                    const state = !! parseInt( parted[ 1 ] ),
+                        isEveryoneExist = args.dynamicChannelVerifiedRoles.includes( interaction.guildId );
+
+                    args.dynamicChannelIncludeEveryoneRole = state;
+
+                    if ( state && ! isEveryoneExist ) {
+                        args.dynamicChannelVerifiedRoles.push( interaction.guildId );
+                    } else if ( ! state && isEveryoneExist ) {
+                        args.dynamicChannelVerifiedRoles.splice( args.dynamicChannelVerifiedRoles.indexOf( interaction.guildId ), 1 );
+                    }
+
+                    args.dynamicChannelVerifiedRoles = args.dynamicChannelVerifiedRoles.sort();
+
+                    break;
+            }
+        } );
+
+        this.getArgsManager().setArgs( this, interaction, args );
+
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep3Component" );
+    }
+
 }

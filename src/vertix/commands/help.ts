@@ -13,7 +13,7 @@ const name = "help";
 export const Help: ICommand = {
     name,
 
-    description: "Help",
+    description: "Displaying Vertix help interface in ephemeral mode.",
     type: ApplicationCommandType.ChatInput,
 
     defaultMemberPermissions: [ PermissionsBitField.Flags.Administrator ],

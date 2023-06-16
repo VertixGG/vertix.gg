@@ -123,8 +123,8 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
                 channelName: channel.name,
                 userLimit: ( channel as VoiceChannel ).userLimit,
 
-                isPrivate: DynamicChannelManager.$.getChannelState( channel ) === "private",
-                isHidden: DynamicChannelManager.$.getChannelVisibilityState( channel ) === "hidden",
+                isPrivate: await DynamicChannelManager.$.getChannelState( channel ) === "private",
+                isHidden: await DynamicChannelManager.$.getChannelVisibilityState( channel ) === "hidden",
 
                 channelId: channel.id,
             },

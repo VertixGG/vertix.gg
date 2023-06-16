@@ -1,10 +1,10 @@
 import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
+import { ChannelNameTemplateEmbed } from "@vertix/ui-v2/channel-name-template/channel-name-template-embed";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 
-import { TemplateEmbed } from "@vertix/ui-v2/template/template-embed";
-
-export class SetupStep1Embed extends TemplateEmbed {
+export class SetupStep1Embed extends ChannelNameTemplateEmbed {
     public static getName() {
         return "Vertix/UI-V2/SetupStep1Embed";
     }
@@ -23,7 +23,7 @@ export class SetupStep1Embed extends TemplateEmbed {
 
     protected getDescription(): string {
         return `${ super.getDescription() }\n\n` +
-            "You can keep the default settings by pressing the \"**Next**\" button.\n";
+            "You can keep the default settings by pressing **( `Next ▶` )** button.\n";
     }
 
     protected getLogic( args: UIArgs ) {

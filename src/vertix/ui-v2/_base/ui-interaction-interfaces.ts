@@ -48,6 +48,10 @@ export interface UIDefaultStringSelectMenuChannelTextInteraction extends SelectM
     channel: TextChannel;
 }
 
+export interface UIDefaultStringSelectRolesChannelTextInteraction extends SelectMenuInteraction<"cached"> {
+    channel: TextChannel;
+}
+
 export interface UIDefaultModalChannelTextInteraction extends ModalMessageModalSubmitInteraction<"cached"> {
     channel: TextChannel;
 }

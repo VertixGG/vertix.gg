@@ -1,12 +1,12 @@
 import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
+import { ChannelButtonsTemplateEmbed } from "@vertix/ui-v2/channel-buttons-template/channel-buttons-template-embed";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 
 import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
-import { ButtonsEmbed } from "@vertix/ui-v2/buttons/buttons-embed";
-
-export class SetupStep2Embed extends ButtonsEmbed {
+export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     private static vars = {
         message: uiUtilsWrapAsTemplate( "message" ),
         defaultMessage: uiUtilsWrapAsTemplate( "defaultMessage" ),
@@ -47,7 +47,9 @@ export class SetupStep2Embed extends ButtonsEmbed {
             SetupStep2Embed.vars.message + "\n\n" +
             "**_⚙️ Configuration_**\n\n" +
 
-            "> 📌 Mention user in primary message: " + SetupStep2Embed.vars.configUserMention;
+            "> 📌 Mention user in primary message: " + SetupStep2Embed.vars.configUserMention +
+            "\n\n" +
+            "You can keep the default settings by pressing **( `Next ▶` )** button.";
     }
 
     protected getFooter() {
@@ -78,7 +80,7 @@ export class SetupStep2Embed extends ButtonsEmbed {
             },
 
             footer: {
-                [ defaultFooter ]: "Members who create dynamic channels using this master channel will only see the buttons you have selected, you can select the buttons using the menu below",
+                [ defaultFooter ]: "Members creating dynamic channels through this master channel will see only the buttons you have selected. You can choose the buttons using the menu below.",
                 [ noButtonsFooter ]: "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n",
             },
         };

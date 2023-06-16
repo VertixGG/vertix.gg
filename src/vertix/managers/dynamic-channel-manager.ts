@@ -55,6 +55,7 @@ import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-cla
 import { AppManager } from "@vertix/managers/app-manager";
 import { DynamicChannelVoteManager } from "@vertix/managers/dynamic-channel-vote-manager";
 import { TopGGManager } from "@vertix/managers/top-gg-manager";
+import { PermissionsManager } from "@vertix/managers/permissions-manager";
 
 import { guildGetMemberDisplayName } from "@vertix/utils/guild";
 
@@ -281,12 +282,10 @@ export class DynamicChannelManager extends InitializeBase {
         return message;
     }
 
-    public getChannelState( channel: VoiceChannel ): ChannelState {
+    public async getChannelState( channel: VoiceChannel ): Promise<ChannelState> {
         let result: ChannelState = "unknown";
 
-        const everyoneRole = channel.permissionOverwrites.cache.get( channel.guild.roles.everyone.id );
-
-        if ( everyoneRole?.deny.has( PermissionsBitField.Flags.Connect ) ) {
+        if ( await this.isVerifiedRolesDeniedFlag( channel, PermissionsBitField.Flags.Connect ) ) {
             result = "private";
         } else {
             result = "public";
@@ -295,12 +294,10 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public getChannelVisibilityState( channel: VoiceChannel ): ChannelVisibilityState {
+    public async getChannelVisibilityState( channel: VoiceChannel ): Promise<ChannelVisibilityState> {
         let result: ChannelVisibilityState = "unknown";
 
-        const everyoneRole = channel.permissionOverwrites.cache.get( channel.guild.roles.everyone.id );
-
-        if ( everyoneRole?.deny.has( PermissionsBitField.Flags.ViewChannel ) ) {
+        if ( await this.isVerifiedRolesDeniedFlag( channel, PermissionsBitField.Flags.ViewChannel ) ) {
             result = "hidden";
         } else {
             result = "shown";
@@ -317,14 +314,14 @@ export class DynamicChannelManager extends InitializeBase {
         const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannel.id );
         if ( ! masterChannelDB ) {
             this.logger.error( this.createDynamicChannel,
-                `Guild id: ${ guild.id } - Could not find master channel in database master channel id: ${ masterChannel.id }` );
+                `Guild id: ${ guild.id } - Could not find master channel in database master channel id: '${ masterChannel.id }'` );
             return;
         }
 
         const dynamicChannelTemplateName = await MasterChannelManager.$.getChannelNameTemplate( masterChannelDB.id );
         if ( ! dynamicChannelTemplateName ) {
             this.logger.error( this.createDynamicChannel,
-                `Guild id: ${ guild.id } - Could not find master channel data in database, master channel id: ${ masterChannel.id }` );
+                `Guild id: ${ guild.id } - Could not find master template name in database, master channel db id: '${ masterChannelDB.id }'` );
             return;
         }
 
@@ -348,7 +345,7 @@ export class DynamicChannelManager extends InitializeBase {
             parent: masterChannel.parent,
             internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
             // ---
-            ...MasterChannelManager.$.getChannelDefaultProperties( newState.id, masterChannel ),
+            ... MasterChannelManager.$.getChannelDefaultProperties( newState.id, masterChannel ),
         } );
 
         if ( ! dynamic ) {
@@ -476,12 +473,14 @@ export class DynamicChannelManager extends InitializeBase {
 
         this.logger.log( this.editChannelState,
             `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-            `Editing dynamic channel state from '${ this.getChannelState( channel ) }' to '${ newState }'`
+            `Editing dynamic channel state from '${ await this.getChannelState( channel ) }' to '${ newState }'`
         );
+
+        const roles = await this.getVerifiedRoles( channel );
 
         switch ( newState ) {
             case "public":
-                await channel.permissionOverwrites.edit( channel.guildId, {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     // ViewChannel: null,
                     Connect: null,
                 } ).catch( ( error ) => {
@@ -497,7 +496,7 @@ export class DynamicChannelManager extends InitializeBase {
                 break;
 
             case "private":
-                await channel.permissionOverwrites.edit( channel.guildId, {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     // ViewChannel: null,
                     Connect: false,
                 } ).catch( ( error ) => {
@@ -526,12 +525,14 @@ export class DynamicChannelManager extends InitializeBase {
 
         this.logger.log( this.editChannelVisibilityState,
             `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-            `Editing dynamic channel visibility state from '${ this.getChannelVisibilityState( channel ) }' to '${ newState }'`
+            `Editing dynamic channel visibility state from '${ await this.getChannelVisibilityState( channel ) }' to '${ newState }'`
         );
+
+        const roles = await this.getVerifiedRoles( channel );
 
         switch ( newState ) {
             case "shown":
-                await channel.permissionOverwrites.edit( channel.guildId, {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     ViewChannel: null,
                 } ).catch( ( error ) => {
                     this.logger.error( this.editChannelVisibilityState, "", error );
@@ -545,7 +546,7 @@ export class DynamicChannelManager extends InitializeBase {
                 break;
 
             case "hidden":
-                await channel.permissionOverwrites.edit( channel.guildId, {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     ViewChannel: false,
                 } ).catch( ( error ) => {
                     this.logger.error( this.editChannelVisibilityState, "", error );
@@ -662,7 +663,7 @@ export class DynamicChannelManager extends InitializeBase {
             ) );
     }
 
-    public editPrimaryMessageDebounce( channel: VoiceChannel, delay = 1500 ) { // TODO: Constant.
+    public editPrimaryMessageDebounce( channel: VoiceChannel, delay = 800 ) { // TODO: Constant.
         this.logger.log( this.editPrimaryMessageDebounce,
             `Guild id: '${ channel.guildId }' - Editing primary message in channel id: '${ channel.id }'`
         );
@@ -710,7 +711,7 @@ export class DynamicChannelManager extends InitializeBase {
 
             for ( const messageComponent of component.components ) {
                 if ( ComponentType.Button === messageComponent.data.type ) {
-                    newRow.addComponents( new ButtonBuilder( { ...messageComponent.toJSON(), disabled: ! state } ) );
+                    newRow.addComponents( new ButtonBuilder( { ... messageComponent.toJSON(), disabled: ! state } ) );
                 }
             }
 
@@ -797,16 +798,16 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        const getCurrentChannelState = ( channel: VoiceChannel ) => {
+        const getCurrentChannelState = async ( channel: VoiceChannel ) => {
                 return {
                     name: channel.name,
                     userLimit: channel.userLimit,
 
-                    state: this.getChannelState( channel ),
-                    visibilityState: this.getChannelVisibilityState( channel ),
+                    state: await this.getChannelState( channel ),
+                    visibilityState: await this.getChannelVisibilityState( channel ),
                 };
             },
-            previousChannelState = getCurrentChannelState( channel ),
+            previousChannelState = await getCurrentChannelState( channel ),
             previousAllowedUsers = await DynamicChannelManager.$.getChannelAllowedUserIds( channel ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
                 DYNAMIC_CHANNEL_USER_TEMPLATE,
@@ -861,15 +862,15 @@ export class DynamicChannelManager extends InitializeBase {
             `🔄 Dynamic Channel has been reset to default settings - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
         );
 
-        const currentChannelState = getCurrentChannelState( channel ),
+        const currentChannelState = await getCurrentChannelState( channel ),
             currentAllowedUsers = await DynamicChannelManager.$.getChannelAllowedUserIds( channel );
 
         result.oldState = {
-            ...previousChannelState,
+            ... previousChannelState,
             allowedUserIds: previousAllowedUsers,
         };
         result.newState = {
-            ...currentChannelState,
+            ... currentChannelState,
             allowedUserIds: currentAllowedUsers,
         };
 
@@ -951,8 +952,8 @@ export class DynamicChannelManager extends InitializeBase {
 
     public isPrimaryMessage( message: Message<true> | undefined ) {
         // TODO: Find better way to check if message is primary.
-        return message?.author?.id === AppManager.$.getClient().user.id  &&
-            message?.embeds?.[ 0 ]?.title?.at(0) === "༄";
+        return message?.author?.id === AppManager.$.getClient().user.id &&
+            message?.embeds?.[ 0 ]?.title?.at( 0 ) === "༄";
     }
 
     public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {
@@ -1007,5 +1008,41 @@ export class DynamicChannelManager extends InitializeBase {
         }
 
         return dynamicChannelDB.userOwnerId === ownerId;
+    }
+
+    private async getVerifiedRoles( channel: VoiceBasedChannel ) {
+        const roles = [],
+            masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+
+        if ( masterChannelDB ) {
+            const verifiedRoles = await MasterChannelManager.$.getChannelVerifiedRoles( masterChannelDB.id, channel.guildId );
+
+            roles.push( ... verifiedRoles );
+        } else {
+            roles.push( channel.guild.roles.everyone.id );
+        }
+
+        return roles;
+    }
+
+    private getDeniedFlagCount( channel: VoiceBasedChannel, roles: string[], flag: bigint ) {
+        let count = 0;
+
+        for ( const roleId of roles ) {
+            const permissions = channel.permissionOverwrites.cache.get( roleId );
+
+            if ( permissions?.deny.has( flag ) ) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private async isVerifiedRolesDeniedFlag( channel: VoiceBasedChannel, flag: bigint ) {
+        const roles = await this.getVerifiedRoles( channel ),
+            count = this.getDeniedFlagCount( channel, roles, flag );
+
+        return count === roles.length;
     }
 }

@@ -88,6 +88,10 @@ export class UIWizardComponentBase extends UIComponentBase {
                         } else {
                             args._wizardIsFinishButtonAvailable = true;
                         }
+
+                        if ( args._wizardShouldDisableFinishButton ) {
+                            args._wizardIsFinishButtonDisabled = true;
+                        }
                     }
 
                     currentElements.push( [ ...wizardControlButtons ] );

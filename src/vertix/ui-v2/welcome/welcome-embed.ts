@@ -30,17 +30,17 @@ export class WelcomeEmbed extends UIEmbedBase {
         return "Welcome to Vertix, an incredible addition to your server!\n" +
             "Let's collaborate and make your server even better.\n\n" +
 
-            "**Bot Setup**\n" +
+            "**Bot Welcome**\n" +
             "Setting up the bot is a breeze! Just follow these simple steps:\n" +
             "- Type `/setup` to create your first master channel.\n" +
-            "- Click on \"`(➕ Create Master Channel)`\".\n" +
-            "- Modify default channel names or click \"`(▶ Next)`\" to proceed.\n" +
+            "- Click on `(➕ Create Master Channel)`.\n" +
+            "- Set default channel names or click \"`(▶ Next)`\" to proceed.\n" +
             "- Choose channel buttons or continue with all features, then click \"`(✔ Finish)`\".\n\n" +
-            "You can always modify the configurations by using the `/setup` command.\n\n" +
+            "You can always edit the configurations by using the `/setup` command.\n\n" +
 
             "**Dynamic Channels and Master Channel**\n" +
             "Dynamic channels inherit all settings from the Master Channel.\n" +
-            "To modify the default settings of dynamic channels, simply adjust the settings of the Master Channel `(➕ New Channel)`.\n\n" +
+            "To Set the default settings of dynamic channels, simply adjust the settings of the Master Channel `(➕ New Channel)`.\n\n" +
 
             "**Buttons Interface**\n" +
             "Please note that the buttons interface is located **inside** the dynamic channel.\n" +

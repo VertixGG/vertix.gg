@@ -152,7 +152,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        switch ( DynamicChannelManager.$.getChannelState( interaction.channel ) ) {
+        switch ( await DynamicChannelManager.$.getChannelState( interaction.channel ) ) {
             case "public":
                 if ( ! await DynamicChannelManager.$.editChannelState( interaction.channel, "private" ) ) {
                     return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateError", {} );
@@ -173,7 +173,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onStateVisibilityClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        switch ( DynamicChannelManager.$.getChannelVisibilityState( interaction.channel ) ) {
+        switch ( await DynamicChannelManager.$.getChannelVisibilityState( interaction.channel ) ) {
             case "shown":
                 if ( ! await DynamicChannelManager.$.editChannelVisibilityState( interaction.channel, "hidden" ) ) {
                     return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateError", {} );

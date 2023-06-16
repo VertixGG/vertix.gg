@@ -5,6 +5,12 @@
 	"elements": {
 		"buttons": [
 			{
+				"name": "Vertix/UI-V2/ChannelNameTemplateEditButton",
+				"content": {
+					"label": "Edit Channel Name"
+				}
+			},
+			{
 				"name": "Vertix/UI-V2/ClaimStartButton",
 				"content": {
 					"label": "Claim Channel"
@@ -23,39 +29,15 @@
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/TemplateModifyButton",
-				"content": {
-					"label": "Modify Channel Name"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/ConfigModifyButtonsButton",
-				"content": {
-					"label": "Modify Dynamic Buttons"
-				}
-			},
-			{
 				"name": "Vertix/UI-V2/DoneButton",
 				"content": {
 					"label": "✓ Done"
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/ConfigModifyButtonsEffectImmediatelyButton",
+				"name": "Vertix/UI-V2/DynamicChannelMetaClearChatButton",
 				"content": {
-					"label": "Immediately"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/ConfigModifyButtonsEffectNewlyButton",
-				"content": {
-					"label": "Apply Only"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/DynamicChannelMetaRenameButton",
-				"content": {
-					"label": "Rename"
+					"label": "Clear Chat"
 				}
 			},
 			{
@@ -65,9 +47,15 @@
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/DynamicChannelMetaClearChatButton",
+				"name": "Vertix/UI-V2/DynamicChannelMetaRenameButton",
 				"content": {
-					"label": "Clear Chat"
+					"label": "Rename"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/DynamicChannelPermissionsAccessButton",
+				"content": {
+					"label": "Access"
 				}
 			},
 			{
@@ -91,9 +79,9 @@
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/DynamicChannelPermissionsAccessButton",
+				"name": "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton",
 				"content": {
-					"label": "Access"
+					"label": "Claim Channel"
 				}
 			},
 			{
@@ -103,18 +91,27 @@
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton",
+				"name": "Vertix/UI-V2/LanguageChooseButton",
 				"content": {
-					"label": "Claim Channel"
+					"label": "Choose Your Language"
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/SetupMasterModifyButton",
+				"name": "Vertix/UI-V2/SetupBadwordsEditButton",
 				"content": {
-					"label": "{masterChannel}{index}",
-					"options": {
-						"masterChannel": "Edit Master Channel #"
-					}
+					"label": "Edit Bad Words"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+				"content": {
+					"label": "Immediately"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/SetupEditButtonsEffectNewlyButton",
+				"content": {
+					"label": "Apply Only"
 				}
 			},
 			{
@@ -124,39 +121,12 @@
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/LanguageChooseButton",
+				"name": "Vertix/UI-V2/SetupMasterEditButton",
 				"content": {
-					"label": "Choose Your Language"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/SetupBadwordsModifyButton",
-				"content": {
-					"label": "Modify Bad-Words"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/WizardBackButton",
-				"content": {
-					"label": "◀ Back"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/WizardNextButton",
-				"content": {
-					"label": "Next ▶"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/WizardFinishButton",
-				"content": {
-					"label": "✔ Finish"
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/WelcomeSupportButton",
-				"content": {
-					"label": "Community Server"
+					"label": "{masterChannel}{index}",
+					"options": {
+						"masterChannel": "Edit Master Channel #"
+					}
 				}
 			},
 			{
@@ -170,11 +140,42 @@
 				"content": {
 					"label": "Setup"
 				}
+			},
+			{
+				"name": "Vertix/UI-V2/WelcomeSupportButton",
+				"content": {
+					"label": "Community Server"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/WizardBackButton",
+				"content": {
+					"label": "◀ Back"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/WizardFinishButton",
+				"content": {
+					"label": "✔ Finish"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/WizardNextButton",
+				"content": {
+					"label": "Next ▶"
+				}
 			}
 		],
 		"textInputs": [
 			{
-				"name": "Vertix/UI-V2/TemplateNameInput",
+				"name": "Vertix/UI-V2/BadwordsInput",
+				"content": {
+					"label": "SEPARATE BY `,` FOR NON-EXACT MATCHES USE `*`",
+					"placeholder": "None"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/ChannelNameTemplateInput",
 				"content": {
 					"label": "SET DEFAULT DYNAMIC CHANNELS NAME",
 					"placeholder": "{user}'s Channel"
@@ -192,44 +193,11 @@
 				"content": {
 					"label": "CHOOSE NAME FOR YOUR CHANNEL"
 				}
-			},
-			{
-				"name": "Vertix/UI-V2/BadwordsInput",
-				"content": {
-					"label": "SEPARATE BY `,` FOR NON-EXACT MATCHES USE `*`",
-					"placeholder": "None"
-				}
 			}
 		],
 		"selectMenus": [
 			{
-				"name": "Vertix/UI-V2/ConfigSelectMasterMenu",
-				"content": {
-					"options": {
-						"masterChannel": "Master Channel #"
-					}
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/ConfigExtrasSelectMenu",
-				"content": {
-					"placeholder": "⌘ ∙ Configuration",
-					"selectOptions": [
-						{
-							"label": "{dynamicChannelMentionableLabel} {state}"
-						}
-					],
-					"options": {
-						"state": {
-							"{stateOn}": "∙🟢 On",
-							"{stateOff}": "∙🔴 Off"
-						},
-						"dynamicChannelMentionableLabel": "Mention user in primary message"
-					}
-				}
-			},
-			{
-				"name": "Vertix/UI-V2/ButtonsSelectMenu",
+				"name": "Vertix/UI-V2/ChannelButtonsTemplateSelectMenu",
 				"content": {
 					"placeholder": "🎚 Select Buttons",
 					"selectOptions": [
@@ -261,15 +229,33 @@
 				}
 			},
 			{
-				"name": "Vertix/UI-V2/DynamicChannelPermissionsGrantMenu",
+				"name": "Vertix/UI-V2/ConfigExtrasSelectMenu",
 				"content": {
-					"placeholder": "🤝️ Grant Access"
+					"placeholder": "⌘ ∙ Configuration",
+					"selectOptions": [
+						{
+							"label": "{dynamicChannelMentionableLabel} {state}"
+						}
+					],
+					"options": {
+						"state": {
+							"{stateOn}": "∙🟢 On",
+							"{stateOff}": "∙🔴 Off"
+						},
+						"dynamicChannelMentionableLabel": "Mention user in primary message"
+					}
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsDenyMenu",
 				"content": {
 					"placeholder": "🚫 Remove Access"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/DynamicChannelPermissionsGrantMenu",
+				"content": {
+					"placeholder": "🤝️ Grant Access"
 				}
 			},
 			{
@@ -285,39 +271,60 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "Vertix/UI-V2/SetupEditSelectEditOptionMenu",
+				"content": {
+					"placeholder": "◎ ∙ Select Edit Option",
+					"selectOptions": [
+						{
+							"label": "∙ Edit Channel's Name"
+						},
+						{
+							"label": "∙ Edit Channel's Buttons"
+						},
+						{
+							"label": "∙ Edit Channel's Verified Roles"
+						}
+					]
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/VerifiedRolesEveryoneSelectMenu",
+				"content": {
+					"placeholder": "🛡️ ∙ Everyone role",
+					"selectOptions": [
+						{
+							"label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
+						}
+					],
+					"options": {
+						"state": {
+							"{stateOn}": "∙🟢 On",
+							"{stateOff}": "∙🔴 Off"
+						},
+						"dynamicChannelIncludeEveryoneRoleLabel": "Include @everyone role"
+					}
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/VerifiedRolesMenu",
+				"content": {
+					"placeholder": "Select Verified Roles"
+				}
 			}
 		]
 	},
 	"embeds": [
 		{
-			"name": "Vertix/UI-V2/NotYourChannelEmbed",
+			"name": "Dynamico/UI-V2/LanguageEmbed",
 			"content": {
-				"title": "⛔  This is not your channel!",
-				"description": "But you can open your own channel :)\n\n Just click here: <#{masterChannelId}>"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/InvalidChannelTypeEmbed",
-			"content": {
-				"title": "# Oops! This component is restricted in this channel type.",
-				"description": "The action is restricted in channel type, but available channel types:\n\n{allowedTypes}\n\nPlease retry the action in a different channel.",
-				"arrayOptions": {
-					"allowedTypes": {
-						"format": "- {value}{separator}",
-						"separator": "\n"
-					}
-				}
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/MissingPermissionsEmbed",
-			"content": {
-				"title": "🔐  Oops! Certain permissions are required",
-				"description": "Some permissions are required to proceed, **{omitterDisplayName}** is missing the following permissions:\n\n{missingPermissions}",
-				"arrayOptions": {
-					"missingPermissions": {
-						"format": "- {value}{separator}",
-						"separator": "\n"
+				"title": "🌍  Select language",
+				"description": "__Current Selected Language__: **{currentLanguage}**\n\nDidn't find your language?\n\nYou can be the one to translate bot to your language!\ncontact us at our support server, and be the one!\n\nFound mistake in translation? Please let us know!",
+				"options": {
+					"currentLanguage": {
+						"en": "English",
+						"ru": "Russian"
 					}
 				}
 			}
@@ -327,6 +334,20 @@
 			"content": {
 				"title": "👑  You're back in charge!",
 				"description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/ClaimResultStepAlreadyInEmbed",
+			"content": {
+				"title": "🤷  You are already in",
+				"description": "Your intentions are clear - you've already nominated yourself as a potential owner of this channel."
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/ClaimResultStepInEmbed",
+			"content": {
+				"title": "😈  Channel might be yours",
+				"description": "You've put yourself forward as a potential owner of this channel.\nGood luck!\n"
 			}
 		},
 		{
@@ -344,27 +365,6 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/ClaimResultVoteUpdatedEmbed",
-			"content": {
-				"title": "🗳️  Your vote has been updated",
-				"description": "You've just changed your vote from <@{prevUserId}> to <@{currentUserId}> for channel ownership."
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/ClaimResultStepInEmbed",
-			"content": {
-				"title": "😈  Channel might be yours",
-				"description": "You've put yourself forward as a potential owner of this channel.\nGood luck!\n"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/ClaimResultStepAlreadyInEmbed",
-			"content": {
-				"title": "🤷  You are already in",
-				"description": "Your intentions are clear - you've already nominated yourself as a potential owner of this channel."
-			}
-		},
-		{
 			"name": "Vertix/UI-V2/ClaimResultVoteSelfEmbed",
 			"content": {
 				"title": "🤷  You cannot vote for yourself",
@@ -372,35 +372,17 @@
 			}
 		},
 		{
+			"name": "Vertix/UI-V2/ClaimResultVoteUpdatedEmbed",
+			"content": {
+				"title": "🗳️  Your vote has been updated",
+				"description": "You've just changed your vote from <@{prevUserId}> to <@{currentUserId}> for channel ownership."
+			}
+		},
+		{
 			"name": "Vertix/UI-V2/ClaimStartEmbed",
 			"content": {
 				"title": "👋  {ownerDisplayName} abandoned his channel!",
 				"description": "<@{ownerId}> has been absent for more than {absentMinutes} minutes.\nWill you be the one to take charge? Step up and claim it for yourself!"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/ClaimVoteStepInEmbed",
-			"content": {
-				"title": "👑  {userInitiatorDisplayName} wish to claim this channel",
-				"description": "Unless someone else steps up, <@{userInitiatorId}> will be the proud owner of this channel in just `{elapsedTimeFormatFraction}`.",
-				"options": {
-					"formatSecondUnits": {
-						"unit": "second",
-						"units": "seconds"
-					},
-					"formatMinuteUnits": {
-						"unit": "minute",
-						"units": "minutes"
-					},
-					"elapsedTimeFormat": {
-						"minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-						"seconds": "{elapsedTimeValue} {formatSecondUnits}"
-					},
-					"elapsedTimeFormatFraction": {
-						"minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-						"seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-					}
-				}
 			}
 		},
 		{
@@ -444,6 +426,31 @@
 			}
 		},
 		{
+			"name": "Vertix/UI-V2/ClaimVoteStepInEmbed",
+			"content": {
+				"title": "👑  {userInitiatorDisplayName} wish to claim this channel",
+				"description": "Unless someone else steps up, <@{userInitiatorId}> will be the proud owner of this channel in just `{elapsedTimeFormatFraction}`.",
+				"options": {
+					"formatSecondUnits": {
+						"unit": "second",
+						"units": "seconds"
+					},
+					"formatMinuteUnits": {
+						"unit": "minute",
+						"units": "minutes"
+					},
+					"elapsedTimeFormat": {
+						"minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+						"seconds": "{elapsedTimeValue} {formatSecondUnits}"
+					},
+					"elapsedTimeFormatFraction": {
+						"minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+						"seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+					}
+				}
+			}
+		},
+		{
 			"name": "Vertix/UI-V2/ClaimVoteWonEmbed",
 			"content": {
 				"title": "👑  {userWonDisplayName} has claimed the channel",
@@ -477,78 +484,6 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/ConfigSelectEmbed",
-			"content": {
-				"title": "🔧  Select Master Channel To Modify",
-				"description": "Customize **Master Channels** according to your preferences and create the ideal setup for your needs.\".\n{masterChannelsState}",
-				"options": {
-					"masterChannelsState": {
-						"{masterChannels}": "**Current Master Channels:**\n\n{masterChannels}",
-						"{masterChannelsDefault}": "\n🚫 No Master Channels"
-					}
-				},
-				"arrayOptions": {
-					"masterChannels": {
-						"format": "{value}{separator}",
-						"separator": "\n",
-						"multiSeparator": "\n\n",
-						"options": {
-							"index": "**#{index}**",
-							"name": "Name: <#{id}>",
-							"id": "Channel ID: `{id}`",
-							"channelsTemplateName": "Dynamic Channels Name: `{channelsTemplateName}`"
-						}
-					}
-				}
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/ConfigModifyEmbed",
-			"content": {
-				"title": "🔧  Modify Master Channel #{index}",
-				"description": "Configure master channel according to your preferences.\n\n▹ Name: <#{masterChannelId}>\n▹ Channel ID: `{masterChannelId}`\n▹ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}",
-				"footer": "Note: Changing user mention will not affect already created dynamic channels.",
-				"options": {
-					"configUserMention": {
-						"{configUserMentionEnabled}": "`🟢∙On`",
-						"{configUserMentionDisabled}": "`🔴∙Off`"
-					}
-				},
-				"arrayOptions": {
-					"dynamicChannelButtonsTemplate": {
-						"format": "- ( {value} ){separator}",
-						"separator": "\n",
-						"options": {
-							"0": "✏️ ∙ **Rename**",
-							"1": "✋ ∙ **User Limit**",
-							"2": "🧹 ∙ **Clear Chat**",
-							"3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
-							"4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
-							"5": "👥 ∙ **Access**",
-							"6": "🔃 ∙ **Reset Channel**",
-							"7": "😈 ∙ **Claim Channel**"
-						}
-					}
-				}
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/ConfigModifyButtonsEmbed",
-			"content": {
-				"title": "🎚  Modify Buttons Of Master Channel #{index}",
-				"description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
-				"footer": "Current enabled buttons at the menu below"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/ConfigModifyButtonsEffectEmbed",
-			"content": {
-				"title": "🎚  Modify Buttons Of Master Channel #{index}",
-				"description": "Modifying buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
-				"footer": "Current enabled buttons at the menu below"
-			}
-		},
-		{
 			"name": "Vertix/UI-V2/DynamicChannelEmbed",
 			"content": {
 				"title": "༄ Manage your Dynamic Channel",
@@ -570,28 +505,10 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
+			"name": "Vertix/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
 			"content": {
-				"title": "✋  Your channel's user limit has changed to {userLimit}",
-				"options": {
-					"userLimit": {
-						"{userLimitValue}": "{userLimitValue}",
-						"{userLimitUnlimited}": "Unlimited"
-					}
-				}
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
-			"content": {
-				"title": "🙅  User limit must be between {minValue} and {maxValue}"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/SomethingWentWrongEmbed",
-			"content": {
-				"title": "🤷 Oops, an issue has occurred",
-				"description": "Something went wrong"
+				"title": "🧹  There are no messages available to clear",
+				"description": "Keep in mind, that only non-embeds messages can be deleted."
 			}
 		},
 		{
@@ -602,10 +519,21 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
+			"name": "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
 			"content": {
-				"title": "🧹  There are no messages available to clear",
-				"description": "Keep in mind, that only non-embeds messages can be deleted."
+				"title": "🙅  User limit must be between {minValue} and {maxValue}"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
+			"content": {
+				"title": "✋  Your channel's user limit has changed to {userLimit}",
+				"options": {
+					"userLimit": {
+						"{userLimitValue}": "{userLimitValue}",
+						"{userLimitUnlimited}": "Unlimited"
+					}
+				}
 			}
 		},
 		{
@@ -651,69 +579,10 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/DynamicChannelPermissionsPrivateEmbed",
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsAccessEmbed",
 			"content": {
-				"title": "🚫  The channel is private now",
-				"description": "Please be aware that only granted users can enter your channel.\n\n{allowedUsersDisplay}\n{message}",
-				"options": {
-					"message": {
-						"{messageDefault}": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
-						"{messageAccessNotAvailable}": "There is no way to grant access to your channel for new members.\n\nThis is because the **(👥 Access)** Button has been disabled by the administrator"
-					},
-					"allowedUsersDisplay": {
-						"{allowedUsersDefault}": "Currently no other user has access except you.\n",
-						"{allowedUsers}": "**_Allowed users_**: \n{allowedUsers}\n"
-					}
-				},
-				"arrayOptions": {
-					"allowedUsers": {
-						"format": "- <@{value}>{separator}",
-						"separator": "\n"
-					}
-				}
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/DynamicChannelPermissionsPublicEmbed",
-			"content": {
-				"title": "🌐  The channel is public now",
-				"description": "Please be aware that your room is currently accessible to anyone.\n\nMembers **without** access will be able to enter the room unless it is hidden or set to private."
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/DynamicChannelPermissionsHiddenEmbed",
-			"content": {
-				"title": "🙈  The channel is hidden now",
-				"description": "Please be aware that only granted users can see your channel.\n\n{allowedUsersDisplay}\n{message}",
-				"options": {
-					"message": {
-						"{messageDefault}": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
-						"{messageAccessNotAvailable}": "There is no way to grant access to your channel for new members.\n\nThis is because the **(👥 Access)** Button has been disabled by the administrator"
-					},
-					"allowedUsersDisplay": {
-						"{allowedUsersDefault}": "Currently no other user has access except you.\n",
-						"{allowedUsers}": "**_Allowed users_**: \n{allowedUsers}\n"
-					}
-				},
-				"arrayOptions": {
-					"allowedUsers": {
-						"format": "- <@{value}>{separator}",
-						"separator": "\n"
-					}
-				}
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/DynamicChannelPermissionsShownEmbed",
-			"content": {
-				"title": "🐵  The channel is visible now"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/DynamicChannelPermissionsGrantedEmbed",
-			"content": {
-				"title": "🤝  Access granted",
-				"description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🚫 Remove Access`)** - Remove user access.\n⚬ **(`👥 Access`)** - Manage channel permissions.",
+				"title": "👥  Manage permissions of your channel",
+				"description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🤝 Grant Access`)** - Grant user access.\n⚬ **(`🚫 Remove Access`)** - Remove user access.",
 				"options": {
 					"allowedUsersDisplay": {
 						"{allowedUsersDefault}": "Currently there are no granted users.\n",
@@ -748,10 +617,10 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/DynamicChannelPermissionsAccessEmbed",
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsGrantedEmbed",
 			"content": {
-				"title": "👥  Manage permissions of your channel",
-				"description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🤝 Grant Access`)** - Grant user access.\n⚬ **(`🚫 Remove Access`)** - Remove user access.",
+				"title": "🤝  Access granted",
+				"description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🚫 Remove Access`)** - Remove user access.\n⚬ **(`👥 Access`)** - Manage channel permissions.",
 				"options": {
 					"allowedUsersDisplay": {
 						"{allowedUsersDefault}": "Currently there are no granted users.\n",
@@ -767,10 +636,62 @@
 			}
 		},
 		{
-			"name": "Vertix/UI-V2/NothingChangedEmbed",
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsHiddenEmbed",
 			"content": {
-				"title": "🤷  Nothing changed",
-				"description": "This is may occur when you try to change something that is not changeable or is the same as before."
+				"title": "🙈  The channel is hidden now",
+				"description": "Please be aware that only granted users can see your channel.\n\n{allowedUsersDisplay}\n{message}",
+				"options": {
+					"message": {
+						"{messageDefault}": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+						"{messageAccessNotAvailable}": "There is no way to grant access to your channel for new members.\n\nThis is because the **(👥 Access)** Button has been disabled by the administrator"
+					},
+					"allowedUsersDisplay": {
+						"{allowedUsersDefault}": "Currently no other user has access except you.\n",
+						"{allowedUsers}": "**_Allowed users_**: \n{allowedUsers}\n"
+					}
+				},
+				"arrayOptions": {
+					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsPrivateEmbed",
+			"content": {
+				"title": "🚫  The channel is private now",
+				"description": "Please be aware that only granted users can enter your channel.\n\n{allowedUsersDisplay}\n{message}",
+				"options": {
+					"message": {
+						"{messageDefault}": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+						"{messageAccessNotAvailable}": "There is no way to grant access to your channel for new members.\n\nThis is because the **(👥 Access)** Button has been disabled by the administrator"
+					},
+					"allowedUsersDisplay": {
+						"{allowedUsersDefault}": "Currently no other user has access except you.\n",
+						"{allowedUsers}": "**_Allowed users_**: \n{allowedUsers}\n"
+					}
+				},
+				"arrayOptions": {
+					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsPublicEmbed",
+			"content": {
+				"title": "🌐  The channel is public now",
+				"description": "Please be aware that your room is currently accessible to anyone.\n\nMembers **without** access will be able to enter the room unless it is hidden or set to private."
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsShownEmbed",
+			"content": {
+				"title": "🐵  The channel is visible now"
 			}
 		},
 		{
@@ -823,14 +744,111 @@
 			}
 		},
 		{
-			"name": "Dynamico/UI-V2/LanguageEmbed",
+			"name": "Vertix/UI-V2/InvalidChannelTypeEmbed",
 			"content": {
-				"title": "🌍  Select language",
-				"description": "__Current Selected Language__: **{currentLanguage}**\n\nDidn't find your language?\n\nYou can be the one to translate bot to your language!\ncontact us at our support server, and be the one!\n\nFound mistake in translation? Please let us know!",
+				"title": "# Oops! This component is restricted in this channel type.",
+				"description": "The action is restricted in channel type, but available channel types:\n\n{allowedTypes}\n\nPlease retry the action in a different channel.",
+				"arrayOptions": {
+					"allowedTypes": {
+						"format": "- {value}{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/MissingPermissionsEmbed",
+			"content": {
+				"title": "🔐  Oops! Certain permissions are required",
+				"description": "Some permissions are required to proceed, **{omitterDisplayName}** is missing the following permissions:\n\n{missingPermissions}",
+				"arrayOptions": {
+					"missingPermissions": {
+						"format": "- {value}{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/NothingChangedEmbed",
+			"content": {
+				"title": "🤷  Nothing changed",
+				"description": "This is may occur when you try to change something that is not changeable or is the same as before."
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/NotYourChannelEmbed",
+			"content": {
+				"title": "⛔  This is not your channel!",
+				"description": "But you can open your own channel :)\n\n Just click here: <#{masterChannelId}>"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/SetupEditButtonsEffectEmbed",
+			"content": {
+				"title": "🎚  Edit Buttons Of Master Channel #{index}",
+				"description": "Editing buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
+				"footer": "Current enabled buttons at the menu below"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/SetupEditButtonsEmbed",
+			"content": {
+				"title": "🎚  Edit Buttons Of Master Channel #{index}",
+				"description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
+				"footer": "Current enabled buttons at the menu below"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/SetupEditEmbed",
+			"content": {
+				"title": "🔧  Configure Master Channel #{index}",
+				"description": "Configure master channel according to your preferences.\n\n▹ Name: <#{masterChannelId}>\n▹ Channel ID: `{masterChannelId}`\n▹ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}",
+				"footer": "Note: Changing user mention will not affect already created dynamic channels.",
 				"options": {
-					"currentLanguage": {
-						"en": "English",
-						"ru": "Russian"
+					"configUserMention": {
+						"{configUserMentionEnabled}": "`🟢∙On`",
+						"{configUserMentionDisabled}": "`🔴∙Off`"
+					}
+				},
+				"arrayOptions": {
+					"dynamicChannelButtonsTemplate": {
+						"format": "- ( {value} ){separator}",
+						"separator": "\n",
+						"options": {
+							"0": "✏️ ∙ **Rename**",
+							"1": "✋ ∙ **User Limit**",
+							"2": "🧹 ∙ **Clear Chat**",
+							"3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+							"4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+							"5": "👥 ∙ **Access**",
+							"6": "🔃 ∙ **Reset Channel**",
+							"7": "😈 ∙ **Claim Channel**"
+						}
+					},
+					"verifiedRoles": {
+						"format": "<@&{value}>{separator}",
+						"separator": ", "
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/SetupEditVerifiedRolesEmbed",
+			"content": {
+				"title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
+				"description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
+				"footer": "Note: The changes will only affect dynamic channels that change their state after the editing.",
+				"options": {
+					"verifiedRolesDisplay": {
+						"{verifiedRoles}": "{verifiedRoles}",
+						"{verifiedRolesDefault}": "**None**"
+					}
+				},
+				"arrayOptions": {
+					"verifiedRoles": {
+						"format": "<@&{value}>{separator}",
+						"separator": ", "
 					}
 				}
 			}
@@ -839,7 +857,7 @@
 			"name": "Vertix/UI-V2/SetupEmbed",
 			"content": {
 				"title": "🛠  Setup Vertix",
-				"description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n\"`(➕ Create Master Channel)`\" button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}",
+				"description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}",
 				"options": {
 					"masterChannelMessage": {
 						"{masterChannels}": "\n{masterChannels}",
@@ -857,10 +875,11 @@
 						"multiSeparator": "\n\n",
 						"options": {
 							"index": "**#{index}**",
-							"name": "Name: <#{id}>",
-							"id": "Channel ID: `{id}`",
-							"channelsTemplateName": "Dynamic Channels Name: `{channelsTemplateName}`",
-							"channelsTemplateButtons": "Channels Buttons: **{channelsTemplateButtons}**"
+							"name": "▹ Name: <#{id}>",
+							"id": "▹ Channel ID: `{id}`",
+							"channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
+							"channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
+							"channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}"
 						}
 					},
 					"badwords": {
@@ -881,14 +900,14 @@
 			"name": "Vertix/UI-V2/SetupStep1Embed",
 			"content": {
 				"title": "Step 1 - Set Dynamic Channels Template Name",
-				"description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing the \"**Next**\" button.\n"
+				"description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n"
 			}
 		},
 		{
 			"name": "Vertix/UI-V2/SetupStep2Embed",
 			"content": {
 				"title": "Step 2 - Dynamic Channels Setup",
-				"description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}",
+				"description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.",
 				"footer": "{footer}",
 				"options": {
 					"message": {
@@ -900,7 +919,7 @@
 						"{configUserMentionDisabled}": "`🔴∙Off`"
 					},
 					"footer": {
-						"{defaultFooter}": "Members who create dynamic channels using this master channel will only see the buttons you have selected, you can select the buttons using the menu below",
+						"{defaultFooter}": "Members creating dynamic channels through this master channel will see only the buttons you have selected. You can choose the buttons using the menu below.",
 						"{noButtonsFooter}": "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n"
 					}
 				},
@@ -923,10 +942,36 @@
 			}
 		},
 		{
+			"name": "Vertix/UI-V2/SetupStep3Embed",
+			"content": {
+				"title": "Step 3 - Select Verified Roles",
+				"description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n__Here's an example__:\nSuppose you have a role called `@Verified`.\n\nWhen the owner of a Dynamic Channel changes its state to `Hidden`, members with the `@Verified` role will lose ability to see the channel.\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+				"options": {
+					"verifiedRolesDisplay": {
+						"{verifiedRoles}": "{verifiedRoles}",
+						"{verifiedRolesDefault}": "**None**"
+					}
+				},
+				"arrayOptions": {
+					"verifiedRoles": {
+						"format": "<@&{value}>{separator}",
+						"separator": ", "
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/SomethingWentWrongEmbed",
+			"content": {
+				"title": "🤷 Oops, an issue has occurred",
+				"description": "Something went wrong"
+			}
+		},
+		{
 			"name": "Vertix/UI-V2/WelcomeEmbed",
 			"content": {
 				"title": "༄ Vertix is here, let's get started!",
-				"description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\nSetting up the bot is a breeze! Just follow these simple steps:\n- Type `/setup` to create your first master channel.\n- Click on \"`(➕ Create Master Channel)`\".\n- Modify default channel names or click \"`(▶ Next)`\" to proceed.\n- Choose channel buttons or continue with all features, then click \"`(✔ Finish)`\".\n\nCongratulations! Your master channel has been created. 🎉\n\nYou can always modify the configurations by using the `/setup` command.\n\n**Dynamic Channels and Master Channel**\nDynamic channels inherit all settings from the Master Channel.\nTo modify the default settings of dynamic channels, simply adjust the settings of the Master Channel `(➕ New Channel)`.\n\n**Buttons Interface**\nPlease note that the buttons interface is located **inside** the dynamic channel.\nYou can access it by opening the chat box of the dynamic channel.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\nJoin us at: https://discord.gg/dEwKeQefUU"
+				"description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Welcome**\nSetting up the bot is a breeze! Just follow these simple steps:\n- Type `/setup` to create your first master channel.\n- Click on `(➕ Create Master Channel)`.\n- Set default channel names or click \"`(▶ Next)`\" to proceed.\n- Choose channel buttons or continue with all features, then click \"`(✔ Finish)`\".\n\nYou can always edit the configurations by using the `/setup` command.\n\n**Dynamic Channels and Master Channel**\nDynamic channels inherit all settings from the Master Channel.\nTo Set the default settings of dynamic channels, simply adjust the settings of the Master Channel `(➕ New Channel)`.\n\n**Buttons Interface**\nPlease note that the buttons interface is located **inside** the dynamic channel.\nYou can access it by opening the chat box of the dynamic channel.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\nJoin us at: https://discord.gg/dEwKeQefUU"
 			}
 		}
 	],
@@ -940,7 +985,13 @@
 	],
 	"modals": [
 		{
-			"name": "Vertix/UI-V2/TemplateNameModal",
+			"name": "Vertix/UI-V2/BadwordsModal",
+			"content": {
+				"title": "Set bad words"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/ChannelNameTemplateModal",
 			"content": {
 				"title": "Set dynamic channels name"
 			}
@@ -955,12 +1006,6 @@
 			"name": "Vertix/UI-V2/DynamicChannelMetaRenameModal",
 			"content": {
 				"title": "Rename dynamic channel"
-			}
-		},
-		{
-			"name": "Vertix/UI-V2/BadwordsModal",
-			"content": {
-				"title": "Set bad words"
 			}
 		}
 	]

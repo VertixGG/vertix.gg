@@ -77,7 +77,7 @@ export class UIAdapterManager extends InitializeBase {
             ( await import ("@vertix/ui-v2/claim/start/claim-start-adapter") ).ClaimStartAdapter,
             ( await import ("@vertix/ui-v2/claim/vote/claim-vote-adapter") ).ClaimVoteAdapter,
 
-            ( await import ("@vertix/ui-v2/config/config-adapter") ).ConfigAdapter,
+            ( await import ("@vertix/ui-v2/setup-edit/setup-edit-adapter") ).SetupEditAdapter,
 
             ( await import ("@vertix/ui-v2/dynamic-channel/dynamic-channel-adapter") ).DynamicChannelAdapter,
 

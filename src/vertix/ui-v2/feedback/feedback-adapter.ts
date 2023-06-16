@@ -63,10 +63,14 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     }
 
     private async onInviteDeveloperModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
-        const inviteLink = interaction.fields.getTextInputValue( "Vertix/UI-V2/FeedbackAdapter:Vertix/UI-V2/FeedbackInputUrl" );
+        const inviteLink = interaction.fields.getTextInputValue( "Vertix/UI-V2/FeedbackAdapter:Vertix/UI-V2/FeedbackInputUrl" ),
+            tagName = interaction.user.tag,
+            guildName = interaction.guild?.name ?? "DM";
 
         await DirectMessageManager.$.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
-            content: `Invite link: ${ inviteLink }`
+            content: `Name: **${ tagName }**\n` +
+                `GuildOrDM: **${ guildName }**\n` +
+                `Invite link: ${ inviteLink }`
         } );
 
         await interaction.reply( {

@@ -1,5 +1,7 @@
 import { Message, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 
+import { AppManager } from "@vertix/managers/app-manager";
+
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 import {
     UIArgs,
@@ -24,7 +26,11 @@ export abstract class UIAdapterExecutionStepsBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterBase<TChannel, TInteraction> {
-    private static adapterExecutionDebugger: Debugger = new Debugger( this, "", true );
+    private static adapterExecutionDebugger: Debugger = new Debugger(
+        this,
+        "",
+        AppManager.isDebugOn( "UI", UIAdapterExecutionStepsBase.getName() )
+    );
 
     private static executionStepsArray: UIExecutionStepItem[];
 
@@ -110,27 +116,6 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     public async editReply( interaction: TInteraction, sendArgs?: UIArgs ) {
-        // const executionSteps = this.staticAdapterExecution.getExecutionStepsArray();
-        //
-        // for ( let i = 0; i < executionSteps.length; i++ ) {
-        //     const step = executionSteps[ i ];
-        //
-        //     if ( ! step.getConditions ) {
-        //         continue;
-        //     }
-        //
-        //     const args = {
-        //         sendArgs,
-        //         context: interaction
-        //     };
-        //
-        //     if ( step.getConditions( args ) ) {
-        //         return this.executeEditStep( step, interaction, sendArgs );
-        //     }
-        // }
-        //
-        // throw new Error( "Missing execution step for the editReply." );
-
         const executionSteps = this.getExecutionStepsArrayAfter(
             this.getCurrentExecutionStep( interaction )
         );
@@ -196,23 +181,6 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
-        // const executionSteps = this.getExecutionStepsArrayAfter();
-        //
-        // for ( let i = 0; i < executionSteps.length; i++ ) {
-        //     const step = executionSteps[ i ];
-        //
-        //     if ( step.getConditions && ! step.getConditions( {
-        //         context: interaction as TInteraction,
-        //         args: this.getArgs( interaction as TInteraction ),
-        //     } ) ) {
-        //         continue;
-        //     }
-        //
-        //     this.setStep( step );
-        //
-        //     break;
-        // }
-
         const executionSteps = this.getExecutionStepsArrayAfter(
             this.getCurrentExecutionStep( interaction as TInteraction )
         );
@@ -269,20 +237,6 @@ export abstract class UIAdapterExecutionStepsBase<
             ... step
         }, interaction, sendArgs );
     }
-    // TODO: Remove
-    // protected editReplyInitialWithStep( interaction: TInteraction, stepName: string, newArgs?: UIArgs ) {
-    //     const step = this.staticAdapterExecution.getExecutionSteps()[ stepName ];
-    //
-    //     if ( ! step ) {
-    //         throw new Error( `Missing execution step: '${ stepName }'` );
-    //     }
-    //
-    //     return this.executeEditReplyInitialStep( {
-    //         name: stepName,
-    //         ... step
-    //     }, interaction, newArgs );
-
-    // }
 
     protected getComponentCreateArgs(): UICreateComponentArgs {
         const stepData = this.getStepDataWithEntities( this.getInitialStep() );
@@ -403,20 +357,6 @@ export abstract class UIAdapterExecutionStepsBase<
 
         return result;
     }
-
-    // TODO: Im testing it. The name is wrong for sure.
-    // TODO: Remove
-    // private async executeEditReplyInitialStep( step: UIExecutionStepItem, interaction: TInteraction, newArgs?: UIArgs ) {
-    //     this.setStep( interaction, step );
-    //
-    //     const result = super.editReplyInitial( interaction, newArgs );
-    //
-    //     if ( this.onStep ) {
-    //         await this.onStep( step.name, interaction, newArgs );
-    //     }
-    //
-    //     return result;
-    // }
 
     private async executeEditMessageStep( step: UIExecutionStepItem, message: Message<true>, sendArgs?: UIArgs ) {
         this.setStep( message, step );

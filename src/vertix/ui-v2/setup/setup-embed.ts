@@ -33,6 +33,7 @@ export class SetupEmbed extends UIEmbedBase {
             id: uiUtilsWrapAsTemplate( "id" ),
             channelsTemplateName: uiUtilsWrapAsTemplate( "channelsTemplateName" ),
             channelsTemplateButtons: uiUtilsWrapAsTemplate( "channelsTemplateButtons" ),
+            channelsVerifiedRoles: uiUtilsWrapAsTemplate( "channelsVerifiedRoles" ),
         },
 
         badwords: uiUtilsWrapAsTemplate( "badwords" ),
@@ -64,7 +65,7 @@ export class SetupEmbed extends UIEmbedBase {
         return "Discover the limitless possibilities of **Vertix**!\n" +
             "Customize and optimize your server to perfection.\n\n" +
             "To create a new master channel just click:\n" +
-            "\"`(➕ Create Master Channel)`\" button.\n\n" +
+            "`(➕ Create Master Channel)` button.\n\n" +
             "Master Channels are dynamic voice channel generators, each with its own unique configuration.\n\n" +
             "Our badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n" +
             "_**Current master channels**_:\n" +
@@ -83,10 +84,11 @@ export class SetupEmbed extends UIEmbedBase {
                 multiSeparator: "\n\n",
                 options: {
                     index: `**#${ masterChannelsOptions.index }**`,
-                    name: `Name: <#${ masterChannelsOptions.id }>`,
-                    id: `Channel ID: \`${ masterChannelsOptions.id }\``,
-                    channelsTemplateName: `Dynamic Channels Name: \`${ masterChannelsOptions.channelsTemplateName }\``,
-                    channelsTemplateButtons: `Channels Buttons: **${ masterChannelsOptions.channelsTemplateButtons }**`,
+                    name: `▹ Name: <#${ masterChannelsOptions.id }>`,
+                    id: `▹ Channel ID: \`${ masterChannelsOptions.id }\``,
+                    channelsTemplateName: `▹ Dynamic Channels Name: \`${ masterChannelsOptions.channelsTemplateName }\``,
+                    channelsTemplateButtons: `▹ Buttons: **${ masterChannelsOptions.channelsTemplateButtons }**`,
+                    channelsVerifiedRoles: `▹ Verified Roles: ${ masterChannelsOptions.channelsVerifiedRoles }`,
                 }
             },
             badwords: {
@@ -124,13 +126,17 @@ export class SetupEmbed extends UIEmbedBase {
                 const data = channel?.data?.[ 0 ],
                     usedButtons = data?.object?.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
                     usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis( usedButtons ) )
-                        .join( ", " );
+                        .join( ", " ),
+                    usedRoles = ( data?.object.dynamicChannelVerifiedRoles || []).map( ( roleId: string ) => {
+                        return "<@&" + roleId + ">";
+                    } ).join( ", " );
 
                 return {
                     index: index + 1,
                     id: channel.channelId,
                     channelsTemplateName: data?.object?.dynamicChannelNameTemplate || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
                     channelsTemplateButtons: usedEmojis,
+                    channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
                 };
             } ),
             masterChannels = await Promise.all( masterChannelsPromise ) || [];

@@ -7,8 +7,8 @@
   "bin": "dist/index.min.js",
   "scripts": {
     "build": "scripts/build.sh",
-    "eslint": "npx eslint --ext .ts .",
-    "eslint:fix": "npx eslint --fix --ext .ts .",
+    "eslint": "npx eslint .",
+    "eslint:fix": "npx eslint --fix .",
     "release": "scripts/build.sh --update-package-version && bash ./scripts/release.sh",
     "release-test-env": "scripts/build.sh && bash ./scripts/release-test-env.sh",
     "start": "node -r dotenv/config index.min.js dotenv_config_path=.env",

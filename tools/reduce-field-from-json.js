@@ -1,9 +1,7 @@
 const fs = require("fs");
 
-
-
 // Read the JSON file
-const jsonData = fs.readFileSync('./ru.json', 'utf8');
+const jsonData = fs.readFileSync("./ru.json", "utf8");
 
 // Parse the JSON into a JavaScript object
 const data = JSON.parse(jsonData);
@@ -22,6 +20,6 @@ data.embeds = reducedEmbeds;
 const updatedJsonData = JSON.stringify(data, null, 2);
 
 // Write the updated JSON data to a file
-fs.writeFileSync('./ru.json', updatedJsonData);
+fs.writeFileSync("./ru.json", updatedJsonData);
 
-console.log('Data saved successfully.')
+console.log("Data saved successfully.");

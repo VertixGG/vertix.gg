@@ -13,7 +13,18 @@ export abstract class InitializeBase extends ObjectBase {
         this.initialize && this.initialize();
     }
 
-    protected initialize?() : void;
-}
+    protected initialize?(): void;
 
-export default InitializeBase;
+    // TODO: Find better place for this
+    protected debounce( func: Function, delay: number ) {
+        let timeoutId: NodeJS.Timeout;
+
+        return ( ... args: any ) => {
+            clearTimeout( timeoutId );
+
+            timeoutId = setTimeout( () => {
+                func.apply( this, args );
+            }, delay );
+        };
+    }
+}

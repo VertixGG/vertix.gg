@@ -46,7 +46,7 @@ module.exports = {
 						"position": "after",
 					},
 					{
-						"pattern": "@dynamico/**",
+						"pattern": "@vertix/**",
 						"group": "parent",
 						"position": "after",
 					}

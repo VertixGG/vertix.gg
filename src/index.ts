@@ -1,35 +1,35 @@
 /**
  * @see https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots
- * @see https://discord.com/api/oauth2/authorize?client_id=1079487067932868608&permissions=286346256&scope=bot%20applications.commands - LegendAI
- * @see https://discord.com/api/oauth2/authorize?client_id=1091272387493908561&permissions=286346256&scope=bot%20applications.commands - Ancient AI
+ * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=8&scope=bot%20applications.commands - Vertix Administrator
+ * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=286354576&scope=bot%20applications.commands - Vertix
+ * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=286346264&scope=bot%20applications.commands - Vertix + Admin
+ * @see https://discord.com/api/oauth2/authorize?client_id=1114586106491572254&permissions=286346264&scope=bot%20applications.commands - Vertix Test
  */
 import path from "path";
 import process from "process";
 
-import dotenv from "dotenv";
+import { config } from "dotenv";
 
-import GlobalLogger from "@dynamico/global-logger";
+import GlobalLogger from "@vertix/global-logger";
 
 function entryPoint() {
-    GlobalLogger.getInstance().info( entryPoint, "Database is connected" );
+    GlobalLogger.$.info( entryPoint, "Database is connected" );
 
-    import( "./dynamico" ).then( ( { default: botInitialize } ) => {
+    import( "./vertix" ).then( ( { default: botInitialize } ) => {
         botInitialize().then( () => {
-            GlobalLogger.getInstance().info( entryPoint, "Bot is initialized" );
+            GlobalLogger.$.info( entryPoint, "Bot is initialized" );
         } );
     } );
 }
 
 function main() {
-    dotenv.config( { path: path.join( process.cwd(), ".env" ) } );
+    config( { path: path.join( process.cwd(), ".env" ) } );
 
-    //GlobalLogger.getInstance().info( main, "Environment variables are loaded:", process.env );
-
-    import( "./prisma" ).then( ( { default: Prisma } ) => {
-        Prisma.getConnectPromise().then( entryPoint );
+    import( "./prisma" ).then( ( { PrismaInstance } ) => {
+        PrismaInstance.$.connect().then( entryPoint );
     } );
 }
 
-console.log( "Starting..."  );
+Error.stackTraceLimit = Infinity;
 
 setTimeout( main, 0 );

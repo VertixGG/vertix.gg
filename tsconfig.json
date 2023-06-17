@@ -23,8 +23,8 @@
 			"@internal/*": [
 				"src/*"
 			],
-			"@dynamico/*": [
-				"src/dynamico/*"
+			"@vertix/*": [
+				"src/vertix/*"
 			]
 		}
 	},

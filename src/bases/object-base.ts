@@ -1,14 +1,17 @@
 import { ForceMethodBase } from "../errors/force-method-implementation";
 
 export abstract class ObjectBase {
+    private readonly id: string;
     private readonly name: string = "__UNDEFINED_NAME__";
 
-    protected readonly args: { [ key: string ]: any };
-
     protected constructor( args?: any ) {
-        this.args = args || {};
-
         this.name = this.getName();
+
+        const timestamp = performance.now() * 1000000;
+        const random1 = BigInt(Math.floor(Math.random() * 1000000));
+        const random2 = BigInt(Math.floor(Math.random() * 1000000));
+
+        this.id = `${timestamp}${random1}${random2}`;
     }
 
     public static getName(): string {
@@ -17,6 +20,10 @@ export abstract class ObjectBase {
 
     public getName(): string {
         return ( this.constructor as typeof ObjectBase ).getName();
+    }
+
+    public getUniqueId(): string {
+        return this.id;
     }
 
     public getInitialName(): string {

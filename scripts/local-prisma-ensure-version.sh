@@ -14,7 +14,6 @@ fi
 if grep -q "\"version\":" "$package_json_path"; then
   echo "version key already exists in package.json"
 else
-  # Add version key with value 0.0.0 to package.json
-  sed -i '1s/^/{\n  "version": "0.0.0",\n/' "$package_json_path"
-  echo "Added version key with value 0.0.0 to package.json"
+  cp "tools/prisma-client-package.json" "$package_json_path"
+  echo "copied tools/prisma-client-package.json to $package_json_path"
 fi

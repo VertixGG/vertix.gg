@@ -1,0 +1,20 @@
+{
+	"name": "Vertix/UI-V2/LanguageSelectMenu",
+	"content": {
+		"selectOptions": [
+			{
+				"label": "🇺🇸 Английский",
+				"value": "en"
+			},
+			{
+				"label": "🇷🇺 Русский",
+				"value": "ru"
+			},
+			{
+				"label": "🇮🇱 Иврит",
+				"value": "he"
+			}
+		],
+		"placeholder": "🌍 Выберите язык"
+	}
+}

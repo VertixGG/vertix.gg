@@ -18,8 +18,9 @@ import { AppManager } from "@vertix/managers/app-manager";
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 import { PermissionsManager } from "@vertix/managers/permissions-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
+import { CategoryManager } from "@vertix/managers/category-manager";
 
-import { ChannelModel } from "@vertix/models/channel";
+import { ChannelModel } from "@vertix/models/channel-model";
 
 import { Debugger } from "@internal/modules/debugger";
 
@@ -153,12 +154,12 @@ export class ChannelManager extends InitializeBase {
                 if ( await ChannelModel.$.isMaster( channel.id ) ) {
                     await MasterChannelManager.$.onDeleteMasterChannel( channel );
                 }
+                break;
 
-                return true;
+            case ChannelType.GuildCategory:
+                await CategoryManager.$.onDelete( channel );
+                break;
         }
-
-        // TODO: Bad practice, should be removed.
-        return false;
     }
 
     public async onChannelUpdate( oldChannelState: DMChannel | NonThreadGuildBasedChannel, newChannelState: DMChannel | NonThreadGuildBasedChannel ) {
@@ -177,27 +178,12 @@ export class ChannelManager extends InitializeBase {
         }
     }
 
-    // TODO: Probably move to Model.
-    public async getMasterChannelDBByDynamicChannelId( dynamicChannelId: string, cache = true ) {
-        this.logger.log( this.getMasterChannelDBByDynamicChannelId,
-            `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from ${ cache ? "cache" : "database" }`
-        );
-
-        const dynamicChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelId, cache );
-
-        if ( ! dynamicChannelDB || ! dynamicChannelDB.ownerChannelId ) {
-            return null;
-        }
-
-        return await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId, cache );
-    }
-
     public async getMasterChannelByDynamicChannelId( dynamicChannelId: string, cache = true ) {
         this.logger.log( this.getMasterChannelByDynamicChannelId,
             `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from database`
         );
 
-        const masterChannelDB = await this.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
 
         if ( ! masterChannelDB ) {
             return null;
@@ -213,7 +199,7 @@ export class ChannelManager extends InitializeBase {
     }
 
     public async getMasterChannelAndDBbyDynamicChannelId( dynamicChannelId: string, cache: boolean = true ) {
-        const masterChannelDB = await this.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
         if ( ! masterChannelDB ) {
             return null;
         }

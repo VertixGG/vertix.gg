@@ -8,7 +8,7 @@ export const UI_LANGUAGES_PATH = process.cwd() + "/assets/languages/",
     UI_LANGUAGES_INITIAL_FILE_NAME = UI_LANGUAGES_INITIAL_CODE + UI_LANGUAGES_FILE_EXTENSION,
     UI_LANGUAGES_INITIAL_FILE_PATH = UI_LANGUAGES_PATH + UI_LANGUAGES_INITIAL_FILE_NAME,
     UI_LANGUAGES_INITIAL_ATTRIBUTES = {
-        code: "en",
+        code: UI_LANGUAGES_INITIAL_CODE,
         name: "English",
         flag: "🇺🇸",
     };

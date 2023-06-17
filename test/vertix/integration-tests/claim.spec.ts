@@ -41,7 +41,7 @@ it("should bypass", function () {
 // import { ClaimVoteAdapter } from "@vertix/ui-v2/claim/vote/claim-vote-adapter";
 // import { ClaimResultAdapter } from "@vertix/ui-v2/claim/result/claim-result-adapter";
 //
-// import { ChannelModel, ChannelResult } from "@vertix/models/channel";
+// import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
 //
 // import { EditDynamicChannel } from "@vertix/ui/edit-dynamic-channel/edit-dynamic-channel";
 // import { AppManager } from "@vertix/managers/app-manager";

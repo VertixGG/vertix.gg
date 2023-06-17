@@ -43,6 +43,12 @@ export abstract class CacheBase<CacheResult> extends InitializeBase {
     protected deleteCache( key: string ): boolean {
         this.cacheDebugger.log( this.deleteCache, `Deleting cache for key: '${ key }'` );
 
+        if ( ! this.cache.has( key ) ) {
+            this.cacheDebugger.log( this.deleteCache, `Cache for key: '${ key }' does not exist` );
+
+            return false;
+        }
+
         return this.cache.delete( key );
     }
 

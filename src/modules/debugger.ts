@@ -16,7 +16,7 @@ export class Debugger extends ObjectBase {
     declare private finalizationRegistry;
 
     public static getName() {
-        return "internal/modules/debugger";
+        return "Internal/Modules/Debugger";
     }
 
     public constructor( owner: ObjectBase | typeof ObjectBase, prefix?: string, shouldDebug = true ) {

@@ -8,7 +8,7 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { ChannelModel, ChannelResult } from "@vertix/models/channel";
+import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
 
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS, } from "@vertix/definitions/master-channel";
 
@@ -75,13 +75,9 @@ export class PermissionsManager extends InitializeBase {
                 isBotPermissionsRemovedFromChannel = ! newState.permissionOverwrites.cache.get( botId );
 
             if ( isBotPermissionsRemovedFromChannel ) {
-                // TODO: Why this log not working?
                 this.logger.admin( this.onChannelPermissionsUpdate,
                     `🔐 Bot permissions were removed from channel id: '${ newState.id }', channel name: '${ newState.name }' - (${ newState.guild.name }) (${ newState.guild?.memberCount })`
                 );
-
-                // TODO: Find out what todo with this.
-                // this.resetBotUserPermissionsDebounce( newState, channel );
             }
         }
     }

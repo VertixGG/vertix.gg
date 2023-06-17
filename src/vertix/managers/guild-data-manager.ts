@@ -32,12 +32,11 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         super( shouldDebugCache );
     }
 
-    // TODO: Cache always false.
-    public async getAllSettings( guildId: string ): Promise<IGuildSettings> {
+    public async getAllSettings( guildId: string, cache = false ): Promise<IGuildSettings> {
         const data = await this.getSettingsData(
             guildId,
             null,
-            false,
+            cache,
             true
         );
 

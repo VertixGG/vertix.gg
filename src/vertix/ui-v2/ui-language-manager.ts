@@ -27,11 +27,11 @@ import { UIModalBase } from "@vertix/ui-v2/_base/ui-modal-base";
 
 import { UnknownElementTypeError } from "@vertix/ui-v2/_base/errors/unknown-element-type-error";
 
-import { ElementButtonLanguageModel } from "@vertix/models/element-button-language";
-import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-menu-language";
-import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language";
-import { EmbedLanguageModel } from "@vertix/models/embed-language";
-import { MarkdownLanguageModel } from "@vertix/models/markdown-language";
+import { ElementButtonLanguageModel } from "@vertix/models/element-button-language-model";
+import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-menu-language-model";
+import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language-model";
+import { EmbedLanguageModel } from "@vertix/models/embed-language-model";
+import { MarkdownLanguageModel } from "@vertix/models/markdown-language-model";
 import { ModalLanguageModel } from "@vertix/models/modal-language-model";
 
 import { LanguageUtils } from "@vertix/utils/language";
@@ -97,7 +97,7 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async getButtonTranslatedContent( button: UIElementButtonBase, languageCode: string | undefined ): Promise<UIElementButtonLanguageContent> {
-        if ( ! languageCode || "en" === languageCode ) {
+        if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return button.getTranslatableContent();
         }
 
@@ -117,7 +117,7 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu | UIElementRoleSelectMenu, languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
-        if ( ! languageCode || "en" === languageCode ) {
+        if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return selectMenu.getTranslatableContent();
         }
 
@@ -138,7 +138,7 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async getTextInputTranslatedContent( textInput: UIElementInputBase, languageCode: string | undefined ): Promise<UIElementTextInputLanguageContent> {
-        if ( ! languageCode || "en" === languageCode ) {
+        if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return textInput.getTranslatableContent();
         }
 
@@ -158,7 +158,7 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async getEmbedTranslatedContent( embed: UIEmbedBase, languageCode: string | undefined ): Promise<UIEmbedLanguageContent> {
-        if ( ! languageCode || "en" === languageCode ) {
+        if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return embed.getTranslatableContent();
         }
 
@@ -181,7 +181,7 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async getMarkdownTranslatedContent( markdown: UIMarkdownBase, languageCode: string | undefined ): Promise<UIMarkdownLanguageContent> {
-        if ( ! languageCode || "en" === languageCode ) {
+        if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return markdown.getTranslatableContent();
         }
 
@@ -201,7 +201,7 @@ export class UILanguageManager extends InitializeBase {
     }
 
     public async getModalTranslatedContent( modal: UIModalBase, languageCode: string | undefined ): Promise<UIModalLanguageContent> {
-        if ( ! languageCode || "en" === languageCode ) {
+        if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return modal.getTranslatableContent();
         }
 

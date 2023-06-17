@@ -2,7 +2,7 @@ import process from "process";
 
 import { Client, GuildChannel, GuildMember, Message, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
-import { ChannelResult } from "@vertix/models/channel";
+import { ChannelResult } from "@vertix/models/channel-model";
 
 import {
     DynamicChannelVoteManager,

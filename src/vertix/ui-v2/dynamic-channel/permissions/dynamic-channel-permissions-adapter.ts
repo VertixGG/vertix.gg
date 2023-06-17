@@ -16,8 +16,8 @@ import {
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 
 import { DynamicChannelAdapterExuBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
-import { ChannelManager } from "@vertix/managers/channel-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
+import { ChannelModel } from "@vertix/models";
 
 type DefaultInteraction =
     | UIDefaultStringSelectMenuChannelVoiceInteraction
@@ -100,7 +100,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 break;
         }
 
-        const masterChannelDB = await ChannelManager.$
+        const masterChannelDB = await ChannelModel.$
             .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
 
         if ( masterChannelDB ) {

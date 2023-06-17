@@ -249,6 +249,20 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         return result;
     }
 
+    public async getMasterChannelDBByDynamicChannelId( dynamicChannelId: string, cache = true ) {
+        this.logger.log( this.getMasterChannelDBByDynamicChannelId,
+            `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from ${ cache ? "cache" : "database" }`
+        );
+
+        const dynamicChannelDB = await this.getByChannelId( dynamicChannelId, cache );
+
+        if ( ! dynamicChannelDB || ! dynamicChannelDB.ownerChannelId ) {
+            return null;
+        }
+
+        return await this.getByChannelId( dynamicChannelDB.ownerChannelId, cache );
+    }
+
     public async getTypeCount( guildId: string, internalType: E_INTERNAL_CHANNEL_TYPES ) {
         const total = await this.ownerModel.count( {
             where: {

@@ -7,10 +7,11 @@ import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager"
 import { DynamicChannelComponent } from "@vertix/ui-v2/dynamic-channel/dynamic-channel-component";
 import { DynamicChannelVoteManager } from "@vertix/managers/dynamic-channel-vote-manager";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
-import { ChannelManager } from "@vertix/managers/channel-manager";
+import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
+
+import { ChannelModel } from "@vertix/models";
 
 import { DynamicChannelAdapterBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-base";
-import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
 
 import { MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE, } from "@vertix/definitions/master-channel";
 
@@ -128,7 +129,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
                 channelId: channel.id,
             },
-            masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+            masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {
             const masterChannelData =

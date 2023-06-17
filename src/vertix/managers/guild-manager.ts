@@ -8,6 +8,8 @@ import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { GuildDataManager } from "@vertix/managers/guild-data-manager";
 
+import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS, DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix/definitions/guild";
+
 import {
     DEFAULT_BADWORDS,
     DEFAULT_BADWORDS_INITIAL_VALUE,
@@ -115,7 +117,7 @@ export class GuildManager extends InitializeBase {
     public async getBadwords( guildId: string ): Promise<string[]> {
         const badwordsDB = await GuildDataManager.$.getData( {
             ownerId: guildId,
-            key: "badwords", // TODO: Use constant.
+            key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
             default: null,
             cache: true,
         }, true );
@@ -139,7 +141,7 @@ export class GuildManager extends InitializeBase {
             try {
                 await GuildDataManager.$.deleteData( {
                     ownerId: guild.id,
-                    key: "badwords", // TODO: Use constant.
+                    key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
                 }, true );
             } catch ( e ) {
                 this.logger.error( this.setBadwords, "", e );
@@ -150,7 +152,7 @@ export class GuildManager extends InitializeBase {
 
         await GuildDataManager.$.setData( {
             ownerId: guild.id,
-            key: "badwords",
+            key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
             default: badwords,
         }, true );
 
@@ -164,7 +166,7 @@ export class GuildManager extends InitializeBase {
     public async setLanguage( guild: Guild, language: string, shouldAdminLog = true ): Promise<void> {
         await GuildDataManager.$.setData( {
             ownerId: guild.id,
-            key: "language", // TODO: Use constant.
+            key: DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
             default: language,
             cache: true,
         }, true );

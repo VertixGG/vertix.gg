@@ -19,9 +19,6 @@ import { Debugger } from "@internal/modules/debugger";
 
 type UIEntitiesGroupsTypes = typeof UIElementsGroupBase[] | typeof UIEmbedsGroupBase[];
 
-// TODO: It should support only custom components with does not include non grouped entities.
-// TODO: Move outside discord
-
 export abstract class UIAdapterExecutionStepsBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,

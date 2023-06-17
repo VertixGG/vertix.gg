@@ -1,7 +1,5 @@
 import { ObjectBase } from "@internal/bases/object-base";
 
-// TODO: Before move forward, check visibility order: public, protected, private.
-
 export abstract class UIBase extends ObjectBase {
     protected readonly hierarchyNames: string[];
 

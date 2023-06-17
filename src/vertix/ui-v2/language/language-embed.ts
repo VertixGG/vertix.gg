@@ -6,7 +6,10 @@ import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
-import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix/ui-v2/_base/ui-language-definitions";
+import {
+    UI_LANGUAGES_INITIAL_ATTRIBUTES,
+    UI_LANGUAGES_INITIAL_CODE
+} from "@vertix/ui-v2/_base/ui-language-definitions";
 
 export class LanguageEmbed extends UIEmbedBase {
     private static vars = {
@@ -58,7 +61,7 @@ export class LanguageEmbed extends UIEmbedBase {
 
     protected getLogic( args: UIArgs ) {
         return {
-            currentLanguage: args?._language || "en",
+            currentLanguage: args?._language || UI_LANGUAGES_INITIAL_CODE,
         };
     }
 }

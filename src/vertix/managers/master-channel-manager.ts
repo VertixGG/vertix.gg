@@ -30,8 +30,8 @@ import {
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES,
 } from "@vertix/definitions/master-channel";
 
-import { CategoryModel } from "@vertix/models/category";
-import { ChannelModel, ChannelResult } from "@vertix/models/channel";
+import { CategoryModel } from "@vertix/models/category-model";
+import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
 
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { AppManager } from "@vertix/managers/app-manager";

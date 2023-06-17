@@ -39,6 +39,9 @@ import { UIRegenerateButton } from "@vertix/ui-v2/_base/regenerate/ui-regenerate
 
 import { UIInteractionMiddleware } from "@vertix/ui-v2/_base/ui-interaction-middleware";
 
+import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix/definitions/guild";
+import { UI_LANGUAGES_INITIAL_CODE } from "@vertix/ui-v2/_base/ui-language-definitions";
+
 import { Debugger } from "@internal/modules/debugger";
 import { Logger } from "@internal/modules/logger";
 import { ForceMethodImplementation } from "@internal/errors";
@@ -206,12 +209,12 @@ export abstract class UIAdapterBase<
             // TODO: Move to hook.
             const language = await GuildDataManager.$.getData( {
                 ownerId: "string" === typeof context ? context : context.guildId,
-                key: "language",
-                default: "en",
+                key: DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
+                default: UI_LANGUAGES_INITIAL_CODE,
                 cache: true,
             }, true );
 
-            args._language = language?.values?.[ 0 ] ?? "en";
+            args._language = language?.values?.[ 0 ] ?? UI_LANGUAGES_INITIAL_CODE;
         }
 
         if ( "unknown" !== from ) {
@@ -596,11 +599,6 @@ export abstract class UIAdapterBase<
         this.storeEntityCallback( selectMenuMap, callback );
     }
 
-    // Should be called when the interaction is manually created. ??
-    // TODO: Check how claim works, ( maybe describe that in miro ) and try to bold the difference between channel rename, and claim.
-    // TODO: Use miro to handle connection between the adapters.
-
-    // TODO: The behavior of this method is not clear, cover it with tests.
     public async awakeInternal( message: Message<true>, argsFromManager?: UIArgs ) {
         const args = {
             ... await this.getArgsInternal( message.channel as TChannel, argsFromManager ),

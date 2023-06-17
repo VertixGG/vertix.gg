@@ -6,7 +6,7 @@ export class CategoryModel extends ModelBase {
     private static instance: CategoryModel;
 
     public static getName(): string {
-        return "Vertix/Models/Category";
+        return "Vertix/Models/CategoryModel";
     }
 
     public static getInstance(): CategoryModel {

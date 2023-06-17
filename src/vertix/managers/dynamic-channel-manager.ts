@@ -45,7 +45,7 @@ import {
 
 import { IChannelLeaveGenericArgs } from "@vertix/interfaces/channel";
 
-import { ChannelModel, ChannelResult } from "@vertix/models/channel";
+import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
 
 import { GuildManager } from "@vertix/managers/guild-manager";
 import { ChannelManager } from "@vertix/managers/channel-manager";
@@ -174,7 +174,7 @@ export class DynamicChannelManager extends InitializeBase {
     public async getChannelNameTemplateReplaced( channel: VoiceChannel, userId: string, returnDefault = false ): Promise<string | null> {
         let result = null;
 
-        const masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id ),
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id ),
             displayName = await guildGetMemberDisplayName( channel.guild, userId );
 
         if ( masterChannelDB ) {
@@ -213,7 +213,7 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async getChannelAllowedUserIds( channel: VoiceChannel, skipOwner = false ) {
-        const masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.getChannelAllowedUserIds,
@@ -880,7 +880,7 @@ export class DynamicChannelManager extends InitializeBase {
     public async grantUserAccess( channel: VoiceChannel, member: GuildMember ): Promise<GrantStatus> {
         let result: GrantStatus = "error";
 
-        const masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         // TODO: Add fail fallback with source method getMasterChannelDBByDynamicChannelId( ..., this.grantUserAccess );
         if ( ! masterChannelDB ) {
@@ -927,7 +927,7 @@ export class DynamicChannelManager extends InitializeBase {
     public async denyUserAccess( channel: VoiceChannel, member: GuildMember ): Promise<DenyStatus> {
         let result: DenyStatus = "error";
 
-        const masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.denyUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
@@ -958,7 +958,7 @@ export class DynamicChannelManager extends InitializeBase {
 
     public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {
         // TODO: Add dedicated method for this.
-        const masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.isClaimButtonEnabled,
@@ -1012,7 +1012,7 @@ export class DynamicChannelManager extends InitializeBase {
 
     private async getVerifiedRoles( channel: VoiceBasedChannel ) {
         const roles = [],
-            masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( channel.id );
+            masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {
             const verifiedRoles = await MasterChannelManager.$.getChannelVerifiedRoles( masterChannelDB.id, channel.guildId );

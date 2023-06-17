@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
 
-import { EmbedLanguageModel } from "@vertix/models/embed-language";
-import { ElementButtonLanguageModel } from "@vertix/models/element-button-language";
-import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language";
-import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-menu-language";
-import { MarkdownLanguageModel } from "@vertix/models/markdown-language";
+import { EmbedLanguageModel } from "@vertix/models/embed-language-model";
+import { ElementButtonLanguageModel } from "@vertix/models/element-button-language-model";
+import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language-model";
+import { ElementSelectMenuLanguageModel } from "@vertix/models/element-select-menu-language-model";
+import { MarkdownLanguageModel } from "@vertix/models/markdown-language-model";
 
 import { ModalLanguageModel } from "@vertix/models/modal-language-model";
 

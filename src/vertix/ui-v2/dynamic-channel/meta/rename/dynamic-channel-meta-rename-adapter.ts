@@ -9,7 +9,7 @@ import {
 } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
-import { ChannelManager } from "@vertix/managers/channel-manager";
+import { ChannelModel } from "@vertix/models";
 
 import { DynamicChannelAdapterExuBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
 
@@ -84,7 +84,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
         let newChannelName = interaction.fields.getTextInputValue(
                 "Vertix/UI-V2/DynamicChannelMetaRenameAdapter:Vertix/UI-V2/DynamicChannelMetaRenameInput"
             ),
-            masterChannelDB = await ChannelManager.$.getMasterChannelDBByDynamicChannelId( interaction.channel.id );
+            masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channel.id );
 
         if ( ! newChannelName ) {
             newChannelName = await DynamicChannelManager.$.getChannelNameTemplateReplaced(

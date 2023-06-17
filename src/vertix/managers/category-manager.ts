@@ -1,6 +1,6 @@
 import { CategoryChannel, ChannelType, Guild } from "discord.js";
 
-import { CategoryModel } from "@vertix/models/category";
+import { CategoryModel } from "@vertix/models/category-model";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
 

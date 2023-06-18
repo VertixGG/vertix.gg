@@ -396,7 +396,11 @@ export class DynamicChannelManager extends InitializeBase {
             ?.send( channel, sendArgs );
 
         if ( messageCreated ) {
-            await ChannelDataManager.$.setSettingsData( dynamicChannelDB.id, { [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: messageCreated?.id } );
+            await ChannelDataManager.$.setSettingsData(
+                dynamicChannelDB.id,
+                { [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: messageCreated?.id },
+                true,
+            );
         }
 
         return messageCreated;

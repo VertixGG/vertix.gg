@@ -133,7 +133,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
         if ( masterChannelDB ) {
             const masterChannelData =
-                await ChannelDataManager.$.getSettingsData( masterChannelDB.id, false );
+                await ChannelDataManager.$.getSettingsData( masterChannelDB.id, false, true );
 
             args.dynamicChannelButtonsTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
         }

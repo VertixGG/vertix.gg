@@ -12,12 +12,12 @@ export abstract class ModelBaseCached<TCacheResult> extends CacheBase<TCacheResu
 
     protected debugger: Debugger;
 
-    protected constructor( shouldDebugCache: boolean ) {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super( shouldDebugCache );
 
         this.prisma = PrismaInstance.getClient();
 
-        this.debugger = new Debugger( this );
+        this.debugger = new Debugger( this, "", shouldDebugModel );
     }
 }
 
@@ -26,12 +26,12 @@ export abstract class ModelBase extends InitializeBase {
 
     protected debugger: Debugger;
 
-    protected constructor() {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super();
 
         this.prisma = PrismaInstance.getClient();
 
-        this.debugger = new Debugger( this );
+        this.debugger = new Debugger( this, "", shouldDebugModel );
     }
 }
 

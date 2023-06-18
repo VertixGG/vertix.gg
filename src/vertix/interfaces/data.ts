@@ -17,6 +17,7 @@ export interface IDataGetArgs extends IDataSelectUniqueArgs {
 }
 
 export interface IDataUpdateArgs extends IDataGetArgs {
+    skipGet?: boolean,
 }
 
 export interface DataResult {

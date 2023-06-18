@@ -23,8 +23,8 @@ export abstract class ModelDataBase<
     protected ownerModel: TOwnerModel;
     protected dataModel: TDataModel;
 
-    protected constructor( shouldDebugCache = true ) {
-        super( shouldDebugCache );
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
+        super( shouldDebugCache, shouldDebugModel );
 
         this.ownerModel = this.getOwnerModel();
         this.dataModel = this.getDataModel();

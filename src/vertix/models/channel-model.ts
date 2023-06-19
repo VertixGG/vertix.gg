@@ -67,20 +67,26 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         super( shouldDebugCache, shouldDebugModel );
     }
 
-    public async create( args: Prisma.ChannelCreateArgs ) {
+    public async create( args: Prisma.ChannelCreateArgs, shouldSaveCache = true ) {
         this.logger.log( this.create,
             `Guild id: '${ args.data.guildId }' - Creating entry for channel id: '${ args.data.channelId }''`
         );
 
         this.debugger.dumpDown( this.create, args.data );
 
-        return this.ownerModel.create( args );
+        const result = await this.ownerModel.create( args );
+
+        if ( shouldSaveCache ) {
+            this.setCache( result.channelId, result );
+        }
+
+        return result;
     }
 
     public async update( args: Prisma.ChannelUpdateArgs, deleteCache = true ) {
-        if ( args.where.channelId ) {
-            this.logger.log( this.update, `Channel id: '${ args.where.channelId }'` );
+        this.logger.log( this.update, `Where args: '${ args.where }'` );
 
+        if ( args.where.channelId ) {
             this.deleteCacheByChannelId( args.where.channelId );
         } else if ( args.where.id ) {
             this.logger.log( this.update, `Object id: '${ args.where.id }'` );
@@ -96,11 +102,11 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     public async delete( guildId: string, channelId?: string | null ) {
-        if ( channelId ) {
-            this.logger.log( this.delete,
-                `Guild id: '${ guildId }' - Deleting entry of channel id: '${ channelId }'`
-            );
+        this.logger.log( this.delete,
+            `Guild id: '${ guildId }' - Deleting entry of channel id: '${ channelId }'`
+        );
 
+        if ( channelId ) {
             if ( await this.isExisting( guildId, channelId ) ) {
                 this.deleteCacheByChannelId( channelId );
 
@@ -122,48 +128,6 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         );
 
         return this.ownerModel.deleteMany( { where: { guildId: guildId } } );
-    }
-
-    public deleteCacheByObjectId( id: string ) {
-        this.debugger.log( this.deleteCacheByObjectId, `Removing channel object id: '${ id }' from cache.` );
-
-        // Get all that have the same channel id.
-        for ( let [ key, value ] of this.getMap().entries() ) {
-            if ( value.id === id ) {
-                // Remove from cache.
-                this.deleteCache( key );
-
-                ChannelDataManager.$.removeFromCache( value.id );
-            }
-        }
-    }
-
-    public deleteCacheByChannelId( channelId: string ) {
-        this.debugger.log( this.deleteCacheByChannelId, `Removing channel id: '${ channelId }' from cache.` );
-
-        // Get all that have the same channel id.
-        for ( let [ key, value ] of this.getMap().entries() ) {
-            if ( value.channelId === channelId ) {
-                // Remove from cache.
-                this.deleteCache( key );
-
-                ChannelDataManager.$.removeFromCache( value.id );
-            }
-        }
-    }
-
-    public deleteCacheByGuildId( guildId: string ) {
-        this.logger.log( this.deleteCacheByGuildId, `Removing guild id: '${ guildId }' from cache.` );
-
-        // Get all that have the same guild id.
-        for ( let [ key, value ] of this.getMap().entries() ) {
-            if ( value.guildId === guildId ) {
-                // Remove from cache.
-                this.deleteCache( key );
-
-                ChannelDataManager.$.removeFromCache( value.id );
-            }
-        }
     }
 
     public async getAll( guildId: string, internalType?: E_INTERNAL_CHANNEL_TYPES, includeData?: boolean ) {
@@ -204,30 +168,8 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         } );
     }
 
-    public async getByObjectId( id: string, cache = true ) {
-        this.debugger.log( this.getByObjectId, `Getting channel object id: '${ id }'` );
-
-        let result = null;
-
-        if ( cache ) {
-            result = this.getCache( id );
-        }
-
-        if ( ! result ) {
-            result = await this.ownerModel.findUnique( { where: { id } } );
-
-            if ( result ) {
-                this.setCache( id, result );
-            }
-        }
-
-        this.debugger.dumpDown( this.getByObjectId, result, "result" );
-
-        return result;
-    }
-
     public async getByChannelId( channelId: string|null, cache = true ) {
-        this.debugger.log( this.getByChannelId, `Getting channel id: '${ channelId }'` );
+        this.logger.log( this.getByChannelId, `Getting channel id: '${ channelId }', cache: '${ cache }'` );
 
         if ( ! channelId ) {
             return null;
@@ -282,7 +224,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     public async isMaster( channelId: string, cache = true ) {
-        this.logger.log( this.isMaster, `Channel id: '${ channelId }'` );
+        this.logger.log( this.isMaster, `Channel id: '${ channelId }', cache: '${ cache }'` );
 
         const result = !! ( await this.getByChannelId( channelId, cache ) )?.isMaster;
 
@@ -292,7 +234,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     public async isDynamic( channelId: string, cache = true ) {
-        this.logger.log( this.isDynamic, `Channel id: '${ channelId }'` );
+        this.logger.log( this.isDynamic, `Channel id: '${ channelId }', cache: '${ cache }'` );
 
         const result = !! ( await this.getByChannelId( channelId, cache ) )?.isDynamic;
 
@@ -335,5 +277,47 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
 
     protected getOwnerIdFieldName(): string {
         return "channelId";
+    }
+
+    private deleteCacheByObjectId( id: string ) {
+        this.debugger.log( this.deleteCacheByObjectId, `Removing channel object id: '${ id }' from cache.` );
+
+        // Get all that have the same channel id.
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( value.id === id ) {
+                // Remove from cache.
+                this.deleteCache( key );
+
+                ChannelDataManager.$.removeFromCache( value.id );
+            }
+        }
+    }
+
+    private deleteCacheByChannelId( channelId: string ) {
+        this.debugger.log( this.deleteCacheByChannelId, `Removing channel id: '${ channelId }' from cache.` );
+
+        // Get all that have the same channel id.
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( value.channelId === channelId ) {
+                // Remove from cache.
+                this.deleteCache( key );
+
+                ChannelDataManager.$.removeFromCache( value.id );
+            }
+        }
+    }
+
+    private deleteCacheByGuildId( guildId: string ) {
+        this.logger.log( this.deleteCacheByGuildId, `Removing guild id: '${ guildId }' from cache.` );
+
+        // Get all that have the same guild id.
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( value.guildId === guildId ) {
+                // Remove from cache.
+                this.deleteCache( key );
+
+                ChannelDataManager.$.removeFromCache( value.id );
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@ import { BaseInteraction, ChannelType, GuildChannel, Message, PermissionsString 
 import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 
+import { AppManager } from "@vertix/managers/app-manager";
+
 import { Debugger } from "@internal/modules/debugger";
 import { InitializeBase } from "@internal/bases/initialize-base";
 
@@ -19,7 +21,11 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
         "regenerate",
     ];
 
-    private static debugger = new Debugger( this );
+    private static debugger = new Debugger(
+        this,
+        "",
+        AppManager.isDebugOn( "UI_MIDDLEWARE", UIInteractionMiddleware.getName() )
+    );
 
     private readonly eventArgs;
 
@@ -67,7 +73,7 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
     }
 
     private async passThrough( target: UIAdapterBase<TChannel, TInteraction>, method: Function, args: any, callback: Function ) {
-        this.logger.log( this.passThrough, `Passing interaction middleware for: '${ target.getName() }::${ method.name }'` );
+        UIInteractionMiddleware.debugger.log( this.passThrough, `Passing interaction middleware for: '${ target.getName() }::${ method.name }'` );
 
         // Find Interaction/Channel/Message in args.
         let context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> | null = null;

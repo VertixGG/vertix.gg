@@ -176,7 +176,7 @@ export class ChannelManager extends InitializeBase {
 
     public async getMasterChannelByDynamicChannelId( dynamicChannelId: string, cache = true ) {
         this.logger.log( this.getMasterChannelByDynamicChannelId,
-            `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from database`
+            `Dynamic channel id: '${ dynamicChannelId }', cache: '${ cache }' - Trying to get master channel from database`
         );
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );

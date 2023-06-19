@@ -26,12 +26,12 @@ export abstract class ModelBase extends InitializeBase {
 
     protected debugger: Debugger;
 
-    protected constructor() {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super();
 
         this.prisma = PrismaInstance.getClient();
 
-        this.debugger = new Debugger( this );
+        this.debugger = new Debugger( this, "", shouldDebugModel );
     }
 }
 

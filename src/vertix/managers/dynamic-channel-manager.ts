@@ -22,19 +22,21 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import fetch from "cross-fetch";
 
 import {
+    AddStatus,
     ChannelState,
     ChannelVisibilityState,
-    DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-    RemoveStatus,
+    DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
+    DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
     DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID,
     DynamicClearChatResultCode,
     DynamicEditChannelResultCode,
     DynamicResetChannelResultCode,
-    AddStatus,
+    EditStatus,
     IDynamicChannelCreateArgs,
     IDynamicClearChatResult,
     IDynamicEditChannelNameResult,
-    IDynamicResetChannelResult, EditStatus
+    IDynamicResetChannelResult,
+    RemoveStatus,
 } from "@vertix/definitions/dynamic-channel";
 
 import { gToken } from "@vertix/login";

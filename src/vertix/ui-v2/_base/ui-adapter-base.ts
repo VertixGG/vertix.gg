@@ -7,7 +7,7 @@ import {
     BaseMessageOptions,
     ButtonBuilder,
     ButtonInteraction,
-    ChannelType,
+    ChannelType, ComponentType,
     GuildChannel,
     InteractionEditReplyOptions,
     Message,
@@ -298,14 +298,41 @@ export abstract class UIAdapterBase<
 
         const message = await this.getMessage( "edit", interaction, newArgs );
 
-        if ( ! interaction.isCommand() && ! interaction.deferred ) {
-            // TODO: Use dedicated method.
-            if ( false === await interaction.deferUpdate().catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( this.editReply, "", e );
+        if ( interaction.isUserSelectMenu() || interaction.isRoleSelectMenu() ) {
+            const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
 
-                return false;
-            } ) ) {
-                return;
+            disabledComponents.forEach( ( row: any ) => {
+                for ( const component of row.components ) {
+                    if ( component.type === ComponentType.RoleSelect || component.type === ComponentType.UserSelect ) {
+                        row.components.splice( row.components.indexOf( component ), 1 );
+                    }
+                }
+            } );
+
+            const reindexDisabledComponents = [];
+
+            for ( const row of disabledComponents ) {
+                if ( row.components.length > 0 ) {
+                    reindexDisabledComponents.push( row );
+                }
+            }
+
+            await interaction.update( {
+                components: reindexDisabledComponents,
+                embeds: message.embeds,
+            } ).catch( ( e ) => {
+                this.staticAdapter.adapterLogger.error( this.editReply, "", e );
+            } );
+        } else {
+            if ( ! interaction.isCommand() && ! interaction.deferred ) {
+                // TODO: Use dedicated method.
+                if ( false === await interaction.deferUpdate().catch( ( e ) => {
+                    this.staticAdapter.adapterLogger.error( this.editReply, "", e );
+
+                    return false;
+                } ) ) {
+                    return;
+                }
             }
         }
 

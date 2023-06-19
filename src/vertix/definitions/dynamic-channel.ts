@@ -1,4 +1,6 @@
-import { Guild, VoiceState } from "discord.js";
+import { Guild, PermissionsBitField, VoiceState } from "discord.js";
+
+const { Flags } = PermissionsBitField;
 
 /* Default Data Key Settings */
 
@@ -64,7 +66,18 @@ export interface IDynamicResetChannelResult {
     rateLimitRetryAfter?: number,
 }
 
+/* Default Permissions */
+
+export const DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS = new PermissionsBitField();
+
+DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS.add(
+    Flags.ViewChannel,
+    Flags.Connect,
+    Flags.ReadMessageHistory
+);
+
 export type ChannelState = "unknown" | "public" | "private";
 export type ChannelVisibilityState = "unknown" | "shown" | "hidden";
-export type GrantStatus = "error" | "self-grant" | "already-granted" | "success";
-export type DenyStatus = "error" | "success";
+export type AddStatus = "error" | "self-grant" | "already-granted" | "success";
+export type EditStatus = "error" | "self-edit" | "already-have" | "success";
+export type RemoveStatus = "error"  | "self-deny" | "user-blocked" | "not-in-the-list" | "success"

@@ -71,7 +71,7 @@ export class UIWizardAdapterBase<
         this.staticWizardAdapter = staticThis;
     }
 
-    public editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ): Promise<undefined | Message<BooleanCache<"cached">>> {
+    public editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {
         this.getArgsManager().setArgs( this, interaction, {
             _step: stepName,
         } );

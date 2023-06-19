@@ -1,8 +1,10 @@
 import { UIElementsGroupBase } from "@vertix/ui-v2/_base/ui-elements-group-base";
 
 import {
+    DynamicChannelPermissionsBlockMenu,
     DynamicChannelPermissionsDenyMenu,
-    DynamicChannelPermissionsGrantMenu
+    DynamicChannelPermissionsGrantMenu,
+    DynamicChannelPermissionsUnblockMenu
 } from "@vertix/ui-v2/dynamic-channel/permissions/elements";
 
 export class DynamicChannelPermissionsAccessElementsGroup extends UIElementsGroupBase {
@@ -14,6 +16,8 @@ export class DynamicChannelPermissionsAccessElementsGroup extends UIElementsGrou
         return [
             [ DynamicChannelPermissionsGrantMenu ],
             [ DynamicChannelPermissionsDenyMenu ],
+            [ DynamicChannelPermissionsBlockMenu ],
+            [ DynamicChannelPermissionsUnblockMenu ],
         ];
     }
 }

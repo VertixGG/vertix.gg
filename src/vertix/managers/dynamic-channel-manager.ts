@@ -7,6 +7,7 @@ import {
     Message,
     MessageEditOptions,
     OverwriteType,
+    PermissionOverwriteOptions,
     PermissionsBitField,
     VoiceBasedChannel,
     VoiceChannel
@@ -21,19 +22,21 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import fetch from "cross-fetch";
 
 import {
+    AddStatus,
     ChannelState,
     ChannelVisibilityState,
     DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
-    DenyStatus,
+    DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
     DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID,
     DynamicClearChatResultCode,
     DynamicEditChannelResultCode,
     DynamicResetChannelResultCode,
-    GrantStatus,
+    EditStatus,
     IDynamicChannelCreateArgs,
     IDynamicClearChatResult,
     IDynamicEditChannelNameResult,
-    IDynamicResetChannelResult
+    IDynamicResetChannelResult,
+    RemoveStatus,
 } from "@vertix/definitions/dynamic-channel";
 
 import { gToken } from "@vertix/login";
@@ -192,14 +195,14 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public async getAllowedUsersTags( channel: VoiceChannel, skipOwner = true ) {
+    public async getChannelUsersWithPermissionState( channel: VoiceChannel, permissions: PermissionsBitField, state: boolean, skipOwner = true ) {
         const result: {
                 id: string,
                 tag: string,
             }[] = [],
-            allowedUserIds = await this.getChannelAllowedUserIds( channel, skipOwner );
+            ids = await this.getChannelUserIdsWithPermissionState( channel, permissions, state, skipOwner );
 
-        for ( const userId of allowedUserIds ) {
+        for ( const userId of ids ) {
             const user = channel.guild.members.cache.get( userId ) ||
                 await channel.guild.members.fetch( userId );
 
@@ -212,19 +215,20 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public async getChannelAllowedUserIds( channel: VoiceChannel, skipOwner = false ) {
+    public async getChannelUserIdsWithPermissionState( channel: VoiceChannel, permissions: PermissionsBitField, state: boolean, skipOwner = false ) {
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
-            this.logger.error( this.getChannelAllowedUserIds,
+            this.logger.error( this.getChannelUserIdsWithPermissionState,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - ` +
                 `Master channel not found for dynamic channel id: '${ channel.id }'`
             );
 
             return [];
         }
+
         const masterChannelCache = channel.client.channels.cache.get( masterChannelDB.channelId ),
-            allowed = [];
+            result = [];
 
         for ( const role of channel.permissionOverwrites?.cache?.values() || [] ) {
             if ( skipOwner && role.id === masterChannelDB.userOwnerId ) {
@@ -241,10 +245,14 @@ export class DynamicChannelManager extends InitializeBase {
                 continue;
             }
 
-            allowed.push( role.id );
+            if ( state && role.allow.has( permissions ) ) {
+                result.push( role.id );
+            } else if ( ! state && role.deny.has( permissions ) ) {
+                result.push( role.id );
+            }
         }
 
-        return allowed;
+        return result;
     }
 
     public async getPrimaryMessage( channel: VoiceChannel ) {
@@ -450,6 +458,8 @@ export class DynamicChannelManager extends InitializeBase {
 
         result.code = DynamicEditChannelResultCode.Success;
 
+        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+
         return result;
     }
 
@@ -468,6 +478,10 @@ export class DynamicChannelManager extends InitializeBase {
                 `✋ Dynamic Channel user limit has been changed from ${ channel.userLimit } to ${ newLimit } - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild.memberCount })`
             );
         } );
+
+        if ( result ) {
+            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        }
 
         return result;
     }
@@ -521,6 +535,10 @@ export class DynamicChannelManager extends InitializeBase {
                 );
         }
 
+        if ( result ) {
+            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        }
+
         return result;
     }
 
@@ -568,6 +586,10 @@ export class DynamicChannelManager extends InitializeBase {
                     `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
                     `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
                 );
+        }
+
+        if ( result ) {
+            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -812,7 +834,7 @@ export class DynamicChannelManager extends InitializeBase {
                 };
             },
             previousChannelState = await getCurrentChannelState( channel ),
-            previousAllowedUsers = await DynamicChannelManager.$.getChannelAllowedUserIds( channel ),
+            previousAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
                 DYNAMIC_CHANNEL_USER_TEMPLATE,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
@@ -867,7 +889,7 @@ export class DynamicChannelManager extends InitializeBase {
         );
 
         const currentChannelState = await getCurrentChannelState( channel ),
-            currentAllowedUsers = await DynamicChannelManager.$.getChannelAllowedUserIds( channel );
+            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true );
 
         result.oldState = {
             ... previousChannelState,
@@ -878,78 +900,159 @@ export class DynamicChannelManager extends InitializeBase {
             allowedUserIds: currentAllowedUsers,
         };
 
+        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+
         return result;
     }
 
-    public async grantUserAccess( channel: VoiceChannel, member: GuildMember ): Promise<GrantStatus> {
-        let result: GrantStatus = "error";
+    public async addUserAccess( channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField ): Promise<AddStatus> {
+        let result: AddStatus = "error";
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
-        // TODO: Add fail fallback with source method getMasterChannelDBByDynamicChannelId( ..., this.grantUserAccess );
+        // TODO: Add fail fallback with source method getMasterChannelDBByDynamicChannelId( ..., this.addUserAccess );
         if ( ! masterChannelDB ) {
-            this.logger.error( this.grantUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
+            this.logger.error( this.addUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
             return result;
         }
 
-        this.logger.log( this.grantUserAccess,
+        this.logger.log( this.addUserAccess,
             `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', ownerId: '${ masterChannelDB.userOwnerId }' - Grant user access, channel: '${ channel.name }', member: '${ member.displayName }'`
         );
 
         // Grant his self.
         if ( member.id === masterChannelDB.userOwnerId ) {
-            this.logger.admin( this.grantUserAccess,
+            this.logger.admin( this.addUserAccess,
                 `🤷 Grant user access did nothing - Trying add his self - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
             );
             return "self-grant";
         }
 
         // Already granted.
-        if ( channel.permissionOverwrites.cache.has( member.id ) ) {
-            this.logger.admin( this.grantUserAccess,
+        if ( channel.permissionOverwrites.cache.get( member.id )?.allow.has( permissions ) ) {
+            this.logger.admin( this.addUserAccess,
                 `🤷 Grant user access did nothing - User already in - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
             );
             return "already-granted";
         }
 
-        await channel.permissionOverwrites.create( member, {
-            ViewChannel: true,
-            Connect: true,
-            ReadMessageHistory: true,
-        } )
+        // TODO: Use permission manager to handle permissions.
+        const permissionsOptions: PermissionOverwriteOptions = {};
+
+        for ( const permission of permissions.toArray() ) {
+            permissionsOptions[ permission ] = true;
+        }
+
+        await channel.permissionOverwrites.create( member, permissionsOptions )
             .then( () => {
-                this.logger.admin( this.grantUserAccess,
-                    `☝️  User access has been granted - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+                this.logger.admin( this.addUserAccess,
+                    `☝️ '${ member.displayName }' access has been granted - "${ permissions.toArray() }" "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
                 );
                 result = "success";
             } )
-            .catch( ( e: any ) => this.logger.error( this.grantUserAccess, "", e ) );
+            .catch( ( e: any ) => this.logger.error( this.addUserAccess, "", e ) );
 
         return result;
     }
 
-    public async denyUserAccess( channel: VoiceChannel, member: GuildMember ): Promise<DenyStatus> {
-        let result: DenyStatus = "error";
+    public async editUserAccess( channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField, state: boolean ): Promise<EditStatus> {
+        let result: RemoveStatus = "error";
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
-            this.logger.error( this.denyUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
+            this.logger.error( this.editUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
             return result;
         }
 
-        this.logger.log( this.denyUserAccess,
+        // Edit his self.
+        if ( member.id === masterChannelDB.userOwnerId ) {
+            this.logger.admin( this.editUserAccess,
+                `🤷 Deny user access did nothing - Trying add his self - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+            );
+            return "self-edit";
+        }
+
+        // Check if permissions are already set.
+        const alreadyHave = state && channel.permissionOverwrites.cache.get( member.id )?.allow.has( permissions )
+            || ! state && channel.permissionOverwrites.cache.get( member.id )?.deny.has( permissions );
+
+        if ( alreadyHave ) {
+            this.logger.admin( this.editUserAccess,
+                `🤷 Grant user access did nothing - User already in - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+            );
+            return "already-have";
+        }
+
+        this.logger.log( this.editUserAccess,
+            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', ownerId: '${ masterChannelDB.userOwnerId }', state: ${ state } - Edit user access, channel: '${ channel.name }', member: '${ member.displayName }'`
+        );
+
+        // TODO: Use permission manager to handle permissions.
+        const permissionsOptions: PermissionOverwriteOptions = {};
+
+        for ( const permission of permissions.toArray() ) {
+            permissionsOptions[ permission ] = state;
+        }
+
+        await channel.permissionOverwrites.edit( member, permissionsOptions )
+            .then( () => {
+                this.logger.admin( this.editUserAccess,
+                    `🤏 '${ member.displayName }' has been edited - "${ permissions.toArray() }" => "${ state }"  "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+                );
+                result = "success";
+            } )
+            .catch( ( e: any ) => this.logger.error( this.editUserAccess, "", e ) );
+
+        return result;
+    }
+
+    public async removeUserAccess( channel: VoiceChannel, member: GuildMember, force = false ): Promise<RemoveStatus> {
+        let result: RemoveStatus = "error";
+
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+
+        if ( ! masterChannelDB ) {
+            this.logger.error( this.removeUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
+            return result;
+        }
+
+        // Grant his self.
+        if ( member.id === masterChannelDB.userOwnerId ) {
+            this.logger.admin( this.removeUserAccess,
+                `🤷 Deny user access did nothing - Trying add his self - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+            );
+            return "self-deny";
+        }
+
+        // Not even granted.
+        if ( ! channel.permissionOverwrites.cache.has( member.id ) ) {
+            this.logger.admin( this.removeUserAccess,
+                `🤷 Deny user access did nothing - User not granted in - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+            );
+            return "not-in-the-list";
+        }
+
+        // Check if user permissions are set to deny.
+        if ( ! force && channel.permissionOverwrites.cache.get( member.id )?.deny.has( DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS ) ) {
+            this.logger.admin( this.removeUserAccess,
+                `🤷 Deny user access did nothing - User is blocked - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+            );
+            return "user-blocked";
+        }
+
+        this.logger.log( this.removeUserAccess,
             `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', ownerId: '${ masterChannelDB.userOwnerId }' - Deny user access, channel: '${ channel.name }', member: '${ member.displayName }'`
         );
 
         await channel.permissionOverwrites.delete( member )
             .then( () => {
-                this.logger.admin( this.denyUserAccess,
-                    `👇 User has been removed from list - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
+                this.logger.admin( this.removeUserAccess,
+                    `👇 '${ member.displayName }' has been removed from list - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
                 );
                 result = "success";
             } )
-            .catch( ( e: any ) => this.logger.error( this.denyUserAccess, "", e ) );
+            .catch( ( e: any ) => this.logger.error( this.removeUserAccess, "", e ) );
 
         return result;
     }

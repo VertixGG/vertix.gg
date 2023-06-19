@@ -171,10 +171,6 @@ export class ChannelManager extends InitializeBase {
                 await PermissionsManager.$
                     .onChannelPermissionsUpdate( oldChannelState as VoiceChannel, newChannelState as VoiceChannel );
             }
-
-            if ( await ChannelModel.$.isDynamic( newChannelState.id ) ) {
-                DynamicChannelManager.$.editPrimaryMessageDebounce( newChannelState );
-            }
         }
     }
 

@@ -341,7 +341,7 @@ export class MasterChannelManager extends InitializeBase {
 
         this.debugger.dumpDown( this.getChannelNameTemplate,
             result,
-            `ownerId: '${ ownerId }' returnDefault:'${ returnDefault }' - Result: `
+            `ownerId: '${ ownerId }' returnDefault: '${ returnDefault }' - Result: `
         );
 
         return name;

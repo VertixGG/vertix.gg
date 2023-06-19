@@ -1,19 +1,27 @@
-import * as util from "util";
-
 import process from "process";
 
 import { PrismaClient } from "@prisma/client";
 
 import chalk from "chalk";
 
-import ObjectBase from "../bases/object-base";
+import { ObjectBase } from "../bases/object-base";
 
-import Logger from "@internal/modules/logger";
+import { Logger } from "@internal/modules/logger";
+import { Debugger } from "@internal/modules/debugger";
+
+type QueryEvent = {
+    timestamp: Date
+    query: string
+    params: string
+    duration: number
+    target: string
+}
 
 export class PrismaInstance extends ObjectBase {
     private static instance: PrismaInstance;
 
     private logger: Logger;
+    private debugger: Debugger;
 
     private client: PrismaClient;
 
@@ -43,6 +51,7 @@ export class PrismaInstance extends ObjectBase {
         super();
 
         this.logger = new Logger( this );
+        this.debugger = new Debugger( this );
         this.logger.addMessagePrefix( chalk.blue( "Prisma" ) );
 
         let options = {};
@@ -85,8 +94,8 @@ export class PrismaInstance extends ObjectBase {
         this.logger.info( this.onInfo, "", message );
     }
 
-    private async onQuery( data: any ) {
-        this.logger.log( this.onQuery, util.inspect( data, false, null, true ) );
+    private async onQuery( data: QueryEvent ) {
+        this.debugger.dumpDown( this.onQuery, data.query );
     }
 
     private async onWarn( message: any ) {

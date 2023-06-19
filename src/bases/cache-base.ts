@@ -7,10 +7,10 @@ export abstract class CacheBase<CacheResult> extends InitializeBase {
 
     private cacheDebugger: Debugger;
 
-    public constructor( debugState = true  ) {
+    public constructor( shouldDebugCache = true  ) {
         super();
 
-        this.cacheDebugger = new Debugger( this, undefined, debugState );
+        this.cacheDebugger = new Debugger( this, undefined, shouldDebugCache );
 
         this.cache = new Map<string, CacheResult>();
     }

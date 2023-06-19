@@ -20,7 +20,7 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
         // TODO: Find a better way to do this.
         name = name.split( UI_GENERIC_SEPARATOR, 1 )[ 0 ];
 
-        this.debugger.log( this.get, `Getting button language for: '${ name }' - Language code: '${ languageCode }'` );
+        this.debugger.log( this.get, `Getting button language for: '${ name }', language code: '${ languageCode }', cache: '${ cache }'` );
 
         const key = languageCode + ":" + name;
 
@@ -42,7 +42,7 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
     }
 
     public async create( name: string, languageCode: string, languageName: string, content: any ) {
-        this.logger.log( this.create, `Language code: '${ languageCode }' - Language name: '${ languageName }'` );
+        this.logger.log( this.create, `For '${ name }' - Language code: '${ languageCode }', language name: '${ languageName }'` );
         this.debugger.dumpDown( this.create, content );
 
         return ( this.getModel() as TModelHelper<TPayloadWithContent> ).create( {

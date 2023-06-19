@@ -60,8 +60,11 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         return ChannelModel.getInstance();
     }
 
-    public constructor( shouldDebugCache = AppManager.isDebugOn( "CACHE", ChannelModel.getName() ) ) {
-        super( shouldDebugCache );
+    public constructor(
+        shouldDebugCache = AppManager.isDebugOn( "CACHE", ChannelModel.getName() ),
+        shouldDebugModel = AppManager.isDebugOn( "MODEL", ChannelModel.getName() )
+    ) {
+        super( shouldDebugCache, shouldDebugModel );
     }
 
     public async create( args: Prisma.ChannelCreateArgs ) {

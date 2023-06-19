@@ -15,6 +15,8 @@ import {
     DynamicChannelPermissionsPrivateEmbed,
     DynamicChannelPermissionsPublicEmbed,
     DynamicChannelPermissionsShownEmbed,
+    DynamicChannelPermissionsBlockedEmbed,
+    DynamicChannelPermissionsUnblockedEmbed,
 } from "@vertix/ui-v2/dynamic-channel/permissions/embeds/";
 
 export class DynamicChannelPermissionsComponent extends UIComponentBase {
@@ -36,6 +38,8 @@ export class DynamicChannelPermissionsComponent extends UIComponentBase {
 
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsGrantedEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsDeniedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsBlockedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsUnblockedEmbed ),
 
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsAccessEmbed ),
 

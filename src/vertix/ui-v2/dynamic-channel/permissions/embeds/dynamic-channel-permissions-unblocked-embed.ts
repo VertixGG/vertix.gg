@@ -1,3 +1,5 @@
+import { Colors } from "discord.js";
+
 import {
     DynamicChannelPermissionsAccessEmbed
 } from "@vertix/ui-v2/dynamic-channel/permissions/embeds/dynamic-channel-permissions-access-embed";
@@ -6,16 +8,13 @@ import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
-export class DynamicChannelPermissionsGrantedEmbed extends DynamicChannelPermissionsAccessEmbed {
+export class DynamicChannelPermissionsUnblockedEmbed extends DynamicChannelPermissionsAccessEmbed {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
-
-        userGrantedDisplayName: uiUtilsWrapAsTemplate( "userGrantedDisplayName" ),
+        userUnBlockedDisplayName: uiUtilsWrapAsTemplate( "userUnBlockedDisplayName" ),
     };
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPermissionsGrantedEmbed";
+        return "Vertix/UI-V2/DynamicChannelPermissionsUnblockedEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {
@@ -23,24 +22,23 @@ export class DynamicChannelPermissionsGrantedEmbed extends DynamicChannelPermiss
     }
 
     protected getColor() {
-        return 0xF5CF4D; // As the emoji.
+        return Colors.Yellow;
     }
 
     protected getTitle() {
-        return "👍  Access granted";
+        return "🤙  User unblocked";
     }
 
     protected getDescription(): string {
-        return `**${ DynamicChannelPermissionsGrantedEmbed.vars.userGrantedDisplayName }** added successfully and now has access to this channel!\n` +
+        return `**${ DynamicChannelPermissionsUnblockedEmbed.vars.userUnBlockedDisplayName }** successfully un-blocked!\n` +
             super.getDescription();
     }
 
     protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
-        result.userGrantedDisplayName = args.userGrantedDisplayName;
+        result.userUnBlockedDisplayName = args.userUnBlockedDisplayName;
 
         return result;
-
     }
 }

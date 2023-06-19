@@ -247,15 +247,27 @@
 				}
 			},
 			{
+				"name": "Vertix/UI-V2/DynamicChannelPermissionsBlockMenu",
+				"content": {
+					"placeholder": "🫵 Block User Access"
+				}
+			},
+			{
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsDenyMenu",
 				"content": {
-					"placeholder": "🚫 Remove Access"
+					"placeholder": "👎 Remove Access"
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsGrantMenu",
 				"content": {
-					"placeholder": "🤝️ Grant Access"
+					"placeholder": "👍 Grant Access"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockMenu",
+				"content": {
+					"placeholder": "🤙 Un-Block User Access"
 				}
 			},
 			{
@@ -303,7 +315,7 @@
 							"{stateOn}": "∙🟢 On",
 							"{stateOff}": "∙🔴 Off"
 						},
-						"dynamicChannelIncludeEveryoneRoleLabel": "Include @everyone role"
+						"dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
 					}
 				}
 			},
@@ -582,15 +594,52 @@
 			"name": "Vertix/UI-V2/DynamicChannelPermissionsAccessEmbed",
 			"content": {
 				"title": "👥  Manage permissions of your channel",
-				"description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🤝 Grant Access`)** - Grant user access.\n⚬ **(`🚫 Remove Access`)** - Remove user access.",
+				"description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+				"footer": "Use the menu below to manage permissions of your channel.",
 				"options": {
 					"allowedUsersDisplay": {
 						"{allowedUsersDefault}": "Currently there are no granted users.\n",
 						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "Currently there are no blocked users.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
 					}
 				},
 				"arrayOptions": {
 					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsBlockedEmbed",
+			"content": {
+				"title": "🫵  User blocked",
+				"description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+				"footer": "Use the menu below to manage permissions of your channel.",
+				"options": {
+					"allowedUsersDisplay": {
+						"{allowedUsersDefault}": "Currently there are no granted users.\n",
+						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "Currently there are no blocked users.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
+					}
+				},
+				"arrayOptions": {
+					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
 						"format": "- <@{value}>{separator}",
 						"separator": "\n"
 					}
@@ -600,16 +649,25 @@
 		{
 			"name": "Vertix/UI-V2/DynamicChannelPermissionsDeniedEmbed",
 			"content": {
-				"title": "🚫  Access canceled",
-				"description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🤝 Grant Access`)** - Grant user access.\n⚬ **(`👥 Access`)** - Manage channel permissions.",
+				"title": "👎  Access canceled",
+				"description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+				"footer": "Use the menu below to manage permissions of your channel.",
 				"options": {
 					"allowedUsersDisplay": {
 						"{allowedUsersDefault}": "Currently there are no granted users.\n",
 						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "Currently there are no blocked users.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
 					}
 				},
 				"arrayOptions": {
 					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
 						"format": "- <@{value}>{separator}",
 						"separator": "\n"
 					}
@@ -619,16 +677,25 @@
 		{
 			"name": "Vertix/UI-V2/DynamicChannelPermissionsGrantedEmbed",
 			"content": {
-				"title": "🤝  Access granted",
-				"description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**You can use**:\n⚬ **(`🚫 Remove Access`)** - Remove user access.\n⚬ **(`👥 Access`)** - Manage channel permissions.",
+				"title": "👍  Access granted",
+				"description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+				"footer": "Use the menu below to manage permissions of your channel.",
 				"options": {
 					"allowedUsersDisplay": {
 						"{allowedUsersDefault}": "Currently there are no granted users.\n",
 						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "Currently there are no blocked users.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
 					}
 				},
 				"arrayOptions": {
 					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
 						"format": "- <@{value}>{separator}",
 						"separator": "\n"
 					}
@@ -692,6 +759,34 @@
 			"name": "Vertix/UI-V2/DynamicChannelPermissionsShownEmbed",
 			"content": {
 				"title": "🐵  The channel is visible now"
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
+			"content": {
+				"title": "🤙  User unblocked",
+				"description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+				"footer": "Use the menu below to manage permissions of your channel.",
+				"options": {
+					"allowedUsersDisplay": {
+						"{allowedUsersDefault}": "Currently there are no granted users.\n",
+						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "Currently there are no blocked users.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
+					}
+				},
+				"arrayOptions": {
+					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					}
+				}
 			}
 		},
 		{
@@ -838,7 +933,7 @@
 			"content": {
 				"title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
 				"description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
-				"footer": "Note: The changes will only affect dynamic channels that change their state after the editing.",
+				"footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
 				"options": {
 					"verifiedRolesDisplay": {
 						"{verifiedRoles}": "{verifiedRoles}",

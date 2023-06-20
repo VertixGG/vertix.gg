@@ -630,7 +630,7 @@ export class DynamicChannelManager extends InitializeBase {
             newOwner = await channel.guild.members.cache.get( newOwnerId );
 
         this.logger.admin( this.editChannelOwner,
-            `😈  Owner of dynamic channel has been changed - "${ previousOwner?.displayName }" => "${ newOwner?.displayName }" - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
+            `🔀  Owner of dynamic channel has been changed - "${ previousOwner?.displayName }" => "${ newOwner?.displayName }" - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
         );
 
         // Restore allowed list.

@@ -75,12 +75,10 @@ export abstract class UIAdapterBase<
 
     private staticAdapter: typeof UIAdapterBase;
 
-    // TODO: Clear them out after a while.
     private static ephemeralInteractions: {
         [ userIdPlusMessageId: string ]: MessageComponentInteraction | ModalSubmitInteraction;
     } = {};
 
-    // TODO: Clear them out after a while.
     private static staticArgs = new UIArgsManager( chalk.green( "StaticArgs" ) );
     private static staticSystemArgs = new UIArgsManager( chalk.red( "SystemArgs" ) );
 
@@ -400,11 +398,12 @@ export abstract class UIAdapterBase<
 
         const message = await this.getMessage( "reply", interaction, sendArgs ),
             shouldDeletePreviousInteraction = deletePreviousInteraction && ! interaction.isCommand() && interaction.message?.id,
-            messageId = shouldDeletePreviousInteraction && interaction.message?.id || 0;
+            messageId = shouldDeletePreviousInteraction && interaction.message?.id || 0,
+            interactionInternalId = interaction.user.id + UI_GENERIC_SEPARATOR + messageId;
 
-        if ( shouldDeletePreviousInteraction && this.staticAdapter.ephemeralInteractions[ interaction.user.id + messageId ] ) {
+        if ( shouldDeletePreviousInteraction && this.staticAdapter.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.
-            const previousInteraction = this.staticAdapter.ephemeralInteractions[ interaction.user.id + messageId ];
+            const previousInteraction = this.staticAdapter.ephemeralInteractions[ interactionInternalId ];
 
             // TODO: Avoid catching here.
             await previousInteraction.deleteReply().catch( ( e ) => {
@@ -417,7 +416,7 @@ export abstract class UIAdapterBase<
             ephemeral: true,
         } ).then( ( result ) => {
             if ( shouldDeletePreviousInteraction ) {
-                this.staticAdapter.ephemeralInteractions[ interaction.user.id + messageId ] = interaction;
+                this.staticAdapter.ephemeralInteractions[ interactionInternalId ] = interaction;
             }
         } ).catch( ( e ) => {
             this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
@@ -518,6 +517,28 @@ export abstract class UIAdapterBase<
 
             await channel.bulkDelete( messagesToDelete );
         }
+    }
+
+    public async deleteRelatedEphemeralInteractionsInternal( interaction: TInteraction, customId: string, count: number ) {
+        let deletedCount = 0;
+
+        for ( const [ key, _interaction ] of Object.entries( this.staticAdapter.ephemeralInteractions ) ) {
+            if ( deletedCount >= count ) {
+                break;
+            }
+
+            if ( key.includes( interaction.user.id ) && _interaction.customId === customId ) {
+                await _interaction.deleteReply().catch( ( e ) => {
+                    this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
+                } );
+
+                delete this.staticAdapter.ephemeralInteractions[ key ];
+
+                ++deletedCount;
+            }
+        }
+
+        return deletedCount;
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {

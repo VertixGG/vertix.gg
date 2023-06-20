@@ -39,7 +39,8 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
         } );
 
         return ( await Promise.all( values ) ).sort( ( a, b ) =>
-            parseInt( a.value ) - parseInt( b.value )
+            DynamicChannelElementsGroup.getItemById( parseInt( a.value ) ).getSortId() -
+            DynamicChannelElementsGroup.getItemById( parseInt( b.value ) ).getSortId()
         );
     }
 }

@@ -9,6 +9,14 @@ export class DynamicChannelMetaRenameButton extends DynamicChannelButtonBase {
         return 0;
     }
 
+    public getSortId() {
+        return 0;
+    }
+
+    public getLabelForEmbed() {
+        return "✏️ ∙ **Rename**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return await this.getLabel();
     }

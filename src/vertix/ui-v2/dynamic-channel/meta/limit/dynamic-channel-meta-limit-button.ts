@@ -9,6 +9,14 @@ export class DynamicChannelMetaLimitButton extends DynamicChannelButtonBase {
         return 1;
     }
 
+    public getSortId() {
+        return 1;
+    }
+
+    public getLabelForEmbed() {
+        return "✋ ∙ **User Limit**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return await this.getLabel();
     }

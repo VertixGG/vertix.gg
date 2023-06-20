@@ -13,6 +13,14 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
         return DynamicChannelPermissionsAccessButton.getId();
     }
 
+    public getSortId() {
+        return 5;
+    }
+
+    public getLabelForEmbed() {
+        return "👥 ∙ **Access**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return await this.getLabel();
     }

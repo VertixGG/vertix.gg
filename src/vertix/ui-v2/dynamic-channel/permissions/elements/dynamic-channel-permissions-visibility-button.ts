@@ -10,6 +10,14 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
         return 4;
     }
 
+    public getSortId(): number {
+        return 4;
+    }
+
+    public getLabelForEmbed() {
+        return "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return "Shown/Hidden"; //  - ( 🙈 / 🐵 )
     }

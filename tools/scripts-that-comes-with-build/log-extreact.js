@@ -5,23 +5,22 @@ const logType = process.argv[ 2 ]; // Read logType from command-line arguments
 
 if ( ! logType ) {
 	console.log( "Usage: tail -f filename.log | log-extractor.js <logType>" );
+	process.exit( 1 );
 }
 
 function extractLog( log ) {
-	const originalDateTime = log.match( /\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}]/ )?.[ 0 ];
+	const originalDateTimeMatch = log.match( /\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?)]/ );
 
-	if ( ! originalDateTime ) {
+	if ( ! originalDateTimeMatch ) {
 		return null;
 	}
 
-	const originalDate = originalDateTime.substring( 1, 11 );
-	const originalTime = originalDateTime.substring( 12, 20 );
-	const modifiedTime = new Date( `${originalDate} ${originalTime}` );
-
+	const originalDateTime = originalDateTimeMatch[ 1 ];
+	const modifiedTime = new Date( originalDateTime );
 	modifiedTime.setHours( modifiedTime.getHours() + targetTimezoneOffset );
 
-	const modifiedDateTime = `[${originalDate} ${modifiedTime.toTimeString().substring( 0, 8 )}]`;
-	const modifiedLog = log.replace( /\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}]/, modifiedDateTime );
+	const modifiedDateTime = `[${ modifiedTime.toISOString().replace( "Z", "" ) }]`;
+	const modifiedLog = log.replace( /\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?]/, modifiedDateTime );
 
 	const regex = /\[(.*?)]\[(.*?)]\[(.*?)]:\s(.*)/;
 	const matches = modifiedLog.match( regex );
@@ -47,7 +46,7 @@ function processLog( log ) {
 	const parsedLog = extractLog( log );
 
 	if ( parsedLog && parsedLog.logType === logType ) {
-		console.log( `${parsedLog.dateTime}: ${parsedLog.message}` );
+		console.log( `${ parsedLog.dateTime }: ${ parsedLog.message }` );
 	}
 }
 

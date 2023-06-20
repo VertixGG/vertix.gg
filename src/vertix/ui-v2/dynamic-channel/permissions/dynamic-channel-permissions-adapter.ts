@@ -250,6 +250,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 } );
                 break;
 
+            case "action-on-bot-user":
             case "self-grant":
             case "already-granted":
                 return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged", {} );
@@ -276,6 +277,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 } );
                 break;
 
+            case "action-on-bot-user":
             case "self-deny":
             case "not-in-the-list":
             case "user-blocked":
@@ -305,6 +307,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 } );
                 break;
 
+            case "action-on-bot-user":
             case "self-edit":
             case "already-have":
                 return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged", {} );
@@ -331,6 +334,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 } );
                 break;
 
+            case "action-on-bot-user":
             case "not-in-the-list":
             case "self-deny":
                 return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged", {} );

@@ -906,6 +906,10 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async addUserAccess( channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField ): Promise<AddStatus> {
+        if ( member.id === channel.client.user.id ) {
+            return "action-on-bot-user";
+        }
+
         let result: AddStatus = "error";
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
@@ -956,6 +960,10 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async editUserAccess( channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField, state: boolean ): Promise<EditStatus> {
+        if ( member.id === channel.client.user.id ) {
+            return "action-on-bot-user";
+        }
+
         let result: RemoveStatus = "error";
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
@@ -1008,6 +1016,10 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async removeUserAccess( channel: VoiceChannel, member: GuildMember, force = false ): Promise<RemoveStatus> {
+        if ( member.id === channel.client.user.id ) {
+            return "action-on-bot-user";
+        }
+
         let result: RemoveStatus = "error";
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );

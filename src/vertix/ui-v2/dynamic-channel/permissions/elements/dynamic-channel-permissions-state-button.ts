@@ -10,6 +10,14 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
         return 3;
     }
 
+    public getSortId(): number {
+        return 3;
+    }
+
+    public getLabelForEmbed() {
+        return "🚫 ∙ **Private** / 🌐 ∙ **Public**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return "Public/Private"; // - ( 🚫 / 🌐 )
     }

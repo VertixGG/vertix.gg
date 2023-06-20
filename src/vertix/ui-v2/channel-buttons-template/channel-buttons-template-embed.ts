@@ -3,6 +3,12 @@ import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
+import {
+    DynamicChannelElementsGroup
+} from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+
+import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
+
 export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
     private static _vars = {
         separator: uiUtilsWrapAsTemplate( "separator" ),
@@ -20,30 +26,24 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
     }
 
     protected getArrayOptions() {
-        // TODO: Use real data.
-        return {
+        const result = {
             dynamicChannelButtonsTemplate: {
                 format: `- ( ${ ChannelButtonsTemplateEmbed._vars.value } )${ ChannelButtonsTemplateEmbed._vars.separator }`,
                 separator: "\n",
-                options: {
-                    0: "✏️ ∙ **Rename**",
-                    1: "✋ ∙ **User Limit**",
-                    2: "🧹 ∙ **Clear Chat**",
-
-                    3: "🚫 ∙ **Private** / 🌐 ∙ **Public**",
-                    4: "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
-                    5: "👥 ∙ **Access**",
-
-                    6: "🔃 ∙ **Reset Channel**",
-                    7: "😈 ∙ **Claim Channel**",
-                }
+                options: {} as any,
             },
         };
+
+        DynamicChannelElementsGroup.getAllItems().forEach( ( item: DynamicChannelButtonBase ) => {
+            result.dynamicChannelButtonsTemplate.options[ item.getId() ] = item.getLabelForEmbed();
+        } );
+
+        return result;
     }
 
     protected getLogic( args: UIArgs ) {
         return {
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate.sort(),
+            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate ),
         };
     }
 }

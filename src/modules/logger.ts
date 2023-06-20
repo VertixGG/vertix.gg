@@ -11,10 +11,6 @@ const DEFAULT_LOG_PREFIX = chalk.blackBright( "⚪ - [LOG]" ),
     DEFAULT_ERROR_PREFIX = chalk.red( "🔴 - [ERROR]" ),
     DEFAULT_ADMIN_PREFIX = chalk.yellowBright( "🟣 - [ADMIN]" );
 
-interface IParams {
-    [ key: string ]: string | number;
-}
-
 export type ICaller = Function | String;
 
 const registeredNames: any = {};
@@ -23,6 +19,8 @@ export class Logger extends ObjectBase {
     private owner: ObjectBase | typeof ObjectBase;
 
     private messagePrefixes: string[] = [];
+
+    private cachedDate: string;
 
     public static getName(): string {
         return "Modules/Logger";
@@ -34,6 +32,14 @@ export class Logger extends ObjectBase {
         if ( registeredNames[ owner.getName() ] ) {
             throw new Error( `Logger for '${ owner.getName() }' already exists` );
         }
+
+        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
+
+        if ( ! iso ) {
+            throw new Error( "Invalid date" );
+        }
+
+        this.cachedDate = iso[ 1 ] + " " + iso[ 2 ];
 
         this.owner = owner;
 
@@ -84,13 +90,7 @@ export class Logger extends ObjectBase {
     }
 
     private getTime(): string {
-        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/ );
-
-        if ( ! iso ) {
-            throw new Error( "Invalid date" );
-        }
-
-        return iso[ 1 ] + " " + iso[ 2 ];
+        return this.cachedDate;
     }
 
     private getCallerName( caller: ICaller ): string {
@@ -105,29 +105,33 @@ export class Logger extends ObjectBase {
         return "_CALLER_UNKNOWN_";
     }
 
-    private getStackTrace() {
-        return ( new Error().stack || "" )
-            .split( "\n" )
-            .filter( ( line: string ) => line.includes( " at " ) )
-            .map( ( line: string ) => line.trim().split( " " ) )
-            .map( ( line: string[] ) => {
-                const isIncludeNew = line.length && "new" === line[ 1 ],
-                    results: any = {
-                        context: line[ 0 ],
+    private getStackTrace(): any[] {
+        const stackTrace = (new Error().stack || "").split("\n");
+        const stackLines = stackTrace.slice(1); // Skip the first line containing "Error"
 
-                        // File remove brackets.
-                        file: line[ line.length - 1 ].replace( /\(|\)/g, "" ),
-                    };
+        const stackRegex = / at (.+?) \((.+?)\)/;
+        const result = [];
 
-                if ( isIncludeNew ) {
-                    results.isNew = true;
-                    results.object = line[ 2 ];
-                } else if ( ! ( 2 === line.length ) ) {
-                    results.object = line[ 1 ];
+        for (let i = 0; i < stackLines.length; i++) {
+            const line = stackLines[i];
+            const match = line.match(stackRegex);
+
+            if (match) {
+                const [, context, file] = match;
+                const parsedLine: any = { context, file };
+
+                if (line.startsWith("new")) {
+                    parsedLine.isNew = true;
+                    parsedLine.object = context.split(" ")[1];
+                } else if (context !== "Object.<anonymous>") {
+                    parsedLine.object = context;
                 }
 
-                return results;
-            } );
+                result.push(parsedLine);
+            }
+        }
+
+        return result;
     }
 
     public getPreviousSource(): string {
@@ -153,24 +157,6 @@ export class Logger extends ObjectBase {
         }
 
         return previousSource;
-    }
-
-    private outputParams( prefix: string, caller: ICaller, messageParams: string[] & IParams[] ): void {
-        let message = "";
-
-        messageParams.forEach( ( param: string | IParams ) => {
-            if ( typeof param === "string" ) {
-                message += param;
-
-                return;
-            }
-
-            Object.entries( param ).forEach( ( [ key, value ] ) => {
-                message += `${ key }=${ value } `;
-            } );
-        } );
-
-        this.output( prefix, caller, message );
     }
 
     private output( prefix: string, caller: ICaller, message: string, ... params: any[] ): void {

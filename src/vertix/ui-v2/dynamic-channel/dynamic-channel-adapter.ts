@@ -55,6 +55,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
         this.bindButton( "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton", this.onResetChannelButtonClicked );
         this.bindButton( "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton", this.onClaimButtonClicked );
+        this.bindButton( "Vertix/UI-V2/DynamicChannelTransferOwnerButton", this.onTransferOwnerButtonClicked );
     }
 
     protected getMessage( from: UIAdapterBuildSource, context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs ): BaseMessageOptions {
@@ -117,6 +118,10 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
         DynamicChannelAdapter.logger.error( this.onClaimButtonClicked,
             `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - Invalid state: ${ DynamicChannelVoteManager.$.getState( interaction.channelId ) }` );
+    }
+
+    private async onTransferOwnerButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+        await this.uiManager.get( "Vertix/UI-V2/DynamicChannelTransferOwnerAdapter" )?.runInitial( interaction );
     }
 
     private async getAllArgs( channel: VoiceChannel ) {

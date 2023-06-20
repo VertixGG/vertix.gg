@@ -9,6 +9,14 @@ export class DynamicChannelMetaClearChatButton extends DynamicChannelButtonBase 
         return 2;
     }
 
+    public getSortId() {
+        return 2;
+    }
+
+    public getLabelForEmbed() {
+        return "🧹 ∙ **Clear Chat**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return await this.getLabel();
     }

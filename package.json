@@ -1,6 +1,6 @@
 {
   "name": "vertix-bot",
-  "version": "0.0.12",
+  "version": "0.0.16",
   "license": "MIT",
   "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
   "main": "index.ts",

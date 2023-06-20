@@ -15,6 +15,14 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
         return DynamicChannelPremiumClaimChannelButton.getId();
     }
 
+    public getSortId() {
+        return 8;
+    }
+
+    public getLabelForEmbed() {
+        return "😈 ∙ **Claim Channel**";
+    }
+
     public async getLabelForMenu(): Promise<string> {
         return await this.getLabel();
     }

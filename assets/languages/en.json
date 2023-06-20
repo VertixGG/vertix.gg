@@ -91,9 +91,21 @@
 				}
 			},
 			{
+				"name": "Vertix/UI-V2/DynamicChannelTransferOwnerButton",
+				"content": {
+					"label": "Transfer Ownership"
+				}
+			},
+			{
 				"name": "Vertix/UI-V2/LanguageChooseButton",
 				"content": {
 					"label": "Choose Your Language"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/NoButton",
+				"content": {
+					"label": "👎 No"
 				}
 			},
 			{
@@ -164,6 +176,12 @@
 				"content": {
 					"label": "Next ▶"
 				}
+			},
+			{
+				"name": "Vertix/UI-V2/YesButton",
+				"content": {
+					"label": "👍 Yes"
+				}
 			}
 		],
 		"textInputs": [
@@ -223,6 +241,9 @@
 							"label": "Reset Channel"
 						},
 						{
+							"label": "Transfer Ownership"
+						},
+						{
 							"label": "Claim Channel"
 						}
 					]
@@ -268,6 +289,12 @@
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockMenu",
 				"content": {
 					"placeholder": "🤙 Un-Block User Access"
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/DynamicChannelTransferOwnerUserMenu",
+				"content": {
+					"placeholder": "🔀 Select User"
 				}
 			},
 			{
@@ -328,19 +355,6 @@
 		]
 	},
 	"embeds": [
-		{
-			"name": "Dynamico/UI-V2/LanguageEmbed",
-			"content": {
-				"title": "🌍  Select language",
-				"description": "__Current Selected Language__: **{currentLanguage}**\n\nDidn't find your language?\n\nYou can be the one to translate bot to your language!\ncontact us at our support server, and be the one!\n\nFound mistake in translation? Please let us know!",
-				"options": {
-					"currentLanguage": {
-						"en": "English",
-						"ru": "Russian"
-					}
-				}
-			}
-		},
 		{
 			"name": "Vertix/UI-V2/ClaimResultOwnerStopEmbed",
 			"content": {
@@ -493,6 +507,13 @@
 						"{resultsLink}": "\n\nFor more details click [here]({resultsLink})"
 					}
 				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DisabledWhileClaimEmbed",
+			"content": {
+				"title": "😈 The action is disabled",
+				"description": "The action is disabled while the claim is in progress.\n\nPlease wait until the claim is completed."
 			}
 		},
 		{
@@ -839,6 +860,27 @@
 			}
 		},
 		{
+			"name": "Vertix/UI-V2/DynamicChannelTransferOwnerEmbed",
+			"content": {
+				"title": "🔀  Transfer channel ownership",
+				"description": "Transfer channel ownership to another user.\n\nSelect the user to whom you want to transfer the channel."
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
+			"content": {
+				"title": "🔀  Transfer channel ownership succeeded!",
+				"description": "You are no longer the owner of this channel."
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
+			"content": {
+				"title": "🔀  Transfer channel ownership",
+				"description": "Transfer channel ownership to {userDisplayName}.\n\n⚠️ By transferring the channel ownership to another user, you will lose your ownership privileges.\n\nAre you sure you want to transfer the channel ownership to **{userDisplayName}?**"
+			}
+		},
+		{
 			"name": "Vertix/UI-V2/InvalidChannelTypeEmbed",
 			"content": {
 				"title": "# Oops! This component is restricted in this channel type.",
@@ -847,6 +889,19 @@
 					"allowedTypes": {
 						"format": "- {value}{separator}",
 						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/LanguageEmbed",
+			"content": {
+				"title": "🌍  Select language",
+				"description": "__Current Selected Language__: **{currentLanguage}**\n\nDidn't find your language?\n\nYou can be the one to translate bot to your language!\ncontact us at our support server, and be the one!\n\nFound mistake in translation? Please let us know!",
+				"options": {
+					"currentLanguage": {
+						"en": "English",
+						"ru": "Russian"
 					}
 				}
 			}
@@ -918,7 +973,8 @@
 							"4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
 							"5": "👥 ∙ **Access**",
 							"6": "🔃 ∙ **Reset Channel**",
-							"7": "😈 ∙ **Claim Channel**"
+							"7": "😈 ∙ **Claim Channel**",
+							"12": "🔀 ∙ **Transfer Ownership**"
 						}
 					},
 					"verifiedRoles": {
@@ -1030,7 +1086,8 @@
 							"4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
 							"5": "👥 ∙ **Access**",
 							"6": "🔃 ∙ **Reset Channel**",
-							"7": "😈 ∙ **Claim Channel**"
+							"7": "😈 ∙ **Claim Channel**",
+							"12": "🔀 ∙ **Transfer Ownership**"
 						}
 					}
 				}

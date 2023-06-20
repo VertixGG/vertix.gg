@@ -1,20 +1,20 @@
 import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
-export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButtonBase {
+export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton";
+        return "Vertix/UI-V2/DynamicChannelTransferOwnerButton";
     }
 
     public getId() {
-        return 6;
+        return 12;
     }
 
     public getSortId() {
-        return 6;
+        return 7;
     }
 
     public getLabelForEmbed() {
-        return "🔃 ∙ **Reset Channel**";
+        return "🔀 ∙ **Transfer Ownership**";
     }
 
     public async getLabelForMenu(): Promise<string> {
@@ -22,10 +22,10 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public getLabel(): Promise<string> {
-        return Promise.resolve( "Reset Channel" );
+        return Promise.resolve( "Transfer Ownership" );
     }
 
     public getEmoji(): Promise<string> {
-        return Promise.resolve( "🔃" );
+        return Promise.resolve( "🔀" );
     }
 }

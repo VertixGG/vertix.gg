@@ -87,6 +87,7 @@ export class UIAdapterManager extends InitializeBase {
 
             ( await import ("@vertix/ui-v2/dynamic-channel/permissions/dynamic-channel-permissions-adapter") ).DynamicChannelPermissionsAdapter,
 
+            ( await import ("@vertix/ui-v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-adapter") ).DynamicChannelTransferOwnerAdapter,
             ( await import ("@vertix/ui-v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-adapter") ).DynamicChannelPremiumResetChannelAdapter,
 
             ( await import ("@vertix/ui-v2/feedback/feedback-adapter") ).FeedbackAdapter,

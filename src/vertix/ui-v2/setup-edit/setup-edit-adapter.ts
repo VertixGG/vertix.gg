@@ -28,6 +28,9 @@ import {
 import { AdminAdapterExuBase } from "@vertix/ui-v2/_general/admin/admin-adapter-exu-base";
 import { SetupEditComponent } from "@vertix/ui-v2/setup-edit/setup-edit-component";
 import { SetupMasterEditButton } from "@vertix/ui-v2/setup/setup-master-edit-button";
+import {
+    DynamicChannelElementsGroup
+} from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction |
@@ -82,7 +85,8 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         let args: UIArgs = {};
 
         if ( argsFromManager?.dynamicChannelButtonsTemplate ) {
-            args.dynamicChannelButtonsTemplate = argsFromManager.dynamicChannelButtonsTemplate.sort();
+            args.dynamicChannelButtonsTemplate =
+                DynamicChannelElementsGroup.sortIds( argsFromManager.dynamicChannelButtonsTemplate );
         }
 
         const availableArgs = this.getArgsManager().getArgs( this, interaction ),
@@ -255,7 +259,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         this.getArgsManager().setArgs( this, interaction, {
-            dynamicChannelButtonsTemplate: interaction.values.map( ( value ) => parseInt( value ) ).sort(),
+            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds( interaction.values.map( ( i ) => parseInt( i ) ) )
         } );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditButtonsEffect" );
@@ -263,7 +267,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
     private async onButtonsEffectImmediatelyButtonsClicked( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction ),
-            buttons = args.dynamicChannelButtonsTemplate.sort();
+            buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
         await MasterChannelManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
@@ -289,7 +293,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
     private async onButtonsEffectNewlyButtonClicked( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction ),
-            buttons = args.dynamicChannelButtonsTemplate.sort();
+            buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
         await MasterChannelManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 

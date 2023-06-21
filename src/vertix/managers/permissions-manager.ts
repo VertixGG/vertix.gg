@@ -54,7 +54,7 @@ export class PermissionsManager extends InitializeBase {
     }
 
     public async onChannelPermissionsUpdate( oldState: VoiceChannel, newState: VoiceChannel ) {
-        this.logger.info( this.onChannelPermissionsUpdate,
+        this.logger.log( this.onChannelPermissionsUpdate,
             `Guild id: '${ oldState.guildId }', channel id: '${ oldState.id }' - Permissions were updated`
         );
 

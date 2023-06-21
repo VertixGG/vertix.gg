@@ -18,6 +18,8 @@ const OWNER_COMMAND_SYNTAX = {
 export class DirectMessageManager extends InitializeBase {
     private static instance: DirectMessageManager;
 
+    private feedbackSentIds: Map<string, string> = new Map();
+
     public static getName() {
         return "Managers/DirectMessage";
     }
@@ -42,6 +44,22 @@ export class DirectMessageManager extends InitializeBase {
         if ( VERTIX_OWNERS_IDS.includes( message.author.id ) ) {
             return this.onOwnerMessage( message );
         }
+
+        if ( this.feedbackSentIds.has( message.author.id ) ) {
+            return;
+        }
+
+        const adapter = UIAdapterManager.$.get( "Vertix/UI-V2/FeedbackAdapter" );
+
+        if ( ! adapter ) {
+            this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );
+            return;
+        }
+
+        this.feedbackSentIds.set( message.author.id, message.author.id );
+
+        // Check what happens with zero
+        await adapter.sendToUser( "direct-message", message.author.id, {} );
     }
 
     public async onOwnerMessage( message: Message ) {

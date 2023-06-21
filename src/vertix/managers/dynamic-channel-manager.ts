@@ -714,47 +714,6 @@ export class DynamicChannelManager extends InitializeBase {
         this.editMessageDebounceMap.set( key, timeoutId );
     }
 
-    public async setPrimaryMessageState( channel: VoiceChannel, state: boolean ) {
-        this.logger.log( this.setPrimaryMessageState,
-            `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - ` +
-            `Disabling primary message request, channel: '${ channel.name }, state: '${ state }'`
-        );
-
-        const message = await this.getPrimaryMessage( channel );
-
-        if ( ! message || ! this.isPrimaryMessage( message ) ) {
-            this.logger.warn( this.setPrimaryMessageState,
-                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
-            return;
-        }
-
-        // Loop over components and disable them.
-        const components = message.components,
-            newComponents = [];
-
-        for ( const component of components ) {
-            const newRow = new ActionRowBuilder<MessageActionRowComponentBuilder>();
-
-            for ( const messageComponent of component.components ) {
-                if ( ComponentType.Button === messageComponent.data.type ) {
-                    newRow.addComponents( new ButtonBuilder( { ... messageComponent.toJSON(), disabled: ! state } ) );
-                }
-            }
-
-            newComponents.push( newRow );
-        }
-
-        const newMessage: MessageEditOptions = {
-            components: newComponents,
-        };
-
-        await message.edit( newMessage )
-            .catch( ( e: any ) => this.logger.warn( this.editPrimaryMessage, "", e ) )
-            .then( () => this.logger.info( this.editPrimaryMessage,
-                `Guild id: '${ channel.guildId }' channel id: '${ channel.id }' - Editing primary message with id: '${ message.id }' succeeded`
-            ) );
-    }
-
     public async clearChat( channel: VoiceChannel ) {
         this.logger.log( this.clearChat,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Clearing chat request, channel: '${ channel.name }'`

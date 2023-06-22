@@ -304,7 +304,7 @@ export abstract class UIAdapterBase<
 
             disabledComponents.forEach( ( row: any ) => {
                 for ( const component of row.components ) {
-                    if ( component.type === ComponentType.RoleSelect || component.type === ComponentType.UserSelect ) {
+                    if ( component.type === ComponentType.UserSelect ) {
                         row.components.splice( row.components.indexOf( component ), 1 );
                     }
                 }

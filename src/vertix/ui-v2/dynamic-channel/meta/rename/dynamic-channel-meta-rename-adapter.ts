@@ -94,7 +94,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
             ) || interaction.channel.name;
         }
 
-        const result = await DynamicChannelManager.$.editChannelName( interaction.channel, newChannelName );
+        const result = await DynamicChannelManager.$.editChannelName( interaction,interaction.channel, newChannelName );
 
         switch ( result.code ) {
             case "success":

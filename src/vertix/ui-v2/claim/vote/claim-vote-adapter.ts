@@ -104,13 +104,12 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
     } ): Promise<void> {
         switch ( stepName ) {
             case "Vertix/UI-V2/ClaimVoteWon":
+                // TODO: Dedicated method
                 const args = await this.getReplyArgs( interaction );
 
                 await DynamicChannelClaimManager.$.unmarkChannelAsClaimable( interaction.channel );
 
-                await DynamicChannelManager.$.editChannelOwner( args.userWonId, args.previousOwnerId, interaction.channel );
-
-                //await DynamicChannelManager.$.setPrimaryMessageState( interaction.channel, true );
+                await DynamicChannelManager.$.editChannelOwner( args.userWonId, args.previousOwnerId, interaction.channel, "claim" );
                 break;
         }
     }

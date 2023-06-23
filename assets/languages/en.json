@@ -286,6 +286,12 @@
 				}
 			},
 			{
+				"name": "Vertix/UI-V2/DynamicChannelPermissionsKickMenu",
+				"content": {
+					"placeholder": "👢 Kick User"
+				}
+			},
+			{
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockMenu",
 				"content": {
 					"placeholder": "🤙 Un-Block User Access"
@@ -740,6 +746,34 @@
 				},
 				"arrayOptions": {
 					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsKickEmbed",
+			"content": {
+				"title": "👢  User kicked",
+				"description": "**{userKickedDisplayName}** successfully kicked!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+				"footer": "Use the menu below to manage permissions of your channel.",
+				"options": {
+					"allowedUsersDisplay": {
+						"{allowedUsersDefault}": "Currently there are no granted users.\n",
+						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "Currently there are no blocked users.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
+					}
+				},
+				"arrayOptions": {
+					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
 						"format": "- <@{value}>{separator}",
 						"separator": "\n"
 					}

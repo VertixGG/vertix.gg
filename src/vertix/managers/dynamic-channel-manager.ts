@@ -18,6 +18,7 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import fetch from "cross-fetch";
 
 import {
+    ActStatus,
     AddStatus,
     ChannelState,
     ChannelVisibilityState,
@@ -825,16 +826,8 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
-
-        // TODO: Add fail fallback with source method getMasterChannelDBByDynamicChannelId( ..., this.addUserAccess );
-        if ( ! masterChannelDB ) {
-            this.logger.error( this.addUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
-            return result;
-        }
-
         // Grant his self.
-        if ( member.id === masterChannelDB.userOwnerId ) {
+        if ( member.id === initiator.user.id ) {
             result = "self-grant";
 
             await this.log( initiator, channel, this.addUserAccess, result, { member, permissions } );
@@ -877,15 +870,8 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
-
-        if ( ! masterChannelDB ) {
-            this.logger.error( this.editUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
-            return result;
-        }
-
         // Edit his self.
-        if ( member.id === masterChannelDB.userOwnerId ) {
+        if ( member.id === initiator.user.id ) {
             result = "self-edit";
 
             await this.log( initiator, channel, this.editUserAccess, result, { member, permissions, state } );
@@ -931,15 +917,8 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
-
-        if ( ! masterChannelDB ) {
-            this.logger.error( this.removeUserAccess, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find master channel in database` );
-            return result;
-        }
-
         // Grant his self.
-        if ( member.id === masterChannelDB.userOwnerId ) {
+        if ( member.id === initiator.user.id ) {
             result = "self-deny";
 
             await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
@@ -970,6 +949,44 @@ export class DynamicChannelManager extends InitializeBase {
             .catch( ( e: any ) => this.logger.error( this.removeUserAccess, "", e ) );
 
         await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
+
+        return result;
+    }
+
+    public async kickUser( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, member: GuildMember ): Promise<ActStatus> {
+        let result: ActStatus = "error";
+
+        if ( member.id === channel.client.user.id ) {
+            result = "action-on-bot-user";
+
+            await this.log( initiator, channel, this.kickUser, result, { member } );
+
+            return result;
+        }
+
+        // Kick his self.
+        if ( member.id === initiator.user.id ) {
+            result = "self-action";
+
+            await this.log( initiator, channel, this.kickUser, result, { member } );
+
+            return result;
+        }
+
+        // Check if member is in the channel.
+        if ( ! channel.members.has( member.id ) ) {
+            result = "not-in-the-list";
+
+            await this.log( initiator, channel, this.kickUser, result, { member } );
+
+            return result;
+        }
+
+        await member.voice.setChannel( null )
+            .then( () => result = "success" )
+            .catch( ( e: any ) => this.logger.error( this.kickUser, "", e ) );
+
+        await this.log( initiator, channel, this.kickUser, result, { member } );
 
         return result;
     }
@@ -1229,7 +1246,6 @@ export class DynamicChannelManager extends InitializeBase {
                 } else {
                     message = "Unknown error when trying to edit user access.";
                 }
-
                 break;
 
             case this.editUserAccess:
@@ -1262,7 +1278,6 @@ export class DynamicChannelManager extends InitializeBase {
                 } else {
                     message = "Unknown error when trying to edit user access.";
                 }
-
                 break;
 
             case this.removeUserAccess:
@@ -1295,7 +1310,31 @@ export class DynamicChannelManager extends InitializeBase {
                         message = `${ emoji } '${ initiatorDisplayName }' ${ context } for: '${ meta.member.displayName }' succeeded.`;
                         break;
                 }
+                break;
 
+            case this.kickUser:
+                const tryingKickPrefix = `👢 '${ initiatorDisplayName }' trying kick user: '${ meta.member.displayName }'`;
+
+                switch ( action as ActStatus ) {
+                    case "error":
+                        message = `${ tryingKickPrefix } - Failed due unknown error.`;
+                        break;
+
+                    case "action-on-bot-user":
+                        message = `${ tryingKickPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                        break;
+
+                    case "self-action":
+                        message = `${ tryingKickPrefix } - Nothing done, cannot do that on his self.`;
+                        break;
+
+                    case "not-in-the-list":
+                        message = `${ tryingKickPrefix } - Nothing done, the user not in the channel.`;
+                        break;
+
+                    case "success":
+                        message = `👢 '${ initiatorDisplayName }' has kicked user: '${ meta.member.displayName }'`;
+                }
                 break;
 
             default:

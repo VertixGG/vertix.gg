@@ -74,6 +74,10 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 elementsGroup: "Vertix/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "Vertix/UI-V2/DynamicChannelPermissionsUnblockedEmbedGroup"
             },
+            "Vertix/UI-V2/DynamicChannelPermissionsKick": {
+                elementsGroup: "Vertix/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "Vertix/UI-V2/DynamicChannelPermissionsKickEmbedGroup"
+            },
 
             "Vertix/UI-V2/DynamicChannelPermissionsAccess": {
                 elementsGroup: "Vertix/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
@@ -111,6 +115,10 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
 
             case "Vertix/UI-V2/DynamicChannelPermissionsUnBlocked":
                 args.userUnBlockedDisplayName = argsFromManager.userUnBlockedDisplayName;
+                break;
+
+            case "Vertix/UI-V2/DynamicChannelPermissionsKick":
+                args.userKickedDisplayName = argsFromManager.userKickedDisplayName;
                 break;
         }
 
@@ -181,6 +189,12 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             "Vertix/UI-V2/DynamicChannelPermissionsUnblockMenu",
             this.onUnBlockSelected
         );
+
+        // Kick user.
+        this.bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+            "Vertix/UI-V2/DynamicChannelPermissionsKickMenu",
+            this.onKickSelected
+        );
     }
 
     protected shouldDeletePreviousReply() {
@@ -211,7 +225,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     private async onStateVisibilityClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         switch ( await DynamicChannelManager.$.getChannelVisibilityState( interaction.channel ) ) {
             case "shown":
-                if ( ! await DynamicChannelManager.$.editChannelVisibilityState( interaction,interaction.channel, "hidden" ) ) {
+                if ( ! await DynamicChannelManager.$.editChannelVisibilityState( interaction, interaction.channel, "hidden" ) ) {
                     return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateError", {} );
                 }
 
@@ -269,7 +283,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             return;
         }
 
-        switch ( await DynamicChannelManager.$.removeUserAccess( interaction,interaction.channel, target ) ) {
+        switch ( await DynamicChannelManager.$.removeUserAccess( interaction, interaction.channel, target ) ) {
             case "success":
                 await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsDenied", {
                     userDeniedDisplayName: target.displayName,
@@ -336,6 +350,31 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             case "action-on-bot-user":
             case "not-in-the-list":
             case "self-deny":
+                return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged", {} );
+
+            default:
+                return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateError", {} );
+        }
+    }
+
+    private async onKickSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+        const targetId = interaction.values.at( 0 ) as string,
+            target = interaction.guild.members.cache.get( targetId );
+
+        if ( ! target ) {
+            await interaction.deferUpdate().catch( () => {} );
+            return;
+        }
+
+        switch ( await DynamicChannelManager.$.kickUser( interaction, interaction.channel, target ) ) {
+            case "success":
+                await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsKick", {
+                    userKickedDisplayName: target.displayName,
+                } );
+                break;
+
+            case "action-on-bot-user":
+            case "self-action":
                 return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged", {} );
 
             default:

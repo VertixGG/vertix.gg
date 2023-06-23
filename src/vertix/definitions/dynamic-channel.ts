@@ -78,6 +78,8 @@ DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS.add(
 
 export type ChannelState = "unknown" | "public" | "private";
 export type ChannelVisibilityState = "unknown" | "shown" | "hidden";
+
 export type AddStatus = "error" | "action-on-bot-user" |  "self-grant" | "already-granted" | "success";
 export type EditStatus = "error" | "action-on-bot-user" | "self-edit" | "already-have" | "success";
 export type RemoveStatus = "error" | "action-on-bot-user" | "self-deny" | "user-blocked" | "not-in-the-list" | "success"
+export type ActStatus = "error" | "action-on-bot-user" | "self-action" | "not-in-the-list" | "success";

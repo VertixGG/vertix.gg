@@ -287,9 +287,15 @@
 				}
 			},
 			{
+				"name": "Vertix/UI-V2/DynamicChannelPermissionsKickMenu",
+				"content": {
+					"placeholder": "👢 Кикнуть"
+				}
+			},
+			{
 				"name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockMenu",
 				"content": {
-					"placeholder": "🤙 Разблокировать User Access"
+					"placeholder": "🤙 Разблокировать доступ"
 				}
 			},
 			{
@@ -741,6 +747,34 @@
 				},
 				"arrayOptions": {
 					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					}
+				}
+			}
+		},
+		{
+			"name": "Vertix/UI-V2/DynamicChannelPermissionsKickEmbed",
+			"content": {
+				"title": "👢 Пользователь исключен",
+				"description": "**{userKickedDisplayName}** успешно исключен!\n",
+				"footer": "Используйте меню ниже для управления доступа к вашему каналу.",
+				"options": {
+					"allowedUsersDisplay": {
+						"{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+						"{allowedUsers}": "{allowedUsers}\n"
+					},
+					"blockedUsersDisplay": {
+						"{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+						"{blockedUsers}": "{blockedUsers}\n"
+					}
+				},
+				"arrayOptions": {
+					"allowedUsers": {
+						"format": "- <@{value}>{separator}",
+						"separator": "\n"
+					},
+					"blockedUsers": {
 						"format": "- <@{value}>{separator}",
 						"separator": "\n"
 					}

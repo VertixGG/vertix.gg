@@ -4,6 +4,7 @@ import {
     DynamicChannelPermissionsBlockMenu,
     DynamicChannelPermissionsDenyMenu,
     DynamicChannelPermissionsGrantMenu,
+    DynamicChannelPermissionsKickMenu,
     DynamicChannelPermissionsUnblockMenu
 } from "@vertix/ui-v2/dynamic-channel/permissions/elements";
 
@@ -18,6 +19,7 @@ export class DynamicChannelPermissionsAccessElementsGroup extends UIElementsGrou
             [ DynamicChannelPermissionsDenyMenu ],
             [ DynamicChannelPermissionsBlockMenu ],
             [ DynamicChannelPermissionsUnblockMenu ],
+            [ DynamicChannelPermissionsKickMenu ],
         ];
     }
 }

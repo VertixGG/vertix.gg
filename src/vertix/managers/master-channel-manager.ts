@@ -457,6 +457,27 @@ export class MasterChannelManager extends InitializeBase {
         return verifiedRoles;
     }
 
+    public async getChannelLogsChannelId( ownerId: string, returnDefault?: boolean ) {
+        const result = await ChannelDataManager.$.getSettingsData(
+                ownerId,
+                returnDefault ? DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS : null,
+                true
+            );
+
+        let logsChannelId = result?.object?.[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ];
+
+        if ( ! logsChannelId ) {
+            logsChannelId = null;
+        }
+
+        this.debugger.dumpDown( this.getChannelLogsChannelId,
+            logsChannelId,
+            `ownerId: '${ ownerId }' returnDefault: '${ returnDefault }' - logsChannelId: `
+        );
+
+        return logsChannelId;
+    }
+
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
         const result: IMasterChannelCreateResult = {
             code: MasterChannelCreateResultCode.Error,
@@ -612,6 +633,22 @@ export class MasterChannelManager extends InitializeBase {
 
         await ChannelDataManager.$.setSettingsData( ownerId, {
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: roles
+        } );
+    }
+
+    public async setChannelLogsChannel( ownerId: string, channelId: string|null, shouldAdminLog = true ) {
+        this.logger.log( this.setChannelLogsChannel,
+            `Master channel id: '${ ownerId }' - Setting channel logs channel: '${ channelId }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin( this.setChannelLogsChannel,
+                `⁝ Set log channel  - ownerId: "${ ownerId }" channelId: "${ channelId }"`
+            );
+        }
+
+        await ChannelDataManager.$.setSettingsData( ownerId, {
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ]: channelId
         } );
     }
 

@@ -299,12 +299,12 @@ export abstract class UIAdapterBase<
 
         const message = await this.getMessage( "edit", interaction, newArgs );
 
-        if ( interaction.isUserSelectMenu() || interaction.isRoleSelectMenu() ) {
+        if ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) {
             const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
 
             disabledComponents.forEach( ( row: any ) => {
                 for ( const component of row.components ) {
-                    if ( component.type === ComponentType.UserSelect ) {
+                    if ( component.type === ComponentType.UserSelect || component.type === ComponentType.ChannelSelect ) {
                         row.components.splice( row.components.indexOf( component ), 1 );
                     }
                 }

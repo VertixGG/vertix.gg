@@ -13,7 +13,7 @@
 			{
 				"name": "Vertix/UI-V2/ClaimStartButton",
 				"content": {
-					"label": "Claim Channel"
+					"label": "Claim"
 				}
 			},
 			{
@@ -81,19 +81,19 @@
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton",
 				"content": {
-					"label": "Claim Channel"
+					"label": "Claim"
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton",
 				"content": {
-					"label": "Reset Channel"
+					"label": "Reset"
 				}
 			},
 			{
 				"name": "Vertix/UI-V2/DynamicChannelTransferOwnerButton",
 				"content": {
-					"label": "Transfer Ownership"
+					"label": "Transfer"
 				}
 			},
 			{
@@ -238,13 +238,13 @@
 							"label": "Access"
 						},
 						{
-							"label": "Reset Channel"
+							"label": "Reset"
 						},
 						{
-							"label": "Transfer Ownership"
+							"label": "Transfer"
 						},
 						{
-							"label": "Claim Channel"
+							"label": "Claim"
 						}
 					]
 				}
@@ -256,6 +256,9 @@
 					"selectOptions": [
 						{
 							"label": "{dynamicChannelMentionableLabel} {state}"
+						},
+						{
+							"label": "{dynamicChannelLogsChannelLabel} {state}"
 						}
 					],
 					"options": {
@@ -263,7 +266,8 @@
 							"{stateOn}": "∙🟢 On",
 							"{stateOff}": "∙🔴 Off"
 						},
-						"dynamicChannelMentionableLabel": "Mention user in primary message"
+						"dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+						"dynamicChannelLogsChannelLabel": "✎ ∙ Send logs to custom channel"
 					}
 				}
 			},
@@ -315,6 +319,12 @@
 							"label": "🇷🇺 Russian"
 						}
 					]
+				}
+			},
+			{
+				"name": "Vertix/UI-V2/LogChannelSelectMenu",
+				"content": {
+					"placeholder": "✎ ∙ Logs-Channel"
 				}
 			},
 			{
@@ -987,12 +997,22 @@
 			"name": "Vertix/UI-V2/SetupEditEmbed",
 			"content": {
 				"title": "🔧  Configure Master Channel #{index}",
-				"description": "Configure master channel according to your preferences.\n\n▹ Name: <#{masterChannelId}>\n▹ Channel ID: `{masterChannelId}`\n▹ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}",
+				"description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n▹ @ ∙ Mention user in primary message: {configUserMention}\n▹ ✎ ∙ Send logs to custom channel: {configLogs}\n\n",
 				"footer": "Note: Changing user mention will not affect already created dynamic channels.",
 				"options": {
+					"on": "`🟢∙On`",
+					"off": "`🔴∙Off`",
+					"dynamicChannelLogsChannelDisplay": {
+						"{dynamicChannelLogsChannelDefault}": "**None**",
+						"{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
+					},
 					"configUserMention": {
-						"{configUserMentionEnabled}": "`🟢∙On`",
-						"{configUserMentionDisabled}": "`🔴∙Off`"
+						"{configUserMentionEnabled}": "{on}",
+						"{configUserMentionDisabled}": "{off}"
+					},
+					"configLogs": {
+						"{configLogsEnabled}": "{on}",
+						"{configLogsDisabled}": "{off}"
 					}
 				},
 				"arrayOptions": {
@@ -1006,9 +1026,9 @@
 							"3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
 							"4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
 							"5": "👥 ∙ **Access**",
-							"6": "🔃 ∙ **Reset Channel**",
-							"7": "😈 ∙ **Claim Channel**",
-							"12": "🔀 ∙ **Transfer Ownership**"
+							"6": "🔃 ∙ **Reset**",
+							"7": "😈 ∙ **Claim**",
+							"12": "🔀 ∙ **Transfer**"
 						}
 					},
 					"verifiedRoles": {
@@ -1043,6 +1063,7 @@
 			"content": {
 				"title": "🛠  Setup Vertix",
 				"description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}",
+				"footer": "Tip: You can set logs channel by editing the master channel.",
 				"options": {
 					"masterChannelMessage": {
 						"{masterChannels}": "\n{masterChannels}",
@@ -1051,7 +1072,8 @@
 					"badwordsMessage": {
 						"{badwords}": "`{badwords}`",
 						"{badwordsMessageDefault}": "**None**"
-					}
+					},
+					"none": "**None**"
 				},
 				"arrayOptions": {
 					"masterChannels": {
@@ -1064,7 +1086,8 @@
 							"id": "▹ Channel ID: `{id}`",
 							"channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
 							"channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
-							"channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}"
+							"channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
+							"channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}"
 						}
 					},
 					"badwords": {
@@ -1119,9 +1142,9 @@
 							"3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
 							"4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
 							"5": "👥 ∙ **Access**",
-							"6": "🔃 ∙ **Reset Channel**",
-							"7": "😈 ∙ **Claim Channel**",
-							"12": "🔀 ∙ **Transfer Ownership**"
+							"6": "🔃 ∙ **Reset**",
+							"7": "😈 ∙ **Claim**",
+							"12": "🔀 ∙ **Transfer**"
 						}
 					}
 				}

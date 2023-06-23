@@ -2,6 +2,7 @@ import {
     BaseGuildTextChannel,
     BaseGuildVoiceChannel,
     ButtonInteraction,
+    ChannelSelectMenuInteraction,
     CommandInteraction,
     MessageComponentInteraction,
     ModalMessageModalSubmitInteraction,
@@ -49,6 +50,10 @@ export interface UIDefaultStringSelectMenuChannelTextInteraction extends SelectM
 }
 
 export interface UIDefaultStringSelectRolesChannelTextInteraction extends SelectMenuInteraction<"cached"> {
+    channel: TextChannel;
+}
+
+export interface UIDefaultChannelSelectMenuChannelTextInteraction extends ChannelSelectMenuInteraction<"cached"> {
     channel: TextChannel;
 }
 

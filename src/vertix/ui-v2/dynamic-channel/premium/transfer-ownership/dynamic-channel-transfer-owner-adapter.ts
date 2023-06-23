@@ -177,7 +177,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             return;
         }
 
-        await DynamicChannelManager.$.editChannelOwner( target.id, interaction.user.id, interaction.channel );
+        await DynamicChannelManager.$.editChannelOwner( target.id, interaction.user.id, interaction.channel, "transfer" );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess" );
     }

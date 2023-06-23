@@ -14,6 +14,8 @@ import { TopGGManager } from "@vertix/managers/top-gg-manager";
 
 import { ChannelModel } from "@vertix/models";
 
+import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
+
 import { InitializeBase } from "@internal/bases/initialize-base";
 
 import { Debugger } from "@internal/modules/debugger";
@@ -329,10 +331,9 @@ export class DynamicChannelClaimManager extends InitializeBase {
     private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
-        // TODO: separator and limit to constants.
-        const customIdParts = interaction.customId.split( ":", 3 );
+        const customIdParts = interaction.customId.split( UI_GENERIC_SEPARATOR, 3 );
+
         switch ( customIdParts[ 1 ] ) {
-            // case "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton":
             case "Vertix/UI-V2/ClaimVoteStepInButton":
                 this.logger.admin( this.handleVoteRequest,
                     `😈  Claim step-In button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`

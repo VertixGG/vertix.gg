@@ -1,11 +1,9 @@
 import {
-    ActionRowBuilder,
-    ButtonBuilder,
     ChannelType,
-    ComponentType,
     GuildMember,
     Message,
-    MessageEditOptions,
+    MessageComponentInteraction,
+    ModalSubmitInteraction,
     OverwriteType,
     PermissionOverwriteOptions,
     PermissionsBitField,
@@ -14,8 +12,6 @@ import {
 } from "discord.js";
 
 import { Routes } from "discord-api-types/v10";
-
-import { MessageActionRowComponentBuilder } from "@discordjs/builders";
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 
@@ -71,7 +67,6 @@ import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { InitializeBase } from "@internal/bases/initialize-base";
 import { Debugger } from "@internal/modules/debugger";
 
-// TODO: Normalize + add logs, when needed.
 export class DynamicChannelManager extends InitializeBase {
     private static instance: DynamicChannelManager;
 
@@ -133,9 +128,7 @@ export class DynamicChannelManager extends InitializeBase {
                     DynamicChannelClaimManager.$.removeChannelTracking( args.oldState.member?.id, channel.id );
                 }
 
-                this.logger.admin( this.onLeaveDynamicChannel,
-                    `➖ Dynamic channel has been deleted - "${ channel.name }" (${ guild.name }) (${ guild.memberCount })`
-                );
+                await this.log( undefined, channel as VoiceChannel, this.onLeaveDynamicChannel, "" );
 
                 await ChannelManager.$.delete( { guild, channel, } );
 
@@ -363,9 +356,7 @@ export class DynamicChannelManager extends InitializeBase {
             return;
         }
 
-        this.logger.admin( this.createDynamicChannel,
-            `➕  Dynamic channel has been created - "${ dynamicChannelName }" (${ guild.name }) (${ guild.memberCount })`
-        );
+        await this.log( undefined, newState.channel as VoiceChannel, this.createDynamicChannel, "", { displayName } );
 
         // Move the user to new created channel.
         await newState.setChannel( dynamic.channel.id ).then( () => {
@@ -414,26 +405,19 @@ export class DynamicChannelManager extends InitializeBase {
         return messageCreated;
     }
 
-    public async editChannelName( channel: VoiceChannel, newChannelName: string ): Promise<IDynamicEditChannelNameResult> {
+    public async editChannelName( initiator: ModalSubmitInteraction<"cached">, channel: VoiceChannel, newChannelName: string ): Promise<IDynamicEditChannelNameResult> {
         const result: IDynamicEditChannelNameResult = {
             code: DynamicEditChannelResultCode.Error,
         };
 
-        this.logger.log( this.editChannelName,
-            `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-            `Editing dynamic channel name from '${ channel.name }' to '${ newChannelName }'`
-        );
-
-        const currentChannelName = channel.name,
-            usedBadword = await GuildManager.$.hasSomeBadword( channel.guildId, newChannelName );
+        const usedBadword = await GuildManager.$.hasSomeBadword( channel.guildId, newChannelName );
 
         if ( usedBadword ) {
-            this.logger.admin( this.editChannelName,
-                `🙅 Bad words function has been activated  - "${ currentChannelName }" (${ channel.guild?.name }) (${ channel.guild.memberCount })`
-            );
-
             result.code = DynamicEditChannelResultCode.Badword;
             result.badword = usedBadword;
+
+            await this.log( initiator, channel, this.editChannelName, "badword", { result, newChannelName } );
+
             return result;
         }
 
@@ -453,31 +437,31 @@ export class DynamicChannelManager extends InitializeBase {
         if ( editResult.retry_after ) {
             result.code = DynamicEditChannelResultCode.RateLimit;
             result.retryAfter = editResult.retry_after;
+
+            await this.log( initiator, channel, this.editChannelName, "limited", { result, newChannelName } );
+
             return result;
         }
 
         result.code = DynamicEditChannelResultCode.Success;
+
+        await this.log( initiator, channel, this.editChannelName, "success", { newChannelName } );
 
         DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
 
         return result;
     }
 
-    public async editUserLimit( channel: VoiceChannel, newLimit: number ) {
+    public async editUserLimit( initiator: ModalSubmitInteraction<"cached">, channel: VoiceChannel, newLimit: number ) {
         let result = false;
 
-        this.logger.log( this.editUserLimit,
-            `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-            `Editing dynamic channel user limit from '${ channel.userLimit }' to '${ newLimit }'`
-        );
+        const oldLimit = channel.userLimit;
 
         await channel.setUserLimit( newLimit ).then( async () => {
             result = true;
-
-            this.logger.admin( this.editUserLimit,
-                `✋ Dynamic Channel user limit has been changed from ${ channel.userLimit } to ${ newLimit } - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild.memberCount })`
-            );
         } );
+
+        await this.log( initiator, channel, this.editUserLimit, "", { result, oldLimit, newLimit } );
 
         if ( result ) {
             DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
@@ -486,28 +470,18 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public async editChannelState( channel: VoiceChannel, newState: ChannelState ) {
+    public async editChannelState( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, newState: ChannelState ) {
         let result = false;
-
-        this.logger.log( this.editChannelState,
-            `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-            `Editing dynamic channel state from '${ await this.getChannelState( channel ) }' to '${ newState }'`
-        );
 
         const roles = await this.getVerifiedRoles( channel );
 
         switch ( newState ) {
             case "public":
                 await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
-                    // ViewChannel: null,
                     Connect: null,
                 } ).catch( ( error ) => {
                     this.logger.error( this.editChannelState, "", error );
                 } ).then( () => {
-                    this.logger.admin( this.editChannelState,
-                        `🌐 Dynamic Channel has been set to public - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild.memberCount }`
-                    );
-
                     result = true;
                 } );
 
@@ -515,15 +489,10 @@ export class DynamicChannelManager extends InitializeBase {
 
             case "private":
                 await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
-                    // ViewChannel: null,
                     Connect: false,
                 } ).catch( ( error ) => {
                     this.logger.error( this.editChannelState, "", error );
                 } ).then( () => {
-                    this.logger.admin( this.editChannelState,
-                        `🚫 Dynamic Channel has been set to private - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
-                    );
-
                     result = true;
                 } );
                 break;
@@ -535,6 +504,8 @@ export class DynamicChannelManager extends InitializeBase {
                 );
         }
 
+        await this.log( initiator, channel, this.editChannelState, newState, { result } );
+
         if ( result ) {
             DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
         }
@@ -542,13 +513,8 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public async editChannelVisibilityState( channel: VoiceChannel, newState: ChannelVisibilityState ) {
+    public async editChannelVisibilityState( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, newState: ChannelVisibilityState ) {
         let result = false;
-
-        this.logger.log( this.editChannelVisibilityState,
-            `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-            `Editing dynamic channel visibility state from '${ await this.getChannelVisibilityState( channel ) }' to '${ newState }'`
-        );
 
         const roles = await this.getVerifiedRoles( channel );
 
@@ -559,10 +525,6 @@ export class DynamicChannelManager extends InitializeBase {
                 } ).catch( ( error ) => {
                     this.logger.error( this.editChannelVisibilityState, "", error );
                 } ).then( () => {
-                    this.logger.admin( this.editChannelVisibilityState,
-                        `🐵 Dynamic Channel has been set to shown - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
-                    );
-
                     result = true;
                 } );
                 break;
@@ -573,10 +535,6 @@ export class DynamicChannelManager extends InitializeBase {
                 } ).catch( ( error ) => {
                     this.logger.error( this.editChannelVisibilityState, "", error );
                 } ).then( () => {
-                    this.logger.admin( this.editChannelVisibilityState,
-                        `🙈 Dynamic Channel has been set to hidden - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
-                    );
-
                     result = true;
                 } );
                 break;
@@ -588,6 +546,8 @@ export class DynamicChannelManager extends InitializeBase {
                 );
         }
 
+        await this.log( initiator, channel, this.editChannelVisibilityState, newState, { result } );
+
         if ( result ) {
             DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
         }
@@ -595,7 +555,7 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public async editChannelOwner( newOwnerId: string, previousOwnerId: string, channel: VoiceChannel ) {
+    public async editChannelOwner( newOwnerId: string, previousOwnerId: string, channel: VoiceChannel, from: "claim" | "transfer" ) {
         if ( ! newOwnerId || ! previousOwnerId ) {
             this.logger.error( this.editChannelOwner,
                 `Guild id: '${ channel.guild.id }' channel id: ${ channel.id } - ` +
@@ -629,9 +589,7 @@ export class DynamicChannelManager extends InitializeBase {
         const previousOwner = await channel.guild.members.cache.get( previousOwnerId ),
             newOwner = await channel.guild.members.cache.get( newOwnerId );
 
-        this.logger.admin( this.editChannelOwner,
-            `🔀  Owner of dynamic channel has been changed - "${ previousOwner?.displayName }" => "${ newOwner?.displayName }" - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
-        );
+        await this.log( undefined, channel, this.editChannelOwner, from, { previousOwner, newOwner } );
 
         // Restore allowed list.
         const permissionOverwrites = MasterChannelManager.$
@@ -714,10 +672,8 @@ export class DynamicChannelManager extends InitializeBase {
         this.editMessageDebounceMap.set( key, timeoutId );
     }
 
-    public async clearChat( channel: VoiceChannel ) {
-        this.logger.log( this.clearChat,
-            `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Clearing chat request, channel: '${ channel.name }'`
-        );
+    public async clearChat( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ) {
+        await this.log( initiator, channel, this.clearChat, "start" );
 
         let result: IDynamicClearChatResult = {
             code: DynamicClearChatResultCode.Error,
@@ -740,20 +696,18 @@ export class DynamicChannelManager extends InitializeBase {
                 await channel.bulkDelete( messagesToDelete )
                     .catch( error )
                     .then( () => {
-                        this.logger.admin( this.clearChat,
-                            `🧹 Dynamic Channel clearing chat - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
-                        );
-
                         result.code = DynamicClearChatResultCode.Success;
                         result.deletedCount = messagesToDelete.size;
                     } );
             } )
             .catch( error );
 
+        await this.log( initiator, channel, this.clearChat, "end", { result } );
+
         return result;
     }
 
-    public async resetChannel( channel: VoiceChannel, requestedUserId: string ): Promise<IDynamicResetChannelResult> {
+    public async resetChannel( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ): Promise<IDynamicResetChannelResult> {
         let result: IDynamicResetChannelResult = {
             code: DynamicResetChannelResultCode.Error,
         };
@@ -762,9 +716,7 @@ export class DynamicChannelManager extends InitializeBase {
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Reset Channel button has been clicked, channel: '${ channel.name }'`
         );
 
-        this.logger.admin( this.resetChannel,
-            `🔄 Reset Channel button has been clicked - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
-        );
+        await this.log( initiator, channel, this.resetChannel, "start" );
 
         // Find master channel.
         const master = await ChannelManager.$
@@ -778,7 +730,9 @@ export class DynamicChannelManager extends InitializeBase {
         const dynamicChannelTemplateName = await MasterChannelManager.$.getChannelNameTemplate( master.db.id, true ),
             userOwnerId = master.db.userOwnerId;
 
-        if ( ! await TopGGManager.$.isVoted( requestedUserId ) ) {
+        if ( ! await TopGGManager.$.isVoted( initiator.user.id ) ) {
+            await this.log( initiator, channel, this.resetChannel, "vote" );
+
             result.code = DynamicResetChannelResultCode.VoteRequired;
             return result;
         }
@@ -827,9 +781,7 @@ export class DynamicChannelManager extends InitializeBase {
             } )
         } )
             .then( async ( response ) => {
-                await response.json()
-                    .then( onThen )
-                    .catch( onCatch );
+                await response.json().then( onThen ).catch( onCatch );
             } )
             .catch( onCatch );
 
@@ -843,9 +795,7 @@ export class DynamicChannelManager extends InitializeBase {
             await MasterChannelManager.$.getChannelDefaultProperties( userOwnerId, master.channel )
         );
 
-        this.logger.admin( this.resetChannel,
-            `🔄 Dynamic Channel has been reset to default settings - "${ channel.name }" (${ channel.guild?.name }) (${ channel.guild?.memberCount })`
-        );
+        await this.log( initiator, channel, this.resetChannel, "end" );
 
         const currentChannelState = await getCurrentChannelState( channel ),
             currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true );
@@ -864,12 +814,16 @@ export class DynamicChannelManager extends InitializeBase {
         return result;
     }
 
-    public async addUserAccess( channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField ): Promise<AddStatus> {
-        if ( member.id === channel.client.user.id ) {
-            return "action-on-bot-user";
-        }
-
+    public async addUserAccess( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField ): Promise<AddStatus> {
         let result: AddStatus = "error";
+
+        if ( member.id === channel.client.user.id ) {
+            result = "action-on-bot-user";
+
+            await this.log( initiator, channel, this.removeUserAccess, result, { member, permissions } );
+
+            return result;
+        }
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
@@ -879,51 +833,49 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        this.logger.log( this.addUserAccess,
-            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', ownerId: '${ masterChannelDB.userOwnerId }' - Grant user access, channel: '${ channel.name }', member: '${ member.displayName }'`
-        );
-
         // Grant his self.
         if ( member.id === masterChannelDB.userOwnerId ) {
-            this.logger.admin( this.addUserAccess,
-                `🤷 Grant user access did nothing - Trying add his self - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "self-grant";
+            result = "self-grant";
+
+            await this.log( initiator, channel, this.addUserAccess, result, { member, permissions } );
+
+            return result;
         }
 
         // Already granted.
         if ( channel.permissionOverwrites.cache.get( member.id )?.allow.has( permissions ) ) {
-            this.logger.admin( this.addUserAccess,
-                `🤷 Grant user access did nothing - User already in - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "already-granted";
+            result = "already-granted";
+
+            await this.log( initiator, channel, this.addUserAccess, result, { member, permissions } );
+
+            return result;
         }
 
-        // TODO: Use permission manager to handle permissions.
+        // Transfer permissions to options.
         const permissionsOptions: PermissionOverwriteOptions = {};
-
         for ( const permission of permissions.toArray() ) {
             permissionsOptions[ permission ] = true;
         }
 
         await channel.permissionOverwrites.create( member, permissionsOptions )
-            .then( () => {
-                this.logger.admin( this.addUserAccess,
-                    `☝️ '${ member.displayName }' access has been granted - "${ permissions.toArray() }" "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-                );
-                result = "success";
-            } )
+            .then( () => result = "success" )
             .catch( ( e: any ) => this.logger.error( this.addUserAccess, "", e ) );
+
+        await this.log( initiator, channel, this.addUserAccess, result, { member, permissions } );
 
         return result;
     }
 
-    public async editUserAccess( channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField, state: boolean ): Promise<EditStatus> {
-        if ( member.id === channel.client.user.id ) {
-            return "action-on-bot-user";
-        }
+    public async editUserAccess( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, member: GuildMember, permissions: PermissionsBitField, state: boolean ): Promise<EditStatus> {
+        let result: EditStatus = "error";
 
-        let result: RemoveStatus = "error";
+        if ( member.id === channel.client.user.id ) {
+            result = "action-on-bot-user";
+
+            await this.log( initiator, channel, this.editUserAccess, result, { member, permissions, state } );
+
+            return result;
+        }
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
@@ -934,10 +886,11 @@ export class DynamicChannelManager extends InitializeBase {
 
         // Edit his self.
         if ( member.id === masterChannelDB.userOwnerId ) {
-            this.logger.admin( this.editUserAccess,
-                `🤷 Deny user access did nothing - Trying add his self - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "self-edit";
+            result = "self-edit";
+
+            await this.log( initiator, channel, this.editUserAccess, result, { member, permissions, state } );
+
+            return result;
         }
 
         // Check if permissions are already set.
@@ -945,41 +898,38 @@ export class DynamicChannelManager extends InitializeBase {
             || ! state && channel.permissionOverwrites.cache.get( member.id )?.deny.has( permissions );
 
         if ( alreadyHave ) {
-            this.logger.admin( this.editUserAccess,
-                `🤷 Grant user access did nothing - User already in - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "already-have";
+            result = "already-have";
+
+            await this.log( initiator, channel, this.editUserAccess, result, { member, permissions, state } );
+
+            return result;
         }
 
-        this.logger.log( this.editUserAccess,
-            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', ownerId: '${ masterChannelDB.userOwnerId }', state: ${ state } - Edit user access, channel: '${ channel.name }', member: '${ member.displayName }'`
-        );
-
-        // TODO: Use permission manager to handle permissions.
+        // Transform permissions to options.
         const permissionsOptions: PermissionOverwriteOptions = {};
-
         for ( const permission of permissions.toArray() ) {
             permissionsOptions[ permission ] = state;
         }
 
         await channel.permissionOverwrites.edit( member, permissionsOptions )
-            .then( () => {
-                this.logger.admin( this.editUserAccess,
-                    `🤏 '${ member.displayName }' has been edited - "${ permissions.toArray() }" => "${ state }"  "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-                );
-                result = "success";
-            } )
+            .then( () => result = "success" )
             .catch( ( e: any ) => this.logger.error( this.editUserAccess, "", e ) );
+
+        await this.log( initiator, channel, this.editUserAccess, result, { member, permissions, state } );
 
         return result;
     }
 
-    public async removeUserAccess( channel: VoiceChannel, member: GuildMember, force = false ): Promise<RemoveStatus> {
-        if ( member.id === channel.client.user.id ) {
-            return "action-on-bot-user";
-        }
-
+    public async removeUserAccess( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, member: GuildMember, force = false ): Promise<RemoveStatus> {
         let result: RemoveStatus = "error";
+
+        if ( member.id === channel.client.user.id ) {
+            result = "action-on-bot-user";
+
+            await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
+
+            return result;
+        }
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
@@ -990,40 +940,36 @@ export class DynamicChannelManager extends InitializeBase {
 
         // Grant his self.
         if ( member.id === masterChannelDB.userOwnerId ) {
-            this.logger.admin( this.removeUserAccess,
-                `🤷 Deny user access did nothing - Trying add his self - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "self-deny";
+            result = "self-deny";
+
+            await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
+
+            return result;
         }
 
         // Not even granted.
         if ( ! channel.permissionOverwrites.cache.has( member.id ) ) {
-            this.logger.admin( this.removeUserAccess,
-                `🤷 Deny user access did nothing - User not granted in - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "not-in-the-list";
+            result = "not-in-the-list";
+
+            await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
+
+            return result;
         }
 
         // Check if user permissions are set to deny.
         if ( ! force && channel.permissionOverwrites.cache.get( member.id )?.deny.has( DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS ) ) {
-            this.logger.admin( this.removeUserAccess,
-                `🤷 Deny user access did nothing - User is blocked - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-            );
-            return "user-blocked";
+            result = "user-blocked";
+
+            await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
+
+            return result;
         }
 
-        this.logger.log( this.removeUserAccess,
-            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', ownerId: '${ masterChannelDB.userOwnerId }' - Deny user access, channel: '${ channel.name }', member: '${ member.displayName }'`
-        );
-
         await channel.permissionOverwrites.delete( member )
-            .then( () => {
-                this.logger.admin( this.removeUserAccess,
-                    `👇 '${ member.displayName }' has been removed from list - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild?.memberCount })`
-                );
-                result = "success";
-            } )
+            .then( () => result = "success" )
             .catch( ( e: any ) => this.logger.error( this.removeUserAccess, "", e ) );
+
+        await this.log( initiator, channel, this.removeUserAccess, result, { member, force } );
 
         return result;
     }
@@ -1123,4 +1069,241 @@ export class DynamicChannelManager extends InitializeBase {
 
         return count === roles.length;
     }
+
+    private async log( initiator: ModalSubmitInteraction<"cached"> | MessageComponentInteraction<"cached"> | undefined, channel: VoiceChannel, caller: Function, action: string, meta: any = {} ) {
+        const initiatorDisplayName = initiator?.member.displayName || "not provided";
+
+        let message = "";
+
+        const adminLogSuffix = `'${ channel.name }' '${ channel.guild.name }'`,
+            ownerLogSuffix = `${ adminLogSuffix } (${ channel.guild?.memberCount }) '${ channel.id }' '${ channel.guildId }'`;
+
+        switch ( caller ) {
+            case this.onLeaveDynamicChannel:
+                message = "➖ Dynamic channel has been deleted";
+                break;
+
+            case this.createDynamicChannel:
+                message = `➕  Dynamic channel has been created for: '${ meta.displayName }'`;
+                break;
+
+            case this.editChannelName:
+                switch ( action as "badword" | "limited" | "success" ) {
+                    case "badword":
+                        message = `✏️ '${ initiatorDisplayName }' tried to edit channel name from '${ channel.name }' to '${ meta.newChannelName }' but failed 🙅 due bad-words function: '${ meta.result.badword }'`;
+                        break;
+
+                    case "limited":
+                        message = `✏️ '${ initiatorDisplayName }' tried to edit channel name from '${ channel.name }' to '${ meta.newChannelName }' but failed due rate limit ( changing channel name too often )`;
+                        break;
+
+                    case "success":
+                        message = `✏️ '${ initiatorDisplayName }' edited channel name from '${ channel.name }' to '${ meta.newChannelName }'`;
+                        break;
+                }
+                break;
+
+            case this.editUserLimit:
+                if ( ! meta.result ) {
+                    message = `✋ '${ initiatorDisplayName }' tried to edit user limit but failed due unknown error`;
+                    break;
+                }
+
+                message = `✋ '${ initiatorDisplayName }' edited user limit from '${ meta.oldLimit }' to '${ meta.newLimit }'`;
+                break;
+
+            case this.editChannelState:
+                if ( ! meta.result ) {
+                    message = `🌐/🚫 '${ initiatorDisplayName }' tried to set channel state but failed due unknown error`;
+                    break;
+                }
+
+                switch ( action as ChannelState ) {
+                    case "public":
+                        message = `🌐 '${ initiatorDisplayName }' set channel to public`;
+                        break;
+
+                    case "private":
+                        message = `🚫 '${ initiatorDisplayName }' set channel to private`;
+                        break;
+                }
+                break;
+
+            case this.editChannelVisibilityState:
+                if ( ! meta.result ) {
+                    message = `🐵️/🙈 '${ initiatorDisplayName }' tried to set channel visibility but failed due unknown error`;
+                    break;
+                }
+
+                switch ( action as ChannelVisibilityState ) {
+                    case "shown":
+                        message = `🐵️ '${ initiatorDisplayName }' set channel to visibility shown`;
+                        break;
+
+                    case "hidden":
+                        message = `🙈 '${ initiatorDisplayName }' set channel to visibility hidden`;
+                        break;
+                }
+                break;
+
+            case this.editChannelOwner:
+                const previousOwner = meta.previousOwner?.displayName || "unknown",
+                    newOwner = meta.newOwner?.displayName || "unknown";
+
+                switch ( action as "claim" | "transfer" ) {
+                    case "claim":
+                        message = `😈 '${ newOwner }' has been claimed ownership of channel, '${ previousOwner }' is not channel owner anymore`;
+                        break;
+
+                    case "transfer":
+                        message = `🔀 ${ previousOwner }' has been transfer ownership of channel to '${ newOwner }'`;
+                        break;
+                }
+                break;
+
+            case this.clearChat:
+                switch ( action as "start" | "end" ) {
+                    case "start":
+                        message = `🧹 '${ initiatorDisplayName }' has been clicked on clear chat button on channel`;
+                        break;
+
+                    case "end":
+                        switch ( meta.result.code ) {
+                            case "nothing-to-delete":
+                                message = `🧹 '${ initiatorDisplayName }' trying to clear chat but there are not message to delete`;
+                                break;
+
+                            case "success":
+                                message = `🧹 '${ initiatorDisplayName }' clear chat has been successfully cleared ${ meta.result.deletedCount } messages }`;
+                                break;
+
+                            default:
+                                message = `🧹 '${ initiatorDisplayName }' trying to clear chat but it failed due unknown error`;
+                        }
+                }
+                break;
+
+            case this.resetChannel:
+                switch ( action as "start" | "vote" | "end" ) {
+                    case "start":
+                        message = `🔄 '${ initiatorDisplayName }' has been clicked on reset channel button on channel`;
+                        break;
+
+                    case "vote":
+                        message = `🔄 '${ initiatorDisplayName }' requested to vote for using premium feature`;
+                        break;
+
+                    case "end":
+                        message = `🔄 '${ initiatorDisplayName }' reset channel has been successfully restored the channel`;
+                        break;
+                }
+                break;
+
+            case this.addUserAccess:
+                if ( DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
+                    // Blocking user access.
+                    const tryingPrefix = `☝️ '${ initiatorDisplayName }' trying grant user access on: '${ meta.member.displayName }'`;
+
+                    switch ( action as AddStatus ) {
+                        case "error":
+                            message = `${ tryingPrefix } - Failed due unknown error.`;
+                            break;
+
+                        case "action-on-bot-user":
+                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                            break;
+
+                        case "self-grant":
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self.`;
+                            break;
+
+                        case "already-granted":
+                            message = `${ tryingPrefix } - Nothing done, already granted.`;
+                            break;
+
+                        case "success":
+                            message = `☝️ ${ initiatorDisplayName }' has granted access for: '${ meta.member.displayName }'.`;
+                            break;
+                    }
+
+                } else {
+                    message = "Unknown error when trying to edit user access.";
+                }
+
+                break;
+
+            case this.editUserAccess:
+                if ( ! meta.state && DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
+                    // Blocking user access.
+                    const tryingPrefix = `🫵 '${ initiatorDisplayName }' trying block user access on: '${ meta.member.displayName }'`;
+
+                    switch ( action as EditStatus ) {
+                        case "error":
+                            message = `${ tryingPrefix } - Failed due unknown error.`;
+                            break;
+
+                        case "action-on-bot-user":
+                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                            break;
+
+                        case "self-edit":
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self.`;
+                            break;
+
+                        case "already-have":
+                            message = `${ tryingPrefix } - Nothing done, already blocked.`;
+                            break;
+
+                        case "success":
+                            message = `🫵 ${ initiatorDisplayName }' has blocked access for: '${ meta.member.displayName }'.`;
+                            break;
+                    }
+
+                } else {
+                    message = "Unknown error when trying to edit user access.";
+                }
+
+                break;
+
+            case this.removeUserAccess:
+                const emoji = meta.force ? "🤙" : "👇",
+                    context = meta.force ? "un-blocking user access" : "removing user access",
+                    tryingPrefix = `${ emoji } '${ initiatorDisplayName }' trying ${ context } on: '${ meta.member.displayName }'`;
+
+                switch ( action as RemoveStatus ) {
+                    case "error":
+                        message = `${ tryingPrefix } - Failed due unknown error.`;
+                        break;
+
+                    case "action-on-bot-user":
+                        message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                        break;
+
+                    case "self-deny":
+                        message = `${ tryingPrefix } - Nothing done, cannot do that on his self.`;
+                        break;
+
+                    case "not-in-the-list":
+                        message = `${ tryingPrefix } - Nothing done, the user does not not have access already.`;
+                        break;
+
+                    case "user-blocked":
+                        message = `${ tryingPrefix } - Nothing done, the user is blocked.`;
+                        break;
+
+                    case "success":
+                        message = `${ emoji } '${ initiatorDisplayName }' ${ context } for: '${ meta.member.displayName }' succeeded.`;
+                        break;
+                }
+
+                break;
+
+            default:
+                this.logger.error( caller, `Guild id:${ channel.guildId }, channel id: '${ channel.id }' - Unknown caller: '${ caller.name }' - ${ ownerLogSuffix }` );
+                return;
+        }
+
+        this.logger.admin( caller, `${ message } - ${ ownerLogSuffix }` );
+    }
+
 }

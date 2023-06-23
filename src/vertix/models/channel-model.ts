@@ -119,6 +119,8 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
                     }
                 } );
             }
+
+            return;
         }
 
         this.deleteCacheByGuildId( guildId );

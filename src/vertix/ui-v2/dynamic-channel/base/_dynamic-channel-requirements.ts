@@ -19,18 +19,25 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
         return false;
     }
 
-    const masterChannelDB = await ChannelModel.$.getByChannelId(
+    const dynamicChannelDB = await ChannelModel.$.getByChannelId(
         interaction.channel.id
     );
 
-    if ( ! masterChannelDB ) {
+    if ( ! dynamicChannelDB ) {
         return false;
     }
 
-    if ( interaction.user.id !== masterChannelDB.userOwnerId ) {
+    if ( interaction.user.id !== dynamicChannelDB.userOwnerId ) {
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelDB.channelId );
+
+        if ( ! masterChannelDB ) {
+            return false;
+        }
+
         await UIAdapterManager.$.get( "Vertix/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
             masterChannelId: masterChannelDB.channelId,
         } );
+
         return false;
     }
 

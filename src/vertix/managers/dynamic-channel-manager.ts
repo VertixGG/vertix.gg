@@ -210,7 +210,8 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async getChannelUserIdsWithPermissionState( channel: VoiceChannel, permissions: PermissionsBitField, state: boolean, skipOwner = false ) {
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id ),
+            dynamicChannelDB = await ChannelModel.$.getByChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.getChannelUserIdsWithPermissionState,
@@ -225,11 +226,11 @@ export class DynamicChannelManager extends InitializeBase {
             result = [];
 
         for ( const role of channel.permissionOverwrites?.cache?.values() || [] ) {
-            if ( skipOwner && role.id === masterChannelDB.userOwnerId ) {
+            if ( role.type !== OverwriteType.Member ) {
                 continue;
             }
 
-            if ( role.type !== OverwriteType.Member ) {
+            if ( skipOwner && role.id === dynamicChannelDB?.userOwnerId ) {
                 continue;
             }
 

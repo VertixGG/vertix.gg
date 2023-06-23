@@ -3,6 +3,7 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import {
     CategoryChannel,
     ChannelType,
+    EmbedBuilder,
     Guild,
     GuildChannel,
     OverwriteType,
@@ -25,6 +26,7 @@ import {
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES,
@@ -84,10 +86,17 @@ interface IMasterChannelCreateResult {
     db?: ChannelResult,
 }
 
+const MAX_TIMEOUT_PER_CREATE = /* 1 minute */ 40 * 1000;
+
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
     private debugger: Debugger;
+
+    private requestedChannelMap: Map<string, {
+        timestamp: number,
+        isWarningSent: boolean,
+    }> = new Map();
 
     public static getName(): string {
         return "Vertix/Managers/MasterChannel";
@@ -116,13 +125,55 @@ export class MasterChannelManager extends InitializeBase {
             { guild } = newState;
 
         this.logger.info( this.onJoinMasterChannel,
-            `Guild id: '${ guild.id }' - User '${ displayName }' joined master channel: '${ channelName }'` );
+            `Guild id: '${ guild.id }' - User '${ displayName }' joined master channel id: '${ newState.channelId }'` );
 
         if ( ! newState.channel ) {
-            this.logger.error( this.onJoinMasterChannel, `Could not find channel: '${ channelName }'` );
+            this.logger.error( this.onJoinMasterChannel, `Could not find channel id: '${ newState.channelId }'` );
 
             return;
         }
+
+        if ( ! newState.member ) {
+            this.logger.error( this.onJoinMasterChannel, `Could not find member channel id: '${ newState.channelId }'` );
+
+            return;
+        }
+
+        const member = newState.member,
+            request = this.requestedChannelMap.get( member.id ),
+            timestamp = Date.now(),
+            timePassed = timestamp - ( request?.timestamp || 0 );
+
+        if ( timePassed < MAX_TIMEOUT_PER_CREATE ) {
+            this.logger.warn( this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - User '${ displayName }' request master channel id: '${ newState.channelId }' too fast` );
+
+            if ( ! request?.isWarningSent ) {
+                const embed = new EmbedBuilder();
+
+                embed.setColor( "Yellow" );
+                embed.setTitle( "Warning" );
+                embed.setDescription( `You are requesting channel too fast. You can create dynamic channels each \`${ MAX_TIMEOUT_PER_CREATE / 1000 }\` seconds.` );
+
+                await newState.member.send( { embeds: [ embed ] } ).catch( () => {
+                    this.logger.error( this.onJoinMasterChannel,
+                        `Guild id: '${ guild.id }' - User '${ displayName }' could not send warning message` );
+                } ).then( () => {
+                    this.requestedChannelMap.set( member.id, {
+                        timestamp,
+                        isWarningSent: true,
+                    } );
+                } );
+            }
+
+            return;
+        }
+
+        // Set new timestamp.
+        this.requestedChannelMap.set( newState.member.id, {
+            timestamp,
+            isWarningSent: typeof request?.isWarningSent === "boolean" ? request.isWarningSent : false,
+        } );
 
         // Check if bot exist in administrator role.
         if ( ! PermissionsManager.$.isSelfAdministratorRole( guild ) ) {
@@ -236,7 +287,6 @@ export class MasterChannelManager extends InitializeBase {
             if ( ! dynamic ) {
                 this.logger.error( this.onJoinMasterChannel,
                     `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'` );
-
                 return;
             }
         } catch ( e ) {

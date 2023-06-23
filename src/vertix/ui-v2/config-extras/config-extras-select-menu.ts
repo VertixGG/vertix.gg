@@ -8,6 +8,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     private static vars = {
         dynamicChannelMentionableLabel: uiUtilsWrapAsTemplate( "dynamicChannelMentionableLabel" ),
+        dynamicChannelLogsChannelLabel: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelLabel" ),
 
         state: uiUtilsWrapAsTemplate( "state" ),
         stateOn: uiUtilsWrapAsTemplate( "stateOn" ),
@@ -33,15 +34,22 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     protected async getSelectOptions() {
         const {
             dynamicChannelMentionableLabel,
+            dynamicChannelLogsChannelLabel,
 
             state,
         } = ConfigExtrasSelectMenu.vars;
 
-        return [ {
-            label: dynamicChannelMentionableLabel + " " + state,
-            value: "dynamicChannelMentionable" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" ),
-            emoji: "📌" as any,
-        } ];
+        return [
+            {
+                label: dynamicChannelMentionableLabel + " " + state,
+                value: "dynamicChannelMentionable" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" ),
+            },
+            {
+                label: dynamicChannelLogsChannelLabel + " " + state,
+                value: "dynamicChannelLogsChannel" + UI_GENERIC_SEPARATOR + "0",
+                selected: ! this.uiArgs?.dynamicChannelLogsChannelId,
+            }
+        ];
     }
 
     protected getOptions() {
@@ -56,7 +64,8 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
                 [ stateOff ]: "∙🔴 Off",
             },
 
-            dynamicChannelMentionableLabel: "Mention user in primary message",
+            dynamicChannelMentionableLabel: "@ ∙ Mention user in primary message",
+            dynamicChannelLogsChannelLabel: "✎ ∙ Send logs to custom channel",
         };
     }
 

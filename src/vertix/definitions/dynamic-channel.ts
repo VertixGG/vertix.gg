@@ -1,4 +1,4 @@
-import { Guild, PermissionsBitField, VoiceState } from "discord.js";
+import { Guild, PermissionsBitField, VoiceChannel, VoiceState } from "discord.js";
 
 const { Flags } = PermissionsBitField;
 

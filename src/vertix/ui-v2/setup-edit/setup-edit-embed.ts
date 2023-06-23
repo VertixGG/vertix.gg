@@ -11,6 +11,9 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         separator: uiUtilsWrapAsTemplate( "separator" ),
         value: uiUtilsWrapAsTemplate( "value" ),
 
+        on: uiUtilsWrapAsTemplate( "on" ),
+        off: uiUtilsWrapAsTemplate( "off" ),
+
         index: uiUtilsWrapAsTemplate( "index" ),
         masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
 
@@ -18,7 +21,16 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         configUserMentionEnabled: uiUtilsWrapAsTemplate( "configUserMentionEnabled" ),
         configUserMentionDisabled: uiUtilsWrapAsTemplate( "configUserMentionDisabled" ),
 
+        configLogs: uiUtilsWrapAsTemplate( "configLogs" ),
+        configLogsEnabled: uiUtilsWrapAsTemplate( "configLogsEnabled" ),
+        configLogsDisabled: uiUtilsWrapAsTemplate( "configLogsDisabled" ),
+
         dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
+        dynamicChannelLogsChannelId: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelId" ),
+
+        dynamicChannelLogsChannelDefault: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDefault" ),
+        dynamicChannelLogsChannelSelected: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelSelected" ),
+        dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
 
         verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
     };
@@ -46,19 +58,21 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     protected getDescription() {
         return "Configure master channel according to your preferences.\n\n" +
 
-            `▹ Name: <#${ SetupEditEmbed.vars.masterChannelId }>\n` +
-            `▹ Channel ID: \`${ SetupEditEmbed.vars.masterChannelId }\`\n` +
-            `▹ Dynamic Channels Name: \`${ SetupEditEmbed.vars.dynamicChannelNameTemplate }\`\n\n` +
+            "**_🎛️ General_**\n\n" +
+            `➤ ∙ Name: <#${ SetupEditEmbed.vars.masterChannelId }>\n` +
+            `➤ ∙ Channel ID: \`${ SetupEditEmbed.vars.masterChannelId }\`\n` +
+            `➤ ∙ Dynamic Channels Name: \`${ SetupEditEmbed.vars.dynamicChannelNameTemplate }\`\n` +
+            `➤ ∙ Logs Channel: ${ SetupEditEmbed.vars.dynamicChannelLogsChannelDisplay }\n\n` +
 
             "**_🎚 Buttons Interface_**\n\n" +
             super.getDescription() + "\n\n" +
 
             "**_🛡️ Verified Roles_**\n\n" +
-            "> " + SetupEditEmbed.vars.verifiedRoles + "\n\n" +
+            "▹ " + SetupEditEmbed.vars.verifiedRoles + "\n\n" +
 
             "**_⚙️ Configuration_**\n\n" +
-            "> 📌 Mention user in primary message: " + SetupEditEmbed.vars.configUserMention;
-
+            "▹ @ ∙ Mention user in primary message: " + SetupEditEmbed.vars.configUserMention + "\n" +
+            "▹ ✎ ∙ Send logs to custom channel: " + SetupEditEmbed.vars.configLogs + "\n\n";
     }
 
     protected getFooter() {
@@ -67,15 +81,39 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
 
     protected getOptions() {
         const {
+            on,
+            off,
+
+            dynamicChannelLogsChannelId,
+
+            dynamicChannelLogsChannelDefault,
+            dynamicChannelLogsChannelSelected,
+
             configUserMentionEnabled,
             configUserMentionDisabled,
+
+            configLogsEnabled,
+            configLogsDisabled,
         } = SetupEditEmbed.vars;
 
         return {
-            configUserMention: {
-                [ configUserMentionEnabled ]: "\`🟢∙On`",
-                [ configUserMentionDisabled ]: "\`🔴∙Off`",
+            "on": "\`🟢∙On`",
+            "off": "\`🔴∙Off`",
+
+            dynamicChannelLogsChannelDisplay: {
+                [ dynamicChannelLogsChannelDefault ]: "**None**",
+                [ dynamicChannelLogsChannelSelected ]: `<#${ dynamicChannelLogsChannelId }>`
             },
+
+            configUserMention: {
+                [ configUserMentionEnabled ]: on,
+                [ configUserMentionDisabled ]: off,
+            },
+
+            configLogs: {
+                [ configLogsEnabled ]: on,
+                [ configLogsDisabled ]: off,
+            }
         };
     }
 
@@ -96,10 +134,14 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             masterChannelId: args.masterChannelId,
 
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
+            dynamicChannelLogsChannelId: args.dynamicChannelLogsChannelId,
 
             verifiedRoles: args.dynamicChannelVerifiedRoles,
 
             configUserMention: args.dynamicChannelMentionable ? SetupEditEmbed.vars.configUserMentionEnabled : SetupEditEmbed.vars.configUserMentionDisabled,
+            configLogs: args.dynamicChannelLogsChannelId ? SetupEditEmbed.vars.configLogsEnabled : SetupEditEmbed.vars.configLogsDisabled,
+
+            dynamicChannelLogsChannelDisplay: args.dynamicChannelLogsChannelId ? SetupEditEmbed.vars.dynamicChannelLogsChannelSelected : SetupEditEmbed.vars.dynamicChannelLogsChannelDefault,
 
             ... super.getLogic( args ),
         };

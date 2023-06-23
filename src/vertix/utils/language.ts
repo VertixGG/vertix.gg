@@ -87,7 +87,7 @@ export class LanguageUtils extends InitializeBase {
                     return;
                 }
 
-                this.logger.info( this.import, `Updating language with code: '${ object.code }' model: '${ Model.getName }'` );
+                this.logger.info( this.import, `Updating language with code: '${ object.code }' model: '${ Model.getName() }'` );
 
                 for ( const entity of currentObject ) {
                     // Check if entity exists.

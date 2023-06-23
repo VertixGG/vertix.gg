@@ -22,6 +22,7 @@ import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-eleme
 import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";
 import { UIElementUserSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-user-select-menu";
 import { UIElementRoleSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-role-select-menu";
+import { UIElementChannelSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-channel-select-menu";
 import { UIMarkdownBase } from "@vertix/ui-v2/_base/ui-markdown-base";
 import { UIModalBase } from "@vertix/ui-v2/_base/ui-modal-base";
 
@@ -116,7 +117,7 @@ export class UILanguageManager extends InitializeBase {
         };
     }
 
-    public async getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu | UIElementRoleSelectMenu, languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
+    public async getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu | UIElementRoleSelectMenu | UIElementChannelSelectMenu, languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
         if ( ! languageCode || UI_LANGUAGES_INITIAL_CODE === languageCode ) {
             return selectMenu.getTranslatableContent();
         }
@@ -434,6 +435,7 @@ export class UILanguageManager extends InitializeBase {
                 case ComponentType.SelectMenu:
                 case ComponentType.UserSelect:
                 case ComponentType.RoleSelect:
+                case ComponentType.ChannelSelect:
                     selectMenus.push( {
                         name: element.getName(),
                         content: await element.getTranslatableContent(),

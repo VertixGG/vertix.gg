@@ -1,5 +1,6 @@
 import {
     ChannelType,
+    EmbedBuilder,
     GuildMember,
     Message,
     MessageComponentInteraction,
@@ -7,6 +8,7 @@ import {
     OverwriteType,
     PermissionOverwriteOptions,
     PermissionsBitField,
+    TextChannel,
     VoiceBasedChannel,
     VoiceChannel
 } from "discord.js";
@@ -43,6 +45,8 @@ import {
     DYNAMIC_CHANNEL_USER_TEMPLATE
 } from "@vertix/definitions/master-channel";
 
+import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
+
 import { IChannelLeaveGenericArgs } from "@vertix/interfaces/channel";
 
 import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
@@ -74,6 +78,13 @@ export class DynamicChannelManager extends InitializeBase {
     private readonly debugger: Debugger;
 
     private editMessageDebounceMap = new Map<string, NodeJS.Timeout>();
+
+    private logInChannelDebounceMap = new Map<string, {
+        masterChannelDB: ChannelResult,
+        logsChannel: TextChannel,
+        embeds: EmbedBuilder[]
+        timer: NodeJS.Timeout,
+    }>();
 
     public static getName() {
         return "Vertix/Managers/DynamicChannel";
@@ -358,21 +369,24 @@ export class DynamicChannelManager extends InitializeBase {
             return;
         }
 
-        await this.log( undefined, newState.channel as VoiceChannel, this.createDynamicChannel, "", { displayName } );
-
-        // Move the user to new created channel.
-        await newState.setChannel( dynamic.channel.id ).then( () => {
-            this.logger.log( this.createDynamicChannel,
-                `Guild id: '${ guild.id }' - User '${ displayName }' moved to dynamic channel '${ dynamicChannelName }'`
-            );
+        await this.log( undefined, newState.channel as VoiceChannel, this.createDynamicChannel, "", {
+            displayName,
+            newState,
         } );
 
-        if ( ! dynamic.channel.isVoiceBased() ) {
-            throw new Error( `Channel is not voice based. Channel id: '${ dynamic.channel.id }'` );
-        }
+        // Move the user to new created channel.
+        setTimeout( () => {
+            newState.setChannel( dynamic.channel.id ).then( () => {
+                this.logger.log( this.createDynamicChannel,
+                    `Guild id: '${ guild.id }' - User '${ displayName }' moved to dynamic channel '${ dynamicChannelName }'`
+                );
+            } );
+        } );
 
-        // Create primary message.
-        await this.createPrimaryMessage( dynamic.channel, dynamic.db );
+        if ( dynamic.channel.isVoiceBased() ) {
+            // Create primary message.
+            await this.createPrimaryMessage( dynamic.channel, dynamic.db );
+        }
 
         return dynamic;
     }
@@ -412,13 +426,19 @@ export class DynamicChannelManager extends InitializeBase {
             code: DynamicEditChannelResultCode.Error,
         };
 
+        const oldChannelName = channel.name;
+
         const usedBadword = await GuildManager.$.hasSomeBadword( channel.guildId, newChannelName );
 
         if ( usedBadword ) {
             result.code = DynamicEditChannelResultCode.Badword;
             result.badword = usedBadword;
 
-            await this.log( initiator, channel, this.editChannelName, "badword", { result, newChannelName } );
+            await this.log( initiator, channel, this.editChannelName, "badword", {
+                result,
+                newChannelName,
+                oldChannelName
+            } );
 
             return result;
         }
@@ -440,14 +460,18 @@ export class DynamicChannelManager extends InitializeBase {
             result.code = DynamicEditChannelResultCode.RateLimit;
             result.retryAfter = editResult.retry_after;
 
-            await this.log( initiator, channel, this.editChannelName, "limited", { result, newChannelName } );
+            await this.log( initiator, channel, this.editChannelName, "limited", {
+                result,
+                newChannelName,
+                oldChannelName
+            } );
 
             return result;
         }
 
         result.code = DynamicEditChannelResultCode.Success;
 
-        await this.log( initiator, channel, this.editChannelName, "success", { newChannelName } );
+        await this.log( initiator, channel, this.editChannelName, "success", { newChannelName, oldChannelName } );
 
         DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
 
@@ -675,8 +699,6 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async clearChat( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ) {
-        await this.log( initiator, channel, this.clearChat, "start" );
-
         let result: IDynamicClearChatResult = {
             code: DynamicClearChatResultCode.Error,
         };
@@ -704,7 +726,7 @@ export class DynamicChannelManager extends InitializeBase {
             } )
             .catch( error );
 
-        await this.log( initiator, channel, this.clearChat, "end", { result } );
+        await this.log( initiator, channel, this.clearChat, "", { result } );
 
         return result;
     }
@@ -717,8 +739,6 @@ export class DynamicChannelManager extends InitializeBase {
         this.logger.log( this.resetChannel,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Reset Channel button has been clicked, channel: '${ channel.name }'`
         );
-
-        await this.log( initiator, channel, this.resetChannel, "start" );
 
         // Find master channel.
         const master = await ChannelManager.$
@@ -797,7 +817,7 @@ export class DynamicChannelManager extends InitializeBase {
             await MasterChannelManager.$.getChannelDefaultProperties( userOwnerId, master.channel )
         );
 
-        await this.log( initiator, channel, this.resetChannel, "end" );
+        await this.log( initiator, channel, this.resetChannel, "done" );
 
         const currentChannelState = await getCurrentChannelState( channel ),
             currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true );
@@ -1091,10 +1111,12 @@ export class DynamicChannelManager extends InitializeBase {
     private async log( initiator: ModalSubmitInteraction<"cached"> | MessageComponentInteraction<"cached"> | undefined, channel: VoiceChannel, caller: Function, action: string, meta: any = {} ) {
         const initiatorDisplayName = initiator?.member.displayName || "not provided";
 
+        let masterChannelId = "";
+
         let message = "";
 
-        const adminLogSuffix = `'${ channel.name }' '${ channel.guild.name }'`,
-            ownerLogSuffix = `${ adminLogSuffix } (${ channel.guild?.memberCount }) '${ channel.id }' '${ channel.guildId }'`;
+        const adminLogSuffix = `'${ channel.name }'`,
+            ownerLogSuffix = `${ adminLogSuffix } '${ channel.guild.name }' (${ channel.guild?.memberCount }) '${ channel.id }' '${ channel.guildId }'`;
 
         switch ( caller ) {
             case this.onLeaveDynamicChannel:
@@ -1102,64 +1124,68 @@ export class DynamicChannelManager extends InitializeBase {
                 break;
 
             case this.createDynamicChannel:
-                message = `➕  Dynamic channel has been created for: '${ meta.displayName }'`;
+                if ( meta.newState.channel ) {
+                    masterChannelId = meta.newState.channel.id;
+                }
+
+                message = `➕  Dynamic channel has been created for: \`${ meta.displayName }\``;
                 break;
 
             case this.editChannelName:
                 switch ( action as "badword" | "limited" | "success" ) {
                     case "badword":
-                        message = `✏️ '${ initiatorDisplayName }' tried to edit channel name from '${ channel.name }' to '${ meta.newChannelName }' but failed 🙅 due bad-words function: '${ meta.result.badword }'`;
+                        message = `✏️ \`${ initiatorDisplayName }\` tried to edit channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\` but failed 🙅 due bad-words function: \`${ meta.result.badword }\``;
                         break;
 
                     case "limited":
-                        message = `✏️ '${ initiatorDisplayName }' tried to edit channel name from '${ channel.name }' to '${ meta.newChannelName }' but failed due rate limit ( changing channel name too often )`;
+                        message = `✏️ \`${ initiatorDisplayName }\` tried to edit channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\` but failed due rate limit ( changing channel name too often )`;
                         break;
 
                     case "success":
-                        message = `✏️ '${ initiatorDisplayName }' edited channel name from '${ channel.name }' to '${ meta.newChannelName }'`;
+                        message = `✏️ \`${ initiatorDisplayName }\` edited channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\``;
                         break;
                 }
                 break;
 
             case this.editUserLimit:
                 if ( ! meta.result ) {
-                    message = `✋ '${ initiatorDisplayName }' tried to edit user limit but failed due unknown error`;
+                    message = `✋ \`${ initiatorDisplayName }\` tried to edit user limit but failed due unknown error`;
                     break;
                 }
 
-                message = `✋ '${ initiatorDisplayName }' edited user limit from '${ meta.oldLimit }' to '${ meta.newLimit }'`;
+                message = `✋ \`${ initiatorDisplayName }\` edited user limit from \`${ meta.oldLimit }\` to \`${ meta.newLimit }\``;
                 break;
 
             case this.editChannelState:
                 if ( ! meta.result ) {
-                    message = `🌐/🚫 '${ initiatorDisplayName }' tried to set channel state but failed due unknown error`;
+                    message = `🌐/🚫 \`${ initiatorDisplayName }\` tried to set channel state but failed due unknown error`;
                     break;
                 }
 
                 switch ( action as ChannelState ) {
                     case "public":
-                        message = `🌐 '${ initiatorDisplayName }' set channel to public`;
+                        message = `🌐 \`${ initiatorDisplayName }\` set channel to public`;
                         break;
 
                     case "private":
-                        message = `🚫 '${ initiatorDisplayName }' set channel to private`;
+                        message = `🚫 \`${ initiatorDisplayName }\` set channel to private`;
                         break;
                 }
                 break;
 
             case this.editChannelVisibilityState:
                 if ( ! meta.result ) {
-                    message = `🐵️/🙈 '${ initiatorDisplayName }' tried to set channel visibility but failed due unknown error`;
+                    message = `🐵️/🙈 \`${ initiatorDisplayName }\` tried to set channel visibility but failed due unknown error`;
                     break;
                 }
 
                 switch ( action as ChannelVisibilityState ) {
                     case "shown":
-                        message = `🐵️ '${ initiatorDisplayName }' set channel to visibility shown`;
+                        message = `🐵️ \`${ initiatorDisplayName }\` set channel to visibility shown`;
                         break;
 
                     case "hidden":
-                        message = `🙈 '${ initiatorDisplayName }' set channel to visibility hidden`;
+                        message = `🙈 \`${ initiatorDisplayName }\` set channel to visibility hidden`;
                         break;
                 }
                 break;
@@ -1170,49 +1196,38 @@ export class DynamicChannelManager extends InitializeBase {
 
                 switch ( action as "claim" | "transfer" ) {
                     case "claim":
-                        message = `😈 '${ newOwner }' has been claimed ownership of channel, '${ previousOwner }' is not channel owner anymore`;
+                        message = `😈 \`${ newOwner }\` has been claimed ownership of channel, \`${ previousOwner }\` is not channel owner anymore`;
                         break;
 
                     case "transfer":
-                        message = `🔀 ${ previousOwner }' has been transfer ownership of channel to '${ newOwner }'`;
+                        message = `🔀 ${ previousOwner }\` has been transfer ownership of channel to \`${ newOwner }\``;
                         break;
                 }
                 break;
 
             case this.clearChat:
-                switch ( action as "start" | "end" ) {
-                    case "start":
-                        message = `🧹 '${ initiatorDisplayName }' has been clicked on clear chat button on channel`;
+                switch ( meta.result.code ) {
+                    case "nothing-to-delete":
+                        message = `🧹 \`${ initiatorDisplayName }\` trying to clear chat but there are no message to delete`;
                         break;
 
-                    case "end":
-                        switch ( meta.result.code ) {
-                            case "nothing-to-delete":
-                                message = `🧹 '${ initiatorDisplayName }' trying to clear chat but there are not message to delete`;
-                                break;
+                    case "success":
+                        message = `🧹 \`${ initiatorDisplayName }\` clear chat has been successfully cleared ${ meta.result.deletedCount } messages }`;
+                        break;
 
-                            case "success":
-                                message = `🧹 '${ initiatorDisplayName }' clear chat has been successfully cleared ${ meta.result.deletedCount } messages }`;
-                                break;
-
-                            default:
-                                message = `🧹 '${ initiatorDisplayName }' trying to clear chat but it failed due unknown error`;
-                        }
+                    default:
+                        message = `🧹 \`${ initiatorDisplayName }\` trying to clear chat but it failed due unknown error`;
                 }
                 break;
 
             case this.resetChannel:
-                switch ( action as "start" | "vote" | "end" ) {
-                    case "start":
-                        message = `🔄 '${ initiatorDisplayName }' has been clicked on reset channel button on channel`;
-                        break;
-
+                switch ( action as "vote" | "done" ) {
                     case "vote":
-                        message = `🔄 '${ initiatorDisplayName }' requested to vote for using premium feature`;
+                        message = `🔄 \`${ initiatorDisplayName }\` requested to vote for using premium feature`;
                         break;
 
-                    case "end":
-                        message = `🔄 '${ initiatorDisplayName }' reset channel has been successfully restored the channel`;
+                    case "done":
+                        message = `🔄 \`${ initiatorDisplayName }\` reset channel has been successfully restored the channel`;
                         break;
                 }
                 break;
@@ -1220,27 +1235,27 @@ export class DynamicChannelManager extends InitializeBase {
             case this.addUserAccess:
                 if ( DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
                     // Blocking user access.
-                    const tryingPrefix = `☝️ '${ initiatorDisplayName }' trying grant user access on: '${ meta.member.displayName }'`;
+                    const tryingPrefix = `☝️ \`${ initiatorDisplayName }\` trying grant user access on: \`${ meta.member.displayName }\``;
 
                     switch ( action as AddStatus ) {
                         case "error":
-                            message = `${ tryingPrefix } - Failed due unknown error.`;
+                            message = `${ tryingPrefix } - Failed due unknown error`;
                             break;
 
                         case "action-on-bot-user":
-                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed`;
                             break;
 
                         case "self-grant":
-                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self.`;
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self`;
                             break;
 
                         case "already-granted":
-                            message = `${ tryingPrefix } - Nothing done, already granted.`;
+                            message = `${ tryingPrefix } - Nothing done, already granted`;
                             break;
 
                         case "success":
-                            message = `☝️ ${ initiatorDisplayName }' has granted access for: '${ meta.member.displayName }'.`;
+                            message = `☝️ \`${ initiatorDisplayName }\` has granted access for: \`${ meta.member.displayName }\``;
                             break;
                     }
 
@@ -1252,27 +1267,27 @@ export class DynamicChannelManager extends InitializeBase {
             case this.editUserAccess:
                 if ( ! meta.state && DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
                     // Blocking user access.
-                    const tryingPrefix = `🫵 '${ initiatorDisplayName }' trying block user access on: '${ meta.member.displayName }'`;
+                    const tryingPrefix = `🫵 \`${ initiatorDisplayName }\` trying block user access on: \`${ meta.member.displayName }\``;
 
                     switch ( action as EditStatus ) {
                         case "error":
-                            message = `${ tryingPrefix } - Failed due unknown error.`;
+                            message = `${ tryingPrefix } - Failed due unknown error`;
                             break;
 
                         case "action-on-bot-user":
-                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed`;
                             break;
 
                         case "self-edit":
-                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self.`;
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self`;
                             break;
 
                         case "already-have":
-                            message = `${ tryingPrefix } - Nothing done, already blocked.`;
+                            message = `${ tryingPrefix } - Nothing done, already blocked`;
                             break;
 
                         case "success":
-                            message = `🫵 ${ initiatorDisplayName }' has blocked access for: '${ meta.member.displayName }'.`;
+                            message = `🫵 \`${ initiatorDisplayName }\` has blocked access for: \`${ meta.member.displayName }\``;
                             break;
                     }
 
@@ -1284,66 +1299,143 @@ export class DynamicChannelManager extends InitializeBase {
             case this.removeUserAccess:
                 const emoji = meta.force ? "🤙" : "👇",
                     context = meta.force ? "un-blocking user access" : "removing user access",
-                    tryingPrefix = `${ emoji } '${ initiatorDisplayName }' trying ${ context } on: '${ meta.member.displayName }'`;
+                    tryingPrefix = `${ emoji } \`${ initiatorDisplayName }\` trying ${ context } on: \`${ meta.member.displayName }\``;
 
                 switch ( action as RemoveStatus ) {
                     case "error":
-                        message = `${ tryingPrefix } - Failed due unknown error.`;
+                        message = `${ tryingPrefix } - Failed due unknown error`;
                         break;
 
                     case "action-on-bot-user":
-                        message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                        message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed`;
                         break;
 
                     case "self-deny":
-                        message = `${ tryingPrefix } - Nothing done, cannot do that on his self.`;
+                        message = `${ tryingPrefix } - Nothing done, cannot do that on his self`;
                         break;
 
                     case "not-in-the-list":
-                        message = `${ tryingPrefix } - Nothing done, the user does not not have access already.`;
+                        message = `${ tryingPrefix } - Nothing done, the user does not not have access already`;
                         break;
 
                     case "user-blocked":
-                        message = `${ tryingPrefix } - Nothing done, the user is blocked.`;
+                        message = `${ tryingPrefix } - Nothing done, the user is blocked`;
                         break;
 
                     case "success":
-                        message = `${ emoji } '${ initiatorDisplayName }' ${ context } for: '${ meta.member.displayName }' succeeded.`;
+                        message = `${ emoji } \`${ initiatorDisplayName }\` ${ context } for: \`${ meta.member.displayName }\` succeeded`;
                         break;
                 }
                 break;
 
             case this.kickUser:
-                const tryingKickPrefix = `👢 '${ initiatorDisplayName }' trying kick user: '${ meta.member.displayName }'`;
+                const tryingKickPrefix = `👢 \`${ initiatorDisplayName }\` trying kick user: \`${ meta.member.displayName }\``;
 
                 switch ( action as ActStatus ) {
                     case "error":
-                        message = `${ tryingKickPrefix } - Failed due unknown error.`;
+                        message = `${ tryingKickPrefix } - Failed due unknown error`;
                         break;
 
                     case "action-on-bot-user":
-                        message = `${ tryingKickPrefix } - Nothing done, doing that on Vertix are not allowed.`;
+                        message = `${ tryingKickPrefix } - Nothing done, doing that on Vertix are not allowed`;
                         break;
 
                     case "self-action":
-                        message = `${ tryingKickPrefix } - Nothing done, cannot do that on his self.`;
+                        message = `${ tryingKickPrefix } - Nothing done, cannot do that on his self`;
                         break;
 
                     case "not-in-the-list":
-                        message = `${ tryingKickPrefix } - Nothing done, the user not in the channel.`;
+                        message = `${ tryingKickPrefix } - Nothing done, the user not in the channel`;
                         break;
 
                     case "success":
-                        message = `👢 '${ initiatorDisplayName }' has kicked user: '${ meta.member.displayName }'`;
+                        message = `👢 \`${ initiatorDisplayName }\` has kicked user: \`${ meta.member.displayName }\``;
                 }
                 break;
 
             default:
-                this.logger.error( caller, `Guild id:${ channel.guildId }, channel id: '${ channel.id }' - Unknown caller: '${ caller.name }' - ${ ownerLogSuffix }` );
-                return;
+                this.logger.error( caller, `Guild id:${ channel.guildId }, channel id: \`${ channel.id }\` - Unknown caller: \`${ caller.name }\`` );
         }
 
         this.logger.admin( caller, `${ message } - ${ ownerLogSuffix }` );
+
+        const masterChannelDB = masterChannelId ? await ChannelModel.$.getByChannelId( masterChannelId ) :
+            await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+
+        if ( ! masterChannelDB ) {
+            this.logger.error( this.log, `Guild id:${ channel.guildId }, channel id: \`${ channel.id }\` - Cannot find master channel DB` );
+            return;
+        }
+
+        await this.logInChannelDebounce( masterChannelDB, channel, message );
     }
 
+    private async logInChannelDebounce( masterChannelDB: ChannelResult, channel: VoiceChannel, message: string, defaultDebounceDelay = 3000 ) {
+        const logsChannelId = await MasterChannelManager.$.getChannelLogsChannelId( masterChannelDB.id, true );
+
+        if ( ! logsChannelId ) {
+            return;
+        }
+
+        const logsChannel = await channel.guild.channels.cache.get( logsChannelId ) as TextChannel;
+
+        if ( ! logsChannel ) {
+            await MasterChannelManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
+
+            this.logger.error( this.log, `Guild id:${ channel.guildId }, channel id: \`${ channel.id }\` - Cannot find logs channel` );
+            return;
+        }
+
+        const embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setTimestamp( new Date() );
+        embedBuilder.setDescription( "➤ " + message );
+        embedBuilder.setColor( VERTIX_DEFAULT_COLOR_BRAND );
+        embedBuilder.setFooter( {
+            text: `Channel: \`${ channel.name }\` masterChannelId: \`${ masterChannelDB.channelId }\``,
+        } );
+
+        const mapItem = this.logInChannelDebounceMap.get( logsChannelId );
+
+        if ( ! mapItem ) {
+            this.logInChannelDebounceMap.set( logsChannel.id, {
+                masterChannelDB,
+                logsChannel,
+                embeds: [ embedBuilder ],
+                timer: setTimeout( this.logEmbeds.bind( this, logsChannelId ), defaultDebounceDelay ),
+            } );
+
+            return;
+        }
+
+        clearTimeout( mapItem.timer );
+
+        // If embeds reach 10, send them and reset timer.
+        if ( mapItem.embeds.length >= 10 ) {
+            await this.logEmbeds( channel.id );
+            mapItem.embeds = [];
+        }
+
+        // Push embed and reset timer.
+        mapItem.embeds.push( embedBuilder );
+
+        mapItem.timer = setTimeout( this.logEmbeds.bind( this, logsChannelId ), defaultDebounceDelay );
+    }
+
+    private async logEmbeds( logsChannelId: string ) {
+        const mapItem = this.logInChannelDebounceMap.get( logsChannelId );
+
+        if ( ! mapItem ) {
+            this.logger.error( this.log, `Cannot find map item for logs channel id: \`${ logsChannelId }\`` );
+            return;
+        }
+
+        const { masterChannelDB, logsChannel, embeds } = mapItem;
+
+        await logsChannel.send( { embeds } ).catch( async ( err ) => {
+            this.logger.error( this.log, "", err );
+
+            await MasterChannelManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
+        } );
+    }
 }

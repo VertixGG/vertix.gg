@@ -9,15 +9,23 @@ const isMatch = ( word: string, badword: string ): boolean => {
 };
 
 /**
- * Function badwordsSomeUsed() :: Determine if a word matchs of the badwords and
+ * Function badwordsSomeUsed() :: Determine if a word matches of the badwords and
  * return the first badword found.
  *
  * the method support '*' for each badword to implement non-exact matches
  */
 export const badwordsSomeUsed = ( content: string, badwords: string[] ): string | null => {
     for ( const badword of badwords ) {
-        if ( isMatch( content, badword ) ) {
-            return badword;
+        let words = content.split( " " );
+
+        if ( ! words.length ) {
+            words = [ content ];
+        }
+
+        for ( const word of words ) {
+            if ( isMatch( word, badword ) ) {
+                return badword;
+            }
         }
     }
     return null;

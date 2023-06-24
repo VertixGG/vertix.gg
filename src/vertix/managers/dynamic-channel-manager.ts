@@ -1441,7 +1441,6 @@ export class DynamicChannelManager extends InitializeBase {
         // If embeds reach 10, send them and reset timer.
         if ( mapItem.embeds.length >= 10 ) {
             await this.logEmbeds( channel.id );
-            mapItem.embeds = [];
         }
 
         // Push embed and reset timer.
@@ -1458,6 +1457,10 @@ export class DynamicChannelManager extends InitializeBase {
             return;
         }
 
+        if ( ! mapItem.embeds.length ) {
+            return;
+        }
+
         const { masterChannelDB, logsChannel, embeds } = mapItem;
 
         await logsChannel.send( { embeds } ).catch( async ( err ) => {
@@ -1465,5 +1468,7 @@ export class DynamicChannelManager extends InitializeBase {
 
             await MasterChannelManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
         } );
+
+        mapItem.embeds = [];
     }
 }

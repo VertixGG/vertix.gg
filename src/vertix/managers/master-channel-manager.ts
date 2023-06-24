@@ -95,7 +95,8 @@ export class MasterChannelManager extends InitializeBase {
 
     private requestedChannelMap: Map<string, {
         timestamp: number,
-        isWarningSent: boolean,
+        tryCount: number,
+        shouldSentWarning: boolean,
     }> = new Map();
 
     public static getName(): string {
@@ -142,18 +143,21 @@ export class MasterChannelManager extends InitializeBase {
         const member = newState.member,
             request = this.requestedChannelMap.get( member.id ),
             timestamp = Date.now(),
-            timePassed = timestamp - ( request?.timestamp || 0 );
+            timePassed = timestamp - ( request?.timestamp || 0 ),
+            tooFast = timePassed < MAX_TIMEOUT_PER_CREATE;
 
-        if ( timePassed < MAX_TIMEOUT_PER_CREATE ) {
+        let tryCount = request?.tryCount || 0;
+
+        if ( tryCount > 1 && tooFast ) {
             this.logger.warn( this.onJoinMasterChannel,
-                `Guild id: '${ guild.id }' - User '${ displayName }' request master channel id: '${ newState.channelId }' too fast` );
+                `Guild id: '${ guild.id }' - User '${ displayName }' request master channel id: '${ newState.channelId }' too fast, try count: ${ request?.tryCount }` );
 
-            if ( ! request?.isWarningSent ) {
+            if ( true === request?.shouldSentWarning ) {
                 const embed = new EmbedBuilder();
 
                 embed.setColor( "Yellow" );
                 embed.setTitle( "Warning" );
-                embed.setDescription( `You are requesting channel too fast. You can create dynamic channels each \`${ MAX_TIMEOUT_PER_CREATE / 1000 }\` seconds.` );
+                embed.setDescription( `You are requesting channel too fast. You can create new channels each \`${ MAX_TIMEOUT_PER_CREATE / 1000 }\` seconds.` );
 
                 await newState.member.send( { embeds: [ embed ] } ).catch( () => {
                     this.logger.error( this.onJoinMasterChannel,
@@ -161,7 +165,8 @@ export class MasterChannelManager extends InitializeBase {
                 } ).then( () => {
                     this.requestedChannelMap.set( member.id, {
                         timestamp,
-                        isWarningSent: true,
+                        shouldSentWarning: false,
+                        tryCount: tryCount + 1,
                     } );
                 } );
             }
@@ -172,7 +177,8 @@ export class MasterChannelManager extends InitializeBase {
         // Set new timestamp.
         this.requestedChannelMap.set( newState.member.id, {
             timestamp,
-            isWarningSent: typeof request?.isWarningSent === "boolean" ? request.isWarningSent : false,
+            shouldSentWarning: true,
+            tryCount: tooFast ? ( tryCount + 1 ) : 1,
         } );
 
         // Check if bot exist in administrator role.

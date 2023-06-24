@@ -1,3 +1,6 @@
+import chalk from "chalk";
+import fetch from "cross-fetch";
+
 import {
     ChannelType,
     EmbedBuilder,
@@ -16,8 +19,6 @@ import {
 import { Routes } from "discord-api-types/v10";
 
 import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
-
-import fetch from "cross-fetch";
 
 import {
     ActStatus,
@@ -381,7 +382,7 @@ export class DynamicChannelManager extends InitializeBase {
         }
 
         await this.log( undefined, newState.channel as VoiceChannel, this.createDynamicChannel, "", {
-            displayName,
+            ownerDisplayName: displayName,
             newState,
         } );
 
@@ -858,7 +859,7 @@ export class DynamicChannelManager extends InitializeBase {
         if ( member.id === channel.client.user.id ) {
             result = "action-on-bot-user";
 
-            await this.log( initiator, channel, this.removeUserAccess, result, { member, permissions } );
+            await this.log( initiator, channel, this.addUserAccess, result, { member, permissions } );
 
             return result;
         }
@@ -1136,7 +1137,7 @@ export class DynamicChannelManager extends InitializeBase {
 
         switch ( caller ) {
             case this.onLeaveDynamicChannel:
-                message = "➖ Dynamic channel has been deleted";
+                message = `➖ Dynamic channel has been **deleted**, owner: \`${ meta.ownerDisplayName }\``;
                 break;
 
             case this.createDynamicChannel:
@@ -1144,17 +1145,17 @@ export class DynamicChannelManager extends InitializeBase {
                     masterChannelId = meta.newState.channel.id;
                 }
 
-                message = `➕  Dynamic channel has been created for: \`${ meta.displayName }\``;
+                message = `➕  Dynamic channel has been **created**, owner: \`${ meta.ownerDisplayName }\``;
                 break;
 
             case this.editChannelName:
                 switch ( action as "badword" | "limited" | "success" ) {
                     case "badword":
-                        message = `✏️ \`${ initiatorDisplayName }\` tried to edit channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\` but failed 🙅 due bad-words function: \`${ meta.result.badword }\``;
+                        message = `✏️ \`${ initiatorDisplayName }\` tried to edit channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\` but failed 🙅 due bad-word: \`${ meta.result.badword }\``;
                         break;
 
                     case "limited":
-                        message = `✏️ \`${ initiatorDisplayName }\` tried to edit channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\` but failed due rate limit ( changing channel name too often )`;
+                        message = `✏️ \`${ initiatorDisplayName }\` tried to edit channel name from \`${ meta.oldChannelName }\` to \`${ meta.newChannelName }\` but failed due rate limit, changed names too fast`;
                         break;
 
                     case "success":
@@ -1180,11 +1181,11 @@ export class DynamicChannelManager extends InitializeBase {
 
                 switch ( action as ChannelState ) {
                     case "public":
-                        message = `🌐 \`${ initiatorDisplayName }\` set channel to public`;
+                        message = `🌐 \`${ initiatorDisplayName }\` set channel to **public**`;
                         break;
 
                     case "private":
-                        message = `🚫 \`${ initiatorDisplayName }\` set channel to private`;
+                        message = `🚫 \`${ initiatorDisplayName }\` set channel to **private**`;
                         break;
                 }
                 break;
@@ -1197,11 +1198,11 @@ export class DynamicChannelManager extends InitializeBase {
 
                 switch ( action as ChannelVisibilityState ) {
                     case "shown":
-                        message = `🐵️ \`${ initiatorDisplayName }\` set channel to visibility shown`;
+                        message = `🐵️ \`${ initiatorDisplayName }\` set channel to visibility **shown**`;
                         break;
 
                     case "hidden":
-                        message = `🙈 \`${ initiatorDisplayName }\` set channel to visibility hidden`;
+                        message = `🙈 \`${ initiatorDisplayName }\` set channel to visibility **hidden**`;
                         break;
                 }
                 break;
@@ -1212,11 +1213,17 @@ export class DynamicChannelManager extends InitializeBase {
 
                 switch ( action as "claim" | "transfer" ) {
                     case "claim":
-                        message = `😈 \`${ newOwner }\` has been claimed ownership of channel, \`${ previousOwner }\` is not channel owner anymore`;
+                        message = `😈 \`${ newOwner }\` has been claimed **ownership** of channel`;
+
+                        if ( previousOwner === newOwner ) {
+                            message += " the same owner, just reclaimed his channel";
+                        } else {
+                            message += ` \`${ previousOwner }\` is not channel owner anymore`;
+                        }
                         break;
 
                     case "transfer":
-                        message = `🔀 ${ previousOwner }\` has been transfer ownership of channel to \`${ newOwner }\``;
+                        message = `🔀 \`${ previousOwner }\` has been transfer **ownership** of channel to \`${ newOwner }\``;
                         break;
                 }
                 break;
@@ -1228,7 +1235,7 @@ export class DynamicChannelManager extends InitializeBase {
                         break;
 
                     case "success":
-                        message = `🧹 \`${ initiatorDisplayName }\` clear chat has been successfully cleared ${ meta.result.deletedCount } messages }`;
+                        message = `🧹 \`${ initiatorDisplayName }\` clear chat has been successfully cleared **${ meta.result.deletedCount }** messages`;
                         break;
 
                     default:
@@ -1243,7 +1250,7 @@ export class DynamicChannelManager extends InitializeBase {
                         break;
 
                     case "done":
-                        message = `🔄 \`${ initiatorDisplayName }\` reset channel has been successfully restored the channel`;
+                        message = `🔄 \`${ initiatorDisplayName }\` reset channel has been successfully **restored** the channel`;
                         break;
                 }
                 break;
@@ -1259,19 +1266,19 @@ export class DynamicChannelManager extends InitializeBase {
                             break;
 
                         case "action-on-bot-user":
-                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed`;
+                            message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
                             break;
 
                         case "self-grant":
-                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self`;
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his **self**`;
                             break;
 
                         case "already-granted":
-                            message = `${ tryingPrefix } - Nothing done, already granted`;
+                            message = `${ tryingPrefix } - Nothing done, **already** granted`;
                             break;
 
                         case "success":
-                            message = `☝️ \`${ initiatorDisplayName }\` has granted access for: \`${ meta.member.displayName }\``;
+                            message = `☝️ \`${ initiatorDisplayName }\` has **granted** access for: \`${ meta.member.displayName }\``;
                             break;
                     }
 
@@ -1291,19 +1298,19 @@ export class DynamicChannelManager extends InitializeBase {
                             break;
 
                         case "action-on-bot-user":
-                            message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed`;
+                            message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
                             break;
 
                         case "self-edit":
-                            message = `${ tryingPrefix } - Nothing done, cannot do that on his self`;
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his **self**`;
                             break;
 
                         case "already-have":
-                            message = `${ tryingPrefix } - Nothing done, already blocked`;
+                            message = `${ tryingPrefix } - Nothing done, **already** blocked`;
                             break;
 
                         case "success":
-                            message = `🫵 \`${ initiatorDisplayName }\` has blocked access for: \`${ meta.member.displayName }\``;
+                            message = `🫵 \`${ initiatorDisplayName }\` has **blocked** access for: \`${ meta.member.displayName }\``;
                             break;
                     }
 
@@ -1314,8 +1321,8 @@ export class DynamicChannelManager extends InitializeBase {
 
             case this.removeUserAccess:
                 const emoji = meta.force ? "🤙" : "👇",
-                    context = meta.force ? "un-blocking user access" : "removing user access",
-                    tryingPrefix = `${ emoji } \`${ initiatorDisplayName }\` trying ${ context } on: \`${ meta.member.displayName }\``;
+                    context = meta.force ? "un-blocking" : "removing",
+                    tryingPrefix = `${ emoji } \`${ initiatorDisplayName }\` trying ${ context } user access on: \`${ meta.member.displayName }\``;
 
                 switch ( action as RemoveStatus ) {
                     case "error":
@@ -1323,23 +1330,23 @@ export class DynamicChannelManager extends InitializeBase {
                         break;
 
                     case "action-on-bot-user":
-                        message = `${ tryingPrefix } - Nothing done, doing that on Vertix are not allowed`;
+                        message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
                         break;
 
                     case "self-deny":
-                        message = `${ tryingPrefix } - Nothing done, cannot do that on his self`;
+                        message = `${ tryingPrefix } - Nothing done, cannot do that on his **self**`;
                         break;
 
                     case "not-in-the-list":
-                        message = `${ tryingPrefix } - Nothing done, the user does not not have access already`;
+                        message = `${ tryingPrefix } - Nothing done, the user permissions **already** clear`;
                         break;
 
                     case "user-blocked":
-                        message = `${ tryingPrefix } - Nothing done, the user is blocked`;
+                        message = `${ tryingPrefix } - Nothing done, the user is **blocked**`;
                         break;
 
                     case "success":
-                        message = `${ emoji } \`${ initiatorDisplayName }\` ${ context } for: \`${ meta.member.displayName }\` succeeded`;
+                        message = `${ emoji } \`${ initiatorDisplayName }\` **${ context }** access for: \`${ meta.member.displayName }\` succeeded`;
                         break;
                 }
                 break;
@@ -1353,19 +1360,19 @@ export class DynamicChannelManager extends InitializeBase {
                         break;
 
                     case "action-on-bot-user":
-                        message = `${ tryingKickPrefix } - Nothing done, doing that on Vertix are not allowed`;
+                        message = `${ tryingKickPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
                         break;
 
                     case "self-action":
-                        message = `${ tryingKickPrefix } - Nothing done, cannot do that on his self`;
+                        message = `${ tryingKickPrefix } - Nothing done, cannot do that on his **self**`;
                         break;
 
                     case "not-in-the-list":
-                        message = `${ tryingKickPrefix } - Nothing done, the user not in the channel`;
+                        message = `${ tryingKickPrefix } - Nothing done, the user not in the **channel**`;
                         break;
 
                     case "success":
-                        message = `👢 \`${ initiatorDisplayName }\` has kicked user: \`${ meta.member.displayName }\``;
+                        message = `👢 \`${ initiatorDisplayName }\` has **kicked** user: \`${ meta.member.displayName }\``;
                 }
                 break;
 
@@ -1373,7 +1380,12 @@ export class DynamicChannelManager extends InitializeBase {
                 this.logger.error( caller, `Guild id:${ channel.guildId }, channel id: \`${ channel.id }\` - Unknown caller: \`${ caller.name }\`` );
         }
 
-        this.logger.admin( caller, `${ message } - ${ ownerLogSuffix }` );
+        // Replace words that wrapped with **%word%** and wrap it with `chalk.bold` for console.
+        const messageForConsole = message.replace( /\*\*(.*?)\*\*/g, ( match, p1 ) => chalk.bold( p1 ) )
+            // Replace words that wrapped with `` and wrap it with `chalk.red` for console.
+            .replace( /`(.*?)`/g, ( match, p1 ) => chalk.red( `"${ p1 }"` ) );
+
+        this.logger.admin( caller, `${ messageForConsole } - ${ ownerLogSuffix }` );
 
         const masterChannelDB = masterChannelId ? await ChannelModel.$.getByChannelId( masterChannelId ) :
             await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );

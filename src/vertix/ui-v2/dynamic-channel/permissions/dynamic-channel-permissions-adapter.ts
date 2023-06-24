@@ -373,6 +373,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 } );
                 break;
 
+            case "not-in-the-list":
             case "action-on-bot-user":
             case "self-action":
                 return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged", {} );

@@ -131,16 +131,27 @@ export class DynamicChannelManager extends InitializeBase {
             `Guild id: '${ guild.id }' - User '${ displayName }' left dynamic channel '${ channelName }'`
         );
 
-        // If the channel is empty, deletedStartedMessagesInternal it.
         if ( args.oldState.channel ) {
-            const channel = args.oldState.channel;
+            const channel = args.oldState.channel,
+                channelDB = await ChannelModel.$.getByChannelId( channel.id );
 
             if ( channel.members.size === 0 ) {
-                if ( args.oldState.member?.id ) {
-                    DynamicChannelClaimManager.$.removeChannelTracking( args.oldState.member?.id, channel.id );
+                DynamicChannelClaimManager.$.removeChannelTracking( channel.id );
+
+                if ( ! channelDB ) {
+                    this.logger.error( this.onLeaveDynamicChannel,
+                        `Guild id: '${ guild.id }', channel id: '${ channel.id }' - ` +
+                        "Channel DB not found."
+                    );
+
+                    return;
                 }
 
-                await this.log( undefined, channel as VoiceChannel, this.onLeaveDynamicChannel, "" );
+                const ownerMember = args.newState.guild.members.cache.get( channelDB.userOwnerId );
+
+                await this.log( undefined, channel as VoiceChannel, this.onLeaveDynamicChannel, "", {
+                    ownerDisplayName: ownerMember?.displayName,
+                } );
 
                 await ChannelManager.$.delete( { guild, channel, } );
 
@@ -148,7 +159,7 @@ export class DynamicChannelManager extends InitializeBase {
                 return;
             }
 
-            if ( await this.isChannelOwner( oldState.member?.id, channel.id ) ) {
+            if ( channelDB?.userOwnerId === oldState.member?.id ) {
                 await this.onOwnerLeaveDynamicChannel( oldState.member as GuildMember, channel );
             }
         }
@@ -163,7 +174,7 @@ export class DynamicChannelManager extends InitializeBase {
         );
 
         if ( "idle" === state ) {
-            DynamicChannelClaimManager.$.removeChannelTracking( owner.id, channel.id );
+            DynamicChannelClaimManager.$.removeChannelOwnerTracking( owner.id, channel.id );
 
             await UIAdapterManager.$.get( "Vertix/UI-V2/ClaimStartAdapter" )?.deletedStartedMessagesInternal( channel );
         }
@@ -625,6 +636,11 @@ export class DynamicChannelManager extends InitializeBase {
         await channel.edit( { permissionOverwrites } );
 
         DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+
+        // Request to rescan, since new channel owner, to determine if he abandoned.
+        if ( await this.isClaimButtonEnabled( channel ) ) {
+            setTimeout( () => DynamicChannelClaimManager.$.handleAbandonedChannels( channel.client, [ channel ] ) );
+        }
     }
 
     public async editPrimaryMessage( channel: VoiceChannel ) {

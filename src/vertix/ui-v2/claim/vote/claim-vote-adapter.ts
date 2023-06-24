@@ -11,7 +11,7 @@ import {
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 import { DynamicChannelVoteManager } from "@vertix/managers/dynamic-channel-vote-manager";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
-import { ChannelManager } from "@vertix/managers/channel-manager";
+import { ChannelModel } from "@vertix/models";
 
 import { guildGetMemberDisplayName } from "@vertix/utils/guild";
 
@@ -140,10 +140,9 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
                 break;
 
             case "Vertix/UI-V2/ClaimVoteWon":
-                const master = await ChannelManager.$
-                    .getMasterChannelAndDBbyDynamicChannelId( context.channelId );
+                const dynamicChannelDB = await ChannelModel.$.getByChannelId( context.channelId );
 
-                if ( ! master ) {
+                if ( ! dynamicChannelDB ) {
                     throw new Error( "Master channel not found." );
                 }
 
@@ -154,8 +153,8 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
 
                 args.elapsedTime = Date.now() - DynamicChannelVoteManager.$.getStartTime( context.channelId );
 
-                args.previousOwnerId = master.db.userOwnerId;
-                args.previousOwnerDisplayName = await guildGetMemberDisplayName( context.guild, master.db.userOwnerId );
+                args.previousOwnerId = dynamicChannelDB.userOwnerId;
+                args.previousOwnerDisplayName = await guildGetMemberDisplayName( context.guild, dynamicChannelDB.userOwnerId );
 
                 args.results = DynamicChannelVoteManager.$.getResults( context.channelId );
 

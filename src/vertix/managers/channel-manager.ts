@@ -75,7 +75,7 @@ export class ChannelManager extends InitializeBase {
         const displayName = newState.member?.displayName as string,
             channelName = newState.channel?.name as string;
 
-        this.logger.info( this.onJoin,
+        this.logger.log( this.onJoin,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' joined to channel: '${ channelName }'`
         );
 

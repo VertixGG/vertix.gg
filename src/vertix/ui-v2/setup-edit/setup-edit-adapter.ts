@@ -34,6 +34,9 @@ import { SetupMasterEditButton } from "@vertix/ui-v2/setup/setup-master-edit-but
 import {
     DynamicChannelElementsGroup
 } from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import {
+    DynamicChannelPremiumClaimChannelButton
+} from "@vertix/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction |
@@ -284,22 +287,24 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         await MasterChannelManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
-        // Get all channels that are using this master channel.
-        setTimeout( async () => {
-            const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
+        if ( buttons.includes( DynamicChannelPremiumClaimChannelButton.getId() ) ) {
+            // Get all channels that are using this master channel.
+            setTimeout( async () => {
+                const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
 
-            for ( const channelDB of channels ) {
-                const channel = AppManager.$.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
+                for ( const channelDB of channels ) {
+                    const channel = AppManager.$.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
 
-                if ( ! channel ) {
-                    console.warn( `Channel ${ channelDB.channelId } not found.` );
+                    if ( ! channel ) {
+                        console.warn( `Channel ${ channelDB.channelId } not found.` );
+                    }
+
+                    await DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
                 }
 
-                await DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
-            }
-
-            DynamicChannelClaimManager.$.handleAbandonedChannels( AppManager.$.getClient(), [], channels );
-        } );
+                DynamicChannelClaimManager.$.handleAbandonedChannels( AppManager.$.getClient(), [], channels );
+            } );
+        }
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
     }

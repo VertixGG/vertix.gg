@@ -20,8 +20,6 @@ export class Logger extends ObjectBase {
 
     private messagePrefixes: string[] = [];
 
-    private readonly cachedDate!: string;
-
     public static getName(): string {
         return "Modules/Logger";
     }
@@ -49,14 +47,6 @@ export class Logger extends ObjectBase {
         if ( process.env.DISABLE_LOGGER_PREVIOUS_SOURCE && "true" === process.env.DISABLE_LOGGER_PREVIOUS_SOURCE ) {
             this.getPreviousSource = () => "";
         }
-
-        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
-
-        if ( ! iso ) {
-            throw new Error( "Invalid date" );
-        }
-
-        this.cachedDate = iso[ 1 ] + " " + iso[ 2 ];
 
         // noinspection FallThroughInSwitchStatementJS
         switch ( parseInt( process.env.LOG_LEVEL || "4" ) ) {
@@ -108,7 +98,13 @@ export class Logger extends ObjectBase {
     }
 
     private getTime(): string {
-        return this.cachedDate;
+        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
+
+        if ( ! iso ) {
+            return "Invalid Time";
+        }
+
+        return iso[ 1 ] + " " + iso[ 2 ];
     }
 
     private getCallerName( caller: ICaller ): string {

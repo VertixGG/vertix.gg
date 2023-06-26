@@ -72,7 +72,7 @@ export class LanguageUtils extends InitializeBase {
 
             if ( currentObject.length !== count ) {
                 if ( 0 === count ) {
-                    this.logger.log( this.import, `Importing from scratch language with code: '${ object.code }' model: '${ Model.getName() }'` );
+                    this.logger.info( this.import, `Importing from scratch language with code: '${ object.code }' model: '${ Model.getName() }'` );
 
                     // TODO: Remove redundant code.
                     for ( const entity of currentObject ) {
@@ -87,7 +87,7 @@ export class LanguageUtils extends InitializeBase {
                     return;
                 }
 
-                this.logger.log( this.import, `Updating language with code: '${ object.code }' model: '${ Model.getName }'` );
+                this.logger.info( this.import, `Updating language with code: '${ object.code }' model: '${ Model.getName() }'` );
 
                 for ( const entity of currentObject ) {
                     // Check if entity exists.

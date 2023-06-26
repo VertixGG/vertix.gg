@@ -34,11 +34,14 @@ export class SetupEmbed extends UIEmbedBase {
             channelsTemplateName: uiUtilsWrapAsTemplate( "channelsTemplateName" ),
             channelsTemplateButtons: uiUtilsWrapAsTemplate( "channelsTemplateButtons" ),
             channelsVerifiedRoles: uiUtilsWrapAsTemplate( "channelsVerifiedRoles" ),
+            channelsLogsChannelId: uiUtilsWrapAsTemplate( "channelsLogsChannelId" ),
         },
 
         badwords: uiUtilsWrapAsTemplate( "badwords" ),
         badwordsMessage: uiUtilsWrapAsTemplate( "badwordsMessage" ),
         badwordsMessageDefault: uiUtilsWrapAsTemplate( "badwordsMessageDefault" ),
+
+        none: uiUtilsWrapAsTemplate( "none" ),
     };
 
     public static getName() {
@@ -74,6 +77,10 @@ export class SetupEmbed extends UIEmbedBase {
             SetupEmbed.vars.badwordsMessage;
     }
 
+    protected getFooter(): string {
+        return "Tip: You can set logs channel by editing the master channel.";
+    }
+
     protected getArrayOptions() {
         const { separator, value, masterChannelsOptions } = SetupEmbed.vars;
 
@@ -89,6 +96,7 @@ export class SetupEmbed extends UIEmbedBase {
                     channelsTemplateName: `▹ Dynamic Channels Name: \`${ masterChannelsOptions.channelsTemplateName }\``,
                     channelsTemplateButtons: `▹ Buttons: **${ masterChannelsOptions.channelsTemplateButtons }**`,
                     channelsVerifiedRoles: `▹ Verified Roles: ${ masterChannelsOptions.channelsVerifiedRoles }`,
+                    channelsLogsChannelId: `▹ Logs Channel: ${ masterChannelsOptions.channelsLogsChannelId }`,
                 }
             },
             badwords: {
@@ -115,7 +123,9 @@ export class SetupEmbed extends UIEmbedBase {
             badwordsMessage: {
                 [ badwords ]: "`" + badwords + "`",
                 [ badwordsMessageDefault ]: "**None**",
-            }
+            },
+
+            none: "**None**",
         };
     }
 
@@ -127,7 +137,7 @@ export class SetupEmbed extends UIEmbedBase {
                     usedButtons = data?.object?.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
                     usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis( usedButtons ) )
                         .join( ", " ),
-                    usedRoles = ( data?.object.dynamicChannelVerifiedRoles || []).map( ( roleId: string ) => {
+                    usedRoles = ( data?.object.dynamicChannelVerifiedRoles || [] ).map( ( roleId: string ) => {
                         return "<@&" + roleId + ">";
                     } ).join( ", " );
 
@@ -137,6 +147,7 @@ export class SetupEmbed extends UIEmbedBase {
                     channelsTemplateName: data?.object?.dynamicChannelNameTemplate || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
                     channelsTemplateButtons: usedEmojis,
                     channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
+                    channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId ? `<#${ data?.object?.dynamicChannelLogsChannelId }>` : SetupEmbed.vars.none,
                 };
             } ),
             masterChannels = await Promise.all( masterChannelsPromise ) || [];

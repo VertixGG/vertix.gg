@@ -14,7 +14,7 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public getLabelForEmbed() {
-        return "🔃 ∙ **Reset Channel**";
+        return "🔃 ∙ **Reset**";
     }
 
     public async getLabelForMenu(): Promise<string> {
@@ -22,7 +22,7 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public getLabel(): Promise<string> {
-        return Promise.resolve( "Reset Channel" );
+        return Promise.resolve( "Reset" );
     }
 
     public getEmoji(): Promise<string> {

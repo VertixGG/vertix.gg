@@ -34,7 +34,7 @@ export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdap
     }
 
     private async onResetChannelButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        const result = await DynamicChannelManager.$.resetChannel( interaction.channel, interaction.user.id );
+        const result = await DynamicChannelManager.$.resetChannel( interaction, interaction.channel );
 
         switch ( result?.code ) {
             case "success-rename-rate-limit":

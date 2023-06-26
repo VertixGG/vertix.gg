@@ -27,12 +27,15 @@ export const DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE = DynamicChannelElementsGr
 
 export const DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE = true;
 
+export const DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID = null;
+
 /* Default Data Key Settings */
 
 export const MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE = "dynamicChannelNameTemplate",
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE = "dynamicChannelButtonsTemplate",
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE = "dynamicChannelMentionable",
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES = "dynamicChannelVerifiedRoles";
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES = "dynamicChannelVerifiedRoles",
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID = "dynamicChannelLogsChannelId";
 
 /* Default Data Settings */
 
@@ -41,6 +44,7 @@ export const DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS = {
     [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
     [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: [],
+    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ]: DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
 };
 
 /* Default Permissions */
@@ -80,17 +84,12 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
     ],
 };
 
-export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS = {
-    type: OverwriteType.Member,
-    allow: [
-        Flags.Connect,
-        Flags.ReadMessageHistory,
-        Flags.SendMessages,
-        Flags.ViewChannel,
-    ],
-};
-
 export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
     deny: [ Flags.SendMessages ],
 };
 
+export const DEFAULT_SETUP_PERMISSIONS  = [
+    PermissionsBitField.Flags.ManageGuild,
+    PermissionsBitField.Flags.ManageChannels,
+    PermissionsBitField.Flags.ManageRoles,
+];

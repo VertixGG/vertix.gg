@@ -9,7 +9,6 @@ import { ChannelModel } from "@vertix/models";
 
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS
 } from "@vertix/definitions/master-channel";
 
 import { GlobalLogger } from "@internal/vertix/global-logger";
@@ -19,18 +18,25 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
         return false;
     }
 
-    const masterChannelDB = await ChannelModel.$.getByChannelId(
+    const dynamicChannelDB = await ChannelModel.$.getByChannelId(
         interaction.channel.id
     );
 
-    if ( ! masterChannelDB ) {
+    if ( ! dynamicChannelDB ) {
         return false;
     }
 
-    if ( interaction.user.id !== masterChannelDB.userOwnerId ) {
+    if ( interaction.user.id !== dynamicChannelDB.userOwnerId ) {
+        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelDB.channelId );
+
+        if ( ! masterChannelDB ) {
+            return false;
+        }
+
         await UIAdapterManager.$.get( "Vertix/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
             masterChannelId: masterChannelDB.channelId,
         } );
+
         return false;
     }
 
@@ -38,10 +44,8 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
         return true;
     }
 
-    const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
-        requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+    const requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
         missingPermissions = [
-            ... PermissionsManager.$.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel ),
             ... PermissionsManager.$.getMissingPermissions( requiredRolePermissions, interaction.guild ),
         ];
 

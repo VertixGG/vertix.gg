@@ -38,7 +38,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
     }
 
     private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        const result = await DynamicChannelManager.$.clearChat( interaction.channel );
+        const result = await DynamicChannelManager.$.clearChat( interaction, interaction.channel );
 
         switch ( result?.code ) {
             case "success":

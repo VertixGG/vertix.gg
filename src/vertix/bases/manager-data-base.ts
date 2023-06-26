@@ -37,7 +37,7 @@ export abstract class ManagerDataBase<
         const { ownerId, key, cache } = args,
             cacheKey = `${ ownerId }-${ key }`;
 
-        this.logger.info( this.getData,
+        this.logger.log( this.getData,
             `Getting data for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'`
         );
 

@@ -20,8 +20,6 @@ export class Logger extends ObjectBase {
 
     private messagePrefixes: string[] = [];
 
-    private cachedDate: string;
-
     public static getName(): string {
         return "Modules/Logger";
     }
@@ -29,31 +27,41 @@ export class Logger extends ObjectBase {
     public constructor( owner: ObjectBase | typeof ObjectBase ) {
         super();
 
+        this.owner = owner;
+
         if ( registeredNames[ owner.getName() ] ) {
             throw new Error( `Logger for '${ owner.getName() }' already exists` );
         }
 
-        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
+        if ( process.env.DISABLE_LOGGER && "true" === process.env.DISABLE_LOGGER ) {
+            this.error = () => {};
+            this.warn = () => {};
+            this.admin = () => {};
+            this.info = () => {};
+            this.log = () => {};
+            this.debug = () => {};
 
-        if ( ! iso ) {
-            throw new Error( "Invalid date" );
+            return;
         }
-
-        this.cachedDate = iso[ 1 ] + " " + iso[ 2 ];
-
-        this.owner = owner;
 
         if ( process.env.DISABLE_LOGGER_PREVIOUS_SOURCE && "true" === process.env.DISABLE_LOGGER_PREVIOUS_SOURCE ) {
             this.getPreviousSource = () => "";
         }
 
-        if ( process.env.DISABLE_LOGGER && "true" === process.env.DISABLE_LOGGER ) {
-            this.log = () => {};
-            this.info = () => {};
-            this.debug = () => {};
-            this.warn = () => {};
-            this.error = () => {};
-            this.admin = () => {};
+        // noinspection FallThroughInSwitchStatementJS
+        switch ( parseInt( process.env.LOG_LEVEL || "4" ) ) {
+            case 0:
+                this.error = () => {};
+            case 1:
+                this.warn = () => {};
+            case 2:
+                this.admin = () => {};
+            case 3:
+                this.info = () => {};
+            case 4:
+                this.log = () => {};
+            case 5:
+                this.debug = () => {};
         }
     }
 
@@ -90,7 +98,13 @@ export class Logger extends ObjectBase {
     }
 
     private getTime(): string {
-        return this.cachedDate;
+        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
+
+        if ( ! iso ) {
+            return "Invalid Time";
+        }
+
+        return iso[ 1 ] + " " + iso[ 2 ];
     }
 
     private getCallerName( caller: ICaller ): string {

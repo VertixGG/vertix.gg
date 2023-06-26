@@ -14,6 +14,8 @@ import { TopGGManager } from "@vertix/managers/top-gg-manager";
 
 import { ChannelModel } from "@vertix/models";
 
+import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
+
 import { InitializeBase } from "@internal/bases/initialize-base";
 
 import { Debugger } from "@internal/modules/debugger";
@@ -88,14 +90,14 @@ export class DynamicChannelClaimManager extends InitializeBase {
             timestamp: Date.now()
         };
 
-        this.debugger.log( this.addChannelTracking, `Channel id: '${ channel.id }' - Adding owner id: '${ owner.id }' to tracking list` );
+        this.logger.info( this.addChannelTracking, `Channel id: '${ channel.id }' - Adding owner id: '${ owner.id }' to tracking list` );
 
         this.trackedChannels[ channel.id ] = trackingData;
     }
 
-    public removeChannelTracking( ownerId: string, channelId?: string ) {
+    public removeChannelOwnerTracking( ownerId: string, channelId?: string ) {
         if ( ! channelId?.length ) {
-            this.logger.log( this.removeChannelTracking,
+            this.logger.log( this.removeChannelOwnerTracking,
                 `Channel id is not provided! - Removing all owners with id: '${ ownerId }' from tracking.`
             );
 
@@ -103,7 +105,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 const channelData = this.trackedChannels[ _channelId ];
 
                 if ( channelData.owner.id === ownerId ) {
-                    this.debugger.log( this.removeChannelTracking, `Channel id: '${ _channelId }' owner id: '${ ownerId }' - Removing channel from tracking according to ownerId.` );
+                    this.debugger.log( this.removeChannelOwnerTracking, `Channel id: '${ _channelId }' owner id: '${ ownerId }' - Removing channel from tracking according to ownerId.` );
 
                     delete this.trackedChannels[ _channelId ];
                 }
@@ -112,16 +114,20 @@ export class DynamicChannelClaimManager extends InitializeBase {
             return;
         }
 
+        this.removeChannelTracking( channelId );
+    }
+
+    public removeChannelTracking( channelId: string ) {
         const channel = this.trackedChannels[ channelId ]?.channel;
 
         if ( ! channel ) {
-            this.logger.warn( this.removeChannelTracking,
+            this.logger.log( this.removeChannelTracking,
                 `Channel: '${ channelId }' is not tracked!`
             );
             return;
         }
 
-        this.debugger.log( this.removeChannelTracking, `Channel id: '${ channel.id }' owner id: '${ ownerId }' - Removing channel from tracking.` );
+        this.logger.info( this.removeChannelTracking, `Channel id: '${ channel.id }' - Removing channel from tracking.` );
 
         delete this.trackedChannels[ channelId ];
     }
@@ -151,6 +157,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
      * so worker can handle them later, the function is called on bot start.
      */
     public async handleAbandonedChannels( client: Client, specificChannels?: VoiceChannel[], specificChannelsDB?: ChannelResult[] ) {
+        this.debugger.dumpDown( this.handleAbandonedChannels, {
+            specificChannels,
+            specificChannelsDB
+        } );
+
         const handleChannels = async ( dynamicChannels: ChannelResult[] ) => {
             for ( const channelDB of dynamicChannels ) {
                 const guild = client.guilds.cache.get( channelDB.guildId );
@@ -246,7 +257,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 `Setting up worker with interval: '${ ( workerInterval / 60000 ).toFixed( 1 ) } minute(s)'`
             );
 
-            this.ownerShipWorkerInterval = setInterval( this.ownerWorker.bind( this ), workerInterval );
+            this.ownerShipWorkerInterval = setInterval( this.trackedChannelsWorker.bind( this ), workerInterval );
 
             this.workerIntervals.push( this.ownerShipWorkerInterval );
         }
@@ -310,7 +321,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         // TODO: Maybe it can cause some issues.
         await interaction.deferUpdate();
 
-        this.removeChannelTracking( channelDB.userOwnerId, interaction.channelId );
+        this.removeChannelOwnerTracking( channelDB.userOwnerId, interaction.channelId );
 
         DynamicChannelVoteManager.$.start(
             interaction.channel,
@@ -329,10 +340,9 @@ export class DynamicChannelClaimManager extends InitializeBase {
     private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
-        // TODO: separator and limit to constants.
-        const customIdParts = interaction.customId.split( ":", 3 );
+        const customIdParts = interaction.customId.split( UI_GENERIC_SEPARATOR, 3 );
+
         switch ( customIdParts[ 1 ] ) {
-            // case "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton":
             case "Vertix/UI-V2/ClaimVoteStepInButton":
                 this.logger.admin( this.handleVoteRequest,
                     `😈  Claim step-In button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
@@ -446,19 +456,12 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
                 // TODO: Remove catch.
                 await UIAdapterManager.$.get( "Vertix/UI-V2/ClaimVoteAdapter" )?.editMessage( message, {} );
-
-                // Request to rescan, since new channel owner, to determine if he abandoned.
-                // TODO: Why its here?
-                // TODO: Should it be tested?
-                if ( "done" === state ) {
-                    setTimeout( () => this.handleAbandonedChannels( interaction.client, [ channel ] ), 1000 ); // TODO: Move to constant.
-                }
         }
     }
 
-    private async ownerWorker() {
+    private async trackedChannelsWorker() {
         if ( this.trackedChannels.length ) {
-            this.logger.log( this.ownerWorker, "Worker activated", Object.entries( this.trackedChannels ).map( ( [ ownerId, data ] ) => {
+            this.logger.log( this.trackedChannelsWorker, "Worker activated", Object.entries( this.trackedChannels ).map( ( [ ownerId, data ] ) => {
                 const { channel } = data,
                     { guildId } = channel;
 
@@ -473,30 +476,30 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 continue;
             }
 
-            this.logger.info( this.ownerWorker,
+            this.logger.info( this.trackedChannelsWorker,
                 `Guild id: '${ channel.guild.id }', owner id: '${ ownerId }' - Abandon the channel: '${ channel.name }'`
             );
 
             if ( ! channel.guild.channels.cache.has( channel.id ) ) {
-                this.logger.warn( this.ownerWorker,
+                this.logger.warn( this.trackedChannelsWorker,
                     `Guild id: '${ channel.guild.id }' Channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
                     `- Channel: '${ channel.name }' deleted while, skip abandon`
                 );
 
-                this.removeChannelTracking( ownerId );
+                this.removeChannelOwnerTracking( ownerId );
 
                 continue;
             }
 
             const state = DynamicChannelVoteManager.$.getState( channel.id );
 
-            this.debugger.log( this.ownerWorker,
+            this.debugger.log( this.trackedChannelsWorker,
                 `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
                 `- Channel: '${ channel.name }' vote state: '${ state }'` );
 
             // Skip if vote is not idle.
             if ( state !== "idle" ) {
-                this.logger.warn( this.ownerWorker,
+                this.logger.warn( this.trackedChannelsWorker,
                     `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
                     `- Channel: '${ channel.name }' has active vote, skip abandon`
                 );
@@ -512,7 +515,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             await UIAdapterManager.$.get( "Vertix/UI-V2/ClaimStartAdapter" )?.send( channel, {} );
 
             // Remove from abandon list.
-            this.removeChannelTracking( ownerId, channel.id );
+            this.removeChannelOwnerTracking( ownerId, channel.id );
         }
     }
 }

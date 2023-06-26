@@ -20,7 +20,7 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     public getLabelForEmbed() {
-        return "😈 ∙ **Claim Channel**";
+        return "😈 ∙ **Claim**";
     }
 
     public async getLabelForMenu(): Promise<string> {
@@ -28,7 +28,7 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     public async getLabel(): Promise<string> {
-        return "Claim Channel";
+        return "Claim";
     }
 
     public getEmoji(): Promise<string> {

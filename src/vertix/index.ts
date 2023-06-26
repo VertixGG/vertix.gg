@@ -74,7 +74,7 @@ export default async function Main() {
     async function onLogin() {
         assert( client.user );
 
-        logger.log( onLogin, `Bot: '${ client.user.username }' is authenticated` );
+        logger.info( onLogin, `Bot: '${ client.user.username }' is authenticated` );
 
         logger.log( onLogin, "Registering listeners..." );
 

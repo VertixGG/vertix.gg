@@ -79,7 +79,7 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
             return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInput", {} );
         }
 
-        if ( ! await DynamicChannelManager.$.editUserLimit( interaction.channel, parsedInput ) ) {
+        if ( ! await DynamicChannelManager.$.editUserLimit( interaction, interaction.channel, parsedInput ) ) {
             return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelMetaLimitError", {} );
         }
 

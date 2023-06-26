@@ -26,27 +26,24 @@ export class WelcomeEmbed extends UIEmbedBase {
         return "༄ Vertix is here, let's get started!";
     }
 
+    protected getThumbnail() {
+        return {
+            url: "https://s11.gifyu.com/images/SuW5n.gif",
+        };
+    }
+
     protected getDescription() {
         return "Welcome to Vertix, an incredible addition to your server!\n" +
             "Let's collaborate and make your server even better.\n\n" +
 
-            "**Bot Welcome**\n" +
-            "Setting up the bot is a breeze! Just follow these simple steps:\n" +
-            "- Type `/setup` to create your first master channel.\n" +
-            "- Click on `(➕ Create Master Channel)`.\n" +
-            "- Set default channel names or click \"`(▶ Next)`\" to proceed.\n" +
-            "- Choose channel buttons or continue with all features, then click \"`(✔ Finish)`\".\n\n" +
+            "**Bot Setup**\n" +
+            "- Type `/setup` or press `(🛠 Setup)` button.\n" +
+            "- Click on `(➕ Create Master Channel)`\n" +
+            "- Follow the steps.\n\n" +
+            "Still not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\n" +
             "You can always edit the configurations by using the `/setup` command.\n\n" +
 
-            "**Dynamic Channels and Master Channel**\n" +
-            "Dynamic channels inherit all settings from the Master Channel.\n" +
-            "To Set the default settings of dynamic channels, simply adjust the settings of the Master Channel `(➕ New Channel)`.\n\n" +
-
-            "**Buttons Interface**\n" +
-            "Please note that the buttons interface is located **inside** the dynamic channel.\n" +
-            "You can access it by opening the chat box of the dynamic channel.\n\n" +
-
-            "If you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n" +
+            "If you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\n" +
             "Join us at: https://discord.gg/dEwKeQefUU";
     }
 }

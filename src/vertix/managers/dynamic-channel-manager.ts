@@ -359,7 +359,7 @@ export class DynamicChannelManager extends InitializeBase {
         this.logger.info( this.createDynamicChannel,
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
 
-        // Create channel for the user.
+        // Create a channel for the user.
         const dynamic = await ChannelManager.$.create( {
             guild,
             name: dynamicChannelName,
@@ -386,17 +386,17 @@ export class DynamicChannelManager extends InitializeBase {
             newState,
         } );
 
-        // Move the user to new created channel.
+        // Move the user to a new created channel.
         setTimeout( () => {
             newState.setChannel( dynamic.channel.id ).then( () => {
                 this.logger.log( this.createDynamicChannel,
                     `Guild id: '${ guild.id }' - User '${ displayName }' moved to dynamic channel '${ dynamicChannelName }'`
                 );
-            } );
+            } ).catch( () => {} );
         } );
 
         if ( dynamic.channel.isVoiceBased() ) {
-            // Create primary message.
+            // Create a primary message.
             await this.createPrimaryMessage( dynamic.channel, dynamic.db );
         }
 

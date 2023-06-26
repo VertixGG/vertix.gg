@@ -5,7 +5,10 @@ import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_bas
 
 import { PermissionsManager } from "@vertix/managers/permissions-manager";
 
-import { DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS } from "@vertix/definitions/master-channel";
+import {
+    DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS,
+    DEFAULT_SETUP_PERMISSIONS
+} from "@vertix/definitions/master-channel";
 
 import Logger from "@internal/modules/logger";
 
@@ -20,7 +23,7 @@ export class AdminAdapterBase<
     }
 
     public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( PermissionsBitField.Flags.Administrator );
+        return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
     }
 
     public getChannelTypes() {

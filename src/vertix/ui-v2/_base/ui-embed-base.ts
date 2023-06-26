@@ -1,4 +1,4 @@
-import { APIEmbedField } from "discord.js";
+import { APIEmbedField, APIEmbedThumbnail } from "discord.js";
 
 import { UITemplateBase } from "@vertix/ui-v2/_base/ui-template-base";
 
@@ -88,7 +88,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
             attributes.footer = content.footer;
         }
 
-        if ( thumbnail.length ) {
+        if ( thumbnail ) {
             attributes.thumbnail = thumbnail;
         }
 
@@ -142,8 +142,8 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return "";
     }
 
-    protected getThumbnail(): string {
-        return "";
+    protected getThumbnail(): APIEmbedThumbnail|null {
+        return null;
     }
 
     protected getImage(): string {

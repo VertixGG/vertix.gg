@@ -84,17 +84,12 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
     ],
 };
 
-export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS = {
-    type: OverwriteType.Member,
-    allow: [
-        Flags.Connect,
-        Flags.ReadMessageHistory,
-        Flags.SendMessages,
-        Flags.ViewChannel,
-    ],
-};
-
 export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
     deny: [ Flags.SendMessages ],
 };
 
+export const DEFAULT_SETUP_PERMISSIONS  = [
+    PermissionsBitField.Flags.ManageGuild,
+    PermissionsBitField.Flags.ManageChannels,
+    PermissionsBitField.Flags.ManageRoles,
+];

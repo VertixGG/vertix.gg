@@ -8,11 +8,7 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
-
-import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS, } from "@vertix/definitions/master-channel";
-
-import { permissionsConvertBitfieldToOverwriteOptions } from "@vertix/utils/permissions";
+import { ChannelModel } from "@vertix/models/channel-model";
 
 import { AppManager } from "@vertix/managers/app-manager";
 
@@ -61,25 +57,6 @@ export class PermissionsManager extends InitializeBase {
         // Print debug new permissions.
         this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldState.guildId }' - New permissions for channel id: '${ oldState.id }'` );
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newState.permissionOverwrites );
-
-        const channel = await ChannelModel.$.getByChannelId( newState.id, true );
-
-        if ( ! channel ) {
-            return this.logger.debug( this.onChannelPermissionsUpdate,
-                `Guild id: '${ oldState.guildId }', channel id: '${ newState.id }' - Not found in the database`
-            );
-        }
-
-        if ( channel.isMaster || channel.isDynamic ) {
-            const botId = newState.client.user.id,
-                isBotPermissionsRemovedFromChannel = ! newState.permissionOverwrites.cache.get( botId );
-
-            if ( isBotPermissionsRemovedFromChannel ) {
-                this.logger.admin( this.onChannelPermissionsUpdate,
-                    `🔐 Bot permissions were removed from channel id: '${ newState.id }', channel name: '${ newState.name }' - (${ newState.guild.name }) (${ newState.guild?.memberCount })`
-                );
-            }
-        }
     }
 
     public getRolesPermissions( context: Guild, userId = context.client.user.id ) {
@@ -239,48 +216,5 @@ export class PermissionsManager extends InitializeBase {
 
             resolve();
         } );
-    }
-
-    private resetBotUserPermissionsDebounce( channel: VoiceChannel, channelResult: ChannelResult, delay = 1500 ) {
-        this.logger.log( this.resetBotUserPermissionsDebounce,
-            `Guild id: '${ channel.guildId }' - Requesting reset bot permissions for channel id: '${ channel.id }'`
-        );
-
-        const callback = async () => {
-            await this.resetBotUserPermissions( channel, channelResult );
-
-            this.resetBotPermissionsDebounceMap.delete( channel.id );
-        };
-
-        const key = channel.id;
-
-        let timeoutId = this.resetBotPermissionsDebounceMap.get( key );
-
-        if ( timeoutId ) {
-            this.resetBotPermissionsDebounceMap.delete( channel.id );
-            clearTimeout( timeoutId );
-        }
-
-        timeoutId = setTimeout( callback, delay );
-
-        this.resetBotPermissionsDebounceMap.set( key, timeoutId );
-    }
-
-    /**
-     * Function resetBotUserPermissions() :: Called when the bot has removed from the channel permissions.
-     * The function will try to re-add the bot permissions to the channel.
-     */
-    private async resetBotUserPermissions( channel: VoiceChannel, channelResult: ChannelResult ) {
-        this.logger.info( this.resetBotUserPermissions,
-            `Guild id: '${ channel.guildId }' - Bot permissions were removed from: '${ channelResult.internalType }' channel: '${ channel.id }'`
-        );
-
-        const requiredPermissionsOptions = permissionsConvertBitfieldToOverwriteOptions(
-            DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow
-        );
-
-        await channel.permissionOverwrites.edit( channel.client.user.id, requiredPermissionsOptions ).catch(
-            ( e ) => this.logger.warn( this.resetBotUserPermissions, "", e )
-        );
     }
 }

@@ -9,7 +9,6 @@ import { ChannelModel } from "@vertix/models";
 
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS
 } from "@vertix/definitions/master-channel";
 
 import { GlobalLogger } from "@internal/vertix/global-logger";
@@ -45,10 +44,8 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
         return true;
     }
 
-    const requiredUserPermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
-        requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
+    const requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
         missingPermissions = [
-            ... PermissionsManager.$.getMissingPermissions( requiredUserPermissions, interaction.channel as VoiceChannel ),
             ... PermissionsManager.$.getMissingPermissions( requiredRolePermissions, interaction.guild ),
         ];
 

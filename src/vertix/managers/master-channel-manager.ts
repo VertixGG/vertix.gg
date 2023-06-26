@@ -20,7 +20,6 @@ import {
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
@@ -181,9 +180,9 @@ export class MasterChannelManager extends InitializeBase {
             tryCount: tooFast ? ( tryCount + 1 ) : 1,
         } );
 
-        // Check if bot exist in administrator role.
+        // Check if bot exists in the administrator role.
         if ( ! PermissionsManager.$.isSelfAdministratorRole( guild ) ) {
-            // Get permissions of master channel.
+            // Get permissions of a master channel.
             const roleMasterChannelPermissions: bigint[] = [];
 
             if ( newState.channel ) {
@@ -197,11 +196,7 @@ export class MasterChannelManager extends InitializeBase {
                 }
             }
 
-            const missingPermissionsChannelLevel = PermissionsManager.$.getMissingPermissions(
-                    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
-                    newState.channel
-                ),
-                missingPermissionsRoleLevel = PermissionsManager.$.getMissingPermissions(
+            const missingPermissionsRoleLevel = PermissionsManager.$.getMissingPermissions(
                     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
                     newState.channel.guild
                 ),
@@ -209,7 +204,6 @@ export class MasterChannelManager extends InitializeBase {
                     roleMasterChannelPermissions,
                     newState.channel.guild,
                 ), missingPermissions = [
-                    ... missingPermissionsChannelLevel,
                     ... missingPermissionsRoleLevel,
                     ... missingPermissionsRoleMasterChannelLevel,
                 ];
@@ -231,12 +225,6 @@ export class MasterChannelManager extends InitializeBase {
             if ( missingPermissionsRoleLevel.length ) {
                 this.logger.admin( this.onJoinMasterChannel,
                     `🔐 Vertix missing permissions - "${ missingPermissionsRoleLevel.join( ", " ) }" (${ guild.name }) (${ guild.memberCount })`
-                );
-            }
-
-            if ( missingPermissionsChannelLevel.length ) {
-                this.logger.admin( this.onJoinMasterChannel,
-                    `🔐 Master Channel missing permissions - "${ missingPermissionsChannelLevel.join( ", " ) }" (${ guild.name }) (${ guild.memberCount })`
                 );
             }
 
@@ -649,7 +637,7 @@ export class MasterChannelManager extends InitializeBase {
 
         if ( shouldAdminLog ) {
             this.logger.admin( this.setChannelLogsChannel,
-                `⁝ Set log channel  - ownerId: "${ ownerId }" channelId: "${ channelId }"`
+                `✎ Set log channel  - ownerId: "${ ownerId }" channelId: "${ channelId }"`
             );
         }
 
@@ -683,13 +671,6 @@ export class MasterChannelManager extends InitializeBase {
             ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
         } ) );
 
-        const outOfBoxPermissionsOverwrites = [ {
-            id: guild.client.user.id,
-            ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-        },
-            ... verifiedRolesWithPermissions
-        ];
-
         const result = await ChannelManager.$.create( {
             parent,
             guild,
@@ -697,7 +678,7 @@ export class MasterChannelManager extends InitializeBase {
             internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
-            permissionOverwrites: outOfBoxPermissionsOverwrites,
+            permissionOverwrites: verifiedRolesWithPermissions,
         } );
 
         if ( ! result ) {

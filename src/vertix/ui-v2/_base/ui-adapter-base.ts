@@ -199,12 +199,14 @@ export abstract class UIAdapterBase<
         }
     }
 
-    public async build( args: UIArgs, from: UIAdapterBuildSource = "unknown", context: string | TInteraction | TChannel | Message<true> ) {
+    public async build( args: UIArgs, from: UIAdapterBuildSource = "unknown", context: "direct-message" | string | TInteraction | TChannel | Message<true> ) {
         await this.getComponent().waitUntilInitialized();
 
         const ownerId = "string" === typeof context ? context : context.guildId;
 
-        if ( ownerId && ! args._language ) {
+        if ( ownerId === "direct-message" ) {
+            args._language = UI_LANGUAGES_INITIAL_CODE;
+        } else if ( ownerId && ! args._language ) {
             // TODO: Move to hook.
             const language = await GuildDataManager.$.getData( {
                 ownerId: "string" === typeof context ? context : context.guildId,
@@ -266,7 +268,7 @@ export abstract class UIAdapterBase<
         throw new Error( "Not implemented" );
     }
 
-    public async sendToUser( guildId: string, userId: string, argsFromManager: UIArgs ) {
+    public async sendToUser( guildId: string | "direct-message", userId: string, argsFromManager: UIArgs ) {
         this.staticAdapter.adapterDebugger.log(
             this.sendToUser, this.getName() + ` - Sending to user: '${ userId }' from guild id: '${ guildId }'`
         );
@@ -297,12 +299,12 @@ export abstract class UIAdapterBase<
 
         const message = await this.getMessage( "edit", interaction, newArgs );
 
-        if ( interaction.isUserSelectMenu() || interaction.isRoleSelectMenu() ) {
+        if ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) {
             const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
 
             disabledComponents.forEach( ( row: any ) => {
                 for ( const component of row.components ) {
-                    if ( component.type === ComponentType.RoleSelect || component.type === ComponentType.UserSelect ) {
+                    if ( component.type === ComponentType.UserSelect || component.type === ComponentType.ChannelSelect ) {
                         row.components.splice( row.components.indexOf( component ), 1 );
                     }
                 }

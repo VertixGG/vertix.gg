@@ -3,6 +3,7 @@ import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
 import {
     CategoryChannel,
     ChannelType,
+    EmbedBuilder,
     Guild,
     GuildChannel,
     OverwriteType,
@@ -19,12 +20,12 @@ import {
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
-    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES,
@@ -84,10 +85,18 @@ interface IMasterChannelCreateResult {
     db?: ChannelResult,
 }
 
+const MAX_TIMEOUT_PER_CREATE = /* 1 minute */ 40 * 1000;
+
 export class MasterChannelManager extends InitializeBase {
     private static instance: MasterChannelManager;
 
     private debugger: Debugger;
+
+    private requestedChannelMap: Map<string, {
+        timestamp: number,
+        tryCount: number,
+        shouldSentWarning: boolean,
+    }> = new Map();
 
     public static getName(): string {
         return "Vertix/Managers/MasterChannel";
@@ -116,17 +125,64 @@ export class MasterChannelManager extends InitializeBase {
             { guild } = newState;
 
         this.logger.info( this.onJoinMasterChannel,
-            `Guild id: '${ guild.id }' - User '${ displayName }' joined master channel: '${ channelName }'` );
+            `Guild id: '${ guild.id }' - User '${ displayName }' joined master channel id: '${ newState.channelId }'` );
 
         if ( ! newState.channel ) {
-            this.logger.error( this.onJoinMasterChannel, `Could not find channel: '${ channelName }'` );
+            this.logger.error( this.onJoinMasterChannel, `Could not find channel id: '${ newState.channelId }'` );
 
             return;
         }
 
-        // Check if bot exist in administrator role.
+        if ( ! newState.member ) {
+            this.logger.error( this.onJoinMasterChannel, `Could not find member channel id: '${ newState.channelId }'` );
+
+            return;
+        }
+
+        const member = newState.member,
+            request = this.requestedChannelMap.get( member.id ),
+            timestamp = Date.now(),
+            timePassed = timestamp - ( request?.timestamp || 0 ),
+            tooFast = timePassed < MAX_TIMEOUT_PER_CREATE;
+
+        let tryCount = request?.tryCount || 0;
+
+        if ( tryCount > 1 && tooFast ) {
+            this.logger.warn( this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - User '${ displayName }' request master channel id: '${ newState.channelId }' too fast, try count: ${ request?.tryCount }` );
+
+            if ( true === request?.shouldSentWarning ) {
+                const embed = new EmbedBuilder();
+
+                embed.setColor( "Yellow" );
+                embed.setTitle( "Warning" );
+                embed.setDescription( `You are requesting channel too fast. You can create new channels each \`${ MAX_TIMEOUT_PER_CREATE / 1000 }\` seconds.` );
+
+                await newState.member.send( { embeds: [ embed ] } ).catch( () => {
+                    this.logger.error( this.onJoinMasterChannel,
+                        `Guild id: '${ guild.id }' - User '${ displayName }' could not send warning message` );
+                } ).then( () => {
+                    this.requestedChannelMap.set( member.id, {
+                        timestamp,
+                        shouldSentWarning: false,
+                        tryCount: tryCount + 1,
+                    } );
+                } );
+            }
+
+            return;
+        }
+
+        // Set new timestamp.
+        this.requestedChannelMap.set( newState.member.id, {
+            timestamp,
+            shouldSentWarning: true,
+            tryCount: tooFast ? ( tryCount + 1 ) : 1,
+        } );
+
+        // Check if bot exists in the administrator role.
         if ( ! PermissionsManager.$.isSelfAdministratorRole( guild ) ) {
-            // Get permissions of master channel.
+            // Get permissions of a master channel.
             const roleMasterChannelPermissions: bigint[] = [];
 
             if ( newState.channel ) {
@@ -140,11 +196,7 @@ export class MasterChannelManager extends InitializeBase {
                 }
             }
 
-            const missingPermissionsChannelLevel = PermissionsManager.$.getMissingPermissions(
-                    DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS.allow,
-                    newState.channel
-                ),
-                missingPermissionsRoleLevel = PermissionsManager.$.getMissingPermissions(
+            const missingPermissionsRoleLevel = PermissionsManager.$.getMissingPermissions(
                     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
                     newState.channel.guild
                 ),
@@ -152,7 +204,6 @@ export class MasterChannelManager extends InitializeBase {
                     roleMasterChannelPermissions,
                     newState.channel.guild,
                 ), missingPermissions = [
-                    ... missingPermissionsChannelLevel,
                     ... missingPermissionsRoleLevel,
                     ... missingPermissionsRoleMasterChannelLevel,
                 ];
@@ -174,12 +225,6 @@ export class MasterChannelManager extends InitializeBase {
             if ( missingPermissionsRoleLevel.length ) {
                 this.logger.admin( this.onJoinMasterChannel,
                     `🔐 Vertix missing permissions - "${ missingPermissionsRoleLevel.join( ", " ) }" (${ guild.name }) (${ guild.memberCount })`
-                );
-            }
-
-            if ( missingPermissionsChannelLevel.length ) {
-                this.logger.admin( this.onJoinMasterChannel,
-                    `🔐 Master Channel missing permissions - "${ missingPermissionsChannelLevel.join( ", " ) }" (${ guild.name }) (${ guild.memberCount })`
                 );
             }
 
@@ -236,7 +281,6 @@ export class MasterChannelManager extends InitializeBase {
             if ( ! dynamic ) {
                 this.logger.error( this.onJoinMasterChannel,
                     `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'` );
-
                 return;
             }
         } catch ( e ) {
@@ -407,6 +451,27 @@ export class MasterChannelManager extends InitializeBase {
         return verifiedRoles;
     }
 
+    public async getChannelLogsChannelId( ownerId: string, returnDefault?: boolean ) {
+        const result = await ChannelDataManager.$.getSettingsData(
+                ownerId,
+                returnDefault ? DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS : null,
+                true
+            );
+
+        let logsChannelId = result?.object?.[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ];
+
+        if ( ! logsChannelId ) {
+            logsChannelId = null;
+        }
+
+        this.debugger.dumpDown( this.getChannelLogsChannelId,
+            logsChannelId,
+            `ownerId: '${ ownerId }' returnDefault: '${ returnDefault }' - logsChannelId: `
+        );
+
+        return logsChannelId;
+    }
+
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
         const result: IMasterChannelCreateResult = {
             code: MasterChannelCreateResultCode.Error,
@@ -565,6 +630,22 @@ export class MasterChannelManager extends InitializeBase {
         } );
     }
 
+    public async setChannelLogsChannel( ownerId: string, channelId: string|null, shouldAdminLog = true ) {
+        this.logger.log( this.setChannelLogsChannel,
+            `Master channel id: '${ ownerId }' - Setting channel logs channel: '${ channelId }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin( this.setChannelLogsChannel,
+                `✎ Set log channel  - ownerId: "${ ownerId }" channelId: "${ channelId }"`
+            );
+        }
+
+        await ChannelDataManager.$.setSettingsData( ownerId, {
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ]: channelId
+        } );
+    }
+
     /**
      * Function createMasterChannel() :: Creates channel master of create.
      */
@@ -590,13 +671,6 @@ export class MasterChannelManager extends InitializeBase {
             ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
         } ) );
 
-        const outOfBoxPermissionsOverwrites = [ {
-            id: guild.client.user.id,
-            ... DEFAULT_MASTER_CHANNEL_CREATE_BOT_USER_PERMISSIONS_REQUIREMENTS,
-        },
-            ... verifiedRolesWithPermissions
-        ];
-
         const result = await ChannelManager.$.create( {
             parent,
             guild,
@@ -604,7 +678,7 @@ export class MasterChannelManager extends InitializeBase {
             internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: DEFAULT_MASTER_CHANNEL_CREATE_NAME,
             type: ChannelType.GuildVoice,
-            permissionOverwrites: outOfBoxPermissionsOverwrites,
+            permissionOverwrites: verifiedRolesWithPermissions,
         } );
 
         if ( ! result ) {

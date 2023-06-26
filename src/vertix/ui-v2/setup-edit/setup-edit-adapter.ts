@@ -2,9 +2,10 @@ import { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 import {
     UIDefaultButtonChannelTextInteraction,
+    UIDefaultChannelSelectMenuChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction,
-    UIDefaultStringSelectRolesChannelTextInteraction
+    UIDefaultStringSelectRolesChannelTextInteraction,
 } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
@@ -18,8 +19,10 @@ import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager"
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 
 import {
+    DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES
@@ -31,10 +34,14 @@ import { SetupMasterEditButton } from "@vertix/ui-v2/setup/setup-master-edit-but
 import {
     DynamicChannelElementsGroup
 } from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import {
+    DynamicChannelPremiumClaimChannelButton
+} from "@vertix/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction |
     UIDefaultStringSelectMenuChannelTextInteraction |
+    UIDefaultChannelSelectMenuChannelTextInteraction |
     UIDefaultModalChannelTextInteraction;
 
 export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interactions> {
@@ -157,6 +164,12 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             this.onConfigExtrasSelected
         );
 
+        // Log channel.
+        this.bindSelectMenu<UIDefaultChannelSelectMenuChannelTextInteraction>(
+            "Vertix/UI-V2/LogChannelSelectMenu",
+            this.onLogChannelSelected
+        );
+
         // Verified roles buttons menu.
         this.bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
             "Vertix/UI-V2/VerifiedRolesMenu",
@@ -212,6 +225,9 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
                 interaction.guild.roles.everyone.id
             ];
+        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ] =
+            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ] ||
+            DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID;
 
         if ( args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].includes( interaction.guild.roles.everyone.id ) ) {
             args.dynamicChannelIncludeEveryoneRole = true;
@@ -271,22 +287,24 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         await MasterChannelManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
-        // Get all channels that are using this master channel.
-        setTimeout( async () => {
-            const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
+        if ( buttons.includes( DynamicChannelPremiumClaimChannelButton.getId() ) ) {
+            // Get all channels that are using this master channel.
+            setTimeout( async () => {
+                const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
 
-            for ( const channelDB of channels ) {
-                const channel = AppManager.$.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
+                for ( const channelDB of channels ) {
+                    const channel = AppManager.$.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
 
-                if ( ! channel ) {
-                    console.warn( `Channel ${ channelDB.channelId } not found.` );
+                    if ( ! channel ) {
+                        console.warn( `Channel ${ channelDB.channelId } not found.` );
+                    }
+
+                    await DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
                 }
 
-                await DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
-            }
-
-            DynamicChannelClaimManager.$.handleAbandonedChannels( AppManager.$.getClient(), [], channels );
-        } );
+                DynamicChannelClaimManager.$.handleAbandonedChannels( AppManager.$.getClient(), [], channels );
+            } );
+        }
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
     }
@@ -320,17 +338,36 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
             values = interaction.values;
 
-        values.forEach( ( value ) => {
+        for ( const value of values ) {
             const parted = value.split( UI_GENERIC_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
                     args.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
+
+                    await MasterChannelManager.$.setChannelMentionable( args.ChannelDBId, args.dynamicChannelMentionable );
+                    break;
+
+                case "dynamicChannelLogsChannel":
+                    args.dynamicChannelLogsChannelId = null;
+
+                    await MasterChannelManager.$.setChannelLogsChannel( args.ChannelDBId, args.dynamicChannelLogsChannelId );
                     break;
             }
-        } );
+        }
 
-        await MasterChannelManager.$.setChannelMentionable( args.ChannelDBId, args.dynamicChannelMentionable );
+        this.getArgsManager().setArgs( this, interaction, args );
+
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+    }
+
+    private async onLogChannelSelected( interaction: UIDefaultChannelSelectMenuChannelTextInteraction ) {
+        const channelId = interaction.values.at( 0 ) || null,
+            args: UIArgs = this.getArgsManager().getArgs( this, interaction );
+
+        args.dynamicChannelLogsChannelId = channelId;
+
+        await MasterChannelManager.$.setChannelLogsChannel( args.ChannelDBId, channelId );
 
         this.getArgsManager().setArgs( this, interaction, args );
 

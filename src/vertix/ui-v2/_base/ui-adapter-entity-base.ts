@@ -2,6 +2,7 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
+    ChannelSelectMenuBuilder,
     ComponentBuilder,
     ComponentType,
     RoleSelectMenuBuilder,
@@ -196,6 +197,10 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
                         case ComponentType.RoleSelect:
                             component = new RoleSelectMenuBuilder( data );
+                            break;
+
+                        case ComponentType.ChannelSelect:
+                            component = new ChannelSelectMenuBuilder( data );
                             break;
 
                         default:

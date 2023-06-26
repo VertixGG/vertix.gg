@@ -14,7 +14,7 @@ export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase 
     }
 
     public getLabelForEmbed() {
-        return "🔀 ∙ **Transfer Ownership**";
+        return "🔀 ∙ **Transfer**";
     }
 
     public async getLabelForMenu(): Promise<string> {
@@ -22,7 +22,7 @@ export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase 
     }
 
     public getLabel(): Promise<string> {
-        return Promise.resolve( "Transfer Ownership" );
+        return Promise.resolve( "Transfer" );
     }
 
     public getEmoji(): Promise<string> {

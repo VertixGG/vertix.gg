@@ -44,12 +44,14 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     protected getDescription(): string {
         return "Setup dynamic channel management interface.\n\n" +
             "**_🎚 Buttons Interface_**\n\n" +
-            SetupStep2Embed.vars.message + "\n\n" +
+            SetupStep2Embed.vars.message + "\n" +
             "**_⚙️ Configuration_**\n\n" +
 
             "> 📌 Mention user in primary message: " + SetupStep2Embed.vars.configUserMention +
             "\n\n" +
-            "You can keep the default settings by pressing **( `Next ▶` )** button.";
+            "You can keep the default settings by pressing **( `Next ▶` )** button." +
+            "\n\n" +
+            "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).";
     }
 
     protected getFooter() {

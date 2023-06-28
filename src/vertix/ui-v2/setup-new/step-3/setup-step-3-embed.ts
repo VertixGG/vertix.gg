@@ -26,10 +26,8 @@ export class SetupStep3Embed extends VerifiedRolesEmbed {
 
     protected getDescription() {
         return "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
-            "__Here's an example__:\n" +
-            "Suppose you have a role called `@Verified`.\n\n"+
-
-            "When the owner of a Dynamic Channel changes its state to `Hidden`, members with the `@Verified` role will lose ability to see the channel.\n\n" +
+            "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
+            "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
 
             "**_🛡️ Verified Roles_**\n\n" +
             "> " + super.getDescription() + "\n\n" +

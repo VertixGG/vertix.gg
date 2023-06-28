@@ -23,7 +23,8 @@ export class SetupStep1Embed extends ChannelNameTemplateEmbed {
 
     protected getDescription(): string {
         return `${ super.getDescription() }\n\n` +
-            "You can keep the default settings by pressing **( `Next ▶` )** button.\n";
+            "You can keep the default settings by pressing **( `Next ▶` )** button.\n\n" +
+            "Not sure how it works? Check out the [explanation](https://vertix.gg/setup/1).";
     }
 
     protected getLogic( args: UIArgs ) {

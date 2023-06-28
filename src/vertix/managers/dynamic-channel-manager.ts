@@ -786,7 +786,7 @@ export class DynamicChannelManager extends InitializeBase {
                 };
             },
             previousChannelState = await getCurrentChannelState( channel ),
-            previousAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true ),
+            previousAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
                 DYNAMIC_CHANNEL_USER_TEMPLATE,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
@@ -837,7 +837,7 @@ export class DynamicChannelManager extends InitializeBase {
         await this.log( initiator, channel, this.resetChannel, "done" );
 
         const currentChannelState = await getCurrentChannelState( channel ),
-            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true );
+            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true );
 
         result.oldState = {
             ... previousChannelState,

@@ -1,18 +1,17 @@
 import process from "process";
+
 import * as fs from "fs";
 import * as path from "path";
 
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
-import { ChannelType, Client } from "discord.js";
+import { spawn, Thread, Worker } from "threads";
 
-import { CategoryManager } from "@vertix/managers/category-manager";
-import { ChannelManager } from "@vertix/managers/channel-manager";
-import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
+import { Client } from "discord.js";
 
 import { CURRENT_VERSION } from "@vertix/definitions/version";
 
 import { InitializeBase } from "@internal/bases/initialize-base";
-import { PrismaInstance } from "@internal/prisma";
+import * as util from "util";
+import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 
 interface PackageJson {
     version: string;
@@ -86,12 +85,22 @@ export class AppManager extends InitializeBase {
 
         await client.application.commands.set( Commands );
 
-        setTimeout( () => {
-            this.handleChannels( client );
+        // ---
+        const worker = await spawn( new Worker(
+            process.platform !== "darwin" ?
+                "./_workers/cleanup-worker.js" :
+                "./../_workers/cleanup-worker"
+        ) );
 
-            // TODO: Should run on background.
-            this.updateGuilds();
+        worker.handle().then( () => {
+            this.logger.log( this.onReady, "terminate worker" );
+            Thread.terminate( worker );
         } );
+        // ---
+
+        await DynamicChannelClaimManager.$.handleAbandonedChannels( client );
+
+        this.logger.info( this.onReady, "Abandoned channels are handled." );
 
         await this.ensureBackwardCompatibility();
 
@@ -100,150 +109,6 @@ export class AppManager extends InitializeBase {
 
         this.logger.log( this.onReady,
             `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.` );
-    }
-
-    public handleChannels( client: Client ) {
-        const promises = [
-            this.removeNonExistMasterChannelsFromDB( client ),
-            this.removeEmptyChannels( client ),
-            this.removeEmptyCategories( client ),
-        ];
-
-        Promise.all( promises ).then( () => {
-            this.logger.info( this.handleChannels, "All channels are handled." );
-
-            DynamicChannelClaimManager.$.handleAbandonedChannels( client ).then( () => {
-                this.logger.info( this.handleChannels, "Abandoned channels are handled." );
-            } );
-        } );
-    }
-
-    private async removeEmptyChannels( client: Client ) {
-        // Get all dynamic channels.
-        const prisma = await PrismaInstance.getClient(),
-            channels = await prisma.channel.findMany( {
-                where: {
-                    internalType: E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL
-                }
-            } );
-
-        for ( const channel of channels ) {
-            const guildCache = client.guilds.cache.get( channel.guildId ),
-                channelCache = guildCache?.channels.cache.get( channel.channelId );
-
-            if ( guildCache && channelCache?.members && channelCache.isVoiceBased() ) {
-                if ( 0 === channelCache.members.size ) {
-                    await ChannelManager.$.delete( {
-                        channel: channelCache,
-                        guild: guildCache,
-                    } );
-                }
-
-                continue;
-            }
-
-            // Delete only from db.
-            await prisma.channel.delete( {
-                where: {
-                    id: channel.id
-                },
-                include: {
-                    data: true
-                }
-            } );
-
-            this.logger.info( this.removeEmptyChannels,
-                `Channel id: '${ channel.channelId }' is deleted from db.`
-            );
-        }
-    }
-
-    public async removeNonExistMasterChannelsFromDB( client: Client ) {
-        // Remove non-existing master channels.
-        const prisma = await PrismaInstance.getClient(),
-            masterChannels = await prisma.channel.findMany( {
-                where: {
-                    internalType: E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
-                }
-            } );
-
-        for ( const channel of masterChannels ) {
-            const guildCache = client.guilds.cache.get( channel.guildId ),
-                channelCache = guildCache?.channels.cache.get( channel.channelId );
-
-            if ( ! guildCache || ! channelCache ) {
-                await prisma.channel.delete( {
-                    where: {
-                        id: channel.id
-                    }
-                } );
-
-                this.logger.info( this.removeNonExistMasterChannelsFromDB,
-                    `Master channel id: '${ channel.channelId }' is deleted from db.`
-                );
-            }
-        }
-    }
-
-    public async removeEmptyCategories( client: Client ) {
-        // Get all dynamic channels.
-        const prisma = await PrismaInstance.getClient(),
-            categories = await prisma.category.findMany();
-
-        for ( const category of categories ) {
-            const categoryCache = client.guilds.cache.get( category.guildId )?.channels.cache.get( category.categoryId );
-
-            if ( ChannelType.GuildCategory === categoryCache?.type ) {
-                if ( 0 === categoryCache.children.cache.size ) {
-                    await CategoryManager.$.delete( categoryCache ).catch( ( error: any ) => {
-                        this.logger.error( this.removeEmptyCategories, "", error );
-                    } );
-                }
-
-                continue;
-            }
-
-            // Delete only from db.
-            await prisma.category.delete( {
-                where: {
-                    id: category.id
-                }
-            } );
-
-            this.logger.info( this.removeEmptyCategories,
-                `Category id: '${ category.categoryId }' is deleted from database`
-            );
-        }
-    }
-
-    public async updateGuilds() {
-        // Get all guilds.
-        const prisma = await PrismaInstance.getClient(),
-            guilds = await prisma.guild.findMany();
-
-        for ( const guild of guilds ) {
-            // Check if guild is active.
-            const guildCache = this.client?.guilds.cache.get( guild.guildId ),
-                name = guildCache?.name || guild.name,
-                isInGuild = !! guildCache;
-
-            prisma.guild.update( {
-                where: {
-                    id: guild.id
-                },
-                data: {
-                    name,
-                    isInGuild,
-                    // Do not update `updatedAt` field.
-                    updatedAt: guild.updatedAt,
-                    updatedAtInternal: new Date(),
-                },
-            } ).then( () => {
-                this.logger.info( this.updateGuilds,
-                    `Guild id: '${ guild.guildId }' - Updated, name: '${ name }', isInGuild: '${ isInGuild }'`
-                );
-            } );
-        }
     }
 
     private async ensureBackwardCompatibility() {

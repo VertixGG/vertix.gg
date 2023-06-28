@@ -1,6 +1,6 @@
 {
   "name": "vertix-bot",
-  "version": "0.0.25",
+  "version": "0.0.33",
   "license": "MIT",
   "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
   "main": "index.ts",
@@ -25,6 +25,7 @@
     "cross-fetch": "^3.1.5",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
+    "threads": "^1.7.0",
     "tough-cookie": "^4.1.2"
   },
   "devDependencies": {
@@ -58,6 +59,9 @@
       "node_modules/.prisma/client/libquery_engine-debian-openssl-3.0.x.so.node",
       "node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node",
       "node_modules/.prisma/client/libquery_engine-darwin-arm64.dylib.node"
+    ],
+    "scripts": [
+      "dist/_workers/*.js"
     ],
     "outputPath": "dist"
   }

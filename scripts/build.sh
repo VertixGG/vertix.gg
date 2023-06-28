@@ -37,6 +37,7 @@ cp -f ./yarn.lock ./dist/yarn.lock
 chmod +x ./dist/*.sh
 
 # Bundle
+tsup-node src/vertix/_workers -d dist/_workers
 tsup-node src/index.ts
 
 # Minify
@@ -51,3 +52,4 @@ pkg . -C GZip
 # Clean up
 rm dist/index.js
 rm dist/index.min.js
+rm -rf dist/_workers

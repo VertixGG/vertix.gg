@@ -1108,14 +1108,14 @@
       "name": "Vertix/UI-V2/SetupStep1Embed",
       "content": {
         "title": "Step 1 - Set Dynamic Channels Template Name",
-        "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n"
+        "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
       }
     },
     {
       "name": "Vertix/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Step 2 - Dynamic Channels Setup",
-        "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.",
+        "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> 📌 Mention user in primary message: {configUserMention}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
         "footer": "{footer}",
         "options": {
           "message": {
@@ -1154,7 +1154,7 @@
       "name": "Vertix/UI-V2/SetupStep3Embed",
       "content": {
         "title": "Step 3 - Select Verified Roles",
-        "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n__Here's an example__:\nSuppose you have a role called `@Verified`.\n\nWhen the owner of a Dynamic Channel changes its state to `Hidden`, members with the `@Verified` role will lose ability to see the channel.\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+        "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",

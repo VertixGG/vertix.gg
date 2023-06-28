@@ -170,9 +170,16 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
     protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
         // TODO: Create convenient solution.
-        args._wizardShouldDisableFinishButton =
-            "Vertix/UI-V2/SetupStep3Component" === this.getCurrentExecutionStep( context )?.name &&
-            ! args.dynamicChannelVerifiedRoles?.length;
+        switch ( this.getCurrentExecutionStep( context )?.name ) {
+
+            case "Vertix/UI-V2/SetupStep2Component":
+                args._configExtraMenuDisableLogsChannelOption = true;
+                break;
+
+            case "Vertix/UI-V2/SetupStep3Component":
+                args._wizardShouldDisableFinishButton = !args.dynamicChannelVerifiedRoles?.length;
+                break;
+        }
     }
 
     protected async onBeforeFinish( interaction: UIDefaultButtonChannelTextInteraction ) {
@@ -235,7 +242,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         this.getArgsManager().setArgs( this, interaction, {
-            dynamicChannelButtonsTemplate: interaction.values.map( ( i ) => parseInt( i ) )
+            dynamicChannelButtonsTemplate: interaction.values.map( ( i ) => parseInt( i ) ),
         } );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );

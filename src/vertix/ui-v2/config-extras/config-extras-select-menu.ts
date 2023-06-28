@@ -39,17 +39,23 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             state,
         } = ConfigExtrasSelectMenu.vars;
 
-        return [
+        const result: APISelectMenuOption[] = [
             {
                 label: dynamicChannelMentionableLabel + " " + state,
                 value: "dynamicChannelMentionable" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" ),
             },
-            {
-                label: dynamicChannelLogsChannelLabel + " " + state,
-                value: "dynamicChannelLogsChannel" + UI_GENERIC_SEPARATOR + "0",
-                selected: ! this.uiArgs?.dynamicChannelLogsChannelId,
-            }
         ];
+
+        if ( ! this.uiArgs?._configExtraMenuDisableLogsChannelOption ) {
+            result.push(
+                {
+                    label: dynamicChannelLogsChannelLabel + " " + state,
+                    value: "dynamicChannelLogsChannel" + UI_GENERIC_SEPARATOR + "0", // Always off, since it only turn off button.
+                }
+            );
+        }
+
+        return result;
     }
 
     protected getOptions() {

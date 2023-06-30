@@ -1,4 +1,4 @@
-import { BooleanCache, Message } from "discord.js";
+import { ForceMethodImplementation } from "@vertix-base/errors";
 
 import {
     UIArgs,
@@ -12,8 +12,6 @@ import { UIWizardComponentBase } from "@vertix/ui-v2/_base/ui-wizard-component-b
 import { UIAdapterExecutionStepsBase } from "@vertix/ui-v2/_base/ui-adapter-execution-steps-base";
 
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
-
-import { ForceMethodImplementation } from "@internal/errors";
 
 export type UIWizardComponentConstructor = { new( args?: UICreateComponentArgs ): UIWizardComponentBase };
 export type UIWizardComponentTypeConstructor = typeof UIWizardComponentBase & UIWizardComponentConstructor;
@@ -29,7 +27,7 @@ export class UIWizardAdapterBase<
     }
 
     public static getComponent(): UIWizardComponentTypeConstructor {
-        throw new ForceMethodImplementation( this, this.getComponent.name );
+        throw new ForceMethodImplementation( this.getName(), this.getComponent.name );
     }
 
     protected static getExecutionStepsInternal() {

@@ -1,4 +1,4 @@
-import { InitializeBase } from "@internal/bases/initialize-base";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 class MockInitializeBase extends InitializeBase {
     public static getName() {

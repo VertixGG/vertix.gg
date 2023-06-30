@@ -2,13 +2,13 @@ import fetch from "cross-fetch";
 
 import { EmbedBuilder, Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { VERTIX_OWNERS_IDS } from "@vertix/definitions/app";
 
 import { AppManager } from "@vertix/managers/app-manager";
 
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 const OWNER_COMMAND_SYNTAX = {
     embed: "!embed <#channel_id> <https://message_url.com>",

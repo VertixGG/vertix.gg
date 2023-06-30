@@ -1,5 +1,7 @@
 import { ChannelType, PermissionsBitField } from "discord.js";
 
+import  { Logger } from "@vertix-base/modules/logger";
+
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
@@ -10,13 +12,11 @@ import {
     DEFAULT_SETUP_PERMISSIONS
 } from "@vertix/definitions/master-channel";
 
-import Logger from "@internal/modules/logger";
-
 export class AdminAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterBase<TChannel, TInteraction> {
-    private static dedicatedLogger = new Logger( this );
+    private static dedicatedLogger = new Logger( this.getName() );
 
     public static getName() {
         return "Vertix/UI-V2/AdminAdapterBase";

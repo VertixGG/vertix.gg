@@ -1,4 +1,4 @@
-import { ObjectBase } from "@internal/bases/object-base";
+import { ObjectBase } from "@vertix-base/bases/object-base";
 
 export abstract class UIBase extends ObjectBase {
     protected readonly hierarchyNames: string[];

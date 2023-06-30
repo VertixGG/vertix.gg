@@ -3,6 +3,8 @@ import path from "path";
 
 import { ComponentType } from "discord.js";
 
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import {
     UI_ELEMENTS_DEPTH,
     UIComponentTypeConstructor,
@@ -58,8 +60,6 @@ import {
     UIModalLanguage,
     UIModalLanguageContent
 } from "@vertix/ui-v2/_base/ui-language-definitions";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface UILanguageManagerValidateOptions {
     skipSameValues?: boolean;

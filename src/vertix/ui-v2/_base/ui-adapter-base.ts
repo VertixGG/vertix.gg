@@ -22,6 +22,10 @@ import {
 
 import chalk from "chalk";
 
+import { Debugger } from "@vertix-base/modules/debugger";
+import { Logger } from "@vertix-base/modules/logger";
+import { ForceMethodImplementation } from "@vertix-base/errors";
+
 import { UI_GENERIC_SEPARATOR, UIAdapterBuildSource, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UIAdapterReplyContext, UIAdapterStartContext, } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
@@ -43,10 +47,6 @@ import { UIInteractionMiddleware } from "@vertix/ui-v2/_base/ui-interaction-midd
 import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix/definitions/guild";
 import { UI_LANGUAGES_INITIAL_CODE } from "@vertix/ui-v2/_base/ui-language-definitions";
 
-import { Debugger } from "@internal/modules/debugger";
-import { Logger } from "@internal/modules/logger";
-import { ForceMethodImplementation } from "@internal/errors";
-
 const REGENERATE_BUTTON_ID = "regenerate-button";
 
 const ADAPTER_CLEANUP_EPHEMERAL_TIMEOUT = Number( process.env.ADAPTER_CLEANUP_EPHEMERAL_TIMEOUT ) ||
@@ -64,9 +64,9 @@ export abstract class UIAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterEntityBase {
-    private static adapterLogger: Logger = new Logger( this );
+    private static adapterLogger: Logger = new Logger( this.getName() );
     private static adapterDebugger: Debugger = new Debugger(
-        this,
+        this.getName(),
         "",
         AppManager.isDebugOn( "UI", UIAdapterBase.getName() )
     );

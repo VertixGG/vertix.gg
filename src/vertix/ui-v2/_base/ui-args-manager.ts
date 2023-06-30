@@ -1,13 +1,13 @@
 import { GuildChannel, Message } from "discord.js";
 
+import { Debugger } from "@vertix-base/modules/debugger";
+import { Logger } from "@vertix-base/modules/logger";
+
 import { UIBase } from "@vertix/ui-v2/_base/ui-base";
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { ArgsNotFoundError } from "@vertix/ui-v2/_base/errors/args-not-found-error";
-
-import { Debugger } from "@internal/modules/debugger";
-import { Logger } from "@internal/modules/logger";
 
 export class UIArgsManager extends UIBase {
     private prefixName: string;

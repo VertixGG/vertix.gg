@@ -1,11 +1,11 @@
 import process from "process";
 
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
 
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 const ADAPTER_CLEANUP_WORKER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_WORKER_INTERNVAL ) ||
     300000; // 5 minutes.

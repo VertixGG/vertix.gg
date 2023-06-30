@@ -8,13 +8,12 @@ import {
     VoiceChannel
 } from "discord.js";
 
+import { Debugger } from "@vertix-base/modules/debugger";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { ChannelModel } from "@vertix/models/channel-model";
 
 import { AppManager } from "@vertix/managers/app-manager";
-
-import { Debugger } from "@internal/modules/debugger";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 export class PermissionsManager extends InitializeBase {
     private static instance: PermissionsManager;

@@ -1,4 +1,4 @@
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
 
 import {
     CategoryChannel,
@@ -11,6 +11,9 @@ import {
     VoiceBasedChannel,
     VoiceChannel,
 } from "discord.js";
+
+import { Debugger } from "@vertix-base/modules/debugger";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 import { IChannelEnterGenericArgs, } from "../interfaces/channel";
 
@@ -46,9 +49,6 @@ import { PermissionsManager } from "@vertix/managers/permissions-manager";
 import {
     DynamicChannelElementsGroup
 } from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
-
-import { Debugger } from "@internal/modules/debugger";
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface IMasterChannelCreateCommonArgs {
     userOwnerId: string,

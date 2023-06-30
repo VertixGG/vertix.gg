@@ -7,11 +7,11 @@ import { spawn, Thread, Worker } from "threads";
 
 import { Client } from "discord.js";
 
-import { CURRENT_VERSION } from "@vertix/definitions/version";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
-import { InitializeBase } from "@internal/bases/initialize-base";
-import * as util from "util";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
+
+import { CURRENT_VERSION } from "@vertix/definitions/version";
 
 interface PackageJson {
     version: string;

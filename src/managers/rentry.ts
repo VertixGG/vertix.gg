@@ -1,6 +1,7 @@
 import { CookieJar } from "tough-cookie";
 
-import { InitializeBase } from "@internal/bases";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { SimpleHttpCookieClient } from "@internal/utils/simple-http-cookie-client";
 
 const RENTRY_BASE_URL = "https://rentry.co",

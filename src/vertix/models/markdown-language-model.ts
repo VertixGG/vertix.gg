@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@vertix-bot-prisma";
 
 import { ModelLanguageBase } from "@vertix/bases/model-language-base";
 

@@ -18,7 +18,10 @@ import {
 
 import { Routes } from "discord-api-types/v10";
 
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
+
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+import { Debugger } from "@vertix-base/modules/debugger";
 
 import {
     ActStatus,
@@ -69,9 +72,6 @@ import {
 } from "@vertix/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
-import { Debugger } from "@internal/modules/debugger";
 
 export class DynamicChannelManager extends InitializeBase {
     private static instance: DynamicChannelManager;

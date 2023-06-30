@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@vertix-bot-prisma";
 
 import { ModelDataBase } from "@vertix/bases/model-data-base";
 
@@ -66,6 +66,10 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return this.prisma.guild.findUnique( {
             where: { guildId: guild.id }
         } );
+    }
+
+    protected getClient() {
+        return client;
     }
 
     protected getDataModel(): typeof client.guildData {

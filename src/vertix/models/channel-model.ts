@@ -1,4 +1,4 @@
-import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@prisma/client";
+import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@vertix-bot-prisma";
 
 import { ModelDataBase } from "@vertix/bases/model-data-base";
 
@@ -267,6 +267,10 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         );
 
         return result;
+    }
+
+    protected getClient() {
+        return PrismaInstance.getClient();
     }
 
     protected getOwnerModel() {

@@ -1,13 +1,12 @@
 import process from "process";
 
-import { PrismaClient } from "@prisma/client";
-
 import chalk from "chalk";
 
-import { ObjectBase } from "../bases/object-base";
+import { PrismaClient } from "@vertix-bot-prisma";
 
-import { Logger } from "@internal/modules/logger";
-import { Debugger } from "@internal/modules/debugger";
+import { ObjectBase } from "@vertix-base/bases/object-base";
+import { Logger } from "@vertix-base/modules/logger";
+import { Debugger } from "@vertix-base/modules/debugger";
 
 type QueryEvent = {
     timestamp: Date

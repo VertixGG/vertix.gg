@@ -6,9 +6,8 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { Debugger } from "@internal/modules/debugger";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
+import { Debugger } from "@vertix-base/modules/debugger";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 export interface IVoteDefaultComponentInteraction extends MessageComponentInteraction<"cached"> {
     channel: VoiceChannel;

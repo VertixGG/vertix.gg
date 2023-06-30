@@ -19,7 +19,7 @@ it("should bypass", function () {
 //     VoiceChannel
 // } from "discord.js";
 //
-// import { E_INTERNAL_CHANNEL_TYPES } from "@prisma/client";
+// import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
 //
 // import { when } from "jest-when";
 // import { instance, mock, when as at } from "ts-mockito";

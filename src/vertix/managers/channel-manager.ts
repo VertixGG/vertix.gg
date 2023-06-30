@@ -10,7 +10,10 @@ import {
     VoiceState,
 } from "discord.js";
 
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
+
+import { Debugger } from "@vertix-base/modules/debugger";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 import { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "../interfaces/channel";
 
@@ -21,10 +24,6 @@ import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { CategoryManager } from "@vertix/managers/category-manager";
 
 import { ChannelModel } from "@vertix/models/channel-model";
-
-import { Debugger } from "@internal/modules/debugger";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,

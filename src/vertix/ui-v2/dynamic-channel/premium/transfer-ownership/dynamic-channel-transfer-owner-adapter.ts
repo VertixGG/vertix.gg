@@ -17,7 +17,6 @@ import {
 } from "@vertix/ui-v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-button";
 
 import { DynamicChannelAdapterExuBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
-import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 
 type DefaultInteraction =
     | UIDefaultUserSelectMenuChannelVoiceInteraction

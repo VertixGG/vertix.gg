@@ -1,5 +1,7 @@
 import { AuditLogEvent, ChannelType, Client, Guild } from "discord.js";
 
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { GuildModel } from "@vertix/models";
 
 import { TopGGManager } from "@vertix/managers/top-gg-manager";
@@ -17,8 +19,6 @@ import {
 } from "@vertix/definitions/badwords";
 
 import { badwordsSomeUsed } from "@vertix/utils/badwords";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
 

@@ -1,5 +1,3 @@
-import { VoiceChannel } from "discord.js";
-
 import { UIAdapterReplyContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";

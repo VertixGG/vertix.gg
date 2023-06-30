@@ -1,3 +1,6 @@
+import { Debugger } from "@vertix-base/modules/debugger";
+import { CacheBase } from "@vertix-base/bases/cache-base";
+
 import {
     DataResult,
     IDataGetArgs,
@@ -6,10 +9,6 @@ import {
     IDataSelectUniqueArgs,
     IDataUpdateArgs
 } from "@vertix/interfaces/data";
-
-import { Debugger } from "@internal/modules/debugger";
-
-import { CacheBase } from "@internal/bases/cache-base";
 
 const DEFAULT_OWNER_ID_CACHE_TIMEOUT = /* 1 hour */ 60 * 60 * 1000;
 

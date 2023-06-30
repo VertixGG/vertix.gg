@@ -1,4 +1,4 @@
-import { ModalContentLanguage } from "@prisma/client";
+import { ModalContentLanguage } from "@vertix-bot-prisma";
 
 import { UIPortableBase } from "@vertix/ui-v2/_base/ui-portable-base";
 import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";

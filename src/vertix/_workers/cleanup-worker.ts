@@ -1,12 +1,12 @@
 import { expose } from "threads/worker";
 
-import { ChannelType, Client, Partials, VoiceChannel } from "discord.js";
+import { ChannelType, Client, VoiceChannel } from "discord.js";
 
 import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
 
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
-import login from "@vertix/login";
+import login from "@vertix-base/discord/login";
 
 import { ChannelManager } from "@vertix/managers/channel-manager";
 import { CategoryManager } from "@vertix/managers/category-manager";
@@ -33,6 +33,8 @@ class CleanupWorker extends InitializeBase {
     }
 
     private async removeEmptyDynamicChannels( client: Client ) {
+        return; // Currently disabled should use fetch instead of cache
+
         const prisma = await PrismaInstance.getClient();
 
         const channels = await prisma.channel.findMany( {
@@ -136,7 +138,9 @@ class CleanupWorker extends InitializeBase {
 
             const deletePromises = chunk.map( async ( channel ) => {
                 const guildFetch = await client.guilds.fetch( channel.guildId );
-                const channelFetch = await guildFetch?.channels.fetch( channel.channelId );
+                const channelFetch = await guildFetch?.channels.fetch( channel.channelId )
+                    .catch( () => null )
+                    .then( ( i ) => i as VoiceChannel );
 
                 if ( ! guildFetch || ! channelFetch ) {
                     await prisma.channel.delete( {
@@ -297,16 +301,7 @@ class CleanupWorker extends InitializeBase {
 
         const client = new Client( {
             intents: [
-                "GuildIntegrations",
-                "GuildInvites",
-                // "GuildMembers",
-                "Guilds",
-                "GuildVoiceStates",
-                "DirectMessages",
             ],
-            partials: [
-                Partials.Channel,
-            ]
         } );
 
         await login( client, async () => {

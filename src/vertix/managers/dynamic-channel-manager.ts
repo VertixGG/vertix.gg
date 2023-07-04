@@ -23,6 +23,8 @@ import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 import { Debugger } from "@vertix-base/modules/debugger";
 
+import { gToken } from "@vertix-base/discord/login";
+
 import {
     ActStatus,
     AddStatus,
@@ -41,8 +43,6 @@ import {
     IDynamicResetChannelResult,
     RemoveStatus,
 } from "@vertix/definitions/dynamic-channel";
-
-import { gToken } from "@vertix/login";
 
 import {
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,

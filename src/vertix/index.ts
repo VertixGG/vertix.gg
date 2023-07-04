@@ -4,11 +4,11 @@ import chalk from "chalk";
 
 import { Client, Partials } from "discord.js";
 
+import login from "@vertix-base/discord/login";
+
 import * as handlers from "./listeners/";
 
 import GlobalLogger from "./global-logger";
-
-import login from "./login";
 
 import { AppManager } from "@vertix/managers/app-manager";
 import { TopGGManager } from "@vertix/managers/top-gg-manager";

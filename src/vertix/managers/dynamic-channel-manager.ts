@@ -499,6 +499,8 @@ export class DynamicChannelManager extends InitializeBase {
 
         await channel.setUserLimit( newLimit ).then( async () => {
             result = true;
+        } ).catch( ( error ) => {
+            this.logger.error( this.editUserLimit, "", error );
         } );
 
         await this.log( initiator, channel, this.editUserLimit, "", { result, oldLimit, newLimit } );
@@ -528,6 +530,7 @@ export class DynamicChannelManager extends InitializeBase {
                 break;
 
             case "private":
+                await PermissionsManager.$.ensureChannelBoConnectivityPermissions( channel );
                 await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     Connect: false,
                 } ).catch( ( error ) => {
@@ -570,6 +573,7 @@ export class DynamicChannelManager extends InitializeBase {
                 break;
 
             case "hidden":
+                await PermissionsManager.$.ensureChannelBoConnectivityPermissions( channel );
                 await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     ViewChannel: false,
                 } ).catch( ( error ) => {

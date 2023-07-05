@@ -24,7 +24,6 @@ export default async function Main() {
         intents: [
             "GuildIntegrations",
             "GuildInvites",
-            // "GuildMembers",
             "Guilds",
             "GuildVoiceStates",
             "DirectMessages",

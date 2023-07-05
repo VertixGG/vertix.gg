@@ -9,11 +9,6 @@ import { UI_ELEMENTS_DEPTH } from "@vertix/ui-v2/_base/ui-definitions";
 
 const { Flags } = PermissionsBitField;
 
-/* Default Values */
-export const DEFAULT_MASTER_CATEGORY_NAME = "༄ Dynamic Channels",
-    DEFAULT_MASTER_CHANNEL_CREATE_NAME = "➕ New Channel",
-    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS = 3;
-
 /* Templates */
 
 export const DYNAMIC_CHANNEL_USER_TEMPLATE = uiUtilsWrapAsTemplate( "user" );

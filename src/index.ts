@@ -25,8 +25,8 @@ function entryPoint() {
 function main() {
     config( { path: path.join( process.cwd(), ".env" ) } );
 
-    import( "./prisma" ).then( ( { PrismaInstance } ) => {
-        PrismaInstance.$.connect().then( entryPoint );
+    import( "@vertix-base/prisma/prisma-bot-instance" ).then( ( { PrismaBotInstance } ) => {
+        PrismaBotInstance.$.connect().then( entryPoint );
     } );
 }
 

@@ -1,10 +1,10 @@
 import { Prisma } from "@vertix-base-prisma-bot";
 
+import { PrismaBotInstance } from"@vertix-base/prisma/prisma-bot-instance";
+
 import { ModelLanguageBase } from "@vertix/bases/model-language-base";
 
-import { PrismaInstance } from "@internal/prisma";
-
-const model = PrismaInstance.getClient().elementTextInputLanguage;
+const model = PrismaBotInstance.getClient().elementTextInputLanguage;
 
 async function withContent() {
     return model.findFirst( {

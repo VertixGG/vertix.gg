@@ -27,6 +27,8 @@ import { gToken } from "@vertix-base/discord/login";
 
 import { isDebugOn } from "@vertix-base/utils/debug";
 
+import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
+
 import {
     ActStatus,
     AddStatus,
@@ -57,7 +59,7 @@ import { IChannelLeaveGenericArgs } from "@vertix/interfaces/channel";
 
 import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
 
-import { GuildManager } from "@vertix/managers/guild-manager";
+import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { ChannelManager } from "@vertix/managers/channel-manager";
 import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
@@ -72,8 +74,6 @@ import { guildGetMemberDisplayName } from "@vertix/utils/guild";
 import {
     DynamicChannelPremiumClaimChannelButton
 } from "@vertix/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
-
-import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 
 export class DynamicChannelManager extends InitializeBase {
     private static instance: DynamicChannelManager;
@@ -442,7 +442,7 @@ export class DynamicChannelManager extends InitializeBase {
 
         const oldChannelName = channel.name;
 
-        const usedBadword = await GuildManager.$.hasSomeBadword( channel.guildId, newChannelName );
+        const usedBadword = await GuildDataManager.$.hasSomeBadword( channel.guildId, newChannelName );
 
         if ( usedBadword ) {
             result.code = DynamicEditChannelResultCode.Badword;

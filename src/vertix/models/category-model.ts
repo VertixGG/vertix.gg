@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "@vertix-base-prisma-bot";
 
 import { ModelBase } from "@vertix-base/bases/model-base";
 
-import { PrismaInstance } from "@internal/prisma";
+import { PrismaBotInstance } from"@vertix-base/prisma/prisma-bot-instance";
 
 export class CategoryModel extends ModelBase<PrismaClient> {
     private static instance: CategoryModel;
@@ -38,7 +38,7 @@ export class CategoryModel extends ModelBase<PrismaClient> {
     }
 
     protected getClient() {
-        return PrismaInstance.getClient();
+        return PrismaBotInstance.getClient();
     }
 }
 

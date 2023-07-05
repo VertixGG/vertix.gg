@@ -201,6 +201,59 @@ export class PermissionsManager extends InitializeBase {
         return this.getMissingChannelPermissions( permissions, context );
     }
 
+    public async ensureChannelBoConnectivityPermissions( channel: VoiceChannel ): Promise<void> {
+        if ( this.isSelfAdministratorRole( channel.guild ) ) {
+            return;
+        }
+
+        await this.ensureChannelBotRolePermissions( channel, new PermissionsBitField( [
+            PermissionsBitField.Flags.ViewChannel,
+            PermissionsBitField.Flags.Connect,
+        ]) ).catch( ( error ) => {
+            this.logger.error( this.ensureChannelBoConnectivityPermissions,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - ${ error }`
+            );
+        } );
+    }
+
+    public async ensureChannelBotRolePermissions( channel: VoiceBasedChannel, permissions: PermissionsBitField ): Promise<void> {
+        const botMember = channel.guild.members.cache.get( channel.guild.client.user.id );
+
+        if ( ! botMember ) {
+            this.logger.error( this.ensureChannelBotRolePermissions,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Bot member not found`
+            );
+            return;
+        }
+
+        const botRole = botMember.roles.cache.first();
+
+        if ( ! botRole ) {
+            this.logger.error( this.ensureChannelBotRolePermissions,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Bot role not found`
+            );
+            return;
+        }
+
+        const permissionsOptions: PermissionOverwriteOptions = {};
+        for ( const permission of permissions.toArray() ) {
+            permissionsOptions[ permission ] = true;
+        }
+
+        const rolePermissions = channel.permissionOverwrites.cache.get( botRole.id );
+
+        if ( ! rolePermissions ) {
+            await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
+            return;
+        }
+
+        if ( rolePermissions.allow.has( permissions ) ) {
+            return;
+        }
+
+        await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
+    }
+
     public async editChannelRolesPermissions( channel: VoiceBasedChannel, roles: string[], permissions: PermissionOverwriteOptions ): Promise<void> {
         return new Promise( ( resolve, reject ) => {
             for ( const roleId of roles ) {

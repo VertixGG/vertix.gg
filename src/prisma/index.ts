@@ -2,7 +2,7 @@ import process from "process";
 
 import chalk from "chalk";
 
-import { PrismaClient } from "@vertix-bot-prisma";
+import { PrismaClient } from "@vertix-base-prisma-bot";
 
 import { ObjectBase } from "@vertix-base/bases/object-base";
 import { Logger } from "@vertix-base/modules/logger";

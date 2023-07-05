@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 
-import { Prisma } from "@vertix-bot-prisma";
+import { Prisma } from "@vertix-base-prisma-bot";
 
 import { ModelDataBase } from "@vertix/bases/model-data-base";
 

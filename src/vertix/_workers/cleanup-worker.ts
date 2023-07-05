@@ -2,7 +2,7 @@ import { expose } from "threads/worker";
 
 import { ChannelType, Client, VoiceChannel } from "discord.js";
 
-import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-base-prisma-bot";
 
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 

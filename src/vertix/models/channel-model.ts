@@ -1,4 +1,4 @@
-import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@vertix-bot-prisma";
+import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@vertix-base-prisma-bot";
 
 import { ModelDataBase } from "@vertix/bases/model-data-base";
 

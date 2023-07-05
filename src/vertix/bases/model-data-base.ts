@@ -1,4 +1,4 @@
-import { PrismaClient } from "@vertix-bot-prisma";
+import { PrismaClient } from "@vertix-base-prisma-bot";
 
 import { ModelBaseCached } from "@vertix-base/bases/model-base";
 

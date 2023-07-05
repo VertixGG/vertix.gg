@@ -18,7 +18,7 @@ import {
 
 import { Routes } from "discord-api-types/v10";
 
-import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-base-prisma-bot";
 
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 import { Debugger } from "@vertix-base/modules/debugger";

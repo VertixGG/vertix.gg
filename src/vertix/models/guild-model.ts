@@ -2,7 +2,7 @@ import { Guild } from "discord.js";
 
 import { Prisma } from "@vertix-base-prisma-bot";
 
-import { ModelDataBase } from "@vertix/bases/model-data-base";
+import { ModelDataBase } from "@vertix-base/bases/model-data-base";
 
 import { PrismaInstance } from "@internal/prisma";
 

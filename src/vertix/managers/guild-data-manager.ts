@@ -1,8 +1,8 @@
+import { ManagerDataBase } from "@vertix-base/bases/manager-data-base";
+
 import { GuildModel } from "@vertix/models";
 
 import { AppManager } from "@vertix/managers/app-manager";
-
-import { ManagerDataBase } from "@vertix/bases/manager-data-base";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@vertix/definitions/master-channel";
 

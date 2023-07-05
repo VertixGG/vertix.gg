@@ -9,9 +9,9 @@ import { Client } from "discord.js";
 
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
-import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
+import { CURRENT_VERSION } from "@vertix-base/definitions/version";
 
-import { CURRENT_VERSION } from "@vertix/definitions/version";
+import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 
 interface PackageJson {
     version: string;

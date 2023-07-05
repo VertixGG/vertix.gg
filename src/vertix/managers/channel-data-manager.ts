@@ -1,6 +1,6 @@
-import { ChannelModel } from "@vertix/models";
+import { ManagerDataBase } from "@vertix-base/bases/manager-data-base";
 
-import { ManagerDataBase } from "@vertix/bases/manager-data-base";
+import { ChannelModel } from "@vertix/models";
 
 import { AppManager } from "@vertix/managers/app-manager";
 

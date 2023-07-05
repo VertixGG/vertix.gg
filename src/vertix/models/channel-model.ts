@@ -1,6 +1,6 @@
 import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@vertix-base-prisma-bot";
 
-import { ModelDataBase } from "@vertix/bases/model-data-base";
+import { ModelDataBase } from "@vertix-base/bases/model-data-base";
 
 import { AppManager } from "@vertix/managers/app-manager";
 import { ChannelDataManager } from "@vertix/managers/channel-data-manager";

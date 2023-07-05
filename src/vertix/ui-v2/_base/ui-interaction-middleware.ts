@@ -3,10 +3,10 @@ import { BaseInteraction, ChannelType, GuildChannel, Message, PermissionsString 
 import { Debugger } from "@vertix-base/modules/debugger";
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
-
-import { AppManager } from "@vertix/managers/app-manager";
 
 export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TInteraction extends UIAdapterReplyContext> extends InitializeBase {
     // TODO: Use decorator to wrap methods
@@ -24,7 +24,7 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
     private static debugger = new Debugger(
         UIInteractionMiddleware.getName(),
         "",
-        AppManager.isDebugOn( "UI_MIDDLEWARE", UIInteractionMiddleware.getName() )
+        isDebugOn( "UI_MIDDLEWARE", UIInteractionMiddleware.getName() )
     );
 
     private readonly eventArgs;

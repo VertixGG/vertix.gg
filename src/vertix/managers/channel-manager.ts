@@ -15,6 +15,8 @@ import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-base-prisma-bot";
 import { Debugger } from "@vertix-base/modules/debugger";
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "../interfaces/channel";
 
 import { AppManager } from "@vertix/managers/app-manager";
@@ -67,7 +69,7 @@ export class ChannelManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this, "", AppManager.isDebugOn( "MANAGER", ChannelManager.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", ChannelManager.getName() ) );
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {

@@ -1,8 +1,8 @@
 import { ManagerDataBase } from "@vertix-base/bases/manager-data-base";
 
-import { ChannelModel } from "@vertix/models";
+import { isDebugOn } from "@vertix-base/utils/debug";
 
-import { AppManager } from "@vertix/managers/app-manager";
+import { ChannelModel } from "@vertix/models";
 
 export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
     private static instance: ChannelDataManager;
@@ -22,7 +22,7 @@ export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
         return ChannelDataManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = AppManager.isDebugOn( "CACHE", ChannelDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugOn( "CACHE", ChannelDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 

@@ -3,7 +3,7 @@ import { Message, MessageComponentInteraction, ModalSubmitInteraction } from "di
 import { ForceMethodImplementation } from "@vertix-base/errors/force-method-implementation";
 import { Debugger } from "@vertix-base/modules/debugger";
 
-import { AppManager } from "@vertix/managers/app-manager";
+import { isDebugOn } from "@vertix-base/utils/debug";
 
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 import {
@@ -26,7 +26,7 @@ export abstract class UIAdapterExecutionStepsBase<
     private static adapterExecutionDebugger: Debugger = new Debugger(
         UIAdapterExecutionStepsBase.getName(),
         "",
-        AppManager.isDebugOn( "UI", UIAdapterExecutionStepsBase.getName() )
+        isDebugOn( "UI", UIAdapterExecutionStepsBase.getName() )
     );
 
     private static executionStepsArray: UIExecutionStepItem[];

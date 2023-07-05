@@ -52,10 +52,6 @@ export class AppManager extends InitializeBase {
         return packageJson.version;
     }
 
-    public static isDebugOn( debugType: string, entityName: string ) {
-        return !! process.env[ `DEBUG_${ debugType }` ]?.includes( entityName );
-    }
-
     public constructor() {
         super();
 

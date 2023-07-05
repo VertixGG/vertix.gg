@@ -6,11 +6,12 @@ import { Client, Partials } from "discord.js";
 
 import login from "@vertix-base/discord/login";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import * as handlers from "./listeners/";
 
 import GlobalLogger from "./global-logger";
 
-import { AppManager } from "@vertix/managers/app-manager";
 import { TopGGManager } from "@vertix/managers/top-gg-manager";
 import { UIManager } from "@vertix/ui-v2/ui-manager";
 
@@ -33,7 +34,7 @@ export default async function Main() {
         ]
     } );
 
-    if ( AppManager.isDebugOn( "DISCORD", "" ) ) {
+    if ( isDebugOn( "DISCORD", "" ) ) {
         const debug = ( ... args: any[] ) => {
             logger.debug( chalk.red( "DISCORD" ), "", args );
         };
@@ -44,13 +45,13 @@ export default async function Main() {
             "error",
             "shardError",
         ].forEach( ( event ) => {
-            if ( AppManager.isDebugOn( "DISCORD", event ) ) {
+            if ( isDebugOn( "DISCORD", event ) ) {
                 client.on( event, debug );
             }
         } );
     }
 
-    if ( AppManager.isDebugOn( "DISCORD_REST", "" ) ) {
+    if ( isDebugOn( "DISCORD_REST", "" ) ) {
         const debug = ( ... args: any[] ) => {
             logger.debug( chalk.red( "DISCORD REST" ), "", args );
         };
@@ -65,7 +66,7 @@ export default async function Main() {
             "removeListener",
             "response",
         ].forEach( ( event ) => {
-            if ( AppManager.isDebugOn( "DISCORD_REST", event ) ) {
+            if ( isDebugOn( "DISCORD_REST", event ) ) {
                 client.rest.on( event, debug );
             }
         } );

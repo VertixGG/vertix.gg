@@ -6,6 +6,8 @@ import { Api } from "@top-gg/sdk";
 
 import { CacheBase } from "@vertix-base/bases/cache-base";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { AppManager } from "@vertix/managers/app-manager";
 
 const TOP_GG_WORKER_INTERVAL = 1000 * 60 * 60, // 1 hour
@@ -44,7 +46,7 @@ export class TopGGManager extends CacheBase<Date> {
     }
 
     public constructor(
-        shouldDebugCache = AppManager.isDebugOn( "CACHE", TopGGManager.getName() ),
+        shouldDebugCache = isDebugOn( "CACHE", TopGGManager.getName() ),
         workerInterval = TOP_GG_WORKER_INTERVAL,
         voteInterval = TOP_GG_VOTE_INTERVAL
     ) {

@@ -1,8 +1,8 @@
 import { ManagerDataBase } from "@vertix-base/bases/manager-data-base";
 
-import { GuildModel } from "@vertix/models";
+import { isDebugOn } from "@vertix-base/utils/debug";
 
-import { AppManager } from "@vertix/managers/app-manager";
+import { GuildModel } from "@vertix/models";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@vertix/definitions/master-channel";
 
@@ -28,7 +28,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return GuildDataManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = AppManager.isDebugOn( "CACHE", GuildDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugOn( "CACHE", GuildDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 

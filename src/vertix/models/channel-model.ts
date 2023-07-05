@@ -2,7 +2,8 @@ import { Channel, E_INTERNAL_CHANNEL_TYPES, Prisma } from "@vertix-base-prisma-b
 
 import { ModelDataBase } from "@vertix-base/bases/model-data-base";
 
-import { AppManager } from "@vertix/managers/app-manager";
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
 
 import { PrismaInstance } from "@internal/prisma";
@@ -61,8 +62,8 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     public constructor(
-        shouldDebugCache = AppManager.isDebugOn( "CACHE", ChannelModel.getName() ),
-        shouldDebugModel = AppManager.isDebugOn( "MODEL", ChannelModel.getName() )
+        shouldDebugCache = isDebugOn( "CACHE", ChannelModel.getName() ),
+        shouldDebugModel = isDebugOn( "MODEL", ChannelModel.getName() )
     ) {
         super( shouldDebugCache, shouldDebugModel );
     }

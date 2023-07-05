@@ -15,6 +15,8 @@ import {
 import { Debugger } from "@vertix-base/modules/debugger";
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { IChannelEnterGenericArgs, } from "../interfaces/channel";
 
 import {
@@ -117,7 +119,7 @@ export class MasterChannelManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this, "", AppManager.isDebugOn( "MANAGER", MasterChannelManager.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", MasterChannelManager.getName() ) );
     }
 
     public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {

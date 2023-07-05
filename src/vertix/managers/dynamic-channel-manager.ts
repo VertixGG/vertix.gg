@@ -25,6 +25,8 @@ import { Debugger } from "@vertix-base/modules/debugger";
 
 import { gToken } from "@vertix-base/discord/login";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import {
     ActStatus,
     AddStatus,
@@ -106,7 +108,7 @@ export class DynamicChannelManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this, "", AppManager.isDebugOn( "MANAGER", DynamicChannelManager.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", DynamicChannelManager.getName() ) );
     }
 
     public async onJoinDynamicChannel( args: IChannelLeaveGenericArgs ) {

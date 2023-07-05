@@ -11,6 +11,8 @@ import {
 import { Debugger } from "@vertix-base/modules/debugger";
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { ChannelModel } from "@vertix/models/channel-model";
 
 import { AppManager } from "@vertix/managers/app-manager";
@@ -45,7 +47,7 @@ export class PermissionsManager extends InitializeBase {
 
         this.channelModel = ChannelModel.getInstance();
 
-        this.debugger = new Debugger( this, "", AppManager.isDebugOn( "MANAGER", PermissionsManager.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", PermissionsManager.getName() ) );
     }
 
     public async onChannelPermissionsUpdate( oldState: VoiceChannel, newState: VoiceChannel ) {

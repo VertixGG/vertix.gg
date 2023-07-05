@@ -26,6 +26,8 @@ import { Debugger } from "@vertix-base/modules/debugger";
 import { Logger } from "@vertix-base/modules/logger";
 import { ForceMethodImplementation } from "@vertix-base/errors";
 
+import { isDebugOn } from "@vertix-base/utils/debug";
+
 import { UI_GENERIC_SEPARATOR, UIAdapterBuildSource, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UIAdapterReplyContext, UIAdapterStartContext, } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
@@ -38,7 +40,6 @@ import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { UIArgsManager } from "@vertix/ui-v2/_base/ui-args-manager";
 import { GuildDataManager } from "@vertix/managers/guild-data-manager";
 import { DirectMessageManager } from "@vertix/managers/direct-message-manager";
-import { AppManager } from "@vertix/managers/app-manager";
 
 import { UIRegenerateButton } from "@vertix/ui-v2/_base/regenerate/ui-regenerate-button";
 
@@ -68,7 +69,7 @@ export abstract class UIAdapterBase<
     private static adapterDebugger: Debugger = new Debugger(
         this.getName(),
         "",
-        AppManager.isDebugOn( "UI", UIAdapterBase.getName() )
+        isDebugOn( "UI", UIAdapterBase.getName() )
     );
 
     private static validatedOnce = false;

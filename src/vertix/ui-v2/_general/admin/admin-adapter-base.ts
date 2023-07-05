@@ -16,7 +16,7 @@ export class AdminAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterBase<TChannel, TInteraction> {
-    private static dedicatedLogger = new Logger( this.getName() );
+    protected static dedicatedLogger = new Logger( this.getName() );
 
     public static getName() {
         return "Vertix/UI-V2/AdminAdapterBase";

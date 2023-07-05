@@ -4,9 +4,9 @@ import { ModelDataBase } from "@vertix-base/bases/model-data-base";
 
 import { isDebugOn } from "@vertix-base/utils/debug";
 
-import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
+import { PrismaBotInstance } from"@vertix-base/prisma/prisma-bot-instance";
 
-import { PrismaInstance } from "@internal/prisma";
+import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
 
 export interface ChannelResult extends Channel {
     isMaster: boolean;
@@ -40,7 +40,7 @@ const extendedModel = Prisma.defineExtension( ( client ) => {
     } );
 } );
 
-const prisma = PrismaInstance.getClient().$extends( extendedModel );
+const prisma = PrismaBotInstance.getClient().$extends( extendedModel );
 
 export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof prisma.channelData, ChannelResult> {
     private static instance: ChannelModel;
@@ -271,7 +271,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     protected getClient() {
-        return PrismaInstance.getClient();
+        return PrismaBotInstance.getClient();
     }
 
     protected getOwnerModel() {

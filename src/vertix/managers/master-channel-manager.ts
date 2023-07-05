@@ -17,16 +17,21 @@ import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 import { isDebugOn } from "@vertix-base/utils/debug";
 
+import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
+
+import {
+    DEFAULT_MASTER_CATEGORY_NAME,
+    DEFAULT_MASTER_CHANNEL_CREATE_NAME
+} from "@vertix-base/definitions/master-channel";
+
 import { IChannelEnterGenericArgs, } from "../interfaces/channel";
 
 import {
     DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
-    DEFAULT_MASTER_CHANNEL_CREATE_NAME,
     DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
@@ -45,7 +50,6 @@ import { CategoryManager } from "@vertix/managers/category-manager";
 import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
 import { ChannelManager } from "@vertix/managers/channel-manager";
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
-import { GuildDataManager } from "@vertix/managers/guild-data-manager";
 import { PermissionsManager } from "@vertix/managers/permissions-manager";
 
 import {

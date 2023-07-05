@@ -1,10 +1,10 @@
 import { Prisma } from "@vertix-base-prisma-bot";
 
+import { PrismaBotInstance } from"@vertix-base/prisma/prisma-bot-instance";
+
 import { ModelLanguageBase } from "@vertix/bases/model-language-base";
 
-import { PrismaInstance } from "@internal/prisma";
-
-const model = PrismaInstance.getClient().elementSelectMenuLanguage;
+const model = PrismaBotInstance.getClient().elementSelectMenuLanguage;
 
 // TODO: All `withContent` should be like that.
 async function withContent() {

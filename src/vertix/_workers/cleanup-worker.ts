@@ -8,10 +8,10 @@ import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 import login from "@vertix-base/discord/login";
 
+import { PrismaBotInstance } from "@vertix-base/prisma/prisma-bot-instance";
+
 import { ChannelManager } from "@vertix/managers/channel-manager";
 import { CategoryManager } from "@vertix/managers/category-manager";
-
-import { PrismaInstance } from "@internal/prisma";
 
 class CleanupWorker extends InitializeBase {
     private static instance: CleanupWorker;
@@ -35,7 +35,7 @@ class CleanupWorker extends InitializeBase {
     private async removeEmptyDynamicChannels( client: Client ) {
         return; // Currently disabled should use fetch instead of cache
 
-        const prisma = await PrismaInstance.getClient();
+        const prisma = await PrismaBotInstance.getClient();
 
         const channels = await prisma.channel.findMany( {
             where: {
@@ -116,7 +116,7 @@ class CleanupWorker extends InitializeBase {
     }
 
     private async removeNonExistMasterChannelsFromDB( client: Client ) {
-        const prisma = await PrismaInstance.getClient();
+        const prisma = await PrismaBotInstance.getClient();
 
         const masterChannels = await prisma.channel.findMany( {
             where: {
@@ -174,7 +174,7 @@ class CleanupWorker extends InitializeBase {
     }
 
     private async removeEmptyCategories( client: Client ) {
-        const prisma = await PrismaInstance.getClient();
+        const prisma = await PrismaBotInstance.getClient();
 
         const categories = await prisma.category.findMany();
 
@@ -232,7 +232,7 @@ class CleanupWorker extends InitializeBase {
     }
 
     private async updateGuilds( client: Client ) {
-        const prisma = await PrismaInstance.getClient();
+        const prisma = await PrismaBotInstance.getClient();
 
         const guilds = await prisma.guild.findMany();
 

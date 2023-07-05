@@ -1,4 +1,4 @@
-import { Prisma } from "@vertix-bot-prisma";
+import { Prisma } from "@vertix-base-prisma-bot";
 
 export type defaultDataTypes = string | string[] | object;
 

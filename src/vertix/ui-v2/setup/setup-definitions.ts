@@ -1,4 +1,4 @@
-import { Channel } from "@vertix-bot-prisma";
+import { Channel } from "@vertix-base-prisma-bot";
 
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 import { DataResult } from "@vertix/interfaces/data";

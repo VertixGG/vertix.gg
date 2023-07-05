@@ -81,6 +81,7 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
         Flags.SendMessages,
         Flags.ViewChannel,
         Flags.EmbedLinks,
+        // Flags.ManageGuild,
     ],
 };
 

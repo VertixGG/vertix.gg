@@ -10,7 +10,7 @@ import {
     VoiceState,
 } from "discord.js";
 
-import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-bot-prisma";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-base-prisma-bot";
 
 import { Debugger } from "@vertix-base/modules/debugger";
 import { InitializeBase } from "@vertix-base/bases/initialize-base";

@@ -11,7 +11,7 @@
       "@vertix-base/*": [
         "../vertix-base/src/lib/*"
       ],
-      "@vertix-bot-prisma": [
+      "@vertix-base-prisma-bot": [
         "../vertix-base/src/prisma-bot-client"
       ]
     }

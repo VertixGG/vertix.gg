@@ -1,8 +1,8 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
 
 import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 /**
  * Shown when the user changed his vote from one user to another.

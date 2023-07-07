@@ -1,10 +1,10 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { ChannelButtonsTemplateEmbed } from "@vertix/ui-v2/channel-buttons-template/channel-buttons-template-embed";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     private static vars = {

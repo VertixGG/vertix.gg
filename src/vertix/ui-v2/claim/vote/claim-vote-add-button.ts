@@ -1,7 +1,7 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIElementButtonBase } from "@vertix/ui-v2/_base/elements/ui-element-button-base";
 import { UIButtonStyleTypes, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class ClaimVoteAddButton extends UIElementButtonBase {
     public static getName() {

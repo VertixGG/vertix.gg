@@ -1,5 +1,7 @@
 import { VoiceChannel } from "discord.js";
 
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
 import { DynamicChannelMetaRenameComponent } from "./dynamic-channel-meta-rename-component";
 
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
@@ -9,7 +11,6 @@ import {
 } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
-import { ChannelModel } from "@vertix/models";
 
 import { DynamicChannelAdapterExuBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
 

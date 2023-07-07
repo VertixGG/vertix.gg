@@ -1,3 +1,7 @@
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
+import { MasterChannelDataManager } from "@vertix-base/managers/master-channel-data-manager";
+
 import { DynamicChannelPermissionsComponent } from "./dynamic-channel-permissions-component";
 
 import {
@@ -15,8 +19,6 @@ import {
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 
 import { DynamicChannelAdapterExuBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
-import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
-import { ChannelModel } from "@vertix/models";
 import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix/definitions/dynamic-channel";
 
 type DefaultInteraction =
@@ -126,7 +128,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
 
         if ( masterChannelDB ) {
-            args.dynamicChannelButtonsTemplate = await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+            args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
             args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
                 ( buttonId: number ) => buttonId === DynamicChannelPermissionsAccessButton.getId()
             );

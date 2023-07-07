@@ -1,6 +1,12 @@
+import { uiUtilsDynamicElementsRearrange } from "@vertix-base/utils/ui";
+
 import { UIComponentBase } from "@vertix/ui-v2/_base/ui-component-base";
 
-import { UI_ELEMENTS_DEPTH, UIInstancesTypes, } from "@vertix/ui-v2/_base/ui-definitions";
+import {
+    UI_ELEMENTS_DEFAULT_MAX_PER_ROW,
+    UI_ELEMENTS_DEPTH,
+    UIInstancesTypes,
+} from "@vertix/ui-v2/_base/ui-definitions";
 
 import {
     DynamicChannelElementsGroup
@@ -8,7 +14,7 @@ import {
 
 import { DynamicChannelEmbed } from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-embed";
 
-import { uiUtilsDynamicElementsRearrange } from "@vertix/ui-v2/ui-utils";
+;
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {
@@ -44,7 +50,7 @@ export class DynamicChannelComponent extends UIComponentBase {
                 // check if required.
                 element.isAvailable
             ) as any
-        ] );
+        ], UI_ELEMENTS_DEFAULT_MAX_PER_ROW );
 
         return schema;
     }

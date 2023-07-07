@@ -3,19 +3,19 @@ import process from "process";
 import { Client, GuildChannel, GuildMember, Message, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { Debugger } from "@vertix-base/modules/debugger";
 
-import { ChannelResult } from "@vertix/models/channel-model";
+import { ChannelResult , ChannelModel } from "@vertix-base/models/channel-model";
 
 import {
     DynamicChannelVoteManager,
     IVoteDefaultComponentInteraction
 } from "@vertix/managers/dynamic-channel-vote-manager";
-import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
+
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { TopGGManager } from "@vertix/managers/top-gg-manager";
-
-import { ChannelModel } from "@vertix/models";
+import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 
 import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
 

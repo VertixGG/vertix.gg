@@ -30,6 +30,16 @@ import { isDebugOn } from "@vertix-base/utils/debug";
 import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
 
 import {
+    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+    DYNAMIC_CHANNEL_USER_TEMPLATE
+} from "@vertix-base/definitions/master-channel-defaults";
+
+import { ChannelModel, ChannelResult } from "@vertix-base/models/channel-model";
+
+import { ChannelDataManager } from "@vertix-base/managers/channel-data-manager";
+import { MasterChannelDataManager } from "@vertix-base/managers/master-channel-data-manager";
+
+import {
     ActStatus,
     AddStatus,
     ChannelState,
@@ -48,20 +58,13 @@ import {
     RemoveStatus,
 } from "@vertix/definitions/dynamic-channel";
 
-import {
-    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    DYNAMIC_CHANNEL_USER_TEMPLATE
-} from "@vertix/definitions/master-channel";
-
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 
 import { IChannelLeaveGenericArgs } from "@vertix/interfaces/channel";
 
-import { ChannelModel, ChannelResult } from "@vertix/models/channel-model";
-
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { ChannelManager } from "@vertix/managers/channel-manager";
-import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
+
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 import { AppManager } from "@vertix/managers/app-manager";
@@ -200,7 +203,7 @@ export class DynamicChannelManager extends InitializeBase {
             displayName = await guildGetMemberDisplayName( channel.guild, userId );
 
         if ( masterChannelDB ) {
-            result = ( await MasterChannelManager.$.getChannelNameTemplate( masterChannelDB.id, true ) )
+            result = ( await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, true ) )
                 .replace(
                     DYNAMIC_CHANNEL_USER_TEMPLATE,
                     displayName
@@ -346,7 +349,7 @@ export class DynamicChannelManager extends InitializeBase {
             return;
         }
 
-        const dynamicChannelTemplateName = await MasterChannelManager.$.getChannelNameTemplate( masterChannelDB.id );
+        const dynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id );
         if ( ! dynamicChannelTemplateName ) {
             this.logger.error( this.createDynamicChannel,
                 `Guild id: ${ guild.id } - Could not find master template name in database, master channel db id: '${ masterChannelDB.id }'` );
@@ -397,9 +400,20 @@ export class DynamicChannelManager extends InitializeBase {
             } ).catch( () => {} );
         } );
 
+        let primaryMessage;
+
         if ( dynamic.channel.isVoiceBased() ) {
             // Create a primary message.
-            await this.createPrimaryMessage( dynamic.channel, dynamic.db );
+            primaryMessage = await this.createPrimaryMessage( dynamic.channel, dynamic.db );
+
+            // Update the database.
+            await ChannelDataManager.$.setSettingsData(
+                dynamic.db.id,
+                {
+                    [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: primaryMessage?.id || null,
+                },
+                true,
+            );
         }
 
         return dynamic;
@@ -418,18 +432,14 @@ export class DynamicChannelManager extends InitializeBase {
         } as any;
 
         if ( masterChannelDB ) {
-            sendArgs.dynamicChannelMentionable = await MasterChannelManager.$.getChannelMentionable( masterChannelDB.id, true );
+            sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
         const messageCreated = await UIAdapterManager.$.get( "Vertix/UI-V2/DynamicChannelAdapter" )
             ?.send( channel, sendArgs );
 
         if ( messageCreated ) {
-            await ChannelDataManager.$.setSettingsData(
-                dynamicChannelDB.id,
-                { [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: messageCreated?.id },
-                true,
-            );
+
         }
 
         return messageCreated;
@@ -685,7 +695,7 @@ export class DynamicChannelManager extends InitializeBase {
         } as any;
 
         if ( masterChannelDB ) {
-            editMessageArgs.dynamicChannelMentionable = await MasterChannelManager.$.getChannelMentionable( masterChannelDB.id, true );
+            editMessageArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
         await UIAdapterManager.$.get( "Vertix/UI-V2/DynamicChannelAdapter" )
@@ -772,7 +782,7 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        const dynamicChannelTemplateName = await MasterChannelManager.$.getChannelNameTemplate( master.db.id, true ),
+        const dynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( master.db.id, true ),
             userOwnerId = master.db.userOwnerId;
 
         if ( ! await TopGGManager.$.isVoted( initiator.user.id ) ) {
@@ -1052,7 +1062,7 @@ export class DynamicChannelManager extends InitializeBase {
             return false;
         }
 
-        const enabledButtons = await MasterChannelManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
 
         if ( ! enabledButtons?.length ) {
             this.logger.error( this.isClaimButtonEnabled,
@@ -1100,7 +1110,7 @@ export class DynamicChannelManager extends InitializeBase {
             masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {
-            const verifiedRoles = await MasterChannelManager.$.getChannelVerifiedRoles( masterChannelDB.id, channel.guildId );
+            const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB.id, channel.guildId );
 
             roles.push( ... verifiedRoles );
         } else {
@@ -1405,7 +1415,7 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     private async logInChannelDebounce( masterChannelDB: ChannelResult, channel: VoiceChannel, message: string, defaultDebounceDelay = 3000 ) {
-        const logsChannelId = await MasterChannelManager.$.getChannelLogsChannelId( masterChannelDB.id, true );
+        const logsChannelId = await MasterChannelDataManager.$.getChannelLogsChannelId( masterChannelDB.id, true );
 
         if ( ! logsChannelId ) {
             return;
@@ -1414,7 +1424,7 @@ export class DynamicChannelManager extends InitializeBase {
         const logsChannel = await channel.guild.channels.cache.get( logsChannelId ) as TextChannel;
 
         if ( ! logsChannel ) {
-            await MasterChannelManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
+            await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
 
             this.logger.error( this.log, `Guild id:${ channel.guildId }, channel id: \`${ channel.id }\` - Cannot find logs channel` );
             return;
@@ -1472,7 +1482,7 @@ export class DynamicChannelManager extends InitializeBase {
         await logsChannel.send( { embeds } ).catch( async ( err ) => {
             this.logger.error( this.log, "", err );
 
-            await MasterChannelManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
+            await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );
         } );
 
         mapItem.embeds = [];

@@ -1,8 +1,9 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedElapsedTimeBase } from "@vertix/ui-v2/_base/ui-embed-time-elapsed-base";
 
 import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 import { ClaimVoteResultsMarkdown } from "@vertix/ui-v2/claim/vote/claim-vote-results-markdown";
 
 export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {

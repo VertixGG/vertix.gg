@@ -1,19 +1,17 @@
-import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
 
-import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
-
-import { ISetupArgs } from "@vertix/ui-v2/setup/setup-definitions";
-
-import {
-    DynamicChannelElementsGroup
-} from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
 
 import {
     DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE
-} from "@vertix/definitions/master-channel";
+} from "@vertix-base/definitions/master-channel-defaults";
+
+import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
+
+import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
+
+import { ISetupArgs } from "@vertix/ui-v2/setup/setup-definitions";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 
@@ -135,7 +133,7 @@ export class SetupEmbed extends UIEmbedBase {
             masterChannelsPromise = ( args?.masterChannels || [] ).map( async ( channel, index ) => {
                 const data = channel?.data?.[ 0 ],
                     usedButtons = data?.object?.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-                    usedEmojis = ( await DynamicChannelElementsGroup.getUsedEmojis( usedButtons ) )
+                    usedEmojis = DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getUsedEmojis( usedButtons )
                         .join( ", " ),
                     usedRoles = ( data?.object.dynamicChannelVerifiedRoles || [] ).map( ( roleId: string ) => {
                         return "<@&" + roleId + ">";

@@ -1,3 +1,5 @@
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
+
 import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase {
@@ -6,26 +8,27 @@ export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase 
     }
 
     public getId() {
-        return 12;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelTransferOwnerButton.getName() );
     }
 
     public getSortId() {
-        return 7;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelTransferOwnerButton.getName() );
     }
 
     public getLabelForEmbed() {
-        return "🔀 ∙ **Transfer**";
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelTransferOwnerButton.getName() );
     }
 
-    public async getLabelForMenu(): Promise<string> {
-        return await this.getLabel();
+    public async getLabelForMenu() {
+        return this.getLabel();
     }
 
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "Transfer" );
+    public async getLabel() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelTransferOwnerButton.getName() );
     }
 
-    public getEmoji(): Promise<string> {
-        return Promise.resolve( "🔀" );
+    public async getEmoji() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
+            .getEmoji( DynamicChannelTransferOwnerButton.getName() ) as string;
     }
 }

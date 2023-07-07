@@ -1,3 +1,5 @@
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
+
 import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonBase {
@@ -6,7 +8,7 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
     }
 
     public static getId() {
-        return 5;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPermissionsAccessButton.getName() );
     }
 
     public getId() {
@@ -14,22 +16,23 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
     }
 
     public getSortId() {
-        return 5;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPermissionsAccessButton.getName() );
     }
 
     public getLabelForEmbed() {
-        return "👥 ∙ **Access**";
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPermissionsAccessButton.getName() );
     }
 
-    public async getLabelForMenu(): Promise<string> {
-        return await this.getLabel();
+    public async getLabelForMenu() {
+        return this.getLabel();
     }
 
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "Access" );
+    public async getLabel() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPermissionsAccessButton.getName() );
     }
 
-    public getEmoji(): Promise<string> {
-        return Promise.resolve( "👥" );
+    public async getEmoji() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
+            .getEmoji( DynamicChannelPermissionsAccessButton.getName() ) as string;
     }
 }

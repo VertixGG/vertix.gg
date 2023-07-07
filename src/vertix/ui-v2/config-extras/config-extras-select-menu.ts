@@ -1,9 +1,9 @@
 import { APISelectMenuOption } from "discord.js";
 
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UI_GENERIC_SEPARATOR, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-string-select-menu";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     private static vars = {

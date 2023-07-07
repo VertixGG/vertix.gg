@@ -17,6 +17,8 @@ import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
 import { isDebugOn } from "@vertix-base/utils/debug";
 
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
 import { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "../interfaces/channel";
 
 import { AppManager } from "@vertix/managers/app-manager";
@@ -24,8 +26,6 @@ import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager"
 import { PermissionsManager } from "@vertix/managers/permissions-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { CategoryManager } from "@vertix/managers/category-manager";
-
-import { ChannelModel } from "@vertix/models/channel-model";
 
 interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,

@@ -8,12 +8,13 @@ import {
     VoiceChannel
 } from "discord.js";
 
-import { Debugger } from "@vertix-base/modules/debugger";
-import { InitializeBase } from "@vertix-base/bases/initialize-base";
-
 import { isDebugOn } from "@vertix-base/utils/debug";
 
-import { ChannelModel } from "@vertix/models/channel-model";
+import { Debugger } from "@vertix-base/modules/debugger";
+
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
+import { ChannelModel } from "@vertix-base/models/channel-model";
 
 import { AppManager } from "@vertix/managers/app-manager";
 

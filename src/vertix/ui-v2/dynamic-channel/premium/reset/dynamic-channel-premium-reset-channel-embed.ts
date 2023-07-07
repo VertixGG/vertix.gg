@@ -1,7 +1,7 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedElapsedTimeBase } from "@vertix/ui-v2/_base/ui-embed-time-elapsed-base";
 import { UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 import { IDynamicResetChannelResult } from "@vertix/definitions/dynamic-channel";
 

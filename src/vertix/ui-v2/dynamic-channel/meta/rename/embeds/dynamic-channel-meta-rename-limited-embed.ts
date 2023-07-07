@@ -1,10 +1,10 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedElapsedTimeBase } from "@vertix/ui-v2/_base/ui-embed-time-elapsed-base";
 
 import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix/definitions/app";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class DynamicChannelMetaRenameLimitedEmbed extends UIEmbedElapsedTimeBase {
     private static vars = {

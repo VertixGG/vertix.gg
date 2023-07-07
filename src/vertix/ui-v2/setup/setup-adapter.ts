@@ -4,6 +4,13 @@ import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
 
 import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix-base/utils/badwords";
 
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
+import {
+    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
+} from "@vertix-base/definitions/master-channel-defaults";
+
 import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 import {
     UIDefaultButtonChannelTextInteraction,
@@ -14,18 +21,11 @@ import { ISetupArgs } from "@vertix/ui-v2/setup/setup-definitions";
 
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 
-import { ChannelModel } from "@vertix/models";
-
 import { AdminAdapterBase } from "@vertix/ui-v2/_general/admin/admin-adapter-base";
 
 import { SetupComponent } from "@vertix/ui-v2/setup/setup-component";
 
 import { LanguageSelectMenu } from "@vertix/ui-v2/language/language-select-menu";
-
-import {
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
-} from "@vertix/definitions/master-channel";
 
 type DefaultInteraction =
     UIDefaultButtonChannelTextInteraction

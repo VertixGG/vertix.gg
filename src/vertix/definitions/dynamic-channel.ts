@@ -55,6 +55,7 @@ export interface IDynamicResetChannelState {
     state: ChannelState,
     visibilityState: ChannelVisibilityState,
     allowedUserIds: string[],
+    blockedUserIds: string[],
 }
 
 export interface IDynamicResetChannelResult {

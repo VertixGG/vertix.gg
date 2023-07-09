@@ -22,6 +22,7 @@ import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
 import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
 
 import {
+    DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
     DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE, DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     DEFAULT_MASTER_CATEGORY_NAME,
@@ -33,6 +34,7 @@ import { ChannelModel, ChannelResult } from "@vertix-base/models/channel-model";
 import { ChannelDataManager } from "@vertix-base/managers/channel-data-manager";
 
 import {
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
@@ -65,7 +67,10 @@ interface IMasterChannelCreateCommonArgs {
 
     dynamicChannelNameTemplate?: string,
     dynamicChannelButtonsTemplate?: number[],
+
     dynamicChannelMentionable?: boolean,
+    dynamicChannelAutoSave?: boolean,
+
     dynamicChannelVerifiedRoles?: string[],
 }
 
@@ -282,6 +287,7 @@ export class MasterChannelManager extends InitializeBase {
         try {
             // Create a new dynamic channel for the user.
             const dynamic = await DynamicChannelManager.$.createDynamicChannel( {
+                username: newState.member.user.username,
                 displayName,
                 guild,
                 oldState,
@@ -414,12 +420,7 @@ export class MasterChannelManager extends InitializeBase {
             return result;
         }
 
-        this.debugger.dumpDown( this.createMasterChannel, {
-            dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
-            dynamicChannelMentionable: args.dynamicChannelMentionable,
-            dynamicChannelVerifiedRoles: args.dynamicChannelVerifiedRoles,
-        }, "options" );
+        this.debugger.dumpDown( this.createMasterChannel, args, "args" );
 
         const master = await this.createMasterChannelInternal( {
             ... args,
@@ -469,8 +470,6 @@ export class MasterChannelManager extends InitializeBase {
     public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Guild id: '${ guild.id }' - Removing leftovers of guild '${ guild.name }'` );
 
-        // TODO Relations are deleted automatically??
-        // TODO: They should be deleted only when they not exist.
         await CategoryModel.$.delete( guild.id );
         await ChannelModel.$.delete( guild.id );
     }
@@ -487,10 +486,15 @@ export class MasterChannelManager extends InitializeBase {
         // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
         const newName = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ] ||
                 DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+
             newButtons = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] ||
                 DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+
             newMentionable = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] === "boolean" ?
                 args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] : DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+            newAutoSave = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] === "boolean" ?
+                args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] : DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
+
             newVerifiedRoles = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
                 guild.roles.everyone.id
             ];
@@ -517,8 +521,12 @@ export class MasterChannelManager extends InitializeBase {
 
         await ChannelDataManager.$.setSettingsData( result.db.id, {
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]: newName,
+
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons,
+
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: newMentionable,
+            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ]: newAutoSave,
+
             [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: newVerifiedRoles,
         } );
 

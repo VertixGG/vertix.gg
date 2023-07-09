@@ -181,6 +181,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             templateName: string = args.dynamicChannelNameTemplate,
             templateButtons: number[] = args.dynamicChannelButtonsTemplate,
             mentionable: boolean = args.dynamicChannelMentionable,
+            autosave: boolean = args.dynamicChannelAutoSave,
             verifiedRoles: string[] = args.dynamicChannelVerifiedRoles;
 
         const result = await MasterChannelManager.$.createMasterChannel( {
@@ -189,8 +190,12 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             userOwnerId: interaction.user.id,
 
             dynamicChannelNameTemplate: templateName,
+
             dynamicChannelButtonsTemplate: templateButtons,
+
             dynamicChannelMentionable: mentionable,
+            dynamicChannelAutoSave: autosave,
+
             dynamicChannelVerifiedRoles: verifiedRoles,
         } );
 
@@ -274,6 +279,10 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
                     argsToSet.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
+                    break;
+
+                case "dynamicChannelAutoSave":
+                    argsToSet.dynamicChannelAutoSave = !! parseInt( parted[ 1 ] );
                     break;
             }
         } );

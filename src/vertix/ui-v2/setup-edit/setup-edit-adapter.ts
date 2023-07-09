@@ -5,6 +5,7 @@ import { ChannelModel } from "@vertix-base/models/channel-model";
 import { ChannelDataManager } from "@vertix-base/managers/channel-data-manager";
 
 import {
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
@@ -225,8 +226,12 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ];
         args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] =
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+
         args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] =
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
+        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] =
+            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ];
+
         args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
                 interaction.guild.roles.everyone.id
@@ -352,6 +357,12 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                     args.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
 
                     await MasterChannelDataManager.$.setChannelMentionable( args.ChannelDBId, args.dynamicChannelMentionable );
+                    break;
+
+                case "dynamicChannelAutoSave":
+                    args.dynamicChannelAutoSave = !! parseInt( parted[ 1 ] );
+
+                    await MasterChannelDataManager.$.setChannelAutoSave( args.ChannelDBId, args.dynamicChannelAutoSave );
                     break;
 
                 case "dynamicChannelLogsChannel":

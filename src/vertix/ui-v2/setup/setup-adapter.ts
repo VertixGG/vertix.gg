@@ -7,6 +7,7 @@ import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix-base/ut
 import { ChannelModel } from "@vertix-base/models/channel-model";
 
 import {
+    DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
     DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
 } from "@vertix-base/definitions/master-channel-defaults";
@@ -128,7 +129,9 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         this.uiManager.get( "Vertix/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+
             dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+            dynamicChannelAutoSave: DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
 
             dynamicChannelIncludeEveryoneRole: true,
             dynamicChannelVerifiedRoles: [

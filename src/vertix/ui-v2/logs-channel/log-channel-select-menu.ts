@@ -13,7 +13,7 @@ export class LogChannelSelectMenu extends UIElementChannelSelectMenu {
     }
 
     protected async getPlaceholder(): Promise<string> {
-        return "✎ ∙ Logs-Channel";
+        return "❯❯ ∙ Logs-Channel";
     }
 
     protected async getMinValues(): Promise<number | undefined> {

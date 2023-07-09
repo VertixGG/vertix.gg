@@ -391,7 +391,9 @@ export abstract class UIAdapterBase<
     }
 
     public async runInitial( interaction: MessageComponentInteraction, args?: UIArgs ) {
-        this.argsManager.setInitialArgs( this, this.argsManager.getArgsId( interaction as TInteraction ), args || {} );
+        this.argsManager.setInitialArgs( this, this.argsManager.getArgsId( interaction as TInteraction ), args || {}, {
+            overwrite: true,
+        } );
 
         return this.run( interaction as MessageComponentInteraction );
     }

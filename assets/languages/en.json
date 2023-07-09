@@ -858,7 +858,7 @@
       "name": "Vertix/UI-V2/DynamicChannelPremiumResetChannelEmbed",
       "content": {
         "title": "🔃  Dynamic Channel has been reset to default settings! ",
-        "description": "Settings has been reset to default:\n\n- Name: **{name}** {nameChanged}\n- User limit: ✋**{userLimit}** {userLimitChanged}\n- State: {state} {stateChanged}\n- Visibility State: {visibilityState} {visibilityStateChanged}\n- Allowed Users: {allowedUsers} {allowedUsersChanged}{rateLimited}",
+        "description": "Settings has been reset to default:\n\n- Name: **{name}** {nameChanged}\n- User limit: ✋**{userLimit}** {userLimitChanged}\n- State: {state} {stateChanged}\n- Visibility State: {visibilityState} {visibilityStateChanged}\n- Allowed Users: {allowedUsers} {allowedUsersChanged}\n- Blocked Users: {blockedUsers} {blockedUsersChanged}{rateLimited}",
         "options": {
           "formatSecondUnits": {
             "unit": "second",
@@ -897,6 +897,10 @@
         },
         "arrayOptions": {
           "allowedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          },
+          "blockedUsers": {
             "format": "<@{value}>{separator}",
             "separator": ", "
           }

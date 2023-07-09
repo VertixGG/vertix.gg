@@ -803,6 +803,7 @@ export class DynamicChannelManager extends InitializeBase {
             },
             previousChannelState = await getCurrentChannelState( channel ),
             previousAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            previousBlockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
                 DYNAMIC_CHANNEL_USER_TEMPLATE,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
@@ -853,15 +854,18 @@ export class DynamicChannelManager extends InitializeBase {
         await this.log( initiator, channel, this.resetChannel, "done" );
 
         const currentChannelState = await getCurrentChannelState( channel ),
-            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true );
+            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            currentBlockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true );
 
         result.oldState = {
             ... previousChannelState,
             allowedUserIds: previousAllowedUsers,
+            blockedUserIds: previousBlockedUsers,
         };
         result.newState = {
             ... currentChannelState,
             allowedUserIds: currentAllowedUsers,
+            blockedUserIds: currentBlockedUsers,
         };
 
         DynamicChannelManager.$.editPrimaryMessageDebounce( channel );

@@ -858,7 +858,7 @@
       "name": "Vertix/UI-V2/DynamicChannelPremiumResetChannelEmbed",
       "content": {
         "title": "🔃  Динамический канал был сброшен до настроек по умолчанию!",
-        "description": "Настройки были сброшены до значений по умолчанию:\n\n- Имя: **{name}** {nameChanged}\n- Ограничение пользователей: ✋ **{userLimit}** {userLimitChanged}\n- Состояние: {state} {stateChanged}\n- Состояние видимости: {visibilityState} {visibilityStateChanged}\n- Разрешенные пользователи: {allowedUsers} {allowedUsersChanged}{rateLimited}",
+        "description": "Настройки были сброшены до значений по умолчанию:\n\n- Имя: **{name}** {nameChanged}\n- Ограничение пользователей: ✋ **{userLimit}** {userLimitChanged}\n- Состояние: {state} {stateChanged}\n- Состояние видимости: {visibilityState} {visibilityStateChanged}\n- Разрешенные пользователи: {allowedUsers} {allowedUsersChanged}\n- Заблокированные пользователи: {blockedUsers} {blockedUsersChanged}{rateLimited}",
         "options": {
           "formatSecondUnits": {
             "unit": "секунда",
@@ -897,6 +897,10 @@
         },
         "arrayOptions": {
           "allowedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          },
+          "blockedUsers": {
             "format": "<@{value}>{separator}",
             "separator": ", "
           }

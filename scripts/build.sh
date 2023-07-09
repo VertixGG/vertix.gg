@@ -1,6 +1,9 @@
 # cd to project root
 cd "$(dirname "$0")/.."
 
+# Ensure package.json compatibility
+bash ./scripts/bot-prisma-ensure-package-json.sh
+
 # Create dist folder
 mkdir -p dist
 
@@ -30,7 +33,7 @@ chmod +x ./dist/*.sh
 
 # Copy `prisma-bot-client` to `./dist`
 mkdir -p dist/src
-cp -r ../vertix-base/src/prisma-bot-client ./dist/src/prisma-bot-client
+cp -rf ../vertix-base/src/prisma-bot-client ./dist/src/
 
 # Bundle
 tsup-node src/vertix/_workers -d dist/_workers

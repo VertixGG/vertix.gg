@@ -315,7 +315,11 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
 
         switch ( await DynamicChannelManager.$.editUserAccess( interaction, interaction.channel, target, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false ) ) {
             case "success":
-                await target.voice.setChannel( null ).catch( () => {} );
+                // Check if target is in the channel.
+                if ( interaction.channel.members.has( target.id ) ) {
+                    // Kick it.
+                    await target.voice.setChannel( null ).catch( () => {} );
+                }
 
                 await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelPermissionsBlocked", {
                     userBlockedDisplayName: target.displayName,

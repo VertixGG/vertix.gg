@@ -1,5 +1,7 @@
 import * as fs from "fs";
 
+import { ForceMethodImplementation } from "@vertix-base/errors/force-method-implementation";
+
 import { UIArgs, UIBaseTemplateOptions, UIType } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UITemplateBase } from "@vertix/ui-v2/_base/ui-template-base";
@@ -7,8 +9,6 @@ import { UITemplateBase } from "@vertix/ui-v2/_base/ui-template-base";
 import { UILanguageManager } from "@vertix/ui-v2/ui-language-manager";
 
 import { UIMarkdownLanguageContent } from "@vertix/ui-v2/_base/ui-language-definitions";
-
-import { ForceMethodImplementation } from "@internal/errors/force-method-implementation";
 
 export abstract class UIMarkdownBase extends UITemplateBase {
     private static generatedLinks: { [ key: string ]: string } = {};

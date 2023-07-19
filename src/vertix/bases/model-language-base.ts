@@ -1,6 +1,10 @@
-import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
+import { PrismaClient} from "@vertix-base-prisma-bot";
 
-import { ModelBaseCached } from "@internal/bases/model-base";
+import { ModelBaseCached } from "@vertix-base/bases/model-base";
+
+import { PrismaBotInstance } from"@vertix-base/prisma/prisma-bot-instance";
+
+import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
 
 export interface TModelHelper<T> {
     findFirst( ... args: any[] ): T;
@@ -11,7 +15,7 @@ export interface TModelHelper<T> {
 /**
  * Wasted too much time on this, didn't find a good solution.
  */
-export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<TPayloadWithContent> {
+export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<PrismaClient, TPayloadWithContent> {
     public static getName(): string {
         return "Vertix/Bases/ModelLanguageBase";
     }
@@ -63,6 +67,10 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
     }
 
     protected abstract getModel(): TModel;
+
+    protected getClient() {
+        return PrismaBotInstance.getClient();
+    }
 
     protected getFindArgs( name: string, languageCode: string ): any {
         return {

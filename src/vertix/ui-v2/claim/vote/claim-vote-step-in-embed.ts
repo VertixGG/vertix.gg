@@ -1,7 +1,7 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedElapsedTimeBase } from "@vertix/ui-v2/_base/ui-embed-time-elapsed-base";
 import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 /**
  * Shown when a user is trying to claim a channel and the channel.

@@ -1,13 +1,16 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { ChannelButtonsTemplateEmbed } from "@vertix/ui-v2/channel-buttons-template/channel-buttons-template-embed";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
-
 export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     private static vars = {
+        on: uiUtilsWrapAsTemplate( "on" ),
+        off: uiUtilsWrapAsTemplate( "off" ),
+
         message: uiUtilsWrapAsTemplate( "message" ),
         defaultMessage: uiUtilsWrapAsTemplate( "defaultMessage" ),
         noButtonsMessage: uiUtilsWrapAsTemplate( "noButtonsMessage" ),
@@ -15,6 +18,10 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         configUserMention: uiUtilsWrapAsTemplate( "configUserMention" ),
         configUserMentionEnabled: uiUtilsWrapAsTemplate( "configUserMentionEnabled" ),
         configUserMentionDisabled: uiUtilsWrapAsTemplate( "configUserMentionDisabled" ),
+
+        configAutoSave: uiUtilsWrapAsTemplate( "configAutoSave" ),
+        configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
+        configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
 
         footer: uiUtilsWrapAsTemplate( "footer" ),
         defaultFooter: uiUtilsWrapAsTemplate( "defaultFooter" ),
@@ -47,8 +54,9 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             SetupStep2Embed.vars.message + "\n" +
             "**_⚙️ Configuration_**\n\n" +
 
-            "> 📌 Mention user in primary message: " + SetupStep2Embed.vars.configUserMention +
-            "\n\n" +
+            "> @ ∙ Mention user in primary message: " + SetupStep2Embed.vars.configUserMention + "\n" +
+            "> ⮑ ∙ Auto save dynamic channels: " + SetupStep2Embed.vars.configAutoSave + "\n" +
+            "\n" +
             "You can keep the default settings by pressing **( `Next ▶` )** button." +
             "\n\n" +
             "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).";
@@ -60,29 +68,43 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
 
     protected getOptions() {
         const {
+            on,
+            off,
+
             defaultMessage,
             noButtonsMessage,
 
             configUserMentionEnabled,
             configUserMentionDisabled,
 
+            configAutoSaveEnabled,
+            configAutoSaveDisabled,
+
             defaultFooter,
             noButtonsFooter,
         } = SetupStep2Embed.vars;
 
         return {
+            "on": "\`🟢∙On`",
+            "off": "\`🔴∙Off`",
+
             message: {
                 [ defaultMessage ]: super.getDescription() + "\n",
                 [ noButtonsMessage ]: "There are no buttons selected!\n",
             },
 
             configUserMention: {
-                [ configUserMentionEnabled ]: "\`🟢∙On`",
-                [ configUserMentionDisabled ]: "\`🔴∙Off`",
+                [ configUserMentionEnabled ]: on,
+                [ configUserMentionDisabled ]: off,
+            },
+
+            configAutoSave: {
+                [ configAutoSaveEnabled ]: on,
+                [ configAutoSaveDisabled ]: off,
             },
 
             footer: {
-                [ defaultFooter ]: "Members creating dynamic channels through this master channel will see only the buttons you have selected. You can choose the buttons using the menu below.",
+                [ defaultFooter ]: "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
                 [ noButtonsFooter ]: "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n",
             },
         };
@@ -93,6 +115,7 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
 
         return {
             configUserMention: args.dynamicChannelMentionable ? SetupStep2Embed.vars.configUserMentionEnabled : SetupStep2Embed.vars.configUserMentionDisabled,
+            configAutoSave: args.dynamicChannelAutoSave ? SetupStep2Embed.vars.configAutoSaveEnabled : SetupStep2Embed.vars.configAutoSaveDisabled,
 
             message: buttonsLength ? SetupStep2Embed.vars.defaultMessage : SetupStep2Embed.vars.noButtonsMessage,
             footer: buttonsLength ? SetupStep2Embed.vars.defaultFooter : SetupStep2Embed.vars.noButtonsFooter,

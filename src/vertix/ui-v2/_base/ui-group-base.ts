@@ -1,9 +1,9 @@
+import { ForceMethodImplementation } from "@vertix-base/errors";
+
 import { UIBase } from "@vertix/ui-v2/_base/ui-base";
 import { UIArgs, UIEntityTypesConstructor } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UIEntityBase } from "@vertix/ui-v2/_base/ui-entity-base";
-
-import { ForceMethodImplementation } from "@internal/errors";
 
 export abstract class UIGroupBase extends UIBase {
     public static getName() {

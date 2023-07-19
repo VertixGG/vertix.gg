@@ -4,9 +4,11 @@ import { Client, EmbedBuilder, MessageComponentInteraction } from "discord.js";
 
 import { Api } from "@top-gg/sdk";
 
-import { AppManager } from "@vertix/managers/app-manager";
+import { CacheBase } from "@vertix-base/bases/cache-base";
 
-import { CacheBase } from "@internal/bases/cache-base";
+import { isDebugOn } from "@vertix-base/utils/debug";
+
+import { AppManager } from "@vertix/managers/app-manager";
 
 const TOP_GG_WORKER_INTERVAL = 1000 * 60 * 60, // 1 hour
     TOP_GG_VOTE_INTERVAL = 1000 * 60 * 60 * 12; // 12 hours
@@ -44,7 +46,7 @@ export class TopGGManager extends CacheBase<Date> {
     }
 
     public constructor(
-        shouldDebugCache = AppManager.isDebugOn( "CACHE", TopGGManager.getName() ),
+        shouldDebugCache = isDebugOn( "CACHE", TopGGManager.getName() ),
         workerInterval = TOP_GG_WORKER_INTERVAL,
         voteInterval = TOP_GG_VOTE_INTERVAL
     ) {

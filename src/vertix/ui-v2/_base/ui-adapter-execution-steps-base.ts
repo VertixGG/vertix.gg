@@ -1,6 +1,9 @@
 import { Message, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 
-import { AppManager } from "@vertix/managers/app-manager";
+import { ForceMethodImplementation } from "@vertix-base/errors/force-method-implementation";
+import { Debugger } from "@vertix-base/modules/debugger";
+
+import { isDebugOn } from "@vertix-base/utils/debug";
 
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
 import {
@@ -14,9 +17,6 @@ import { UIElementsGroupBase } from "@vertix/ui-v2/_base/ui-elements-group-base"
 
 import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
-import { ForceMethodImplementation } from "@internal/errors/force-method-implementation";
-import { Debugger } from "@internal/modules/debugger";
-
 type UIEntitiesGroupsTypes = typeof UIElementsGroupBase[] | typeof UIEmbedsGroupBase[];
 
 export abstract class UIAdapterExecutionStepsBase<
@@ -24,9 +24,9 @@ export abstract class UIAdapterExecutionStepsBase<
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterBase<TChannel, TInteraction> {
     private static adapterExecutionDebugger: Debugger = new Debugger(
-        this,
+        UIAdapterExecutionStepsBase.getName(),
         "",
-        AppManager.isDebugOn( "UI", UIAdapterExecutionStepsBase.getName() )
+        isDebugOn( "UI", UIAdapterExecutionStepsBase.getName() )
     );
 
     private static executionStepsArray: UIExecutionStepItem[];
@@ -85,7 +85,7 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     protected static getExecutionSteps(): UIExecutionSteps {
-        throw new ForceMethodImplementation( this, this.getExecutionSteps.name );
+        throw new ForceMethodImplementation( this.getName(), this.getExecutionSteps.name );
     }
 
     protected static getExecutionStepsInternal(): UIExecutionSteps {

@@ -1,12 +1,12 @@
 import { Colors } from "discord.js";
 
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import {
     DynamicChannelPermissionsAccessEmbed
 } from "@vertix/ui-v2/dynamic-channel/permissions/embeds/dynamic-channel-permissions-access-embed";
 
 import { UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class DynamicChannelPermissionsBlockedEmbed extends DynamicChannelPermissionsAccessEmbed {
     private static vars = {

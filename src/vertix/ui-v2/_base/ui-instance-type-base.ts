@@ -1,7 +1,7 @@
+import { ForceMethodImplementation } from "@vertix-base/errors";
+
 import { UIBase } from "@vertix/ui-v2/_base/ui-base";
 import { UIInstancesTypes, UIType } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { ForceMethodImplementation } from "@internal/errors";
 
 export class UIInstanceTypeBase extends UIBase {
     public static getName() {

@@ -1,8 +1,10 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, PrismaClient } from "@vertix-base-prisma-bot";
 
-import { ModelBase } from "@internal/bases/model-base";
+import { ModelBase } from "@vertix-base/bases/model-base";
 
-export class CategoryModel extends ModelBase {
+import { PrismaBotInstance } from"@vertix-base/prisma/prisma-bot-instance";
+
+export class CategoryModel extends ModelBase<PrismaClient> {
     private static instance: CategoryModel;
 
     public static getName(): string {
@@ -33,6 +35,10 @@ export class CategoryModel extends ModelBase {
         }
 
         return this.prisma.category.deleteMany( { where } );
+    }
+
+    protected getClient() {
+        return PrismaBotInstance.getClient();
     }
 }
 

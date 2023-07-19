@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 
-import { GuildDataManager } from "@vertix/managers/guild-data-manager";
+import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
 
 import { rolesGetEveryoneRoleMention } from "@vertix/utils/roles";
 

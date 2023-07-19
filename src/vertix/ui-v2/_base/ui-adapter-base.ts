@@ -22,6 +22,16 @@ import {
 
 import chalk from "chalk";
 
+import { Debugger } from "@vertix-base/modules/debugger";
+import { Logger } from "@vertix-base/modules/logger";
+import { ForceMethodImplementation } from "@vertix-base/errors";
+
+import { isDebugOn } from "@vertix-base/utils/debug";
+
+import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
+
+import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix-base/definitions/guild-data-keys";
+
 import { UI_GENERIC_SEPARATOR, UIAdapterBuildSource, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UIAdapterReplyContext, UIAdapterStartContext, } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
@@ -32,20 +42,13 @@ import { UIAdapterEntityBase } from "@vertix/ui-v2/_base/ui-adapter-entity-base"
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 
 import { UIArgsManager } from "@vertix/ui-v2/_base/ui-args-manager";
-import { GuildDataManager } from "@vertix/managers/guild-data-manager";
 import { DirectMessageManager } from "@vertix/managers/direct-message-manager";
-import { AppManager } from "@vertix/managers/app-manager";
 
 import { UIRegenerateButton } from "@vertix/ui-v2/_base/regenerate/ui-regenerate-button";
 
 import { UIInteractionMiddleware } from "@vertix/ui-v2/_base/ui-interaction-middleware";
 
-import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix/definitions/guild";
 import { UI_LANGUAGES_INITIAL_CODE } from "@vertix/ui-v2/_base/ui-language-definitions";
-
-import { Debugger } from "@internal/modules/debugger";
-import { Logger } from "@internal/modules/logger";
-import { ForceMethodImplementation } from "@internal/errors";
 
 const REGENERATE_BUTTON_ID = "regenerate-button";
 
@@ -64,11 +67,11 @@ export abstract class UIAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterEntityBase {
-    private static adapterLogger: Logger = new Logger( this );
+    private static adapterLogger: Logger = new Logger( this.getName() );
     private static adapterDebugger: Debugger = new Debugger(
-        this,
+        this.getName(),
         "",
-        AppManager.isDebugOn( "UI", UIAdapterBase.getName() )
+        isDebugOn( "UI", UIAdapterBase.getName() )
     );
 
     private static validatedOnce = false;
@@ -388,7 +391,9 @@ export abstract class UIAdapterBase<
     }
 
     public async runInitial( interaction: MessageComponentInteraction, args?: UIArgs ) {
-        this.argsManager.setInitialArgs( this, this.argsManager.getArgsId( interaction as TInteraction ), args || {} );
+        this.argsManager.setInitialArgs( this, this.argsManager.getArgsId( interaction as TInteraction ), args || {}, {
+            overwrite: true,
+        } );
 
         return this.run( interaction as MessageComponentInteraction );
     }

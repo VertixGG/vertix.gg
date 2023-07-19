@@ -1,7 +1,7 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
 import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
 

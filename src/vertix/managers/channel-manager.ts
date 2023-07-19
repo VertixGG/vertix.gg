@@ -10,7 +10,14 @@ import {
     VoiceState,
 } from "discord.js";
 
-import { E_INTERNAL_CHANNEL_TYPES } from ".prisma/client";
+import { E_INTERNAL_CHANNEL_TYPES } from "@vertix-base-prisma-bot";
+
+import { Debugger } from "@vertix-base/modules/debugger";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
+import { isDebugOn } from "@vertix-base/utils/debug";
+
+import { ChannelModel } from "@vertix-base/models/channel-model";
 
 import { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "../interfaces/channel";
 
@@ -19,12 +26,6 @@ import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager"
 import { PermissionsManager } from "@vertix/managers/permissions-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { CategoryManager } from "@vertix/managers/category-manager";
-
-import { ChannelModel } from "@vertix/models/channel-model";
-
-import { Debugger } from "@internal/modules/debugger";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     guild: Guild,
@@ -68,7 +69,7 @@ export class ChannelManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this, "", AppManager.isDebugOn( "MANAGER", ChannelManager.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", ChannelManager.getName() ) );
     }
 
     public async onJoin( oldState: VoiceState, newState: VoiceState ) {

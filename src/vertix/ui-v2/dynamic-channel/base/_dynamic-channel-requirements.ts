@@ -1,11 +1,9 @@
-import { VoiceChannel } from "discord.js";
+import { ChannelModel } from "@vertix-base/models/channel-model";
 
 import { UIAdapterReplyContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
 import { PermissionsManager } from "@vertix/managers/permissions-manager";
-
-import { ChannelModel } from "@vertix/models";
 
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,

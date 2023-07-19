@@ -1,3 +1,5 @@
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
+
 import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 import { DynamicChannelVoteManager } from "@vertix/managers/dynamic-channel-vote-manager";
@@ -8,7 +10,7 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     public static getId() {
-        return 7;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPremiumClaimChannelButton.getName() );
     }
 
     public getId() {
@@ -16,23 +18,24 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     public getSortId() {
-        return 8;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPremiumClaimChannelButton.getName() );
     }
 
     public getLabelForEmbed() {
-        return "😈 ∙ **Claim**";
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPremiumClaimChannelButton.getName() );
     }
 
-    public async getLabelForMenu(): Promise<string> {
+    public async getLabelForMenu() {
         return await this.getLabel();
     }
 
-    public async getLabel(): Promise<string> {
-        return "Claim";
+    public async getLabel() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPremiumClaimChannelButton.getName() );
     }
 
-    public getEmoji(): Promise<string> {
-        return Promise.resolve( "😈" );
+    public async getEmoji() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
+            .getEmoji( DynamicChannelPremiumClaimChannelButton.getName() ) as string;
     }
 
     protected async isDisabled(): Promise<boolean> {

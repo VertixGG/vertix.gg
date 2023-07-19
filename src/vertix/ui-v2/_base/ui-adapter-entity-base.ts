@@ -11,6 +11,9 @@ import {
     UserSelectMenuBuilder
 } from "discord.js";
 
+import { Debugger } from "@vertix-base/modules/debugger";
+import { ForceMethodImplementation } from "@vertix-base/errors/force-method-implementation";
+
 import { UIInstanceTypeBase } from "@vertix/ui-v2/_base/ui-instance-type-base";
 import { UIComponentBase } from "@vertix/ui-v2/_base/ui-component-base";
 import { UIEntityBase } from "@vertix/ui-v2/_base/ui-entity-base";
@@ -27,9 +30,6 @@ import {
 } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UnknownElementTypeError } from "@vertix/ui-v2/_base/errors/unknown-element-type-error";
-
-import { Debugger } from "@internal/modules/debugger";
-import { ForceMethodImplementation } from "@internal/errors/force-method-implementation";
 
 interface UIEntityMapped {
     entity: typeof UIEntityBase,

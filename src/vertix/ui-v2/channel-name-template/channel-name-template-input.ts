@@ -1,8 +1,8 @@
+import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix-base/definitions/master-channel-defaults";
+
 import { UIElementInputBase } from "@vertix/ui-v2/_base/elements/ui-element-input-base";
 
 import { UIInputStyleTypes, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix/definitions/master-channel";
 
 export class ChannelNameTemplateInput extends UIElementInputBase {
     public static getName() {

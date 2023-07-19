@@ -1,14 +1,15 @@
 import { APISelectMenuOption } from "discord.js";
 
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UI_GENERIC_SEPARATOR, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 import { UIElementStringSelectMenu } from "@vertix/ui-v2/_base/elements/ui-element-string-select-menu";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     private static vars = {
         dynamicChannelMentionableLabel: uiUtilsWrapAsTemplate( "dynamicChannelMentionableLabel" ),
         dynamicChannelLogsChannelLabel: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelLabel" ),
+        dynamicChannelAutoSaveLabel: uiUtilsWrapAsTemplate( "dynamicChannelAutoSaveLabel" ),
 
         state: uiUtilsWrapAsTemplate( "state" ),
         stateOn: uiUtilsWrapAsTemplate( "stateOn" ),
@@ -35,15 +36,21 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         const {
             dynamicChannelMentionableLabel,
             dynamicChannelLogsChannelLabel,
+            dynamicChannelAutoSaveLabel,
 
             state,
         } = ConfigExtrasSelectMenu.vars;
 
+        // TODO: Do not repeat yourself.
         const result: APISelectMenuOption[] = [
             {
                 label: dynamicChannelMentionableLabel + " " + state,
                 value: "dynamicChannelMentionable" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" ),
             },
+            {
+                label: dynamicChannelAutoSaveLabel + " " + state,
+                value: "dynamicChannelAutoSave" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelAutoSave ? "0" : "1" ),
+            }
         ];
 
         if ( ! this.uiArgs?._configExtraMenuDisableLogsChannelOption ) {
@@ -71,7 +78,8 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             },
 
             dynamicChannelMentionableLabel: "@ ∙ Mention user in primary message",
-            dynamicChannelLogsChannelLabel: "✎ ∙ Send logs to custom channel",
+            dynamicChannelAutoSaveLabel: "⮑ ∙ Auto save dynamic channel",
+            dynamicChannelLogsChannelLabel: "❯❯ ∙ Send logs to custom channel",
         };
     }
 

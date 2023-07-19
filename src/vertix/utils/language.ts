@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { EmbedLanguageModel } from "@vertix/models/embed-language-model";
 import { ElementButtonLanguageModel } from "@vertix/models/element-button-language-model";
 import { ElementTextInputLanguageModel } from "@vertix/models/element-text-input-language-model";
@@ -10,8 +12,6 @@ import { MarkdownLanguageModel } from "@vertix/models/markdown-language-model";
 import { ModalLanguageModel } from "@vertix/models/modal-language-model";
 
 import { UI_LANGUAGES_PATH, UILanguageJSON } from "@vertix/ui-v2/_base/ui-language-definitions";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 export class LanguageUtils extends InitializeBase {
     private static instance: LanguageUtils;

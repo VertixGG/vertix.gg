@@ -1,24 +1,16 @@
 import { AuditLogEvent, ChannelType, Client, Guild } from "discord.js";
 
-import { GuildModel } from "@vertix/models";
+import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix-base/definitions/guild-data-keys";
+
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
+import { GuildModel } from "@vertix-base/models/guild-model";
+import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
 
 import { TopGGManager } from "@vertix/managers/top-gg-manager";
 import { DirectMessageManager } from "@vertix/managers/direct-message-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 import { UIAdapterManager } from "@vertix/ui-v2/ui-adapter-manager";
-import { GuildDataManager } from "@vertix/managers/guild-data-manager";
-
-import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS, DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix/definitions/guild";
-
-import {
-    DEFAULT_BADWORDS,
-    DEFAULT_BADWORDS_INITIAL_VALUE,
-    DEFAULT_BADWORDS_SEPARATOR
-} from "@vertix/definitions/badwords";
-
-import { badwordsSomeUsed } from "@vertix/utils/badwords";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
 
@@ -114,55 +106,6 @@ export class GuildManager extends InitializeBase {
         this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
-    public async getBadwords( guildId: string ): Promise<string[]> {
-        const badwordsDB = await GuildDataManager.$.getData( {
-            ownerId: guildId,
-            key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
-            default: null,
-            cache: true,
-        }, true );
-
-        if ( badwordsDB?.values ) {
-            return badwordsDB.values;
-        }
-
-        return DEFAULT_BADWORDS;
-    }
-
-    public async getBadwordsFormatted( guildId: string ): Promise<string> {
-        return ( await this.getBadwords( guildId ) )
-                .join( DEFAULT_BADWORDS_SEPARATOR ) || DEFAULT_BADWORDS_INITIAL_VALUE;
-    }
-
-    public async setBadwords( guild: Guild, badwords: string[] | undefined, shouldAdminLog = true ): Promise<void> {
-        const oldBadwords =  shouldAdminLog || await this.getBadwordsFormatted( guild.id );
-
-        if ( ! badwords?.length ) {
-            try {
-                await GuildDataManager.$.deleteData( {
-                    ownerId: guild.id,
-                    key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
-                }, true );
-            } catch ( e ) {
-                this.logger.error( this.setBadwords, "", e );
-            }
-
-            return;
-        }
-
-        await GuildDataManager.$.setData( {
-            ownerId: guild.id,
-            key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
-            default: badwords,
-        }, true );
-
-        if ( shouldAdminLog ) {
-            this.logger.admin( this.setBadwords,
-                `🔧 Bad Words filter has been modified - "${ oldBadwords }" -> "${ badwords }" (${ guild.name }) (${ guild.memberCount })`
-            );
-        }
-    }
-
     public async setLanguage( guild: Guild, language: string, shouldAdminLog = true ): Promise<void> {
         await GuildDataManager.$.setData( {
             ownerId: guild.id,
@@ -176,10 +119,6 @@ export class GuildManager extends InitializeBase {
                 `🌍  Language has been modified - "${ language }" (${ guild.name }) (${ guild.memberCount })`
             );
         }
-    }
-
-    public async hasSomeBadword( guildId: string, content: string ): Promise<string | null> {
-        return badwordsSomeUsed( content, await this.getBadwords( guildId ) );
     }
 
     private updateStats() {

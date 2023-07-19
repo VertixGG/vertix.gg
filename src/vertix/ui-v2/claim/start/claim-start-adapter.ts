@@ -1,5 +1,7 @@
 import { ButtonInteraction, ChannelType, PermissionsBitField, VoiceChannel } from "discord.js";
 
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
 import { ClaimStartComponent } from "@vertix/ui-v2/claim/start/claim-start-component";
 
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
@@ -8,9 +10,7 @@ import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 
-import { ChannelModel } from "@vertix/models";
-
-import {  guildGetMemberDisplayName } from "@vertix/utils/guild";
+import { guildGetMemberDisplayName } from "@vertix/utils/guild";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;

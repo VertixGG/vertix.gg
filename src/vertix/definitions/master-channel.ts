@@ -1,51 +1,7 @@
+// TODO: Maybe Rename file to permissions.ts
 import { OverwriteType, PermissionsBitField } from "discord.js";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
-import { UI_ELEMENTS_DEPTH } from "@vertix/ui-v2/_base/ui-definitions";
-
 const { Flags } = PermissionsBitField;
-
-/* Default Values */
-export const DEFAULT_MASTER_CATEGORY_NAME = "༄ Dynamic Channels",
-    DEFAULT_MASTER_CHANNEL_CREATE_NAME = "➕ New Channel",
-    DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS = 3;
-
-/* Templates */
-
-export const DYNAMIC_CHANNEL_USER_TEMPLATE = uiUtilsWrapAsTemplate( "user" );
-
-/* Templates Data */
-
-export const DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE = DYNAMIC_CHANNEL_USER_TEMPLATE + "'s Channel";
-
-export const DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE = DynamicChannelElementsGroup.getItems().flat( UI_ELEMENTS_DEPTH )
-    .map( ( item ) => ( new item ).getId() ); // TODO: Create dedicated method for this, which validate the uniqueness of the ids
-
-export const DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE = true;
-
-export const DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID = null;
-
-/* Default Data Key Settings */
-
-export const MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE = "dynamicChannelNameTemplate",
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE = "dynamicChannelButtonsTemplate",
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE = "dynamicChannelMentionable",
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES = "dynamicChannelVerifiedRoles",
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID = "dynamicChannelLogsChannelId";
-
-/* Default Data Settings */
-
-export const DEFAULT_MASTER_CHANNEL_DATA_DYNAMIC_CHANNEL_SETTINGS = {
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]: DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: [],
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ]: DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-};
 
 /* Default Permissions */
 
@@ -81,6 +37,7 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
         Flags.SendMessages,
         Flags.ViewChannel,
         Flags.EmbedLinks,
+        // Flags.ManageGuild,
     ],
 };
 

@@ -1,9 +1,6 @@
-import {
-    BaseGuildTextChannel,
-    ChannelType,
-    MessageComponentInteraction,
-    PermissionsBitField,
-} from "discord.js";
+import { BaseGuildTextChannel, ChannelType, MessageComponentInteraction, PermissionsBitField, } from "discord.js";
+
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE } from "@vertix-base/definitions/master-channel-defaults";
 
 import { UI_GENERIC_SEPARATOR, UIAdapterBuildSource, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
@@ -29,10 +26,7 @@ import { SetupMaxMasterChannelsEmbed } from "@vertix/ui-v2/setup/setup-max-maste
 
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
 
-import {
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    DEFAULT_SETUP_PERMISSIONS
-} from "@vertix/definitions/master-channel";
+import { DEFAULT_SETUP_PERMISSIONS } from "@vertix/definitions/master-channel";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction
@@ -177,7 +171,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
                 break;
 
             case "Vertix/UI-V2/SetupStep3Component":
-                args._wizardShouldDisableFinishButton = !args.dynamicChannelVerifiedRoles?.length;
+                args._wizardShouldDisableFinishButton = ! args.dynamicChannelVerifiedRoles?.length;
                 break;
         }
     }
@@ -187,6 +181,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             templateName: string = args.dynamicChannelNameTemplate,
             templateButtons: number[] = args.dynamicChannelButtonsTemplate,
             mentionable: boolean = args.dynamicChannelMentionable,
+            autosave: boolean = args.dynamicChannelAutoSave,
             verifiedRoles: string[] = args.dynamicChannelVerifiedRoles;
 
         const result = await MasterChannelManager.$.createMasterChannel( {
@@ -195,8 +190,12 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             userOwnerId: interaction.user.id,
 
             dynamicChannelNameTemplate: templateName,
+
             dynamicChannelButtonsTemplate: templateButtons,
+
             dynamicChannelMentionable: mentionable,
+            dynamicChannelAutoSave: autosave,
+
             dynamicChannelVerifiedRoles: verifiedRoles,
         } );
 
@@ -280,6 +279,10 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
                     argsToSet.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
+                    break;
+
+                case "dynamicChannelAutoSave":
+                    argsToSet.dynamicChannelAutoSave = !! parseInt( parted[ 1 ] );
                     break;
             }
         } );

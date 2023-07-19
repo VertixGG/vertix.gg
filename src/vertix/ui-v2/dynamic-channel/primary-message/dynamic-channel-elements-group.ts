@@ -57,7 +57,6 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
             }
         } );
 
-        // @ts-ignore
         DynamicChannelElementsGroup.allItems = allItems;
 
         allItems.forEach( ( item ) => {
@@ -77,14 +76,6 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
         return ids.sort( ( aId: number, bId: number ) =>
             DynamicChannelElementsGroup.getItemById( aId ).getSortId() -
             DynamicChannelElementsGroup.getItemById( bId ).getSortId()
-        );
-    }
-
-    public static async getUsedEmojis( usedButtons: number[] ) {
-        return Promise.all(
-            this.getAllItems()
-                .filter( item => usedButtons.includes( item.getId() ) )
-                .map( async ( item ) => item.getEmoji() )
         );
     }
 }

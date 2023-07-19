@@ -1,3 +1,5 @@
+import { ForceMethodImplementation } from "@vertix-base/errors";
+
 import { UIPortableBase } from "@vertix/ui-v2/_base/ui-portable-base";
 import { UIElementsGroupBase } from "@vertix/ui-v2/_base/ui-elements-group-base";
 import { UIEmbedsGroupBase } from "@vertix/ui-v2/_base/ui-embeds-group-base";
@@ -21,8 +23,6 @@ import {
 } from "@vertix/ui-v2/_base/ui-definitions";
 
 import { UIMarkdownBase } from "@vertix/ui-v2/_base/ui-markdown-base";
-
-import { ForceMethodImplementation } from "@internal/errors";
 
 // TODO: Test
 export abstract class UIComponentInfraBase extends UIPortableBase {

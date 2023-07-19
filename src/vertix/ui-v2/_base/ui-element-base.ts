@@ -1,9 +1,9 @@
 import { APIBaseComponent, ComponentType } from "discord.js";
 
+import { ForceMethodImplementation } from "@vertix-base/errors";
+
 import { UIType } from "@vertix/ui-v2/_base/ui-definitions";
 import { UITemplateBase } from "@vertix/ui-v2/_base/ui-template-base";
-
-import { ForceMethodImplementation } from "@internal/errors";
 
 export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> extends UITemplateBase {
     public static getName() {

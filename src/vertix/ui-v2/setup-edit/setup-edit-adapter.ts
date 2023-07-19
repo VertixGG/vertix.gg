@@ -1,5 +1,25 @@
 import { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
+import { ChannelDataManager } from "@vertix-base/managers/channel-data-manager";
+
+import {
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES
+} from "@vertix-base/definitions/master-channel-data-keys";
+
+import {
+    DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
+    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE
+} from "@vertix-base/definitions/master-channel-defaults";
+
+import { MasterChannelDataManager } from "@vertix-base/managers/master-channel-data-manager";
+
 import {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultChannelSelectMenuChannelTextInteraction,
@@ -10,23 +30,10 @@ import {
 
 import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 
-import { ChannelModel } from "@vertix/models";
-
 import { AppManager } from "@vertix/managers/app-manager";
-import { ChannelDataManager } from "@vertix/managers/channel-data-manager";
+
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
-import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
-
-import {
-    DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES
-} from "@vertix/definitions/master-channel";
 
 import { AdminAdapterExuBase } from "@vertix/ui-v2/_general/admin/admin-adapter-exu-base";
 import { SetupEditComponent } from "@vertix/ui-v2/setup-edit/setup-edit-component";
@@ -219,8 +226,12 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ];
         args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] =
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+
         args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] =
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
+        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] =
+            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ];
+
         args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
             masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
                 interaction.guild.roles.everyone.id
@@ -268,7 +279,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             dynamicChannelNameTemplate: value || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
         } );
 
-        await MasterChannelManager.$.setChannelNameTemplate( args?.ChannelDBId, value );
+        await MasterChannelDataManager.$.setChannelNameTemplate( args?.ChannelDBId, value );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
     }
@@ -285,7 +296,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const args = this.getArgsManager().getArgs( this, interaction ),
             buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
-        await MasterChannelManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
         if ( buttons.includes( DynamicChannelPremiumClaimChannelButton.getId() ) ) {
             // Get all channels that are using this master channel.
@@ -313,7 +324,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const args = this.getArgsManager().getArgs( this, interaction ),
             buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
-        await MasterChannelManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
     }
@@ -345,13 +356,19 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                 case "dynamicChannelMentionable":
                     args.dynamicChannelMentionable = !! parseInt( parted[ 1 ] );
 
-                    await MasterChannelManager.$.setChannelMentionable( args.ChannelDBId, args.dynamicChannelMentionable );
+                    await MasterChannelDataManager.$.setChannelMentionable( args.ChannelDBId, args.dynamicChannelMentionable );
+                    break;
+
+                case "dynamicChannelAutoSave":
+                    args.dynamicChannelAutoSave = !! parseInt( parted[ 1 ] );
+
+                    await MasterChannelDataManager.$.setChannelAutoSave( args.ChannelDBId, args.dynamicChannelAutoSave );
                     break;
 
                 case "dynamicChannelLogsChannel":
                     args.dynamicChannelLogsChannelId = null;
 
-                    await MasterChannelManager.$.setChannelLogsChannel( args.ChannelDBId, args.dynamicChannelLogsChannelId );
+                    await MasterChannelDataManager.$.setChannelLogsChannel( args.ChannelDBId, args.dynamicChannelLogsChannelId );
                     break;
             }
         }
@@ -367,7 +384,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         args.dynamicChannelLogsChannelId = channelId;
 
-        await MasterChannelManager.$.setChannelLogsChannel( args.ChannelDBId, channelId );
+        await MasterChannelDataManager.$.setChannelLogsChannel( args.ChannelDBId, channelId );
 
         this.getArgsManager().setArgs( this, interaction, args );
 
@@ -445,7 +462,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     private async onFinishButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction );
 
-        await MasterChannelManager.$.setChannelVerifiedRoles(
+        await MasterChannelDataManager.$.setChannelVerifiedRoles(
             interaction.guildId,
             args.ChannelDBId,
             args.dynamicChannelVerifiedRoles

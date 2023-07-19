@@ -1,6 +1,6 @@
-import { UIEntityBase } from "@vertix/ui-v2/_base/ui-entity-base";
+import { UI_TEMPLATE_WRAPPER_END, UI_TEMPLATE_WRAPPER_START } from "@vertix-base/utils/ui";
 
-import { UI_TEMPLATE_WRAPPER_END, UI_TEMPLATE_WRAPPER_START } from "@vertix/ui-v2/ui-utils";
+import { UIEntityBase } from "@vertix/ui-v2/_base/ui-entity-base";
 
 const UI_TEMPLATE_VAR_WRAPPER_REGEX = new RegExp( UI_TEMPLATE_WRAPPER_START + "(.+?)" + UI_TEMPLATE_WRAPPER_END, "g" );
 

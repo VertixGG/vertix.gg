@@ -16,7 +16,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"@internal/*": ["../src/*"],
-			"@vertix/*": ["../src/vertix/*"]
+			"@vertix/*": ["../src/vertix/*"],
+			"@vertix-base/*": ["../../vertix-base/src/lib/*"]
 		}
 	}
 }

@@ -1,7 +1,7 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { UIEmbedElapsedTimeBase } from "@vertix/ui-v2/_base/ui-embed-time-elapsed-base";
 import { UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 import { IDynamicResetChannelResult } from "@vertix/definitions/dynamic-channel";
 
@@ -33,6 +33,9 @@ export class DynamicChannelPremiumResetChannelEmbed extends UIEmbedElapsedTimeBa
 
         allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
         allowedUsersChanged: uiUtilsWrapAsTemplate( "allowedUsersChanged" ),
+
+        blockedUsers: uiUtilsWrapAsTemplate( "blockedUsers" ),
+        blockedUsersChanged: uiUtilsWrapAsTemplate( "blockedUsersChanged" ),
 
         rateLimited: uiUtilsWrapAsTemplate( "rateLimited" ),
         rateLimitedNone: uiUtilsWrapAsTemplate( "rateLimitedNone" ),
@@ -76,6 +79,9 @@ export class DynamicChannelPremiumResetChannelEmbed extends UIEmbedElapsedTimeBa
             allowedUsers,
             allowedUsersChanged,
 
+            blockedUsers,
+            blockedUsersChanged,
+
             rateLimited
         } = DynamicChannelPremiumResetChannelEmbed.vars;
 
@@ -84,7 +90,8 @@ export class DynamicChannelPremiumResetChannelEmbed extends UIEmbedElapsedTimeBa
             `- User limit: ✋**${ userLimit }** ${ userLimitChanged }\n` +
             `- State: ${ state } ${ stateChanged }\n` +
             `- Visibility State: ${ visibilityState } ${ visibilityStateChanged }\n` +
-            `- Allowed Users: ${ allowedUsers } ${ allowedUsersChanged }` +
+            `- Allowed Users: ${ allowedUsers } ${ allowedUsersChanged }\n` +
+            `- Blocked Users: ${ blockedUsers } ${ blockedUsersChanged }` +
             rateLimited;
     }
 
@@ -136,6 +143,10 @@ export class DynamicChannelPremiumResetChannelEmbed extends UIEmbedElapsedTimeBa
                 format: `<@${ value }>${ separator }`,
                 separator: ", ",
             },
+            blockedUsers: {
+                format: `<@${ value }>${ separator }`,
+                separator: ", ",
+            }
         };
     }
 
@@ -177,6 +188,9 @@ export class DynamicChannelPremiumResetChannelEmbed extends UIEmbedElapsedTimeBa
 
             allowedUsers: newState?.allowedUserIds,
             allowedUsersChanged: JSON.stringify( newState?.allowedUserIds ) !== JSON.stringify( oldState?.allowedUserIds ) ? changedDisplay : unchangedDisplay,
+
+            blockedUsers: newState?.blockedUserIds,
+            blockedUsersChanged: JSON.stringify( newState?.blockedUserIds ) !== JSON.stringify( oldState?.blockedUserIds ) ? changedDisplay : unchangedDisplay,
 
             rateLimited: args.rateLimitRetryAfter ? rateLimitedDisplay : rateLimitedNone
         };

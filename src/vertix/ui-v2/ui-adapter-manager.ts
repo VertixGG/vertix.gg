@@ -1,3 +1,5 @@
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix/ui-v2/_base/ui-interaction-interfaces";
 
 import { UIAdapterBase } from "@vertix/ui-v2/_base/ui-adapter-base";
@@ -5,8 +7,6 @@ import { UIAdapterExecutionStepsBase } from "@vertix/ui-v2/_base/ui-adapter-exec
 import { UIWizardAdapterBase } from "@vertix/ui-v2/_base/ui-wizard-adapter-base";
 
 import { UI_GENERIC_SEPARATOR } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 type ManagedClass =
     UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>

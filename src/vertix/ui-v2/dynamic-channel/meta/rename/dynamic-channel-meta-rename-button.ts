@@ -1,3 +1,5 @@
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
+
 import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelMetaRenameButton extends DynamicChannelButtonBase {
@@ -6,26 +8,27 @@ export class DynamicChannelMetaRenameButton extends DynamicChannelButtonBase {
     }
 
     public getId() {
-        return 0;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelMetaRenameButton.getName() );
     }
 
     public getSortId() {
-        return 0;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelMetaRenameButton.getName() );
     }
 
     public getLabelForEmbed() {
-        return "✏️ ∙ **Rename**";
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelMetaRenameButton.getName() );
     }
 
-    public async getLabelForMenu(): Promise<string> {
-        return await this.getLabel();
+    public async getLabelForMenu() {
+        return this.getLabel();
     }
 
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "Rename" );
+    public async getLabel() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelMetaRenameButton.getName() );
     }
 
-    public async getEmoji(): Promise<string> {
-        return "✏️";
+    public async getEmoji() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
+            .getEmoji( DynamicChannelMetaRenameButton.getName() ) as string;
     }
 }

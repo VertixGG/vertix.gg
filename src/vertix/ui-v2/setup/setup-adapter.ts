@@ -1,5 +1,17 @@
 import { BaseGuildTextChannel } from "discord.js";
 
+import { GuildDataManager } from "@vertix-base/managers/guild-data-manager";
+
+import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix-base/utils/badwords";
+
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
+import {
+    DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
+    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
+} from "@vertix-base/definitions/master-channel-defaults";
+
 import { UI_GENERIC_SEPARATOR, UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 import {
     UIDefaultButtonChannelTextInteraction,
@@ -8,23 +20,13 @@ import {
 
 import { ISetupArgs } from "@vertix/ui-v2/setup/setup-definitions";
 
-import { GuildManager } from "@vertix/managers/guild-manager";
-import { GuildDataManager } from "@vertix/managers/guild-data-manager";
 import { MasterChannelManager } from "@vertix/managers/master-channel-manager";
-
-import { ChannelModel } from "@vertix/models";
 
 import { AdminAdapterBase } from "@vertix/ui-v2/_general/admin/admin-adapter-base";
 
 import { SetupComponent } from "@vertix/ui-v2/setup/setup-component";
 
 import { LanguageSelectMenu } from "@vertix/ui-v2/language/language-select-menu";
-
-import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix/utils/badwords";
-import {
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
-} from "@vertix/definitions/master-channel";
 
 type DefaultInteraction =
     UIDefaultButtonChannelTextInteraction
@@ -47,7 +49,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
     protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager?: UIArgs ): Promise<ISetupArgs> {
         const args: any = {},
-            badwords = badwordsNormalizeArray( await GuildManager.$.getBadwords( interaction.guild.id ) );
+            badwords = badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) );
 
         args.masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, true );
         args.badwords = badwords;
@@ -127,7 +129,9 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         this.uiManager.get( "Vertix/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+
             dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+            dynamicChannelAutoSave: DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
 
             dynamicChannelIncludeEveryoneRole: true,
             dynamicChannelVerifiedRoles: [
@@ -148,7 +152,14 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( value ) )
                 .map( ( word ) => word.trim() );
 
-        await GuildManager.$.setBadwords( interaction.guild, newBadwords );
+        await GuildDataManager.$.setBadwords( interaction.guildId, newBadwords ).then( ( data )  => {
+            if ( data ) {
+                const guild = interaction.guild;
+                SetupAdapter.dedicatedLogger.admin( this.onBadwordsModalSubmitted,
+                    `🔧 Bad Words filter has been modified - "${ data.oldBadwords }" -> "${ data.newBadwords }" (${ guild.name }) (${ guild.memberCount })`
+                );
+            }
+        } );
 
         await this.editReply( interaction, {} );
     }

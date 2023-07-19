@@ -1,5 +1,8 @@
+import { uiUtilsDynamicElementsRearrange } from "@vertix-base/utils/ui";
+
 import { UIElementBase } from "@vertix/ui-v2/_base/ui-element-base";
-import { uiUtilsDynamicElementsRearrange } from "@vertix/ui-v2/ui-utils";
+
+;
 
 class ElementMockClass extends UIElementBase<any> {
     public static getName() {

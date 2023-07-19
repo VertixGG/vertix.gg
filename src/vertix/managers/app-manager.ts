@@ -7,10 +7,10 @@ import { spawn, Thread, Worker } from "threads";
 
 import { Client } from "discord.js";
 
-import { CURRENT_VERSION } from "@vertix/definitions/version";
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
 
-import { InitializeBase } from "@internal/bases/initialize-base";
-import * as util from "util";
+import { CURRENT_VERSION } from "@vertix-base/definitions/version";
+
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
 
 interface PackageJson {
@@ -50,10 +50,6 @@ export class AppManager extends InitializeBase {
 
     public static getBuildVersion() {
         return packageJson.version;
-    }
-
-    public static isDebugOn( debugType: string, entityName: string ) {
-        return !! process.env[ `DEBUG_${ debugType }` ]?.includes( entityName );
     }
 
     public constructor() {

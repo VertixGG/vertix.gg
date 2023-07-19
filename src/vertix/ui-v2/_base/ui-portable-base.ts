@@ -1,11 +1,10 @@
+import { Debugger } from "@vertix-base/modules/debugger";
+import { ForceMethodImplementation } from "@vertix-base/errors/force-method-implementation";
+
 import { UIInstanceTypeBase } from "@vertix/ui-v2/_base/ui-instance-type-base";
 import { UIEntityBase } from "@vertix/ui-v2/_base/ui-entity-base";
 
 import { UIArgs, UIEntityTypes, UIPortableSchemaBase } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { Debugger } from "@internal/modules/debugger";
-
-import { ForceMethodImplementation } from "@internal/errors/force-method-implementation";
 
 type EntityPossibleConstructorTypes = { new( args?: UIArgs ): UIEntityBase } | { new( args?: UIArgs ): UIPortableBase };
 type EntityPossibleTypes =

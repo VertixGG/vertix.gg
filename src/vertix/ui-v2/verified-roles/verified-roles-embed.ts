@@ -1,6 +1,6 @@
-import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
 
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
+import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
 
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
 

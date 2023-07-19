@@ -1,4 +1,4 @@
-import { badwordsSomeUsed } from "@vertix/utils/badwords";
+import { badwordsSomeUsed } from "@vertix-base/utils/badwords";
 
 describe( "Vertix/Utils/Badwords", () => {
 

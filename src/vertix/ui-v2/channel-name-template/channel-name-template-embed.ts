@@ -1,9 +1,9 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
+import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix-base/definitions/master-channel-defaults";
+
 import { UIEmbedBase } from "@vertix/ui-v2/_base/ui-embed-base";
 import { UIArgs } from "@vertix/ui-v2/_base/ui-definitions";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
-
-import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix/definitions/master-channel";
 
 export class ChannelNameTemplateEmbed extends UIEmbedBase {
     private static vars = {

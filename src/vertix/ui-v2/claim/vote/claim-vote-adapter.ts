@@ -1,5 +1,7 @@
 import { ButtonInteraction, ChannelType, Message, PermissionsBitField, VoiceChannel } from "discord.js";
 
+import { ChannelModel } from "@vertix-base/models/channel-model";
+
 import { ClaimVoteComponent } from "@vertix/ui-v2/claim/vote/claim-vote-component";
 
 import { UIArgs, UIExecutionConditionArgs } from "@vertix/ui-v2/_base/ui-definitions";
@@ -11,7 +13,6 @@ import {
 import { DynamicChannelManager } from "@vertix/managers/dynamic-channel-manager";
 import { DynamicChannelVoteManager } from "@vertix/managers/dynamic-channel-vote-manager";
 import { DynamicChannelClaimManager } from "@vertix/managers/dynamic-channel-claim-manager";
-import { ChannelModel } from "@vertix/models";
 
 import { guildGetMemberDisplayName } from "@vertix/utils/guild";
 

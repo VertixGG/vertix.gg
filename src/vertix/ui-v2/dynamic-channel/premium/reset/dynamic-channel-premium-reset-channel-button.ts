@@ -1,3 +1,5 @@
+import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix-base/definitions/dynamic-channel-defaults";
+
 import { DynamicChannelButtonBase } from "@vertix/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButtonBase {
@@ -6,26 +8,27 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public getId() {
-        return 6;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPremiumResetChannelButton.getName() );
     }
 
     public getSortId() {
-        return 6;
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPremiumResetChannelButton.getName() );
     }
 
     public getLabelForEmbed() {
-        return "🔃 ∙ **Reset**";
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPremiumResetChannelButton.getName() );
     }
 
-    public async getLabelForMenu(): Promise<string> {
+    public async getLabelForMenu() {
         return await this.getLabel();
     }
 
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "Reset" );
+    public async getLabel() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPremiumResetChannelButton.getName() );
     }
 
-    public getEmoji(): Promise<string> {
-        return Promise.resolve( "🔃" );
+    public async getEmoji() {
+        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
+            .getEmoji( DynamicChannelPremiumResetChannelButton.getName() ) as string;
     }
 }

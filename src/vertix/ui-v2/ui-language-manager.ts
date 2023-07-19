@@ -3,6 +3,8 @@ import path from "path";
 
 import { ComponentType } from "discord.js";
 
+import { InitializeBase } from "@vertix-base/bases/initialize-base";
+
 import {
     UI_ELEMENTS_DEPTH,
     UIComponentTypeConstructor,
@@ -58,8 +60,6 @@ import {
     UIModalLanguage,
     UIModalLanguageContent
 } from "@vertix/ui-v2/_base/ui-language-definitions";
-
-import { InitializeBase } from "@internal/bases/initialize-base";
 
 interface UILanguageManagerValidateOptions {
     skipSameValues?: boolean;
@@ -241,6 +241,7 @@ export class UILanguageManager extends InitializeBase {
         } );
 
         // TODO: Use checksum + db checksum to avoid extra validations.
+        // TODO: If checksums are the same, load all in initial loading, from disk.
         if ( fs.existsSync( UI_LANGUAGES_INITIAL_FILE_PATH ) ) {
             this.logger.info( this.register, `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' exists, validating...` );
 
@@ -347,7 +348,7 @@ export class UILanguageManager extends InitializeBase {
 
             // Check if component is already exist.
             if ( allComponents.find( ( c ) => c.getName() === AdapterType.getComponent().getName() ) ) {
-                this.logger.warn( this.ensureInitialLanguage,
+                this.logger.log( this.ensureInitialLanguage,
                     `Component with name: '${ AdapterType.getComponent().getName() }' already exists, skipping...`
                 );
                 return;

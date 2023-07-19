@@ -1,16 +1,11 @@
 # cd to project root
 cd "$(dirname "$0")/.."
 
-bash ./scripts/local-prisma-ensure-version.sh
+# Ensure package.json compatibility
+bash ./scripts/bot-prisma-ensure-package-json.sh
 
 # Create dist folder
 mkdir -p dist
-
-# Create dist/prisma folder
-mkdir -p dist/prisma
-
-# copy schema.prisma to dist/prisma folder
-cp ./prisma/schema.prisma dist/prisma/schema.prisma
 
 # Check if the argument for updating the package version is provided
 if [[ "$1" == "--update-package-version" ]]; then
@@ -18,7 +13,7 @@ if [[ "$1" == "--update-package-version" ]]; then
   ./scripts/update-package-version.sh
 fi
 
-# copy `assets` folder to `dist`
+# Copy `assets` folder to `dist`
 cp -r ./assets ./dist/
 
 # Copy package.json to dist folder
@@ -35,6 +30,10 @@ cp -f ./yarn.lock ./dist/yarn.lock
 
 # Apply chmod +x to them.
 chmod +x ./dist/*.sh
+
+# Copy `prisma-bot-client` to `./dist`
+mkdir -p dist/src
+cp -rf ../vertix-base/src/prisma-bot-client ./dist/src/
 
 # Bundle
 tsup-node src/vertix/_workers -d dist/_workers

@@ -1,9 +1,9 @@
+import { uiUtilsWrapAsTemplate } from "@vertix-base/utils/ui";
+
 import { VerifiedRolesEmbed } from "@vertix/ui-v2/verified-roles/verified-roles-embed";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIArgs, UIInstancesTypes } from "@vertix/ui-v2/_base/ui-definitions";
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix/definitions/app";
-
-import { uiUtilsWrapAsTemplate } from "@vertix/ui-v2/ui-utils";
 
 export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
     private static vars = {

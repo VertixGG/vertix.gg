@@ -320,6 +320,9 @@
               "label": "🇺🇸 English"
             },
             {
+              "label": "🇬🇷 Greek"
+            },
+            {
               "label": "🇷🇺 Russian"
             }
           ]
@@ -953,6 +956,7 @@
         "options": {
           "currentLanguage": {
             "en": "English",
+            "el": "Greek",
             "ru": "Russian"
           }
         }

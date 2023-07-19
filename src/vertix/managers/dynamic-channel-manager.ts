@@ -754,7 +754,12 @@ export class DynamicChannelManager extends InitializeBase {
             return logError();
         }
 
-        if ( ! await UserModel.$.transferData( previousOwnerId, newOwnerId ) ) {
+        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannel.id );
+        if ( ! masterChannelDB ) {
+            return logError();
+        }
+
+        if ( ! await UserModel.$.transferData( previousOwnerId, newOwnerId, masterChannelDB.id ) ) {
             return logError();
         }
 

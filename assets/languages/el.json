@@ -270,7 +270,7 @@
               "{stateOff}": "∙🔴 Off"
             },
             "dynamicChannelMentionableLabel": "@ ∙ Αναφορά χρήστη στο κύριο κανάλι",
-            "dynamicChannelAutoSaveLabel": "⮑ ∙ Αυτόματη αποθήκευση δυναμικού καναλιού",
+            "dynamicChannelAutoSaveLabel": "⫸ ∙ Αυτόματη αποθήκευση δυναμικού καναλιού",
             "dynamicChannelLogsChannelLabel": "❯❯ ∙ Καταγραφή Ιστορικού Στο Προσαρμοσμένο Κανάλι"
           }
         }
@@ -1009,7 +1009,7 @@
       "name": "Vertix/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Επεξεργασία Κύριου Καναλιού #{index}",
-        "description": "Επεξεργάσου το κύριο κανάλι αναλόγα με τις προτιμήσεις σου.\n\n**_🎛️ Γενικό_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ ID Καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα Δυναμικού Καναλιού: `{dynamicChannelNameTemplate}`\n➤ ∙ Κανάλι Ιστορικού: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή Κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι Ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Διαμόρφωση**\n\n@ ∙ Αναφορά (mention) χρήστη στο κύριο μήνυμα: {configUserMention}\n⮑ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή Καταγραφής Ιστορικού στο προσαρμοσμένο κανάλι: {configLogs}\n\n",
+        "description": "Επεξεργάσου το κύριο κανάλι αναλόγα με τις προτιμήσεις σου.\n\n**_🎛️ Γενικό_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ ID Καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα Δυναμικού Καναλιού: `{dynamicChannelNameTemplate}`\n➤ ∙ Κανάλι Ιστορικού: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή Κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι Ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Διαμόρφωση**\n\n@ ∙ Αναφορά (mention) χρήστη στο κύριο μήνυμα: {configUserMention}\n⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή Καταγραφής Ιστορικού στο προσαρμοσμένο κανάλι: {configLogs}\n\n",
         "footer": "Σημείωση: Αλλάζοντας την αναφορά χρήστη (user mention) δεν θα επηρεάσει τα ήδη δημιουργημένα δυναμικά κανάλια",
         "options": {
           "on": "`🟢∙On`",
@@ -1131,7 +1131,7 @@
       "name": "Vertix/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Βήμα 2 - Εγκατάσταση Δυναμικών Καναλιών",
-        "description": "Διαμόρφωσε την διαχείριση των Δυναμικών Καναλιών.\n\n**_🎚 Πίνακας Κουμπιών_**\n\n{message}\n**_⚙️ Διαμόρφωση_**\n\n> @ ∙ Αναφορά Χρήστη (mention user) στα κύρια μηνύματα: {configUserMention}\n> ⮑ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n\n Μπορείς να διατηρήσεις τις αρχικές ρυθμίσεις πατώντας το κουμπί **( `Next ▶` )**.\n\nΔεν είσαι σίγουρος για το πως λειτουργεί? Δες την [επεξήγηση](https://vertix.gg/features/dynamic-channels-showcase).",
+        "description": "Διαμόρφωσε την διαχείριση των Δυναμικών Καναλιών.\n\n**_🎚 Πίνακας Κουμπιών_**\n\n{message}\n**_⚙️ Διαμόρφωση_**\n\n> @ ∙ Αναφορά Χρήστη (mention user) στα κύρια μηνύματα: {configUserMention}\n> ⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n\n Μπορείς να διατηρήσεις τις αρχικές ρυθμίσεις πατώντας το κουμπί **( `Next ▶` )**.\n\nΔεν είσαι σίγουρος για το πως λειτουργεί? Δες την [επεξήγηση](https://vertix.gg/features/dynamic-channels-showcase).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙On`",

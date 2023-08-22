@@ -76,7 +76,7 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
 
             "**_⚙️ Configuration_**\n\n" +
             "@ ∙ Mention user in primary message: " + SetupEditEmbed.vars.configUserMention + "\n" +
-            "⮑ ∙ Auto save dynamic channels: " + SetupEditEmbed.vars.configAutoSave + "\n" +
+            "⫸ ∙ Auto save dynamic channels: " + SetupEditEmbed.vars.configAutoSave + "\n" +
             "❯❯ ∙ Send logs to custom channel: " + SetupEditEmbed.vars.configLogs + "\n\n";
     }
 

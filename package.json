@@ -1,6 +1,6 @@
 {
   "name": "vertix-bot",
-  "version": "0.0.40",
+  "version": "0.0.43",
   "license": "MIT",
   "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
   "main": "index.ts",
@@ -52,10 +52,7 @@
       "node18-linux-x64"
     ],
     "assets": [
-      "assets/**/*",
-      "prisma/libquery_engine-debian-openssl-3.0.x.so.node",
-      "prisma/libquery_engine-rhel-openssl-1.0.x.so.node",
-      "prisma/libquery_engine-darwin-arm64.dylib.node"
+      "assets/**/*"
     ],
     "scripts": [
       "dist/_workers/*.js"

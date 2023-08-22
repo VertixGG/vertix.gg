@@ -78,7 +78,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             },
 
             dynamicChannelMentionableLabel: "@ ∙ Mention user in primary message",
-            dynamicChannelAutoSaveLabel: "⮑ ∙ Auto save dynamic channel",
+            dynamicChannelAutoSaveLabel: "⫸ ∙ Auto save dynamic channel",
             dynamicChannelLogsChannelLabel: "❯❯ ∙ Send logs to custom channel",
         };
     }

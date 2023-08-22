@@ -55,7 +55,7 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             "**_⚙️ Configuration_**\n\n" +
 
             "> @ ∙ Mention user in primary message: " + SetupStep2Embed.vars.configUserMention + "\n" +
-            "> ⮑ ∙ Auto save dynamic channels: " + SetupStep2Embed.vars.configAutoSave + "\n" +
+            "> ⫸ ∙ Auto save dynamic channels: " + SetupStep2Embed.vars.configAutoSave + "\n" +
             "\n" +
             "You can keep the default settings by pressing **( `Next ▶` )** button." +
             "\n\n" +

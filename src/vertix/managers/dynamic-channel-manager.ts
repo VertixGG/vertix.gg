@@ -2,6 +2,7 @@ import chalk from "chalk";
 import fetch from "cross-fetch";
 
 import {
+    APIPartialChannel,
     ChannelType,
     EmbedBuilder,
     GuildMember,
@@ -13,6 +14,7 @@ import {
     OverwriteType,
     PermissionOverwriteOptions,
     PermissionsBitField,
+    RESTRateLimit,
     TextChannel,
     VoiceBasedChannel,
     VoiceChannel
@@ -57,11 +59,13 @@ import {
     DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT,
     DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE,
     DynamicClearChatResultCode,
-    DynamicEditChannelResultCode,
+    DynamicEditChannelNameInternalResultCode,
+    DynamicEditChannelNameResultCode,
     DynamicResetChannelResultCode,
     EditStatus,
     IDynamicChannelCreateArgs,
     IDynamicClearChatResult,
+    IDynamicEditChannelNameInternalResult,
     IDynamicEditChannelNameResult,
     IDynamicResetChannelResult,
     RemoveStatus,
@@ -181,7 +185,7 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
-        const state = await DynamicChannelVoteManager.$.getState( channel.id );
+        const state = DynamicChannelVoteManager.$.getState( channel.id );
 
         this.logger.info( this.onOwnerJoinDynamicChannel,
             `Guild id: '${ channel.guild.id }', channel id: ${ channel.id }, state: '${ state }' - ` +
@@ -558,16 +562,12 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     public async editChannelName( initiator: ModalSubmitInteraction<"cached">, channel: VoiceChannel, newChannelName: string ): Promise<IDynamicEditChannelNameResult> {
-        const result: IDynamicEditChannelNameResult = {
-            code: DynamicEditChannelResultCode.Error,
-        };
-
-        const oldChannelName = channel.name;
-
-        const usedBadword = await GuildDataManager.$.hasSomeBadword( channel.guildId, newChannelName );
+        const result: IDynamicEditChannelNameResult = { code: DynamicEditChannelNameResultCode.Error },
+            oldChannelName = channel.name,
+            usedBadword = await GuildDataManager.$.hasSomeBadword( channel.guildId, newChannelName );
 
         if ( usedBadword ) {
-            result.code = DynamicEditChannelResultCode.Badword;
+            result.code = DynamicEditChannelNameResultCode.Badword;
             result.badword = usedBadword;
 
             await this.log( initiator, channel, this.editChannelName, "badword", {
@@ -579,41 +579,35 @@ export class DynamicChannelManager extends InitializeBase {
             return result;
         }
 
-        const editResult = await fetch( "https://discord.com/api/v10/" + Routes.channel( channel.id ), {
-            method: "PATCH",
-            headers: {
-                "Authorization": `Bot ${ gToken }`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify( {
-                name: newChannelName
-            } )
-        } )
-            .then( ( response ) => response.json() )
-            .catch( ( error ) => this.logger.error( this.editChannelName, "", error ) );
+        const editResult = await this.editChannelNameInternal( channel, newChannelName );
 
-        if ( editResult.retry_after ) {
-            result.code = DynamicEditChannelResultCode.RateLimit;
-            result.retryAfter = editResult.retry_after;
+        switch ( editResult.code ) {
+            case DynamicEditChannelNameInternalResultCode.Success:
+                result.code = DynamicEditChannelNameResultCode.Success;
 
-            await this.log( initiator, channel, this.editChannelName, "limited", {
-                result,
-                newChannelName,
-                oldChannelName
-            } );
+                await UserDataManager.$.setMasterDataEnsheathed( initiator, channel, {
+                    [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: newChannelName,
+                } );
 
-            return result;
+                result.code = DynamicEditChannelNameResultCode.Success;
+
+                await this.log( initiator, channel, this.editChannelName, "success", { newChannelName, oldChannelName } );
+
+                this.editPrimaryMessageDebounce( channel );
+                break;
+
+            case DynamicEditChannelNameInternalResultCode.RateLimit:
+                result.code = DynamicEditChannelNameResultCode.RateLimit;
+                result.retryAfter = editResult.retryAfter;
+
+                await this.log( initiator, channel, this.editChannelName, "limited", {
+                    result,
+                    newChannelName,
+                    oldChannelName
+                } );
+
+                break;
         }
-
-        await UserDataManager.$.setMasterDataEnsheathed( initiator, channel, {
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: newChannelName,
-        } );
-
-        result.code = DynamicEditChannelResultCode.Success;
-
-        await this.log( initiator, channel, this.editChannelName, "success", { newChannelName, oldChannelName } );
-
-        this.editPrimaryMessageDebounce( channel );
 
         return result;
     }
@@ -943,40 +937,11 @@ export class DynamicChannelManager extends InitializeBase {
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
 
-        const onCatch = ( error: any ) => {
-                this.logger.error( this.resetChannel, error );
+        const renameResult = await this.editChannelNameInternal( channel, dynamicChannelName );
 
-                result.code = DynamicResetChannelResultCode.Error;
-            },
-            onThen = async ( responseJSON: any ) => {
-                if ( responseJSON.retry_after ) {
-                    result.code = DynamicResetChannelResultCode.SuccessRenameRateLimit;
-                    result.rateLimitRetryAfter = responseJSON.retry_after;
-
-                    return;
-                }
-
-                result.code = DynamicResetChannelResultCode.Success;
-            };
-
-        // Rename channel to default.
-        await fetch( "https://discord.com/api/v10/" + Routes.channel( channel.id ), {
-            method: "PATCH",
-            headers: {
-                "Authorization": `Bot ${ gToken }`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify( {
-                name: dynamicChannelName,
-            } )
-        } )
-            .then( async ( response ) => {
-                await response.json().then( onThen ).catch( onCatch );
-            } )
-            .catch( onCatch );
-
-        if ( result.code === DynamicResetChannelResultCode.Error ) {
-            return result;
+        if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
+            result.code = DynamicResetChannelResultCode.SuccessRenameRateLimit;
+            result.rateLimitRetryAfter = renameResult.retryAfter;
         }
 
         // Edit channel.
@@ -1666,5 +1631,34 @@ export class DynamicChannelManager extends InitializeBase {
         } );
 
         mapItem.embeds = [];
+    }
+
+    private async editChannelNameInternal( channel: VoiceChannel, newChannelName: string ): Promise<IDynamicEditChannelNameInternalResult> {
+        const result: IDynamicEditChannelNameInternalResult = {
+            code: DynamicEditChannelNameInternalResultCode.Error,
+        };
+
+        const promise = fetch( "https://discord.com/api/v10/" + Routes.channel( channel.id ), {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bot ${ gToken }`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify( {
+                name: newChannelName
+            } )
+        } );
+
+        const editResult: APIPartialChannel | RESTRateLimit = await promise.then( ( response ) => response.json() )
+            .catch( ( error ) => this.logger.error( this.editChannelName, "", error ) );
+
+        if ( "retry_after" in editResult ) {
+            result.code = DynamicEditChannelNameInternalResultCode.RateLimit;
+            result.retryAfter = editResult.retry_after;
+        } else if ( "type" in editResult ) {
+            result.code = DynamicEditChannelNameInternalResultCode.Success;
+        }
+
+        return result;
     }
 }

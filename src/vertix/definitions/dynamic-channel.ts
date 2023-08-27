@@ -17,7 +17,13 @@ export const DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS = {
     [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: null,
 };
 
-export enum DynamicEditChannelResultCode {
+export enum DynamicEditChannelNameInternalResultCode {
+    Error = 0,
+    Success = "success",
+    RateLimit = "rate-limit",
+}
+
+export enum DynamicEditChannelNameResultCode {
     Error = 0,
     Success = "success",
     Badword = "badword",
@@ -45,8 +51,13 @@ export interface IDynamicChannelCreateArgs {
     displayName: string,
 }
 
+export interface IDynamicEditChannelNameInternalResult {
+    code: DynamicEditChannelNameInternalResultCode,
+    retryAfter?: number,
+}
+
 export interface IDynamicEditChannelNameResult {
-    code: DynamicEditChannelResultCode,
+    code: DynamicEditChannelNameResultCode,
     retryAfter?: number,
     badword?: string,
 }

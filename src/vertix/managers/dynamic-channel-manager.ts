@@ -613,7 +613,7 @@ export class DynamicChannelManager extends InitializeBase {
 
         await this.log( initiator, channel, this.editChannelName, "success", { newChannelName, oldChannelName } );
 
-        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        this.editPrimaryMessageDebounce( channel );
 
         return result;
     }
@@ -636,7 +636,7 @@ export class DynamicChannelManager extends InitializeBase {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT ]: newLimit,
             } );
 
-            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+            this.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -684,7 +684,7 @@ export class DynamicChannelManager extends InitializeBase {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: newState,
             } );
 
-            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+            this.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -731,7 +731,7 @@ export class DynamicChannelManager extends InitializeBase {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: newState,
             } );
 
-            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+            this.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -786,7 +786,7 @@ export class DynamicChannelManager extends InitializeBase {
         // # NOTE: This is will trigger editPrimaryMessage() function, TODO: Such logic should be handled using command pattern.
         await channel.edit( { permissionOverwrites } );
 
-        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        this.editPrimaryMessageDebounce( channel );
 
         // Request to rescan, since new channel owner, to determine if he abandoned.
         if ( await this.isClaimButtonEnabled( channel ) ) {
@@ -936,8 +936,8 @@ export class DynamicChannelManager extends InitializeBase {
                 };
             },
             previousChannelState = await getCurrentChannelState( channel ),
-            previousAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
-            previousBlockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
+            previousAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            previousBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
                 DYNAMIC_CHANNEL_USER_TEMPLATE,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
@@ -988,8 +988,8 @@ export class DynamicChannelManager extends InitializeBase {
         await this.log( initiator, channel, this.resetChannel, "done" );
 
         const currentChannelState = await getCurrentChannelState( channel ),
-            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
-            currentBlockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true );
+            currentAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            currentBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true );
 
         result.oldState = {
             ... previousChannelState,
@@ -1011,7 +1011,7 @@ export class DynamicChannelManager extends InitializeBase {
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS ]: currentBlockedUsers,
         } );
 
-        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        this.editPrimaryMessageDebounce( channel );
 
         return result;
     }
@@ -1301,14 +1301,14 @@ export class DynamicChannelManager extends InitializeBase {
     }
 
     private async updateUserDataPermissionLists( initiator: Interaction, channel: VoiceChannel ) {
-        const allowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState(
+        const allowedUsers = await this.getChannelUserIdsWithPermissionState(
             channel,
             DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
             true,
             true,
         );
 
-        const blockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState(
+        const blockedUsers = await this.getChannelUserIdsWithPermissionState(
             channel,
             DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
             false,

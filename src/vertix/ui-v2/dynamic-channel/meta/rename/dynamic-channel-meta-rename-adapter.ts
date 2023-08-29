@@ -59,7 +59,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
                 break;
 
             default:
-                args.defaultChannelName = await DynamicChannelManager.$.getChannelNameTemplateReplaced(
+                args.defaultChannelName = await DynamicChannelManager.$.getAssembledChannelNameTemplate(
                     interaction.channel,
                     interaction.user.id,
                     true
@@ -88,7 +88,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
             masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channel.id );
 
         if ( ! newChannelName ) {
-            newChannelName = await DynamicChannelManager.$.getChannelNameTemplateReplaced(
+            newChannelName = await DynamicChannelManager.$.getAssembledChannelNameTemplate(
                 interaction.channel,
                 interaction.user.id,
                 true

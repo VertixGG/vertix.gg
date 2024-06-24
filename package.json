@@ -1,62 +1,40 @@
 {
-  "name": "vertix-bot",
-  "version": "0.0.43",
-  "license": "MIT",
-  "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
-  "main": "index.ts",
-  "bin": "dist/index.min.js",
-  "scripts": {
-    "build": "scripts/build.sh",
-    "eslint": "npx eslint . --ext .ts",
-    "eslint:fix": "npx eslint --fix . --ext .ts",
-    "release": "scripts/build.sh --update-package-version && bash ./scripts/release.sh",
-    "release-test-env": "scripts/build.sh && bash ./scripts/release-test-env.sh",
-    "start": "node -r dotenv/config index.min.js dotenv_config_path=.env",
-    "start-dev": "ts-node src/index.ts",
-    "start-dev-debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts",
-    "start-dev-transpile": "npx ts-node --transpile-only src/index.ts",
-    "test": "export DISABLE_LOGGER=true && jest --runInBand --detectOpenHandles --coverage",
-    "test-debugger": "node --inspect-brk ./node_modules/jest/bin/jest.js"
-  },
-  "dependencies": {
-    "@top-gg/sdk": "^3.1.5",
-    "cross-fetch": "^3.1.5",
-    "discord.js": "^14.8.0",
-    "dotenv": "^16.0.3",
-    "threads": "^1.7.0",
-    "tough-cookie": "^4.1.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.21.0",
-    "@babel/preset-typescript": "^7.21.0",
-    "@types/jest": "^29.4.0",
-    "@types/jest-when": "^3.5.2",
-    "@types/node": "^18.14.6",
-    "@types/tough-cookie": "^4.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.54.1",
-    "@typescript-eslint/parser": "^5.54.1",
-    "eslint": "^8.35.0",
-    "eslint-import-resolver-typescript": "^3.5.3",
-    "eslint-plugin-import": "^2.27.5",
-    "jest": "^29.0.0",
-    "jest-when": "^3.5.2",
-    "ts-jest": "^29.0.0",
-    "ts-mockito": "^2.6.1",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.1.2",
-    "tsup": "^6.7.0",
-    "typescript": "^4.9.5"
-  },
-  "pkg": {
-    "targets": [
-      "node18-linux-x64"
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
+    "name": "@vertix.gg/vertix",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
+    "license": "proprietary",
+    "type": "module",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vertixgg/vertix.git"
+    },
+    "workspaces": [
+        "packages/*"
     ],
-    "assets": [
-      "assets/**/*"
-    ],
-    "scripts": [
-      "dist/_workers/*.js"
-    ],
-    "outputPath": "dist"
-  }
+    "scripts": {
+        "vertix:eslint": "time bunx --bun eslint .",
+        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix-bot:jest )",
+        "vertix:watch:dev": "bun run @z-cli @watch --dev",
+        "vertix:build": "bun run @z-cli @build --haltOnDiagnosticError",
+        "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
+        "vertix:bot:build": "bun run @z-cli @build --workspace bot --haltOnDiagnosticError",
+        "vertix-bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
+        "vertix-bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
+        "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
+        "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:bun:jest",
+        "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
+    },
+    "dependencies": {
+        "@zenflux/cli": "latest",
+        "@zenflux/utils": "latest",
+        "discord.js": "latest"
+    },
+    "devDependencies": {
+        "@zenflux/eslint": "latest",
+        "@zenflux/jest": "latest",
+        "eslint": "latest",
+        "typescript": "latest"
+    },
+    "packageManager": "bun@1.1.16"
 }

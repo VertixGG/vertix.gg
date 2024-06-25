@@ -1,3 +1,5 @@
+import "@vertix.gg/prisma/bot-client";
+
 import {
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     DEFAULT_DYNAMIC_CHANNEL_STATE_PRIVATE,
@@ -23,11 +25,13 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
-import chalk from "chalk";
+import pc from "picocolors";
 
 import fetch from "cross-fetch";
 
 import { Routes } from "discord-api-types/v10";
+
+import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -68,6 +72,7 @@ import type {
     EditStatus,
     IDynamicChannelCreateArgs,
     IDynamicClearChatResult,
+    IDynamicEditChannelNameInternalResult,
     IDynamicEditChannelNameResult,
     IDynamicEditChannelStateResult,
     IDynamicResetChannelResult,
@@ -79,14 +84,6 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
 import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
-
-import "@vertix.gg/prisma/bot-client";
-
-import {
-
-     NewsChannel
-
-, ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
 import type {APIPartialChannel, GuildMember, Interaction, Message, MessageComponentInteraction, ModalSubmitInteraction, OverwriteResolvable, PermissionOverwriteOptions, RESTRateLimit, TextChannel, VoiceBasedChannel, VoiceChannel} from "discord.js";
 
@@ -205,7 +202,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
-        const state = await DynamicChannelVoteManager.$.getState( channel.id );
+        const state = DynamicChannelVoteManager.$.getState( channel.id );
 
         this.logger.info( this.onOwnerJoinDynamicChannel,
             `Guild id: '${ channel.guild.id }', channel id: ${ channel.id }, state: '${ state }' - ` +
@@ -229,18 +226,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async getChannelNameTemplateReplaced( channel: VoiceChannel, userId: string, returnDefault = false ): Promise<string | null> {
-        let result = null;
-
+    public async getAssembledChannelNameTemplate( channel: VoiceChannel, userId: string, returnDefault = false ): Promise<string | null> {
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id ),
-            displayName = await guildGetMemberDisplayName( channel.guild, userId );
+            userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
-        if ( masterChannelDB ) {
-            result = ( await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, true ) )
-                .replace(
-                    DYNAMIC_CHANNEL_USER_TEMPLATE,
-                    displayName
-                );
+        if ( ! masterChannelDB ) {
+            if ( returnDefault ) {
+                return DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE.replace( DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR, userDisplayName );
+            }
+            return null;
         }
 
         const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, true );
@@ -268,7 +262,19 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 : DEFAULT_DYNAMIC_CHANNEL_STATE_PUBLIC;
         }
 
-        return result;
+        if ( args.userDisplayName ) {
+            userDisplayName = args.userDisplayName.replace( /[^a-zA-Z0-9]/g, "" );
+        }
+
+        const replacements: Record<string, string> = {
+            [ DEFAULT_DYNAMIC_CHANNEL_STATE_VAR ]: state,
+            [ DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR ]: userDisplayName,
+        };
+
+        return channelNameTemplate.replace(
+            new RegExp( Object.keys( replacements ).join( "|" ), "g" ),
+            ( matched: any ) => replacements[ matched ]
+        );
     }
 
     public async getChannelUsersWithPermissionState( channel: VoiceChannel, permissions: PermissionsBitField, state: boolean, skipOwner = true ) {
@@ -497,10 +503,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 return;
             }
 
-            dynamicChannelName = dynamicChannelTemplateName.replace(
-                DYNAMIC_CHANNEL_USER_TEMPLATE,
-                displayName
-            );
+            dynamicChannelName = await this.assembleChannelNameTemplate( dynamicChannelTemplateName, {
+                userDisplayName: displayName,
+                state: null,
+            } );
         }
 
         this.logger.info( this.createDynamicChannel,
@@ -617,16 +623,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async editChannelName( initiator: ModalSubmitInteraction<"cached">, channel: VoiceChannel, newChannelName: string ): Promise<IDynamicEditChannelNameResult> {
-        const result: IDynamicEditChannelNameResult = {
-            code: DynamicEditChannelResultCode.Error,
-        };
-
-        const oldChannelName = channel.name;
-
-        const usedBadword = await GuildDataManager.$.hasSomeBadword( channel.guildId, newChannelName );
+        const result: IDynamicEditChannelNameResult = { code: DynamicEditChannelNameResultCode.Error },
+            oldChannelName = channel.name,
+            usedBadword = await GuildDataManager.$.hasSomeBadword( channel.guildId, newChannelName );
 
         if ( usedBadword ) {
-            result.code = DynamicEditChannelResultCode.Badword;
+            result.code = DynamicEditChannelNameResultCode.Badword;
             result.badword = usedBadword;
 
             await this.log( initiator, channel, this.editChannelName, "badword", {
@@ -638,42 +640,38 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
-        const editResult = await fetch( "https://discord.com/api/v10/" + Routes.channel( channel.id ), {
-            method: "PATCH",
-            headers: {
-                "Authorization": `Bot ${ gToken }`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify( {
-                name: newChannelName
-            } )
-        } )
-            .then( ( response ) => response.json() )
-            .catch( ( error ) => this.logger.error( this.editChannelName, "", error ) );
+        const editResult = await this.editChannelNameInternal( channel, newChannelName );
 
-        if ( editResult.retry_after ) {
-            result.code = DynamicEditChannelResultCode.RateLimit;
-            result.retryAfter = editResult.retry_after;
+        switch ( editResult.code ) {
+            case DynamicEditChannelNameInternalResultCode.Success:
+                result.code = DynamicEditChannelNameResultCode.Success;
 
-            await this.log( initiator, channel, this.editChannelName, "limited", {
-                result,
-                newChannelName,
-                oldChannelName
-            } );
+                await UserDataManager.$.setMasterDataEnsheathed( initiator, channel, {
+                    [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: newChannelName,
+                } );
 
-            return result;
-        }
+                result.code = DynamicEditChannelNameResultCode.Success;
 
                 await this.log( initiator, channel, this.editChannelName, "success", {
                     newChannelName,
                     oldChannelName
                 } );
 
-        result.code = DynamicEditChannelResultCode.Success;
+                this.editPrimaryMessageDebounce( channel );
+                break;
 
-        await this.log( initiator, channel, this.editChannelName, "success", { newChannelName, oldChannelName } );
+            case DynamicEditChannelNameInternalResultCode.RateLimit:
+                result.code = DynamicEditChannelNameResultCode.RateLimit;
+                result.retryAfter = editResult.retryAfter;
 
-        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+                await this.log( initiator, channel, this.editChannelName, "limited", {
+                    result,
+                    newChannelName,
+                    oldChannelName
+                } );
+
+                break;
+        }
 
         return result;
     }
@@ -696,7 +694,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT ]: newLimit,
             } );
 
-            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+            this.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -768,7 +766,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: newState,
             } );
 
-            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+            this.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -815,7 +813,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: newState,
             } );
 
-            DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+            this.editPrimaryMessageDebounce( channel );
         }
 
         return result;
@@ -871,7 +869,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // # NOTE: This is will trigger editPrimaryMessage() function, TODO: Such logic should be handled using command pattern.
         await channel.edit( { permissionOverwrites } );
 
-        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        this.editPrimaryMessageDebounce( channel );
 
         // Request to rescan, since new channel owner, to determine if he abandoned.
         if ( await this.isClaimButtonEnabled( channel ) ) {
@@ -1021,47 +1019,18 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 };
             },
             previousChannelState = await getCurrentChannelState( channel ),
-            previousAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
-            previousBlockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
+            previousAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            previousBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
-                DYNAMIC_CHANNEL_USER_TEMPLATE,
+                DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
 
-        const onCatch = ( error: any ) => {
-                this.logger.error( this.resetChannel, error );
+        const renameResult = await this.editChannelNameInternal( channel, dynamicChannelName );
 
-                result.code = DynamicResetChannelResultCode.Error;
-            },
-            onThen = async ( responseJSON: any ) => {
-                if ( responseJSON.retry_after ) {
-                    result.code = DynamicResetChannelResultCode.SuccessRenameRateLimit;
-                    result.rateLimitRetryAfter = responseJSON.retry_after;
-
-                    return;
-                }
-
-                result.code = DynamicResetChannelResultCode.Success;
-            };
-
-        // Rename channel to default.
-        await fetch( "https://discord.com/api/v10/" + Routes.channel( channel.id ), {
-            method: "PATCH",
-            headers: {
-                "Authorization": `Bot ${ gToken }`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify( {
-                name: dynamicChannelName,
-            } )
-        } )
-            .then( async ( response ) => {
-                await response.json().then( onThen ).catch( onCatch );
-            } )
-            .catch( onCatch );
-
-        if ( result.code === DynamicResetChannelResultCode.Error ) {
-            return result;
+        if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
+            result.code = DynamicResetChannelResultCode.SuccessRenameRateLimit;
+            result.rateLimitRetryAfter = renameResult.retryAfter;
         }
 
         // TODO: Ensure it works.
@@ -1080,8 +1049,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.log( initiator, channel, this.resetChannel, "done" );
 
         const currentChannelState = await getCurrentChannelState( channel ),
-            currentAllowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
-            currentBlockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true );
+            currentAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            currentBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true );
 
         result.oldState = {
             ... previousChannelState,
@@ -1103,7 +1072,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS ]: currentBlockedUsers,
         } );
 
-        DynamicChannelManager.$.editPrimaryMessageDebounce( channel );
+        this.editPrimaryMessageDebounce( channel );
 
         return result;
     }
@@ -1393,14 +1362,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async updateUserDataPermissionLists( initiator: Interaction, channel: VoiceChannel ) {
-        const allowedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState(
+        const allowedUsers = await this.getChannelUserIdsWithPermissionState(
             channel,
             DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
             true,
             true,
         );
 
-        const blockedUsers = await DynamicChannelManager.$.getChannelUserIdsWithPermissionState(
+        const blockedUsers = await this.getChannelUserIdsWithPermissionState(
             channel,
             DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
             false,
@@ -1668,10 +1637,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 this.logger.error( caller, `Guild id:${ channel.guildId }, channel id: \`${ channel.id }\` - Unknown caller: \`${ caller.name }\`` );
         }
 
-        // Replace words that wrapped with **%word%** and wrap it with `chalk.bold` for console.
-        const messageForConsole = message.replace( /\*\*(.*?)\*\*/g, ( match, p1 ) => chalk.bold( p1 ) )
-            // Replace words that wrapped with `` and wrap it with `chalk.red` for console.
-            .replace( /`(.*?)`/g, ( match, p1 ) => chalk.red( `"${ p1 }"` ) );
+        // Replace words that wrapped with **%word%** and wrap it with `pc.bold` for console.
+        const messageForConsole = message.replace( /\*\*(.*?)\*\*/g, ( _match, p1 ) => pc.bold( p1 ) )
+            // Replace words that wrapped with `` and wrap it with `pc.red` for console.
+            .replace( /`(.*?)`/g, ( _match, p1 ) => pc.red( `"${ p1 }"` ) );
 
         this.logger.admin( caller, `${ messageForConsole } - ${ ownerLogSuffix }` );
 
@@ -1758,5 +1727,34 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
 
         mapItem.embeds = [];
+    }
+
+    private async editChannelNameInternal( channel: VoiceChannel, newChannelName: string ): Promise<IDynamicEditChannelNameInternalResult> {
+        const result: IDynamicEditChannelNameInternalResult = {
+            code: DynamicEditChannelNameInternalResultCode.Error,
+        };
+
+        const promise = fetch( "https://discord.com/api/v10/" + Routes.channel( channel.id ), {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bot ${ gToken }`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify( {
+                name: newChannelName
+            } )
+        } );
+
+        const editResult: APIPartialChannel | RESTRateLimit = await promise.then( ( response ) => response.json() )
+            .catch( ( error ) => this.logger.error( this.editChannelName, "", error ) );
+
+        if ( "retry_after" in editResult ) {
+            result.code = DynamicEditChannelNameInternalResultCode.RateLimit;
+            result.retryAfter = editResult.retry_after;
+        } else if ( "type" in editResult ) {
+            result.code = DynamicEditChannelNameInternalResultCode.Success;
+        }
+
+        return result;
     }
 }

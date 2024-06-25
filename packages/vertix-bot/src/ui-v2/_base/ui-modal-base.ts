@@ -1,8 +1,8 @@
+import "@vertix.gg/prisma/bot-client";
+
 import { UIPortableBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-portable-base";
 
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
-
-import type { ModalContentLanguage } from "@vertix.gg/base/src/prisma-bot-client";
 
 import type { UIElementInputBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-input-base";
 
@@ -56,7 +56,7 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
         return super.build( args );
     }
 
-    public async getTranslatableContent(): Promise<ModalContentLanguage> {
+    public async getTranslatableContent(): Promise<PrismaBot.ModalContentLanguage> {
         return {
             title: this.getTitle(),
         };

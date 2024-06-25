@@ -1,12 +1,12 @@
+import  "@vertix.gg/prisma/bot-client";
+
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import type { PrismaClient as PrismaBotClient } from "@vertix.gg/prisma/bot-client";
-
-type PossibleClients = PrismaBotClient;// | PrismaApiClient;
+type PossibleClients = PrismaBot.PrismaClient;// | PrismaApiClient;
 
 export abstract class ModelBaseCached<TPrismaClient extends PossibleClients, TCacheResult> extends CacheBase<TCacheResult> {
     protected prisma: TPrismaClient;

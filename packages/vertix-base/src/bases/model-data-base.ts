@@ -1,3 +1,4 @@
+import "@vertix.gg/prisma/bot-client";
 
 import { ModelBaseCached } from "@vertix.gg/base/src/bases/model-base";
 
@@ -13,14 +14,12 @@ import type {
     IOwnerInnerModel
 } from "@vertix.gg/base/src/interfaces/data";
 
-import type { PrismaClient } from "@vertix.gg/base/src/prisma-bot-client";
-
 export abstract class ModelDataBase<
     TOwnerModel extends IOwnerInnerModel,
     TDataModel extends IDataInnerModel,
     TCacheResult = undefined,
 >
-    extends ModelBaseCached<PrismaClient, TCacheResult> implements IDataModel
+    extends ModelBaseCached<PrismaBot.PrismaClient, TCacheResult> implements IDataModel
 {
 
     protected ownerModel: TOwnerModel;

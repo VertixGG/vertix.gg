@@ -1,8 +1,8 @@
+import "@vertix.gg/prisma/bot-client";
+
 import type { GuildChannel, User as DiscordUser } from "discord.js";
 
 import type { RESTAPIPartialCurrentUserGuild } from "discord-api-types/v10";
-
-import type { Channel as ChannelDB, ChannelData as ChannelDataDB, GuildData as GuildDataDB } from "@vertix.gg/base/src/prisma-bot-client";
 
 export interface APIDataTypeGenericError {
     error: true,
@@ -11,10 +11,10 @@ export interface APIDataTypeGenericError {
 }
 
 export interface APIDataTypeMasterChannel {
-    dataDB: ChannelDataDB[],
-    channelDB: ChannelDB,
+    dataDB: PrismaBot.ChannelData[],
+    channelDB: PrismaBot.Channel,
 
-    dynamicChannelsDB: ChannelDB[],
+    dynamicChannelsDB: PrismaBot.Channel[],
 
     channelDS: GuildChannel,
     userOwnerDS: DiscordUser,
@@ -23,7 +23,7 @@ export interface APIDataTypeMasterChannel {
 export interface APIDataTypeGuild {
     guildRS: RESTAPIPartialCurrentUserGuild,
     masterChannelsAP: APIDataTypeMasterChannel[],
-    dataDB: GuildDataDB[],
+    dataDB: PrismaBot.GuildData[],
 }
 
 export type APIDataTypeGetGuilds = APIDataTypeGenericError | APIDataTypeGuild[];

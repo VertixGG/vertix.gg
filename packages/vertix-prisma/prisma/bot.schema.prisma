@@ -1,0 +1,260 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["clientExtensions"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "rhel-openssl-1.0.x", "linux-arm64-openssl-3.0.x"]
+  output          = "../src/prisma-bot-client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("BOT_PRISMA_DATABASE_URL")
+}
+
+enum E_INTERNAL_CHANNEL_TYPES {
+  DEFAULT_CHANNEL
+  DYNAMIC_CHANNEL
+  MASTER_CREATE_CHANNEL
+}
+
+model Guild {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId           String      @unique
+  name              String
+  // ---
+  isInGuild         Boolean
+  // ---
+  data              GuildData[] @relation("GuildData")
+  // ---
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  updatedAtInternal DateTime?
+}
+
+model GuildData {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  key       String
+  type      String   @default("default")
+  // ---
+  object    Json?
+  values    String[]
+  // ---
+  version   String?
+  // ---
+  ownerId   String   @db.ObjectId
+  guild     Guild    @relation("GuildData", fields: [ownerId], references: [id], onDelete: Cascade)
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, key])
+}
+
+model Category {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name             String
+  categoryId       String
+  guildId          String
+  // ---
+  createdAtDiscord Int
+  // ---
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Channel {
+  id               String                   @id @default(auto()) @map("_id") @db.ObjectId
+  channelId        String                   @unique
+  // ---
+  guildId          String
+  userOwnerId      String
+  // ---
+  categoryId       String?
+  ownerChannelId   String?
+  // ---
+  data             ChannelData[]            @relation("ChannelData")
+  // ---
+  internalType     E_INTERNAL_CHANNEL_TYPES @default(DEFAULT_CHANNEL)
+  // ---
+  createdAtDiscord Int
+  // ---
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+}
+
+model ChannelData {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  key       String
+  type      String   @default("default")
+  // ---
+  object    Json?
+  values    String[]
+  // ---
+  version   String?
+  // ---
+  ownerId   String   @db.ObjectId
+  channel   Channel  @relation("ChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, key])
+}
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  userId    String     @unique
+  username  String?
+  // ---
+  data      UserData[] @relation("UserData")
+  // ---
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model UserData {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  key       String
+  type      String   @default("default")
+  // ---
+  object    Json?
+  values    String[]
+  // ---
+  version   String?
+  // ---
+  ownerId   String   @db.ObjectId
+  user      User     @relation("UserData", fields: [ownerId], references: [id], onDelete: Cascade)
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, key])
+}
+
+// Language.
+type Language {
+  name String
+  code String
+}
+
+// Elements language.
+
+type ElementButtonContent {
+  label   String
+  options Json?
+}
+
+model ElementButtonLanguage {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ElementButtonContent
+  // ---
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+// Elements inputs language.
+
+type ElementTextInputContentLanguage {
+  label       String
+  placeholder String?
+}
+
+model ElementTextInputLanguage {
+  id        String                          @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ElementTextInputContentLanguage
+  // ---
+  createdAt DateTime                        @default(now())
+  updatedAt DateTime                        @updatedAt
+}
+
+// Element select menus language.
+
+type ElementSelectMenuOptionsLanguage {
+  label String
+}
+
+type ElementSelectMenuLanguageContent {
+  placeholder String?
+
+  selectOptions ElementSelectMenuOptionsLanguage[]
+
+  options Json?
+}
+
+model ElementSelectMenuLanguage {
+  id        String                           @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ElementSelectMenuLanguageContent
+  // ---
+  createdAt DateTime                         @default(now())
+  updatedAt DateTime                         @updatedAt
+}
+
+// Embeds Language.
+
+type EmbedContentLanguage {
+  title        String?
+  description  String?
+  footer       String?
+  options      Json?
+  arrayOptions Json?
+}
+
+model EmbedLanguage {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   EmbedContentLanguage
+  // ---
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+// Markdowns Language.
+
+type MarkdownContentLanguage {
+  content String
+  options Json?
+}
+
+model MarkdownLanguage {
+  id        String                  @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   MarkdownContentLanguage
+  // ---
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
+}
+
+// Modals Language.
+
+type ModalContentLanguage {
+  title String
+}
+
+model ModalLanguage {
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  name      String
+  language  Language
+  content   ModalContentLanguage
+  // ---
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}

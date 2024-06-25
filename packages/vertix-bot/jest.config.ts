@@ -16,10 +16,14 @@ const config: Config.InitialProjectOptions = {
     setupFilesAfterEnv: [ "<rootDir>/test/__setup__.ts" ],
 
     transform: {
-        '^.+\\.(t|j)sx?$': ['@swc/jest', { ...swcOptions } ],
+        '^.+\\.(t|j)sx?$': ['@swc/jest', { ...swcOptions, ... {
+            inputSourceMap: ! process.argv.includes( "--ci" ),
+        } } ],
     },
 
     extensionsToTreatAsEsm: ['.ts', '.tsx'],
+
+    cache: ! process.argv.includes( "--ci" ),
 };
 
 export default config;

@@ -27,17 +27,13 @@
         "threads": "^1.7.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.21.0",
-        "@babel/preset-typescript": "^7.21.0",
         "@types/jest": "latest",
-        "@types/jest-when": "^3.5.2",
-        "@types/node": "^18.14.6",
+        "@types/jest-when": "latest",
+        "@types/node": "latest",
         "@swc/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
-        "jest": "^29.0.0",
-        "jest-when": "^3.5.2",
-        "ts-jest": "^29.0.0",
-        "ts-mockito": "^2.6.1",
-        "ts-node": "^10.9.1"
+        "jest": "latest",
+        "jest-when": "latest",
+        "ts-mockito": "latest"
     }
 }

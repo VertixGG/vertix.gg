@@ -5,6 +5,7 @@
         "./__setup__.ts"
 	],
 	"compilerOptions": {
+        "inlineSourceMap": true,
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
 		"baseUrl": ".",

@@ -10,11 +10,6 @@ const currentDir = path.dirname( fileURLToPath( import.meta.url ) );
 
 const tsConfig = readTsConfig( path.join( currentDir, "test", "tsconfig.json" ) ),
     swcOptions = convertTsConfig( tsConfig );
-
-if ( process.argv.includes( "--ci" ) ) {
-    swcOptions.sourceMaps = "inline";
-}
-
 const config: Config.InitialProjectOptions = {
     testRegex: "(/test/.*\\.spec\\.ts)$",
 

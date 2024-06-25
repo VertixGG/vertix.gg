@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 CURRENT_DIR=$(pwd)
 
 # create key
-cd CURRENT_DIR/packages/vertix-base/src/encryption/
+cd packages/vertix-base/src/encryption/
 pwd
 bash key-gen.bash
 

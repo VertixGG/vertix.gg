@@ -13,4 +13,7 @@ bash key-gen.bash
 cd $CURRENT_DIR
 
 bun run vertix:base:jest - --ci
+
+GENERATE_SOURCEMAP=false
+
 bun run vertix-bot:jest - --ci

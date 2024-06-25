@@ -42,4 +42,4 @@ jobs:
         run: bun install
 
       - name: Run tests
-        run: bun run vertix:jest
+        run: bun run vertix:ci:jest

@@ -11,9 +11,8 @@ const currentDir = path.dirname( fileURLToPath( import.meta.url ) );
 const tsConfig = readTsConfig( path.join( currentDir, "test", "tsconfig.json" ) ),
     swcOptions = convertTsConfig( tsConfig );
 
-// In `--ci` set `inputSourceMap`
 if ( process.argv.includes( "--ci" ) ) {
-    swcOptions.inputSourceMap = true;
+    swcOptions.sourceMaps = "inline";
 }
 
 const config: Config.InitialProjectOptions = {

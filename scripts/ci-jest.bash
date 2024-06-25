@@ -5,7 +5,9 @@ cd "$(dirname "$0")/.."
 CURRENT_DIR=$(pwd)
 
 # create key
-cd packages/vertix-base/src/encryption/ & bash key-gen.bash
+cd CURRENT_DIR/packages/vertix-base/src/encryption/
+pwd
+bash key-gen.bash
 
 # back to root
 cd $CURRENT_DIR

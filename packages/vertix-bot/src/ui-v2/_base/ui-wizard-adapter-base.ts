@@ -24,7 +24,7 @@ export class UIWizardAdapterBase<
     protected staticWizardAdapter: typeof UIWizardAdapterBase;
 
     public static getName() {
-        return "Vertix/UI-V2/UIWizardAdapterBase";
+        return "VertixBot/UI-V2/UIWizardAdapterBase";
     }
 
     public static getComponent(): UIWizardComponentTypeConstructor {
@@ -93,9 +93,9 @@ export class UIWizardAdapterBase<
     protected buildEntitiesMap() {
         super.buildEntitiesMap();
 
-        this.bindButton<TInteraction>( "Vertix/UI-V2/WizardBackButton", this.onWizardBackButtonClicked );
-        this.bindButton<TInteraction>( "Vertix/UI-V2/WizardNextButton", this.onWizardNextButtonClicked );
-        this.bindButton<TInteraction>( "Vertix/UI-V2/WizardFinishButton", this.onWizardFinishButtonClicked );
+        this.bindButton<TInteraction>( "VertixBot/UI-V2/WizardBackButton", this.onWizardBackButtonClicked );
+        this.bindButton<TInteraction>( "VertixBot/UI-V2/WizardNextButton", this.onWizardNextButtonClicked );
+        this.bindButton<TInteraction>( "VertixBot/UI-V2/WizardFinishButton", this.onWizardFinishButtonClicked );
     }
 
     private async onWizardBackButtonClicked( interaction: TInteraction ) {

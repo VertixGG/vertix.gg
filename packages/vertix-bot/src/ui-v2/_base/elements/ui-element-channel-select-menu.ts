@@ -12,7 +12,7 @@ export abstract class UIElementChannelSelectMenu extends UIElementBase<APIChanne
     private content: UIElementSelectMenuLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIElementChannelSelectMenu";
+        return "VertixBot/UI-V2/UIElementChannelSelectMenu";
     }
 
     public static getComponentType(): ComponentType {

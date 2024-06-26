@@ -15,7 +15,7 @@ export interface TModelHelper<T> {
  */
 export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<PrismaBotClient, TPayloadWithContent> {
     public static getName(): string {
-        return "Vertix/Bases/ModelLanguageBase";
+        return "VertixBot/Bases/ModelLanguageBase";
     }
 
     public async get( name: string, languageCode: string, cache = true ) {

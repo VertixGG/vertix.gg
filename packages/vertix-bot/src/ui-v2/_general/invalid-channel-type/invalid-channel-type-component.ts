@@ -5,7 +5,7 @@ import { InvalidChannelTypeEmbed } from "@vertix.gg/bot/src/ui-v2/_general/inval
 
 export class InvalidChannelTypeComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/InvalidChannelTypeComponent";
+        return "VertixBot/UI-V2/InvalidChannelTypeComponent";
     }
 
     public static getInstanceType() {

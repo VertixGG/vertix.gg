@@ -12,7 +12,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
     private content: UIEmbedLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIEmbedBase";
+        return "VertixBot/UI-V2/UIEmbedBase";
     }
 
     public static getType(): UIType {

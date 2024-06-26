@@ -6,7 +6,7 @@ import { WelcomeSetupButton } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-set
 
 export class WelcomeElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V2/WelcomeElementsGroup";
+        return "VertixBot/UI-V2/WelcomeElementsGroup";
     }
 
     public static getItems() {

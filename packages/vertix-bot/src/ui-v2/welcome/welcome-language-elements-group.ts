@@ -5,7 +5,7 @@ import { DoneButton } from "@vertix.gg/bot/src/ui-v2/_general/done-button";
 
 export class WelcomeLanguageElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V2/WelcomeLanguageElementsGroup";
+        return "VertixBot/UI-V2/WelcomeLanguageElementsGroup";
     }
 
     public static getItems() {

@@ -13,7 +13,7 @@ export class DynamicChannelTransferOwnerUserSelectedEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed";
+        return "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

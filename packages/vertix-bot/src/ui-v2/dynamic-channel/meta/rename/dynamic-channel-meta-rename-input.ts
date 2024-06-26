@@ -6,7 +6,7 @@ const MIN_INPUT_LENGTH = 0,
 
 export class DynamicChannelMetaRenameInput extends UIElementInputBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaRenameInput";
+        return "VertixBot/UI-V2/DynamicChannelMetaRenameInput";
     }
 
     public static getInstanceType() {

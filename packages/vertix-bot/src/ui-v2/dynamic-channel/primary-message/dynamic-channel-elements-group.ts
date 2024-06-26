@@ -22,7 +22,7 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
     private static allItemsObjects: { [ key: string ]: DynamicChannelButtonBase } = {};
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelElementsGroup";
+        return "VertixBot/UI-V2/DynamicChannelElementsGroup";
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

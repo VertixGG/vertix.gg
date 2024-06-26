@@ -16,7 +16,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/VerifiedRolesEveryoneSelectMenu";
+        return "VertixBot/UI-V2/VerifiedRolesEveryoneSelectMenu";
     }
 
     public static getInstanceType() {

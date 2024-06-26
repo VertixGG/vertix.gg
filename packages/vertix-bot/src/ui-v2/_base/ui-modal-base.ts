@@ -29,7 +29,7 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
     private content: UIModalLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIModalBase";
+        return "VertixBot/UI-V2/UIModalBase";
     }
 
     public static getType(): UIType {

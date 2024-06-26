@@ -5,7 +5,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 export class LogChannelSelectMenu extends UIElementChannelSelectMenu {
     public static getName() {
-        return "Vertix/UI-V2/LogChannelSelectMenu";
+        return "VertixBot/UI-V2/LogChannelSelectMenu";
     }
 
     public static getInstanceType() {

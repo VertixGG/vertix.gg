@@ -16,7 +16,7 @@ export class MissingPermissionsEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/MissingPermissionsEmbed";
+        return "VertixBot/UI-V2/MissingPermissionsEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

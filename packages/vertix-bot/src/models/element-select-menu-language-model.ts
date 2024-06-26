@@ -23,7 +23,7 @@ export class ElementSelectMenuLanguageModel extends ModelLanguageBase<typeof mod
     private static instance: ElementSelectMenuLanguageModel;
 
     public static getName(): string {
-        return "Vertix/Models/ElementSelectMenuLanguageModel";
+        return "VertixBot/Models/ElementSelectMenuLanguageModel";
     }
 
     public static getInstance(): ElementSelectMenuLanguageModel {

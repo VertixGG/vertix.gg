@@ -1,8 +1,8 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
-import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
+import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
 
 const client = PrismaBotClient.getPrismaClient();
 
@@ -10,7 +10,7 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     private static instance: UserModel;
 
     public static getName(): string {
-        return "Vertix/Models/UserModel";
+        return "VertixBase/Models/UserModel";
     }
 
     public static getInstance(): UserModel {
@@ -26,8 +26,8 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     }
 
     public constructor(
-        shouldDebugCache = isDebugOn( "CACHE", UserModel.getName() ),
-        shouldDebugModel = isDebugOn( "MODEL", UserModel.getName() )
+        shouldDebugCache = isDebugEnabled( "CACHE", UserModel.getName() ),
+        shouldDebugModel = isDebugEnabled( "MODEL", UserModel.getName() )
     ) {
         super( shouldDebugCache, shouldDebugModel );
     }

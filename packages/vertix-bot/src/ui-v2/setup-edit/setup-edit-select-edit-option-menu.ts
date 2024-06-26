@@ -3,7 +3,7 @@ import { UIElementStringSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elemen
 
 export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
     public static getName() {
-        return "Vertix/UI-V2/SetupEditSelectEditOptionMenu";
+        return "VertixBot/UI-V2/SetupEditSelectEditOptionMenu";
     }
 
     public static getInstanceType() {

@@ -2,7 +2,7 @@ import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-chann
 
 export class DynamicChannelMetaLimitButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaLimitButton";
+        return "VertixBot/UI-V2/DynamicChannelMetaLimitButton";
     }
 
     public getId() {

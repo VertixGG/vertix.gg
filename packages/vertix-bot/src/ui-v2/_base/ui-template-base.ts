@@ -12,7 +12,7 @@ type KeyValue = { [ key: string | number ]: any };
  */
 export abstract class UITemplateBase extends UIEntityBase {
     public static getName(): string {
-        return "Vertix/UI-V2/UITemplateBase";
+        return "VertixBot/UI-V2/UITemplateBase";
     }
 
     /**

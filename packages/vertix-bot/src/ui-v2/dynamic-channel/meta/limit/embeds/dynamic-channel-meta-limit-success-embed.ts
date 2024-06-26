@@ -14,7 +14,7 @@ export class DynamicChannelMetaLimitSuccessEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbed";
+        return "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

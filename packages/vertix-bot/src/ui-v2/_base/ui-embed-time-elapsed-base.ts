@@ -13,7 +13,7 @@ const VALUE_VARIABLE_NAME = "elapsedTimeValue",
 
 export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
     public static getName() {
-        return "Vertix/UI-V2/EmbedElapsedTimeBase";
+        return "VertixBot/UI-V2/EmbedElapsedTimeBase";
     }
 
     protected abstract getEndTime( args: UIArgs ): Date;

@@ -90,7 +90,7 @@ export class UILanguageManager extends InitializeBase {
     private uiInitialLanguage!: UILanguageJSON;
 
     public static getName() {
-        return "Vertix/UI-V2/LanguageManager";
+        return "VertixBot/UI-V2/LanguageManager";
     }
 
     public static getInstance() {
@@ -364,7 +364,7 @@ export class UILanguageManager extends InitializeBase {
             const AdapterType = adapter as typeof UIAdapterBase;
 
             // TODO Temporary - Skip feedback adapter by name.
-            if ( AdapterType.getName() === "Vertix/UI-V2/FeedbackAdapter" ) {
+            if ( AdapterType.getName() === "VertixBot/UI-V2/FeedbackAdapter" ) {
                 return;
             }
 

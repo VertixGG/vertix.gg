@@ -11,7 +11,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/
 
 export class MissingPermissionsAdapter extends UIAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelVoiceInteraction> {
     public static getName() {
-        return "Vertix/UI-V2/MissingPermissionsAdapter";
+        return "VertixBot/UI-V2/MissingPermissionsAdapter";
     }
 
     public static getComponent() {

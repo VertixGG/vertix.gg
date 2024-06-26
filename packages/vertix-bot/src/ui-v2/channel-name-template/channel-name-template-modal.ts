@@ -6,7 +6,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 export class ChannelNameTemplateModal extends UIModalBase {
     public static getName() {
-        return "Vertix/UI-V2/ChannelNameTemplateModal";
+        return "VertixBot/UI-V2/ChannelNameTemplateModal";
     }
 
     public static getInstanceType() {

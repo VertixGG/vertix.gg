@@ -333,7 +333,7 @@ it("should bypass", function () {
 //         await guild.members.add( daniUser, { nick: "User Dani" } as AddGuildMemberOptions );
 //         await guild.members.add( ownerUser, { nick: "Owner dado" } as AddGuildMemberOptions );
 //
-//         // Register `Vertix/UI/EditDynamicChannel` via old UI manager.
+//         // Register `VertixBot/UI/EditDynamicChannel` via old UI manager.
 //         await GUIManager.$.register( EditDynamicChannel ).waitUntilLoaded();
 //
 //         // Register UI adapters.
@@ -399,7 +399,7 @@ it("should bypass", function () {
 //
 //         // Prepare "Claim Channel" button interaction for user "bob".
 //         const claimStartAdapter =
-//                 UIAdapterManager.$.get( "Vertix/UI-V2/ClaimStartAdapter" ) as unknown as ClaimStartAdapter,
+//                 UIAdapterManager.$.get( "VertixBot/UI-V2/ClaimStartAdapter" ) as unknown as ClaimStartAdapter,
 //             claimStartButtonInteraction = createButtonInteraction(
 //                 claimStartButton.data.custom_id,
 //                 claimStartUserAbandonResponse.methodResult.id,
@@ -448,7 +448,7 @@ it("should bypass", function () {
 //             .toEqual( "Step in" );
 //
 //         // Prepare "Step In" button interaction for user "dani".
-//         let claimVoteAdapter = UIAdapterManager.$.get( "Vertix/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter,
+//         let claimVoteAdapter = UIAdapterManager.$.get( "VertixBot/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter,
 //             claimVoteButtonInteraction = createButtonInteraction(
 //                 claimVoteStepInButton.data.custom_id,
 //                 claimStartUserAbandonResponse.methodResult.id,
@@ -476,7 +476,7 @@ it("should bypass", function () {
 //         );
 //
 //         // Prepare "Step In" button interaction for user "owner"
-//         claimVoteAdapter = UIAdapterManager.$.get( "Vertix/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter;
+//         claimVoteAdapter = UIAdapterManager.$.get( "VertixBot/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter;
 //         claimVoteButtonInteraction = createButtonInteraction(
 //             claimVoteStepInButton.data.custom_id,
 //             claimStartUserAbandonResponse.methodResult.id,
@@ -542,11 +542,11 @@ it("should bypass", function () {
 //         );
 //
 //         // Simulate "dani" vote for bob.
-//         claimVoteAdapter = UIAdapterManager.$.get( "Vertix/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter;
+//         claimVoteAdapter = UIAdapterManager.$.get( "VertixBot/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter;
 //         claimVoteAdapter.run( daniClaimVoteForBobInteraction );
 //
 //         // Simulate "owner" vote for bob.
-//         claimVoteAdapter = UIAdapterManager.$.get( "Vertix/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter;
+//         claimVoteAdapter = UIAdapterManager.$.get( "VertixBot/UI-V2/ClaimVoteAdapter" ) as unknown as ClaimVoteAdapter;
 //         claimVoteAdapter.run( ownerClaimVoteForBobInteraction );
 //
 //         // Wait for message response.

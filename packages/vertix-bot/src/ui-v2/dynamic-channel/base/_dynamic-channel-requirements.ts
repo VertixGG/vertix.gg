@@ -35,7 +35,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
             return false;
         }
 
-        await uiAdapterService.get( "Vertix/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
+        await uiAdapterService.get( "VertixBot/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
             masterChannelId: masterChannelDB.channelId,
         } );
 
@@ -60,7 +60,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
 
         GlobalLogger.$.log( dynamicChannelRequirements, `Guild id: '${ interaction.guildId }' - Required permissions:`, missingPermissions );
 
-        await uiAdapterService.get( "Vertix/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+        await uiAdapterService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
             missingPermissions,
             omitterDisplayName: interaction.guild.client.user.username,
         } );

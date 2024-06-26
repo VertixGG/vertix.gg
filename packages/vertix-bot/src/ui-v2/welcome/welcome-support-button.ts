@@ -3,7 +3,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 export class WelcomeSupportButton extends UIElementButtonUrlBase {
     public static getName() {
-        return "Vertix/UI-V2/WelcomeSupportButton";
+        return "VertixBot/UI-V2/WelcomeSupportButton";
     }
 
     public static getInstanceType() {

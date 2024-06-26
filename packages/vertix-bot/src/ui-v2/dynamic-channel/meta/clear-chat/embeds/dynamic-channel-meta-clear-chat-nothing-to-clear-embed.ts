@@ -3,7 +3,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 export class DynamicChannelMetaClearChatNothingToClearEmbed extends UIEmbedBase {
     public static getName(): string {
-        return "Vertix/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed";
+        return "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed";
     }
 
     public static getInstanceType() {

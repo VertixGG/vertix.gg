@@ -1,10 +1,9 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import {
     PermissionsBitField
 
 ,
     Guild} from "discord.js";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
@@ -36,7 +35,7 @@ export class PermissionsManager extends InitializeBase {
     private resetBotPermissionsDebounceMap = new Map<string, NodeJS.Timeout>();
 
     public static getName() {
-        return "Vertix/Managers/Permissions";
+        return "VertixBot/Managers/Permissions";
     }
 
     public static getInstance(): PermissionsManager {
@@ -58,7 +57,7 @@ export class PermissionsManager extends InitializeBase {
 
         this.channelModel = ChannelModel.getInstance();
 
-        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", PermissionsManager.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", PermissionsManager.getName() ) );
     }
 
     public async onChannelPermissionsUpdate( oldState: VoiceChannel, newState: VoiceChannel ) {

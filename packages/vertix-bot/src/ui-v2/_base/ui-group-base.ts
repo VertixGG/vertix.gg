@@ -8,7 +8,7 @@ import type { UIEntityBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-entity-base
 
 export abstract class UIGroupBase extends UIBase {
     public static getName() {
-        return "Vertix/UI-V2/UIGroupBase";
+        return "VertixBot/UI-V2/UIGroupBase";
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-defini
 
 export class ChannelNameTemplateEditButton extends UIElementButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/ChannelNameTemplateEditButton";
+        return "VertixBot/UI-V2/ChannelNameTemplateEditButton";
     }
 
     public static getInstanceType() {

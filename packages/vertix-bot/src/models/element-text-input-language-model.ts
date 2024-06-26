@@ -15,7 +15,7 @@ export class ElementTextInputLanguageModel extends ModelLanguageBase<typeof mode
     private static instance: ElementTextInputLanguageModel;
 
     public static getName(): string {
-        return "Vertix/Models/ElementTextInputLanguageModel";
+        return "VertixBot/Models/ElementTextInputLanguageModel";
     }
 
     public static getInstance(): ElementTextInputLanguageModel {

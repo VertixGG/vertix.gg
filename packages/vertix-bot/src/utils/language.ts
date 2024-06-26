@@ -19,7 +19,7 @@ export class LanguageUtils extends InitializeBase {
     private static instance: LanguageUtils;
 
     public static getName(): string {
-        return "Vertix/Utils/LanguageUtils";
+        return "VertixBot/Utils/LanguageUtils";
     }
 
     public static getInstance(): LanguageUtils {

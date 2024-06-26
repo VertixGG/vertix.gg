@@ -11,7 +11,7 @@ import { ConfigExtrasSelectMenu } from "@vertix.gg/bot/src/ui-v2/config-extras/c
 
 export class SetupStep2Component extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/SetupStep2Component";
+        return "VertixBot/UI-V2/SetupStep2Component";
     }
 
     public static getInstanceType() {

@@ -12,7 +12,7 @@ export abstract class UIElementInputBase extends UIElementBase<APITextInputCompo
     protected content: UIElementTextInputLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIElementInputBase";
+        return "VertixBot/UI-V2/UIElementInputBase";
     }
 
     public static getComponentType(): ComponentType {

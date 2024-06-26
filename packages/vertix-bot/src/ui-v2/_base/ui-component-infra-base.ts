@@ -67,7 +67,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
     private currentMarkdownsType: typeof UIMarkdownsGroupBase;
 
     public static getName() {
-        return "Vertix/UI-V2/UIComponentBaseInfra";
+        return "VertixBot/UI-V2/UIComponentBaseInfra";
     }
 
     public static getType(): UIType {

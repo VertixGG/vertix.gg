@@ -4,7 +4,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 export class VerifiedRolesMenu extends UIElementRoleSelectMenu {
     public static getName() {
-        return "Vertix/UI-V2/VerifiedRolesMenu";
+        return "VertixBot/UI-V2/VerifiedRolesMenu";
     }
 
     public static getInstanceType() {

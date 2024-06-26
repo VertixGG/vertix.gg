@@ -14,7 +14,7 @@ describe( "VertixBot/UI-V2/UIBase", () => {
         // Arrange.
         const Class = class extends UIBase {
             public static getName() {
-                return "Vertix/UI-V2/ComponentWhateverBase";
+                return "VertixBot/UI-V2/ComponentWhateverBase";
             }
         };
 

@@ -5,7 +5,7 @@ import { FeedbackInputUrl } from "@vertix.gg/bot/src/ui-v2/feedback/modal-elemen
 
 export class FeedbackInviteDeveloperModal extends UIModalBase {
     public static getName() {
-        return "Vertix/UI-V2/FeedbackInviteDeveloperModal";
+        return "VertixBot/UI-V2/FeedbackInviteDeveloperModal";
     }
 
     public static getInstanceType() {

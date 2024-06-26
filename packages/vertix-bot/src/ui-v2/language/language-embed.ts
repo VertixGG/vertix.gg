@@ -19,7 +19,7 @@ export class LanguageEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/LanguageEmbed";
+        return "VertixBot/UI-V2/LanguageEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

@@ -40,7 +40,7 @@ export abstract class UIPortableBase<TSchema extends UIPortableSchemaBase = UIPo
     } );
 
     public static getName() {
-        return "Vertix/UI-V2/UIPortableBase";
+        return "VertixBot/UI-V2/UIPortableBase";
     }
 
     public static validate() {

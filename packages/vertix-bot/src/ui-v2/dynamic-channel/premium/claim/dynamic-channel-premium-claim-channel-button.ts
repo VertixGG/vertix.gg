@@ -6,7 +6,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton";
+        return "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton";
     }
 
     public static getId() {

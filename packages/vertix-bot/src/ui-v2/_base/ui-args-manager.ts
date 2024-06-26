@@ -27,7 +27,7 @@ export class UIArgsManager extends UIBase {
     } = {};
 
     public static getName() {
-        return "Vertix/UI-V2/UIArgsManager";
+        return "VertixBot/UI-V2/UIArgsManager";
     }
 
     public constructor( prefixName: string, shouldDebug = true ) {

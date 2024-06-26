@@ -7,7 +7,7 @@ import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix.gg/bot/src/ui-v2/_base/
 
 export class LanguageSelectMenu extends UIElementStringSelectMenu {
     public static getName() {
-        return "Vertix/UI-V2/LanguageSelectMenu";
+        return "VertixBot/UI-V2/LanguageSelectMenu";
     }
 
     public static getInstanceType() {

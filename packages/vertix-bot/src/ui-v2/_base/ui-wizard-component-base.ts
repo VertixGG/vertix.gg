@@ -15,7 +15,7 @@ import type { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
 
 export class UIWizardComponentBase extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/UIWizardComponentBase";
+        return "VertixBot/UI-V2/UIWizardComponentBase";
     }
 
     public static getInstanceType() {

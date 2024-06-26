@@ -7,7 +7,7 @@ import type { UIButtonStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-defini
 
 export class ClaimStartButton extends DynamicChannelPremiumClaimChannelButton {
     public static getName() {
-        return "Vertix/UI-V2/ClaimStartButton";
+        return "VertixBot/UI-V2/ClaimStartButton";
     }
 
     public static getInstanceType() {

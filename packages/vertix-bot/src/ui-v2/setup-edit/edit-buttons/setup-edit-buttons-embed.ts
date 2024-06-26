@@ -14,7 +14,7 @@ export class SetupEditButtonsEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/SetupEditButtonsEmbed";
+        return "VertixBot/UI-V2/SetupEditButtonsEmbed";
     }
 
     public static getInstanceType() {

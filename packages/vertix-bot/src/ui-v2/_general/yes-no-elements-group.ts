@@ -5,7 +5,7 @@ import { YesButton } from "@vertix.gg/bot/src/ui-v2/_general/yes-button";
 
 export class YesNoElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V2/YesNoElementsGroup";
+        return "VertixBot/UI-V2/YesNoElementsGroup";
     }
 
     public static getItems() {

@@ -19,7 +19,7 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 
 export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultInteraction> {
     public static getName() {
-        return "Vertix/UI-V2/ClaimStartAdapter";
+        return "VertixBot/UI-V2/ClaimStartAdapter";
     }
 
     public static getComponent() {
@@ -53,7 +53,7 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
     }
 
     protected onEntityMap() {
-        this.bindButton<DefaultInteraction>( "Vertix/UI-V2/ClaimStartButton", this.onClaimStartButtonClicked );
+        this.bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimStartButton", this.onClaimStartButtonClicked );
     }
 
     private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {

@@ -1,8 +1,8 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { ManagerDataBase } from "@vertix.gg/base/src/bases/manager-data-base";
 
 import { UserModel } from "@vertix.gg/base/src/models/user-model";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
@@ -26,7 +26,7 @@ export class UserDataManager extends ManagerDataBase<UserModel> {
         return UserDataManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = isDebugOn( "CACHE", UserDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugEnabled( "CACHE", UserDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 

@@ -18,7 +18,7 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
     private content: UIElementButtonLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIElementButtonBase";
+        return "VertixBot/UI-V2/UIElementButtonBase";
     }
 
     public static getComponentType(): ComponentType {

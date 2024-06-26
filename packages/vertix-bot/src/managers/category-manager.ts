@@ -17,7 +17,7 @@ export class CategoryManager extends InitializeBase {
     private categoryModel: CategoryModel;
 
     public static getName() {
-        return "Vertix/Managers/Category";
+        return "VertixBot/Managers/Category";
     }
 
     public static getInstance(): CategoryManager {

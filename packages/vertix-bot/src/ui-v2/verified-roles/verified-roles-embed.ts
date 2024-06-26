@@ -15,7 +15,7 @@ export class VerifiedRolesEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/VerifiedRolesEmbed";
+        return "VertixBot/UI-V2/VerifiedRolesEmbed";
     }
 
     protected getDescription(): string {

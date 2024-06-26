@@ -11,7 +11,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/
 
 export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
     public static getName() {
-        return "Vertix/UI-V2/WelcomeAdapter";
+        return "VertixBot/UI-V2/WelcomeAdapter";
     }
 
     public static getComponent() {
@@ -49,8 +49,8 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
     }
 
     protected onEntityMap() {
-        this.bindButton( "Vertix/UI-V2/WelcomeSetupButton", async ( interaction ) => {
-            await this.uiService.get( "Vertix/UI-V2/SetupAdapter" )?.ephemeral( interaction );
+        this.bindButton( "VertixBot/UI-V2/WelcomeSetupButton", async ( interaction ) => {
+            await this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.ephemeral( interaction );
 
             const argsId = this.getArgsManager().getArgsId( interaction );
 

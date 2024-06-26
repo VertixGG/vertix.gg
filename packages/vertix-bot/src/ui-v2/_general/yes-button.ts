@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-defini
 
 export class YesButton extends UIElementButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/YesButton";
+        return "VertixBot/UI-V2/YesButton";
     }
 
     public static getInstanceType() {

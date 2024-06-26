@@ -1,8 +1,7 @@
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
 
@@ -27,7 +26,7 @@ export abstract class UIAdapterExecutionStepsBase<
     private static adapterExecutionDebugger: Debugger = new Debugger(
         UIAdapterExecutionStepsBase.getName(),
         "",
-        isDebugOn( "UI", UIAdapterExecutionStepsBase.getName() )
+        isDebugEnabled( "UI", UIAdapterExecutionStepsBase.getName() )
     );
 
     private static executionStepsArray: UIExecutionStepItem[];
@@ -35,7 +34,7 @@ export abstract class UIAdapterExecutionStepsBase<
     private currentExecutionStep: UIExecutionStepItem = this.getInitialStep();
 
     public static getName() {
-        return "Vertix/UI-V2/UIAdapterExecutionStepsBase";
+        return "VertixBot/UI-V2/UIAdapterExecutionStepsBase";
     }
 
     public static validate() {

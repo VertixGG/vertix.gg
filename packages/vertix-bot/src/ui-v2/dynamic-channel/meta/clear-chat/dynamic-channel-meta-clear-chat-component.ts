@@ -13,7 +13,7 @@ import { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-
 
 export class DynamicChannelMetaClearChatComponent extends UIComponentBase {
     public static getName(): string {
-        return "Vertix/UI-V2/DynamicChannelMetaClearChatComponent";
+        return "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent";
     }
 
     public static getInstanceType() {

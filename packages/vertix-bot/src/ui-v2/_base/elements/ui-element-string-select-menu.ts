@@ -12,7 +12,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
     private content: UIElementSelectMenuLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIElementStringSelectMenu";
+        return "VertixBot/UI-V2/UIElementStringSelectMenu";
     }
 
     public static getComponentType() {

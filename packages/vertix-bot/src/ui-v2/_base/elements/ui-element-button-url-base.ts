@@ -6,7 +6,7 @@ import type { APIButtonComponentWithURL} from "discord.js";
 
 export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComponentWithURL> {
     public static getName() {
-        return "Vertix/UI-V2/UIElementButtonUrlBase";
+        return "VertixBot/UI-V2/UIElementButtonUrlBase";
     }
 
     public static getComponentType() {

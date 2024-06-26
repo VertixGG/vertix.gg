@@ -34,7 +34,7 @@ describe( "VertixBot/UI-V2/ClaimVoteStepInEmbed", () => {
 
         // Assert.
         expect( result ).toEqual( {
-            "name": "Vertix/UI-V2/ClaimVoteStepInEmbed",
+            "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
             "type": "embed",
             "attributes": {
                 "title": "👑  {userInitiatorDisplayName} wish to claim this channel",
@@ -87,7 +87,7 @@ describe( "VertixBot/UI-V2/ClaimVoteStepInEmbed", () => {
 
         // Assert.
         expect( result ).toEqual( {
-            "name": "Vertix/UI-V2/ClaimVoteStepInEmbed",
+            "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
             "type": "embed",
             "attributes": {
                 "description": "Unless someone else steps up, <@{userInitiatorId}> will be the proud owner of this channel in just `2 minutes`.",

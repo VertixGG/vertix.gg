@@ -8,7 +8,7 @@ import { VerifiedRolesEveryoneSelectMenu } from "@vertix.gg/bot/src/ui-v2/verifi
 
 export class SetupStep3Component extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/SetupStep3Component";
+        return "VertixBot/UI-V2/SetupStep3Component";
     }
 
     public static getInstanceType() {

@@ -5,7 +5,7 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 export class SetupStep3Embed extends VerifiedRolesEmbed {
     public static getName() {
-        return "Vertix/UI-V2/SetupStep3Embed";
+        return "VertixBot/UI-V2/SetupStep3Embed";
     }
 
     public static getInstanceType() {

@@ -1,14 +1,20 @@
+import util from "node:util";
+
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
 
 import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
+import type { WithRequiredProp } from "@vertix.gg/utils/src/common-types";
 
 export interface ChannelResult extends PrismaBot.Channel {
     isMaster: boolean;
     isDynamic: boolean;
+}
+
+export interface ChannelResultWithCacheKey extends ChannelResult {
+    cacheKey: string;
 }
 
 const E_INTERNAL_CHANNEL_TYPES = PrismaBot.E_INTERNAL_CHANNEL_TYPES;
@@ -84,37 +90,39 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         return result;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public async update( args: PrismaBot.Prisma.ChannelUpdateArgs, deleteCache = true ) {
+    public async update( args: PrismaBot.Prisma.ChannelUpdateArgs, forEachCachedEntities?: ( value: ChannelResultWithCacheKey ) => void ) {
         this.logger.log( this.update, `Where args: '${ args.where }'` );
 
-        if ( args.where.channelId ) {
-            this.deleteCacheByChannelId( args.where.channelId );
-        } else if ( args.where.id ) {
-            this.logger.log( this.update, `Object id: '${ args.where.id }'` );
+        this.forEachCachedEntitiesByWhere( args.where, ( value ) => {
+            this.deleteCache( value.cacheKey );
 
-            this.deleteCacheByObjectId( args.where.id );
-        } else {
-            throw new Error( "Channel id or object id must be provided." );
-        }
+            forEachCachedEntities?.( value );
+        } );
 
         this.debugger.dumpDown( this.update, args.data, "data" );
 
         return this.ownerModel.update( args );
     }
 
-    public async delete( guildId: string, channelId?: string | null ) {
+    public async delete(
+        args: WithRequiredProp< Pick<PrismaBot.Prisma.ChannelWhereUniqueInput, "guildId" | "channelId">, "guildId" >,
+        forEachCachedEntities?: ( value: ChannelResultWithCacheKey ) => void
+    ) {
         this.logger.log( this.delete,
-            `Guild id: '${ guildId }' - Deleting entry of channel id: '${ channelId }'`
+            `Guild id: '${ args.guildId }' - Deleting entry of channel id: '${ args.channelId }'`
         );
 
-        if ( channelId ) {
-            if ( await this.isExisting( guildId, channelId ) ) {
-                this.deleteCacheByChannelId( channelId );
+        if ( args.channelId ) {
+            if ( await this.isExisting( args.guildId.toString(), args.channelId ) ) {
+                this.forEachCachedEntitiesByWhere( args as Required<typeof args>, ( value ) => {
+                    this.deleteCache( value.cacheKey );
+
+                    forEachCachedEntities?.( value );
+                } );
 
                 return this.ownerModel.delete( {
                     where: {
-                        channelId
+                        channelId: args.channelId
                     },
                     include: {
                         data: true
@@ -125,13 +133,20 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
             return;
         }
 
-        this.deleteCacheByGuildId( guildId );
+        this.forEachCachedEntitiesByWhere( {
+            id: undefined,
+            guildId: args.guildId
+        }, ( value ) => {
+            this.deleteCache( value.cacheKey );
+
+            forEachCachedEntities?.( value );
+        } );
 
         this.logger.log( this.delete,
-            `Guild id: '${ guildId }' - Deleting all channels for the guild`
+            `Guild id: '${ args.guildId }' - Deleting all channels for the guild`
         );
 
-        return this.ownerModel.deleteMany( { where: { guildId: guildId } } );
+        return this.ownerModel.deleteMany( { where: { guildId: args.guildId } } );
     }
 
     public async getAll( guildId: string, internalType?: PrismaBot.E_INTERNAL_CHANNEL_TYPES, includeData?: boolean ) {
@@ -287,48 +302,101 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         return "channelId";
     }
 
-    private deleteCacheByObjectId( id: string ) {
-        this.debugger.log( this.deleteCacheByObjectId, `Removing channel object id: '${ id }' from cache.` );
+    private getFilterConditionByWhere( where: PrismaBot.Prisma.ChannelWhereUniqueInput ) {
+        if ( where.id ) {
+            return ( value: ChannelResult ) => value.id === where.id;
+        }
+
+        if ( where.channelId ) {
+            return ( value: ChannelResult ) => value.channelId === where.channelId;
+        }
+
+        if ( where.guildId ) {
+            return ( value: ChannelResult ) => value.guildId === where.guildId;
+        }
+
+        return null;
+    }
+
+    private getCachedEntitiesByWhere( where: PrismaBot.Prisma.ChannelWhereUniqueInput ) {
+        if ( where.id ) {
+            return this.getCachedEntitiesByObjectId( where.id );
+        }
+
+        if ( where.channelId ) {
+            return this.getCachedEntitiesByChannelId( where.channelId );
+        }
+
+        if ( where.guildId ) {
+            return this.getCachedEntitiesByGuildId( where.guildId.toString() );
+        }
+
+        return null;
+    }
+
+    private forEachCachedEntitiesByWhere( where: PrismaBot.Prisma.ChannelWhereUniqueInput, callback: ( value: ChannelResultWithCacheKey ) => void ) {
+        this.debugger.log( this.forEachCachedEntitiesByWhere, `Getting channel cache by where: ${ util.inspect( where ) }` );
+
+        const filter = this.getFilterConditionByWhere( where );
+
+        if ( ! filter ) {
+            return;
+        }
+
+        for ( let [ key, value ] of this.getMap().entries() ) {
+            if ( filter( value ) ) {
+                const result: ChannelResultWithCacheKey = {
+                    cacheKey: key,
+                    ...value,
+                };
+
+                callback( result );
+            }
+        }
+    }
+
+    private getCachedEntitiesByObjectId( id: string ) {
+        const result: ChannelResultWithCacheKey[] = [];
+
+        this.debugger.log( this.getCachedEntitiesByObjectId, `Getting channel cache by object id: '${ id }'` );
 
         // Get all that have the same channel id.
         for ( let [ key, value ] of this.getMap().entries() ) {
             if ( value.id === id ) {
-                // Remove from cache.
-                this.deleteCache( key );
-
-                // TODO: Model should not be aware of the data manager.
-                ChannelDataManager.$.removeFromCache( value.id );
+                result.push( { cacheKey: key, ...value } );
             }
         }
+
+        return result;
     }
 
-    private deleteCacheByChannelId( channelId: string ) {
-        this.debugger.log( this.deleteCacheByChannelId, `Removing channel id: '${ channelId }' from cache.` );
+    private getCachedEntitiesByChannelId( channelId: string ) {
+        const result: ChannelResultWithCacheKey[] = [];
+
+        this.debugger.log( this.getCachedEntitiesByChannelId, `Getting channel cache by channelId: '${ channelId }'` );
 
         // Get all that have the same channel id.
         for ( let [ key, value ] of this.getMap().entries() ) {
             if ( value.channelId === channelId ) {
-                // Remove from cache.
-                this.deleteCache( key );
-
-                // TODO: Model should not be aware of the data manager.
-                ChannelDataManager.$.removeFromCache( value.id );
+                result.push( { cacheKey: key, ...value } );
             }
         }
+
+        return result;
     }
 
-    private deleteCacheByGuildId( guildId: string ) {
-        this.logger.log( this.deleteCacheByGuildId, `Removing guild id: '${ guildId }' from cache.` );
+    private getCachedEntitiesByGuildId( guildId: string ) {
+        const result: ChannelResultWithCacheKey[] = [];
 
-        // Get all that have the same guild id.
+        this.debugger.log( this.getCachedEntitiesByGuildId, `Getting channel cache by guildId: '${ guildId }'` );
+
+        // Get all that have the same channel id.
         for ( let [ key, value ] of this.getMap().entries() ) {
             if ( value.guildId === guildId ) {
-                // Remove from cache.
-                this.deleteCache( key );
-
-                // TODO: Model should not be aware of the data manager.
-                ChannelDataManager.$.removeFromCache( value.id );
+                result.push( { cacheKey: key, ...value } );
             }
         }
+
+        return result;
     }
 }

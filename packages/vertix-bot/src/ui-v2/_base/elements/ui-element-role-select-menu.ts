@@ -12,7 +12,7 @@ export abstract class UIElementRoleSelectMenu extends UIElementBase<APIRoleSelec
     private content: UIElementSelectMenuLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIElementRolesSelectMenu";
+        return "VertixBot/UI-V2/UIElementRolesSelectMenu";
     }
 
     public static getComponentType(): ComponentType {

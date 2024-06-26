@@ -2,6 +2,6 @@ import { UIHookBuildBefore } from "@vertix.gg/bot/src/ui-v2/_base/hooks/ui-hook-
 
 export class LanguageHook extends UIHookBuildBefore {
     public static getName() {
-        return "Vertix/UI-V2/LanguageHook";
+        return "VertixBot/UI-V2/LanguageHook";
     }
 }

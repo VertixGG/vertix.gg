@@ -9,7 +9,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/
 
 export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdapterBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPremiumResetChannelAdapter";
+        return "VertixBot/UI-V2/DynamicChannelPremiumResetChannelAdapter";
     }
 
     public static getComponent() {
@@ -29,7 +29,7 @@ export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdap
     }
 
     protected onEntityMap() {
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>( "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton", this.onResetChannelButtonClicked );
+        this.bindButton<UIDefaultButtonChannelVoiceInteraction>( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", this.onResetChannelButtonClicked );
     }
 
     private async onResetChannelButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
@@ -38,7 +38,7 @@ export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdap
         switch ( result?.code ) {
             case "success-rename-rate-limit":
             case "success":
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup" );
 
                 await this.ephemeral( interaction, { result } );
                 break;
@@ -48,7 +48,7 @@ export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdap
                 break;
 
             default:
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/SomethingWentWrongEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V2/SomethingWentWrongEmbedGroup" );
                 await this.ephemeral( interaction, {} );
         }
     }

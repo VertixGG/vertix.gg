@@ -1,6 +1,6 @@
 import EventEmitter from "events";
 
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import ObjectBase from "@vertix.gg/base/src/bases/object-base";
 
@@ -25,9 +25,8 @@ export class EventBus extends ObjectBase {
     public constructor() {
         super();
 
-        // TODO: Remove `!` from `isDebugOn` function.
-        this.debugger = new Debugger( this, "", ! isDebugOn(
-            "",
+        this.debugger = new Debugger( this, "", isDebugEnabled(
+            "MODULE",
             EventBus.getName()
         ) );
 

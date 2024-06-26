@@ -55,7 +55,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     private entitiesMap: UIEntityMap = {};
 
     public static getName() {
-        return "Vertix/UI-V2/UIAdapterEntityBase";
+        return "VertixBot/UI-V2/UIAdapterEntityBase";
     }
 
     public static getComponent(): UIComponentTypeConstructor {

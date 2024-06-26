@@ -1,5 +1,1 @@
-/.0_local/
-/node_modules/
-/.idea/
-/yarn-error.log
-/coverage/
+.env

@@ -58,7 +58,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         }
 
         const adapter = this.services.uiAdapterService
-            .get( "Vertix/UI-V2/FeedbackAdapter" );
+            .get( "VertixBot/UI-V2/FeedbackAdapter" );
 
         if ( ! adapter ) {
             this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );
@@ -158,7 +158,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 
     public async sendLeaveMessageToOwner( guild: Guild ) {
         const adapter = this.services.uiAdapterService
-            .get( "Vertix/UI-V2/FeedbackAdapter" );
+            .get( "VertixBot/UI-V2/FeedbackAdapter" );
 
         if ( ! adapter ) {
             this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );

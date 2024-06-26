@@ -15,7 +15,7 @@ export class ModalLanguageModel extends ModelLanguageBase<typeof model, PrismaBo
     private static instance: ModalLanguageModel;
 
     public static getName(): string {
-        return "Vertix/Models/ModalLanguageModel";
+        return "VertixBot/Models/ModalLanguageModel";
     }
 
     public static getInstance(): ModalLanguageModel {

@@ -22,7 +22,7 @@ import {
 
 export class DynamicChannelPermissionsComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPermissionsComponent";
+        return "VertixBot/UI-V2/DynamicChannelPermissionsComponent";
     }
 
     public static getInstanceType() {

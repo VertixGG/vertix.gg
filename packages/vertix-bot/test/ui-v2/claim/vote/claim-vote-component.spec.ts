@@ -9,7 +9,7 @@ it( "should be bypassed", () => {
 //         it( "should passthroughs sanity check", async () => {
 //             const component = new ClaimVoteComponent();
 //
-//             component.switchMarkdownsGroup( "Vertix/UI-V2/ClaimVoteResultsMarkdownGroup" );
+//             component.switchMarkdownsGroup( "VertixBot/UI-V2/ClaimVoteResultsMarkdownGroup" );
 //
 //             const result = await component.build( {
 //

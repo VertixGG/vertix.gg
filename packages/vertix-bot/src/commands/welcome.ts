@@ -24,6 +24,6 @@ export const Welcome: ICommand = {
     run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
         const uiAdapter = ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" );
 
-        uiAdapter.get( "Vertix/UI-V2/WelcomeAdapter" )?.ephemeral( interaction );
+        uiAdapter.get( "VertixBot/UI-V2/WelcomeAdapter" )?.ephemeral( interaction );
     }
 };

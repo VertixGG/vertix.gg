@@ -8,7 +8,7 @@ import type { UIInputStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-definit
 
 export class ChannelNameTemplateInput extends UIElementInputBase {
     public static getName() {
-        return "Vertix/UI-V2/ChannelNameTemplateInput";
+        return "VertixBot/UI-V2/ChannelNameTemplateInput";
     }
 
     public static getInstanceType() {

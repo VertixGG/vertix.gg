@@ -2,9 +2,9 @@ import util from "node:util";
 
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
-import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
+import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
 
 import type { WithRequiredProp } from "@vertix.gg/utils/src/common-types";
 
@@ -52,7 +52,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     private static instance: ChannelModel;
 
     public static getName(): string {
-        return "Vertix/Models/Channel";
+        return "VertixBase/Models/Channel";
     }
 
     public static getInstance(): ChannelModel {
@@ -68,8 +68,8 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     public constructor(
-        shouldDebugCache = isDebugOn( "CACHE", ChannelModel.getName() ),
-        shouldDebugModel = isDebugOn( "MODEL", ChannelModel.getName() )
+        shouldDebugCache = isDebugEnabled( "CACHE", ChannelModel.getName() ),
+        shouldDebugModel = isDebugEnabled( "MODEL", ChannelModel.getName() )
     ) {
         super( shouldDebugCache, shouldDebugModel );
     }

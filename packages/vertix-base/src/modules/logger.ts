@@ -11,6 +11,8 @@ const DEFAULT_LOG_PREFIX = pc.white( "⚪ - [LOG]" ),
     DEFAULT_ERROR_PREFIX = pc.red( "🔴 - [ERROR]" ),
     DEFAULT_ADMIN_PREFIX = pc.bold( "🟣 - [ADMIN]" );
 
+const DEFAULT_LOG_LEVEL = "5";
+
 export type ICaller = Function | String;
 
 const registeredNames: any = {};
@@ -26,6 +28,35 @@ export class Logger extends ObjectBase {
         return "VertixBase/Modules/Logger";
     }
 
+    public static getLogLevelString(): string {
+        switch ( parseInt( process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL ) ) {
+            case 0:
+                return "NONE";
+            case 1:
+                return "ERROR";
+            case 2:
+                return "WARN";
+            case 3:
+                return "ADMIN";
+            case 4:
+                return "INFO";
+            case 5:
+                return "LOG";
+            case 6:
+                return "DEBUG";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    public static getLogLevel(): number {
+        return parseInt( process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL );
+    }
+
+    public static isDebugEnabled() {
+        return this.getLogLevel() >= 6;
+    }
+
     public constructor( owner: ObjectBase | typeof ObjectBase | string ) {
         super();
 
@@ -39,7 +70,7 @@ export class Logger extends ObjectBase {
             throw new Error( `Logger for '${ this.ownerName }' already exists` );
         }
 
-        if ( process.env.DISABLE_LOGGER && "true" === process.env.DISABLE_LOGGER ) {
+        if ( process.env.LOGGER_DISABLED && "true" === process.env.DISABLE_LOGGER ) {
             this.error = () => {};
             this.warn = () => {};
             this.admin = () => {};
@@ -50,12 +81,12 @@ export class Logger extends ObjectBase {
             return;
         }
 
-        if ( process.env.DISABLE_LOGGER_PREVIOUS_SOURCE && "true" === process.env.DISABLE_LOGGER_PREVIOUS_SOURCE ) {
+        if ( process.env.LOGGER_LOG_PREVIOUS_CALLER_SOURCE_DISABLED && "true" === process.env.LOGGER_LOG_PREVIOUS_CALLER_SOURCE_DISABLED ) {
             this.getPreviousSource = () => "";
         }
 
         // noinspection FallThroughInSwitchStatementJS
-        switch ( parseInt( process.env.LOG_LEVEL || "5" ) ) {
+        switch ( Logger.getLogLevel() ) {
             case 0:
                 this.error = () => {};
             case 1:

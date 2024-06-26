@@ -1,6 +1,6 @@
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
+import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
 
 export class DynamicChannelDataManager extends ChannelDataManager {
     private static _instance: DynamicChannelDataManager;
@@ -20,7 +20,7 @@ export class DynamicChannelDataManager extends ChannelDataManager {
         return DynamicChannelDataManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = isDebugOn( "CACHE", DynamicChannelDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugEnabled( "CACHE", DynamicChannelDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 }

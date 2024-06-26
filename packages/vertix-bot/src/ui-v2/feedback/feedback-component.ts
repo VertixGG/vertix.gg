@@ -15,7 +15,7 @@ import { WelcomeSupportButton } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-s
 
 export class FeedbackComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/FeedbackComponent";
+        return "VertixBot/UI-V2/FeedbackComponent";
     }
 
     public static getInstanceType() {

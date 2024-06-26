@@ -34,6 +34,7 @@
         "@zenflux/tsconfig-to-swc": "latest",
         "jest": "latest",
         "jest-when": "latest",
-        "ts-mockito": "latest"
+        "ts-mockito": "latest",
+        "tsx": "latest"
     }
 }

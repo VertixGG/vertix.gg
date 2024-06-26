@@ -1,5 +1,7 @@
 import process from "process";
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix.gg/base/src/definitions/guild-data-keys";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
@@ -9,8 +11,6 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import picocolors from "picocolors";
 
@@ -84,7 +84,7 @@ export abstract class UIAdapterBase<
     private static adapterDebugger: Debugger = new Debugger(
         this.getName(),
         "",
-        isDebugOn( "UI", UIAdapterBase.getName() )
+        isDebugEnabled( "UI", UIAdapterBase.getName() )
     );
 
     private static validatedOnce = false;
@@ -117,7 +117,7 @@ export abstract class UIAdapterBase<
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
-        return "Vertix/UI-V2/UIAdapterBase";
+        return "VertixBot/UI-V2/UIAdapterBase";
     }
 
     public static getInstanceType() {
@@ -211,13 +211,13 @@ export abstract class UIAdapterBase<
         if ( ! this.shouldDisableMiddleware || ! this.shouldDisableMiddleware() ) {
             new UIInteractionMiddleware( this, {
                 onChannelFailed: async ( channel, channelTypes ) => {
-                    await uiService.get( "Vertix/UI-V2/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
+                    await uiService.get( "VertixBot/UI-V2/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
                         channelTypes,
                     } );
                 },
 
                 onInteractionFailed: async ( interaction, missingPermissions ) => {
-                    await uiService.get( "Vertix/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                    await uiService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                         missingPermissions,
                     } );
                 },

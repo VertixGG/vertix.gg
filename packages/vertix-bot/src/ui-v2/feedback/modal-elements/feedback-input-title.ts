@@ -6,7 +6,7 @@ import type { UIInputStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-definit
 
 export class FeedbackInputTitle extends UIElementInputBase {
     public static getName() {
-        return "Vertix/UI-V2/FeedbackInputTitle";
+        return "VertixBot/UI-V2/FeedbackInputTitle";
     }
 
     public static getInstanceType() {

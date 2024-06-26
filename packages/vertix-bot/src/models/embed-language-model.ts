@@ -16,7 +16,7 @@ export class EmbedLanguageModel extends ModelLanguageBase<typeof model, PrismaBo
     private static instance: EmbedLanguageModel;
 
     public static getName(): string {
-        return "Vertix/Models/EmbedLanguageModel";
+        return "VertixBot/Models/EmbedLanguageModel";
     }
 
     public static getInstance(): EmbedLanguageModel {

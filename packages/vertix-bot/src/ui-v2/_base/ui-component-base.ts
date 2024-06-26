@@ -27,7 +27,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
     private uiModals: UIModalBase[] = [];
 
     public static getName() {
-        return "Vertix/UI-V2/UIComponentBase";
+        return "VertixBot/UI-V2/UIComponentBase";
     }
 
     /**

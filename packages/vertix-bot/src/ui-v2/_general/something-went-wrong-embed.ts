@@ -5,7 +5,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 export class SomethingWentWrongEmbed extends UIEmbedBase {
     public static getName() {
-        return "Vertix/UI-V2/SomethingWentWrongEmbed";
+        return "VertixBot/UI-V2/SomethingWentWrongEmbed";
     }
 
     public static getInstanceType() {

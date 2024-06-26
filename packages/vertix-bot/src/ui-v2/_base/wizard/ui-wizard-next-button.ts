@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-defini
 
 export class UIWizardNextButton extends UIElementButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/WizardNextButton";
+        return "VertixBot/UI-V2/WizardNextButton";
     }
 
     public static getInstanceType() {

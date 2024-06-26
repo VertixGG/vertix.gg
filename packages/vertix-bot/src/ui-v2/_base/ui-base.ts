@@ -4,7 +4,7 @@ export abstract class UIBase extends ObjectBase {
     protected readonly hierarchyNames: string[];
 
     public static getName() {
-        return "Vertix/UI-V2/UIBase";
+        return "VertixBot/UI-V2/UIBase";
     }
 
     public constructor() {

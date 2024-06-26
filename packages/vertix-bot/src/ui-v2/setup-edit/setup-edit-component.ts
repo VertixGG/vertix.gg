@@ -29,7 +29,7 @@ import {
  */
 export class SetupEditComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/ConfigComponent";
+        return "VertixBot/UI-V2/ConfigComponent";
     }
 
     public static getInstanceType() {
@@ -65,10 +65,10 @@ export class SetupEditComponent extends UIComponentBase {
     }
 
     protected static getDefaultElementsGroup() {
-        return "Vertix/UI-V2/SetupEditElementsGroup";
+        return "VertixBot/UI-V2/SetupEditElementsGroup";
     }
 
     protected static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V2/SetupEditEmbedGroup";
+        return "VertixBot/UI-V2/SetupEditEmbedGroup";
     }
 }

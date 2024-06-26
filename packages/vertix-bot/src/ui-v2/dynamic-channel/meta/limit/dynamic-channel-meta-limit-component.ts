@@ -11,7 +11,7 @@ import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-grou
 
 export class DynamicChannelMetaLimitComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaLimitComponent";
+        return "VertixBot/UI-V2/DynamicChannelMetaLimitComponent";
     }
 
     public static getInstanceType() {

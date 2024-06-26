@@ -16,7 +16,7 @@ export class MarkdownLanguageModel extends ModelLanguageBase<typeof model, Prism
     private static instance: MarkdownLanguageModel;
 
     public static getName(): string {
-        return "Vertix/Models/MarkdownLanguageModel";
+        return "VertixBot/Models/MarkdownLanguageModel";
     }
 
     public static getInstance(): MarkdownLanguageModel {

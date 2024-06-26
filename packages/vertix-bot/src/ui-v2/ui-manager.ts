@@ -10,7 +10,7 @@ import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
 
 import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
-const ADAPTER_CLEANUP_WORKER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_WORKER_INTERNVAL ) ||
+const ADAPTER_CLEANUP_WORKER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_WORKER_INTERVAL ) ||
     300000; // 5 minutes.
 
 export class UIManager extends InitializeBase {
@@ -19,7 +19,7 @@ export class UIManager extends InitializeBase {
     private static cleanWorkerTimer: NodeJS.Timeout;
 
     public static getName() {
-        return "Vertix/UI-V2/UIManager";
+        return "VertixBot/UI-V2/UIManager";
     }
 
     public static getInstance() {

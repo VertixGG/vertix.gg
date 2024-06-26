@@ -43,7 +43,7 @@ export class SetupEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/SetupEmbed";
+        return "VertixBot/UI-V2/SetupEmbed";
     }
 
     public static getInstanceType() {

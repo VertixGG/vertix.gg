@@ -1,3 +1,4 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import "@vertix.gg/prisma/bot-client";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
@@ -10,8 +11,6 @@ import {
 } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
@@ -132,7 +131,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this, "", isDebugOn( "MANAGER", MasterChannelService.getName() ) );
+        this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", MasterChannelService.getName() ) );
 
         EventBus.$.on( "VertixBot/Services/Channel",
             "onChannelGuildVoiceDelete",
@@ -299,7 +298,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 // Send DM message to the user with missing permissions.
                 if ( newState.member?.id ) {
                     const missingPermissionsAdapter = this.services
-                        .uiAdapterService.get( "Vertix/UI-V2/MissingPermissionsAdapter" );
+                        .uiAdapterService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" );
 
                     if ( ! missingPermissionsAdapter ) {
                         this.logger.error( this.onJoinMasterChannel,

@@ -12,7 +12,7 @@ import { ClaimResultVotedSameEmbed } from "@vertix.gg/bot/src/ui-v2/claim/result
 
 export class ClaimResultComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/ClaimResultComponent";
+        return "VertixBot/UI-V2/ClaimResultComponent";
     }
 
     public static getInstanceType() {

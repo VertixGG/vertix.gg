@@ -6,7 +6,7 @@ import { BadwordsInput } from "@vertix.gg/bot/src/ui-v2/badwords/badwords-input"
 
 export class BadwordsModal extends UIModalBase {
     public static getName() {
-        return "Vertix/UI-V2/BadwordsModal";
+        return "VertixBot/UI-V2/BadwordsModal";
     }
 
     public static getInstanceType() {

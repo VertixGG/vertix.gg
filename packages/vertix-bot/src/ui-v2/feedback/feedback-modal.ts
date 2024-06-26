@@ -6,7 +6,7 @@ import { FeedbackInputDescription } from "@vertix.gg/bot/src/ui-v2/feedback/moda
 
 export class FeedbackModal extends UIModalBase {
     public static getName() {
-        return "Vertix/UI-V2/FeedbackModal";
+        return "VertixBot/UI-V2/FeedbackModal";
     }
 
     public static getInstanceType() {

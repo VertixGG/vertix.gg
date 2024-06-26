@@ -1,10 +1,10 @@
 import process from "process";
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { EmbedBuilder } from "discord.js";
 
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -54,7 +54,7 @@ export class TopGGManager extends CacheBase<Date> {
 
     public constructor(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        shouldDebugCache = isDebugOn( "CACHE", TopGGManager.getName() ),
+        shouldDebugCache = isDebugEnabled( "CACHE", TopGGManager.getName() ),
         workerInterval = TOP_GG_WORKER_INTERVAL,
         voteInterval = TOP_GG_VOTE_INTERVAL
     ) {

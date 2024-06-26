@@ -1,4 +1,5 @@
 import "@vertix.gg/prisma/bot-client";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
 
@@ -8,8 +9,6 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { ChannelType } from "discord.js";
 
@@ -65,8 +64,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         this.debugger = new Debugger(
             this,
             "",
-            // TODO Remove `!`
-            ! isDebugOn( "MANAGER", ChannelService.getName() )
+            isDebugEnabled( "SERVICE", ChannelService.getName() )
         );
 
         EventBus.$.register( this, [

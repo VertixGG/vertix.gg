@@ -10,7 +10,7 @@ import type { VoiceChannel } from "discord.js";
 
 export abstract class DynamicChannelAdapterExuBase<TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction> extends UIAdapterExecutionStepsBase<VoiceChannel, TInteraction> {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelAdapterExuBase";
+        return "VertixBot/UI-V2/DynamicChannelAdapterExuBase";
     }
 
     public getChannelTypes() {

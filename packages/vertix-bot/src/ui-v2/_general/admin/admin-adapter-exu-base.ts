@@ -20,7 +20,7 @@ export class AdminAdapterExuBase<
     private static dedicatedLogger = new Logger( this.getName() );
 
     public static getName() {
-        return "Vertix/UI-V2/AdminAdapterExuBase";
+        return "VertixBot/UI-V2/AdminAdapterExuBase";
     }
 
     public getPermissions(): PermissionsBitField {
@@ -44,7 +44,7 @@ export class AdminAdapterExuBase<
                     `🔐 Bot missing permissions" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
                 );
 
-                await this.uiService.get( "Vertix/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                await this.uiService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                     missingPermissions,
                     omitterDisplayName: interaction.guild.client.user.username,
                 } );

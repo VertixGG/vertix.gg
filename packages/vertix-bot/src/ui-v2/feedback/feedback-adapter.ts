@@ -7,7 +7,7 @@ import type { ModalSubmitInteraction } from "discord.js";
 
 export class FeedbackAdapter extends UIAdapterBase<any, any> {
     public static getName() {
-        return "Vertix/UI-V2/FeedbackAdapter";
+        return "VertixBot/UI-V2/FeedbackAdapter";
     }
 
     public static getComponent() {
@@ -20,20 +20,20 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
 
     protected onEntityMap() {
         this.bindModalWithButton(
-            "Vertix/UI-V2/FeedbackReportButton",
-            "Vertix/UI-V2/FeedbackReportModal",
+            "VertixBot/UI-V2/FeedbackReportButton",
+            "VertixBot/UI-V2/FeedbackReportModal",
             this.onReportModalSubmitted
         );
 
         this.bindModalWithButton(
-            "Vertix/UI-V2/FeedbackSuggestionButton",
-            "Vertix/UI-V2/FeedbackModal",
+            "VertixBot/UI-V2/FeedbackSuggestionButton",
+            "VertixBot/UI-V2/FeedbackModal",
             this.onSuggestionModalSubmitted
         );
 
         this.bindModalWithButton(
-            "Vertix/UI-V2/FeedbackInviteDeveloperButton",
-            "Vertix/UI-V2/FeedbackInviteDeveloperModal",
+            "VertixBot/UI-V2/FeedbackInviteDeveloperButton",
+            "VertixBot/UI-V2/FeedbackInviteDeveloperModal",
             this.onInviteDeveloperModalSubmitted
         );
     }
@@ -61,7 +61,7 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     }
 
     private async onInviteDeveloperModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
-        const inviteLink = interaction.fields.getTextInputValue( "Vertix/UI-V2/FeedbackAdapter:Vertix/UI-V2/FeedbackInputUrl" ),
+        const inviteLink = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" ),
             tagName = interaction.user.tag,
             guildName = interaction.guild?.name ?? "DM";
 
@@ -78,8 +78,8 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
 
     private async informCollector( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
         const tagName = interaction.user.tag,
-            title = interaction.fields.getTextInputValue( "Vertix/UI-V2/FeedbackAdapter:Vertix/UI-V2/FeedbackInputTitle" ),
-            description = interaction.fields.getTextInputValue( "Vertix/UI-V2/FeedbackAdapter:Vertix/UI-V2/FeedbackInputDescription" ),
+            title = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputTitle" ),
+            description = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputDescription" ),
             guildName = interaction.guild?.name ?? "DM";
 
         await this.dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {

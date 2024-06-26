@@ -18,7 +18,7 @@ export abstract class UIMarkdownBase extends UITemplateBase {
     private translatedContent: UIMarkdownLanguageContent | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIMarkdownTemplateBase";
+        return "VertixBot/UI-V2/UIMarkdownTemplateBase";
     }
 
     public static getType(): UIType {

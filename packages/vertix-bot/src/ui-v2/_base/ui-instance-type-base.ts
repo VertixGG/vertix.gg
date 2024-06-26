@@ -8,7 +8,7 @@ import type { UIType } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class UIInstanceTypeBase extends UIBase {
     public static getName() {
-        return "Vertix/UI-V2/UIInstanceTypeBase";
+        return "VertixBot/UI-V2/UIInstanceTypeBase";
     }
 
     public static getInstanceType(): UIInstancesTypes {

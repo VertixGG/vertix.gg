@@ -5,7 +5,7 @@ export class GlobalLogger extends ObjectBase {
     private static instance: Logger;
 
     public static getName() {
-        return "Vertix/GlobalLogger";
+        return "VertixBot/GlobalLogger";
     }
 
     public static getInstance() {

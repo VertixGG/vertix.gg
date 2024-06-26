@@ -17,7 +17,7 @@ export class Debugger extends ObjectBase {
         return "VertixBase/Modules/Debugger";
     }
 
-    public constructor( owner: ObjectBase | typeof ObjectBase | string, prefix?: string, private shouldDebug = true ) {
+    public constructor( owner: ObjectBase | typeof ObjectBase | string, prefix?: string, private shouldDebug = Logger.isDebugEnabled() ) {
         super();
 
         if ( shouldDebug ) {

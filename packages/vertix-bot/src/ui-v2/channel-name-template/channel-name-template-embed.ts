@@ -12,7 +12,7 @@ export class ChannelNameTemplateEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/ChannelNameTemplateEmbed";
+        return "VertixBot/UI-V2/ChannelNameTemplateEmbed";
     }
 
     protected getTitle(): string {

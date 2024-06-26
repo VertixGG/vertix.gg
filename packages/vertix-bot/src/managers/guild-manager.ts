@@ -34,7 +34,7 @@ export class GuildManager extends InitializeBase {
     private readonly updateStatsBound: OmitThisParameter<() => void>;
 
     public static getName(): string {
-        return "Vertix/Managers/Guild";
+        return "VertixBot/Managers/Guild";
     }
 
     public static getInstance(): GuildManager {
@@ -99,7 +99,7 @@ export class GuildManager extends InitializeBase {
                 return;
             }
 
-            await this.uiAdapterService.get( "Vertix/UI-V2/WelcomeAdapter" )?.send( defaultChannel, {
+            await this.uiAdapterService.get( "VertixBot/UI-V2/WelcomeAdapter" )?.send( defaultChannel, {
                 userId: user.id,
             } );
         }

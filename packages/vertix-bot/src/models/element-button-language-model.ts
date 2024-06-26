@@ -16,7 +16,7 @@ export class ElementButtonLanguageModel extends ModelLanguageBase<typeof model, 
     private static instance: ElementButtonLanguageModel;
 
     public static getName(): string {
-        return "Vertix/Models/ElementButtonLanguageModel";
+        return "VertixBot/Models/ElementButtonLanguageModel";
     }
 
     public static getInstance(): ElementButtonLanguageModel {

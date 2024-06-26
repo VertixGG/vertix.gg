@@ -92,7 +92,7 @@ export class DynamicChannelVoteManager<
     } = {};
 
     public static getName() {
-        return "Vertix/Managers/ChannelVote";
+        return "VertixBot/Managers/ChannelVote";
     }
 
     public static getInstance() {

@@ -1,7 +1,8 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
 import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords";
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/base/src/definitions/guild-data-keys";
@@ -36,7 +37,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return GuildDataManager.getInstance();
     }
 
-    public constructor( shouldDebugCache = isDebugOn( "CACHE", GuildDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugEnabled( "CACHE", GuildDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 

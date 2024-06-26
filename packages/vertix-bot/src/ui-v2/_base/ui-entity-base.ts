@@ -13,7 +13,7 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
     protected uiArgs: UIArgs | undefined;
 
     public static getName() {
-        return "Vertix/UI-V2/UIEntityBase";
+        return "VertixBot/UI-V2/UIEntityBase";
     }
 
     public getSchema() {

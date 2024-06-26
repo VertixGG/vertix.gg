@@ -4,7 +4,7 @@ import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
 
 class ElementMockClass extends UIElementBase<any> {
     public static getName() {
-        return "Vertix/UI-V2/TestElementMockClass";
+        return "VertixBot/UI-V2/TestElementMockClass";
     }
 
     protected getAttributes(): Promise<any> {

@@ -1,9 +1,8 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { BaseInteraction, ChannelType, GuildChannel, Message } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
-
-import { isDebugOn } from "@vertix.gg/base/src/utils/debug";
 
 import type { PermissionsString } from "discord.js";
 
@@ -26,7 +25,7 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
     private static debugger = new Debugger(
         UIInteractionMiddleware.getName(),
         "",
-        isDebugOn( "UI_MIDDLEWARE", UIInteractionMiddleware.getName() )
+        isDebugEnabled( "UI", UIInteractionMiddleware.getName() )
     );
 
     private readonly eventArgs;
@@ -34,7 +33,7 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
     private readonly target: UIAdapterBase<TChannel, TInteraction>;
 
     public static getName() {
-        return "Vertix/UI-V2/UIInteractionMiddleware";
+        return "VertixBot/UI-V2/UIInteractionMiddleware";
     }
 
     public constructor( target: UIAdapterBase<TChannel, TInteraction>, eventArgs?: {

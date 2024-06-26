@@ -11,7 +11,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/
 
 export class InvalidChannelTypeAdapter extends UIAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelVoiceInteraction> {
     public static getName() {
-        return "Vertix/UI-V2/InvalidChannelTypeAdapter";
+        return "VertixBot/UI-V2/InvalidChannelTypeAdapter";
     }
 
     public static getComponent() {

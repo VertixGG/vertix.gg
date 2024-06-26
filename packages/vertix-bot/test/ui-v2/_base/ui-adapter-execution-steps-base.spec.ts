@@ -12,7 +12,7 @@ import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 const ElementMock = class extends UIElementButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/TestElementButton";
+        return "VertixBot/UI-V2/TestElementButton";
     }
 
     public static getInstanceType(): UIInstancesTypes {
@@ -30,13 +30,13 @@ const ElementMock = class extends UIElementButtonBase {
 
 const ElementGroupMock = class extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V2/TestElementsGroup";
+        return "VertixBot/UI-V2/TestElementsGroup";
     }
 };
 
 const EmbedMock = class extends UIEmbedBase {
     public static getName() {
-        return "Vertix/UI-V2/TestEmbed";
+        return "VertixBot/UI-V2/TestEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {
@@ -46,7 +46,7 @@ const EmbedMock = class extends UIEmbedBase {
 
 const ComponentMock = class extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/TestComponent";
+        return "VertixBot/UI-V2/TestComponent";
     }
 
     public static getInstanceType(): UIInstancesTypes {
@@ -64,7 +64,7 @@ const ComponentMock = class extends UIComponentBase {
 
 const AdapterMock = class extends UIAdapterExecutionStepsBase<VoiceChannel, MessageComponentInteraction<"cached">> {
     public static getName() {
-        return "Vertix/UI-V2/Test";
+        return "VertixBot/UI-V2/Test";
     }
 
     protected getStartArgs() {
@@ -106,7 +106,7 @@ describe( "VertixBot/UI-V2/UIAdapterExecutionStepsBase", () => {
             const act = () => UIAdapter.validate();
 
             // Assert.
-            expect( act ).toThrow( "Missing execution step for the group: 'Vertix/UI-V2/TestElementsGroup'" );
+            expect( act ).toThrow( "Missing execution step for the group: 'VertixBot/UI-V2/TestElementsGroup'" );
         } );
 
         it( "should throw error if step does not have corresponding group", function () {
@@ -131,8 +131,8 @@ describe( "VertixBot/UI-V2/UIAdapterExecutionStepsBase", () => {
                 protected static getExecutionSteps() {
                     return {
                         "step-1": {
-                            embedsGroup: "Vertix/UI-V2/TestEmbed",
-                            elementsGroup: "Vertix/UI-V2/TestElementsGroup",
+                            embedsGroup: "VertixBot/UI-V2/TestEmbed",
+                            elementsGroup: "VertixBot/UI-V2/TestElementsGroup",
                         },
                     };
                 }
@@ -142,7 +142,7 @@ describe( "VertixBot/UI-V2/UIAdapterExecutionStepsBase", () => {
             const act = () => UIAdapter.validate();
 
             // Assert.
-            expect( act ).toThrow( "Missing entities group for the execution step: 'Vertix/UI-V2/TestEmbed'" );
+            expect( act ).toThrow( "Missing entities group for the execution step: 'VertixBot/UI-V2/TestEmbed'" );
         } );
 
         it( "should passthroughs sanity", function () {
@@ -173,8 +173,8 @@ describe( "VertixBot/UI-V2/UIAdapterExecutionStepsBase", () => {
                 protected static getExecutionSteps() {
                     return {
                         "step-1": {
-                            embedsGroup: "Vertix/UI-V2/TestEmbedGroup",
-                            elementsGroup: "Vertix/UI-V2/TestElementsGroup",
+                            embedsGroup: "VertixBot/UI-V2/TestEmbedGroup",
+                            elementsGroup: "VertixBot/UI-V2/TestElementsGroup",
                         },
                     };
                 }

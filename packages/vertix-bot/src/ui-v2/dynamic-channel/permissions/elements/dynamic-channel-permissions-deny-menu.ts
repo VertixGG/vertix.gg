@@ -2,7 +2,7 @@ import { DynamicChannelUserMenuBase } from "@vertix.gg/bot/src/ui-v2/dynamic-cha
 
 export class DynamicChannelPermissionsDenyMenu extends DynamicChannelUserMenuBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPermissionsDenyMenu";
+        return "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu";
     }
 
     public getId() {

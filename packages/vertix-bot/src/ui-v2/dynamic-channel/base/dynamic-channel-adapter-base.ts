@@ -14,7 +14,7 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<VoiceChann
     protected static logger = new Logger( this.getName() );
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelAdapterBase";
+        return "VertixBot/UI-V2/DynamicChannelAdapterBase";
     }
 
     public getChannelTypes() {

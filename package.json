@@ -14,6 +14,7 @@
     ],
     "scripts": {
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
+        "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix-bot:jest )",
         "vertix:watch:dev": "bun run @z-cli @watch --dev",

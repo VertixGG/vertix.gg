@@ -367,7 +367,14 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             } );
         }
 
-        await ChannelModel.$.delete( channel.guildId, channel.id );
+        const where = {
+            guildId: channel.guildId,
+            channelId: channel.id,
+        };
+
+        await ChannelModel.$.delete( where,
+            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
+        );
     }
 
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
@@ -450,7 +457,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         this.logger.info( this.removeLeftOvers, `Guild id: '${ guild.id }' - Removing leftovers of guild '${ guild.name }'` );
 
         await CategoryModel.$.delete( guild.id );
-        await ChannelModel.$.delete( guild.id );
+
+        await ChannelModel.$.delete( { guildId: guild.id },
+            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
+        );
     }
 
     /**

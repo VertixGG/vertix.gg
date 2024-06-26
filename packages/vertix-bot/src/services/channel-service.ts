@@ -1,5 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
 
+import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
+
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
@@ -137,12 +139,6 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         this.debugger.log( this.onJoin,
             `Guild id: '${ args.newState.guild.id }' - User: '${ args.displayName }' joined to channel: '${ args.channelName }'`
         );
-
-        // if ( await ChannelModel.$.isMaster( newState.channelId ) ) {
-        //     await this.services.masterChannelService.onJoinMasterChannel( args );
-        // } else if ( await ChannelModel.$.isDynamic( newState.channelId ) ) {
-        //     await this.services.dynamicChannelService.onJoinDynamicChannel( args );
-        // }
     }
 
     public async onLeaveGeneric( oldState: VoiceState, newState: VoiceState ) {
@@ -163,13 +159,9 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         if ( oldState.channelId ) {
             await this.onLeave( leaveArgs );
         }
-
-        // if ( oldState.channelId && await ChannelModel.$.isDynamic( oldState.channelId ) ) {
-        //     await this.services.dynamicChannelService.onLeaveDynamicChannel( leaveArgs );
-        // }
     }
 
-    public async onLeave( args: IChannelLeaveGenericArgs ) {
+    public async onLeave( _args: IChannelLeaveGenericArgs ) {
 
     }
 
@@ -296,10 +288,14 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             `guild: '${ channel.guild.name }' with the following properties: ownerId: '${ userOwnerId }'`
         );
 
-        await ChannelModel.$.update( {
+        const where = {
             where: { channelId: channel.id },
             data: { userOwnerId }
-        } );
+        };
+
+        await ChannelModel.$.update( where,
+            ( cache ) => ChannelDataManager.$.removeFromCache( cache.id )
+        );
     }
 
     public async delete( args: IChannelDeleteArgs ) {
@@ -309,8 +305,14 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' channel id: '${ channel.id }' guild: '${ guild.name }'`
         );
 
-        await ChannelModel.$.delete( guild.id, channel.id )
-            .catch( ( e ) => this.logger.error( this.delete, "", e ) );
+        const where = {
+            guildId: guild.id,
+            channelId: channel.id,
+        };
+
+        await ChannelModel.$.delete( where,
+            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
+        ).catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
         // Some channels are not deletable, so we need to catch the error.
         await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) );

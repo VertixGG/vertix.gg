@@ -42,5 +42,5 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Run tests
-        run: bun run vertix:eslint
+      - name: Run eslint
+        run: bun run vertix:ci:eslint

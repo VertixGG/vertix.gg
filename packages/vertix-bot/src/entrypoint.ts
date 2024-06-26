@@ -9,7 +9,7 @@ import path from "path";
 import process from "process";
 
 // @ts-ignore
-import { spawn, Thread, Worker } from "threads";
+// import { spawn, Thread, Worker } from "threads";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 

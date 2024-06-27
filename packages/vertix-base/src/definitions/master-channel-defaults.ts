@@ -1,3 +1,4 @@
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
 
 import {
     MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
@@ -9,8 +10,6 @@ import {
 } from "@vertix.gg/base/src/definitions/master-channel-data-keys";
 
 import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/base/src/utils/ui";
 
 export const DEFAULT_MASTER_CATEGORY_NAME = "༄ Dynamic Channels",
     DEFAULT_MASTER_CHANNEL_CREATE_NAME = "➕ New Channel",

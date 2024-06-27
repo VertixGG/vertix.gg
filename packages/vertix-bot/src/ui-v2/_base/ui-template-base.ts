@@ -1,4 +1,4 @@
-import { UI_TEMPLATE_WRAPPER_END, UI_TEMPLATE_WRAPPER_START } from "@vertix.gg/base/src/utils/ui";
+import { UI_TEMPLATE_WRAPPER_END, UI_TEMPLATE_WRAPPER_START } from "@vertix.gg/bot/src/ui-v2/ui-utils";
 
 import { UIEntityBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-entity-base";
 

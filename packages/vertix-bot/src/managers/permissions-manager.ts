@@ -6,8 +6,6 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
-
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import type {
@@ -25,11 +23,7 @@ export class PermissionsManager extends InitializeBase {
 
     private appService: AppService;
 
-    private channelModel: ChannelModel;
-
     private debugger: Debugger;
-
-    private resetBotPermissionsDebounceMap = new Map<string, NodeJS.Timeout>();
 
     public static getName() {
         return "VertixBot/Managers/Permissions";
@@ -51,8 +45,6 @@ export class PermissionsManager extends InitializeBase {
         super();
 
         this.appService = ServiceLocator.$.get( "VertixBot/Services/App" );
-
-        this.channelModel = ChannelModel.getInstance();
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", PermissionsManager.getName() ) );
     }

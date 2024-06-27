@@ -5,7 +5,7 @@ import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
 import type { UIArgs, UIInputStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { APITextInputComponent} from "discord.js";
+import type { APITextInputComponent } from "discord.js";
 import type { UIElementTextInputLanguageContent } from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementInputBase extends UIElementBase<APITextInputComponent> {

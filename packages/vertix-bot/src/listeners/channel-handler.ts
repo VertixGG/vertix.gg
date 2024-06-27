@@ -2,7 +2,7 @@ import { Events  } from "discord.js";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import type {VoiceState, Client } from "discord.js";
+import type { VoiceState, Client } from "discord.js";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 

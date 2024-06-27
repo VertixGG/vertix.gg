@@ -11,7 +11,7 @@ import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager"
 import type { UIArgs, UIBaseTemplateOptions, UIButtonStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 import type {
     APIButtonComponentWithCustomId,
-    APIMessageComponentEmoji} from "discord.js";
+    APIMessageComponentEmoji } from "discord.js";
 import type { UIElementButtonLanguageContent } from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementButtonBase extends UIElementBase<APIButtonComponentWithCustomId> {

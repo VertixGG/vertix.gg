@@ -7,7 +7,7 @@ import { UIElementButtonBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-
 import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
 
-import type { UIButtonStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIButtonStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 const ElementMock = class extends UIElementButtonBase {

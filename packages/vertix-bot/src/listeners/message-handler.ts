@@ -4,7 +4,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-message-service";
 
-import type { Client} from "discord.js";
+import type { Client } from "discord.js";
 
 export function messageHandler( client: Client ) {
     client.on( Events.MessageCreate, async ( message ) => {

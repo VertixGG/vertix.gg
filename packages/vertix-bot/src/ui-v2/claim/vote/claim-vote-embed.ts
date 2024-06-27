@@ -4,7 +4,7 @@ import { UIEmbedElapsedTimeBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-
 
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 /**
  * Shown when there at least two candidates for a claim.

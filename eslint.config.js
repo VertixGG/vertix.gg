@@ -1,6 +1,4 @@
-import path from "path";
-
-import { zLintGetDefaultConfig, zLintSetRootPackagePath } from "@zenflux/eslint";
+import { zLintGetDefaultConfig } from "@zenflux/eslint";
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export const tests = [
@@ -24,6 +22,11 @@ export const tests = [
 /** @type {import("eslint").Linter.FlatConfig[]} */
 const config = [
     ...zLintGetDefaultConfig(),
+    ...[ {
+        rules: {
+            "object-curly-spacing": [ "error", "always" ],
+        }
+    } ],
     ...tests,
 ];
 

@@ -4,7 +4,7 @@ import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 /**
  * Shown when the user changed his vote from one user to another.

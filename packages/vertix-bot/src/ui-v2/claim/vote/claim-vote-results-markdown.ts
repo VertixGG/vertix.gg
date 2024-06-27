@@ -9,7 +9,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import { RentryManager } from "@vertix.gg/bot/src/managers/rentry";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
     public static getName() {

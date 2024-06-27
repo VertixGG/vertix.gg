@@ -4,7 +4,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 import { DEFAULT_BADWORDS_PLACEHOLDER } from "@vertix.gg/bot/src/definitions/badwords";
 
-import type { UIInputStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIInputStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class BadwordsInput extends UIElementInputBase {
     public static getName() {

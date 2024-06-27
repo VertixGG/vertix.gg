@@ -6,7 +6,7 @@ import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions"
 
 import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-results-markdown";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
     private static vars: any = {

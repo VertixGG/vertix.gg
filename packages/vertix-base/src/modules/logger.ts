@@ -4,7 +4,7 @@ import pc from "picocolors";
 
 import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
-const DEFAULT_LOG_PREFIX = pc.white( "⚪ - [LOG]" ),
+const DEFAULT_LOG_PREFIX = pc.white( "⚪  - [LOG]" ),
     DEFAULT_INFO_PREFIX = pc.blue( "🔵 - [INFO]" ),
     DEFAULT_DEBUG_PREFIX = pc.gray( "🟤 - [DEBUG]" ),
     DEFAULT_WARN_PREFIX = pc.yellow( "🟡 - [WARN]" ),
@@ -13,7 +13,7 @@ const DEFAULT_LOG_PREFIX = pc.white( "⚪ - [LOG]" ),
 
 const DEFAULT_LOG_LEVEL = "5";
 
-export type ICaller = Function | String;
+export type ICaller = string | Function;
 
 const registeredNames: any = {};
 
@@ -145,16 +145,21 @@ export class Logger extends ObjectBase {
         return iso[ 1 ] + " " + iso[ 2 ];
     }
 
-    private getCallerName( caller: ICaller ): string {
+    private getCallerName( caller: ICaller ) {
+        let result: string = "";
+
         if ( typeof caller === "string" ) {
-            return caller;
+            result = caller;
         } else if ( typeof caller === "function" ) {
-            return caller.name;
+            result = caller.name;
         }
 
-        console.error( "Invalid Caller", new Error().stack );
+        if ( ! result || ! result.length ) {
+            console.error( "Invalid Caller", new Error().stack );
+            result = "_CALLER_UNKNOWN_";
+        }
 
-        return "_CALLER_UNKNOWN_";
+        return result;
     }
 
     private getStackTrace(): any[] {

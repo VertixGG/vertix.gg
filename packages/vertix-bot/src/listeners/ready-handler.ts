@@ -15,7 +15,6 @@ export async function readyHandler( client: Client<true> ) {
                 resolve( true );
             };
 
-        // Sometimes but connected so fast that the ready event is not fired.
         if ( client.isReady() ) {
             return botReady();
         }

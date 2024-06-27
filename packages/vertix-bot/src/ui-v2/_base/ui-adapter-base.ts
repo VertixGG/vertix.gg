@@ -198,7 +198,7 @@ export abstract class UIAdapterBase<
 
         this.staticAdapter = staticThis;
 
-        if ( staticThis.adapterDebugger.isDebugging() ) {
+        if ( staticThis.adapterDebugger.isEnabled() ) {
             staticThis.adapterDebugger.enableCleanupDebug( this );
         }
 

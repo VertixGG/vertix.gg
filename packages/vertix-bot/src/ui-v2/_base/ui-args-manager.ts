@@ -1,3 +1,4 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { GuildChannel, Message } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
@@ -30,12 +31,12 @@ export class UIArgsManager extends UIBase {
         return "VertixBot/UI-V2/UIArgsManager";
     }
 
-    public constructor( prefixName: string, shouldDebug = true ) {
+    public constructor( prefixName: string ) {
         super();
 
         this.prefixName = prefixName;
 
-        this.debugger = new Debugger( this, prefixName, shouldDebug );
+        this.debugger = new Debugger( this, prefixName, isDebugEnabled( "UI", this.getName() ) );
         this.logger = new Logger( this );
     }
 

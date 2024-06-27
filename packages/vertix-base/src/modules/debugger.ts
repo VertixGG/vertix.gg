@@ -83,7 +83,7 @@ export class Debugger extends ObjectBase {
         }
     }
 
-    public isDebugging() {
+    public isEnabled() {
         return this.shouldDebug;
     }
 }

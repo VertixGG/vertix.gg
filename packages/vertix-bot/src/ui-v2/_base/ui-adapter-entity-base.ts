@@ -1,3 +1,4 @@
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -48,7 +49,9 @@ interface UIEntityMap {
 
 export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     // TODO Make config for all new debuggers.
-    private static adapterEntityDebugger: Debugger = new Debugger( this, "", false );
+    private static adapterEntityDebugger: Debugger = new Debugger( this, "",
+        isDebugEnabled( "UI", UIAdapterEntityBase.getName()
+    ) );
 
     private readonly component: UIComponentBase;
 

@@ -1,6 +1,10 @@
-import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/base/src/utils/ui";
+import crypto from "crypto";
+
+import { UI_CUSTOM_ID_MAX_LENGTH } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
+
+import { uiGenerateCustomIdHash, uiUtilsDynamicElementsRearrange } from "@vertix.gg/bot/src/ui-v2/ui-utils";
 
 class ElementMockClass extends UIElementBase<any> {
     public static getName() {
@@ -56,7 +60,7 @@ describe( "VertixBot/UI-V2/UI-Utils", function () {
             ];
 
             // Act.
-            const rearrangedElements = uiUtilsDynamicElementsRearrange( [ elements] as any, 3 );
+            const rearrangedElements = uiUtilsDynamicElementsRearrange( [ elements ] as any, 3 );
 
             // Assert.
             expect( rearrangedElements ).toEqual( [
@@ -301,5 +305,37 @@ describe( "VertixBot/UI-V2/UI-Utils", function () {
             ] );
         } );
 
+        describe( "uiGenerateCustomIdHash", function () {
+            it( "should generate a hash of maximum length equal to UI_CUSTOM_ID_MAX_LENGTH when maxLength is not provided", function () {
+                // Arrange.
+                const input = "anyString";
+
+                // Act.
+                const hash = uiGenerateCustomIdHash( input );
+
+                const expectedHash = crypto.createHash( "md5" ).update( input ).digest( "hex" );
+                const expectedMaxLengthHash = expectedHash.repeat( Math.ceil( UI_CUSTOM_ID_MAX_LENGTH / expectedHash.length ) ).slice( 0, UI_CUSTOM_ID_MAX_LENGTH );
+
+                // Assert.
+                expect( hash.length ).toEqual( UI_CUSTOM_ID_MAX_LENGTH );
+                expect( hash ).toEqual( expectedMaxLengthHash );
+            } );
+
+            it( "should generate a hash of a specific length when maxLength is provided", function () {
+                // Arrange.
+                const input = "anyString";
+                const maxLength = 20;
+
+                // Act.
+                const hash = uiGenerateCustomIdHash( input, maxLength );
+
+                const expectedHash = crypto.createHash( "md5" ).update( input ).digest( "hex" );
+                const expectedMaxLengthHash = expectedHash.repeat( Math.ceil( maxLength / expectedHash.length ) ).slice( 0, maxLength );
+
+                // Assert.
+                expect( hash.length ).toEqual( maxLength );
+                expect( hash ).toEqual( expectedMaxLengthHash );
+            } );
+        } );
     } );
 } );

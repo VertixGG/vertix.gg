@@ -2,7 +2,7 @@ import { ButtonStyle, ComponentType } from "discord.js";
 
 import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
 
-import type { APIButtonComponentWithURL} from "discord.js";
+import type { APIButtonComponentWithURL } from "discord.js";
 
 export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComponentWithURL> {
     public static getName() {

@@ -26,7 +26,7 @@ import type {
     UIDefaultStringSelectRolesChannelTextInteraction
 } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { BaseGuildTextChannel, MessageComponentInteraction} from "discord.js";
+import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction

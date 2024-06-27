@@ -1,6 +1,6 @@
 import { PermissionsBitField } from "discord.js";
 
-import type { PermissionOverwriteOptions} from "discord.js";
+import type { PermissionOverwriteOptions } from "discord.js";
 
 export const permissionsConvertBitfieldToOverwriteOptions = ( allowPermissions: bigint[], denyPermissions?: bigint[] ) => {
     const result: PermissionOverwriteOptions = {},

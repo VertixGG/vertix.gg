@@ -6,7 +6,7 @@ import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/bot/src/ui
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     private static vars: any = {

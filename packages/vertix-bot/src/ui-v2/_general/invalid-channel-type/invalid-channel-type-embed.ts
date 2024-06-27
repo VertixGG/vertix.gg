@@ -6,7 +6,7 @@ import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class InvalidChannelTypeEmbed extends UIEmbedBase {
     private static vars = {

@@ -42,7 +42,7 @@ import type {
     UIEntityConstructor,
     UIEntityTypes,
     UIMarkdownConstructor,
-    UIModalConstructor} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+    UIModalConstructor } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 import type { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 

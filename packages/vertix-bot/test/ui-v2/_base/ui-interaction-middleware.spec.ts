@@ -14,7 +14,7 @@ import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
 import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { ButtonInteraction} from "discord.js";
+import type { ButtonInteraction } from "discord.js";
 
 class MockComponent extends UIComponentBase {
     public static getName() {

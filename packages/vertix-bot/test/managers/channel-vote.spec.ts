@@ -10,7 +10,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 import type { IVoteDefaultComponentInteraction } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 import type { RawAnonymousGuildData, RawMessageComponentInteractionData } from "discord.js/typings/rawDataTypes";
 
-import type { Client} from "discord.js";
+import type { Client } from "discord.js";
 
 class MockDynamicChannelVoteManager extends DynamicChannelVoteManager {
     public getLogger() {

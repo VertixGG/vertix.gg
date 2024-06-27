@@ -1,9 +1,6 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-import {
-    PermissionsBitField
 
-,
-    Guild} from "discord.js";
+import { PermissionsBitField, Guild } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 

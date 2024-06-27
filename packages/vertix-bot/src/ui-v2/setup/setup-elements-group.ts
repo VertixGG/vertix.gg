@@ -8,7 +8,7 @@ import { BadwordsEditButton } from "@vertix.gg/bot/src/ui-v2/badwords/badwords-e
 import { LanguageChooseButton } from "@vertix.gg/bot/src/ui-v2/language/language-choose-button";
 
 import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { ISetupArgs} from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
+import type { ISetupArgs } from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
 import type { UIElementButtonBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-button-base";
 
 export class SetupElementsGroup extends UIElementsGroupBase {

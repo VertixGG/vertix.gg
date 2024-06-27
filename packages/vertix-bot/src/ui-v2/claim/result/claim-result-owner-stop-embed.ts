@@ -4,7 +4,7 @@ import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 /**
  * Shown when the owner of the channel has returned or click on "Claim button" and the channel is no longer claimable.

@@ -2,7 +2,7 @@ import { UIElementInputBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-e
 
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIInputStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIInputStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class FeedbackInputTitle extends UIElementInputBase {
     public static getName() {

@@ -9,7 +9,7 @@ import { UIWizardBackButton } from "@vertix.gg/bot/src/ui-v2/_base/wizard/ui-wiz
 import { UIWizardNextButton } from "@vertix.gg/bot/src/ui-v2/_base/wizard/ui-wizard-next-button";
 import { UIWizardFinishButton } from "@vertix.gg/bot/src/ui-v2/_base/wizard/ui-wizard-finish-button";
 
-import type { UIArgs} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 import type { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
 

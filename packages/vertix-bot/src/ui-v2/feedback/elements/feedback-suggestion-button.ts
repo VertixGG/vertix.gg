@@ -2,7 +2,7 @@ import { UIElementButtonBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-
 
 import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIButtonStyleTypes} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIButtonStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class FeedbackSuggestionButton extends UIElementButtonBase {
     public static getName() {

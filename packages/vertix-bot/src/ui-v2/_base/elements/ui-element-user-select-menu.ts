@@ -5,7 +5,7 @@ import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
 import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { APIUserSelectComponent} from "discord.js";
+import type { APIUserSelectComponent } from "discord.js";
 import type { UIElementSelectMenuLanguageContent } from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
 
 export abstract class UIElementUserSelectMenu extends UIElementBase<APIUserSelectComponent> {

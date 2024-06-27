@@ -84,7 +84,7 @@ import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service
 
 import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
-import type {APIPartialChannel, GuildMember, Interaction, Message, MessageComponentInteraction, ModalSubmitInteraction, OverwriteResolvable, PermissionOverwriteOptions, RESTRateLimit, TextChannel, VoiceBasedChannel, VoiceChannel} from "discord.js";
+import type { APIPartialChannel, GuildMember, Interaction, Message, MessageComponentInteraction, ModalSubmitInteraction, OverwriteResolvable, PermissionOverwriteOptions, RESTRateLimit, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 

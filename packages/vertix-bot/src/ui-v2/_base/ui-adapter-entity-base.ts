@@ -32,7 +32,7 @@ import type {
 } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 import type {
-    ComponentBuilder} from "discord.js";
+    ComponentBuilder } from "discord.js";
 
 interface UIEntityMapped {
     entity: typeof UIEntityBase,

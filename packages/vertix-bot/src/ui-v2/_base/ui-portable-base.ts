@@ -1,6 +1,8 @@
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { UIInstanceTypeBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-instance-type-base";
 
 import type { UIEntityBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-entity-base";
@@ -20,7 +22,9 @@ interface UIPromiseControl {
 }
 
 export abstract class UIPortableBase<TSchema extends UIPortableSchemaBase = UIPortableSchemaBase> extends UIInstanceTypeBase {
-    private static portableDebugger = new Debugger( this, "", false );
+    private static portableDebugger = new Debugger( this, "",
+        isDebugEnabled( "UI", UIPortableBase.getName() )
+    );
 
     private static validatedEntities: UIEntityTypes = [];
 

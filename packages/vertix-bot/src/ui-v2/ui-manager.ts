@@ -1,8 +1,10 @@
 import process from "process";
 
+import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
@@ -20,6 +22,14 @@ export class UIManager extends InitializeBase {
 
     public static getName() {
         return "VertixBot/UI-V2/UIManager";
+    }
+
+    public constructor(
+        // TODO: Why repeating... why not? Debugger( UIManager.getName(), "", /* check env */ "env" );
+        private uiDebugger = new Debugger( UIManager.getName(), "", isDebugEnabled( "UI", UIManager.getName() ) )
+    ) {
+        super();
+
     }
 
     public static getInstance() {

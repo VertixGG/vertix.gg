@@ -1,4 +1,3 @@
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/base/src/utils/ui";
 
 import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
 
@@ -6,6 +5,8 @@ import {
     DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE
 } from "@vertix.gg/base/src/definitions/master-channel-defaults";
+
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 

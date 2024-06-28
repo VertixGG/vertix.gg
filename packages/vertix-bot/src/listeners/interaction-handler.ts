@@ -9,6 +9,7 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import type { Client, CommandInteraction, Interaction } from "discord.js";
 
 import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -16,12 +17,16 @@ export function interactionHandler( client: Client ) {
             ( interaction instanceof MessageComponentInteraction ) ||
             ( interaction instanceof ModalSubmitInteraction )
         ) {
+            const uiService = ServiceLocator.$.get<UIService>( "VertixBot/UI-V2/UIService" );
+
+            const realCustomId = uiService.getCustomIdFromHash( interaction.customId );
+
             GlobalLogger.$.log( interactionHandler,
-                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ interaction.customId }' was used by '${ interaction.user.username }'`
+                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ realCustomId }' was used by '${ interaction.user.username }'`
             );
 
             const adapter = ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" )
-                .get( interaction.customId, true );
+                .get( realCustomId, true );
 
             if ( adapter ) {
                 await adapter.run( interaction );

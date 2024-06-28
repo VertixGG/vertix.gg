@@ -19,11 +19,13 @@ import { SetupComponent } from "@vertix.gg/bot/src/ui-v2/setup/setup-component";
 import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui-v2/language/language-select-menu";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
+
 import type {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
 } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
 import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+
 import type { BaseGuildTextChannel } from "discord.js";
 
 type DefaultInteraction =
@@ -88,18 +90,22 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onEditMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        const customIdParts = interaction.customId.split( UI_GENERIC_SEPARATOR ),
+        // TODO: There should be some helper or extension of interaction to get the customId parts.
+        // EG: interaction.getCustomId( "masterChannelIndex" )
+        const customIdParts =
+                this.uiService.getCustomIdFromHash( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
             masterChannelIndex = parseInt( customIdParts[ 2 ] ),
             masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, false );
 
         if ( ! masterChannels.length || ! masterChannels[ masterChannelIndex ] ) {
+            // TODO: Error...
             await this.editReply( interaction, {} );
             return;
         }
 
         const masterChannelDB = masterChannels[ masterChannelIndex ];
 
-        await this.uiService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
+        await this.uiAdapterService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
             masterChannelIndex,
             masterChannelDB
         } );
@@ -126,7 +132,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             return;
         }
 
-        this.uiService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
+        this.uiAdapterService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
 
             dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
@@ -164,6 +170,6 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onLanguageChooseClicked( interaction: DefaultInteraction ) {
-        this.uiService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
+        this.uiAdapterService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
     }
 }

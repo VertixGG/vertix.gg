@@ -220,7 +220,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     protected async regenerate( interaction: MessageComponentInteraction<"cached"> ): Promise<void> {
-        this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+        this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
     }
 
     private async onSetupMasterEditButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
@@ -348,7 +348,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             case "VertixBot/UI-V2/SetupEditMaster":
                 this.deleteArgs( interaction );
 
-                this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+                this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
                 break;
         }
 

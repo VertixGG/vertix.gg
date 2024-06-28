@@ -25,6 +25,7 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 async function registerServices() {
     const { AppService } = await import( "@vertix.gg/bot/src/services/app-service" );
+    const { UIService } = await import( "@vertix.gg/bot/src/ui-v2/ui-service" );
     const { UIAdapterService } = await import( "@vertix.gg/bot/src/ui-v2/ui-adapter-service" );
     const { DirectMessageService } = await import( "@vertix.gg/bot/src/services/direct-message-service" );
     const { ChannelService } = await import( "@vertix.gg/bot/src/services/channel-service" );
@@ -32,6 +33,7 @@ async function registerServices() {
     const { MasterChannelService } = await import( "@vertix.gg/bot/src/services/master-channel-service" );
 
     ServiceLocator.$.register( AppService );
+    ServiceLocator.$.register( UIService );
     ServiceLocator.$.register( UIAdapterService );
     ServiceLocator.$.register( DirectMessageService );
     ServiceLocator.$.register( ChannelService );
@@ -91,5 +93,4 @@ export async function entryPoint() {
             GlobalLogger.$.info( entryPoint, "Bot is initialized" );
         } );
     } );
-
 }

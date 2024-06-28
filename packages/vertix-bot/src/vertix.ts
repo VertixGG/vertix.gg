@@ -1,19 +1,22 @@
 import assert from "assert";
 
+import pc from "picocolors";
+
+import { Client, Partials } from "discord.js";
+
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import login from "@vertix.gg/base/src/discord/login";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { Client, Partials } from "discord.js";
-
-import pc from "picocolors";
+import * as handlers from "@vertix.gg/bot/src/listeners";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
-import * as handlers from "@vertix.gg/bot/src/listeners";
-
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
-import { UIManager } from "@vertix.gg/bot/src/ui-v2/ui-manager";
+
+import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
 import type { ClientEvents } from "discord.js";
 
@@ -173,7 +176,8 @@ export default async function Main() {
         TopGGManager.$.handshake();
     }
 
-    await UIManager.$.register();
+    await ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" )
+        .registerAdapters();
 
     await login( client, onLogin );
 }

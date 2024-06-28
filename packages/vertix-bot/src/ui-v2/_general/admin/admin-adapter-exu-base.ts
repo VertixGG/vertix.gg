@@ -44,7 +44,7 @@ export class AdminAdapterExuBase<
                     `🔐 Bot missing permissions" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
                 );
 
-                await this.uiService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                await this.uiAdapterService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                     missingPermissions,
                     omitterDisplayName: interaction.guild.client.user.username,
                 } );

@@ -223,7 +223,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     protected async regenerate( interaction: MessageComponentInteraction<"cached"> ): Promise<void> {
-        this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+        this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
     }
 
     private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {

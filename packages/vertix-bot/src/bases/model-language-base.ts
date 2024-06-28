@@ -13,7 +13,7 @@ export interface TModelHelper<T> {
 /**
  * Wasted too much time on this, didn't find a good solution.
  */
-export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<PrismaBotClient, TPayloadWithContent> {
+export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<PrismaBot.PrismaClient, TPayloadWithContent> {
     public static getName(): string {
         return "VertixBot/Bases/ModelLanguageBase";
     }
@@ -67,7 +67,7 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
     protected abstract getModel(): TModel;
 
     protected getClient() {
-        return PrismaBotClient.getInstance();
+        return PrismaBotClient.$.getClient();
     }
 
     protected getFindArgs( name: string, languageCode: string ): any {

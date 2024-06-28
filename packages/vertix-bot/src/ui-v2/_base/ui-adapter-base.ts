@@ -48,6 +48,7 @@ import type {
 } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
 
 import type { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
+import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
 import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
 import type {
@@ -92,7 +93,10 @@ export abstract class UIAdapterBase<
     private staticAdapter: typeof UIAdapterBase;
 
     private static ephemeralInteractions: {
-        [ userIdPlusMessageId: string ]: MessageComponentInteraction | ModalSubmitInteraction;
+        [ userIdPlusMessageId: string ]: {
+            interaction: MessageComponentInteraction | ModalSubmitInteraction,
+            rawCustomId: string,
+        }
     } = {};
 
     private static staticArgs = new UIArgsManager( picocolors.green( "StaticArgs" ) );
@@ -109,7 +113,9 @@ export abstract class UIAdapterBase<
         }
     } = {};
 
-    protected uiService: UIAdapterService;
+    protected uiService: UIService;
+
+    protected uiAdapterService: UIAdapterService;
 
     protected dmService: DirectMessageService;
 
@@ -156,7 +162,7 @@ export abstract class UIAdapterBase<
 
         // Delete old ephemeral interactions.
         for ( const id in UIAdapterBase.ephemeralInteractions ) {
-            const interaction = UIAdapterBase.ephemeralInteractions[ id ];
+            const { interaction } = UIAdapterBase.ephemeralInteractions[ id ];
 
             if ( Date.now() - interaction.createdAt.getTime() > ADAPTER_CLEANUP_EPHEMERAL_TIMEOUT ) {
                 UIAdapterBase.adapterDebugger.log( UIAdapterBase.cleanupWorker,
@@ -170,11 +176,12 @@ export abstract class UIAdapterBase<
         UIAdapterBase.adapterDebugger.dumpDown( UIAdapterBase.cleanupWorker, {
             staticArgs: UIAdapterBase.staticArgs.getData(),
             systemArgs: UIAdapterBase.staticSystemArgs.getData(),
-            ephemeralInteractions: Object.values( UIAdapterBase.ephemeralInteractions ).map( ( interaction ) => {
+            ephemeralInteractions: Object.values( UIAdapterBase.ephemeralInteractions ).map( ( { interaction, rawCustomId } ) => {
                 return {
                     id: interaction.id,
-                    customId: interaction.customId,
                     createdAt: interaction.createdAt,
+                    customId: interaction.customId,
+                    rawCustomId,
                 };
             } ),
         } );
@@ -184,10 +191,11 @@ export abstract class UIAdapterBase<
         return [];
     }
 
-    public constructor( uiService: UIAdapterService ) {
+    public constructor( uiAdapterService: UIAdapterService ) {
         super();
 
-        this.uiService = uiService;
+        this.uiService = ServiceLocator.$.get( "VertixBot/UI-V2/UIService" );
+        this.uiAdapterService = uiAdapterService;
 
         this.dmService = ServiceLocator.$.get( "VertixBot/Services/DirectMessage" );
 
@@ -211,13 +219,13 @@ export abstract class UIAdapterBase<
         if ( ! this.shouldDisableMiddleware || ! this.shouldDisableMiddleware() ) {
             new UIInteractionMiddleware( this, {
                 onChannelFailed: async ( channel, channelTypes ) => {
-                    await uiService.get( "VertixBot/UI-V2/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
+                    await uiAdapterService.get( "VertixBot/UI-V2/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
                         channelTypes,
                     } );
                 },
 
                 onInteractionFailed: async ( interaction, missingPermissions ) => {
-                    await uiService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                    await uiAdapterService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                         missingPermissions,
                     } );
                 },
@@ -390,9 +398,10 @@ export abstract class UIAdapterBase<
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
-        const entityName = interaction.customId.split( UI_GENERIC_SEPARATOR )[ 1 ];
+        const customId = this.uiService.getCustomIdFromHash( interaction.customId ),
+            entityName = customId.split( UI_GENERIC_SEPARATOR )[ 1 ];
 
-        this.staticAdapter.adapterDebugger.log( this.editReply, this.getName() + ` - Running: '${ interaction.customId }'` );
+        this.staticAdapter.adapterDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
 
         if ( interaction.isMessageComponent() && REGENERATE_BUTTON_ID === entityName && this.regenerate ) {
             this.staticAdapter.adapterLogger.admin( this.run,
@@ -424,7 +433,8 @@ export abstract class UIAdapterBase<
     }
 
     public async ephemeral( interaction: TInteraction, sendArgs?: UIArgs, deletePreviousInteraction = this.shouldDeletePreviousReply?.() || false ) {
-        const args = await this.getArgsInternal( interaction, sendArgs );
+        const args = await this.getArgsInternal( interaction, sendArgs ),
+            caller = this.ephemeral.name;
 
         await this.build( args, "reply", interaction );
 
@@ -435,11 +445,12 @@ export abstract class UIAdapterBase<
 
         if ( shouldDeletePreviousInteraction && this.staticAdapter.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.
-            const previousInteraction = this.staticAdapter.ephemeralInteractions[ interactionInternalId ];
+            const previousInteraction =
+                this.staticAdapter.ephemeralInteractions[ interactionInternalId ].interaction;
 
             // TODO: Avoid catching here.
             await previousInteraction.deleteReply().catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
+                this.staticAdapter.adapterLogger.error( caller, "", e );
             } );
         }
 
@@ -448,10 +459,13 @@ export abstract class UIAdapterBase<
             ephemeral: true,
         } ).then( _result => {
             if ( shouldDeletePreviousInteraction ) {
-                this.staticAdapter.ephemeralInteractions[ interactionInternalId ] = interaction;
+                this.staticAdapter.ephemeralInteractions[ interactionInternalId ] = {
+                    interaction,
+                    rawCustomId: this.uiService.getCustomIdFromHash( interaction.customId ),
+                };
             }
         } ).catch( ( e ) => {
-            this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
+            this.staticAdapter.adapterLogger.error( caller, "", e );
         } );
     }
 
@@ -560,13 +574,13 @@ export abstract class UIAdapterBase<
     public async deleteRelatedEphemeralInteractionsInternal( interaction: TInteraction, customId: string, count: number ) {
         let deletedCount = 0;
 
-        for ( const [ key, _interaction ] of Object.entries( this.staticAdapter.ephemeralInteractions ) ) {
+        for ( const [ key, it ] of Object.entries( this.staticAdapter.ephemeralInteractions ) ) {
             if ( deletedCount >= count ) {
                 break;
             }
 
-            if ( key.includes( interaction.user.id ) && _interaction.customId === customId ) {
-                await _interaction.deleteReply().catch( ( e ) => {
+            if ( key.includes( interaction.user.id ) && it.rawCustomId === customId ) {
+                await it.interaction.deleteReply().catch( ( e ) => {
                     this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
                 } );
 
@@ -618,7 +632,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.getName() + ":" + modal.getName(),
+            customId: this.uiService.generateCustomIdHash( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }
@@ -743,7 +757,7 @@ export abstract class UIAdapterBase<
 
             const buttonData = await button.build();
 
-            buttonData.attributes.customId = this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID;
+            buttonData.attributes.customId = this.uiService.generateCustomIdHash( this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID );
 
             const buttonBuilder = new ButtonBuilder( buttonData.attributes );
 

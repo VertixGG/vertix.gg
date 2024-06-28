@@ -53,23 +53,33 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
         const target = this.target,
             self = this;
 
-        UIInteractionMiddleware.methods.forEach( key => {
-            const Key = key as keyof UIAdapterBase<TChannel, TInteraction>;
+        UIInteractionMiddleware.methods.forEach( ( key ) => {
+            const keyAsProperty = key as keyof UIAdapterBase<TChannel, TInteraction>;
 
-            const method = target[ Key ];
+            const method = target[ keyAsProperty ];
 
-            // @ts-ignore
-            target[ Key ] = async function ( ... args: any[] ) {
+            const wrapper = async function WrapperCallback( ... args: [] ) {
                 // Call the passThrough method to handle the middleware logic
-                return self.passThrough( target, method, args, () => {
+                return self.passThrough( target, method, args, function () {
                     // Call the original method with the provided arguments
                     UIInteractionMiddleware.debugger.log( self.passThrough,
                         `Calling original method: '${ target.getName() }::${ method.name }'` );
 
-                    // @ts-ignore
-                    return method.apply( target, args );
+                    return Reflect.apply(method, target, args );
                 } );
             };
+
+            // Preserve the original name of the method
+            // @ts-expect-error - TODO: Use better design pattern to for middleware
+            target[ keyAsProperty ] = new Proxy( wrapper, {
+                get( target, prop ) {
+                    if ( prop === "name" ) {
+                        return method.name;
+                    }
+
+                    return target[ prop as keyof typeof target ];
+                }
+            } );
         } );
     }
 

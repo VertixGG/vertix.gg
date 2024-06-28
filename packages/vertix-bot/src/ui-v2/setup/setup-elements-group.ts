@@ -19,7 +19,7 @@ export class SetupElementsGroup extends UIElementsGroupBase {
     public static getItems( args?: ISetupArgs ) {
         const result: typeof UIElementButtonBase[][] = [];
 
-        let masterButtons: typeof UIElementButtonBase[] = [];
+        let masterButtons: typeof UIElementButtonBase[];
 
         // TODO: Called too many times.
         if ( args?.masterChannels.length ) {

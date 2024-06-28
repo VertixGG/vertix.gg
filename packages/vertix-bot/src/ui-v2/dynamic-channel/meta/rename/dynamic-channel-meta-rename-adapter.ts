@@ -1,4 +1,3 @@
-
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { DynamicChannelMetaRenameComponent } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-component";
@@ -82,9 +81,10 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
     }
 
     private async onModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
-        let newChannelName = interaction.fields.getTextInputValue(
-                "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter:VertixBot/UI-V2/DynamicChannelMetaRenameInput"
-            ),
+        const renameButtonId = this.uiService
+            .generateCustomIdHash( "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter:VertixBot/UI-V2/DynamicChannelMetaRenameInput" );
+
+        let newChannelName = interaction.fields.getTextInputValue(renameButtonId ),
             masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channel.id );
 
         if ( ! newChannelName ) {

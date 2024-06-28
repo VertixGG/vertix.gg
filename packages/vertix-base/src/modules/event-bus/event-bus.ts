@@ -121,13 +121,24 @@ export class EventBus extends ObjectBase {
 
             const originalMethod = method;
 
-            ( object as any )[ method.name ] = async ( ... args: any[] ) => {
+            const eventBusHook = async ( ... args: any[] ) => {
                 const result = await originalMethod.apply( object, args );
 
                 this.emit( object, method, ... args );
 
                 return result;
             };
+
+            // TODO: Use better design pattern to handle losing of function names.
+            ( object as any )[ method.name ] = new Proxy( eventBusHook, {
+                get( target, prop ) {
+                    if ( prop === "name" ) {
+                        return method.name;
+                    }
+
+                    return target[ prop as keyof typeof target ];
+                }
+            } );
         } );
     }
 

@@ -21,6 +21,7 @@ export const UI_ELEMENTS_DEPTH = 2,
     UI_ELEMENTS_DEFAULT_MAX_PER_ROW = 3;
 
 export const UI_GENERIC_SEPARATOR = ":";
+export const UI_CUSTOM_ID_MAX_LENGTH = 100;
 
 export const UI_IMAGE_EMPTY_LINE_URL = "https://i.imgur.com/NthLO3W.png";
 

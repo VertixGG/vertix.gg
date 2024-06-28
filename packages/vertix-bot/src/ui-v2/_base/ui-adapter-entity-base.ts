@@ -1,4 +1,3 @@
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -11,6 +10,10 @@ import {
     UserSelectMenuBuilder
 } from "discord.js";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
 
@@ -20,17 +23,18 @@ import { EntityCallbackNotFoundError } from "@vertix.gg/bot/src/ui-v2/_base/erro
 
 import { UnknownElementTypeError } from "@vertix.gg/bot/src/ui-v2/_base/errors/unknown-element-type-error";
 
+import {
+    UI_GENERIC_SEPARATOR
+
+} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+
+import type { UIService } from "src/ui-v2/ui-service";
+
+import type { UIComponentConstructor, UIComponentTypeConstructor, UICreateComponentArgs, UIEntityTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 import type { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
 import type { UIEntityBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-entity-base";
 
 import type { UIAdapterReplyContext } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
-
-import type {
-    UIComponentConstructor,
-    UIComponentTypeConstructor,
-    UICreateComponentArgs,
-    UIEntityTypes
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 import type {
     ComponentBuilder } from "discord.js";
@@ -164,6 +168,8 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     }
 
     protected buildComponentsBySchema( schema: any ) { // TODO: Add type.
+        const uiService = ServiceLocator.$.get<UIService>( "VertixBot/UI-V2/UIService" );
+
         return schema.map( ( row: any ) => ( new ActionRowBuilder ).addComponents(
             row.map( ( entity: any ) => { // TODO: Add type.
                     if ( ! entity.isAvailable ) {
@@ -176,7 +182,9 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                         };
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
-                        data.customId = entity.attributes.custom_id || this.getName() + ":" + entity.name; // TODO: Move separator to constant. + create method for it.
+                        data.customId = entity.attributes.custom_id || uiService.generateCustomIdHash(
+                            this.getName() + UI_GENERIC_SEPARATOR + entity.name
+                        );
                     }
 
                     switch ( entity.attributes.type ) {

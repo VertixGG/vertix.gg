@@ -1,7 +1,10 @@
-import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
+import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
+
+import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
+import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
 
 import type { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
@@ -16,7 +19,9 @@ type ManagedClass =
 type MangedClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
 type MangedClassConstructor = { new( uiManager: UIAdapterService ): ManagedClass };
 
-export class UIAdapterService extends ServiceBase {
+export class UIAdapterService extends ServiceWithDependenciesBase<{
+    uiService: UIService;
+}> {
     private uiAdaptersTypes = new Map<string, MangedClassType | MangedClassConstructor>;
     private uiStaticInstances = new Map<string, ManagedClass>;
 
@@ -26,6 +31,12 @@ export class UIAdapterService extends ServiceBase {
 
     public getAll() {
         return this.uiAdaptersTypes;
+    }
+
+    public getDependencies() {
+        return {
+            uiService: "VertixBot/UI-V2/UIService"
+        };
     }
 
     public get( uiName: string, silent = false ) {
@@ -86,6 +97,8 @@ export class UIAdapterService extends ServiceBase {
         adapters.forEach( adapter => {
             this.registerAdapter( adapter );
         } );
+
+        await UILanguageManager.$.register();
     }
 
     public registerAdapter( UIClass: MangedClassType ) {
@@ -97,6 +110,12 @@ export class UIAdapterService extends ServiceBase {
 
         // Each entity must be validated before it is registered.
         UIClass.validate();
+
+        const entities = UIClass.getComponent().getEntities();
+
+        for ( const entity of entities ) {
+            this.services.uiService.generateCustomIdHash( UIClass.getName() + UI_GENERIC_SEPARATOR + entity.getName() );
+        }
 
         this.storeClass( UIClass );
 
@@ -123,7 +142,9 @@ export class UIAdapterService extends ServiceBase {
      * Function storeInstance() :: Stores only static entity instances.
      */
     private storeInstance( UIClass: MangedClassType ) {
-        this.uiStaticInstances.set( UIClass.getName(), this.createInstance( UIClass.getName() ) );
+        const instance = this.createInstance( UIClass.getName() );
+
+        this.uiStaticInstances.set( UIClass.getName(), instance );
     }
 
     /**

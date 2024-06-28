@@ -15,6 +15,7 @@ describe( "VertixBot/UI-V2/ClaimVoteStepInEmbed", () => {
         );
 
         // Register UIAdapterService
+        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-service" ) ).UIService );
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-adapter-service" ) ).UIAdapterService );
 
         // Await for all services to be registered.

@@ -4,7 +4,10 @@
 		"**/*.ts",
         "./__setup__.ts"
 	],
-	"compilerOptions": {
+    "exclude": [
+        "../dist"
+    ],
+    "compilerOptions": {
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
 		"baseUrl": ".",
@@ -19,7 +22,7 @@
             "node",
             "jest",
             "prisma-bot-client.d.ts",
-            "discord.js/typings/index.d.ts",
+            "discord.js/typings/index.d.ts"
         ]
     }
 }

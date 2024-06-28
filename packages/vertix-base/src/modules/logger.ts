@@ -70,7 +70,7 @@ export class Logger extends ObjectBase {
             throw new Error( `Logger for '${ this.ownerName }' already exists` );
         }
 
-        if ( process.env.LOGGER_DISABLED && "true" === process.env.DISABLE_LOGGER ) {
+        if ( process.env.LOGGER_DISABLED && "true" === process.env.LOGGER_DISABLED ) {
             this.error = () => {};
             this.warn = () => {};
             this.admin = () => {};

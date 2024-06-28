@@ -15,16 +15,20 @@
     "scripts": {
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
+
         "vertix:eslint": "time bunx --bun eslint .",
-        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix-bot:jest )",
-        "vertix:watch:dev": "bun run @z-cli @watch --dev",
-        "vertix:build": "bun run @z-cli @build --haltOnDiagnosticError",
+        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest )",
+
+        "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
-        "vertix:bot:build": "bun run @z-cli @build --workspace bot --haltOnDiagnosticError",
-        "vertix-bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
-        "vertix-bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
+        "vertix:bot:watch:dev": "bun run @z-cli @watch --workspace bot @watch --dev",
+        "vertix:bot:build": "bun run vertix-bot:build",
+        "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
+        "vertix:bot:node:start:build": "cd packages/vertix-bot/dist && node vertix-bot.mjs",
+
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
-        "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:bun:jest",
+        "vertix:base:jest": "cd packages/vertix-base ; bun test",
+
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
     },
     "dependencies": {

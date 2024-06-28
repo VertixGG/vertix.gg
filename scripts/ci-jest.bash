@@ -13,4 +13,4 @@ bash key-gen.bash
 cd $CURRENT_DIR
 
 bun run vertix:base:jest - --ci
-bun run vertix-bot:jest - --ci
+bun run vertix:bot:jest - --ci

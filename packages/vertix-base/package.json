@@ -2,9 +2,6 @@
     "name": "@vertix.gg/base",
     "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
     "type": "module",
-    "scripts": {
-        "vertix-base:bun:jest": "bun test"
-    },
     "dependencies": {
         "@prisma/client": "latest",
         "@vertix.gg/prisma": "workspace:*",

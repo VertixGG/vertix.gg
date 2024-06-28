@@ -7,15 +7,15 @@
     "bin": "dist/index.min.js",
     "type": "module",
     "scripts": {
+        "vertix-bot:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects bot",
         "vertix-bot:build": "scripts/build.sh",
         "vertix-bot:release": "scripts/build.sh --update-package-version && bash ./scripts/release.sh",
-        "vertix-bot:release:jest-env": "scripts/build.sh && bash ./scripts/release-test-env.sh",
-        "vertix-bot:node:start": "node -r dotenv/config dist/vertix-bot.mjs dotenv_config_path=.env",
-        "vertix-bot:bun:start:dev": "dotenv_config_path=.env bun -r 'dotenv/config' src/index-bun.ts",
-        "vertix-bot:bun:start:dev--debug": "dotenv_config_path=.env bun --inspect -r 'dotenv/config' src/index-bun.ts",
+        "vertix-bot:watch:dev": "bun run @z-cli @watch --dev",
+        "vertix-bot:node:start": "node dist/vertix-bot.mjs",
+        "vertix-bot:bun:start:dev": "bun src/index-bun.ts",
+        "vertix-bot:bun:start:dev--debug": "bun --inspect src/index-bun.ts",
         "vertix-bot:ts-node:start:dev": "tsx --tsconfig tsconfig.es.dev.json --trace-exit --trace-uncaught --enable-source-maps src/index.ts",
-        "vertix-bot:ts-node:start:dev--debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts",
-        "vertix-bot:jest": "export DISABLE_LOGGER=true && @z-jest --selectedProjects bot"
+        "vertix-bot:ts-node:start:dev--debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts"
     },
     "dependencies": {
         "@top-gg/sdk": "^3.1.6",

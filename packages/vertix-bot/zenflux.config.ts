@@ -16,7 +16,9 @@ const config: IZConfig = {
         "discord.js",
         "prisma",
         "picocolors",
-        "tough-cookie"
+        "tough-cookie",
+        "raw-body",
+        "@fastify/busboy"
     ],
 
     omitWarningCodes: [

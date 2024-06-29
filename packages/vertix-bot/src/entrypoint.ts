@@ -5,6 +5,7 @@
  * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=286346264&scope=bot%20applications.commands - Vertix + Admin
  * @see https://discord.com/api/oauth2/authorize?client_id=1114586106491572254&permissions=286346264&scope=bot%20applications.commands - Vertix Test
  */
+import { fileURLToPath } from "node:url";
 import * as util from "node:util";
 
 import path from "path";
@@ -12,14 +13,13 @@ import process from "process";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
-// @ts-ignore
-// import { spawn, Thread, Worker } from "threads";
-
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { config } from "dotenv";
 
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
+
+import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
@@ -42,13 +42,17 @@ async function registerServices() {
 }
 
 async function createCleanupWorker() {
-    // const worker = await spawn( new Worker( "./_workers/cleanup-worker.ts" ) );
-    //
-    // worker.handle().then( () => {
-    //     GlobalLogger.$.log( createCleanupWorker, "terminate worker" );
-    //
-    //     Thread.terminate( worker );
-    // } );
+    const thread = await initWorker();
+
+    thread.run().catch( ( error ) => {
+        GlobalLogger.$.error( createCleanupWorker, "", error );
+    } ).then( () => {
+        GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
+    } );
+
+    thread.on( "error", ( error: any ) => {
+        GlobalLogger.$.error( createCleanupWorker, "", error );
+    } );
 }
 
 export async function entryPoint() {
@@ -88,6 +92,9 @@ export async function entryPoint() {
 
     import( "./vertix" ).then( ( { default: botInitialize } ) => {
         botInitialize().then( () => {
+            // TODO: Use normalized config
+            process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) )
+                , "../tsconfig.json" );
             createCleanupWorker();
 
             GlobalLogger.$.info( entryPoint, "Bot is initialized" );

@@ -1,0 +1,25 @@
+{
+    "name": "@vertix.gg/prisma",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "scripts": {
+        "prisma-generate-bot": "bunx prisma generate --schema prisma/bot.schema.prisma",
+        "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma"
+    },
+    "dependencies": {
+        "@prisma/client": "latest",
+        "prisma": "latest",
+        "@vertix.gg/base": "workspace:*"
+    },
+    "exports": {
+        "./package.json": "./package.json",
+        "./bot-client": {
+            "default": "./src/prisma-bot-client.ts",
+            "types": "./types/prisma-bot-client.d.ts"
+        },
+        "./._bot-client-internal": {
+            "require": "./src/prisma-bot-client/index.js",
+            "types": "./src/prisma-bot-client/index.d.ts"
+        }
+    }
+}

@@ -36,31 +36,11 @@ jobs:
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff }}
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: Cache node modules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+
       - name: Install dependencies
-        run: |
-          if [ -e yarn.lock ]; then
-          yarn install --frozen-lockfile
-          elif [ -e package-lock.json ]; then
-          npm ci
-          else
-          npm i
-          fi
-      - name: Run Lint
-        run: ./node_modules/eslint/bin/eslint.js .
+        run: bun install
+
+      - name: Run eslint
+        run: bun run vertix:ci:eslint

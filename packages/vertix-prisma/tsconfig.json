@@ -1,0 +1,26 @@
+{
+    // Extends the configuration from "./tsconfig.paths.json"
+    "extends": "./tsconfig.paths.json",
+
+    // Compiler options
+    "compilerOptions": {
+        "typeRoots": [
+            "../../node_modules/@types",
+            "./types"
+        ],
+        "types": [
+            "node",
+            "prisma-bot-client.d.ts"
+        ],
+        "module": "ESNext",
+
+        "moduleResolution": "bundler",
+
+        "strict": true,
+
+        "esModuleInterop": true,
+
+        // Skip lib check
+        "skipLibCheck": true
+    }
+}

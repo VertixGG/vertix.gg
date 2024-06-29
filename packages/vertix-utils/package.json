@@ -1,0 +1,11 @@
+{
+    "name": "@vertix.gg/utils",
+    "type": "module",
+    "dependencies": {
+        "@vertix.gg/base": "workspace:*",
+        "tough-cookie": "^4.1.2"
+    },
+    "devDependencies": {
+        "@types/tough-cookie": "^4.0.2"
+    }
+}

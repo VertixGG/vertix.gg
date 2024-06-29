@@ -1,0 +1,41 @@
+{
+    "name": "@vertix.gg/bot",
+    "version": "0.0.53",
+    "license": "MIT",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "main": "index.ts",
+    "bin": "dist/index.min.js",
+    "type": "module",
+    "scripts": {
+        "vertix-bot:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects bot",
+        "vertix-bot:build": "scripts/build.sh",
+        "vertix-bot:release": "scripts/build.sh --update-package-version && bash ./scripts/release.sh",
+        "vertix-bot:watch:dev": "bun run @z-cli @watch --dev",
+        "vertix-bot:node:start": "node dist/vertix-bot.mjs",
+        "vertix-bot:bun:start:dev": "bun src/index-bun.ts",
+        "vertix-bot:bun:start:dev--debug": "bun --inspect src/index-bun.ts",
+        "vertix-bot:ts-node:start:dev": "tsx --tsconfig tsconfig.es.dev.json --trace-exit --trace-uncaught --enable-source-maps src/index.ts",
+        "vertix-bot:ts-node:start:dev--debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts"
+    },
+    "dependencies": {
+        "@top-gg/sdk": "^3.1.6",
+        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
+        "cross-fetch": "^3.1.5",
+        "dotenv": "^16.0.3",
+        "picocolors": "^1.0.1",
+        "threads": "^1.7.0"
+    },
+    "devDependencies": {
+        "@types/jest": "latest",
+        "@types/jest-when": "latest",
+        "@types/node": "latest",
+        "@swc/jest": "latest",
+        "@zenflux/tsconfig-to-swc": "latest",
+        "@zenflux/worker": "latest",
+        "jest": "latest",
+        "jest-when": "latest",
+        "ts-mockito": "latest",
+        "tsx": "latest"
+    }
+}

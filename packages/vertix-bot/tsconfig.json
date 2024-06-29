@@ -1,0 +1,39 @@
+{
+    // Extends the configuration from "./tsconfig.paths.json"
+    "extends": "./tsconfig.paths.json",
+    // Compiler options
+    "compilerOptions": {
+        "typeRoots": [
+            "../../node_modules/@types",
+            "../vertix-prisma/types"
+        ],
+
+        "types": [
+            "node",
+            "prisma-bot-client.d.ts"
+        ],
+
+        // Specifies the ECMAScript version to transpile to (e.g., ESNext)
+        "target": "ESNext",
+        // Specifies the module system used in the code (e.g., ESNext)
+        "module": "ESNext",
+        // Defines how TypeScript resolves module import paths (Node.js style)
+        "moduleResolution": "bundler",
+        // Enables json resolve for imports
+        "resolveJsonModule": true,
+        // Allows importing modules that don't have default exports
+        "allowSyntheticDefaultImports": true,
+        // Enables compatibility with modules that use CommonJS or AMD
+        "esModuleInterop": true,
+        // Skips type checking of declaration files from external libraries
+        "skipLibCheck": true,
+        // Enforces strict type checking rules
+        "strict": true,
+        // Enforces additional constraints on function types
+        "strictFunctionTypes": true,
+        // Disables strict checking of property initialization in classes
+        "strictPropertyInitialization": false,
+
+        "declaration": false
+    }
+}

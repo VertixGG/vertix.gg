@@ -1,35 +1,41 @@
-// @ts-ignore
-import { expose } from "threads/worker";
-
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-
-import { ChannelType, Client } from "discord.js";
+import { fileURLToPath } from "node:url";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import login from "@vertix.gg/base/src/discord/login";
+import { ensureInWorker } from "@zenflux/worker/utils";
 
-import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
+import { ChannelType, Client  } from "discord.js";
 
-import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
+import type { DiscordAPIError , VoiceChannel } from "discord.js";
 
-import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
+import type { default as loginType } from "@vertix.gg/base/src/discord/login";
 
-import type { VoiceChannel } from "discord.js";
+import type { ServiceLocator as ServiceLocatorType } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import type { CategoryManager as CategoryManagerType } from "@vertix.gg/bot/src/managers/category-manager";
+
+import type { AppService as AppServiceType } from "@vertix.gg/bot/src/services/app-service";
+
+import type { ChannelService as ChannelServiceType } from "@vertix.gg/bot/src/services/channel-service";
+
+import type { PrismaBotClient as PrismaBotClientType } from "@vertix.gg/prisma/bot-client";
+
+import type { ThreadHost } from "@zenflux/worker/definitions";
+
+let login: typeof loginType;
+let ServiceLocator: typeof ServiceLocatorType;
+let PrismaBotClient: typeof PrismaBotClientType;
+let AppService: typeof AppServiceType;
+let CategoryManager: typeof CategoryManagerType;
+let ChannelService: typeof ChannelServiceType;
 
 class CleanupWorker extends InitializeBase {
     private static instance: CleanupWorker;
 
-    private channelService: ChannelService;
+    private channelService: ChannelServiceType;
 
     public static getName() {
         return "VertixBot/Workers/CleanupWorker";
-    }
-
-    public constructor() {
-        super();
-
-        this.channelService = ServiceLocator.$.get( "VertixBot/Services/Channel" );
     }
 
     public static getInstance() {
@@ -84,7 +90,34 @@ class CleanupWorker extends InitializeBase {
                     guildCache.channels.cache.has( channel.channelId ) &&
                     guildCache.channels.cache.get( channel.channelId )?.isVoiceBased()
                 ) {
-                    const channelFetch = await guildCache.channels.fetch( channel.channelId ) as VoiceChannel;
+                    const channelFetch = await
+                        guildCache.channels.fetch( channel.channelId )
+                            .catch( ( e: DiscordAPIError ) => {
+                                if ( e.code === 10003 ) {
+                                    // Unknown Channel, remove from db
+                                    prisma.channel.delete( {
+                                        where: {
+                                            id: channel.id,
+                                        },
+                                    } );
+
+                                    this.logger.info(
+                                        this.removeEmptyDynamicChannels,
+                                        `Unknown Channel (not exist anymore) - Dynamic Channel id: '${ channel.channelId }' is deleted from db.`
+                                    );
+
+                                    return null;
+                                }
+
+                                this.logger.error( this.removeEmptyDynamicChannels, "", e );
+                                return null;
+                            } )
+                            .then( ( i ) => i as VoiceChannel );
+
+                    if ( ! channelFetch ) {
+                        return;
+                    }
+
                     if ( channelFetch?.members && channelFetch.members.size === 0 ) {
                         await this.channelService.delete( {
                             channel: channelFetch,
@@ -148,9 +181,38 @@ class CleanupWorker extends InitializeBase {
 
             const deletePromises = chunk.map( async ( channel ) => {
                 try {
-                    const guildFetch = await client.guilds.fetch( channel.guildId );
+                    const guildFetch = await client.guilds.fetch( channel.guildId )
+                        .catch( ( error: DiscordAPIError ) => {
+                            if ( error.code === 10004 ) {
+                                // Unknown Guild, remove from db
+                                prisma.channel.delete( {
+                                    where: {
+                                        id: channel.id,
+                                    },
+                                } );
+
+                                this.logger.info(
+                                    this.removeNonExistMasterChannelsFromDB,
+                                    `Unknown Guild (not exist anymore) - Master channel id: '${ channel.channelId }' is deleted from db.`
+                                );
+
+                                return null;
+                            }
+
+                            this.logger.error( this.removeNonExistMasterChannelsFromDB, "", error );
+                            return null;
+                        } )
+                        .then( ( i ) => i );
+
+                    if ( ! guildFetch ) {
+                        return;
+                    }
+
                     const channelFetch = await guildFetch?.channels.fetch( channel.channelId )
-                        .catch( () => null )
+                        .catch( ( error: any ) => {
+                            this.logger.error( this.removeNonExistMasterChannelsFromDB, "", error );
+                            return null;
+                        } )
                         .then( ( i ) => i as VoiceChannel );
 
                     if ( ! guildFetch || ! channelFetch ) {
@@ -205,8 +267,36 @@ class CleanupWorker extends InitializeBase {
             const chunk = categories.slice( chunkStartIndex, chunkEndIndex );
 
             const deletePromises = chunk.map( async ( category ) => {
-                const categoryFetch = (await client.guilds.fetch( category.guildId ))
-                    ?.channels.cache.get( category.categoryId );
+                const fetchPromise = client.guilds.fetch( category.guildId );
+
+                const fetchResult = await fetchPromise
+                    .catch( ( error: DiscordAPIError ) => {
+                        if ( error.code === 10004 ) {
+                            // Unknown Guild, remove from db
+                            prisma.category.delete( {
+                                where: {
+                                    id: category.id,
+                                },
+                            } );
+
+                            this.logger.info(
+                                this.removeEmptyCategories,
+                                `Unknown Guild (not exist anymore) - Category id: '${ category.categoryId }' is deleted from db.`
+                            );
+
+                            return null;
+                        }
+
+                        this.logger.error( this.removeEmptyCategories, "", error );
+                        return null;
+                    } )
+                    .then( ( i ) => i );
+
+                if ( ! fetchResult ) {
+                    return;
+                }
+
+                const categoryFetch = fetchResult.channels.cache.get( category.categoryId );
 
                 if ( categoryFetch?.type === ChannelType.GuildCategory ) {
                     if ( categoryFetch.children.cache.size === 0 ) {
@@ -245,17 +335,21 @@ class CleanupWorker extends InitializeBase {
         this.logger.info( this.removeEmptyCategories, "Empty categories deletion completed." );
     }
 
-    private async updateGuilds( client: Client ) {
+    private async handleGuilds( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
-        const guilds = await prisma.guild.findMany();
+        // Find all guilds that are `updated_at` at current year.
+        const guilds = await this.getGuildsDidntUpdateRecntly( prisma );
 
         const CHUNK_SIZE = 20;
         const CHUNK_DELAY = 2000;
         const CHUNK_TIME_LIMIT = 20000;
 
+        let count = 0;
         let currentIndex = 0;
         let startTime = Date.now();
+
+        const totalStartTime = Date.now();
 
         while ( currentIndex < guilds.length ) {
             const chunkStartIndex = currentIndex;
@@ -279,8 +373,10 @@ class CleanupWorker extends InitializeBase {
                     },
                 } );
 
+                ++count;
+
                 this.logger.info(
-                    this.updateGuilds,
+                    this.handleGuilds,
                     `Guild id: '${ guild.guildId }' - Updated, name: '${ name }', isInGuild: '${ isInGuild }'`
                 );
             } );
@@ -299,7 +395,31 @@ class CleanupWorker extends InitializeBase {
             startTime = Date.now();
         }
 
-        this.logger.info( this.updateGuilds, "All guild updates completed." );
+        const totalElapsedTime = Date.now() - totalStartTime,
+            totalForEachChunk = (totalElapsedTime / guilds.length).toFixed( 4 );
+
+        this.logger.info( this.handleGuilds,
+            `${ count } guild are updates it toke: ${ totalElapsedTime }ms` +
+            count ? `in ${ CHUNK_SIZE } chunk(s) with ${ totalForEachChunk }ms approximately for each chunk.` : ""
+        );
+    }
+
+    private async getGuildsDidntUpdateRecntly( prisma: ReturnType<typeof PrismaBotClient.$["getClient"] > ) {
+        return prisma.guild.findMany( {
+            where: {
+                updatedAtInternal: {
+                    // Get only guilds that are not updated in the last month.
+                    lt: new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 ),
+                },
+            },
+            select: {
+                id: true,
+                guildId: true,
+                name: true,
+                updatedAt: true,
+                updatedAtInternal: true,
+            },
+        } );
     }
 
     private async handleChannels( client: Client ) {
@@ -313,20 +433,58 @@ class CleanupWorker extends InitializeBase {
     public async handle() {
         this.logger.info( this.handle, "Channels worker thread is started." );
 
+        PrismaBotClient = ( await import( "@vertix.gg/prisma/bot-client" ) ).PrismaBotClient;
+
+        // Load the required modules.
+        login = ( await import( "@vertix.gg/base/src/discord/login" ) ).default;
+        ServiceLocator = ( await import( "@vertix.gg/base/src/modules/service/service-locator" ) ).ServiceLocator;
+        AppService = ( await import( "@vertix.gg/bot/src/services/app-service" ) ).AppService;
+        CategoryManager = ( await import( "@vertix.gg/bot/src/managers/category-manager" ) ).CategoryManager;
+        ChannelService = ( await import( "@vertix.gg/bot/src/services/channel-service" ) ).ChannelService;
+
+        ServiceLocator.$.register( AppService );
+        ServiceLocator.$.register( ChannelService );
+
+        this.channelService = ServiceLocator.$.get( "VertixBot/Services/Channel" );
+
+        await ServiceLocator.$.waitForAll();
+
         const client = new Client( {
-            intents: [
-            ],
+            intents: [],
         } );
 
         await login( client, async () => {
-            await this.updateGuilds( client );
             await this.handleChannels( client );
+            await this.handleGuilds( client );
         } );
 
         this.logger.info( this.handle, "Channels worker thread is finished." );
     }
 }
 
-expose( {
-    handle: CleanupWorker.$.handle.bind( CleanupWorker.$ ),
-} );
+export function inWorker( threadHost: ThreadHost ) {
+    ensureInWorker();
+
+    return CleanupWorker.$.handle().catch( ( e ) => {
+        threadHost.sendMessage( "error", {
+            name: e.name,
+            message: e.message,
+            stack: e.stack,
+            code: e.code,
+        } );
+    } );
+}
+
+export async function initWorker( args = [] ) {
+    const { zCreateWorker } = ( await import( "@zenflux/worker" ) );
+
+    return zCreateWorker( {
+        name: "clean-up-worker",
+        display: CleanupWorker.getName(),
+
+        workFilePath: fileURLToPath( import.meta.url ),
+        workFunction: inWorker,
+
+        workArgs: args,
+    } );
+}

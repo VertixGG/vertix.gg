@@ -32,6 +32,7 @@
         "@types/node": "latest",
         "@swc/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
+        "@zenflux/worker": "latest",
         "jest": "latest",
         "jest-when": "latest",
         "ts-mockito": "latest",

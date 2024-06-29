@@ -231,3 +231,5 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         return embedBuilder;
     }
 }
+
+export default DirectMessageService;

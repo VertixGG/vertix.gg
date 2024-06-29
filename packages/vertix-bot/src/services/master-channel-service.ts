@@ -543,3 +543,5 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 }
+
+export default MasterChannelService;

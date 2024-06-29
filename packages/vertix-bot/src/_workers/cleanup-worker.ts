@@ -400,7 +400,7 @@ class CleanupWorker extends InitializeBase {
 
         this.logger.info( this.handleGuilds,
             `${ count } guild are updates it toke: ${ totalElapsedTime }ms` +
-            count ? `in ${ CHUNK_SIZE } chunk(s) with ${ totalForEachChunk }ms approximately for each chunk.` : ""
+             ( count ? `in ${ CHUNK_SIZE } chunk(s) with ${ totalForEachChunk }ms approximately for each chunk.` : "")
         );
     }
 

@@ -104,3 +104,5 @@ export class AppService extends ServiceBase {
         );
     }
 }
+
+export default AppService;

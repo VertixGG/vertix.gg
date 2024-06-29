@@ -160,3 +160,5 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         return new UIClass( this );
     }
 }
+
+export default UIAdapterService;

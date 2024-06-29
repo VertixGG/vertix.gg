@@ -1757,3 +1757,5 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 }
+
+export default DynamicChannelService;

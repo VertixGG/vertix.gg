@@ -228,3 +228,5 @@ export class UIService extends ServiceBase {
             Array.from( this.hashTableReverse.values() ).reduce( ( acc, map ) => acc + map.size, 0 );
     }
 }
+
+export default UIService;

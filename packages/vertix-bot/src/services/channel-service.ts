@@ -316,3 +316,5 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) );
     }
 }
+
+export default ChannelService;

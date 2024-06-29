@@ -92,6 +92,7 @@ export async function entryPoint() {
 
     import( "./vertix" ).then( ( { default: botInitialize } ) => {
         botInitialize().then( () => {
+            // TODO: Use normalized config
             process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) )
                 , "../tsconfig.json" );
             createCleanupWorker();

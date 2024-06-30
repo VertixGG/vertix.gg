@@ -23,12 +23,9 @@ import { EntityCallbackNotFoundError } from "@vertix.gg/bot/src/ui-v2/_base/erro
 
 import { UnknownElementTypeError } from "@vertix.gg/bot/src/ui-v2/_base/errors/unknown-element-type-error";
 
-import {
-    UI_GENERIC_SEPARATOR
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-
-import type { UIService } from "src/ui-v2/ui-service";
+import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
 
 import type { UIComponentConstructor, UIComponentTypeConstructor, UICreateComponentArgs, UIEntityTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 import type { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";

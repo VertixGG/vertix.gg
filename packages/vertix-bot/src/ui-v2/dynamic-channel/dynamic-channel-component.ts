@@ -1,4 +1,4 @@
-import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
 

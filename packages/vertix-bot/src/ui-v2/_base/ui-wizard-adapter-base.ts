@@ -12,7 +12,7 @@ import type {
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
 import type { UIWizardComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-wizard-component-base";
 
-import type { UIAdapterService } from "src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
 export type UIWizardComponentConstructor = { new( args?: UICreateComponentArgs ): UIWizardComponentBase };
 export type UIWizardComponentTypeConstructor = typeof UIWizardComponentBase & UIWizardComponentConstructor;

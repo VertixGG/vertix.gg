@@ -1,4 +1,4 @@
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { VerifiedRolesEmbed } from "@vertix.gg/bot/src/ui-v2/verified-roles/verified-roles-embed";
 

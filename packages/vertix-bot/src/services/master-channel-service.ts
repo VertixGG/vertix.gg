@@ -68,7 +68,7 @@ import type {
     VoiceChannel
 } from "discord.js";
 
-import type { AppService } from "src/services/app-service";
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 interface IMasterChannelCreateCommonArgs {
     userOwnerId: string,

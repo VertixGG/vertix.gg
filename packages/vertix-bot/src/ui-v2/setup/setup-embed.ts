@@ -6,7 +6,7 @@ import {
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE
 } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 

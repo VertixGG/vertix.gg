@@ -1,6 +1,8 @@
 import crypto from "crypto";
 
-import { UI_CUSTOM_ID_MAX_LENGTH } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { uiGenerateCustomIdHash, uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
+
+import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
 
 import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
 
@@ -304,7 +306,7 @@ describe( "VertixBot/UI-V2/UI-Utils", function () {
         } );
 
         describe( "uiGenerateCustomIdHash", function () {
-            it( "should generate a hash of maximum length equal to UI_CUSTOM_ID_MAX_LENGTH when maxLength is not provided", function () {
+            it( "should generate a hash of maximum length equal to UI_MAX_CUSTOM_ID_LENGTH when maxLength is not provided", function () {
                 // Arrange.
                 const input = "anyString";
 
@@ -312,10 +314,10 @@ describe( "VertixBot/UI-V2/UI-Utils", function () {
                 const hash = uiGenerateCustomIdHash( input );
 
                 const expectedHash = crypto.createHash( "md5" ).update( input ).digest( "hex" );
-                const expectedMaxLengthHash = expectedHash.repeat( Math.ceil( UI_CUSTOM_ID_MAX_LENGTH / expectedHash.length ) ).slice( 0, UI_CUSTOM_ID_MAX_LENGTH );
+                const expectedMaxLengthHash = expectedHash.repeat( Math.ceil( UI_MAX_CUSTOM_ID_LENGTH / expectedHash.length ) ).slice( 0, UI_MAX_CUSTOM_ID_LENGTH );
 
                 // Assert.
-                expect( hash.length ).toEqual( UI_CUSTOM_ID_MAX_LENGTH );
+                expect( hash.length ).toEqual( UI_MAX_CUSTOM_ID_LENGTH );
                 expect( hash ).toEqual( expectedMaxLengthHash );
             } );
 

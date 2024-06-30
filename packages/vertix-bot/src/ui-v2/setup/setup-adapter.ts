@@ -1,6 +1,6 @@
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
-import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base/src/utils/badwords";
+import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base/src/utils/badwords-utils";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 

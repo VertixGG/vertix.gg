@@ -88,7 +88,7 @@ import type { APIPartialChannel, GuildMember, Interaction, Message, MessageCompo
 
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
-import type { AppService } from "src/services/app-service";
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,

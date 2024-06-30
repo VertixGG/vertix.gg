@@ -1,6 +1,6 @@
 import { Colors } from "discord.js";
 
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import {
     DynamicChannelPermissionsAccessEmbed

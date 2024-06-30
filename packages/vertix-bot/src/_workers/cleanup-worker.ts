@@ -4,9 +4,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ensureInWorker } from "@zenflux/worker/utils";
 
-import { ChannelType, Client  } from "discord.js";
-
-import type { DiscordAPIError , VoiceChannel } from "discord.js";
+import { ChannelType, Client, DiscordAPIError, GatewayIntentBits } from "discord.js";
 
 import type { default as loginType } from "@vertix.gg/base/src/discord/login";
 
@@ -21,6 +19,8 @@ import type { ChannelService as ChannelServiceType } from "@vertix.gg/bot/src/se
 import type { PrismaBotClient as PrismaBotClientType } from "@vertix.gg/prisma/bot-client";
 
 import type { ThreadHost } from "@zenflux/worker/definitions";
+
+import type { VoiceChannel } from "discord.js";
 
 let login: typeof loginType;
 let ServiceLocator: typeof ServiceLocatorType;
@@ -50,6 +50,22 @@ class CleanupWorker extends InitializeBase {
         return CleanupWorker.getInstance();
     }
 
+    private async removeDynamicChannelFromDB( prisma: ReturnType<typeof PrismaBotClient.$["getClient"]>, channel: any ) {
+        await prisma.channel.delete( {
+            where: {
+                id: channel.id,
+            },
+            include: {
+                data: true,
+            },
+        } );
+
+        this.logger.info(
+            this.removeEmptyDynamicChannels,
+            `Dynamic Channel id: '${ channel.channelId }' is deleted from db.`
+        );
+    }
+
     private async removeEmptyDynamicChannels( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
@@ -77,57 +93,40 @@ class CleanupWorker extends InitializeBase {
             const chunk = channels.slice( chunkStartIndex, chunkEndIndex );
 
             const deletePromises = chunk.map( async ( channel ) => {
-                const guildCache = client.guilds.cache.get( channel.guildId );
+                try {
+                    const guild = await client.guilds.fetch( channel.guildId );
 
-                if ( guildCache ) {
-                    const channelFetch = await
-                        guildCache.channels.fetch( channel.channelId )
-                            .catch( async ( e: DiscordAPIError ) => {
-                                if ( e.code === 10003 ) {
-                                    // Unknown Channel, remove from db
-                                    await prisma.channel.delete( {
-                                        where: {
-                                            id: channel.id,
-                                        },
-                                    } );
-
-                                    this.logger.info(
-                                        this.removeEmptyDynamicChannels,
-                                        `Unknown Channel (not exist anymore) - Dynamic Channel id: '${ channel.channelId }' is deleted from db.`
-                                    );
-
-                                    return null;
-                                }
-
-                                this.logger.error( this.removeEmptyDynamicChannels, "", e );
+                    const channelFetch = guild && await
+                        guild.channels.fetch( channel.channelId )
+                            .catch( ( error: any ) => {
+                                this.logger.error( this.removeEmptyDynamicChannels, "", error );
                                 return null;
                             } )
                             .then( ( i ) => i as VoiceChannel );
 
                     if ( ! channelFetch ) {
+                        await this.removeDynamicChannelFromDB( prisma, channel );
                         return;
                     }
 
-                    if ( channelFetch?.members && channelFetch.members.size === 0 ) {
+                    if ( channelFetch.members && channelFetch.members.size === 0 ) {
                         await this.channelService.delete( {
+                            guild,
                             channel: channelFetch,
-                            guild: guildCache,
                         } );
                     }
-                } else {
-                    await prisma.channel.delete( {
-                        where: {
-                            id: channel.id,
-                        },
-                        include: {
-                            data: true,
-                        },
-                    } );
+                } catch ( error: any ) {
+                    if ( error instanceof DiscordAPIError && error.code === 10004 ) {
+                        // Unknown Guild, remove from db
+                        this.logger.info(
+                            this.removeEmptyDynamicChannels,
+                            `Unknown Guild (not exist anymore) - Master channel id: '${ channel.channelId }' is deleted from db.`
+                        );
 
-                    this.logger.info(
-                        this.removeEmptyDynamicChannels,
-                        `Dynamic Channel id: '${ channel.channelId }' is deleted from db.`
-                    );
+                        await this.removeDynamicChannelFromDB( prisma, channel );
+                    }
+
+                    this.logger.error( this.removeEmptyDynamicChannels, "", error );
                 }
             } );
 
@@ -329,7 +328,7 @@ class CleanupWorker extends InitializeBase {
         const prisma = PrismaBotClient.$.getClient();
 
         // Find all guilds that are `updated_at` at current year.
-        const guilds = await this.getGuildsDidntUpdateRecntly( prisma );
+        const guilds = await this.getGuildsDidntUpdateRecently( prisma );
 
         const CHUNK_SIZE = 20;
         const CHUNK_DELAY = 2000;
@@ -386,15 +385,15 @@ class CleanupWorker extends InitializeBase {
         }
 
         const totalElapsedTime = Date.now() - totalStartTime,
-            totalForEachChunk = (totalElapsedTime / guilds.length).toFixed( 4 );
+            totalForEachChunk = ( totalElapsedTime / guilds.length ).toFixed( 4 );
 
         this.logger.info( this.handleGuilds,
             `${ count } guild are updates it toke: ${ totalElapsedTime }ms` +
-             ( count ? `in ${ CHUNK_SIZE } chunk(s) with ${ totalForEachChunk }ms approximately for each chunk.` : "")
+            ( count ? `in ${ CHUNK_SIZE } chunk(s) with ${ totalForEachChunk }ms approximately for each chunk.` : "" )
         );
     }
 
-    private async getGuildsDidntUpdateRecntly( prisma: ReturnType<typeof PrismaBotClient.$["getClient"] > ) {
+    private async getGuildsDidntUpdateRecently( prisma: ReturnType<typeof PrismaBotClient.$["getClient"]> ) {
         return prisma.guild.findMany( {
             where: {
                 updatedAtInternal: {
@@ -440,7 +439,11 @@ class CleanupWorker extends InitializeBase {
         await ServiceLocator.$.waitForAll();
 
         const client = new Client( {
-            intents: [],
+            // Require for cleanup to work properly.
+            intents: [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildVoiceStates
+            ],
         } );
 
         await login( client, async () => {

@@ -75,27 +75,17 @@ class CleanupWorker extends InitializeBase {
             const chunkStartIndex = currentIndex;
             const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, channels.length );
             const chunk = channels.slice( chunkStartIndex, chunkEndIndex );
-            const guildIds = chunk.map( ( channel ) => channel.guildId );
-            const channelIds = chunk.map( ( channel ) => channel.channelId );
-
-            const guildCaches = guildIds.map( ( guildId ) =>
-                client.guilds.cache.get( guildId )
-            );
 
             const deletePromises = chunk.map( async ( channel ) => {
-                const guildCache = guildCaches[ channelIds.indexOf( channel.channelId ) ];
+                const guildCache = client.guilds.cache.get( channel.guildId );
 
-                if (
-                    guildCache &&
-                    guildCache.channels.cache.has( channel.channelId ) &&
-                    guildCache.channels.cache.get( channel.channelId )?.isVoiceBased()
-                ) {
+                if ( guildCache ) {
                     const channelFetch = await
                         guildCache.channels.fetch( channel.channelId )
-                            .catch( ( e: DiscordAPIError ) => {
+                            .catch( async ( e: DiscordAPIError ) => {
                                 if ( e.code === 10003 ) {
                                     // Unknown Channel, remove from db
-                                    prisma.channel.delete( {
+                                    await prisma.channel.delete( {
                                         where: {
                                             id: channel.id,
                                         },
@@ -270,10 +260,10 @@ class CleanupWorker extends InitializeBase {
                 const fetchPromise = client.guilds.fetch( category.guildId );
 
                 const fetchResult = await fetchPromise
-                    .catch( ( error: DiscordAPIError ) => {
+                    .catch( async ( error: DiscordAPIError ) => {
                         if ( error.code === 10004 ) {
                             // Unknown Guild, remove from db
-                            prisma.category.delete( {
+                            await prisma.category.delete( {
                                 where: {
                                     id: category.id,
                                 },

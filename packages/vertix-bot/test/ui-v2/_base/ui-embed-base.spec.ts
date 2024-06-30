@@ -2,7 +2,7 @@ import { jest } from "@jest/globals";
 
 import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
 
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 

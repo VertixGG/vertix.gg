@@ -2,17 +2,19 @@ import fs from "fs";
 
 import process from "process";
 
+import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
+
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { uiGenerateCustomIdHash } from "@vertix.gg/gui/src/ui-utils";
+
 import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
 
-import { UI_CUSTOM_ID_MAX_LENGTH, UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-
-import { uiGenerateCustomIdHash } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 const ADAPTER_CLEANUP_WORKER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_WORKER_INTERVAL ) ||
     300000; // 5 minutes.

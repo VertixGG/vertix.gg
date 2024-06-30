@@ -2,7 +2,7 @@ import { jest } from "@jest/globals";
 
 import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
 
-import { uiGenerateCustomIdHash } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiGenerateCustomIdHash } from "@vertix.gg/gui/src/ui-utils";
 
 import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
 

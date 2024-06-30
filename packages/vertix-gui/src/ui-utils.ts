@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-import { UI_CUSTOM_ID_MAX_LENGTH } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
 
 export const UI_TEMPLATE_WRAPPER_START = "{",
     UI_TEMPLATE_WRAPPER_END = "}";
@@ -34,7 +34,7 @@ export const uiUtilsDynamicElementsRearrange = ( elements: [][], elementsPerRow:
     return dynamicElements;
 };
 
-export const uiGenerateCustomIdHash = ( input: string, maxLength = UI_CUSTOM_ID_MAX_LENGTH ): string => {
+export const uiGenerateCustomIdHash = ( input: string, maxLength = UI_MAX_CUSTOM_ID_LENGTH ): string => {
     const base = crypto
         .createHash( "md5" )
         .update( input )

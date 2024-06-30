@@ -1,0 +1,8 @@
+{
+    "name": "@vertix.gg/gui",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "dependencies": {
+        "@vertix.gg/base": "workspace:*"
+    }
+}

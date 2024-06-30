@@ -1,15 +1,15 @@
-import type { Message } from "discord.js";
+import type { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
 
 import type { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
-import type { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 import type { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-group-base";
+import type { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
 import type { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
 import type { UIEntityBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-entity-base";
-import type { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
+import type { UIAdapterReplyContext } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
 import type { UIMarkdownBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-markdown-base";
 import type { UIMarkdownsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-markdowns-group-base";
 import type { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
-import type { UIAdapterReplyContext } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+import type { Message } from "discord.js";
 
 export enum UIInstancesTypes {
     Static = "Static",
@@ -21,7 +21,6 @@ export const UI_ELEMENTS_DEPTH = 2,
     UI_ELEMENTS_DEFAULT_MAX_PER_ROW = 3;
 
 export const UI_GENERIC_SEPARATOR = ":";
-export const UI_CUSTOM_ID_MAX_LENGTH = 100;
 
 export const UI_IMAGE_EMPTY_LINE_URL = "https://i.imgur.com/NthLO3W.png";
 

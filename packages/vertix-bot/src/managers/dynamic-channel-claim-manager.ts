@@ -8,15 +8,13 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import {
-    DynamicChannelVoteManager
-} from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 // import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-import type { UIAdapterService } from "src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
 import type {
     IVoteDefaultComponentInteraction

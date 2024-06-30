@@ -35,20 +35,6 @@ export class UIService extends ServiceBase {
         return "VertixBot/UI-V2/UIService";
     }
 
-    public constructor(
-        // TODO: Why repeating... why not? Debugger( UIManager.getName(), "", /* check env */ "env" );
-        private uiDebugger = new Debugger( UIService.getName(), "", isDebugEnabled( "SERVICE", UIService.getName() ) )
-    ) {
-        super();
-
-        if ( ! UIService.cleanWorkerTimer ) {
-            UIService.cleanWorkerTimer = setInterval( UIAdapterBase.cleanupWorker, ADAPTER_CLEANUP_WORKER_INTERVAL );
-        }
-
-        // Try load hash tables from file.
-        this.loadTablesFromFile();
-    }
-
     public static getInstance() {
         if ( ! UIService.instance ) {
             UIService.instance = new UIService();
@@ -61,18 +47,38 @@ export class UIService extends ServiceBase {
         return UIService.getInstance();
     }
 
-    public generateCustomIdHash( id: string, separator = UI_GENERIC_SEPARATOR, maxLength = UI_CUSTOM_ID_MAX_LENGTH ): string {
+    protected static setupCleanWorkerTimer() {
+        if ( ! UIService.cleanWorkerTimer ) {
+            UIService.cleanWorkerTimer = setInterval( UIAdapterBase.cleanupWorker, ADAPTER_CLEANUP_WORKER_INTERVAL );
+        }
+    }
+
+    public constructor(
+        // TODO: Why repeating... why not? Debugger( UIManager.getName(), "", /* check env */ "env" );
+        private uiDebugger = new Debugger( UIService.getName(), "", isDebugEnabled( "SERVICE", UIService.getName() ) )
+    ) {
+        super();
+
+        // Try load hash tables from file.
+        this.isSaveHashEnabled() && this.loadTablesFromFile();
+
+        ( this.constructor as typeof UIService ).setupCleanWorkerTimer();
+    }
+
+    public generateCustomIdHash( id: string, separator = UI_GENERIC_SEPARATOR, maxLength = UI_MAX_CUSTOM_ID_LENGTH ): string {
         if ( this.hashTable.has( maxLength ) && this.hashTable.get( maxLength )!.has( id ) ) {
             return this.hashTable.get( maxLength )!.get( id )!;
         }
 
-        if ( this.hashSaveTimeout ) {
-            clearTimeout( this.hashSaveTimeout );
-        }
+        if ( this.isSaveHashEnabled() ) {
+            if ( this.hashSaveTimeout ) {
+                clearTimeout( this.hashSaveTimeout );
+            }
 
-        this.hashSaveTimeout = setTimeout( () => {
-            this.maybeSaveTablesToFile();
-        }, ADAPTER_SAVE_HASHES_DEBOUNCE_DELAY );
+            this.hashSaveTimeout = setTimeout( () => {
+                this.maybeSaveTablesToFile();
+            }, ADAPTER_SAVE_HASHES_DEBOUNCE_DELAY );
+        }
 
         const parted = id.split( separator );
 
@@ -157,6 +163,10 @@ export class UIService extends ServiceBase {
         }
 
         return id;
+    }
+
+    public isSaveHashEnabled() {
+        return true;
     }
 
     private setHashTableEntry( id: string, hash: string, length: number ) {

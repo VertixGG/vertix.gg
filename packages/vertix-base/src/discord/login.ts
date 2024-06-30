@@ -13,6 +13,12 @@ export let gToken = "";
 const DEFAULT_REMOTE_LOGIN_LIST = "YOUR_REMOTE_LOGIN_LIST";
 
 export default async function ( client: any, onLogin: Function ) {
+    if ( process.env.DISCORD_TEST_TOKEN ) {
+        gToken = process.env.DISCORD_TEST_TOKEN;
+        await client.login( gToken ).then( onLogin );
+        return;
+    }
+
     const exit = () => {
             console.error( `[${ ( fileURLToPath( import.meta.url) ).split("/").pop()  }]: Failed to login` );
             process.exit( 1 );

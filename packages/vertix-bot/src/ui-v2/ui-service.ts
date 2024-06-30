@@ -16,7 +16,7 @@ import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
 
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
-const ADAPTER_CLEANUP_WORKER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_WORKER_INTERVAL ) ||
+const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER_INTERVAL ) ||
     300000; // 5 minutes.
 
 const ADAPTER_SAVE_HASHES_DEBOUNCE_DELAY = 10000;
@@ -24,7 +24,7 @@ const ADAPTER_SAVE_HASHES_DEBOUNCE_DELAY = 10000;
 export class UIService extends ServiceBase {
     private static instance: UIService;
 
-    private static cleanWorkerTimer: NodeJS.Timeout;
+    private static cleanupTimerInterval: NodeJS.Timeout;
 
     private hashTable: Map<number, Map<string, string>> = new Map();
     private hashTableReverse: Map<number, Map<string, string>> = new Map();
@@ -49,9 +49,9 @@ export class UIService extends ServiceBase {
         return UIService.getInstance();
     }
 
-    protected static setupCleanWorkerTimer() {
-        if ( ! UIService.cleanWorkerTimer ) {
-            UIService.cleanWorkerTimer = setInterval( UIAdapterBase.cleanupWorker, ADAPTER_CLEANUP_WORKER_INTERVAL );
+    protected static setupCleanupTimerInterval() {
+        if ( ! UIService.cleanupTimerInterval ) {
+            UIService.cleanupTimerInterval = setInterval( UIAdapterBase.cleanupTimer, ADAPTER_CLEANUP_TIMER_INTERVAL );
         }
     }
 
@@ -64,7 +64,7 @@ export class UIService extends ServiceBase {
         // Try load hash tables from file.
         this.isSaveHashEnabled() && this.loadTablesFromFile();
 
-        ( this.constructor as typeof UIService ).setupCleanWorkerTimer();
+        ( this.constructor as typeof UIService ).setupCleanupTimerInterval();
     }
 
     public generateCustomIdHash( id: string, separator = UI_GENERIC_SEPARATOR, maxLength = UI_MAX_CUSTOM_ID_LENGTH ): string {

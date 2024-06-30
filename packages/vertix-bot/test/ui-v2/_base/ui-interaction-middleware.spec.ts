@@ -51,7 +51,7 @@ describe( "VertixBot/UI-V2/UIInteractionMiddleware", () => {
 
         // Register dependencies for `DirectMessageService`.
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/services/app-service" ) ).AppService );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-service" ) ).UIService );
+        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/test/ui-v2/__mock__/ui-service-mock" ) ).UIServiceMock );
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-adapter-service" ) ).UIAdapterService );
 
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/services/direct-message-service" ) ).DirectMessageService );

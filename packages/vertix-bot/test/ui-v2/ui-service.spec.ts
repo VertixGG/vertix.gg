@@ -18,8 +18,7 @@ describe( "VertixBot/UI-V2/UIService", () => {
             () => ServiceLocatorMock
         );
 
-        // Register UIAdapterService
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-service" ) ).UIService );
+        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/test/ui-v2/__mock__/ui-service-mock" ) ).UIServiceMock );
 
         // Await for all services to be registered.
         await ServiceLocatorMock.$.waitForAll();

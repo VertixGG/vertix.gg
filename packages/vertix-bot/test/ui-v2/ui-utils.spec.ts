@@ -4,8 +4,6 @@ import { UI_CUSTOM_ID_MAX_LENGTH } from "@vertix.gg/bot/src/ui-v2/_base/ui-defin
 
 import { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
 
-import { uiGenerateCustomIdHash, uiUtilsDynamicElementsRearrange } from "@vertix.gg/bot/src/ui-v2/ui-utils";
-
 class ElementMockClass extends UIElementBase<any> {
     public static getName() {
         return "VertixBot/UI-V2/TestElementMockClass";

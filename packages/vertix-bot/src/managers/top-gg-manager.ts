@@ -15,7 +15,7 @@ import type TopGG from "@top-gg/sdk";
 import type { Client, MessageComponentInteraction } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-const TOP_GG_WORKER_INTERVAL = 1000 * 60 * 60, // 1 hour
+const TOP_GG_TIMER_INTERVAL = 1000 * 60 * 60, // 1 hour
     TOP_GG_VOTE_INTERVAL = 1000 * 60 * 60 * 12; // 12 hours
 
 export class TopGGManager extends CacheBase<Date> {
@@ -26,7 +26,7 @@ export class TopGGManager extends CacheBase<Date> {
     private api!: TopGG.Api;
     private client!: Client;
 
-    private readonly workerInterval: number;
+    private readonly timerInterval: number;
     private readonly voteInterval: number;
 
     private isTryingHandshakeOnce = false;
@@ -55,14 +55,14 @@ export class TopGGManager extends CacheBase<Date> {
     public constructor(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         shouldDebugCache = isDebugEnabled( "CACHE", TopGGManager.getName() ),
-        workerInterval = TOP_GG_WORKER_INTERVAL,
+        timerInterval = TOP_GG_TIMER_INTERVAL,
         voteInterval = TOP_GG_VOTE_INTERVAL
     ) {
         super();
 
         this.appService = ServiceLocator.$.get( "VertixBot/Services/App");
 
-        this.workerInterval = workerInterval;
+        this.timerInterval = timerInterval;
         this.voteInterval = voteInterval;
     }
 
@@ -159,7 +159,7 @@ export class TopGGManager extends CacheBase<Date> {
 
             this.logger.info( this.handshake, "TopGG manager is initializing..." );
 
-            setInterval( this.worker.bind( this ), this.workerInterval );
+            setInterval( this.timer.bind( this ), this.timerInterval );
         }
 
         this.api = new Api( process.env.TOP_GG_TOKEN as string );
@@ -198,7 +198,7 @@ export class TopGGManager extends CacheBase<Date> {
         return true;
     }
 
-    private worker() {
+    private timer() {
         this.handshake();
     }
 }

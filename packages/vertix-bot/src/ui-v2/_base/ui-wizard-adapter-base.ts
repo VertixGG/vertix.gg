@@ -65,9 +65,7 @@ export class UIWizardAdapterBase<
     public constructor( uiManager: UIAdapterService ) {
         super( uiManager );
 
-        const staticThis = this.constructor as typeof UIWizardAdapterBase;
-
-        this.staticWizardAdapter = staticThis;
+        this.staticWizardAdapter = this.constructor as typeof UIWizardAdapterBase;
     }
 
     public editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {

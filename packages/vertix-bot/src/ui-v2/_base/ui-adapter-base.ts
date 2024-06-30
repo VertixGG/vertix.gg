@@ -140,7 +140,7 @@ export abstract class UIAdapterBase<
         this.validatedOnce = true;
     }
 
-    public static cleanupWorker() {
+    public static cleanupTimer() {
         if ( ! UIAdapterBase.staticArgs ) {
             return;
         }
@@ -165,7 +165,7 @@ export abstract class UIAdapterBase<
             const { interaction } = UIAdapterBase.ephemeralInteractions[ id ];
 
             if ( Date.now() - interaction.createdAt.getTime() > ADAPTER_CLEANUP_EPHEMERAL_TIMEOUT ) {
-                UIAdapterBase.adapterDebugger.log( UIAdapterBase.cleanupWorker,
+                UIAdapterBase.adapterDebugger.log( UIAdapterBase.cleanupTimer,
                     `Deleting old ephemeral interaction: '${ interaction.id }' from memory`
                 );
 
@@ -173,7 +173,7 @@ export abstract class UIAdapterBase<
             }
         }
 
-        UIAdapterBase.adapterDebugger.dumpDown( UIAdapterBase.cleanupWorker, {
+        UIAdapterBase.adapterDebugger.dumpDown( UIAdapterBase.cleanupTimer, {
             staticArgs: UIAdapterBase.staticArgs.getData(),
             systemArgs: UIAdapterBase.staticSystemArgs.getData(),
             ephemeralInteractions: Object.values( UIAdapterBase.ephemeralInteractions ).map( ( { interaction, rawCustomId } ) => {

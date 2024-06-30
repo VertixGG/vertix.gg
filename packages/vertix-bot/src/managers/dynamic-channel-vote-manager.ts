@@ -50,7 +50,7 @@ type VoteEventState = "idle" | "starting" | "active" | "done";
 
 const FALLBACK_VOTE_TIMEOUT = 60 * 1000, // 1 minute.
     FALLBACK_VOTE_ADD_TIMEOUT = 60 * 1000, // 1 minute.
-    FALLBACK_WORKER_INTERVAL = 1000; // 1 second.
+    FALLBACK_TIMER_INTERVAL = 1000; // 1 second.
 
 // TODO: What happens when bot restarts? should it be saved in the database?
 // TODO: convert to object oriented.
@@ -63,9 +63,9 @@ export class DynamicChannelVoteManager<
 
     private debugger: Debugger = new Debugger( this );
 
-    private voteRunTime: number;
-    private voteAddTime: number;
-    private voteWorkerIntervalTime: number;
+    private readonly voteRunTime: number;
+    private readonly voteAddTime: number;
+    private readonly voteTimerIntervalTime: number;
 
     // Used to keep track of who voted for what.
     private voteKeeper: {
@@ -110,18 +110,18 @@ export class DynamicChannelVoteManager<
     public constructor(
         runTime = process.env.DYNAMIC_CHANNEL_VOTE_TIMEOUT || FALLBACK_VOTE_TIMEOUT,
         addTime = process.env.DYNAMIC_CHANNEL_VOTE_ADD_TIME || FALLBACK_VOTE_ADD_TIMEOUT,
-        workerInterval = process.env.DYNAMIC_CHANNEL_VOTE_WORKER_INTERVAL || FALLBACK_WORKER_INTERVAL
+        timerInterval = process.env.DYNAMIC_CHANNEL_VOTE_TIMER_INTERVAL || FALLBACK_TIMER_INTERVAL
     ) {
         super();
 
         this.voteRunTime = parseInt( runTime.toString() );
         this.voteAddTime = parseInt( addTime.toString() );
-        this.voteWorkerIntervalTime = parseInt( workerInterval.toString() );
+        this.voteTimerIntervalTime = parseInt( timerInterval.toString() );
 
         this.logger.info( this.constructor.name, "Initialized with time settings:", this.getTimeSettings() );
     }
 
-    // TODO: Base worker.
+    // TODO: Base timer.
     public destroy() {
         Object.entries( this.events ).forEach( ( [ , event ] ) => {
             clearInterval( event.intervalHandler );
@@ -150,10 +150,10 @@ export class DynamicChannelVoteManager<
         this.events[ channel.id ].startTime = Date.now();
         this.events[ channel.id ].endTime = Date.now() + this.voteRunTime;
 
-        this.worker( channel, callback ).then( () => {
+        this.timer( channel, callback ).then( () => {
             this.events[ channel.id ].intervalHandler = setInterval(
-                this.worker.bind( this, channel, callback ),
-                this.voteWorkerIntervalTime
+                this.timer.bind( this, channel, callback ),
+                this.voteTimerIntervalTime
             );
 
             this.logger.info( this.start,
@@ -348,7 +348,7 @@ export class DynamicChannelVoteManager<
         return {
             runTime: this.voteRunTime,
             addTime: this.voteAddTime,
-            workerIntervalTime: this.voteWorkerIntervalTime,
+            timerIntervalTime: this.voteTimerIntervalTime,
         };
     }
 
@@ -537,7 +537,7 @@ export class DynamicChannelVoteManager<
         return VoteManagerResult.Success;
     }
 
-    private async worker( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
+    private async timer( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
         const channelId = channel.id as string,
             state = this.getState( channelId );
 

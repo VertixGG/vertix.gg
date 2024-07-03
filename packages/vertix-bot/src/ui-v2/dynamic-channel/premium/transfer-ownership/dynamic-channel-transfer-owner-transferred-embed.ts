@@ -1,5 +1,5 @@
-import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
+import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 

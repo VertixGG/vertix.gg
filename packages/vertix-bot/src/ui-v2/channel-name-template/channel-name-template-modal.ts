@@ -1,8 +1,9 @@
+
+import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
+
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { ChannelNameTemplateInput } from "@vertix.gg/bot/src/ui-v2/channel-name-template/channel-name-template-input";
-
-import { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
-
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class ChannelNameTemplateModal extends UIModalBase {
     public static getName() {

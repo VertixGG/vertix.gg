@@ -16,8 +16,9 @@
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
 
+        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest | bun run vertix:gui:jest )",
         "vertix:eslint": "time bunx --bun eslint .",
-        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest )",
+        "vertix:eslint:fix": "time bunx --bun eslint . --fix",
 
         "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
@@ -31,7 +32,11 @@
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
         "vertix:base:jest": "cd packages/vertix-base ; bun test",
 
+        "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
+        "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
+
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
+
     },
     "dependencies": {
         "@zenflux/cli": "latest",

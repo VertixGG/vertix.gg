@@ -1,8 +1,8 @@
-import { UIElementInputBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-input-base";
+import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIInputStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class FeedbackInputDescription extends UIElementInputBase {
     public static getName() {

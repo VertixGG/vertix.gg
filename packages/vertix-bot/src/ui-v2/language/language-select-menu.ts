@@ -1,9 +1,11 @@
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIElementStringSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-string-select-menu"
+import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu"
     ;
-import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
-import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+
+import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
 export class LanguageSelectMenu extends UIElementStringSelectMenu {
     public static getName() {

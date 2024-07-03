@@ -2,7 +2,7 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ModelBaseCached } from "@vertix.gg/base/src/bases/model-base";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export interface TModelHelper<T> {
     findFirst( ... args: any[] ): T;

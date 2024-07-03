@@ -1,7 +1,8 @@
 
-import { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
+import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { BadwordsInput } from "@vertix.gg/bot/src/ui-v2/badwords/badwords-input";
 
 export class BadwordsModal extends UIModalBase {

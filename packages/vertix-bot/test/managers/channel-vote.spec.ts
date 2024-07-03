@@ -2,8 +2,8 @@ import { jest } from "@jest/globals";
 
 import { ChannelType, MessageComponentInteraction, SnowflakeUtil, VoiceChannel } from "discord.js";
 
-import { ClientMock } from "@vertix.gg/bot/test/__mock__/discord/client-mock";
-import { GuildMock } from "@vertix.gg/bot/test/__mock__/discord/guild-mock";
+import { ClientMock } from "@vertix.gg/test-utils/src/__mock__/discord/client-mock";
+import { GuildMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-mock";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 

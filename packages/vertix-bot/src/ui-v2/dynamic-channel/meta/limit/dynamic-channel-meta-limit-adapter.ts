@@ -8,8 +8,8 @@ import {
     DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/meta/limit/dynamic-channel-meta-limit-definitions";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ModalMessageModalSubmitInteraction, VoiceChannel } from "discord.js";
 
 interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteraction<"cached"> {

@@ -1,5 +1,6 @@
-import { UIElementButtonUrlBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-button-url-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIElementButtonUrlBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-url-base";
+
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class WelcomeSupportButton extends UIElementButtonUrlBase {
     public static getName() {

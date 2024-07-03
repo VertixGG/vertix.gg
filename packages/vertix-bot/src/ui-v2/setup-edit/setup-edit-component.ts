@@ -1,10 +1,10 @@
 
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+
 import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui-v2/channel-name-template/channel-name-template-modal";
-
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
 
 // TODO: Use index
 import { SetupEditElementsGroup } from "@vertix.gg/bot/src/ui-v2/setup-edit/setup-edit-elements-group";

@@ -1,20 +1,22 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { ClaimVoteComponent } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-component";
-
 import {
     UIAdapterExecutionStepsBase,
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-execution-steps-base";
+} from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
+
+import { ClaimVoteComponent } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-component";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
+import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
@@ -109,9 +111,16 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
                 // TODO: Dedicated method
                 const args = await this.getReplyArgs( interaction );
 
-                await DynamicChannelClaimManager.$.unmarkChannelAsClaimable( interaction.channel );
+                DynamicChannelClaimManager.$.unmarkChannelAsClaimable( interaction.channel );
 
-                await this.dynamicChannelService.editChannelOwner( args.userWonId, args.previousOwnerId, interaction.channel, "claim" );
+                await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel")
+                    .editChannelOwner(
+                        args.userWonId,
+                        args.previousOwnerId,
+                        interaction.channel,
+                        "claim"
+                    );
+
                 break;
         }
     }

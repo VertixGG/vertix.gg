@@ -8,13 +8,13 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 // import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type {
     IVoteDefaultComponentInteraction
@@ -76,7 +76,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
     ) {
         super();
 
-        this.uiAdapterService = ServiceLocator.$.get( "VertixBot/UI-V2/UIAdapterService" );
+        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
 

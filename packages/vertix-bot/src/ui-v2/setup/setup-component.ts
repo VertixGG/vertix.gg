@@ -1,8 +1,10 @@
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+
 import { SetupEmbed } from "@vertix.gg/bot/src/ui-v2/setup/setup-embed";
 import { SetupElementsGroup } from "@vertix.gg/bot/src/ui-v2/setup/setup-elements-group";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui-v2/setup/setup-max-master-channels-embed";
 import { BadwordsModal } from "@vertix.gg/bot/src/ui-v2/badwords/badwords-modal";
 

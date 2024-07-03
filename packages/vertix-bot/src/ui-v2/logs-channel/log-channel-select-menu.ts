@@ -1,7 +1,8 @@
 import { ChannelType } from "discord.js";
 
-import { UIElementChannelSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-channel-select-menu";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIElementChannelSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-channel-select-menu";
+
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class LogChannelSelectMenu extends UIElementChannelSelectMenu {
     public static getName() {

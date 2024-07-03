@@ -1,13 +1,13 @@
 import { ChannelType, PermissionFlagsBits, PermissionsBitField } from "discord.js";
 
-import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
+import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-component";
 
 import type { BaseMessageOptions, VoiceChannel } from "discord.js";
 
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
     public static getName() {

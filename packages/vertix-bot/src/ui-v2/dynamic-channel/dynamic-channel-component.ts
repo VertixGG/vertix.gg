@@ -1,20 +1,18 @@
 import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import {
     UI_ELEMENTS_DEFAULT_MAX_PER_ROW,
     UI_ELEMENTS_DEPTH,
     UIInstancesTypes,
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+} from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import {
     DynamicChannelElementsGroup
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { DynamicChannelEmbed } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-embed";
-
-;
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {

@@ -1,14 +1,14 @@
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import { ClaimResultComponent } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-component";
+import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
-import { UIAdapterExecutionStepsBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-execution-steps-base";
+import { ClaimResultComponent } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-component";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, ButtonInteraction<"cached">> {

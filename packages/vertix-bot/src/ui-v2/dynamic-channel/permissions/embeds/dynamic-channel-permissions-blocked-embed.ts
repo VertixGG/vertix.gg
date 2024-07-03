@@ -2,13 +2,13 @@ import { Colors } from "discord.js";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import {
     DynamicChannelPermissionsAccessEmbed
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/permissions/embeds/dynamic-channel-permissions-access-embed";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelPermissionsBlockedEmbed extends DynamicChannelPermissionsAccessEmbed {
     private static vars = {

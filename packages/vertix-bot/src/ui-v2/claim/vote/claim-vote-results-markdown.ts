@@ -1,7 +1,7 @@
 import process from "process";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIMarkdownBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-markdown-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
@@ -9,7 +9,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import { RentryManager } from "@vertix.gg/bot/src/managers/rentry";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
     public static getName() {

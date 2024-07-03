@@ -4,11 +4,11 @@ import { DynamicChannelMetaRenameComponent } from "@vertix.gg/bot/src/ui-v2/dyna
 
 import { DynamicChannelAdapterExuBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultModalChannelVoiceInteraction
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
 

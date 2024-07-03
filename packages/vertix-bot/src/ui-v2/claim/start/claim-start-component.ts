@@ -1,8 +1,9 @@
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { ClaimStartButton } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-button";
 import { ClaimStartEmbed } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-embed";
-
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 
 export class ClaimStartComponent extends UIComponentBase {
     public static getName() {

@@ -1,6 +1,6 @@
-import { UIElementRoleSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-role-select-menu";
+import { UIElementRoleSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-role-select-menu";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class VerifiedRolesMenu extends UIElementRoleSelectMenu {
     public static getName() {

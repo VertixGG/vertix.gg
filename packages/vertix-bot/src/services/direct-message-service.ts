@@ -8,7 +8,7 @@ import { VERTIX_OWNERS_IDS } from "@vertix.gg/bot/src/definitions/app";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 
@@ -30,7 +30,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixBot/UI-V2/UIAdapterService",
+            uiAdapterService: "VertixGUI/UIAdapterService",
         };
     }
 

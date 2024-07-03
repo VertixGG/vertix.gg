@@ -2,7 +2,7 @@ import { jest } from "@jest/globals";
 
 import { Api } from "@top-gg/sdk";
 
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
@@ -14,15 +14,9 @@ describe( "VertixBot/Managers/TopGG", () => {
     let topGGManager: TopGGManager;
 
     beforeEach( async () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
+        // Mock original ServiceLocator.
+        ServiceLocatorMock.mockOrigin();
 
-        // Mock ServiceLocator.
-        jest.mock( "@vertix.gg/base/src/modules/service/service-locator",
-            () => ServiceLocatorMock
-        );
-
-        // Register AppService
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/services/app-service" ) ).AppService );
 
         // Await for all services to be registered.
@@ -36,7 +30,8 @@ describe( "VertixBot/Managers/TopGG", () => {
     } );
 
     afterEach( () => {
-        jest.resetAllMocks();
+        // Reset ServiceLocator.
+        ServiceLocatorMock.reset();
     } );
 
     describe( "isVoted()", () => {

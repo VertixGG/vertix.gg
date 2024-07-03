@@ -1,6 +1,7 @@
+import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { VerifiedRolesEmbed } from "@vertix.gg/bot/src/ui-v2/verified-roles/verified-roles-embed";
 
-import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 export class SetupStep3Embed extends VerifiedRolesEmbed {

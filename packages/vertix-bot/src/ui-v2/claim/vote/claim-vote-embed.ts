@@ -1,10 +1,10 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedElapsedTimeBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-time-elapsed-base";
+import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 /**
  * Shown when there at least two candidates for a claim.

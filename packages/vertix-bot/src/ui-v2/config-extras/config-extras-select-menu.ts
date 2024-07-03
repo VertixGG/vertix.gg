@@ -1,8 +1,9 @@
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UI_GENERIC_SEPARATOR, UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIElementStringSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-string-select-menu";
+import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
+
+import { UI_GENERIC_SEPARATOR, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { APISelectMenuOption } from "discord.js";
 

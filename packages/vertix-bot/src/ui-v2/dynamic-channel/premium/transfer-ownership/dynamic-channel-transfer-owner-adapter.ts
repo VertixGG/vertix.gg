@@ -12,8 +12,8 @@ import { DynamicChannelAdapterExuBase } from "@vertix.gg/bot/src/ui-v2/dynamic-c
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultUserSelectMenuChannelVoiceInteraction
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 type DefaultInteraction =
     | UIDefaultUserSelectMenuChannelVoiceInteraction

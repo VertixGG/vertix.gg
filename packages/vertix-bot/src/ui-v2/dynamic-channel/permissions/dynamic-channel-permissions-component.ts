@@ -1,8 +1,9 @@
-import { DynamicChannelPermissionsAccessElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/permissions/dynamic-channel-permissions-access-elements-group";
 
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+
+import { DynamicChannelPermissionsAccessElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/permissions/dynamic-channel-permissions-access-elements-group";
 
 import { NothingChangedEmbed } from "@vertix.gg/bot/src/ui-v2/_general/nothing-changed-embed";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui-v2/_general/something-went-wrong-embed";

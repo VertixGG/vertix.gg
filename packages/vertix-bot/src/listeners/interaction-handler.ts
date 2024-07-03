@@ -8,8 +8,8 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
 import type { Client, CommandInteraction, Interaction } from "discord.js";
 
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
-import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -17,7 +17,7 @@ export function interactionHandler( client: Client ) {
             ( interaction instanceof MessageComponentInteraction ) ||
             ( interaction instanceof ModalSubmitInteraction )
         ) {
-            const uiService = ServiceLocator.$.get<UIService>( "VertixBot/UI-V2/UIService" );
+            const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
             const realCustomId = uiService.getCustomIdFromHash( interaction.customId );
 
@@ -25,7 +25,7 @@ export function interactionHandler( client: Client ) {
                 `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ realCustomId }' was used by '${ interaction.user.username }'`
             );
 
-            const adapter = ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" )
+            const adapter = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" )
                 .get( realCustomId, true );
 
             if ( adapter ) {

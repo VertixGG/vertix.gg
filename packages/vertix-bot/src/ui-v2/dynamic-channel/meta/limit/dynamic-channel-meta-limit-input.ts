@@ -1,5 +1,6 @@
-import { UIElementInputBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-input-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
+
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import {
     DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH,

@@ -5,6 +5,11 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { Client } from "discord.js";
 
 export async function readyHandler( client: Client<true> ) {
+    await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
+        silent: true,
+        timeout: 800,
+    } );
+
     const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" );
 
     return new Promise( ( resolve ) => {

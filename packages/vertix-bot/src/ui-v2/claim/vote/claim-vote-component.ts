@@ -1,14 +1,15 @@
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-group-base";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+
+import { UIMarkdownsGroupBase } from "@vertix.gg/gui/src/bases/ui-markdowns-group-base";
 
 import { ClaimVoteEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-embed";
 import { ClaimVoteStepInButton } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-step-in-button";
 import { ClaimVoteWonEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/calim-vote-won-embed";
 import { ClaimVoteStepInEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-step-in-embed";
 import { ClaimVoteElementsGroup } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-elements-group";
-import { UIMarkdownsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-markdowns-group-base";
 import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-results-markdown";
 
 export class ClaimVoteComponent extends UIComponentBase {

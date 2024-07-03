@@ -1,12 +1,12 @@
-import { DynamicChannelPremiumResetChannelEmbed } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-embed";
+
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+
+import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import { DynamicChannelPremiumResetChannelButton } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-button";
-
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
-
-import { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-group-base";
+import { DynamicChannelPremiumResetChannelEmbed } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-embed";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui-v2/_general/something-went-wrong-embed";
 
 export class DynamicChannelPremiumResetChannelComponent extends UIComponentBase {

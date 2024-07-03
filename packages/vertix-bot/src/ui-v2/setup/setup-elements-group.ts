@@ -1,4 +1,4 @@
-import { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-group-base";
+import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import { MAX_EDIT_MASTER_BUTTONS_PER_ROW } from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
 
@@ -7,9 +7,9 @@ import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-ma
 import { BadwordsEditButton } from "@vertix.gg/bot/src/ui-v2/badwords/badwords-edit-button";
 import { LanguageChooseButton } from "@vertix.gg/bot/src/ui-v2/language/language-choose-button";
 
-import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
-import type { UIElementButtonBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-button-base";
+import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
 export class SetupElementsGroup extends UIElementsGroupBase {
     public static getName() {

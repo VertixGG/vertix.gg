@@ -1,12 +1,14 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { ChannelType, PermissionsBitField, } from "discord.js";
 
 import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { UIWizardAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-wizard-adapter-base";
-import { UIWizardComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-wizard-component-base";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
+import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
+import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
 import { SetupStep1Component } from "@vertix.gg/bot/src/ui-v2/setup-new/step-1/setup-step-1-component";
 import { SetupStep2Component } from "@vertix.gg/bot/src/ui-v2/setup-new/step-2/setup-step-2-component";
@@ -19,14 +21,17 @@ import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui-v2/setup/setu
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+
 import type {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
+import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction
@@ -34,6 +39,8 @@ type Interactions =
     | UIDefaultStringSelectMenuChannelTextInteraction;
 
 export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
+    private masterChannelService: MasterChannelService;
+
     public static getName() {
         return "VertixBot/UI-V2/SetupNewWizardAdapter";
     }
@@ -80,6 +87,12 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
                 embedsGroup: "VertixBot/UI-V2/SomethingWentWrongEmbedGroup",
             },
         };
+    }
+
+    public constructor( uiService: UIAdapterService ) {
+        super( uiService );
+
+        this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }
 
     public getPermissions(): PermissionsBitField {

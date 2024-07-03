@@ -6,10 +6,12 @@
     "compilerOptions": {
         "typeRoots": [
             "../../node_modules/@types",
+            "../vertix-prisma/types"
         ],
 
         "types": [
             "node",
+            "prisma-bot-client.d.ts"
         ],
 
         "target": "ESNext",

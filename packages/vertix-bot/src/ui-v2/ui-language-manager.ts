@@ -1,17 +1,25 @@
 import fs from "fs";
+
 import path from "path";
 
-import { ComponentType } from "discord.js";
-
-import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import {
-    UI_ELEMENTS_DEPTH
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { ComponentType } from "discord.js";
 
-import { UnknownElementTypeError } from "@vertix.gg/bot/src/ui-v2/_base/errors/unknown-element-type-error";
+import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown-element-type-error";
+
+import { UI_ELEMENTS_DEPTH } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import {
+    UI_LANGUAGES_FILE_EXTENSION,
+    UI_LANGUAGES_INITIAL_ATTRIBUTES,
+    UI_LANGUAGES_INITIAL_CODE,
+    UI_LANGUAGES_INITIAL_FILE_NAME,
+    UI_LANGUAGES_INITIAL_FILE_PATH,
+    UI_LANGUAGES_PATH
+} from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
 import { ElementButtonLanguageModel } from "@vertix.gg/bot/src/models/element-button-language-model";
 
@@ -27,14 +35,9 @@ import { ModalLanguageModel } from "@vertix.gg/bot/src/models/modal-language-mod
 
 import { LanguageUtils } from "@vertix.gg/bot/src/utils/language";
 
-import {
-    UI_LANGUAGES_FILE_EXTENSION,
-    UI_LANGUAGES_INITIAL_ATTRIBUTES,
-    UI_LANGUAGES_INITIAL_CODE,
-    UI_LANGUAGES_INITIAL_FILE_NAME,
-    UI_LANGUAGES_INITIAL_FILE_PATH,
-    UI_LANGUAGES_PATH
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
+import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
+
+import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import type {
     UIComponentTypeConstructor,
@@ -42,20 +45,11 @@ import type {
     UIEntityConstructor,
     UIEntityTypes,
     UIMarkdownConstructor,
-    UIModalConstructor } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+    UIModalConstructor
+} from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
-import type { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
-
-import type { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
-import type { UIElementBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-element-base";
-import type { UIElementButtonBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-button-base";
-import type { UIElementStringSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-string-select-menu";
-import type { UIElementInputBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-input-base";
-import type { UIElementUserSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-user-select-menu";
-import type { UIElementRoleSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-role-select-menu";
-import type { UIElementChannelSelectMenu } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-channel-select-menu";
-import type { UIMarkdownBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-markdown-base";
-import type { UIModalBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-modal-base";
+import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import type {
     UIElementButtonLanguage,
@@ -71,16 +65,26 @@ import type {
     UIMarkdownLanguageContent,
     UIModalLanguage,
     UIModalLanguageContent
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
+} from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
+import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
+
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+
+import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
+import type { UIElementChannelSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-channel-select-menu";
+import type { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
+import type { UIElementRoleSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-role-select-menu";
+import type { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
+import type { UIElementUserSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-user-select-menu";
 
 interface UILanguageManagerValidateOptions {
     skipSameValues?: boolean;
 }
 
 // TODO: Reduce repeated code.
-export class UILanguageManager extends InitializeBase {
+export class UILanguageManager extends InitializeBase implements UILanguageManagerInterface {
     private static instance: UILanguageManager;
 
     private uiAdapterService: UIAdapterService;
@@ -108,7 +112,7 @@ export class UILanguageManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.uiAdapterService = ServiceLocator.$.get( "VertixBot/UI-V2/UIAdapterService" );
+        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
     }
 
     public getAvailableLanguages() {

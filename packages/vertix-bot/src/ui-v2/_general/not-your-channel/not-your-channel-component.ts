@@ -1,5 +1,6 @@
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { NotYourChannelEmbed } from "@vertix.gg/bot/src/ui-v2/_general/not-your-channel/not-your-channel-embed";
 
 export class NotYourChannelComponent extends UIComponentBase {

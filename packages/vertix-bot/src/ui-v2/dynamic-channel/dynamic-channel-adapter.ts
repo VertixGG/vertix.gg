@@ -1,4 +1,3 @@
-
 import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
@@ -13,8 +12,8 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-adapter-base";
 
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { BaseMessageOptions, Message, VoiceChannel } from "discord.js";
 
 export class DynamicChannelAdapter extends DynamicChannelAdapterBase {

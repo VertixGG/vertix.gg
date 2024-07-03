@@ -1,4 +1,4 @@
-import { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-group-base";
+import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import { WelcomeSupportButton } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-support-button";
 import { WelcomeInviteButton } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-invite-button";

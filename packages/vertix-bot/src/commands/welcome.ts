@@ -9,7 +9,7 @@ import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master
 import type { Client, CommandInteraction } from "discord.js";
 
 import type { ICommand } from "@vertix.gg/bot/src/interfaces/command";
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 const name = "welcome";
 
@@ -22,7 +22,7 @@ export const Welcome: ICommand = {
     defaultMemberPermissions: [ DEFAULT_SETUP_PERMISSIONS ],
 
     run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
-        const uiAdapter = ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" );
+        const uiAdapter = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" );
 
         uiAdapter.get( "VertixBot/UI-V2/WelcomeAdapter" )?.ephemeral( interaction );
     }

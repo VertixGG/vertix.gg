@@ -1,10 +1,11 @@
 // TODO: Fix imports order.
-import { UIElementsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-elements-group-base";
+import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
+
 import { ClaimVoteStepInButton } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-step-in-button";
 import { ClaimVoteAddButton } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-add-button";
 
-import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { UIElementButtonBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-button-base";
+import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
 const MAX_BUTTONS_PER_ROW = 3;
 

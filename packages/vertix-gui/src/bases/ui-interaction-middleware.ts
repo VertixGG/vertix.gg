@@ -1,13 +1,13 @@
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-import { BaseInteraction, ChannelType, GuildChannel, Message } from "discord.js";
-
-import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import type { PermissionsString } from "discord.js";
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
+
+import { BaseInteraction, ChannelType, GuildChannel, Message } from "discord.js";
+
+import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+import type { PermissionsString } from "discord.js";
 
 export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TInteraction extends UIAdapterReplyContext> extends InitializeBase {
     // TODO: Use decorator to wrap methods
@@ -22,12 +22,7 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
         "regenerate",
     ];
 
-    private static debugger = new Debugger(
-        UIInteractionMiddleware.getName(),
-        "",
-        isDebugEnabled( "UI", UIInteractionMiddleware.getName() )
-    );
-
+    private static debugger = createDebugger( UIInteractionMiddleware.getName(), "UI" );
     private readonly eventArgs;
 
     private readonly target: UIAdapterBase<TChannel, TInteraction>;
@@ -65,7 +60,7 @@ export class UIInteractionMiddleware<TChannel extends UIAdapterStartContext, TIn
                     UIInteractionMiddleware.debugger.log( self.passThrough,
                         `Calling original method: '${ target.getName() }::${ method.name }'` );
 
-                    return Reflect.apply(method, target, args );
+                    return Reflect.apply( method, target, args );
                 } );
             };
 

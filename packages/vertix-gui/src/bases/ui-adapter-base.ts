@@ -1,13 +1,11 @@
 import process from "process";
 
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-
 import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix.gg/base/src/definitions/guild-data-keys";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
-import { Debugger } from "@vertix.gg/base/src/modules/debugger";
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
@@ -76,11 +74,7 @@ export abstract class UIAdapterBase<
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterEntityBase {
     private static adapterLogger: Logger = new Logger( this.getName() );
-    private static adapterDebugger: Debugger = new Debugger(
-        this.getName(),
-        "",
-        isDebugEnabled( "UI", UIAdapterBase.getName() )
-    );
+    private static adapterDebugger = createDebugger( this.getName(), "UI" );
 
     private static validatedOnce = false;
 

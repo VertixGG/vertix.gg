@@ -2,11 +2,11 @@ import { GuildChannel, Message } from "discord.js";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-
-import { Debugger } from "@vertix.gg/base/src/modules/debugger";
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { ArgsNotFoundError } from "@vertix.gg/gui/src/bases/errors/args-not-found-error";
+
+import type { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import type { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
 
@@ -14,7 +14,6 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class UIArgsManager extends InitializeBase {
-    private prefixName: string;
     private debugger: Debugger;
 
     private data: {
@@ -32,12 +31,10 @@ export class UIArgsManager extends InitializeBase {
         return "VertixGUI/UIArgsManager";
     }
 
-    public constructor( prefixName: string ) {
+    public constructor( private readonly prefixName: string ) {
         super();
 
-        this.prefixName = prefixName;
-
-        this.debugger = new Debugger( this, prefixName, isDebugEnabled( "UI", this.getName() ) );
+        this.debugger = createDebugger( this, prefixName, "UI" );
     }
 
     // TODO: Remove this method, it should be handled by initiator

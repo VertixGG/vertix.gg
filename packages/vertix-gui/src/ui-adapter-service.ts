@@ -120,7 +120,7 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
     public async registerInternalAdapters() {
         const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
 
-        this.registerAdapters( Object.values( internalAdapters ) );
+        await this.registerAdapters( Object.values( internalAdapters ) );
     }
 
     public async registerAdapters( adapters: MangedClassType[] ) {

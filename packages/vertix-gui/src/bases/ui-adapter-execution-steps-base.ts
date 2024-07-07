@@ -1,6 +1,6 @@
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
-import { Debugger } from "@vertix.gg/base/src/modules/debugger";
+
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
@@ -22,11 +22,8 @@ export abstract class UIAdapterExecutionStepsBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterBase<TChannel, TInteraction> {
-    private static adapterExecutionDebugger: Debugger = new Debugger(
-        UIAdapterExecutionStepsBase.getName(),
-        "",
-        isDebugEnabled( "UI", UIAdapterExecutionStepsBase.getName() )
-    );
+
+    private static adapterExecutionDebugger = createDebugger( this.getName(), "UI" );
 
     private static executionStepsArray: UIExecutionStepItem[];
 

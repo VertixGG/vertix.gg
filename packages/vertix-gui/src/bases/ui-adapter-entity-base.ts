@@ -12,9 +12,7 @@ import {
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-
-import { Debugger } from "@vertix.gg/base/src/modules/debugger";
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
 
 import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
@@ -49,10 +47,7 @@ interface UIEntityMap {
 // TODO: Some methods can be private.
 
 export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
-    // TODO Make config for all new debuggers.
-    private static adapterEntityDebugger: Debugger = new Debugger( this, "",
-        isDebugEnabled( "UI", UIAdapterEntityBase.getName()
-    ) );
+    private static adapterEntityDebugger = createDebugger( this, "", "UI" );
 
     private readonly component: UIComponentBase;
 

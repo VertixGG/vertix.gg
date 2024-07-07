@@ -6,9 +6,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
-import { Debugger } from "@vertix.gg/base/src/modules/debugger";
-
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
@@ -51,6 +49,8 @@ export class UIService extends ServiceBase {
 
     private static cleanupTimerInterval: NodeJS.Timeout;
 
+    private debugger = createDebugger( this, "UI", "" );
+
     private uiLanguageManager: UILanguageManagerInterface | null = null;
 
     private hashTable: Map<number, Map<string, string>> = new Map();
@@ -79,11 +79,7 @@ export class UIService extends ServiceBase {
         return UIService.instance;
     }
 
-    public constructor(
-        // TODO: Why repeating... why not? Debugger( UIManager.getName(), "", /* check env */ "env" );
-        private client: Client<true>,
-        private uiDebugger = new Debugger( UIService.getName(), "", isDebugEnabled( "SERVICE", UIService.getName() ) )
-    ) {
+    public constructor( private client: Client<true> ) {
         super();
 
         // Try load hash tables from file.
@@ -118,7 +114,7 @@ export class UIService extends ServiceBase {
         const parted = id.split( separator );
 
         if ( parted.length > 1 ) {
-            this.uiDebugger.log(
+            this.debugger.log(
                 this.generateCustomIdHash, "Generating custom id for parted id:", {
                     id,
                     parted,
@@ -132,7 +128,7 @@ export class UIService extends ServiceBase {
                 hashedParts = parted.map( ( part ) => this.generateCustomIdHash( part, separator, maxLenForPart ) ),
                 result = hashedParts.join( separator );
 
-            this.uiDebugger.log(
+            this.debugger.log(
                 this.generateCustomIdHash, "Generated custom id:", {
                     hashedParts,
                     maxLenForPart,
@@ -160,7 +156,7 @@ export class UIService extends ServiceBase {
         this.setHashTableEntry( id, hash, maxLength );
         this.setHashTableReverseEntry( hash, id, hash.length );
 
-        this.uiDebugger.log(
+        this.debugger.log(
             this.generateCustomIdHash, `Generated hash id: '${ hash.slice( 0, 32 ) + "..." + hash.slice( hash.length - 4 ) }' for id: '${ id }'`
         );
 
@@ -171,14 +167,14 @@ export class UIService extends ServiceBase {
         const hashedParts = separator ? hash.split( separator ) : [];
 
         if ( hashedParts.length > 1 ) {
-            this.uiDebugger.log(
+            this.debugger.log(
                 this.getCustomIdFromHash, "Getting custom id from hashed parts:", hashedParts
             );
 
             const result = hashedParts.map( ( part ) => this.getCustomIdFromHash( part, separator ) )
                 .join( separator! );
 
-            this.uiDebugger.log(
+            this.debugger.log(
                 this.getCustomIdFromHash, "Got custom id:", { hashedParts, result, resultLen: result.length }
             );
 
@@ -188,7 +184,7 @@ export class UIService extends ServiceBase {
         const id = this.hashTableReverse.get( hash.length )?.get( hash );
 
         if ( ! id ) {
-            if ( this.uiDebugger.isEnabled() ) {
+            if ( this.debugger.isEnabled() ) {
                 throw new Error( `Can't find id for hash: '${ hash }'` );
             } else {
                 this.logger.error( this.getCustomIdFromHash, `Can't find id for hash: '${ hash }'` );
@@ -259,7 +255,7 @@ export class UIService extends ServiceBase {
     }
 
     public maybeSaveTablesToFile() {
-        this.uiDebugger.log( this.maybeSaveTablesToFile, "Checking if hash tables need to be saved to file", {
+        this.debugger.log( this.maybeSaveTablesToFile, "Checking if hash tables need to be saved to file", {
             old: this.hashTablesSaveLength,
             new: this.getCurrenHashTablesLength()
         } );
@@ -281,7 +277,7 @@ export class UIService extends ServiceBase {
     }
 
     public async saveTablesToFile( filePath = process.cwd() + "/ui-hash-tables.json" ) {
-        this.uiDebugger.log( this.saveTablesToFile, "Saving hash tables to file:", filePath );
+        this.debugger.log( this.saveTablesToFile, "Saving hash tables to file:", filePath );
 
         const data = {
             hashTable: Array.from( this.hashTable.entries() ).map( ( [ length, map ] ) => [ length, Array.from( map.entries() ) ] ),
@@ -293,10 +289,10 @@ export class UIService extends ServiceBase {
 
     public loadTablesFromFile( filePath = process.cwd() + "/ui-hash-tables.json" ) {
         if ( ! fs.existsSync( filePath ) ) {
-            return this.uiDebugger.log( this.loadTablesFromFile, "File not found:", filePath );
+            return this.debugger.log( this.loadTablesFromFile, "File not found:", filePath );
         }
 
-        this.uiDebugger.log( this.loadTablesFromFile, "Loading hash tables from file:", filePath );
+        this.debugger.log( this.loadTablesFromFile, "Loading hash tables from file:", filePath );
 
         const data = JSON.parse( fs.readFileSync( filePath, "utf-8" ) );
 

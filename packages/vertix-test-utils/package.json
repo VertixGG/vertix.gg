@@ -2,7 +2,7 @@
     "name": "@vertix.gg/test-utils",
     "type": "module",
     "devDependencies": {
-        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/base": "workspace:*"
 
     }
 }

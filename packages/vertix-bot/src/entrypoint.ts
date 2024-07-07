@@ -117,13 +117,6 @@ async function registerUILanguageManager() {
 
 async function createCleanupWorker() {
     try {
-
-        if ( process.env.npm_execpath && path.basename( process.env.npm_execpath ) === "bun" ) {
-            // TODO: Implement solution.
-            // noinspection ExceptionCaughtLocallyJS
-            throw new Error( "Cleanup worker is disabled when using bun runner" );
-        }
-
         const thread = await initWorker();
         await thread.run();
         GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );

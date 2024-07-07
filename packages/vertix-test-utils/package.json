@@ -3,13 +3,6 @@
     "type": "module",
     "devDependencies": {
         "@vertix.gg/base": "workspace:*",
-        "discord.js": "latest",
-        "@types/jest": "latest",
-        "@types/jest-when": "latest",
-        "@types/node": "latest",
-        "jest": "latest",
-        "jest-when": "latest",
-        "ts-mockito": "latest",
-        "tsx": "latest"
+
     }
 }

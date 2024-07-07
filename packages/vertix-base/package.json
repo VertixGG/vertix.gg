@@ -2,6 +2,9 @@
     "name": "@vertix.gg/base",
     "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
     "type": "module",
+    "scripts": {
+        "vertix-base:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects base"
+    },
     "dependencies": {
         "@prisma/client": "latest",
         "@vertix.gg/prisma": "workspace:*",

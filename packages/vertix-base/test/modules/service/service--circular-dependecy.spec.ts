@@ -98,12 +98,9 @@ describe( "VertixBase/Modules/Service" , () => {
 
         it( "should fail on circular dependencies", async () => {
             // Arrange + Act & Assert.
-            expect( async () => {
+            expect( () => {
                 ServiceLocatorMock.$.register( CircularServiceA );
                 ServiceLocatorMock.$.register( CircularServiceB );
-
-                await ServiceLocatorMock.$.waitFor( "Services/CircularA" );
-                await ServiceLocatorMock.$.waitFor( "Services/CircularB" );
             } ).toThrow( "Circular dependency detected" );
         } );
 
@@ -166,7 +163,7 @@ describe( "VertixBase/Modules/Service" , () => {
             }
 
             // Act & Assert.
-            expect( async () => {
+            expect( () => {
                 ServiceLocatorMock.$.register( ServiceA );
                 ServiceLocatorMock.$.register( ServiceB );
                 ServiceLocatorMock.$.register( ServiceC );

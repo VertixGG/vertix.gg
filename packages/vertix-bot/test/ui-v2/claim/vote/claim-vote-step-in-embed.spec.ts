@@ -1,29 +1,24 @@
 import { jest } from "@jest/globals";
 
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 import { ClaimVoteStepInEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-step-in-embed";
 
 describe( "VertixBot/UI-V2/ClaimVoteStepInEmbed", () => {
     beforeEach( async () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
+        // Mock original ServiceLocator.
+        ServiceLocatorMock.mockOrigin();
 
-        // Mock ServiceLocator.
-        jest.mock( "@vertix.gg/base/src/modules/service/service-locator",
-            () => ServiceLocatorMock
-        );
-
-        // Register UIAdapterService
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-service" ) ).UIService );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-adapter-service" ) ).UIAdapterService );
+        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
+        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
 
         // Await for all services to be registered.
         await ServiceLocatorMock.$.waitForAll();
     } );
 
     afterEach( () => {
-        jest.clearAllMocks();
+        // Reset ServiceLocator.
+        ServiceLocatorMock.reset();
     } );
 
     it( "should passthroughs sanity check", async () => {

@@ -1,5 +1,5 @@
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { SetupStep1Embed } from "@vertix.gg/bot/src/ui-v2/setup-new/step-1/setup-step-1-embed";
 

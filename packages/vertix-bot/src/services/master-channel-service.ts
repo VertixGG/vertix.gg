@@ -53,7 +53,7 @@ import {
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
@@ -68,7 +68,7 @@ import type {
     VoiceChannel
 } from "discord.js";
 
-import type { AppService } from "src/services/app-service";
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 interface IMasterChannelCreateCommonArgs {
     userOwnerId: string,
@@ -161,7 +161,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixBot/UI-V2/UIAdapterService",
+            uiAdapterService: "VertixGUI/UIAdapterService",
             channelService: "VertixBot/Services/Channel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel",
         };
@@ -298,7 +298,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 // Send DM message to the user with missing permissions.
                 if ( newState.member?.id ) {
                     const missingPermissionsAdapter = this.services
-                        .uiAdapterService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" );
+                        .uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" );
 
                     if ( ! missingPermissionsAdapter ) {
                         this.logger.error( this.onJoinMasterChannel,

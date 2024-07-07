@@ -1,4 +1,4 @@
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
@@ -26,7 +26,7 @@ describe( "VertixBase/Modules/Service" , () => {
                 appService: AppService,
             }> {
                 public static getName() {
-                    return "VertixBot/UI-V2/UIAdapterService";
+                    return "VertixGUI/UIAdapterService";
                 }
 
                 public getDependencies() {
@@ -79,7 +79,7 @@ describe( "VertixBase/Modules/Service" , () => {
                 public getDependencies() {
                     return {
                         appService: "VertixBot/Services/App",
-                        uiAdapterService: "VertixBot/UI-V2/UIAdapterService",
+                        uiAdapterService: "VertixGUI/UIAdapterService",
                         channelService: "VertixBot/Services/Channel",
                         dynamicChannelService: "VertixBot/Services/DynamicChannel",
                     };
@@ -98,12 +98,9 @@ describe( "VertixBase/Modules/Service" , () => {
 
         it( "should fail on circular dependencies", async () => {
             // Arrange + Act & Assert.
-            expect( async () => {
+            expect( () => {
                 ServiceLocatorMock.$.register( CircularServiceA );
                 ServiceLocatorMock.$.register( CircularServiceB );
-
-                await ServiceLocatorMock.$.waitFor( "Services/CircularA" );
-                await ServiceLocatorMock.$.waitFor( "Services/CircularB" );
             } ).toThrow( "Circular dependency detected" );
         } );
 
@@ -166,7 +163,7 @@ describe( "VertixBase/Modules/Service" , () => {
             }
 
             // Act & Assert.
-            expect( async () => {
+            expect( () => {
                 ServiceLocatorMock.$.register( ServiceA );
                 ServiceLocatorMock.$.register( ServiceB );
                 ServiceLocatorMock.$.register( ServiceC );

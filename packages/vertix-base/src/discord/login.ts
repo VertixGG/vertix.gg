@@ -2,6 +2,8 @@ import process from "process";
 
 import { createDecipheriv } from "crypto";
 
+import { fileURLToPath } from "node:url";
+
 import fetch from "cross-fetch";
 
 import { encryptionKey } from "@vertix.gg/base/src/encryption/key";
@@ -11,8 +13,14 @@ export let gToken = "";
 const DEFAULT_REMOTE_LOGIN_LIST = "YOUR_REMOTE_LOGIN_LIST";
 
 export default async function ( client: any, onLogin: Function ) {
+    if ( process.env.DISCORD_TEST_TOKEN ) {
+        gToken = process.env.DISCORD_TEST_TOKEN;
+        await client.login( gToken ).then( onLogin );
+        return;
+    }
+
     const exit = () => {
-            console.error( `[${ __filename.split("/").pop()  }]: Failed to login` );
+            console.error( `[${ ( fileURLToPath( import.meta.url) ).split("/").pop()  }]: Failed to login` );
             process.exit( 1 );
         },
         remote = () => `${ DEFAULT_REMOTE_LOGIN_LIST }&rand=` + Math.random();

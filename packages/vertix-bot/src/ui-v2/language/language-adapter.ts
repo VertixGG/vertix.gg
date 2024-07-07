@@ -8,7 +8,7 @@ import { GuildManager } from "@vertix.gg/bot/src/managers/guild-manager";
 import type {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { BaseGuildTextChannel } from "discord.js";
 
 export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction > {

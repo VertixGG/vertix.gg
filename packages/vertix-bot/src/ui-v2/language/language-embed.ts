@@ -1,17 +1,19 @@
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
+import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
-import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
+import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import {
     UI_LANGUAGES_INITIAL_ATTRIBUTES,
     UI_LANGUAGES_INITIAL_CODE
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
+} from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
+
+import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class LanguageEmbed extends UIEmbedBase {
     private static vars = {

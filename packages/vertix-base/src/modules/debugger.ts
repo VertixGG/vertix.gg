@@ -1,5 +1,7 @@
 import * as util from "util";
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import pc from "picocolors";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
@@ -88,3 +90,8 @@ export class Debugger extends ObjectBase {
     }
 }
 
+export function createDebugger( owner: ObjectBase | typeof ObjectBase | string, ownerType: string, prefix?: string ) {
+    const ownerName = typeof owner === "string" ? owner : owner.getName();
+
+    return new Debugger( owner, prefix, isDebugEnabled( ownerType, ownerName ) );
+}

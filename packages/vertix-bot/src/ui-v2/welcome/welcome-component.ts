@@ -1,5 +1,5 @@
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { WelcomeElementsGroup } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-elements-group";
 import { WelcomeEmbed } from "@vertix.gg/bot/src/ui-v2/welcome/welcome-embed";

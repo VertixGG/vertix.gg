@@ -3,6 +3,8 @@ import path from "path";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
+import { UI_LANGUAGES_PATH } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+
 import { EmbedLanguageModel } from "@vertix.gg/bot/src/models/embed-language-model";
 import { ElementButtonLanguageModel } from "@vertix.gg/bot/src/models/element-button-language-model";
 import { ElementTextInputLanguageModel } from "@vertix.gg/bot/src/models/element-text-input-language-model";
@@ -11,9 +13,7 @@ import { MarkdownLanguageModel } from "@vertix.gg/bot/src/models/markdown-langua
 
 import { ModalLanguageModel } from "@vertix.gg/bot/src/models/modal-language-model";
 
-import { UI_LANGUAGES_PATH } from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
-
-import type { UILanguageJSON } from "@vertix.gg/bot/src/ui-v2/_base/ui-language-definitions";
+import type { UILanguageJSON } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
 export class LanguageUtils extends InitializeBase {
     private static instance: LanguageUtils;

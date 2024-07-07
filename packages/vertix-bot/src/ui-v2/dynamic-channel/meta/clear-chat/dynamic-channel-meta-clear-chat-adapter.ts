@@ -7,8 +7,8 @@ import {
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { VoiceChannel } from "discord.js";
 
 export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBase {

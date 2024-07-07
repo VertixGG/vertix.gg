@@ -4,8 +4,8 @@ import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui-v2/dynamic-chan
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdapterBase {
     public static getName() {

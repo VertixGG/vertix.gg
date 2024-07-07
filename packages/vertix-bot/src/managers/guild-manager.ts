@@ -16,7 +16,7 @@ import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-ch
 import type { Client, Guild } from "discord.js";
 
 import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-message-service";
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
 
@@ -52,7 +52,7 @@ export class GuildManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.uiAdapterService = ServiceLocator.$.get( "VertixBot/UI-V2/UIAdapterService" );
+        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
         this.dmService = ServiceLocator.$.get( "VertixBot/Services/DirectMessage" );
 

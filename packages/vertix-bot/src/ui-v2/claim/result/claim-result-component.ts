@@ -1,8 +1,10 @@
 // TODO: Sort out imports
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+
+import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { ClaimResultOwnerStopEmbed } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-owner-stop-embed";
-import { UIEmbedsGroupBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embeds-group-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
 import { ClaimResultStepInEmbed } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-step-in-embed";
 import { ClaimResultStepAlreadyInEmbed } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-step-already-in-embed";
 import { ClaimResultVotedEmbed } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-voted-embed";

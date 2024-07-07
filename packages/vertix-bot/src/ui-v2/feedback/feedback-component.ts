@@ -1,5 +1,5 @@
-import { UIComponentBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-component-base";
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { FeedbackReportButton } from "@vertix.gg/bot/src/ui-v2/feedback/elements/feedback-report-button";
 import { FeedbackSuggestionButton } from "@vertix.gg/bot/src/ui-v2/feedback/elements/feedback-suggestion-button";

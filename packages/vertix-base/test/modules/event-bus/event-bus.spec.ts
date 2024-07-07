@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import { MockEventBus, MockObject } from "@vertix.gg/base/test/modules/event-bus/__mock__";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";

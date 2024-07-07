@@ -20,7 +20,7 @@ import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-ch
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
@@ -34,17 +34,17 @@ import {
     DynamicChannelPremiumClaimChannelButton
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultChannelSelectMenuChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction,
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction |

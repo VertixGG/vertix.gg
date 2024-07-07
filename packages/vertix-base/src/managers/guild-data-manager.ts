@@ -1,8 +1,8 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
+import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
 
-import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords";
+import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
 import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/base/src/definitions/guild-data-keys";

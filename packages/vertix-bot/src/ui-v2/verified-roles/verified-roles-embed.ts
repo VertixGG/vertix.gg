@@ -1,8 +1,8 @@
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/bot/src/ui-v2/ui-utils";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-embed-base";
+import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class VerifiedRolesEmbed extends UIEmbedBase {
     private static _vars = {

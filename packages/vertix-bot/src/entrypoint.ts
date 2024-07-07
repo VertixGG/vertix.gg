@@ -7,42 +7,112 @@
  * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=286346264&scope=bot%20applications.commands - Vertix + Admin
  * @see https://discord.com/api/oauth2/authorize?client_id=1114586106491572254&permissions=286346264&scope=bot%20applications.commands - Vertix Test
  */
-
 import { fileURLToPath } from "node:url";
+
 import * as util from "node:util";
 
 import path from "path";
+
 import process from "process";
 
-import { config } from "dotenv";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
+
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-import { Logger } from "@vertix.gg/base/src/modules/logger";
-
-import GlobalLogger from "@vertix.gg/bot/src/global-logger";
+import { config } from "dotenv";
 
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
+import GlobalLogger from "@vertix.gg/bot/src/global-logger";
+
+import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
+
+import type { Client } from "discord.js";
+
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
+
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+
+import type UIService from "@vertix.gg/gui/src/ui-service";
+
+async function registerUIServices( client: Client<true> ) {
+    const uiServices = await Promise.all( [
+        import("@vertix.gg/gui/src/ui-service"),
+        import("@vertix.gg/gui/src/ui-adapter-service"),
+    ] );
+
+    uiServices.forEach( service => {
+        GlobalLogger.$.debug( registerUIServices, `Registering service: '${ service.default.getName() }'` );
+
+        ServiceLocator.$.register<ServiceBase>( service.default, client );
+
+        GlobalLogger.$.debug( registerUIServices, `Service registered: '${ service.default.getName() }'` );
+    } );
+
+    await ServiceLocator.$.waitForAll();
+}
 
 async function registerServices() {
     const services = await Promise.all( [
         import("@vertix.gg/bot/src/services/app-service"),
-        import("@vertix.gg/bot/src/ui-v2/ui-service"),
-        import("@vertix.gg/bot/src/ui-v2/ui-adapter-service"),
+
         import("@vertix.gg/bot/src/services/direct-message-service"),
+
         import("@vertix.gg/bot/src/services/channel-service"),
         import("@vertix.gg/bot/src/services/dynamic-channel-service"),
         import("@vertix.gg/bot/src/services/master-channel-service")
     ] );
 
     services.forEach( service => {
+        GlobalLogger.$.debug( registerServices, `Registering service: '${ service.default.getName() }'` );
+
         ServiceLocator.$.register<ServiceBase>( service.default );
+
+        GlobalLogger.$.debug( registerServices, `Service registered: '${ service.default.getName() }'` );
     } );
 
     await ServiceLocator.$.waitForAll();
+}
+
+async function registerUIAdapters() {
+    // Register UI adapters
+    const uiAdapters = await import("@vertix.gg/bot/src/ui-v2/ui-adapters-index"),
+        uiAdapterService = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" );
+
+    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/regenerate/ui-regenerate-button" ),
+        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-back-button" ),
+        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-next-button" ),
+        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-finish-button" );
+
+    uiAdapterService.$$.registerSystemElements( {
+        RegenerateButton: UIRegenerateButton,
+        WizardBackButton: UIWizardBackButton,
+        WizardNextButton: UIWizardNextButton,
+        WizardFinishButton: UIWizardFinishButton
+    } );
+
+    const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui-v2/_general/invalid-channel-type/invalid-channel-type-component" ),
+        { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui-v2/_general/missing-permissions/missing-permissions-component" );
+
+    uiAdapterService.$$.registerSystemComponents( {
+        InvalidChannelTypeComponent: InvalidChannelTypeComponent,
+        MissingPermissionsComponent: MissingPermissionsComponent
+    } );
+
+    await uiAdapterService.registerInternalAdapters();
+
+    await uiAdapterService.registerAdapters( Object.values( uiAdapters ) );
+}
+
+async function registerUILanguageManager() {
+    // Register UI language manager
+    await UILanguageManager.$.register();
+
+    // Register UI language manager in UIService
+    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+        .registerUILanguageManager( UILanguageManager.$ );
 }
 
 async function createCleanupWorker() {
@@ -79,15 +149,23 @@ export async function entryPoint() {
     await PrismaBotClient.$.connect();
 
     GlobalLogger.$.info( entryPoint, "Database is connected" );
+
     GlobalLogger.$.info( entryPoint, "Registering services..." );
 
+    GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
+
+    const { default: botInitialize } = await import("./vertix");
+
+    const client = await botInitialize();
+
+    // TODO Check what happened if no services are registered, and adapter are requested,
+    await registerUIServices( client );
     await registerServices();
 
     GlobalLogger.$.info( entryPoint, "Services are registered" );
 
-    const { default: botInitialize } = await import("./vertix");
-
-    await botInitialize();
+    await registerUIAdapters();
+    await registerUILanguageManager();
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 

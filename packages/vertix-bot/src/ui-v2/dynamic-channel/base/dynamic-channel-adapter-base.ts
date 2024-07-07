@@ -1,20 +1,32 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import  { Logger } from "@vertix.gg/base/src/modules/logger";
 
-import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
+import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/_dynamic-channel-requirements";
 
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
+import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 export abstract class DynamicChannelAdapterBase extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
     protected static logger = new Logger( this.getName() );
 
+    protected dynamicChannelService: DynamicChannelService;
+
     public static getName() {
         return "VertixBot/UI-V2/DynamicChannelAdapterBase";
+    }
+
+    public constructor( uiAdapterService: UIAdapterService ) {
+        super( uiAdapterService );
+
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
     public getChannelTypes() {

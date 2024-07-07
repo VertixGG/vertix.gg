@@ -1,6 +1,7 @@
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base/src/utils/badwords";
+import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base/src/utils/badwords-utils";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
@@ -10,7 +11,7 @@ import {
     DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
 } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-base";
 
@@ -23,16 +24,20 @@ import type { ISetupArgs } from "@vertix.gg/bot/src/ui-v2/setup/setup-definition
 import type {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultModalChannelTextInteraction,
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { BaseGuildTextChannel } from "discord.js";
+import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 
 type DefaultInteraction =
     UIDefaultButtonChannelTextInteraction
     | UIDefaultModalChannelTextInteraction;
 
 export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, DefaultInteraction> {
+    private masterChannelService: MasterChannelService;
+
     public static getName() {
         return "VertixBot/UI-V2/SetupAdapter";
     }
@@ -45,6 +50,12 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         return [
             LanguageSelectMenu,
         ];
+    }
+
+    public constructor( uiAdapterService: UIAdapterService ) {
+        super( uiAdapterService );
+
+        this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }
 
     protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager?: UIArgs ): Promise<ISetupArgs> {

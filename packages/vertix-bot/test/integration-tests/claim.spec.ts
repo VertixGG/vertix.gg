@@ -361,7 +361,7 @@ it("should bypass", function () {
 //                 categoryId: "category_id_1",
 //             } );
 //
-//         // Add owner to tracking, simulate that he left the channel, and trigger on the abandon worker.
+//         // Add owner to tracking, simulate that he left the channel, and trigger on the abandon timer.
 //         // - it will trigger send message(Claim Start) to the channel.
 //         claimManager.addChannelTracking( ownerUser.id, channel );
 //         claimManager.handleAbandonedChannels( client );

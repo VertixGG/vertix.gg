@@ -2,15 +2,15 @@ import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { ClaimStartComponent } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-component";
+import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
+import { ClaimStartComponent } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-component";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {

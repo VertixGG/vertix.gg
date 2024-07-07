@@ -82,13 +82,13 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { APIPartialChannel, GuildMember, Interaction, Message, MessageComponentInteraction, ModalSubmitInteraction, OverwriteResolvable, PermissionOverwriteOptions, RESTRateLimit, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
-import type { AppService } from "src/services/app-service";
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
@@ -122,7 +122,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixBot/UI-V2/UIAdapterService",
+            uiAdapterService: "VertixGUI/UIAdapterService",
             channelService: "VertixBot/Services/Channel",
         };
     }

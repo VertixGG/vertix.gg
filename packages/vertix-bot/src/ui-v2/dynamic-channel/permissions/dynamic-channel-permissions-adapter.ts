@@ -16,8 +16,8 @@ import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultUserSelectMenuChannelVoiceInteraction
-} from "@vertix.gg/bot/src/ui-v2/_base/ui-interaction-interfaces";
-import type { UIArgs } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 type DefaultInteraction =
     | UIDefaultUserSelectMenuChannelVoiceInteraction

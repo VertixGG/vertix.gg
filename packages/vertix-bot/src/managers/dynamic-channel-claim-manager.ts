@@ -8,15 +8,13 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import {
-    DynamicChannelVoteManager
-} from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 // import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
-
-import type { UIAdapterService } from "src/ui-v2/ui-adapter-service";
+import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type {
     IVoteDefaultComponentInteraction
@@ -25,7 +23,7 @@ import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 import type { Client, GuildChannel, GuildMember, Message, VoiceBasedChannel, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-const FALLBACK_OWNERSHIP_WORKER_INTERVAL = 30 * 1000, // Half minute.
+const FALLBACK_OWNERSHIP_TIMER_INTERVAL = 30 * 1000, // Half minute.
     FALLBACK_OWNERSHIP_TIMEOUT = 10 * 60 * 1000; // 10 minutes.
 
 export class DynamicChannelClaimManager extends InitializeBase {
@@ -38,11 +36,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
     private readonly debugger: Debugger = new Debugger( this );
 
     private readonly ownershipTimeout: number;
-    private readonly ownershipWorkerTimeInterval: number;
+    private readonly ownershipTimerInterval: number;
 
-    private readonly workerIntervals: NodeJS.Timeout[] = [];
+    private readonly timerIntervals: NodeJS.Timeout[] = [];
 
-    private ownerShipWorkerInterval: NodeJS.Timeout | null = null;
+    private ownerShipTimerInterval: NodeJS.Timeout | null = null;
 
     private trackedChannels: {
         [ channelId: string ]: {
@@ -74,21 +72,21 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     public constructor(
         ownershipTimeout = process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMEOUT || FALLBACK_OWNERSHIP_TIMEOUT,
-        ownershipWorkerTimeInterval = process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_WORKER_INTERVAL || FALLBACK_OWNERSHIP_WORKER_INTERVAL
+        ownershipTimerInterval = process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMER_INTERVAL || FALLBACK_OWNERSHIP_TIMER_INTERVAL
     ) {
         super();
 
-        this.uiAdapterService = ServiceLocator.$.get( "VertixBot/UI-V2/UIAdapterService" );
+        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
 
         this.ownershipTimeout = Number( ownershipTimeout );
-        this.ownershipWorkerTimeInterval = Number( ownershipWorkerTimeInterval );
+        this.ownershipTimerInterval = Number( ownershipTimerInterval );
     }
 
-    // TODO: Base worker.
+    // TODO: Base timer.
     public destroy() {
-        this.workerIntervals.forEach( interval => clearInterval( interval ) );
+        this.timerIntervals.forEach( interval => clearInterval( interval ) );
     }
 
     public getChannelOwnershipTimeout() {
@@ -167,9 +165,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     /**
      * Function handleAbandonedChannels() :: Ensures that all abandoned added to abandon list,
-     * so worker can handle them later, the function is called on bot start.
+     * so timer can handle them later, the function is called on bot start.
      */
     public async handleAbandonedChannels( client: Client, specificChannels?: VoiceChannel[], specificChannelsDB?: ChannelResult[] ) {
+        await this.uiAdapterService.waitForAdapter( "VertixBot/UI-V2/ClaimStartAdapter" );
+
         this.debugger.dumpDown( this.handleAbandonedChannels, {
             specificChannels,
             specificChannelsDB
@@ -204,7 +204,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
                 // If it startup process, remove old "Claim Channel" button.
                 // TODO: Not good place for this.
-                if ( ! this.ownerShipWorkerInterval ) {
+                if ( ! this.ownerShipTimerInterval ) {
                     // Remove old "Claim Channel" button.
                     await this.uiAdapterService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.deleteRelatedComponentMessagesInternal( channel );
                 }
@@ -263,16 +263,16 @@ export class DynamicChannelClaimManager extends InitializeBase {
             await handleChannels( dynamicChannels );
         }
 
-        if ( ! this.ownerShipWorkerInterval ) {
-            const workerInterval = this.ownershipWorkerTimeInterval;
+        if ( ! this.ownerShipTimerInterval ) {
+            const timerInterval = this.ownershipTimerInterval;
 
             this.logger.info( this.handleAbandonedChannels,
-                `Setting up worker with interval: '${ ( workerInterval / 60000 ).toFixed( 1 ) } minute(s)'`
+                `Setting up timer with interval: '${ ( timerInterval / 60000 ).toFixed( 1 ) } minute(s)'`
             );
 
-            this.ownerShipWorkerInterval = setInterval( this.trackedChannelsWorker.bind( this ), workerInterval );
+            this.ownerShipTimerInterval = setInterval( this.trackedChannelsTimer.bind( this ), timerInterval );
 
-            this.workerIntervals.push( this.ownerShipWorkerInterval );
+            this.timerIntervals.push( this.ownerShipTimerInterval );
         }
     }
 
@@ -338,7 +338,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         DynamicChannelVoteManager.$.start(
             interaction.channel,
-            ( channel, state ) => this.voteWorker( channel, state, {
+            ( channel, state ) => this.voteTimer( channel, state, {
                 interaction,
                 message: forceMessage || interaction.message
             } ), // TODO Remove object.
@@ -443,15 +443,15 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
     }
 
-    private async voteWorker( channel: VoiceChannel, state: string, { message, interaction }: {
+    private async voteTimer( channel: VoiceChannel, state: string, { message, interaction }: {
         interaction: IVoteDefaultComponentInteraction,
         message: Message<true>
     } ) {
-        this.debugger.log( this.voteWorker,
+        this.debugger.log( this.voteTimer,
             `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - State: '${ state }'` );
 
         if ( ! message.channel ) {
-            this.logger.error( this.voteWorker,
+            this.logger.error( this.voteTimer,
                 `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Channel not found`
             );
             return;
@@ -472,9 +472,9 @@ export class DynamicChannelClaimManager extends InitializeBase {
         }
     }
 
-    private async trackedChannelsWorker() {
+    private async trackedChannelsTimer() {
         if ( this.trackedChannels.length ) {
-            this.logger.log( this.trackedChannelsWorker, "Worker activated", Object.entries( this.trackedChannels ).map( ( [ ownerId, data ] ) => {
+            this.logger.log( this.trackedChannelsTimer, "Timer activated", Object.entries( this.trackedChannels ).map( ( [ ownerId, data ] ) => {
                 const { channel } = data,
                     { guildId } = channel;
 
@@ -489,12 +489,12 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 continue;
             }
 
-            this.logger.info( this.trackedChannelsWorker,
+            this.logger.info( this.trackedChannelsTimer,
                 `Guild id: '${ channel.guild.id }', owner id: '${ ownerId }' - Abandon the channel: '${ channel.name }'`
             );
 
             if ( ! channel.guild.channels.cache.has( channel.id ) ) {
-                this.logger.warn( this.trackedChannelsWorker,
+                this.logger.warn( this.trackedChannelsTimer,
                     `Guild id: '${ channel.guild.id }' Channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
                     `- Channel: '${ channel.name }' deleted while, skip abandon`
                 );
@@ -506,13 +506,13 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
             const state = DynamicChannelVoteManager.$.getState( channel.id );
 
-            this.debugger.log( this.trackedChannelsWorker,
+            this.debugger.log( this.trackedChannelsTimer,
                 `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
                 `- Channel: '${ channel.name }' vote state: '${ state }'` );
 
             // Skip if vote is not idle.
             if ( state !== "idle" ) {
-                this.logger.warn( this.trackedChannelsWorker,
+                this.logger.warn( this.trackedChannelsTimer,
                     `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
                     `- Channel: '${ channel.name }' has active vote, skip abandon`
                 );

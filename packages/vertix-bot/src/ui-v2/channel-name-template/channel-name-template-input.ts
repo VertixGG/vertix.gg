@@ -1,10 +1,10 @@
 import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 
-import { UIElementInputBase } from "@vertix.gg/bot/src/ui-v2/_base/elements/ui-element-input-base";
+import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 
-import { UIInstancesTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIInputStyleTypes } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ChannelNameTemplateInput extends UIElementInputBase {
     public static getName() {

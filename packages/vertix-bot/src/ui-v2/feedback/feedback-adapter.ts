@@ -1,4 +1,5 @@
-import { UIAdapterBase } from "@vertix.gg/bot/src/ui-v2/_base/ui-adapter-base";
+import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+
 import { FeedbackComponent } from "@vertix.gg/bot/src/ui-v2/feedback/feedback-component";
 
 import { VERTIX_DEFAULT_SURVEY_COLLECTOR_ID } from "@vertix.gg/bot/src/definitions/app";

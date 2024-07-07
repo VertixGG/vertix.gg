@@ -168,6 +168,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
      * so timer can handle them later, the function is called on bot start.
      */
     public async handleAbandonedChannels( client: Client, specificChannels?: VoiceChannel[], specificChannelsDB?: ChannelResult[] ) {
+        await this.uiAdapterService.waitForAdapter( "VertixBot/UI-V2/ClaimStartAdapter" );
+
         this.debugger.dumpDown( this.handleAbandonedChannels, {
             specificChannels,
             specificChannelsDB

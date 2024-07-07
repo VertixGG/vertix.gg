@@ -1,3 +1,5 @@
+import EventEmitter from "node:events";
+
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { UI_GENERIC_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -41,6 +43,8 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
     private uiAdaptersTypes = new Map<string, MangedClassType | MangedClassConstructor>;
     private uiStaticInstances = new Map<string, ManagedClass>;
 
+    private static emitter = new EventEmitter();
+
     public static getName() {
         return "VertixGUI/UIAdapterService";
     }
@@ -51,6 +55,8 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         }
 
         Object.assign( UIAdapterService.uiSystemElements, systemElements );
+
+        this.emitter.emit( "system-elements-registered", systemElements );
     }
 
     public static registerSystemComponents( systemComponents: typeof UIAdapterService.uiSystemComponents ) {
@@ -59,6 +65,8 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         }
 
         Object.assign( UIAdapterService.uiSystemComponents, systemComponents );
+
+        this.emitter.emit( "system-components-registered", systemComponents );
     }
 
     public static getSystemElements() {
@@ -121,6 +129,8 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
 
         await this.registerAdapters( Object.values( internalAdapters ) );
+
+        this.$$.emitter.emit( "internal-adapters-registered" );
     }
 
     public async registerAdapters( adapters: MangedClassType[] ) {
@@ -152,9 +162,28 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
             this.storeInstance( UIClass );
         }
 
+        this.$$.emitter.emit( "adapter-registered", uiName );
+
         this.logger.log( this.registerAdapter,
             `Register entity: '${ uiName }' instanceType: '${ UIClass.getInstanceType() }'`
         );
+    }
+
+    public async waitForAdapter( uiName: string, options = { timeout: 0 } ) {
+        return new Promise<void>( ( resolve, reject ) => {
+            const callback = ( name: string ) => {
+                if ( name === uiName ) {
+                    this.$$.emitter.off( "adapter-registered", callback );
+                    resolve();
+                }
+
+                setTimeout( () => {
+                    reject( new Error( `User interface '${ uiName }' does not exist` ) );
+                }, options.timeout );
+            };
+
+            this.$$.emitter.on( "adapter-registered", callback );
+        } );
     }
 
     /**

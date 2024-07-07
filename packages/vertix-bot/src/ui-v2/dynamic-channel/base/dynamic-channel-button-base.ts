@@ -44,10 +44,6 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
         return false;
     }
 
-    protected async isLabelOmitted(): Promise<boolean> {
-        return true;
-    }
-
     protected async isAvailable(): Promise<boolean> {
         if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
             return this.uiArgs.dynamicChannelButtonsTemplate.some(

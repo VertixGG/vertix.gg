@@ -16,6 +16,14 @@ enum E_INTERNAL_CHANNEL_TYPES {
   MASTER_CREATE_CHANNEL
 }
 
+enum E_DATA_TYPES {
+  STRING
+  NUMBER
+  BOOLEAN
+  OBJECT
+  ARRAY
+}
+
 model Guild {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   // ---
@@ -257,4 +265,24 @@ model ModalLanguage {
   // ---
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
+}
+
+// Bot configuration.
+
+model Config {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  key       String
+  version   String
+  type      E_DATA_TYPES @default(STRING)
+  // ---
+  object    Json?
+  value     String?
+  values    String[]
+  // ---
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  // ---
+  @@unique([key, version])
 }

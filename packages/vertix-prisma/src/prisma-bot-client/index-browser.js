@@ -16,12 +16,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 5.15.0
- * Query Engine version: 12e25d8d06f6ea5a0252864dd9a03b1bb51f3022
+ * Prisma Client JS version: 5.16.1
+ * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
  */
 Prisma.prismaVersion = {
-  client: "5.15.0",
-  engine: "12e25d8d06f6ea5a0252864dd9a03b1bb51f3022"
+  client: "5.16.1",
+  engine: "34ace0eb2704183d2c05b60b52fba5c43c13f303"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -231,6 +231,18 @@ exports.Prisma.ModalLanguageScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -246,6 +258,14 @@ exports.E_INTERNAL_CHANNEL_TYPES = exports.$Enums.E_INTERNAL_CHANNEL_TYPES = {
   MASTER_CREATE_CHANNEL: 'MASTER_CREATE_CHANNEL'
 };
 
+exports.E_DATA_TYPES = exports.$Enums.E_DATA_TYPES = {
+  STRING: 'STRING',
+  NUMBER: 'NUMBER',
+  BOOLEAN: 'BOOLEAN',
+  OBJECT: 'OBJECT',
+  ARRAY: 'ARRAY'
+};
+
 exports.Prisma.ModelName = {
   Guild: 'Guild',
   GuildData: 'GuildData',
@@ -259,7 +279,8 @@ exports.Prisma.ModelName = {
   ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',
   EmbedLanguage: 'EmbedLanguage',
   MarkdownLanguage: 'MarkdownLanguage',
-  ModalLanguage: 'ModalLanguage'
+  ModalLanguage: 'ModalLanguage',
+  Config: 'Config'
 };
 
 /**

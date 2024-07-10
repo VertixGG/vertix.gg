@@ -9,11 +9,11 @@ export class DynamicChannelPermissionsKickMenu extends DynamicChannelUserMenuBas
         return 14;
     }
 
-    protected getPlaceholder(): Promise<string> {
-        return Promise.resolve( "👢 Kick User" );
+    protected async getPlaceholder() {
+        return "👢 Kick User";
     }
 
-    protected async isAvailable(): Promise<boolean> {
+    protected async isAvailable() {
         return this.uiArgs?.dynamicChannelButtonsIsAccessButtonAvailable;
     }
 }

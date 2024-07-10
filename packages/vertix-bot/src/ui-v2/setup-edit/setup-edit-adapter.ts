@@ -30,9 +30,6 @@ import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-mast
 import {
     DynamicChannelElementsGroup
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
-import {
-    DynamicChannelPremiumClaimChannelButton
-} from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
@@ -308,7 +305,10 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
-        if ( buttons.includes( DynamicChannelPremiumClaimChannelButton.getId() ) ) {
+        const claimChannelButtonId = DynamicChannelElementsGroup
+            .getByName( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton" )?.getId();
+
+        if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
             // Get all channels that are using this master channel.
             setTimeout( async () => {
                 const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
@@ -320,7 +320,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                         console.warn( `Channel ${ channelDB.channelId } not found.` );
                     }
 
-                    await this.dynamicChannelService.editPrimaryMessageDebounce( channel );
+                    this.dynamicChannelService.editPrimaryMessageDebounce( channel );
                 }
 
                 DynamicChannelClaimManager.$.handleAbandonedChannels( this.appService.getClient(), [], channels );

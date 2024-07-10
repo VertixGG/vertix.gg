@@ -14,11 +14,9 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import {
     DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE, DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
+    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
     DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
     DEFAULT_MASTER_CATEGORY_NAME,
     DEFAULT_MASTER_CHANNEL_CREATE_NAME
@@ -476,7 +474,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
 
             newButtons = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] ||
-                DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+                DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
 
             newMentionable = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] === "boolean" ?
                 args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] : DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
@@ -522,12 +520,12 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         } );
 
         // TODO: Duplicate code.
-        const usedButtons = DynamicChannelElementsGroup.getAllItems().filter( ( item ) => {
+        const usedButtons = DynamicChannelElementsGroup.getAll().filter( ( item ) => {
                 return newButtons.includes( item.getId() );
             } ),
-            usedEmojis = DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getUsedEmojis(
+            usedEmojis = ( DynamicChannelElementsGroup.getEmbedEmojis(
                 usedButtons.map( ( item ) => item.getId()
-                ) ).join( "," ),
+                )) ).join( "," ),
             usedRoles = newVerifiedRoles.map( ( roleId ) => {
                 if ( roleId === guild.roles.everyone.id ) {
                     return "@everyone";

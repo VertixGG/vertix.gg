@@ -35,7 +35,7 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
             },
         };
 
-        DynamicChannelElementsGroup.getAllItems().forEach( ( item: DynamicChannelButtonBase ) => {
+        DynamicChannelElementsGroup.getAll().forEach( ( item: DynamicChannelButtonBase ) => {
             result.dynamicChannelButtonsTemplate.options[ item.getId() ] = item.getLabelForEmbed();
         } );
 

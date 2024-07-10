@@ -7,11 +7,12 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import {
     DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
     DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
 } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-base";
 
@@ -144,7 +145,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         }
 
         this.uiAdapterService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
-            dynamicChannelButtonsTemplate: DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
 
             dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
             dynamicChannelAutoSave: DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,

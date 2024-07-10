@@ -1,5 +1,3 @@
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelMetaRenameButton extends DynamicChannelButtonBase {
@@ -8,15 +6,15 @@ export class DynamicChannelMetaRenameButton extends DynamicChannelButtonBase {
     }
 
     public getId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelMetaRenameButton.getName() );
+        return 0;
     }
 
     public getSortId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelMetaRenameButton.getName() );
+        return 0;
     }
 
     public getLabelForEmbed() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelMetaRenameButton.getName() );
+        return "✏️ ∙ **Rename**";
     }
 
     public async getLabelForMenu() {
@@ -24,11 +22,14 @@ export class DynamicChannelMetaRenameButton extends DynamicChannelButtonBase {
     }
 
     public async getLabel() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelMetaRenameButton.getName() );
+        return "Rename";
     }
 
     public async getEmoji() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
-            .getEmoji( DynamicChannelMetaRenameButton.getName() ) as string;
+        return "✏️";
+    }
+
+    public getEmojiForEmbed() {
+        return "✏️";
     }
 }

@@ -2,13 +2,13 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { ChannelType, PermissionsBitField, } from "discord.js";
 
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
-
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+
+import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { SetupStep1Component } from "@vertix.gg/bot/src/ui-v2/setup-new/step-1/setup-step-1-component";
 import { SetupStep2Component } from "@vertix.gg/bot/src/ui-v2/setup-new/step-2/setup-step-2-component";
@@ -264,7 +264,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     private async onButtonSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction, state: "added" | "remove" ) {
         const selectedButtonId = interaction.values[ 0 ],
             args = this.getArgsManager().getArgs( this, interaction ),
-            buttons = args.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE;
+            buttons = args.dynamicChannelButtonsTemplate || DynamicChannelElementsGroup.getAll().map( ( i ) => i.getId() );
 
         if ( state === "added" ) {
             if ( ! buttons.includes( parseInt( selectedButtonId ) ) ) {

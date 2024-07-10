@@ -20,17 +20,8 @@ interface IGuildSettings {
 }
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
-    private static instance: GuildDataManager;
-
     public static getName() {
         return "VertixBase/Managers/GuildData";
-    }
-
-    public static getInstance(): GuildDataManager {
-        if ( ! GuildDataManager.instance ) {
-            GuildDataManager.instance = new GuildDataManager();
-        }
-        return GuildDataManager.instance;
     }
 
     public static get $() {

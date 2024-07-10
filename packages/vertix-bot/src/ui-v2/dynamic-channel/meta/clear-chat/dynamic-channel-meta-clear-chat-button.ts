@@ -17,15 +17,19 @@ export class DynamicChannelMetaClearChatButton extends DynamicChannelButtonBase 
         return "🧹 ∙ **Clear Chat**";
     }
 
-    public async getLabelForMenu(): Promise<string> {
+    public async getLabelForMenu() {
         return await this.getLabel();
     }
 
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "Clear Chat" );
+    public async getLabel() {
+        return "Clear Chat";
     }
 
-    public async getEmoji(): Promise<string> {
+    public async getEmoji() {
+        return "🧹";
+    }
+
+    public getEmojiForEmbed() {
         return "🧹";
     }
 }

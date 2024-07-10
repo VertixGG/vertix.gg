@@ -1,5 +1,3 @@
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonBase {
@@ -7,32 +5,31 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
         return "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton";
     }
 
-    public static getId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPermissionsAccessButton.getName() );
-    }
-
     public getId() {
-        return DynamicChannelPermissionsAccessButton.getId();
+        return 5;
     }
 
     public getSortId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPermissionsAccessButton.getName() );
+        return 5;
     }
 
     public getLabelForEmbed() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPermissionsAccessButton.getName() );
+        return "👥 ∙ **Access**";
     }
 
     public async getLabelForMenu() {
-        return this.getLabel();
+        return "Access";
     }
 
     public async getLabel() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPermissionsAccessButton.getName() );
+        return this.getLabelForMenu();
     }
 
     public async getEmoji() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
-            .getEmoji( DynamicChannelPermissionsAccessButton.getName() ) as string;
+        return "👥";
+    }
+
+    public getEmojiForEmbed() {
+        return "👥";
     }
 }

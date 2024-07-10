@@ -8,7 +8,7 @@ import {
 
 import type { APISelectMenuOption } from "discord.js";
 
-const allItems = DynamicChannelElementsGroup.getAllItems();
+const allItems = DynamicChannelElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectMenu {
     public static getName() {

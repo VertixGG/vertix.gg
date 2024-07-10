@@ -6,7 +6,7 @@ import {
     DynamicChannelElementsGroup
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
-const allItems = DynamicChannelElementsGroup.getAllItems();
+const allItems = DynamicChannelElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu {
     public static getName() {
@@ -40,8 +40,8 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
         } );
 
         return ( await Promise.all( values ) ).sort( ( a, b ) =>
-            DynamicChannelElementsGroup.getItemById( parseInt( a.value ) ).getSortId() -
-            DynamicChannelElementsGroup.getItemById( parseInt( b.value ) ).getSortId()
+            DynamicChannelElementsGroup.getById( parseInt( a.value ) )!.getSortId() -
+            DynamicChannelElementsGroup.getById( parseInt( b.value ) )!.getSortId()
         );
     }
 }

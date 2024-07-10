@@ -1,3 +1,5 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import  { Logger } from "@vertix.gg/base/src/modules/logger";
@@ -11,7 +13,10 @@ import {
     DEFAULT_SETUP_PERMISSIONS
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 export class AdminAdapterExuBase<
     TChannel extends UIAdapterStartContext,
@@ -19,8 +24,16 @@ export class AdminAdapterExuBase<
 > extends UIAdapterExecutionStepsBase<TChannel, TInteraction> {
     private static dedicatedLogger = new Logger( this.getName() );
 
+    protected dynamicChannelService: DynamicChannelService;
+
     public static getName() {
         return "VertixBot/UI-V2/AdminAdapterExuBase";
+    }
+
+    public constructor( uiAdapterService: UIAdapterService ) {
+        super( uiAdapterService );
+
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
     public getPermissions(): PermissionsBitField {

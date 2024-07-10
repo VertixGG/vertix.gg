@@ -1,5 +1,3 @@
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
@@ -10,19 +8,19 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
     }
 
     public getId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPermissionsVisibilityButton.getName() );
+        return 4;
     }
 
     public getSortId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPermissionsVisibilityButton.getName() );
+        return 4;
     }
 
     public getLabelForEmbed() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPermissionsVisibilityButton.getName() );
+        return "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**";
     }
 
     public async getLabelForMenu() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPermissionsVisibilityButton.getName() );
+        return "Shown/Hidden";
     }
 
     public async getLabel(): Promise<string> {
@@ -30,14 +28,11 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
     }
 
     public async getEmoji() {
-        const emojis = DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
-            .getEmoji( DynamicChannelPermissionsVisibilityButton.getName() ) as string[];
+        return this.uiArgs?.isHidden ? "🙈" : "🐵";
+    }
 
-        if ( ! this.uiArgs?.isHidden ) {
-            return emojis[ 0 ];
-        }
-
-        return emojis[ 1 ];
+    public getEmojiForEmbed() {
+        return "(🙈 / 🐵)";
     }
 
     protected getOptions() {

@@ -1,16 +1,29 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/_dynamic-channel-requirements";
 
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+
 import type { UIAdapterReplyContext, UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
+import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 export abstract class DynamicChannelAdapterExuBase<TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction> extends UIAdapterExecutionStepsBase<VoiceChannel, TInteraction> {
+    protected dynamicChannelService: DynamicChannelService;
+
     public static getName() {
         return "VertixBot/UI-V2/DynamicChannelAdapterExuBase";
+    }
+
+    public constructor( uiAdapterService: UIAdapterService ) {
+        super( uiAdapterService );
+
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
     public getChannelTypes() {

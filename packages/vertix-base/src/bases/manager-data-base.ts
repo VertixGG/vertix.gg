@@ -17,13 +17,23 @@ const DEFAULT_OWNER_ID_CACHE_TIMEOUT = /* 1 hour */ 60 * 60 * 1000;
 export abstract class ManagerDataBase<
     ModelType extends IDataModel
 > extends CacheBase<DataResult> implements IDataManager {
+    private static instances: Map<any, any> = new Map();
+
     private ownerIdCache: { [ ownerId: string ]: string } = {};
 
     private dataSourceModel: ModelType;
 
     protected debugger: Debugger;
 
-    public constructor( shouldDebugCache = false ) {
+    public static getInstance<TModelType extends IDataModel, TManager extends ManagerDataBase<TModelType>>( this: new () => TManager): TManager {
+        if ( ! ManagerDataBase.instances.has( this ) ) {
+            ManagerDataBase.instances.set( this, new this() );
+        }
+
+        return ManagerDataBase.instances.get( this );
+    }
+
+    protected constructor( shouldDebugCache = false ) {
         super( shouldDebugCache );
 
         this.debugger = new Debugger( this );

@@ -1,5 +1,3 @@
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButtonBase {
@@ -8,15 +6,15 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public getId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPremiumResetChannelButton.getName() );
+        return 6;
     }
 
     public getSortId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPremiumResetChannelButton.getName() );
+        return 6;
     }
 
     public getLabelForEmbed() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPremiumResetChannelButton.getName() );
+        return "🔃 ∙ **Reset**";
     }
 
     public async getLabelForMenu() {
@@ -24,11 +22,14 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     }
 
     public async getLabel() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPremiumResetChannelButton.getName() );
+        return "Reset";
     }
 
     public async getEmoji() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
-            .getEmoji( DynamicChannelPremiumResetChannelButton.getName() ) as string;
+        return "🔃";
+    }
+
+    public getEmojiForEmbed() {
+        return "🔃";
     }
 }

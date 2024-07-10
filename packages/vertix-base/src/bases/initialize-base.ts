@@ -5,12 +5,12 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 export abstract class InitializeBase extends ObjectBase {
     protected logger: Logger;
 
-    protected constructor() {
+    protected constructor( shouldInitialize = true ) {
         super();
 
         this.logger = new Logger( this );
 
-        this.initialize && this.initialize();
+        this.initialize && shouldInitialize && this.initialize();
     }
 
     protected initialize?(): void;

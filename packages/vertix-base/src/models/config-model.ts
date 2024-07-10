@@ -8,7 +8,7 @@ const client = PrismaBotClient.getPrismaClient();
 
 const E_DATA_TYPES = PrismaBot.E_DATA_TYPES;
 
-type TypeMapping = {
+type DataTypesMapping = {
     [ E_DATA_TYPES.STRING ]: string;
     [ E_DATA_TYPES.NUMBER ]: number;
     [ E_DATA_TYPES.BOOLEAN ]: boolean;
@@ -16,13 +16,15 @@ type TypeMapping = {
     [ E_DATA_TYPES.ARRAY ]: any[];
 };
 
-type EnumKeys = keyof typeof E_DATA_TYPES;
+type keys = keyof typeof E_DATA_TYPES;
 
 type DataType = {
-    [Key in EnumKeys]: TypeMapping[typeof E_DATA_TYPES[Key]];
-}[EnumKeys];
+    [Key in keys]: DataTypesMapping[typeof E_DATA_TYPES[Key]];
+}[keys];
 
-const CONFIG_DEFAULT_VERSION: `${ number }.${ number }.${ number }` = "0.0.0";
+type VersionType = `${ number }.${ number }.${ number }`;
+
+const CONFIG_DEFAULT_VERSION: VersionType = "0.0.0";
 
 export class ConfigModel extends ModelBaseCached<typeof client, PrismaBot.Config> {
     private static instance: ConfigModel | null = null;
@@ -94,7 +96,7 @@ export class ConfigModel extends ModelBaseCached<typeof client, PrismaBot.Config
             this.setCache( this.generateCacheKey( result.key, result.version ), result );
         }
 
-        return result;
+        return result ? this.getValueAsType<T>( result ) : null;
     }
 
     protected getClient() {
@@ -135,21 +137,17 @@ export class ConfigModel extends ModelBaseCached<typeof client, PrismaBot.Config
      * EG: `E_DATA_TYPES.ARRAY` will use `config.array`
      */
     protected getValueAsType<T extends DataType>( config: PrismaBot.Config ) {
-        if ( ! config.value ) {
-            return null;
-        }
-
         switch ( config.type ) {
             case E_DATA_TYPES.STRING:
-                return config.value.toString() as TypeMapping[typeof E_DATA_TYPES.STRING] as T;
+                return config.value!.toString() as DataTypesMapping[typeof E_DATA_TYPES.STRING] as T;
             case E_DATA_TYPES.NUMBER:
-                return Number( config.value ) as TypeMapping[typeof E_DATA_TYPES.NUMBER] as T;
+                return Number( config.value ) as DataTypesMapping[typeof E_DATA_TYPES.NUMBER] as T;
             case E_DATA_TYPES.BOOLEAN:
-                return Boolean( config.value ) as TypeMapping[typeof E_DATA_TYPES.BOOLEAN] as T;
+                return Boolean( config.value ) as DataTypesMapping[typeof E_DATA_TYPES.BOOLEAN] as T;
             case E_DATA_TYPES.OBJECT:
-                return config.object as TypeMapping[typeof E_DATA_TYPES.OBJECT] as T;
+                return config.object as DataTypesMapping[typeof E_DATA_TYPES.OBJECT] as T;
             case E_DATA_TYPES.ARRAY:
-                return config.values as TypeMapping[typeof E_DATA_TYPES.ARRAY] as T;
+                return config.values as DataTypesMapping[typeof E_DATA_TYPES.ARRAY] as T;
         }
     }
 
@@ -158,3 +156,10 @@ export class ConfigModel extends ModelBaseCached<typeof client, PrismaBot.Config
     }
 }
 
+export {
+    CONFIG_DEFAULT_VERSION
+};
+
+export type {
+    VersionType
+};

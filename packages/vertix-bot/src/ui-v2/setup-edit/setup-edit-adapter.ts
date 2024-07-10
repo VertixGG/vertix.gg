@@ -30,9 +30,6 @@ import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-mast
 import {
     DynamicChannelElementsGroup
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
-import {
-    DynamicChannelPremiumClaimChannelButton
-} from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {

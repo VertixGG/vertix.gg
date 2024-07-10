@@ -1,3 +1,7 @@
+import crypto from "node:crypto";
+
+import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
+
 import { ConfigModel  } from "@vertix.gg/base/src/models/config-model";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
@@ -63,8 +67,10 @@ export abstract class ConfigBase<
             }
         }
 
+        this.validateChecksum( defaults, currentConfig );
+
         this.config.data = currentConfig;
-        this.config.defaults = this.getDefaults();
+        this.config.defaults = defaults;
         this.config.meta = {
             name: this.$$.getName(),
             key,
@@ -90,6 +96,28 @@ export abstract class ConfigBase<
 
     private get $$() {
         return this.constructor as typeof ConfigBase;
+    }
+
+    private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
+        // Validate checksum
+        const checksum = ( obj: Record<string, any> ) => {
+            const asArray = Object.entries( obj ),
+                data = Buffer.from( asArray.map( i => i.join( ":" ) ).join( ";" ) );
+
+            return crypto.createHash("sha256")
+                .update(data)
+                .digest("hex");
+        };
+
+        const checksumA = checksum( objA ),
+            checksumB = checksum( objB );
+
+        if ( checksumA !== checksumB ) {
+            throw new ErrorWithMetadata( `Checksum mismatch for: '${ this.$$.getName() }'`, {
+                checksumA,
+                checksumB
+            } );
+        }
     }
 }
 

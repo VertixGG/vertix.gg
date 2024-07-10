@@ -28,4 +28,8 @@ export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButto
     public async getEmoji() {
         return "🔃";
     }
+
+    public getEmojiForEmbed() {
+        return "🔃";
+    }
 }

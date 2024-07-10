@@ -1,5 +1,3 @@
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase {
@@ -8,15 +6,15 @@ export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase 
     }
 
     public getId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelTransferOwnerButton.getName() );
+        return 12;
     }
 
     public getSortId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelTransferOwnerButton.getName() );
+        return 7;
     }
 
     public getLabelForEmbed() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelTransferOwnerButton.getName() );
+        return "🔀 ∙ **Transfer**";
     }
 
     public async getLabelForMenu() {
@@ -24,11 +22,14 @@ export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase 
     }
 
     public async getLabel() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelTransferOwnerButton.getName() );
+        return "Transfer";
     }
 
     public async getEmoji() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
-            .getEmoji( DynamicChannelTransferOwnerButton.getName() ) as string;
+        return "🔀";
+    }
+
+    public getEmojiForEmbed() {
+        return "🔀";
     }
 }

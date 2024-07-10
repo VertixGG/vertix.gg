@@ -9,11 +9,11 @@ export class DynamicChannelPermissionsDenyMenu extends DynamicChannelUserMenuBas
         return 9;
     }
 
-    protected getPlaceholder(): Promise<string> {
-        return Promise.resolve( "👎 Remove Access" );
+    protected async getPlaceholder() {
+        return "👎 Remove Access";
     }
 
-    protected async isAvailable(): Promise<boolean> {
+    protected async isAvailable() {
         return this.uiArgs?.dynamicChannelButtonsIsAccessButtonAvailable;
     }
 }

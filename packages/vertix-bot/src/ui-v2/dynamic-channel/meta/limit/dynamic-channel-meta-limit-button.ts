@@ -17,15 +17,19 @@ export class DynamicChannelMetaLimitButton extends DynamicChannelButtonBase {
         return "✋ ∙ **User Limit**";
     }
 
-    public async getLabelForMenu(): Promise<string> {
+    public async getLabelForMenu() {
         return await this.getLabel();
     }
 
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "Limit" );
+    public async getLabel() {
+        return "Limit";
     }
 
-    public async getEmoji(): Promise<string> {
+    public async getEmoji() {
+        return "✋";
+    }
+
+    public getEmojiForEmbed() {
         return "✋";
     }
 }

@@ -1,5 +1,3 @@
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
@@ -10,19 +8,19 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public getId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getId( DynamicChannelPermissionsStateButton.getName() );
+        return 3    ;
     }
 
     public getSortId() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getSortId( DynamicChannelPermissionsStateButton.getName() );
+        return 3;
     }
 
     public getLabelForEmbed() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForEmbed( DynamicChannelPermissionsStateButton.getName() );
+        return "🚫 ∙ **Private** / 🌐 ∙ **Public**";
     }
 
     public async getLabelForMenu() {
-        return DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getLabelForMenu( DynamicChannelPermissionsStateButton.getName() );
+        return "Public/Private";
     }
 
     public async getLabel() {
@@ -30,14 +28,11 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public async getEmoji() {
-        const emojis = DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA
-            .getEmoji( DynamicChannelPermissionsStateButton.getName() ) as string[];
+        return this.uiArgs?.isPrivate ? "🚫" : "🌐";
+    }
 
-        if ( ! this.uiArgs?.isPrivate ) {
-            return emojis[ 0 ];
-        }
-
-        return emojis[ 1 ];
+    public getEmojiForEmbed(): string {
+        return "(🚫 / 🌐)";
     }
 
     protected getOptions() {

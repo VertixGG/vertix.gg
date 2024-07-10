@@ -9,11 +9,11 @@ export class DynamicChannelPermissionsGrantMenu extends DynamicChannelUserMenuBa
         return 8;
     }
 
-    protected getPlaceholder(): Promise<string> {
-        return Promise.resolve( "👍 Grant Access" );
+    protected async getPlaceholder() {
+        return "👍 Grant Access";
     }
 
-    protected async isAvailable(): Promise<boolean> {
+    protected async isAvailable() {
         return this.uiArgs?.dynamicChannelButtonsIsAccessButtonAvailable;
     }
 }

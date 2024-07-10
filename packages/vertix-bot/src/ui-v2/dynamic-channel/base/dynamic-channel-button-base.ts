@@ -17,7 +17,6 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
         return UIInstancesTypes.Dynamic;
     }
 
-    // TODO: Add unique verification.
     public abstract getId(): number;
 
     public abstract getSortId(): number;
@@ -29,6 +28,8 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     public abstract getLabelForMenu(): Promise<string>;
 
     public abstract getLabelForEmbed(): string;
+
+    public abstract getEmojiForEmbed(): string;
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
         return Promise.resolve( "secondary" );

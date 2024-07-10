@@ -19,29 +19,29 @@ import type { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-type ItemMap = { [ key: string ]: DynamicChannelButtonBase };
+type ButtonsMap = { [ key: string ]: DynamicChannelButtonBase };
 
 /**
  * Represents a group of dynamic channel elements.
  * @extends UIElementsGroupBase
  */
 export class DynamicChannelElementsGroup extends UIElementsGroupBase {
-    private static allItems: DynamicChannelButtonBase[] = [];
-    private static allItemsById: ItemMap = {};
-    private static allItemsByName: ItemMap = {};
+    private static allButtons: DynamicChannelButtonBase[] = [];
+    private static allButtonsById: ButtonsMap = {};
+    private static allButtonsByName: ButtonsMap = {};
 
     public static getName() {
         return "VertixBot/UI-V2/DynamicChannelElementsGroup";
     }
 
-    private static getItemFromMap( map: ItemMap, key: string ): DynamicChannelButtonBase | undefined {
+    private static getItemFromMap( map: ButtonsMap, key: string ): DynamicChannelButtonBase | undefined {
         return map[ key ];
     }
 
-    private static mapElements( allItems: DynamicChannelButtonBase[] ) {
+    private static mapButtons( allItems: DynamicChannelButtonBase[] ) {
         allItems.forEach( ( item ) => {
-            this.allItemsById[ item.getId() ] = item;
-            this.allItemsByName[ item.getName() ] = item;
+            this.allButtonsById[ item.getId() ] = item;
+            this.allButtonsByName[ item.getName() ] = item;
         } );
     }
 
@@ -73,52 +73,80 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
      * It checks for duplicate item IDs and throws an error if found.
      */
     public static populate() {
-        const allItems = DynamicChannelElementsGroup.getItems().flat().map( ( item ) => new item() ),
-            allItemsIds = allItems.map( item => item.getId() );
+        // If already populated, throw an error.
+        if ( this.allButtons.length ) {
+            throw new Error( `${ this.getName() } already populated` );
+        }
 
-        allItemsIds.forEach( ( itemId, index ) => {
-            delete allItemsIds[ index ];
+        const dynamicChannelButtons = DynamicChannelElementsGroup.getItems().flat();
 
-            if ( allItemsIds.find( ( i ) => i === itemId ) ) {
-                throw new Error( `Duplicate item ID: ${ itemId }` );
+        dynamicChannelButtons.forEach( ( DynamicChannelButton ) => {
+            const button = new DynamicChannelButton();
+
+            if ( this.allButtons.find( ( item ) =>
+                item.getId() === button.getId() || item.getName() === button.getName() )
+            ) {
+                throw new Error( `Duplicate item id: '${ button.getId() }' name: '${ button.getName() }'` );
             }
+
+            this.allButtons.push( button );
         } );
 
-        DynamicChannelElementsGroup.allItems = allItems;
+        this.allButtons = this.sort( this.allButtons );
 
-        this.mapElements( allItems );
+        this.mapButtons( this.allButtons );
     }
 
-    public static getAllItems() {
-        return DynamicChannelElementsGroup.allItems;
+    public static getAll() {
+        return DynamicChannelElementsGroup.allButtons;
     }
 
-    public static getItemById( id: number ) {
-        return this.getItemFromMap( this.allItemsById, id.toString() );
+    public static getById( id: number ) {
+        return this.getItemFromMap( this.allButtonsById, id.toString() );
     }
 
-    public static getItemByName( name: string ) {
-        return this.getItemFromMap( this.allItemsByName, name );
+    public static getByName( name: string ) {
+        return this.getItemFromMap( this.allButtonsByName, name );
     }
 
-    public static getEmojis( ids: number[] ) {
-        const emojis: Promise<string>[] = [];
+    public static async getEmojis( ids: number[] ) {
+        const emojis: string[] = [];
 
-        ids.forEach( ( id ) => {
-            const item = DynamicChannelElementsGroup.getItemById( id );
+        await Promise.all( ids.map( async ( id ) => {
+            const item = DynamicChannelElementsGroup.getById( id );
 
             if ( item ) {
-                emojis.push( item.getEmoji() );
+                emojis.push( ( await item.getEmoji() ) );
             }
-        } );
+        } ) );
 
         return emojis;
     }
 
+    public static getEmbedEmojis( ids: number[] ) {
+        const emojis: string[] = [];
+
+        Promise.all( ids.map( async ( id ) => {
+            const item = DynamicChannelElementsGroup.getById( id );
+
+            if ( item ) {
+                emojis.push( ( item.getEmojiForEmbed() ) );
+            }
+        } ) );
+
+        return emojis;
+    }
+
+    public static sort( buttons: DynamicChannelButtonBase[] ) {
+        return buttons.sort( ( a: DynamicChannelButtonBase, b: DynamicChannelButtonBase ) =>
+            a.getSortId() - b.getSortId()
+        );
+    };
+
     public static sortIds( ids: number[] ) {
         return ids.sort( ( aId: number, bId: number ) =>
-            DynamicChannelElementsGroup.getItemById( aId )!.getSortId() -
-            DynamicChannelElementsGroup.getItemById( bId )!.getSortId()
+            DynamicChannelElementsGroup.getById( aId )!.getSortId() -
+            DynamicChannelElementsGroup.getById( bId )!.getSortId()
         );
     }
 }

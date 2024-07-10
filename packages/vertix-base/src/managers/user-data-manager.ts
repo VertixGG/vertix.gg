@@ -9,17 +9,8 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 import type { Interaction, VoiceChannel } from "discord.js";
 
 export class UserDataManager extends ManagerDataBase<UserModel> {
-    private static instance: UserDataManager;
-
     public static getName() {
         return "VertixBase/Managers/UserData";
-    }
-
-    public static getInstance(): UserDataManager {
-        if ( ! UserDataManager.instance ) {
-            UserDataManager.instance = new UserDataManager();
-        }
-        return UserDataManager.instance;
     }
 
     public static get $() {

@@ -15,6 +15,8 @@ import path from "path";
 
 import process from "process";
 
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
@@ -115,6 +117,24 @@ async function registerUILanguageManager() {
         .registerUILanguageManager( UILanguageManager.$ );
 }
 
+async function registerConfigs() {
+    GlobalLogger.$.info( registerConfigs, "Registering configs ..." );
+
+    const configs = await Promise.all( [
+        import("@vertix.gg/bot/src/config/master-channel-config")
+    ] );
+
+    configs.forEach( config => {
+        GlobalLogger.$.debug( registerConfigs, `Registering config: '${ config.default.getName() }'` );
+
+        ConfigManager.$.register( config.default );
+
+        GlobalLogger.$.debug( registerConfigs, `Config registered: '${ config.default.getName() }'` );
+    } );
+
+    GlobalLogger.$.info( registerConfigs, "Configs are registered" );
+}
+
 async function createCleanupWorker() {
     try {
         const thread = await initWorker();
@@ -160,6 +180,8 @@ export async function entryPoint() {
 
     // TODO Check what happened if no services are registered, and adapter are requested,
     await registerUIServices( client );
+    await registerConfigs();
+
     await registerServices();
 
     GlobalLogger.$.info( entryPoint, "Services are registered" );

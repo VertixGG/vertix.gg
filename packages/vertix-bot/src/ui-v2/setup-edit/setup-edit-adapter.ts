@@ -308,7 +308,10 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
 
-        if ( buttons.includes( DynamicChannelPremiumClaimChannelButton.getId() ) ) {
+        const claimChannelButtonId = DynamicChannelElementsGroup
+            .getByName( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton" )?.getId();
+
+        if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
             // Get all channels that are using this master channel.
             setTimeout( async () => {
                 const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
@@ -320,7 +323,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                         console.warn( `Channel ${ channelDB.channelId } not found.` );
                     }
 
-                    await this.dynamicChannelService.editPrimaryMessageDebounce( channel );
+                    this.dynamicChannelService.editPrimaryMessageDebounce( channel );
                 }
 
                 DynamicChannelClaimManager.$.handleAbandonedChannels( this.appService.getClient(), [], channels );

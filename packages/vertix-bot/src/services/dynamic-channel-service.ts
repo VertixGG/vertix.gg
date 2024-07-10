@@ -32,6 +32,8 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
+import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
@@ -58,8 +60,6 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
-
-import { DynamicChannelPremiumClaimChannelButton } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/premium/claim/dynamic-channel-premium-claim-channel-button";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
@@ -1290,8 +1290,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return false;
         }
 
+        const claimChannelButtonId = DynamicChannelElementsGroup
+            .getByName( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton" )?.getId();
+
         // Check if claim button is enabled.
-        if ( DynamicChannelPremiumClaimChannelButton.getId() in enabledButtons ) {
+        if ( ! claimChannelButtonId || claimChannelButtonId in enabledButtons ) {
             return true;
         }
 
@@ -1655,13 +1658,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async logInChannelDebounce( masterChannelDB: ChannelResult, channel: VoiceChannel, message: string, defaultDebounceDelay = 3000 ) {
-        const logsChannelId = await MasterChannelDataManager.$.getChannelLogsChannelId( masterChannelDB.id, true );
+        const logsChannelId = await MasterChannelDataManager.$.getChannelLogsChannelId( masterChannelDB.id );
 
         if ( ! logsChannelId ) {
             return;
         }
 
-        const logsChannel = await channel.guild.channels.cache.get( logsChannelId ) as TextChannel;
+        const logsChannel = channel.guild.channels.cache.get( logsChannelId ) as TextChannel;
 
         if ( ! logsChannel ) {
             await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB.id, null, false );

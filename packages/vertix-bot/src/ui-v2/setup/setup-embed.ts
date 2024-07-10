@@ -1,16 +1,12 @@
-
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
-import {
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE
-} from "@vertix.gg/base/src/definitions/master-channel-defaults";
+import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -133,9 +129,8 @@ export class SetupEmbed extends UIEmbedBase {
         const result: any = {},
             masterChannelsPromise = ( args?.masterChannels || [] ).map( async ( channel, index ) => {
                 const data = channel?.data?.[ 0 ],
-                    usedButtons = data?.object?.dynamicChannelButtonsTemplate || DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-                    usedEmojis = DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getUsedEmojis( usedButtons )
-                        .join( ", " ),
+                    usedButtons = data?.object?.dynamicChannelButtonsTemplate || DynamicChannelElementsGroup.getAll().map( i => i.getId()),
+                    usedEmojis = ( DynamicChannelElementsGroup.getEmbedEmojis( usedButtons ) ).join( ", " ),
                     usedRoles = ( data?.object.dynamicChannelVerifiedRoles || [] ).map( ( roleId: string ) => {
                         return "<@&" + roleId + ">";
                     } ).join( ", " );

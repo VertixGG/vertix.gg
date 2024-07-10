@@ -20,6 +20,6 @@ export class ChannelButtonsTemplateAddSelectMenu extends ChannelButtonsTemplateS
     }
 
     protected async isAvailable(): Promise<boolean> {
-        return Object.keys( this.uiArgs?.dynamicChannelButtonsTemplate || {} ).length !== DynamicChannelElementsGroup.getAllItems().length;
+        return Object.keys( this.uiArgs?.dynamicChannelButtonsTemplate || {} ).length !== DynamicChannelElementsGroup.getAll().length;
     }
 }

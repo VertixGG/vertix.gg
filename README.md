@@ -6,10 +6,6 @@
 
 ## Vertix is an exceptional Discord bot designed to revolutionize your server experience.
 
-----------------------------------------------------
-
-### **Vertix** is an exceptional Discord bot designed to revolutionize your server experience.[](https://rentry.co/piiiwg/#vertix-is-an-exceptional-discord-bot-designed-to-revolutionize-your-server-experience "Permanent link")
-
 With a focus on providing the best user satisfaction, offering convenient temporary voice channels management tools.
 
 #### Terms[](https://rentry.co/piiiwg/#terms "Permanent link")

@@ -1,7 +1,7 @@
 <p align="center">
-    
+    <a href="https://vertix.gg/">
 <img src="https://github.com/VertixGG/vertix.gg/assets/10234691/a634122c-0c57-4a7f-b988-b60ab50db5d0" alt="image" style="width: 250px" />
-
+    </a>
 </p>
 
 ## Vertix is an exceptional Discord bot designed to revolutionize your server experience.

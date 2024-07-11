@@ -738,32 +738,32 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.log( initiator, channel, this.editChannelState, newState, { result } );
 
         if ( result ) {
-            // TODO: Use command pattern with hooks to handle such logic or any alternative.
+            // TODO: This is disabled, since of `Discord` rate limits, probably better use `status` message.
             // Rename channel if state is in the name template
-            const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
-
-            if ( masterChannelDB ) {
-                const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, false );
-
-                if ( channelNameTemplate?.includes( this.config.defaults.masterChannelDefaults.dynamicChannelStateVar ) ) {
-                    const channelName = await this.assembleChannelNameTemplate( channelNameTemplate, {
-                        userDisplayName: await guildGetMemberDisplayName( channel.guild, initiator.user.id ),
-                        state: newState,
-                    } );
-
-                    const renameResult = await this.editChannelNameInternal( channel, channelName );
-
-                    // If failed due rate limit, send message to the initiator.
-                    if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
-                        result.code = DynamicEditChannelStateResultCode.RenameChannelStateRateLimit;
-                        result.retryAfter = renameResult.retryAfter;
-
-                        setTimeout( () => {
-                            this.editChannelNameInternal( channel, channelName );
-                        }, ( ( result.retryAfter as number ) + 1 ) * 1000 );
-                    }
-                }
-            }
+            // const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+            //
+            // if ( masterChannelDB ) {
+            //     const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, false );
+            //
+            //     if ( channelNameTemplate?.includes( this.config.defaults.masterChannelDefaults.dynamicChannelStateVar ) ) {
+            //         const channelName = await this.assembleChannelNameTemplate( channelNameTemplate, {
+            //             userDisplayName: await guildGetMemberDisplayName( channel.guild, initiator.user.id ),
+            //             state: newState,
+            //         } );
+            //
+            //         const renameResult = await this.editChannelNameInternal( channel, channelName );
+            //
+            //         // If failed due rate limit, send message to the initiator.
+            //         if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
+            //             result.code = DynamicEditChannelStateResultCode.RenameChannelStateRateLimit;
+            //             result.retryAfter = renameResult.retryAfter;
+            //
+            //             setTimeout( () => {
+            //                 this.editChannelNameInternal( channel, channelName );
+            //             }, ( ( result.retryAfter as number ) + 1 ) * 1000 );
+            //         }
+            //     }
+            // }
 
             await UserDataManager.$.setMasterDataEnsheathed( initiator as Interaction, channel, {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: newState,

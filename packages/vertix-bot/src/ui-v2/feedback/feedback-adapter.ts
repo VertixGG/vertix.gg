@@ -1,8 +1,11 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { FeedbackComponent } from "@vertix.gg/bot/src/ui-v2/feedback/feedback-component";
 
 import { VERTIX_DEFAULT_SURVEY_COLLECTOR_ID } from "@vertix.gg/bot/src/definitions/app";
+
+import type DirectMessageService from "@vertix.gg/bot/src/services/direct-message-service";
 
 import type { ModalSubmitInteraction } from "discord.js";
 
@@ -62,11 +65,13 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     }
 
     private async onInviteDeveloperModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
+        const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
+
         const inviteLink = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" ),
             tagName = interaction.user.tag,
             guildName = interaction.guild?.name ?? "DM";
 
-        await this.dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
+        await dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
             content: `Name: **${ tagName }**\n` +
                 `GuildOrDM: **${ guildName }**\n` +
                 `Invite link: ${ inviteLink }`
@@ -78,12 +83,14 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     }
 
     private async informCollector( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
+        const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
+
         const tagName = interaction.user.tag,
             title = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputTitle" ),
             description = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputDescription" ),
             guildName = interaction.guild?.name ?? "DM";
 
-        await this.dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
+        await dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
             content: `Type: **${ type }**\n` +
                 `Name: **${ tagName }**\n` +
                 `GuildOrDM: **${ guildName }**\n` +

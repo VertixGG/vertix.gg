@@ -57,6 +57,22 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
+import type {
+    Client,
+    APIPartialChannel,
+    GuildMember,
+    Interaction,
+    Message,
+    MessageComponentInteraction,
+    ModalSubmitInteraction,
+    OverwriteResolvable,
+    PermissionOverwriteOptions,
+    RESTRateLimit,
+    TextChannel,
+    VoiceBasedChannel,
+    VoiceChannel
+} from "discord.js";
+
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type {
@@ -79,8 +95,6 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
-
-import type { APIPartialChannel, GuildMember, Interaction, Message, MessageComponentInteraction, ModalSubmitInteraction, OverwriteResolvable, PermissionOverwriteOptions, RESTRateLimit, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
@@ -114,6 +128,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", DynamicChannelService.getName() ) );
 
+        EventBus.$.on( "VertixBot/Services/App", "onReady", this.onBotReady.bind( this ) );
+
         EventBus.$.on( "VertixBot/Services/Channel", "onJoin", this.onJoin.bind( this ) );
         EventBus.$.on( "VertixBot/Services/Channel", "onLeave", this.onLeave.bind( this ) );
     }
@@ -124,6 +140,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             uiAdapterService: "VertixGUI/UIAdapterService",
             channelService: "VertixBot/Services/Channel",
         };
+    }
+
+    private async onBotReady( client: Client<true> ) {
+        DynamicChannelClaimManager.$.handleAbandonedChannels( client );
     }
 
     private async onJoin( args: IChannelEnterGenericArgs ) {

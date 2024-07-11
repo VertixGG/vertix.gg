@@ -164,7 +164,10 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onBadwordsModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
-        const value = interaction.fields.getTextInputValue( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" ),
+        const badwordsInputId = this.uiService
+                .generateCustomIdHash( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" );
+
+        const value = interaction.fields.getTextInputValue( badwordsInputId ),
             newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( value ) )
                 .map( ( word ) => word.trim() );
 

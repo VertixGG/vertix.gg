@@ -67,8 +67,11 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     private async onInviteDeveloperModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
-        const inviteLink = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" ),
-            tagName = interaction.user.tag,
+        const inviteLink = interaction.fields.getTextInputValue(
+        this.uiService.generateCustomIdHash( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" )
+        );
+
+        const tagName = interaction.user.tag,
             guildName = interaction.guild?.name ?? "DM";
 
         await dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
@@ -85,9 +88,14 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     private async informCollector( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
+        const feedbackInputTitleId = this.uiService
+                .generateCustomIdHash( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputTitle" ),
+            feedbackInputDescriptionId = this.uiService
+                .generateCustomIdHash( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputDescription" );
+
         const tagName = interaction.user.tag,
-            title = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputTitle" ),
-            description = interaction.fields.getTextInputValue( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputDescription" ),
+            title = interaction.fields.getTextInputValue( feedbackInputTitleId ),
+            description = interaction.fields.getTextInputValue( feedbackInputDescriptionId ),
             guildName = interaction.guild?.name ?? "DM";
 
         await dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {

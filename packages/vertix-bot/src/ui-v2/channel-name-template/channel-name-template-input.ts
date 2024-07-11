@@ -1,12 +1,17 @@
-import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ChannelNameTemplateInput extends UIElementInputBase {
+    private config = ConfigManager.$
+        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
+
     public static getName() {
         return "VertixBot/UI-V2/ChannelNameTemplateInput";
     }
@@ -24,11 +29,13 @@ export class ChannelNameTemplateInput extends UIElementInputBase {
     }
 
     protected async getPlaceholder(): Promise<string> {
-        return DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE;
+        return this.config.data.masterChannelData.dynamicChannelNameTemplate;
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.dynamicChannelNameTemplate || this.content?.placeholder ||  DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE;
+        return this.uiArgs?.dynamicChannelNameTemplate ||
+            this.content?.placeholder ||
+            this.config.data.masterChannelData.dynamicChannelNameTemplate;
     }
 
     protected async getMinLength(): Promise<number> {

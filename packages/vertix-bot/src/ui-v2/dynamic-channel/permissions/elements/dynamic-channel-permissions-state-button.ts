@@ -28,7 +28,7 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public async getEmoji() {
-        return this.uiArgs?.isPrivate ? "🚫" : "🌐";
+        return this.uiArgs?.isPrivate ?  "🌐" : "🚫";
     }
 
     public getEmojiForEmbed(): string {

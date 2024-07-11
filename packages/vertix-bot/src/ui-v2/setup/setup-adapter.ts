@@ -1,3 +1,4 @@
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -5,20 +6,15 @@ import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import {
-    DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
-    DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE
-} from "@vertix.gg/base/src/definitions/master-channel-defaults";
-
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
-
-import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-base";
 
 import { SetupComponent } from "@vertix.gg/bot/src/ui-v2/setup/setup-component";
 
 import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui-v2/language/language-select-menu";
+
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
 
@@ -144,11 +140,14 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             return;
         }
 
-        this.uiAdapterService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
-            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
+        const { masterChannelData } = ConfigManager.$
+            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
 
-            dynamicChannelMentionable: DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
-            dynamicChannelAutoSave: DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
+        this.uiAdapterService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
+            dynamicChannelButtonsTemplate: masterChannelData.dynamicChannelButtonsTemplate,
+
+            dynamicChannelMentionable: masterChannelData.dynamicChannelMentionable,
+            dynamicChannelAutoSave: masterChannelData.dynamicChannelAutoSave,
 
             dynamicChannelIncludeEveryoneRole: true,
             dynamicChannelVerifiedRoles: [
@@ -165,7 +164,10 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onBadwordsModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
-        const value = interaction.fields.getTextInputValue( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" ),
+        const badwordsInputId = this.uiService
+                .generateCustomIdHash( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" );
+
+        const value = interaction.fields.getTextInputValue( badwordsInputId ),
             newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( value ) )
                 .map( ( word ) => word.trim() );
 

@@ -1,22 +1,29 @@
 import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 
-import type {
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES
-} from "@vertix.gg/base/src/definitions/master-channel-data-keys";
+export interface MasterChannelDataInterface {
+    dynamicChannelAutoSave: boolean;
+    dynamicChannelButtonsTemplate: number[];
+    dynamicChannelLogsChannelId: string | null;
+    dynamicChannelMentionable: boolean;
+    dynamicChannelNameTemplate: string;
+    dynamicChannelVerifiedRoles: string[];
+}
+
+export interface MasterChannelDefaultsInterface {
+    dynamicChannelStateVar: string;
+    dynamicChannelUserVar: string;
+    dynamicChannelsCategoryName: string;
+
+    dynamicChannelStatePrivate: string;
+    dynamicChannelStatePublic: string;
+
+    masterChannelMaximumFreeChannels: number;
+    masterChannelName: string;
+}
 
 export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]: string;
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: number[];
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: boolean;
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ]: boolean;
-
-    buttonsEmojis: { [ id: number ]: string },
+    masterChannelData: MasterChannelDataInterface,
+    masterChannelDefaults: MasterChannelDefaultsInterface,
+    buttonsIdsEmojisMap: { [ id: number ]: string },
 }> {
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: string[];
-    [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ]: string;
 }

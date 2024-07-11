@@ -1,8 +1,10 @@
-import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -10,6 +12,9 @@ export class ChannelNameTemplateEmbed extends UIEmbedBase {
     private static vars = {
         dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
     };
+
+    private config = ConfigManager.$
+        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
 
     public static getName() {
         return "VertixBot/UI-V2/ChannelNameTemplateEmbed";
@@ -27,7 +32,8 @@ export class ChannelNameTemplateEmbed extends UIEmbedBase {
 
     protected getLogic( args: UIArgs ) {
         return {
-            dynamicChannelNameTemplate: args?.dynamicChannelNameTemplate || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+            dynamicChannelNameTemplate: args?.dynamicChannelNameTemplate ||
+                this.config.data.masterChannelData.dynamicChannelNameTemplate,
         };
     }
 }

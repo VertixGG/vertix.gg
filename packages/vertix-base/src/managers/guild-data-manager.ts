@@ -1,10 +1,11 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
 import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
 
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
-import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@vertix.gg/base/src/definitions/master-channel-defaults";
 import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/base/src/definitions/guild-data-keys";
 
 import {
@@ -14,6 +15,8 @@ import {
 } from "@vertix.gg/base/src/definitions/badwords-defaults";
 
 import { ManagerDataBase } from "@vertix.gg/base/src/bases/manager-data-base";
+
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 interface IGuildSettings {
     maxMasterChannels: number;
@@ -44,8 +47,11 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             return data.object;
         }
 
+        const { masterChannelDefaults } = ConfigManager.$
+            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
+
         return {
-            maxMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
+            maxMasterChannels: masterChannelDefaults.masterChannelMaximumFreeChannels,
         };
     }
 

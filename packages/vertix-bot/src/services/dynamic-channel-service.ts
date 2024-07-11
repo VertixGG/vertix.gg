@@ -1,13 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import {
-    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    DEFAULT_DYNAMIC_CHANNEL_STATE_PRIVATE,
-    DEFAULT_DYNAMIC_CHANNEL_STATE_PUBLIC,
-    DEFAULT_DYNAMIC_CHANNEL_STATE_VAR,
-    DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR
-} from "@vertix.gg/base/src/definitions/master-channel-defaults";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { gToken } from "@vertix.gg/base/src/discord/login";
 
@@ -63,6 +57,8 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
 import type {
     ActStatus,
     AddStatus,
@@ -96,6 +92,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     channelService: ChannelService,
 }> {
     private readonly debugger: Debugger;
+
+    private config = ConfigManager.$
+        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
 
     private editMessageDebounceMap = new Map<string, NodeJS.Timeout>();
 
@@ -229,11 +228,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id ),
             userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
+        const { masterChannelDefaults } = this.config.data,
+            { masterChannelData } = this.config.data;
+
         if ( ! masterChannelDB ) {
-            if ( returnDefault ) {
-                return DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE.replace( DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR, userDisplayName );
-            }
-            return null;
+            return returnDefault ?
+                masterChannelData.dynamicChannelNameTemplate
+                    .replace( masterChannelDefaults.dynamicChannelUserVar, userDisplayName )
+                : null;
         }
 
         const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, true );
@@ -255,10 +257,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         let state = "",
             userDisplayName = "";
 
+        const { masterChannelDefaults } = this.config.data;
+
         if ( args.state ) {
             state = args.state === "private"
-                ? DEFAULT_DYNAMIC_CHANNEL_STATE_PRIVATE
-                : DEFAULT_DYNAMIC_CHANNEL_STATE_PUBLIC;
+                ? masterChannelDefaults.dynamicChannelStatePrivate
+                : masterChannelDefaults.dynamicChannelStatePublic;
         }
 
         if ( args.userDisplayName ) {
@@ -266,8 +270,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         const replacements: Record<string, string> = {
-            [ DEFAULT_DYNAMIC_CHANNEL_STATE_VAR ]: state,
-            [ DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR ]: userDisplayName,
+            [ masterChannelDefaults.dynamicChannelStateVar ]: state,
+            [ masterChannelDefaults.dynamicChannelUserVar ]: userDisplayName,
         };
 
         return channelNameTemplate.replace(
@@ -734,32 +738,32 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.log( initiator, channel, this.editChannelState, newState, { result } );
 
         if ( result ) {
-            // TODO: Use command pattern with hooks to handle such logic or any alternative.
+            // TODO: This is disabled, since of `Discord` rate limits, probably better use `status` message.
             // Rename channel if state is in the name template
-            const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
-
-            if ( masterChannelDB ) {
-                const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, false );
-
-                if ( channelNameTemplate?.includes( DEFAULT_DYNAMIC_CHANNEL_STATE_VAR ) ) {
-                    const channelName = await this.assembleChannelNameTemplate( channelNameTemplate, {
-                        userDisplayName: await guildGetMemberDisplayName( channel.guild, initiator.user.id ),
-                        state: newState,
-                    } );
-
-                    const renameResult = await this.editChannelNameInternal( channel, channelName );
-
-                    // If failed due rate limit, send message to the initiator.
-                    if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
-                        result.code = DynamicEditChannelStateResultCode.RenameChannelStateRateLimit;
-                        result.retryAfter = renameResult.retryAfter;
-
-                        setTimeout( () => {
-                            this.editChannelNameInternal( channel, channelName );
-                        }, ( ( result.retryAfter as number ) + 1 ) * 1000 );
-                    }
-                }
-            }
+            // const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+            //
+            // if ( masterChannelDB ) {
+            //     const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, false );
+            //
+            //     if ( channelNameTemplate?.includes( this.config.defaults.masterChannelDefaults.dynamicChannelStateVar ) ) {
+            //         const channelName = await this.assembleChannelNameTemplate( channelNameTemplate, {
+            //             userDisplayName: await guildGetMemberDisplayName( channel.guild, initiator.user.id ),
+            //             state: newState,
+            //         } );
+            //
+            //         const renameResult = await this.editChannelNameInternal( channel, channelName );
+            //
+            //         // If failed due rate limit, send message to the initiator.
+            //         if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
+            //             result.code = DynamicEditChannelStateResultCode.RenameChannelStateRateLimit;
+            //             result.retryAfter = renameResult.retryAfter;
+            //
+            //             setTimeout( () => {
+            //                 this.editChannelNameInternal( channel, channelName );
+            //             }, ( ( result.retryAfter as number ) + 1 ) * 1000 );
+            //         }
+            //     }
+            // }
 
             await UserDataManager.$.setMasterDataEnsheathed( initiator as Interaction, channel, {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: newState,
@@ -1021,7 +1025,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             previousAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
             previousBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
             dynamicChannelName = dynamicChannelTemplateName.replace(
-                DEFAULT_DYNAMIC_CHANNEL_USER_NAME_VAR,
+                this.config.defaults.masterChannelDefaults.dynamicChannelUserVar,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
 

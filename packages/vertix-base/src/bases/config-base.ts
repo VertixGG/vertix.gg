@@ -1,6 +1,10 @@
-import { ConfigModel  } from "@vertix.gg/base/src/models/config-model";
+import crypto from "node:crypto";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
+import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
+
+import { ConfigModel } from "@vertix.gg/base/src/models/config-model";
 
 import type { VersionType } from "@vertix.gg/base/src/models/config-model";
 
@@ -63,8 +67,10 @@ export abstract class ConfigBase<
             }
         }
 
+        this.validateChecksum( defaults, currentConfig );
+
         this.config.data = currentConfig;
-        this.config.defaults = this.getDefaults();
+        this.config.defaults = defaults;
         this.config.meta = {
             name: this.$$.getName(),
             key,
@@ -72,8 +78,8 @@ export abstract class ConfigBase<
         };
     }
 
-    public get( key: string ) {
-        return this.config.data[ key ];
+    public get<TKey extends keyof TConfig["data"]>( key: TKey ) {
+        return this.data[ key ];
     };
 
     public get defaults() {
@@ -88,8 +94,39 @@ export abstract class ConfigBase<
         return <TConfig["data"]>this.config.data;
     }
 
+    public getKeys<
+        TSectionKey extends keyof TConfig["defaults"],
+        TSectionKeys extends keyof TConfig["defaults"][TSectionKey]
+    >( section: TSectionKey ) {
+        return Object.fromEntries(
+            Object.entries( this.defaults[ section ] ).map( ( [ key, ] ) => [ key, key ] )
+        ) as Record<TSectionKeys, TSectionKeys>;
+    }
+
     private get $$() {
         return this.constructor as typeof ConfigBase;
+    }
+
+    private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
+        // Validate checksum
+        const checksum = ( obj: Record<string, any> ) => {
+            const asArray = Object.entries( obj ),
+                data = Buffer.from( asArray.map( i => i.join( ":" ) ).join( ";" ) );
+
+            return crypto.createHash("sha256")
+                .update(data)
+                .digest("hex");
+        };
+
+        const checksumA = checksum( objA ),
+            checksumB = checksum( objB );
+
+        if ( checksumA !== checksumB ) {
+            throw new ErrorWithMetadata( `Checksum mismatch for: '${ this.$$.getName() }'`, {
+                checksumA,
+                checksumB
+            } );
+        }
     }
 }
 

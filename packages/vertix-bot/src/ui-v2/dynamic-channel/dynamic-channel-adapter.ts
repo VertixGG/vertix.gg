@@ -1,19 +1,17 @@
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import {
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE
-} from "@vertix.gg/base/src/definitions/master-channel-data-keys";
-
-import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/dynamic-channel-component";
-import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-adapter-base";
 
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/dynamic-channel-component";
+
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { BaseMessageOptions, Message, VoiceChannel } from "discord.js";
 
 export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
@@ -138,13 +136,12 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
                 region: channel.rtcRegion,
             },
-            masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+            masterChannelDB =
+                await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {
-            const masterChannelData =
-                await ChannelDataManager.$.getSettingsData( masterChannelDB.id, false, true );
-
-            args.dynamicChannelButtonsTemplate = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+            args.dynamicChannelButtonsTemplate =
+                await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id );
         }
 
         return args;

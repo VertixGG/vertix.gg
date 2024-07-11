@@ -2,15 +2,6 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { ConfigBase  } from "@vertix.gg/base/src/bases/config-base";
 
-import {
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE
-} from "@vertix.gg/base/src/definitions/master-channel-data-keys";
-
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
@@ -29,29 +20,41 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
         return "0.0.2" as const;
     }
 
-    protected getDefaults() {
-        const buttonsEmojis: MasterChannelConfigInterface["defaults"]["buttonsEmojis"] = {};
+    protected getDefaults(): MasterChannelConfigInterface["defaults"] {
+        const buttonsIdsEmojisMap: MasterChannelConfigInterface["defaults"]["buttonsIdsEmojisMap"] = {};
 
         DynamicChannelElementsGroup.getAll().forEach( async i => {
-            buttonsEmojis[ i.getId() ] = await i.getEmoji();
+            buttonsIdsEmojisMap[ i.getId() ] = await i.getEmoji();
         } );
 
         return {
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]:
-                uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
+            buttonsIdsEmojisMap,
 
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]:
-                DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
+            masterChannelData: {
+                dynamicChannelAutoSave: false,
 
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: true,
+                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
 
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: [],
+                dynamicChannelLogsChannelId: null,
 
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ]: "",
+                dynamicChannelMentionable: true,
 
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ]: false,
+                dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
-            buttonsEmojis,
+                dynamicChannelVerifiedRoles: [],
+            },
+
+            masterChannelDefaults: {
+                dynamicChannelStateVar: uiUtilsWrapAsTemplate( "state" ),
+                dynamicChannelUserVar: uiUtilsWrapAsTemplate( "user" ),
+                dynamicChannelsCategoryName: "༄ Dynamic Channels",
+
+                dynamicChannelStatePrivate: "🔴",
+                dynamicChannelStatePublic: "🟢",
+
+                masterChannelMaximumFreeChannels: 6,
+                masterChannelName: "➕ New Channel",
+            },
         };
     }
 }

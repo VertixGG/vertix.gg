@@ -1,10 +1,10 @@
 import crypto from "node:crypto";
 
+import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
 import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
 
-import { ConfigModel  } from "@vertix.gg/base/src/models/config-model";
-
-import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+import { ConfigModel } from "@vertix.gg/base/src/models/config-model";
 
 import type { VersionType } from "@vertix.gg/base/src/models/config-model";
 
@@ -78,8 +78,8 @@ export abstract class ConfigBase<
         };
     }
 
-    public get( key: string ) {
-        return this.config.data[ key ];
+    public get<TKey extends keyof TConfig["data"]>( key: TKey ) {
+        return this.data[ key ];
     };
 
     public get defaults() {
@@ -92,6 +92,15 @@ export abstract class ConfigBase<
 
     public get data() {
         return <TConfig["data"]>this.config.data;
+    }
+
+    public getKeys<
+        TSectionKey extends keyof TConfig["defaults"],
+        TSectionKeys extends keyof TConfig["defaults"][TSectionKey]
+    >( section: TSectionKey ) {
+        return Object.fromEntries(
+            Object.entries( this.defaults[ section ] ).map( ( [ key, ] ) => [ key, key ] )
+        ) as Record<TSectionKeys, TSectionKeys>;
     }
 
     private get $$() {

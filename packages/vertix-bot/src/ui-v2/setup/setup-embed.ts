@@ -1,4 +1,4 @@
-import { DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE } from "@vertix.gg/base/src/definitions/master-channel-defaults";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
@@ -9,6 +9,8 @@ import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/ba
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui-v2/setup/setup-definitions";
 
@@ -125,6 +127,9 @@ export class SetupEmbed extends UIEmbedBase {
     }
 
     protected async getLogicAsync( args: ISetupArgs ) {
+        const { masterChannelData } = ConfigManager.$
+            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
+
         // TODO: Duplicate code, refactor.
         const result: any = {},
             masterChannelsPromise = ( args?.masterChannels || [] ).map( async ( channel, index ) => {
@@ -138,7 +143,7 @@ export class SetupEmbed extends UIEmbedBase {
                 return {
                     index: index + 1,
                     id: channel.channelId,
-                    channelsTemplateName: data?.object?.dynamicChannelNameTemplate || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+                    channelsTemplateName: data?.object?.dynamicChannelNameTemplate || masterChannelData.dynamicChannelNameTemplate,
                     channelsTemplateButtons: usedEmojis,
                     channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
                     channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId ? `<#${ data?.object?.dynamicChannelLogsChannelId }>` : SetupEmbed.vars.none,

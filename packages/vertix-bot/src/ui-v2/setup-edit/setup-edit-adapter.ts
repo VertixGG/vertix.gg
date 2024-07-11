@@ -1,22 +1,6 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
-
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
-
-import {
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES
-} from "@vertix.gg/base/src/definitions/master-channel-data-keys";
-
-import {
-    DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID,
-    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE
-} from "@vertix.gg/base/src/definitions/master-channel-defaults";
-
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -25,13 +9,15 @@ import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-exu-base";
+import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui-v2/setup-edit/setup-edit-component";
 import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-master-edit-button";
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
 import type {
     UIDefaultButtonChannelTextInteraction,
     UIDefaultChannelSelectMenuChannelTextInteraction,
@@ -39,9 +25,8 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
-import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction |
@@ -119,16 +104,20 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             args.ChannelDBId = masterChannelDB.id;
             args.masterChannelId = masterChannelDB.channelId;
 
-            const masterChannelData = await ChannelDataManager.$.getSettingsData( args.ChannelDBId, false );
+            const masterChannelKeys = MasterChannelDataManager.$.getKeys();
 
-            args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ] =
-                masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ];
-            args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] =
-                masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
-            args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] =
-                masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
-            args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
-                masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ];
+            const masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( args.ChannelDBId );
+
+            const selectedKeys = [
+                masterChannelKeys.dynamicChannelNameTemplate,
+                masterChannelKeys.dynamicChannelButtonsTemplate,
+                masterChannelKeys.dynamicChannelMentionable,
+                masterChannelKeys.dynamicChannelVerifiedRoles,
+            ];
+
+            selectedKeys.forEach( ( key ) => {
+                args[ key ] = masterChannelSettings.object[ key ];
+            } );
         } else {
             args.masterChannels = await ChannelModel.$.getMasters( interaction.guild?.id || "", true );
         }
@@ -172,7 +161,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             this.onButtonsEffectNewlyButtonClicked
         );
 
-        // Configuration toggler.
+        // Configuration toggle.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-V2/ConfigExtrasSelectMenu",
             this.onConfigExtrasSelected
@@ -227,27 +216,16 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         args.ChannelDBId = args.masterChannelDB.id;
         args.masterChannelId = args.masterChannelDB.channelId;
 
-        const masterChannelData = await ChannelDataManager.$.getSettingsData( args.ChannelDBId, false );
+        const masterChannelKeys = MasterChannelDataManager.$.getKeys();
+        const masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( args.ChannelDBId, {
+            [ masterChannelKeys.dynamicChannelLogsChannelId ]: [ interaction.guild.roles.everyone.id ]
+        } );
 
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]
-            = masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ];
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] =
-            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ];
+        Object.entries( masterChannelSettings.object ).forEach( ( [ key, value ] ) => {
+            args[ key ] = value;
+        } );
 
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] =
-            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ];
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] =
-            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ];
-
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
-            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
-                interaction.guild.roles.everyone.id
-            ];
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ] =
-            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID ] ||
-            DEFAULT_DYNAMIC_CHANNEL_LOGS_CHANNEL_ID;
-
-        if ( args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].includes( interaction.guild.roles.everyone.id ) ) {
+        if ( args[ masterChannelKeys.dynamicChannelVerifiedRoles ].includes( interaction.guild.roles.everyone.id ) ) {
             args.dynamicChannelIncludeEveryoneRole = true;
         }
 
@@ -282,8 +260,11 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const value = interaction.fields.getTextInputValue( "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-V2/ChannelNameTemplateInput" ),
             args = this.getArgsManager().getArgs( this, interaction );
 
+        const { masterChannelData } = ConfigManager.$.
+            get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
+
         this.getArgsManager().setArgs( this, interaction, {
-            dynamicChannelNameTemplate: value || DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+            dynamicChannelNameTemplate: value || masterChannelData.dynamicChannelNameTemplate,
         } );
 
         await MasterChannelDataManager.$.setChannelNameTemplate( args?.ChannelDBId, value );
@@ -451,18 +432,30 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onBackButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        const args = this.getArgsManager().getArgs( this, interaction ),
-            masterChannelData = await ChannelDataManager.$.getSettingsData( args.ChannelDBId, false );
+        const args = this.getArgsManager().getArgs( this, interaction );
 
-        args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
-            masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
-                interaction.guild.roles.everyone.id
-            ];
+        // masterChannelData = await ChannelDataManager.$.getSettingsData( args.ChannelDBId, false );
+        //
+        // args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
+        //     masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
+        //         interaction.guild.roles.everyone.id
+        //     ];
+        //
+        // if ( ! args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].length ||
+        //     args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].includes( interaction.guild.roles.everyone.id ) ) {
+        //     args.dynamicChannelIncludeEveryoneRole = true;
+        // }
 
-        if ( ! args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].length ||
-            args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].includes( interaction.guild.roles.everyone.id ) ) {
+        const keys = MasterChannelDataManager.$.getKeys();
+
+        const verifiedRoles = await MasterChannelDataManager.$
+            .getChannelVerifiedRoles( args.ChannelDBId, interaction.guild.id );
+
+        if ( verifiedRoles.length && verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
             args.dynamicChannelIncludeEveryoneRole = true;
         }
+
+        args[ keys.dynamicChannelVerifiedRoles ] = verifiedRoles;
 
         this.getArgsManager().setArgs( this, interaction, args );
 

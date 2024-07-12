@@ -57,7 +57,7 @@ export class MasterChannelDataManager extends ChannelDataManager {
 
         this.debugger.dumpDown( caller,
             value,
-            `ownerId: '${ ownerId }' returnDefault: '${ returnDefault }' -${ key }:`
+            `ownerId: '${ ownerId }' returnDefault: '${ !! returnDefault }' -${ key }:`
         );
 
         return value;

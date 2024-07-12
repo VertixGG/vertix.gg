@@ -1,4 +1,5 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
@@ -10,9 +11,12 @@ import {
 import { ClaimVoteComponent } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-component";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
+
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
@@ -23,6 +27,8 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 }
 
 export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, DefaultInteraction> {
+    protected dynamicChannelClaimService: DynamicChannelClaimService;
+
     public static getName() {
         return "VertixBot/UI-V2/ClaimVoteAdapter";
     }
@@ -57,6 +63,12 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
                 markdownGroup: "VertixBot/UI-V2/ClaimVoteResultsMarkdownGroup",
             }
         };
+    }
+
+    public constructor( uiAdapterService: UIAdapterService ) {
+        super( uiAdapterService );
+
+        this.dynamicChannelClaimService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannelClaim");
     }
 
     public getPermissions(): PermissionsBitField {
@@ -111,7 +123,7 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
                 // TODO: Dedicated method
                 const args = await this.getReplyArgs( interaction );
 
-                DynamicChannelClaimManager.$.unmarkChannelAsClaimable( interaction.channel );
+                this.dynamicChannelClaimService.unmarkChannelAsClaimable( interaction.channel );
 
                 await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel")
                     .editChannelOwner(
@@ -126,7 +138,7 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
     }
 
     protected async handleVoteRequest( interaction: DefaultInteraction ) {
-        await DynamicChannelClaimManager.$.handleVoteRequest( interaction );
+        await this.dynamicChannelClaimService.handleVoteRequest( interaction );
     }
 
     private async getAllArgs( context: DefaultInteraction | Message<true> ) {

@@ -1,3 +1,4 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
@@ -6,9 +7,9 @@ import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { ClaimStartComponent } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-component";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
-
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
@@ -48,7 +49,9 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
             ownerId: channelDB.userOwnerId,
             channelId: channel.id,
             ownerDisplayName: await guildGetMemberDisplayName( channel.guild, channelDB.userOwnerId ),
-            absentInterval: DynamicChannelClaimManager.$.getChannelOwnershipTimeout(),
+            absentInterval: ServiceLocator.$
+                .get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim")
+                .getChannelOwnershipTimeout(),
         };
     }
 
@@ -57,6 +60,7 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
     }
 
     private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
-        await DynamicChannelClaimManager.$.handleVoteRequest( interaction );
+        await ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim")
+            .handleVoteRequest( interaction );
     }
 }

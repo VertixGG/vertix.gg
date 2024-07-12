@@ -1,13 +1,15 @@
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-adapter-base";
 
 import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/dynamic-channel-component";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -112,7 +114,9 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         switch ( state ) {
             case "idle":
             case "active":
-                await DynamicChannelClaimManager.$.handleVoteRequest( interaction, message );
+                await ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim").
+                    handleVoteRequest( interaction, message );
+
                 return;
         }
 

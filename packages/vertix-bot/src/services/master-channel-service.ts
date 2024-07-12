@@ -129,20 +129,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    private async onJoin( args: IChannelEnterGenericArgs ) {
-        const { newState } = args;
-
-        if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
-            await this.onJoinMasterChannel( args );
-        }
-    }
-
-    private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
-        if ( await ChannelModel.$.isMaster( channel.id ) ) {
-            await this.onDeleteMasterChannel( channel );
-        }
-    }
-
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
@@ -525,6 +511,20 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         );
 
         return result;
+    }
+
+    private async onJoin( args: IChannelEnterGenericArgs ) {
+        const { newState } = args;
+
+        if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
+            await this.onJoinMasterChannel( args );
+        }
+    }
+
+    private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
+        if ( await ChannelModel.$.isMaster( channel.id ) ) {
+            await this.onDeleteMasterChannel( channel );
+        }
     }
 }
 

@@ -1,9 +1,8 @@
+import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-base";
 
 import { LanguageComponent } from "@vertix.gg/bot/src/ui-v2/language/language-component";
-
-import { GuildManager } from "@vertix.gg/bot/src/managers/guild-manager";
 
 import type {
     UIDefaultButtonChannelTextInteraction,
@@ -33,7 +32,7 @@ export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDe
     private async onLanguageSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const language = interaction.values[ 0 ];
 
-        await GuildManager.$.setLanguage( interaction.guild, language );
+        await GuildDataManager.$.setLanguage( interaction.guild, language );
 
         this.uiAdapterService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {
             _language: language

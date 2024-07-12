@@ -31,13 +31,13 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
-import type { Client } from "discord.js";
-
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
+
+import type { Client } from "discord.js";
 
 async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
@@ -64,6 +64,7 @@ async function registerServices() {
 
         import("@vertix.gg/bot/src/services/channel-service"),
         import("@vertix.gg/bot/src/services/dynamic-channel-service"),
+        import("@vertix.gg/bot/src/services/dynamic-channel-claim-service"),
         import("@vertix.gg/bot/src/services/master-channel-service")
     ] );
 

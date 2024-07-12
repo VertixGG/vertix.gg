@@ -1,12 +1,13 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
 import { ClaimResultComponent } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-component";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
-
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
@@ -67,7 +68,9 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
 
         switch ( this.getCurrentExecutionStep().name ) {
             case "VertixBot/UI-V2/ClaimResultOwnerStop":
-                args.absentInterval = DynamicChannelClaimManager.$.getChannelOwnershipTimeout();
+                args.absentInterval =
+                    ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim")
+                        .getChannelOwnershipTimeout();
                 break;
 
             case "VertixBot/UI-V2/ClaimResultVotedSuccessfully":

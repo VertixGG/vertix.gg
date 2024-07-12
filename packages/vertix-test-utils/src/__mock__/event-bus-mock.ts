@@ -15,6 +15,6 @@ export class EventBusMock extends EventBus {
     }
 
     public static mockOrigin() {
-        jest.spyOn( EventBusMock, "$", "get" ).mockReturnValue( this.$ );
+        jest.spyOn( EventBusMock, "$", "get" ).mockImplementation( () => this.$ );
     }
 }

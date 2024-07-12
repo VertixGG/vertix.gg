@@ -19,7 +19,7 @@ export class ServiceLocatorMock extends ServiceLocator {
     }
 
     public static mockOrigin() {
-        jest.spyOn( ServiceLocator, "$", "get" ).mockReturnValue( this.$ );
+        jest.spyOn( ServiceLocator, "$", "get" ).mockImplementation( () => this.$ );
     }
 }
 

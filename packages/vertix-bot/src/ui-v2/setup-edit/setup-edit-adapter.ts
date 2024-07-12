@@ -310,7 +310,6 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                     this.dynamicChannelService.editPrimaryMessageDebounce( channel );
                 }
 
-                // Ignore await.
                 ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim" )
                     .handleAbandonedChannels( this.appService.getClient(), [], channels )
                     .catch( ( e ) => { throw e; } );

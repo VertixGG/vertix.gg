@@ -440,17 +440,6 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     private async onBackButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction );
 
-        // masterChannelData = await ChannelDataManager.$.getSettingsData( args.ChannelDBId, false );
-        //
-        // args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] =
-        //     masterChannelData?.object[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
-        //         interaction.guild.roles.everyone.id
-        //     ];
-        //
-        // if ( ! args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].length ||
-        //     args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ].includes( interaction.guild.roles.everyone.id ) ) {
-        //     args.dynamicChannelIncludeEveryoneRole = true;
-        // }
 
         const keys = MasterChannelDataManager.$.getKeys();
 

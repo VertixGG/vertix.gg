@@ -8,8 +8,8 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
 import type { Client, CommandInteraction, Interaction } from "discord.js";
 
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
-import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -17,9 +17,9 @@ export function interactionHandler( client: Client ) {
             ( interaction instanceof MessageComponentInteraction ) ||
             ( interaction instanceof ModalSubmitInteraction )
         ) {
-            const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+            const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" );
 
-            const realCustomId = uiService.getCustomIdFromHash( interaction.customId );
+            const realCustomId = uiHashService.generateId( interaction.customId );
 
             GlobalLogger.$.log( interactionHandler,
                 `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ realCustomId }' was used by '${ interaction.user.username }'`

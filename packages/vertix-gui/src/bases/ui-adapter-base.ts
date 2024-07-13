@@ -51,6 +51,7 @@ import type {
     StringSelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 const REGENERATE_BUTTON_ID = "regenerate-button";
 
@@ -128,6 +129,7 @@ export abstract class UIAdapterBase<
     } ();
 
     protected uiService: UIService;
+    protected uiHashService: UIHashService;
 
     protected uiAdapterService: UIAdapterService;
 
@@ -204,6 +206,7 @@ export abstract class UIAdapterBase<
         super();
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
+        this.uiHashService = ServiceLocator.$.get( "VertixGUI/UIHashService" );
         this.uiAdapterService = uiAdapterService;
 
         const staticThis = this.constructor as typeof UIAdapterBase;
@@ -405,7 +408,7 @@ export abstract class UIAdapterBase<
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
-        const customId = this.uiService.getCustomIdFromHash( interaction.customId ),
+        const customId = this.uiHashService.getId( interaction.customId ),
             entityName = customId.split( UI_GENERIC_SEPARATOR )[ 1 ];
 
         this.staticAdapter.adapterDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
@@ -468,7 +471,7 @@ export abstract class UIAdapterBase<
             if ( shouldDeletePreviousInteraction ) {
                 this.staticAdapter.ephemeralInteractions[ interactionInternalId ] = {
                     interaction,
-                    rawCustomId: this.uiService.getCustomIdFromHash( interaction.customId ),
+                    rawCustomId: this.uiHashService.getId( interaction.customId ),
                 };
             }
         } ).catch( ( e ) => {
@@ -637,7 +640,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.uiService.generateCustomIdHash( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
+            customId: this.uiHashService.getId( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }
@@ -764,7 +767,8 @@ export abstract class UIAdapterBase<
 
             const buttonData = await button.build();
 
-            buttonData.attributes.customId = this.uiService.generateCustomIdHash( this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID );
+            buttonData.attributes.customId = this.uiHashService
+                .generateId( this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID );
 
             const buttonBuilder = new ButtonBuilder( buttonData.attributes );
 

@@ -1,5 +1,7 @@
 import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
+
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
@@ -8,19 +10,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 describe( "VertixGUI/UIEmbedBase", () => {
     beforeEach( async () => {
-        // Mock original ServiceLocator.
-        ServiceLocatorMock.mockOrigin();
-
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
-    } );
-
-    afterEach( () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
+        await TestWithServiceLocatorMock.withUIServiceMock();
     } );
 
     it( "should support multiple selectOptions", async function () {

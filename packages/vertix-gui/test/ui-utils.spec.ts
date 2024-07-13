@@ -1,10 +1,6 @@
-import crypto from "crypto";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
-import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
-
-import { uiGenerateCustomIdHash, uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
-
-import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
+import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
@@ -24,18 +20,7 @@ class ElementMockClass extends UIElementBase<any> {
 
 describe( "VertixGUI/UI-Utils", function () {
     beforeEach( async () => {
-        // Mock original ServiceLocator.
-        ServiceLocatorMock.mockOrigin();
-
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
-    } );
-
-    afterEach( () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
+        await TestWithServiceLocatorMock.withUIServiceMock();
     } );
 
     describe( "uiUtilsDynamicElementsRearrange", function () {
@@ -320,39 +305,6 @@ describe( "VertixGUI/UI-Utils", function () {
                 [ elements[ 1 ][ 0 ], elements[ 1 ][ 1 ], elements[ 1 ][ 2 ], elements[ 1 ][ 3 ], elements[ 1 ][ 4 ] ],
                 [ elements[ 2 ][ 0 ], elements[ 2 ][ 1 ] ],
             ] );
-        } );
-
-        describe( "uiGenerateCustomIdHash", function () {
-            it( "should generate a hash of maximum length equal to UI_MAX_CUSTOM_ID_LENGTH when maxLength is not provided", function () {
-                // Arrange.
-                const input = "anyString";
-
-                // Act.
-                const hash = uiGenerateCustomIdHash( input );
-
-                const expectedHash = crypto.createHash( "md5" ).update( input ).digest( "hex" );
-                const expectedMaxLengthHash = expectedHash.repeat( Math.ceil( UI_MAX_CUSTOM_ID_LENGTH / expectedHash.length ) ).slice( 0, UI_MAX_CUSTOM_ID_LENGTH );
-
-                // Assert.
-                expect( hash.length ).toEqual( UI_MAX_CUSTOM_ID_LENGTH );
-                expect( hash ).toEqual( expectedMaxLengthHash );
-            } );
-
-            it( "should generate a hash of a specific length when maxLength is provided", function () {
-                // Arrange.
-                const input = "anyString";
-                const maxLength = 20;
-
-                // Act.
-                const hash = uiGenerateCustomIdHash( input, maxLength );
-
-                const expectedHash = crypto.createHash( "md5" ).update( input ).digest( "hex" );
-                const expectedMaxLengthHash = expectedHash.repeat( Math.ceil( maxLength / expectedHash.length ) ).slice( 0, maxLength );
-
-                // Assert.
-                expect( hash.length ).toEqual( maxLength );
-                expect( hash ).toEqual( expectedMaxLengthHash );
-            } );
         } );
     } );
 } );

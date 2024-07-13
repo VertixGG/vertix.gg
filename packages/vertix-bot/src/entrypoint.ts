@@ -43,6 +43,7 @@ async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
         import("@vertix.gg/gui/src/ui-service"),
         import("@vertix.gg/gui/src/ui-adapter-service"),
+        import("@vertix.gg/gui/src/ui-hash-service"),
     ] );
 
     uiServices.forEach( service => {

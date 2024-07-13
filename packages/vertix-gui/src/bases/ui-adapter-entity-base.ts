@@ -23,8 +23,6 @@ import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown
 
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIService } from "@vertix.gg/gui/src//ui-service";
-
 import type { UIComponentConstructor, UIComponentTypeConstructor, UICreateComponentArgs, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import type { UIEntityBase } from "@vertix.gg/gui/src/bases/ui-entity-base";
@@ -33,6 +31,7 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
 
 import type {
     ComponentBuilder } from "discord.js";
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 interface UIEntityMapped {
     entity: typeof UIEntityBase,
@@ -160,7 +159,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     }
 
     protected buildComponentsBySchema( schema: any ) { // TODO: Add type.
-        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" );
 
         return schema.map( ( row: any ) => ( new ActionRowBuilder ).addComponents(
             row.map( ( entity: any ) => { // TODO: Add type.
@@ -174,7 +173,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                         };
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
-                        data.customId = entity.attributes.custom_id || uiService.generateCustomIdHash(
+                        data.customId = entity.attributes.custom_id || uiHashService.generateId(
                             this.getName() + UI_GENERIC_SEPARATOR + entity.name
                         );
                     }

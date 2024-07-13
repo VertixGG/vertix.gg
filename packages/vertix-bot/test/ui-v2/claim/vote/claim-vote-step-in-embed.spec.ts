@@ -1,24 +1,12 @@
 import { jest } from "@jest/globals";
 
-import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
 import { ClaimVoteStepInEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-step-in-embed";
 
 describe( "VertixBot/UI-V2/ClaimVoteStepInEmbed", () => {
     beforeEach( async () => {
-        // Mock original ServiceLocator.
-        ServiceLocatorMock.mockOrigin();
-
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
-    } );
-
-    afterEach( () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
+        await TestWithServiceLocatorMock.withUIServiceMock();
     } );
 
     it( "should passthroughs sanity check", async () => {

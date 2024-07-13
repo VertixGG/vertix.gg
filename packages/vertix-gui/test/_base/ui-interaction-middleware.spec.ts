@@ -1,5 +1,7 @@
 import * as assert from "assert";
 
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
+
 import { EventBusMock } from "@vertix.gg/test-utils/src/__mock__/event-bus-mock";
 
 import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
@@ -35,22 +37,12 @@ const guild = new GuildMock( client, {
 
 describe( "VertixGUI/UIInteractionMiddleware", () => {
     beforeEach( async () => {
-        // Mock original ServiceLocator.
-        ServiceLocatorMock.mockOrigin();
+        await TestWithServiceLocatorMock.withUIAdapterServiceMock();
 
         EventBusMock.reset();
 
-        // Register dependencies for `DirectMessageService`.
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
-
         // Await for all services to be registered.
         await ServiceLocatorMock.$.waitForAll();
-    } );
-
-    afterEach( () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
     } );
 
     it( "should protect 'send' method work only for specific channel types", async () => {

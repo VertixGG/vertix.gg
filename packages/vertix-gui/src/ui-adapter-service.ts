@@ -15,6 +15,7 @@ import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gu
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 import type { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
+import type { UIHashService } from "src/ui-hash-service";
 
 type ManagedClass =
     UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
@@ -25,7 +26,8 @@ type MangedClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterRepl
 type MangedClassConstructor = { new( uiManager: UIAdapterService ): ManagedClass };
 
 export class UIAdapterService extends ServiceWithDependenciesBase<{
-    uiService: UIService;
+    uiService: UIService,
+    uiHashService: UIHashService,
 }> {
     // TODO: Maybe system entities should be in UI-Service
     private static uiSystemElements: {
@@ -96,7 +98,8 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
 
     public getDependencies() {
         return {
-            uiService: "VertixGUI/UIService"
+            uiService: "VertixGUI/UIService",
+            uiHashService: "VertixGUI/UIHashService"
         };
     }
 
@@ -151,8 +154,10 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
 
         const entities = UIClass.getComponent().getEntities();
 
+        // In order to have all hashes generated before the UI is created.
         for ( const entity of entities ) {
-            this.services.uiService.generateCustomIdHash( UIClass.getName() + UI_GENERIC_SEPARATOR + entity.getName() );
+            this.services.uiHashService
+                .generateId( UIClass.getName() + UI_GENERIC_SEPARATOR + entity.getName() );
         }
 
         this.storeClass( UIClass );

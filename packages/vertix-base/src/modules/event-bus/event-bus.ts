@@ -9,6 +9,8 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 export class EventBus extends ObjectBase {
     protected static instance: EventBus | null = null;
 
+    private debugger: Debugger;
+
     private objects = new Map<string, {
         object: ObjectBase,
         methods: Function[]
@@ -16,7 +18,7 @@ export class EventBus extends ObjectBase {
 
     private eventEmitter = new EventEmitter();
 
-    private debugger: Debugger;
+    private lastEmittedEvents = new Map<string, any[]>();
 
     public static getName() {
         return "VertixBase/Modules/EventBus";
@@ -30,7 +32,7 @@ export class EventBus extends ObjectBase {
             EventBus.getName()
         ) );
 
-        this.debugger.log( this.constructor,"EventBus is initialized" );
+        this.debugger.log( this.constructor, "EventBus is initialized" );
     }
 
     public static getInstance(): EventBus {
@@ -71,6 +73,28 @@ export class EventBus extends ObjectBase {
         );
     }
 
+    /**
+     * Function onCalledBeforeDoInvoke(): The difference between this function and on()
+     * is that this function will call the callback if the event already happened.
+     */
+    public onCalledBeforeDoInvoke( objectName: string, methodName: string, callback: ( ... args: any[] ) => void ) {
+        this.on( objectName, methodName, callback );
+
+        // If event already happened, call the callback
+        if (this.objects.has(objectName)) {
+            const object = this.objects.get( objectName );
+
+            if ( object ) {
+                const method = object.methods.find( method => method.name === methodName );
+
+                if ( method && this.lastEmittedEvents.has( this.getEventName( objectName, methodName ) ) ) {
+                    this.debugger.log( this.onCalledBeforeDoInvoke, `Recall callback for ${ objectName }::${ methodName }` );
+                    callback( ... this.lastEmittedEvents.get( this.getEventName( objectName, methodName ) )! );
+                }
+            }
+        }
+    }
+
     public off( objectName: string, methodName: string, callback: ( ... args: any[] ) => void ) {
         this.eventEmitter.off(
             this.getEventName( objectName, methodName ),
@@ -82,7 +106,7 @@ export class EventBus extends ObjectBase {
         this.debugger.log( this.register, `Registering object ${ object.getName() }` );
 
         if ( this.objects.has( object.getName() ) ) {
-            throw new Error( `Object ${ object.getName() } is already registered` );
+            throw new Error( `Error in: '${ this.getName() }', object: '${ object.getName() }' is already registered` );
         }
 
         this.objects.set( object.getName(), {
@@ -109,6 +133,8 @@ export class EventBus extends ObjectBase {
         this.debugger.log( this.emit, `Emitting event ${ object.getName() }::${ method.name }` );
 
         const eventName = this.getEventName( object.getName(), method.name );
+
+        this.lastEmittedEvents.set( eventName, args );
 
         return this.eventEmitter.emit( eventName, ... args );
     }

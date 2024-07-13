@@ -1,6 +1,10 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/dynamic-channel-button-base";
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButtonBase {
     public static getName() {
@@ -40,6 +44,7 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
             return true;
         }
 
-        return ! DynamicChannelClaimManager.$.isChannelClaimable( this.uiArgs?.channelId );
+        return ! ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim")
+            .isChannelClaimable( this.uiArgs?.channelId );
     }
 }

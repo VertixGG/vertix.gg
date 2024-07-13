@@ -1,107 +1,32 @@
-import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
-
-import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
-import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
-import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator-util/ui-mock-generator-util";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
-
-import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
-
-const ElementMock = class extends UIElementButtonBase {
-    public static getName() {
-        return "VertixGUI/TestElementButton";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    public getLabel(): Promise<string> {
-        return Promise.resolve( "" );
-    }
-
-    public getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "primary" );
-    }
-};
-
-const ElementGroupMock = class extends UIElementsGroupBase {
-    public static getName() {
-        return "VertixGUI/TestElementsGroup";
-    }
-};
-
-const EmbedMock = class extends UIEmbedBase {
-    public static getName() {
-        return "VertixGUI/TestEmbed";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
-};
-
-const ComponentMock = class extends UIComponentBase {
-    public static getName() {
-        return "VertixGUI/TestComponent";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected static getDefaultElementsGroup() {
-        return null;
-    }
-
-    protected static getDefaultEmbedsGroup() {
-        return null;
-    }
-};
-
-const AdapterMock = class extends UIAdapterExecutionStepsBase<VoiceChannel, MessageComponentInteraction<"cached">> {
-    public static getName() {
-        return "VertixGUI/Test";
-    }
-
-    protected getStartArgs() {
-        return {};
-    }
-
-    protected getReplyArgs() {
-        return {};
-    }
-};
 
 describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
     describe( "validate()", () => {
         it( "should throw error if one of the entities group are specify but there are no execution steps for them", function () {
             // Arrange.
-            const UIAdapter = class extends AdapterMock {
-                public static getComponent() {
-                    return class extends ComponentMock {
-                        public static getElementsGroups() {
-                            return [
-                                class extends ElementGroupMock {
-                                    public static getItems() {
-                                        return [
-                                            ElementMock,
-                                        ];
-                                    }
-                                }
-                            ];
-                        }
-                    };
-                }
-
-                protected static getExecutionSteps() {
-                    return {};
-                }
-            };
+            const UIAdapter = UIMockGeneratorUtil.createExecutionStepsAdapter()
+                .withName( "VertixGUI/Test" )
+                .withExecutionSteps( {} )
+                .withComponent(
+                    UIMockGeneratorUtil.createComponent()
+                        .withName( "VertixGUI/TestComponent" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .withElementsGroups(
+                            UIMockGeneratorUtil.createElementsGroup()
+                                .withName( "VertixGUI/TestElementsGroup" )
+                                .withItems(
+                                    UIMockGeneratorUtil.createElement()
+                                        .withName( "VertixGUI/TestElementButton" )
+                                        .withInstanceType( UIInstancesTypes.Dynamic )
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
+                .build();
 
             // Act.
             const act = () => UIAdapter.validate();
@@ -111,33 +36,24 @@ describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
         } );
 
         it( "should throw error if step does not have corresponding group", function () {
-            // Arrange.
-            const UIAdapter = class extends AdapterMock {
-                public static getComponent() {
-                    return class extends ComponentMock {
-                        public static getElementsGroups() {
-                            return [
-                                class extends ElementGroupMock {
-                                    public static getItems() {
-                                        return [
-                                            ElementMock,
-                                        ];
-                                    }
-                                }
-                            ];
-                        }
-                    };
-                }
-
-                protected static getExecutionSteps() {
-                    return {
-                        "step-1": {
-                            embedsGroup: "VertixGUI/TestEmbed",
-                            elementsGroup: "VertixGUI/TestElementsGroup",
-                        },
-                    };
-                }
-            };
+            const UIAdapter = UIMockGeneratorUtil.createExecutionStepsAdapter()
+                .withExecutionSteps( {
+                    "step-1": {
+                        embedsGroup: "VertixGUI/TestEmbed",
+                        elementsGroup: "VertixGUI/TestElementsGroup",
+                    },
+                } )
+                .withComponent(
+                    UIMockGeneratorUtil.createComponent()
+                        .withElementsGroups(
+                            UIMockGeneratorUtil.createElementsGroup()
+                                .withName( "VertixGUI/TestElementsGroup" )
+                                .withItems( UIMockGeneratorUtil.createElement().build() )
+                                .build()
+                        )
+                        .build()
+                )
+                .build();
 
             // Act.
             const act = () => UIAdapter.validate();
@@ -147,39 +63,36 @@ describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
         } );
 
         it( "should passthroughs sanity", function () {
-            // Arrange.
-            const UIAdapter = class extends AdapterMock {
-                public static getComponent() {
-                    return class extends ComponentMock {
-                        public static getElementsGroups() {
-                            return [
-                                class extends ElementGroupMock {
-                                    public static getItems() {
-                                        return [
-                                            ElementMock,
-                                        ];
-                                    }
-                                }
-                            ];
-                        }
-
-                        public static getEmbedsGroups() {
-                            return [
-                                UIEmbedsGroupBase.createSingleGroup( EmbedMock ),
-                            ];
-                        }
-                    };
-                }
-
-                protected static getExecutionSteps() {
-                    return {
-                        "step-1": {
-                            embedsGroup: "VertixGUI/TestEmbedGroup",
-                            elementsGroup: "VertixGUI/TestElementsGroup",
-                        },
-                    };
-                }
-            };
+            const UIAdapter = UIMockGeneratorUtil.createExecutionStepsAdapter()
+                .withComponent(
+                    UIMockGeneratorUtil.createComponent()
+                        .withElementsGroups(
+                            UIMockGeneratorUtil.createElementsGroup()
+                                .withName( "VertixGUI/TestElementsGroup" )
+                                .withItems(
+                                    UIMockGeneratorUtil.createElement()
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .withEmbedsGroups(
+                            UIMockGeneratorUtil.createEmbedsGroup()
+                                .withName( "VertixGUI/TestEmbedGroup" )
+                                .withItems(
+                                    UIMockGeneratorUtil.createEmbed()
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
+                .withExecutionSteps( {
+                    "step-1": {
+                        embedsGroup: "VertixGUI/TestEmbedGroup",
+                        elementsGroup: "VertixGUI/TestElementsGroup",
+                    },
+                } )
+                .build();
 
             // Act.
             const act = () => UIAdapter.validate();

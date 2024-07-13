@@ -1,19 +1,17 @@
-import { AuditLogEvent, ChannelType } from "discord.js";
-
-import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix.gg/base/src/definitions/guild-data-keys";
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
+import { AuditLogEvent, ChannelType  } from "discord.js";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
-import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+import type { TextChannel , User , Client, Guild } from "discord.js";
 
-import type { Client, Guild } from "discord.js";
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
 import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-message-service";
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
@@ -61,6 +59,10 @@ export class GuildManager extends InitializeBase {
         this.guildModel = GuildModel.getInstance();
 
         this.updateStatsBound = this.updateStats.bind( this );
+
+        EventBus.$.register( this, [
+            this.onJoined.bind( this ),
+        ] );
     }
 
     public async onJoin( client: Client, guild: Guild ) {
@@ -85,24 +87,24 @@ export class GuildManager extends InitializeBase {
             await this.guildModel.create( guild );
         }
 
-        if ( entry?.executor?.id ) {
-            const user = await client.users.fetch( entry.executor.id );
+        const defaultChannel = guild?.systemChannel || guild?.channels.cache.find( ( channel ) => {
+            return channel.type === ChannelType.GuildText;
+        } );
 
-            const defaultChannel = guild?.systemChannel || guild?.channels.cache.find( ( channel ) => {
-                return channel.type === ChannelType.GuildText;
-            } );
-
-            if ( ! defaultChannel || defaultChannel.type !== ChannelType.GuildText ) {
-                this.logger.warn( this.onJoin,
-                    `Guild id: '${ guild.id }' - Default channel not found`
-                );
-                return;
-            }
-
-            await this.uiAdapterService.get( "VertixBot/UI-V2/WelcomeAdapter" )?.send( defaultChannel, {
-                userId: user.id,
-            } );
+        if ( ! defaultChannel || defaultChannel.type !== ChannelType.GuildText ) {
+            this.logger.warn( this.onJoin,
+                `Guild id: '${ guild.id }' - Default channel not found`
+            );
+            return;
         }
+
+        let user: User | undefined;
+
+        if ( entry?.executor?.id ) {
+            user = await client.users.fetch( entry.executor.id );
+        }
+
+        await this.onJoined( guild, defaultChannel, user );
 
         this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
@@ -124,19 +126,10 @@ export class GuildManager extends InitializeBase {
         this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
-    public async setLanguage( guild: Guild, language: string, shouldAdminLog = true ): Promise<void> {
-        await GuildDataManager.$.setData( {
-            ownerId: guild.id,
-            key: DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
-            default: language,
-            cache: true,
-        }, true );
-
-        if ( shouldAdminLog ) {
-            this.logger.admin( this.setLanguage,
-                `🌍  Language has been modified - "${ language }" (${ guild.name }) (${ guild.memberCount })`
-            );
-        }
+    public async onJoined( guild: Guild, defaultChannel: TextChannel, user?: User ) {
+        await this.uiAdapterService.get( "VertixBot/UI-V2/WelcomeAdapter" )?.send( defaultChannel, user ? {
+            userId: user.id,
+        } : undefined );
     }
 
     private updateStats() {

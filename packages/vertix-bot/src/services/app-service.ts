@@ -3,11 +3,11 @@ import process from "process";
 import * as fs from "fs";
 import * as path from "path";
 
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
+
 import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
-
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import type { Client } from "discord.js";
 
@@ -41,6 +41,10 @@ export class AppService extends ServiceBase {
     public constructor() {
         super();
 
+        EventBus.$.register( this, [
+            this.onReady,
+        ] );
+
         this.printVersion();
     }
 
@@ -70,8 +74,6 @@ export class AppService extends ServiceBase {
         const { Commands } = ( await import( "@vertix.gg/bot/src/commands" ) );
 
         await client.application.commands.set( Commands );
-
-        await DynamicChannelClaimManager.$.handleAbandonedChannels( client );
 
         this.logger.info( this.onReady, "Abandoned channels are handled." );
 

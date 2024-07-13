@@ -24,9 +24,7 @@ import fetch from "cross-fetch";
 
 import { Routes } from "discord-api-types/v10";
 
-import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
-
-import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { ChannelType, EmbedBuilder,  OverwriteType, PermissionsBitField } from "discord.js";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -49,13 +47,26 @@ import {
 
 import { DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
-
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+
+import type { Guild ,
+    APIPartialChannel,
+    GuildMember,
+    Interaction,
+    Message,
+    MessageComponentInteraction,
+    ModalSubmitInteraction,
+    OverwriteResolvable,
+    PermissionOverwriteOptions,
+    RESTRateLimit,
+    TextChannel,
+    VoiceBasedChannel,
+    VoiceChannel
+} from "discord.js";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
@@ -79,8 +90,6 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
-
-import type { APIPartialChannel, GuildMember, Interaction, Message, MessageComponentInteraction, ModalSubmitInteraction, OverwriteResolvable, PermissionOverwriteOptions, RESTRateLimit, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
@@ -116,6 +125,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         EventBus.$.on( "VertixBot/Services/Channel", "onJoin", this.onJoin.bind( this ) );
         EventBus.$.on( "VertixBot/Services/Channel", "onLeave", this.onLeave.bind( this ) );
+
+        EventBus.$.register( this, [
+            this.onOwnerJoinDynamicChannel,
+            this.onOwnerLeaveDynamicChannel,
+            this.onLeaveDynamicChannelEmpty,
+            this.updateChannelOwnership,
+        ] );
     }
 
     public getDependencies() {
@@ -124,22 +140,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             uiAdapterService: "VertixGUI/UIAdapterService",
             channelService: "VertixBot/Services/Channel",
         };
-    }
-
-    private async onJoin( args: IChannelEnterGenericArgs ) {
-        const { newState } = args;
-
-        if ( await ChannelModel.$.isDynamic( newState.channelId! ) ) {
-            await this.onJoinDynamicChannel( args );
-        }
-    }
-
-    private async onLeave( args: IChannelLeaveGenericArgs ) {
-        const { oldState } = args;
-
-        if ( await ChannelModel.$.isDynamic( oldState.channelId! ) ) {
-            await this.onLeaveDynamicChannel( args );
-        }
     }
 
     public async onJoinDynamicChannel( args: IChannelEnterGenericArgs ) {
@@ -170,30 +170,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 channelDB = await ChannelModel.$.getByChannelId( channel.id );
 
             if ( channel.members.size === 0 ) {
-                DynamicChannelClaimManager.$.removeChannelTracking( channel.id );
-
-                if ( ! channelDB ) {
-                    this.logger.error( this.onLeaveDynamicChannel,
-                        `Guild id: '${ guild.id }', channel id: '${ channel.id }' - ` +
-                        "Channel DB not found."
-                    );
-
-                    return;
-                }
-
-                const ownerMember = args.newState.guild.members.cache.get( channelDB.userOwnerId );
-
-                await this.log( undefined, channel as VoiceChannel, this.onLeaveDynamicChannel, "", {
-                    ownerDisplayName: ownerMember?.displayName,
-                } );
-
-                await this.services.channelService.delete( { guild, channel, } );
-
-                // # CRITICAL:
-                return;
-            }
-
-            if ( channelDB?.userOwnerId === oldState.member?.id ) {
+                await this.onLeaveDynamicChannelEmpty( channel, channelDB, guild, args );
+            } else if ( channelDB?.userOwnerId === oldState.member?.id ) {
                 await this.onOwnerLeaveDynamicChannel( oldState.member as GuildMember, channel );
             }
         }
@@ -207,21 +185,31 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             `Owner: '${ owner.displayName }' join dynamic channel: '${ channel.name }'`
         );
 
-        if ( "idle" === state ) {
-            DynamicChannelClaimManager.$.removeChannelOwnerTracking( owner.id, channel.id );
-
-            await this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.deletedStartedMessagesInternal( channel );
-        }
     }
 
     public async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
         this.logger.info( this.onOwnerLeaveDynamicChannel,
             `Guild id: '${ channel.guild.id }' - Owner: '${ owner.displayName }' left dynamic channel: '${ channel.name }'`
         );
+    }
 
-        if ( await this.isClaimButtonEnabled( channel ) ) {
-            DynamicChannelClaimManager.$.addChannelTracking( owner, channel );
+    public async onLeaveDynamicChannelEmpty( channel: VoiceBasedChannel, channelDB: null | ChannelResult, guild: Guild, args: IChannelLeaveGenericArgs ) {
+        if ( ! channelDB ) {
+            this.logger.error( this.onLeaveDynamicChannelEmpty,
+                `Guild id: '${ guild.id }', channel id: '${ channel.id }' - ` +
+                "Channel DB not found."
+            );
+
+            return;
         }
+
+        const ownerMember = args.newState.guild.members.cache.get( channelDB.userOwnerId );
+
+        await this.log( undefined, channel as VoiceChannel, this.onLeaveDynamicChannelEmpty, "", {
+            ownerDisplayName: ownerMember?.displayName,
+        } );
+
+        await this.services.channelService.delete( { guild, channel, } );
     }
 
     public async getAssembledChannelNameTemplate( channel: VoiceChannel, userId: string, returnDefault = false ): Promise<string | null> {
@@ -849,16 +837,20 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return logError();
         }
 
-        this.logger.info( this.editChannelOwner,
-            `Guild id: '${ channel.guild.id }' channel id: ${ channel.id } - ` +
-            `Changing owner of dynamic channel: '${ channel.name }' from owner id: '${ previousOwnerId }' to owner id: '${ newOwnerId }'`
-        );
-
         // Delete cache.
         await this.services.channelService.update( {
             channel,
             userOwnerId: newOwnerId,
         } );
+
+        await this.updateChannelOwnership( channel, previousOwnerId, newOwnerId, from, masterChannel );
+    }
+
+    public async updateChannelOwnership( channel: VoiceChannel, previousOwnerId: string, newOwnerId: string, from: "claim" | "transfer", masterChannel: VoiceChannel ) {
+        this.logger.info( this.updateChannelOwnership,
+            `Guild id: '${ channel.guild.id }' channel id: ${ channel.id } - ` +
+            `Changing owner of dynamic channel: '${ channel.name }' from owner id: '${ previousOwnerId }' to owner id: '${ newOwnerId }'`
+        );
 
         const previousOwner = channel.guild.members.cache.get( previousOwnerId ),
             newOwner = channel.guild.members.cache.get( newOwnerId );
@@ -873,11 +865,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await channel.edit( { permissionOverwrites } );
 
         this.editPrimaryMessageDebounce( channel );
-
-        // Request to rescan, since new channel owner, to determine if he abandoned.
-        if ( await this.isClaimButtonEnabled( channel ) ) {
-            setTimeout( () => DynamicChannelClaimManager.$.handleAbandonedChannels( channel.client, [ channel ] ) );
-        }
     }
 
     public async editPrimaryMessage( channel: VoiceChannel ) {
@@ -1272,41 +1259,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // TODO: Find better way to check if message is primary.
         return message?.author?.id === this.services.appService.getClient().user.id &&
             message?.embeds?.[ 0 ]?.title?.at( 0 ) === "༄";
-    }
-
-    public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {
-        // TODO: Add dedicated method for this.
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
-
-        if ( ! masterChannelDB ) {
-            this.logger.error( this.isClaimButtonEnabled,
-                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - Master channel not found.`
-            );
-            return false;
-        }
-
-        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
-
-        if ( ! enabledButtons?.length ) {
-            this.logger.error( this.isClaimButtonEnabled,
-                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - Enabled buttons not found.`
-            );
-            return false;
-        }
-
-        const claimChannelButtonId = DynamicChannelElementsGroup
-            .getByName( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton" )?.getId();
-
-        // Check if claim button is enabled.
-        if ( ! claimChannelButtonId || claimChannelButtonId in enabledButtons ) {
-            return true;
-        }
-
-        this.logger.log( this.isClaimButtonEnabled,
-            `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - Claim button is disabled.`
-        );
-
-        return false;
     }
 
     public async isChannelOwner( ownerId: string | undefined, channelId: string ) {
@@ -1762,6 +1714,22 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         return result;
+    }
+
+    private async onJoin( args: IChannelEnterGenericArgs ) {
+        const { newState } = args;
+
+        if ( await ChannelModel.$.isDynamic( newState.channelId! ) ) {
+            await this.onJoinDynamicChannel( args );
+        }
+    }
+
+    private async onLeave( args: IChannelLeaveGenericArgs ) {
+        const { oldState } = args;
+
+        if ( await ChannelModel.$.isDynamic( oldState.channelId! ) ) {
+            await this.onLeaveDynamicChannel( args );
+        }
     }
 }
 

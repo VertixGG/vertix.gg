@@ -6,12 +6,12 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
-
 import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-exu-base";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui-v2/setup-edit/setup-edit-component";
 import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-master-edit-button";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
@@ -310,7 +310,9 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                     this.dynamicChannelService.editPrimaryMessageDebounce( channel );
                 }
 
-                DynamicChannelClaimManager.$.handleAbandonedChannels( this.appService.getClient(), [], channels );
+                ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim" )
+                    .handleAbandonedChannels( this.appService.getClient(), [], channels )
+                    .catch( ( e ) => { throw e; } );
             } );
         }
 
@@ -439,7 +441,6 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
     private async onBackButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction );
-
 
         const keys = MasterChannelDataManager.$.getKeys();
 

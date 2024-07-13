@@ -1,13 +1,9 @@
-import { jest } from "@jest/globals";
-
 import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
-import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator-util/ui-mock-generator-util";
+
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
-import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 abstract class UIElementBaseMock extends UIElementBase<any> {
     public async getTranslatableContent(): Promise<any> {
@@ -40,15 +36,11 @@ describe( "VertixGUI/UIComponentBase", () => {
 
         test( "ensureEntities() :: ensure error - component should have entities", function () {
             // Arrange.
-            const Class = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const Class = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
             // Act.
             const action = () => Class.validate();
@@ -58,82 +50,40 @@ describe( "VertixGUI/UIComponentBase", () => {
         } );
 
         test( "ensureEntities() :: ensure error - dynamic component should not allow static entities", function () {
-            // Arrange - Class dynamic component with static entity.
-            const ClassWithElement = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
+            // Arrange
+            const ClassWithElement = UIMockGeneratorUtil.createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withElements(
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "entity-element" )
+                        .withInstanceType( UIInstancesTypes.Static )
+                        .build()
+                )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
+            const ClassWithEmbed = UIMockGeneratorUtil.createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withEmbeds(
+                    UIMockGeneratorUtil.createEmbed()
+                        .withName( "entity-embed" )
+                        .withInstanceType( UIInstancesTypes.Static )
+                        .build()
+                )
+                .build();
 
-                protected static getElements() {
-                    return [
-                        class extends UIElementBaseMock {
-                            public static getName() {
-                                return "entity-element";
-                            }
-
-                            public static getInstanceType() {
-                                return UIInstancesTypes.Static;
-                            }
-                        }
-                    ];
-                }
-            };
-
-            const ClassWithEmbed = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                protected static getEmbeds() {
-                    return [
-                        class extends UIEmbedBase {
-                            public static getName() {
-                                return "entity-embed";
-                            }
-
-                            public static getInstanceType() {
-                                return UIInstancesTypes.Static;
-                            }
-                        }
-                    ];
-                }
-            };
-
-            const ClassWithModal = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                protected static getModals() {
-                    return [
-                        class extends UIModalBase {
-                            public static getName() {
-                                return "entity-modal";
-                            }
-
-                            public static getInstanceType() {
-                                return UIInstancesTypes.Static;
-                            }
-
-                            protected getTitle() {
-                                return "test title";
-                            }
-                        }
-                    ];
-                }
-            };
+            const ClassWithModal = UIMockGeneratorUtil.createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withModals(
+                    UIMockGeneratorUtil.createModal()
+                        .withName( "entity-modal" )
+                        .withInstanceType( UIInstancesTypes.Static )
+                        .withTitle( "test title" )
+                        .build()
+                )
+                .build();
 
             const classes = [ ClassWithElement, ClassWithEmbed, ClassWithModal ];
 
@@ -148,32 +98,19 @@ describe( "VertixGUI/UIComponentBase", () => {
     } );
 
     describe( "build()", () => {
-
         test( "buildElements() :: ensure single row", async function () {
             // Arrange.
-            const Class = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                protected static getElements() {
-                    return [
-                        class extends UIElementBaseMock {
-                            public static getName() {
-                                return "entity-element";
-                            }
-
-                            public static getInstanceType() {
-                                return UIInstancesTypes.Dynamic;
-                            }
-                        }
-                    ];
-                }
-            };
+            const Class = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withElements(
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "entity-element" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                )
+                .build();
 
             const instance = new Class();
 
@@ -189,42 +126,21 @@ describe( "VertixGUI/UIComponentBase", () => {
 
         test( "buildElements() :: ensure single multi row", async function () {
             // Arrange.
-            const Class = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                protected static getElements() {
-                    return [
-                        [
-                            class extends UIElementBaseMock {
-                                public static getName() {
-                                    return "entity-element-row-1";
-                                }
-
-                                public static getInstanceType() {
-                                    return UIInstancesTypes.Dynamic;
-                                }
-                            }
-                        ],
-                        [
-                            class extends UIElementBaseMock {
-                                public static getName() {
-                                    return "entity-element-row-2";
-                                }
-
-                                public static getInstanceType() {
-                                    return UIInstancesTypes.Dynamic;
-                                }
-                            }
-                        ],
-                    ];
-                }
-            };
+            const Class = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withElements(
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "entity-element-row-1" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build(),
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "entity-element-row-2" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                )
+                .build();
 
             const instance = new Class();
 
@@ -245,32 +161,18 @@ describe( "VertixGUI/UIComponentBase", () => {
         test( "buildElements() :: ensure dynamic recreated", async function () {
             // Arrange.
             const elements = [
-                class extends UIElementBaseMock {
-                    public static elementName = "entity-element";
-
-                    public static getName() {
-                        return this.elementName;
-                    }
-
-                    public static getInstanceType() {
-                        return UIInstancesTypes.Dynamic;
-                    }
-                }
+                UIMockGeneratorUtil.createElement()
+                    .withName( "entity-element" )
+                    .withInstanceType( UIInstancesTypes.Dynamic )
+                    .build()
             ];
 
-            const Class = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                protected static getElements() {
-                    return elements;
-                }
-            };
+            const Class = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withElements( ... elements )
+                .build();
 
             const instance = new Class();
 
@@ -282,7 +184,7 @@ describe( "VertixGUI/UIComponentBase", () => {
                 .toEqual( "entity-element" );
 
             // Act - Manipulate element & re-build.
-            elements[ 0 ].elementName = "entity-element-changed";
+            elements[ 0 ].__name = "entity-element-changed";
 
             await instance.build();
 
@@ -294,32 +196,18 @@ describe( "VertixGUI/UIComponentBase", () => {
         test( "buildElements() :: ensure static not recreated", async function () {
             // Arrange.
             const elements = [
-                class extends UIElementBaseMock {
-                    public static elementName = "entity-element";
-
-                    public static getName() {
-                        return this.elementName;
-                    }
-
-                    public static getInstanceType() {
-                        return UIInstancesTypes.Static;
-                    }
-                }
+                UIMockGeneratorUtil.createElement()
+                    .withName( "entity-element" )
+                    .withInstanceType( UIInstancesTypes.Static )
+                    .build()
             ];
 
-            const Class = class extends UIComponentBase {
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Static;
-                }
-
-                protected static getElements() {
-                    return elements;
-                }
-            };
+            const Class = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Static )
+                .withElements( ... elements )
+                .build();
 
             const instance = new Class();
             await instance.waitUntilInitialized();
@@ -329,7 +217,7 @@ describe( "VertixGUI/UIComponentBase", () => {
                 .toEqual( "entity-element" );
 
             // Act - Manipulate element & re-build.
-            elements[ 0 ].elementName = "entity-element-changed";
+            elements[ 0 ].__name = "entity-element-changed";
             await instance.build();
 
             // Assert - Ensure static element is not recreated - stay the same!.
@@ -380,44 +268,22 @@ describe( "VertixGUI/UIComponentBase", () => {
 
         test( "buildElements() :: ensure empty rebuild removes the elements", async function () {
             // Arrange.
-            const Class = class MyComponent extends UIComponentBase {
-                private static myElements = [ [
-                    class extends UIElementBaseMock {
-                        public static getName() {
-                            return "entity-element-row-1";
-                        }
-
-                        public static getInstanceType() {
-                            return UIInstancesTypes.Dynamic;
-                        }
-                    } ], [
-                    class extends UIElementBaseMock {
-                        public static getName() {
-                            return "entity-element-row-2";
-                        }
-
-                        public static getInstanceType() {
-                            return UIInstancesTypes.Dynamic;
-                        }
-                    }
-                ] ];
-
-                public static getName() {
-                    return "test";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                protected static getElements() {
-                    return MyComponent.myElements;
-                }
-
-                public switchToEmptyElements() {
-                    MyComponent.myElements = [];
-                }
-            };
+            const Class = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withElements( /* 2 rows */ [
+                        UIMockGeneratorUtil.createElement()
+                            .withName( "entity-element-row-1" )
+                            .withInstanceType( UIInstancesTypes.Dynamic )
+                            .build() ], [
+                        UIMockGeneratorUtil.createElement()
+                            .withName( "entity-element-row-2" )
+                            .withInstanceType( UIInstancesTypes.Dynamic )
+                            .build()
+                    ]
+                )
+                .build();
 
             const instance = new Class();
 
@@ -428,7 +294,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             expect( result ).toHaveLength( 2 );
 
             // Act.
-            instance.switchToEmptyElements();
+            instance.clearElements();
             await instance.build();
             const result2 = instance.getEntitiesInstance().elements;
 
@@ -440,108 +306,52 @@ describe( "VertixGUI/UIComponentBase", () => {
     describe( "switchElementsGroup()", () => {
         it( "should able to switch between elements", async function () {
             // Arrange.
-            const Embed = class extends UIEmbedBase {
-                public static getName() {
-                    return "embed";
-                }
+            const Embed = UIMockGeneratorUtil
+                .createEmbed()
+                .withName( "embed" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const ElementsGroupA = UIMockGeneratorUtil
+                .createElementsGroup()
+                .withName( "elements-b" )
+                .withItems( /* 2 rows */ [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element1" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                ], [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element2" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                ] )
+                .build();
 
-            const Element1 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element1";
-                }
+            const ElementsGroupB = UIMockGeneratorUtil
+                .createElementsGroup()
+                .withName( "elements-a" )
+                .withItems( /* 2 rows */ [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element3" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build(),
+                    ], [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element4" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                ] )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const Element2 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element2";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const Element3 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element3";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const Element4 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element4";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const ElementsA = class extends UIElementsGroupBase {
-                public static getName() {
-                    return "elements-a";
-                }
-
-                public static getItems() {
-                    return [
-                        [ Element1 ],
-                        [ Element2 ],
-                    ];
-                }
-            };
-
-            const ElementsB = class extends UIElementsGroupBase {
-                public static getName() {
-                    return "elements-b";
-                }
-
-                public static getItems() {
-                    return [
-                        [ Element3 ],
-                        [ Element4 ],
-                    ];
-                }
-            };
-
-            const Component = class extends UIComponentBase {
-                public static getName() {
-                    return "test-component";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                public static getElementsGroups() {
-                    return [
-                        ElementsA,
-                        ElementsB,
-                    ];
-                }
-
-                protected static getEmbeds() {
-                    return [
-                        Embed,
-                    ];
-                }
-
-                protected static getDefaultElementsGroup() {
-                    return ElementsA.getName();
-                }
-            };
+            const Component = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test-component" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withEmbeds( Embed )
+                .withElementsGroups( ElementsGroupA, ElementsGroupB )
+                .withDefaultElementsGroup( ElementsGroupA.getName() )
+                .build();
 
             // Act - Build.
             const instance = new Component(),
@@ -576,7 +386,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             } );
 
             // Act - Switch to ElementsB.
-            instance.switchElementsGroup( ElementsB );
+            instance.switchElementsGroup( ElementsGroupB );
 
             // Act - Re-build.
             const schema2 = await instance.build();
@@ -612,115 +422,59 @@ describe( "VertixGUI/UIComponentBase", () => {
 
         it( "should not allow dynamic component to switch dynamic elements with static elements", async function () {
             // Arrange.
-            const Embed = class extends UIEmbedBase {
-                public static getName() {
-                    return "embed";
-                }
+            const Embed = UIMockGeneratorUtil
+                .createEmbed()
+                .withName( "embed" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const ElementsGroupA = UIMockGeneratorUtil
+                .createElementsGroup()
+                .withName( "elements-b" )
+                .withItems( /* 2 rows */ [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element1" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                ], [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element2" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                ] )
+                .build();
 
-            const Element1 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element1";
-                }
+            const ElementsGroupB = UIMockGeneratorUtil
+                .createElementsGroup()
+                .withName( "elements-a" )
+                .withItems( /* 2 rows */ [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element3" )
+                        .withInstanceType( UIInstancesTypes.Static )
+                        .build(),
+                    ], [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "element4" )
+                        .withInstanceType( UIInstancesTypes.Static )
+                        .build()
+                ] )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const Element2 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element2";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const Element3 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element3";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Static;
-                }
-            };
-
-            const Element4 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element4";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Static;
-                }
-            };
-
-            const ElementsA = class extends UIElementsGroupBase {
-                public static getName() {
-                    return "elements-a";
-                }
-
-                public static getItems() {
-                    return [
-                        [ Element1 ],
-                        [ Element2 ],
-                    ];
-                }
-            };
-
-            const ElementsB = class extends UIElementsGroupBase {
-                public static getName() {
-                    return "elements-b";
-                }
-
-                public static getItems() {
-                    return [
-                        [ Element3 ],
-                        [ Element4 ],
-                    ];
-                }
-            };
-
-            const Component = class extends UIComponentBase {
-                public static getName() {
-                    return "test-component";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                public static getElementsGroups() {
-                    return [
-                        ElementsA,
-                        ElementsB,
-                    ];
-                }
-
-                protected static getEmbeds() {
-                    return [
-                        Embed,
-                    ];
-                }
-
-                protected static getDefaultElementsGroup() {
-                    return ElementsA.getName();
-                }
-            };
+            const Component = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test-component" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withEmbeds( Embed )
+                .withElementsGroups( ElementsGroupA, ElementsGroupB )
+                .withDefaultElementsGroup( ElementsGroupA.getName() )
+                .build();
 
             // Act - Build.
             const instance = new Component();
             await instance.build();
 
             // Act - Switch elements.
-            const action = () => instance.switchElementsGroup( ElementsB );
+            const action = () => instance.switchElementsGroup( ElementsGroupB );
 
             // Assert.
             await expect( action ).toThrowError( "Entity: 'element3' is static, but component: 'test-component' is dynamic" );
@@ -730,74 +484,38 @@ describe( "VertixGUI/UIComponentBase", () => {
     describe( "clearElements()", () => {
         it( "should build schema without elements", async function () {
             // Arrange.
-            const Embed = class extends UIEmbedBase {
-                public static getName() {
-                    return "embed";
-                }
+            const Embed = UIMockGeneratorUtil
+                .createEmbed()
+                .withName( "embed" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const Element1 = UIMockGeneratorUtil
+                .createElement()
+                .withName( "element1" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-            const Element1 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element1";
-                }
+            const Element2 = UIMockGeneratorUtil
+                .createElement()
+                .withName( "element2" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const ElementsA = UIMockGeneratorUtil
+                .createElementsGroup()
+                .withName( "elements-a" )
+                .withItems( /* 2 rows */ [ Element1 ], [ Element2 ] )
+                .build();
 
-            const Element2 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element2";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const ElementsA = class extends UIElementsGroupBase {
-                public static getName() {
-                    return "elements-a";
-                }
-
-                public static getItems() {
-                    return [
-                        [ Element1 ],
-                        [ Element2 ],
-                    ];
-                }
-            };
-
-            const Component = class extends UIComponentBase {
-                public static getName() {
-                    return "test-component";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                public static getElementsGroups() {
-                    return [
-                        ElementsA,
-                    ];
-                }
-
-                protected static getEmbeds() {
-                    return [
-                        Embed,
-                    ];
-                }
-
-                protected static getDefaultElementsGroup() {
-                    return ElementsA.getName();
-                }
-            };
+            const Component = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test-component" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withEmbeds( Embed )
+                .withElementsGroups( ElementsA )
+                .withDefaultElementsGroup( ElementsA.getName() )
+                .build();
 
             const instance = new Component(),
                 schema = await instance.build();
@@ -854,74 +572,38 @@ describe( "VertixGUI/UIComponentBase", () => {
 
         it( "should not effect schema elements when component recreated", async function () {
             // Arrange.
-            const Embed = class extends UIEmbedBase {
-                public static getName() {
-                    return "embed";
-                }
+            const Embed = UIMockGeneratorUtil
+                .createEmbed()
+                .withName( "embed" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const Element1 = UIMockGeneratorUtil
+                .createElement()
+                .withName( "element1" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-            const Element1 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element1";
-                }
+            const Element2 = UIMockGeneratorUtil
+                .createElement()
+                .withName( "element2" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .build();
 
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
+            const ElementsA = UIMockGeneratorUtil
+                .createElementsGroup()
+                .withName( "elements-a" )
+                .withItems( /* 2 rows */ [ Element1 ], [ Element2 ] )
+                .build();
 
-            const Element2 = class extends UIElementBaseMock {
-                public static getName() {
-                    return "element2";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-            };
-
-            const ElementsA = class extends UIElementsGroupBase {
-                public static getName() {
-                    return "elements-a";
-                }
-
-                public static getItems() {
-                    return [
-                        [ Element1 ],
-                        [ Element2 ],
-                    ];
-                }
-            };
-
-            const Component = class extends UIComponentBase {
-                public static getName() {
-                    return "test-component";
-                }
-
-                public static getInstanceType() {
-                    return UIInstancesTypes.Dynamic;
-                }
-
-                public static getElementsGroups() {
-                    return [
-                        ElementsA,
-                    ];
-                }
-
-                protected static getEmbeds() {
-                    return [
-                        Embed,
-                    ];
-                }
-
-                protected static getDefaultElementsGroup() {
-                    return ElementsA.getName();
-                }
-            };
+            const Component = UIMockGeneratorUtil
+                .createComponent()
+                .withName( "test-component" )
+                .withInstanceType( UIInstancesTypes.Dynamic )
+                .withEmbeds( Embed )
+                .withElementsGroups( ElementsA )
+                .withDefaultElementsGroup( ElementsA.getName() )
+                .build();
 
             const instance = new Component(),
                 schema = await instance.build();

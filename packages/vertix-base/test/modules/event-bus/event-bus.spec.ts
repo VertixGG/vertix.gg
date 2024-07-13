@@ -83,4 +83,43 @@ describe( "VertixBase/Modules/EventBus", () => {
         // Assert.
         expect( mockCallback ).not.toHaveBeenCalled();
     } );
+
+    it( "should call the callback immediately if the event was already emitted", async () => {
+        eventbus.register( mockObject, [ mockObject.mockMethod ] );
+
+        mockObject.mockMethod();
+
+        await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+        eventbus.onCalledBeforeDoInvoke( mockObject.getName(), "mockMethod", mockCallback );
+
+        expect( mockCallback ).toHaveBeenCalled();
+    } );
+
+    it( "should not call the callback immediately if the event was not emitted", () => {
+        eventbus.register( mockObject, [ mockObject.mockMethod ] );
+
+        eventbus.onCalledBeforeDoInvoke( mockObject.getName(), "mockMethod", mockCallback );
+
+        expect( mockCallback ).not.toHaveBeenCalled();
+    } );
+
+    it( "should throw an error if the object is not registered", () => {
+        expect( () => {
+            eventbus.onCalledBeforeDoInvoke( "nonExistentObject", "mockMethod", mockCallback );
+        } ).toThrow( "Object nonExistentObject is not registered" );
+    } );
+
+    it( "should call the callback immediately with the correct arguments if the event was already emitted", async () => {
+        eventbus.register( mockObject, [ mockObject.mockMethod ] );
+
+        const args = [ "arg1", "arg2" ];
+        mockObject.mockMethod( ...args );
+
+        await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+        eventbus.onCalledBeforeDoInvoke( mockObject.getName(), "mockMethod", mockCallback );
+
+        expect( mockCallback ).toHaveBeenCalledWith( ...args );
+    } );
 } );

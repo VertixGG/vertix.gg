@@ -10,8 +10,6 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import picocolors from "picocolors";
-
 import {
     ActionRowBuilder,
     BaseGuildTextChannel,
@@ -21,6 +19,8 @@ import {
     GuildChannel,
     Message
 } from "discord.js";
+
+import picocolors from "picocolors";
 
 import { UIAdapterEntityBase } from "@vertix.gg/gui/src/bases/ui-adapter-entity-base";
 
@@ -32,15 +32,11 @@ import { UIInteractionMiddleware } from "@vertix.gg/gui/src/bases/ui-interaction
 
 import { UI_LANGUAGES_INITIAL_CODE } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
+import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-
-import type {
-    UIAdapterReplyContext,
-    UIAdapterStartContext
-} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
-import type { UIService } from "@vertix.gg/gui/src//ui-service";
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type {
@@ -94,12 +90,42 @@ export abstract class UIAdapterBase<
 
     private readonly argsManager: UIArgsManager;
 
-    // TODO: Clear them out after a while, figure out how it works.
-    private startedMessages: {
-        [ channelId: string ]: {
-            [ messageId: string ]: Message<true>,
+    /**
+     * Managing Discord messages sent in different channels.
+     *
+     * The class keeps track of started messages, by channel and message ID.
+     */
+    private channelStartedMessages = new class StartedMessages {
+        // TODO: Clear them out after a while, figure out how it works.
+        private messages: {
+            [ channelId: string ]: {
+                [ messageId: string ]: Message<true>,
+            }
+        } = {};
+
+        public get( channelId: string ) {
+            return this.messages[ channelId ];
         }
-    } = {};
+
+        public set( channelId: string, messageId: string, message: Message<true> ) {
+            if ( ! this.messages[ channelId ] ) {
+                this.messages[ channelId ] = {};
+            }
+
+            this.messages[ channelId ][ messageId ] = message;
+        }
+
+        public delete( channelId: string, messageId: string ): void;
+        public delete( channelId: string ): void;
+
+        public delete( channelId: string, messageId?: string ) {
+            if ( messageId ) {
+                delete this.messages[ channelId ][ messageId ];
+            } else {
+                delete this.messages[ channelId ];
+            }
+        }
+    } ();
 
     protected uiService: UIService;
 
@@ -243,6 +269,9 @@ export abstract class UIAdapterBase<
         return schema;
     }
 
+    /**
+     * Sends a message to a channel.
+     */
     public async send( channel: TChannel, sendArgs?: UIArgs ) {
         // TODO: When args switching from one adapter to another, the old args should be cleared out.
         // TODO: Old interaction should be cleared out.
@@ -252,13 +281,9 @@ export abstract class UIAdapterBase<
 
         await this.build( args, "send", channel );
 
-        const message = await this.getMessage( "send", channel, sendArgs );
+        const message = this.getMessage( "send", channel, sendArgs );
 
         if ( channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel ) {
-            if ( ! this.startedMessages[ channel.id ] ) {
-                this.startedMessages[ channel.id ] = {};
-            }
-
             const result = await channel.send( message ).catch( ( e ) => {
                 this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
 
@@ -269,7 +294,7 @@ export abstract class UIAdapterBase<
                 return null;
             }
 
-            this.startedMessages[ channel.id ][ result.id ] = result;
+            this.channelStartedMessages.set( channel.id, result.id, result );
 
             // New Interaction?
             this.argsManager.setInitialArgs( this, result.id, args );
@@ -291,7 +316,7 @@ export abstract class UIAdapterBase<
             .send( this.getMessage() )
             .catch(
                 () => this.staticAdapter.adapterLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
-         );
+            );
     }
 
     public async editReply( interaction: TInteraction, newArgs?: UIArgs ) {
@@ -313,7 +338,7 @@ export abstract class UIAdapterBase<
 
         await this.build( args, "edit", interaction );
 
-        const message = await this.getMessage( "edit", interaction, newArgs );
+        const message = this.getMessage( "edit", interaction, newArgs );
 
         if ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) {
             const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
@@ -420,7 +445,7 @@ export abstract class UIAdapterBase<
 
         await this.build( args, "reply", interaction );
 
-        const message = await this.getMessage( "reply", interaction, sendArgs ),
+        const message =  this.getMessage( "reply", interaction, sendArgs ),
             shouldDeletePreviousInteraction = deletePreviousInteraction && ! interaction.isCommand() && interaction.message?.id,
             messageId = shouldDeletePreviousInteraction && interaction.message?.id || 0,
             interactionInternalId = interaction.user.id + UI_GENERIC_SEPARATOR + messageId;
@@ -483,10 +508,6 @@ export abstract class UIAdapterBase<
         return this.getComponent().waitUntilInitialized();
     }
 
-    public getStartedMessages( channel: TChannel ) {
-        return this.startedMessages[ channel.id ];
-    }
-
     public getPermissions(): PermissionsBitField {
         throw new ForceMethodImplementation( this, "getPermissions" );
     }
@@ -503,8 +524,10 @@ export abstract class UIAdapterBase<
     }
 
     public async deletedStartedMessagesInternal( channel: TChannel ) {
-        if ( this.startedMessages[ channel.id ] ) {
-            const messages = Object.entries( this.startedMessages[ channel.id ] ) || [],
+        const startedMessages = this.channelStartedMessages.get( channel.id );
+
+        if ( startedMessages ) {
+            const messages = Object.entries( startedMessages ) || [],
                 messageLength = messages.length;
 
             for ( let i = 0 ; i < messageLength ; i++ ) {
@@ -512,14 +535,14 @@ export abstract class UIAdapterBase<
 
                 await message.delete();
 
-                delete this.startedMessages[ channel.id ][ id ];
+                this.channelStartedMessages.delete( channel.id, id );
             }
 
             // If started channel has no messages, deletedStartedMessagesInternal it.
-            if ( ! Object.keys( this.startedMessages[ channel.id ]?.messages || {} ).length ) {
+            if ( ! Object.keys( this.channelStartedMessages.get( channel.id )?.messages || {} ).length ) {
                 this.getArgsManager().deleteArgs( this, channel.id );
 
-                delete this.startedMessages[ channel.id ];
+                this.channelStartedMessages.delete( channel.id );
             }
         }
     }
@@ -802,4 +825,5 @@ export abstract class UIAdapterBase<
 
         return args;
     }
+
 }

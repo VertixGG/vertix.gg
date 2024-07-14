@@ -10,10 +10,10 @@ import {
     UserSelectMenuBuilder
 } from "discord.js";
 
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-
 import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
+
+import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
 
 import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
 
@@ -32,6 +32,7 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
 import type {
     ComponentBuilder } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 
 interface UIEntityMapped {
     entity: typeof UIEntityBase,
@@ -46,18 +47,20 @@ interface UIEntityMap {
 // TODO: Some methods can be private.
 
 export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
-    private static adapterEntityDebugger = createDebugger( this, "", "UI" );
+    private static adapterEntityDebugger = createDebugger( this.getName(), "", "UI" );
 
     private readonly component: UIComponentBase;
 
     private entitiesMap: UIEntityMap = {};
+
+    protected customIdStrategy!: UICustomIdStrategyBase;
 
     public static getName() {
         return "VertixGUI/UIAdapterEntityBase";
     }
 
     public static getComponent(): UIComponentTypeConstructor {
-        throw new ForceMethodImplementation( this, this.getComponent.name );
+        throw new ForceMethodImplementation( this.getName(), this.getComponent.name );
     }
 
     protected static getExcludedElements(): UIEntityTypes {
@@ -68,7 +71,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         return this.getExcludedElements();
     }
 
-    protected constructor() {
+    protected constructor( protected options: TAdapterRegisterOptions ) {
         super();
 
         const staticThis = this.constructor as typeof UIAdapterEntityBase,
@@ -82,6 +85,8 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
             this.onEntityMap?.();
         } );
+
+        this.defineOptions();
     }
 
     protected getComponent(): UIComponentBase {
@@ -159,8 +164,6 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     }
 
     protected buildComponentsBySchema( schema: any ) { // TODO: Add type.
-        const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" );
-
         return schema.map( ( row: any ) => ( new ActionRowBuilder ).addComponents(
             row.map( ( entity: any ) => { // TODO: Add type.
                     if ( ! entity.isAvailable ) {
@@ -173,7 +176,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                         };
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
-                        data.customId = entity.attributes.custom_id || uiHashService.generateId(
+                        data.customId = entity.attributes.custom_id || this.customIdStrategy.generateId(
                             this.getName() + UI_GENERIC_SEPARATOR + entity.name
                         );
                     }
@@ -246,5 +249,15 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         }
 
         await mappedEntity.callback.bind( this )( interaction, entityInstance );
+    }
+
+    private defineOptions() {
+        const { module } = this.options;
+
+        if ( module ) {
+            this.customIdStrategy = module.customIdStrategy;
+        } else {
+            this.customIdStrategy = new UICustomIdPlainStrategy();
+        }
     }
 }

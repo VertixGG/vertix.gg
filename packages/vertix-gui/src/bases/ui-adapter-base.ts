@@ -51,7 +51,7 @@ import type {
     StringSelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
-import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 const REGENERATE_BUTTON_ID = "regenerate-button";
 
@@ -70,12 +70,10 @@ export abstract class UIAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterEntityBase {
-    private static adapterLogger: Logger = new Logger( this.getName() );
-    private static adapterDebugger = createDebugger( this.getName(), "UI" );
+    private static logger: Logger = new Logger( this.getName() );
+    private static staticDebugger = createDebugger( this.getName(), "UI" );
 
     private static validatedOnce = false;
-
-    private staticAdapter: typeof UIAdapterBase;
 
     private static ephemeralInteractions: {
         [ userIdPlusMessageId: string ]: {
@@ -86,10 +84,6 @@ export abstract class UIAdapterBase<
 
     private static staticArgs = new UIArgsManager( picocolors.green( "StaticArgs" ) );
     private static staticSystemArgs = new UIArgsManager( picocolors.red( "SystemArgs" ) );
-
-    private dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
-
-    private readonly argsManager: UIArgsManager;
 
     /**
      * Managing Discord messages sent in different channels.
@@ -128,9 +122,11 @@ export abstract class UIAdapterBase<
         }
     } ();
 
-    protected uiService: UIService;
-    protected uiHashService: UIHashService;
+    private readonly argsManager: UIArgsManager;
 
+    private dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
+
+    protected uiService: UIService;
     protected uiAdapterService: UIAdapterService;
 
     public static getName() {
@@ -176,7 +172,7 @@ export abstract class UIAdapterBase<
             const { interaction } = UIAdapterBase.ephemeralInteractions[ id ];
 
             if ( Date.now() - interaction.createdAt.getTime() > ADAPTER_CLEANUP_EPHEMERAL_TIMEOUT ) {
-                UIAdapterBase.adapterDebugger.log( UIAdapterBase.cleanupTimer,
+                UIAdapterBase.staticDebugger.log( UIAdapterBase.cleanupTimer,
                     `Deleting old ephemeral interaction: '${ interaction.id }' from memory`
                 );
 
@@ -184,7 +180,7 @@ export abstract class UIAdapterBase<
             }
         }
 
-        UIAdapterBase.adapterDebugger.dumpDown( UIAdapterBase.cleanupTimer, {
+        UIAdapterBase.staticDebugger.dumpDown( UIAdapterBase.cleanupTimer, {
             staticArgs: UIAdapterBase.staticArgs.getData(),
             systemArgs: UIAdapterBase.staticSystemArgs.getData(),
             ephemeralInteractions: Object.values( UIAdapterBase.ephemeralInteractions ).map( ( { interaction, rawCustomId } ) => {
@@ -202,19 +198,14 @@ export abstract class UIAdapterBase<
         return [];
     }
 
-    public constructor( uiAdapterService: UIAdapterService ) {
-        super();
+    public constructor( protected options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
-        this.uiHashService = ServiceLocator.$.get( "VertixGUI/UIHashService" );
-        this.uiAdapterService = uiAdapterService;
+        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
-        const staticThis = this.constructor as typeof UIAdapterBase;
-
-        this.staticAdapter = staticThis;
-
-        if ( staticThis.adapterDebugger.isEnabled() ) {
-            staticThis.adapterDebugger.enableCleanupDebug( this );
+        if ( this.$$.staticDebugger.isEnabled() ) {
+            this.$$.staticDebugger.enableCleanupDebug( this );
         }
 
         if ( this.isStatic() ) {
@@ -226,18 +217,22 @@ export abstract class UIAdapterBase<
         if ( ! this.shouldDisableMiddleware || ! this.shouldDisableMiddleware() ) {
             new UIInteractionMiddleware( this, {
                 onChannelFailed: async ( channel, channelTypes ) => {
-                    await uiAdapterService.get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
+                    await this.uiAdapterService.get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
                         channelTypes,
                     } );
                 },
 
                 onInteractionFailed: async ( interaction, missingPermissions ) => {
-                    await uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                    await this.uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                         missingPermissions,
                     } );
                 },
             } );
         }
+    }
+
+    public get $$() {
+        return this.constructor as typeof UIAdapterBase;
     }
 
     public async build( args: UIArgs, from: UIAdapterBuildSource = "unknown", context: "direct-message" | string | TInteraction | TChannel | Message<true> ) {
@@ -280,7 +275,7 @@ export abstract class UIAdapterBase<
         // TODO: Old interaction should be cleared out.
         const args = await this.getArgsInternal( channel, sendArgs );
 
-        this.staticAdapter.adapterDebugger.dumpDown( this.send, args, "getStartArgs" );
+        this.$$.staticDebugger.dumpDown( this.send, args, "getStartArgs" );
 
         await this.build( args, "send", channel );
 
@@ -288,7 +283,7 @@ export abstract class UIAdapterBase<
 
         if ( channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel ) {
             const result = await channel.send( message ).catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
+                this.$$.logger.error( this.ephemeral, "", e );
 
                 return null;
             } );
@@ -309,7 +304,7 @@ export abstract class UIAdapterBase<
     }
 
     public async sendToUser( guildId: string | "direct-message", userId: string, argsFromManager: UIArgs ) {
-        this.staticAdapter.adapterDebugger.log(
+        this.$$.staticDebugger.log(
             this.sendToUser, this.getName() + ` - Sending to user: '${ userId }' from guild id: '${ guildId }'`
         );
 
@@ -318,13 +313,13 @@ export abstract class UIAdapterBase<
         await ( await this.uiAdapterService.getClient().users.fetch( userId ) )
             .send( this.getMessage() )
             .catch(
-                () => this.staticAdapter.adapterLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
+                () => this.$$.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
             );
     }
 
     public async editReply( interaction: TInteraction, newArgs?: UIArgs ) {
         // TODO: Add log middleware.
-        this.staticAdapter.adapterDebugger.log( this.editReply, this.getName() + ` - Editing reply: '${ interaction.id }'` );
+        this.$$.staticDebugger.log( this.editReply, this.getName() + ` - Editing reply: '${ interaction.id }'` );
 
         if ( await this.isArgsExpiredInternal( interaction ) ) {
             return;
@@ -366,13 +361,13 @@ export abstract class UIAdapterBase<
                 components: reindexDisabledComponents,
                 embeds: message.embeds,
             } ).catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( this.editReply, "", e );
+                this.$$.logger.error( this.editReply, "", e );
             } );
         } else {
             if ( ! interaction.isCommand() && ! interaction.deferred ) {
                 // TODO: Use dedicated method.
                 if ( false === await interaction.deferUpdate().catch( ( e ) => {
-                    this.staticAdapter.adapterLogger.error( this.editReply, "", e );
+                    this.$$.logger.error( this.editReply, "", e );
 
                     return false;
                 } ) ) {
@@ -382,7 +377,7 @@ export abstract class UIAdapterBase<
         }
 
         return await interaction.editReply( message ).catch( ( e ) => {
-            this.staticAdapter.adapterLogger.error( this.editReply, "", e );
+            this.$$.logger.error( this.editReply, "", e );
         } );
     }
 
@@ -408,13 +403,13 @@ export abstract class UIAdapterBase<
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
-        const customId = this.uiHashService.getId( interaction.customId ),
+        const customId = this.customIdStrategy.getId( interaction.customId ),
             entityName = customId.split( UI_GENERIC_SEPARATOR )[ 1 ];
 
-        this.staticAdapter.adapterDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
+        this.$$.staticDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
 
         if ( interaction.isMessageComponent() && REGENERATE_BUTTON_ID === entityName && this.regenerate ) {
-            this.staticAdapter.adapterLogger.admin( this.run,
+            this.$$.logger.admin( this.run,
                 `⚡ Regenerating: '${ this.getName() }' - (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
@@ -453,14 +448,14 @@ export abstract class UIAdapterBase<
             messageId = shouldDeletePreviousInteraction && interaction.message?.id || 0,
             interactionInternalId = interaction.user.id + UI_GENERIC_SEPARATOR + messageId;
 
-        if ( shouldDeletePreviousInteraction && this.staticAdapter.ephemeralInteractions[ interactionInternalId ] ) {
+        if ( shouldDeletePreviousInteraction && this.$$.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.
             const previousInteraction =
-                this.staticAdapter.ephemeralInteractions[ interactionInternalId ].interaction;
+                this.$$.ephemeralInteractions[ interactionInternalId ].interaction;
 
             // TODO: Avoid catching here.
             await previousInteraction.deleteReply().catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( caller, "", e );
+                this.$$.logger.error( caller, "", e );
             } );
         }
 
@@ -469,13 +464,13 @@ export abstract class UIAdapterBase<
             ephemeral: true,
         } ).then( _result => {
             if ( shouldDeletePreviousInteraction ) {
-                this.staticAdapter.ephemeralInteractions[ interactionInternalId ] = {
+                this.$$.ephemeralInteractions[ interactionInternalId ] = {
                     interaction,
-                    rawCustomId: this.uiHashService.getId( interaction.customId ),
+                    rawCustomId: this.customIdStrategy.getId( interaction.customId ),
                 };
             }
         } ).catch( ( e ) => {
-            this.staticAdapter.adapterLogger.error( caller, "", e );
+            this.$$.logger.error( caller, "", e );
         } );
     }
 
@@ -484,7 +479,7 @@ export abstract class UIAdapterBase<
     public async showModal( modalName: string, interaction: MessageComponentInteraction<"cached"> ) {
         const args = await this.getArgsInternal( interaction as TInteraction, {} );
 
-        // const entity = this.staticAdapter.getComponent()
+        // const entity = this.$$.getComponent()
         //     .getEntities( { modals: true })
         //     .find( ( entity ) => entity.getName() === modalName );
         //
@@ -501,7 +496,7 @@ export abstract class UIAdapterBase<
             modal = this.buildModal( modalInstance );
 
         await interaction.showModal( modal )
-            .catch( ( error ) => this.staticAdapter.adapterLogger.error( this.showModal, "", error ) )
+            .catch( ( error ) => this.$$.logger.error( this.showModal, "", error ) )
             .then( () => {
                 // this.deleteArgs( this.getArgsId( interaction as TInteraction ) );
             } );
@@ -555,7 +550,7 @@ export abstract class UIAdapterBase<
 
         if ( supported ) {
             const messages = await channel.messages.fetch().catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( this.deleteRelatedComponentMessagesInternal, "", e );
+                this.$$.logger.error( this.deleteRelatedComponentMessagesInternal, "", e );
             } );
 
             if ( ! messages ) {
@@ -582,17 +577,17 @@ export abstract class UIAdapterBase<
     public async deleteRelatedEphemeralInteractionsInternal( interaction: TInteraction, customId: string, count: number ) {
         let deletedCount = 0;
 
-        for ( const [ key, it ] of Object.entries( this.staticAdapter.ephemeralInteractions ) ) {
+        for ( const [ key, it ] of Object.entries( this.$$.ephemeralInteractions ) ) {
             if ( deletedCount >= count ) {
                 break;
             }
 
             if ( key.includes( interaction.user.id ) && it.rawCustomId === customId ) {
                 await it.interaction.deleteReply().catch( ( e ) => {
-                    this.staticAdapter.adapterLogger.error( this.ephemeral, "", e );
+                    this.$$.logger.error( this.ephemeral, "", e );
                 } );
 
-                delete this.staticAdapter.ephemeralInteractions[ key ];
+                delete this.$$.ephemeralInteractions[ key ];
 
                 ++deletedCount;
             }
@@ -640,7 +635,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.uiHashService.getId( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
+            customId: this.customIdStrategy.getId( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }
@@ -738,7 +733,7 @@ export abstract class UIAdapterBase<
         if ( ! interaction.isCommand() ) {
             // Use main deferUpdate method.
             await interaction.deferUpdate().catch( ( e ) => {
-                this.staticAdapter.adapterLogger.error( this.isArgsExpiredInternal, `Interaction id: '${ interaction.id }' failed to deferUpdate.`, e );
+                this.$$.logger.error( this.isArgsExpiredInternal, `Interaction id: '${ interaction.id }' failed to deferUpdate.`, e );
             } );
         }
 
@@ -750,7 +745,7 @@ export abstract class UIAdapterBase<
 
         errorLog += " has expired.";
 
-        this.staticAdapter.adapterLogger.warn( this.isArgsExpiredInternal, errorLog );
+        this.$$.logger.warn( this.isArgsExpiredInternal, errorLog );
 
         const options: InteractionEditReplyOptions = {
             components: [],
@@ -767,7 +762,7 @@ export abstract class UIAdapterBase<
 
             const buttonData = await button.build();
 
-            buttonData.attributes.customId = this.uiHashService
+            buttonData.attributes.customId = this.customIdStrategy
                 .generateId( this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID );
 
             const buttonBuilder = new ButtonBuilder( buttonData.attributes );
@@ -821,7 +816,7 @@ export abstract class UIAdapterBase<
 
         args = Object.assign( {}, args );
 
-        this.staticAdapter.adapterDebugger.dumpDown( this.getArgsInternal, {
+        this.$$.staticDebugger.dumpDown( this.getArgsInternal, {
             contextId,
             args,
             argsFromManager,

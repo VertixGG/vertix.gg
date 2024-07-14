@@ -1,11 +1,13 @@
+import { ObjectBase } from "@vertix.gg/base/src/bases/index";
+
 import type { Base } from "discord.js";
 
-export abstract class UIVersionStrategyBase {
-    protected readonly versions: Map<number, string>;
+export abstract class UIVersionStrategyBase extends ObjectBase {
+    public constructor(protected readonly versions: Map<number, string> ) {
+        super();
 
-    public constructor(versions: typeof this.versions ) {
         this.versions = versions;
     }
 
-    public abstract determine( context?: Base ): number;
+    public abstract determine( context?: Base ): Promise<number>;
 }

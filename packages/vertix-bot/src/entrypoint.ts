@@ -31,6 +31,8 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
+import type UIVersioningAdapterService from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
@@ -137,6 +139,27 @@ async function registerConfigs() {
     GlobalLogger.$.info( registerConfigs, "Configs are registered" );
 }
 
+async function registerUIVersionStrategies() {
+    GlobalLogger.$.info( registerUIVersionStrategies, "Registering version strategies ..." );
+
+    const versionStrategies = await Promise.all( [
+            await import("@vertix.gg/base/src/version-strategies/ui-guild-version-strategy"),
+        ]),
+        uiVersioningAdapterService = ServiceLocator.$.get<UIVersioningAdapterService>( "VertixGUI/UIVersioningAdapterService" );
+
+    uiVersioningAdapterService.registerVersions( [ 2, 3 ] );
+
+    versionStrategies.forEach( strategy => {
+        GlobalLogger.$.debug( registerUIVersionStrategies, `Registering version strategy: '${ strategy.default.getName() }'` );
+
+        uiVersioningAdapterService.registerStrategy( strategy.default );
+
+        GlobalLogger.$.debug( registerUIVersionStrategies, `Version strategy registered: '${ strategy.default.getName() }'` );
+    } );
+
+    GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
+}
+
 async function createCleanupWorker() {
     try {
         const thread = await initWorker();
@@ -190,6 +213,8 @@ export async function entryPoint() {
 
     await registerUIAdapters();
     await registerUILanguageManager();
+
+    await registerUIVersionStrategies();
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 

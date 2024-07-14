@@ -1,27 +1,17 @@
 import { jest } from "@jest/globals";
 
-import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
 import { ClaimVoteEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-embed";
 
 describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
     beforeEach( async () => {
-        // Mock original ServiceLocator.
-        ServiceLocatorMock.mockOrigin();
-
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
+        await TestWithServiceLocatorMock.withUIServiceMock();
 
         jest.useFakeTimers();
     } );
 
     afterEach( () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
-
         jest.clearAllTimers();
     } );
 

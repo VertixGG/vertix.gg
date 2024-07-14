@@ -1,35 +1,12 @@
-import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
 import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator-util/ui-mock-generator-util";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
-
-abstract class UIElementBaseMock extends UIElementBase<any> {
-    public async getTranslatableContent(): Promise<any> {
-        return {};
-    }
-
-    protected async getAttributes() {
-        return {};
-    }
-}
 
 describe( "VertixGUI/UIComponentBase", () => {
     beforeEach( async () => {
-        // Mock original ServiceLocator.
-        ServiceLocatorMock.mockOrigin();
-
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
-    } );
-
-    afterEach( () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
+        await TestWithServiceLocatorMock.withUIServiceMock();
     } );
 
     describe( "validate()", () => {
@@ -130,16 +107,17 @@ describe( "VertixGUI/UIComponentBase", () => {
                 .createComponent()
                 .withName( "test" )
                 .withInstanceType( UIInstancesTypes.Dynamic )
-                .withElements(
+                .withElements( [
                     UIMockGeneratorUtil.createElement()
                         .withName( "entity-element-row-1" )
                         .withInstanceType( UIInstancesTypes.Dynamic )
                         .build(),
+                ], [
                     UIMockGeneratorUtil.createElement()
                         .withName( "entity-element-row-2" )
                         .withInstanceType( UIInstancesTypes.Dynamic )
                         .build()
-                )
+                ] )
                 .build();
 
             const instance = new Class();
@@ -336,7 +314,7 @@ describe( "VertixGUI/UIComponentBase", () => {
                         .withName( "element3" )
                         .withInstanceType( UIInstancesTypes.Dynamic )
                         .build(),
-                    ], [
+                ], [
                     UIMockGeneratorUtil.createElement()
                         .withName( "element4" )
                         .withInstanceType( UIInstancesTypes.Dynamic )
@@ -452,7 +430,7 @@ describe( "VertixGUI/UIComponentBase", () => {
                         .withName( "element3" )
                         .withInstanceType( UIInstancesTypes.Static )
                         .build(),
-                    ], [
+                ], [
                     UIMockGeneratorUtil.createElement()
                         .withName( "element4" )
                         .withInstanceType( UIInstancesTypes.Static )

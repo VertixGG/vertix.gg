@@ -11,12 +11,6 @@ import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-ch
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui-v2/setup-edit/setup-edit-component";
 import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-master-edit-button";
 
-import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
-
-import type UIService from "@vertix.gg/gui/src/ui-service";
-
-import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
@@ -27,7 +21,13 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
+
 import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 type Interactions =
@@ -259,9 +259,9 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onTemplateEditModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
-        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
-            channelNameInputId = uiService
-                .generateCustomIdHash( "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-V2/ChannelNameTemplateInput" );
+        const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ),
+            channelNameInputId = uiHashService
+                .generateId( "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-V2/ChannelNameTemplateInput" );
 
         const value = interaction.fields.getTextInputValue( channelNameInputId ),
             args = this.getArgsManager().getArgs( this, interaction );

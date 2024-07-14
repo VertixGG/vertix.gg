@@ -101,7 +101,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         // TODO: There should be some helper or extension of interaction to get the customId parts.
         // EG: interaction.getCustomId( "masterChannelIndex" )
         const customIdParts =
-                this.uiService.getCustomIdFromHash( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
+                this.uiHashService.generateId( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
             masterChannelIndex = parseInt( customIdParts[ 2 ] ),
             masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, false );
 
@@ -164,8 +164,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onBadwordsModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
-        const badwordsInputId = this.uiService
-                .generateCustomIdHash( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" );
+        const badwordsInputId = this.uiHashService
+                .generateId( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" );
 
         const value = interaction.fields.getTextInputValue( badwordsInputId ),
             newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( value ) )

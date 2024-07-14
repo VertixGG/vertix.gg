@@ -1,4 +1,5 @@
 import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
 import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator-util/ui-mock-generator-util";
 
@@ -18,10 +19,8 @@ let adapterService: UIAdapterService;
 describe( "VertixGUI/UIVersioningAdapterService", () => {
 
     beforeEach( async () => {
-        ServiceLocatorMock.reset();
+        await TestWithServiceLocatorMock.withUIAdapterServiceMock();
 
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock );
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/gui/src/ui-versioning-adapter-service" ) ).UIVersioningAdapterService );
 
         // Await for all services to be registered.

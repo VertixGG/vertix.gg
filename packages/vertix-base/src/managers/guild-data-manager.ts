@@ -8,7 +8,8 @@ import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
-    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE
+    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
+    DEFAULT_GUILD_SETTINGS_KEY_VERSION
 } from "@vertix.gg/base/src/definitions/guild-data-keys";
 
 import {
@@ -80,6 +81,17 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             .join( DEFAULT_BADWORDS_SEPARATOR ) || DEFAULT_BADWORDS_INITIAL_VALUE;
     }
 
+    public async getUIVersion( guildId: string ): Promise<number> {
+        const version = await this.getData( {
+            ownerId: guildId,
+            key: DEFAULT_GUILD_SETTINGS_KEY_VERSION,
+            default: "0",
+            cache: true,
+        }, true ) || "0";
+
+        return parseInt( version.toString() );
+    }
+
     public async setBadwords( guildId: string, badwords: string[] | undefined ) {
         const oldBadwords = await this.getBadwordsFormatted( guildId );
 
@@ -119,6 +131,21 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         if ( shouldAdminLog ) {
             this.logger.admin( this.setLanguage,
                 `🌍  Language has been modified - "${ language }" (${ guild.name }) (${ guild.memberCount })`
+            );
+        }
+    }
+
+    public async setUIVersion( guild: Guild, version: number, shouldAdminLog = true ) {
+        await this.setData( {
+            ownerId: guild.id,
+            key: DEFAULT_GUILD_SETTINGS_KEY_VERSION,
+            default: version.toString(),
+            cache: true,
+        }, true );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin( this.setUIVersion,
+                `⏫  UI Version has been modified - "${ version }" (${ guild.name }) (${ guild.memberCount })`
             );
         }
     }

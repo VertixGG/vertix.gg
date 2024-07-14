@@ -23,7 +23,6 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
@@ -259,8 +258,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onTemplateEditModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
-        const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ),
-            channelNameInputId = uiHashService
+        const channelNameInputId = this.customIdStrategy
                 .generateId( "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-V2/ChannelNameTemplateInput" );
 
         const value = interaction.fields.getTextInputValue( channelNameInputId ),

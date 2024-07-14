@@ -23,7 +23,6 @@ import type {
     UIDefaultModalChannelTextInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { BaseGuildTextChannel } from "discord.js";
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
@@ -49,8 +48,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         ];
     }
 
-    public constructor( uiAdapterService: UIAdapterService ) {
-        super( uiAdapterService );
+    public constructor( protected options: any ) {
+        super( options );
 
         this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }
@@ -101,7 +100,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         // TODO: There should be some helper or extension of interaction to get the customId parts.
         // EG: interaction.getCustomId( "masterChannelIndex" )
         const customIdParts =
-                this.uiHashService.generateId( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
+                this.customIdStrategy.getId( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
             masterChannelIndex = parseInt( customIdParts[ 2 ] ),
             masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, false );
 
@@ -164,7 +163,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onBadwordsModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
-        const badwordsInputId = this.uiHashService
+        const badwordsInputId = this.customIdStrategy
                 .generateId( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" );
 
         const value = interaction.fields.getTextInputValue( badwordsInputId ),

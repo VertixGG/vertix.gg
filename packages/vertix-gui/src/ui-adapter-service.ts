@@ -4,26 +4,22 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { UI_GENERIC_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
-
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 import type { Client } from "discord.js";
 
 import type { UIService } from "src/ui-service";
-import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
-import type { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
-import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
-import type { UIHashService } from "src/ui-hash-service";
+import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type {
+    TPossibleAdapters,
+    TAdapterConstructor,
+    TAdapterClassType,
+    TAdapterRegisterOptions,
+} from "src/definitions/ui-adapter-declaration";
 
-type ManagedClass =
-    UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
-    & UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>
-    & UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
-type MangedClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
-type MangedClassConstructor = { new( uiManager: UIAdapterService ): ManagedClass };
+import type { TModuleConstructor } from "@vertix.gg/gui/src/definitions/ui-module-declration";
 
 export class UIAdapterService extends ServiceWithDependenciesBase<{
     uiService: UIService,
@@ -42,8 +38,9 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         MissingPermissionsComponent?: UIComponentTypeConstructor;
     } = {};
 
-    private uiAdaptersTypes = new Map<string, MangedClassType | MangedClassConstructor>;
-    private uiStaticInstances = new Map<string, ManagedClass>;
+    private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>;
+    private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>;
+    private uiAdaptersRegisterOptions = new Map<string, TAdapterRegisterOptions>();
 
     private static emitter = new EventEmitter();
 
@@ -108,10 +105,9 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
     }
 
     public get( uiName: string, silent = false ) {
-        // TODO: Use constants for the separator.
         uiName = uiName.split( UI_GENERIC_SEPARATOR )[ 0 ];
 
-        const UIClass = this.uiAdaptersTypes.get( uiName ) as MangedClassType;
+        const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterClassType;
 
         if ( ! UIClass ) {
             if ( ! silent ) {
@@ -125,7 +121,15 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
             return this.createInstance( uiName );
         }
 
-        return this.uiStaticInstances.get( uiName );
+        return this.uiAdaptersStaticInstances.get( uiName );
+    }
+
+    public async registerModule( Module: TModuleConstructor ) {
+        Module.validate();
+
+        const adapters = Module.getAdapters();
+
+        await this.registerAdapters( adapters, { module: new Module() } );
     }
 
     public async registerInternalAdapters() {
@@ -136,13 +140,13 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         this.$$.emitter.emit( "internal-adapters-registered" );
     }
 
-    public async registerAdapters( adapters: MangedClassType[] ) {
+    public async registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
         adapters.forEach( adapter => {
-            this.registerAdapter( adapter );
+            this.registerAdapter( adapter, options );
         } );
     }
 
-    public registerAdapter( UIClass: MangedClassType ) {
+    public registerAdapter( UIClass: TAdapterClassType, options: TAdapterRegisterOptions = {} ) {
         const uiName = UIClass.getName();
 
         if ( this.uiAdaptersTypes.has( uiName ) ) {
@@ -156,11 +160,12 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
 
         // In order to have all hashes generated before the UI is created.
         for ( const entity of entities ) {
-            this.services.uiHashService
-                .generateId( UIClass.getName() + UI_GENERIC_SEPARATOR + entity.getName() );
+            this.services.uiHashService.generateId(
+                UIClass.getName() + UI_GENERIC_SEPARATOR + entity.getName()
+            );
         }
 
-        this.storeClass( UIClass );
+        this.storeClass( UIClass, options );
 
         // Store only instances that are static.
         if ( UIClass.isStatic() ) {
@@ -194,32 +199,39 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
     /**
      * Function storeClass() :: Stores the class of the entity, the actual registration.
      */
-    private storeClass( UIClass: MangedClassType ) {
+    private storeClass( UIClass: TAdapterClassType, options: TAdapterRegisterOptions ) {
         const uiName = UIClass.getName();
 
         this.uiAdaptersTypes.set( uiName, UIClass );
+        this.uiAdaptersRegisterOptions.set( uiName, options );
     }
 
     /**
      * Function storeInstance() :: Stores only static entity instances.
      */
-    private storeInstance( UIClass: MangedClassType ) {
+    private storeInstance( UIClass: TAdapterClassType ) {
         const instance = this.createInstance( UIClass.getName() );
 
-        this.uiStaticInstances.set( UIClass.getName(), instance );
+        this.uiAdaptersStaticInstances.set( UIClass.getName(), instance );
     }
 
     /**
      * Function createInstance() :: Creates a new instance of the entity for `get()` and `register()`.
      */
     private createInstance( uiName: string ) {
-        const UIClass = this.uiAdaptersTypes.get( uiName ) as MangedClassConstructor;
+        const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterConstructor;
 
         if ( ! UIClass ) {
-            throw new Error( `User interface '${ uiName }' does not exist` );
+            throw new Error( `Adapter: '${ uiName }' does not exist` );
         }
 
-        return new UIClass( this );
+        const options = this.uiAdaptersRegisterOptions.get( uiName );
+
+        if ( ! options ) {
+            throw new Error( `Adapter: '${ uiName }' options do not exist` );
+        }
+
+        return new UIClass( options );
     }
 }
 

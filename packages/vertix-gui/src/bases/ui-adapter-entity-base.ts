@@ -31,7 +31,7 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
 
 import type {
     ComponentBuilder } from "discord.js";
-import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 interface UIEntityMapped {
     entity: typeof UIEntityBase,

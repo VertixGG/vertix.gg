@@ -46,6 +46,7 @@ async function registerUIServices( client: Client<true> ) {
         import("@vertix.gg/gui/src/ui-service"),
         import("@vertix.gg/gui/src/ui-adapter-service"),
         import("@vertix.gg/gui/src/ui-hash-service"),
+        import("@vertix.gg/gui/src/ui-versioning-adapter-service"),
     ] );
 
     uiServices.forEach( service => {

@@ -8,6 +8,7 @@ import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { Base } from "discord.js";
+import type { TPossibleAdapters } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 class FallBackVersionStrategy extends UIVersionStrategyBase {
     public static getName() {
@@ -63,7 +64,7 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
     public async get( adapterName: string, context: Base, options: {
         prefix?: string;
         separator?: string;
-    } = {} ) {
+    } = {} ): Promise<TPossibleAdapters | undefined> {
         const {
             prefix = DEFAULT_UI_PREFIX,
             separator = DEFAULT_UI_NAMESPACE_SEPARATOR,

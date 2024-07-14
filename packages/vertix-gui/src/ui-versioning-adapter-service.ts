@@ -1,5 +1,7 @@
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
+import { DEFAULT_UI_NAMESPACE_SEPARATOR, DEFAULT_UI_PREFIX } from "@vertix.gg/gui/src/definitions/ui-declaration";
+
 import { UIVersionStrategyBase } from "@vertix.gg/gui/src/bases/ui-version-strategy-base";
 
 import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
@@ -7,13 +9,14 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { Base } from "discord.js";
 
-const DEFAULT_UI_PREFIX = "UI-V",
-    DEFAULT_NAMESPACE_SEPARATOR = "/";
-
 class FallBackVersionStrategy extends UIVersionStrategyBase {
-    public determine() {
-        // Return last possible version.
-        return Array.from( this.versions.keys() ).pop() || 0;
+    public static getName() {
+        return "VertixGUI/FallBackVersionStrategy";
+    }
+
+    public async determine() {
+        // Return first version
+        return this.versions.keys().next().value;
     }
 }
 
@@ -53,16 +56,20 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public get( adapterName: string, context: Base, options: {
+    public registerStrategy( strategy: new( versions: Map<number, string> ) => UIVersionStrategyBase ) {
+        this.versionStrategies.push( new strategy( this.versions ) );
+    }
+
+    public async get( adapterName: string, context: Base, options: {
         prefix?: string;
         separator?: string;
-    } ) {
+    } = {} ) {
         const {
             prefix = DEFAULT_UI_PREFIX,
-            separator = DEFAULT_NAMESPACE_SEPARATOR,
+            separator = DEFAULT_UI_NAMESPACE_SEPARATOR,
         } = options;
 
-        const version = this.determineVersion( context );
+        const version = await this.determineVersion( context );
 
         const adapterNameWithVersion =
             this.formAdapterNameWithVersion( adapterName, version, prefix, separator );
@@ -88,13 +95,17 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
         return this.versions;
     }
 
-    public determineVersion( context: Base ) {
+    public async determineVersion( context: Base ) {
         for ( const versionStrategy of this.versionStrategies.reverse() ) {
-            if ( versionStrategy.determine( context ) ) {
-                return versionStrategy.determine( context );
+            const tryVersion = await versionStrategy.determine( context );
+
+            if ( tryVersion ) {
+                return tryVersion;
             }
         }
 
         throw new Error( "Unable to determine version" );
     }
 }
+
+export default UIVersioningAdapterService;

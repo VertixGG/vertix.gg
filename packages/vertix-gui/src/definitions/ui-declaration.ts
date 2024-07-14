@@ -1,0 +1,2 @@
+export const DEFAULT_UI_PREFIX = "UI-V",
+    DEFAULT_UI_NAMESPACE_SEPARATOR = "/";

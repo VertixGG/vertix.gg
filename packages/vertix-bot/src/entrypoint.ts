@@ -85,7 +85,7 @@ async function registerServices() {
 
 async function registerUIAdapters() {
     // Register UI adapters
-    const uiAdapters = await import("@vertix.gg/bot/src/ui-v2/ui-adapters-index"),
+    const uiModuleV2 = await import("@vertix.gg/bot/src/ui-v2/ui-module"),
         uiAdapterService = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" );
 
     const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/regenerate/ui-regenerate-button" ),
@@ -110,7 +110,7 @@ async function registerUIAdapters() {
 
     await uiAdapterService.registerInternalAdapters();
 
-    await uiAdapterService.registerAdapters( Object.values( uiAdapters ) );
+    await uiAdapterService.registerModule( uiModuleV2.default );
 }
 
 async function registerUILanguageManager() {

@@ -15,6 +15,8 @@ import type { Debugger } from "@vertix.gg/base/src/modules/debugger";
 const DEFAULT_SAVE_HASHES_DEBOUNCE_DELAY = 10000;
 
 export class UIHashService extends ServiceBase {
+    public static HASH_SIGNATURE = "ff9";
+
     private debugger: Debugger;
 
     private hashTable: Map<number, Map<string, string>> = new Map();
@@ -28,14 +30,16 @@ export class UIHashService extends ServiceBase {
         return "VertixGUI/UIHashService";
     }
 
-    public static generateHash( input: string, maxLength = UI_MAX_CUSTOM_ID_LENGTH ) {
+    public static generateHash( input: string, maxLength = UI_MAX_CUSTOM_ID_LENGTH, shouldSign = false ): string {
         const base = crypto
             .createHash( "md5" )
             .update( input )
             .digest( "hex" );
 
         // 32 * length
-        return base.repeat( Math.ceil( maxLength / 32 ) ).slice( 0, maxLength );
+        const hash = base.repeat( Math.ceil( maxLength / 32 ) ).slice( 0, maxLength );
+
+        return ( ( shouldSign ? UIHashService.HASH_SIGNATURE : "" ) + hash ).slice( 0, maxLength );
     }
 
     public constructor() {
@@ -50,7 +54,7 @@ export class UIHashService extends ServiceBase {
         return this.constructor as typeof UIHashService;
     }
 
-    public generateId( id: string, separator = UI_GENERIC_SEPARATOR, maxLength = UI_MAX_CUSTOM_ID_LENGTH ): string {
+    public generateId( id: string, separator = UI_GENERIC_SEPARATOR, maxLength = UI_MAX_CUSTOM_ID_LENGTH, shouldSign = true ): string {
         if ( this.hashTable.has( maxLength ) && this.hashTable.get( maxLength )!.has( id ) ) {
             return this.hashTable.get( maxLength )!.get( id )!;
         }
@@ -71,7 +75,9 @@ export class UIHashService extends ServiceBase {
 
             const totalSeparatorLength = ( parted.length - 1 ) * separator.length;
             const maxLenForPart = Math.floor( ( maxLength - totalSeparatorLength ) / parted.length ),
-                hashedParts = parted.map( ( part ) => this.generateId( part, separator, maxLenForPart ) ),
+                hashedParts = parted.map( /* no signature for parts */
+                    ( part ) => this.generateId( part, separator, maxLenForPart, false )
+                ),
                 result = hashedParts.join( separator );
 
             this.debugger.log(
@@ -93,7 +99,7 @@ export class UIHashService extends ServiceBase {
             return result;
         }
 
-        const hash = this.$$.generateHash( id, maxLength );
+        const hash = this.$$.generateHash( id, maxLength, shouldSign );
 
         if ( this.hashTable.has( maxLength ) && this.hashTable.get( maxLength )!.has( id ) ) {
             return this.hashTable.get( maxLength )!.get( id )!;
@@ -109,7 +115,22 @@ export class UIHashService extends ServiceBase {
         return hash;
     }
 
-    public getId( hash: string, separator: string | null = UI_GENERIC_SEPARATOR ): string {
+    public getId( hash: string, separator: string | null = UI_GENERIC_SEPARATOR, options = {
+        silent: false
+    } ): string {
+        // If hash is not signed, then it's not a hash.
+        if ( ! hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+            if ( ! options.silent ) {
+                if ( this.debugger.isEnabled() ) {
+                    throw new Error( `Hash: '${ hash }' is not signed` );
+                } else {
+                    this.logger.error( this.getId, `Hash: '${ hash }' is not signed` );
+                }
+            }
+
+            return hash;
+        }
+
         const hashedParts = separator ? hash.split( separator ) : [];
 
         if ( hashedParts.length > 1 ) {
@@ -130,16 +151,22 @@ export class UIHashService extends ServiceBase {
         const id = this.hashTableReverse.get( hash.length )?.get( hash );
 
         if ( ! id ) {
-            if ( this.debugger.isEnabled() ) {
-                throw new Error( `Can't find id for hash: '${ hash }'` );
-            } else {
-                this.logger.error( this.getId, `Can't find id for hash: '${ hash }'` );
+            if ( ! options.silent ) {
+                if ( this.debugger.isEnabled() ) {
+                    throw new Error( `Can't find id for hash: '${ hash }'` );
+                } else {
+                    this.logger.error( this.getId, `Can't find id for hash: '${ hash }'` );
+                }
             }
 
             return hash;
         }
 
         return id;
+    }
+
+    public getIdSilent( hash: string ) {
+        return this.getId( hash, UI_GENERIC_SEPARATOR, { silent: true } );
     }
 
     public loadTablesFromFile( filePath = process.cwd() + "/ui-hash-tables.json" ) {
@@ -155,8 +182,12 @@ export class UIHashService extends ServiceBase {
 
         const data = JSON.parse( fs.readFileSync( filePath, "utf-8" ) );
 
-        this.hashTable = new Map( data.hashTable.map( ( [ length, entries ]: [ number, [ string, string ][] ] ) => [ length, new Map( entries ) ] ) );
-        this.hashTableReverse = new Map( data.hashTableReverse.map( ( [ length, entries ]: [ number, [ string, string ][] ] ) => [ length, new Map( entries ) ] ) );
+        this.hashTable = new Map( data.hashTable.map(
+            ( [ length, entries ]: [ number, [ string, string ][] ] ) => [ length, new Map( entries ) ] ) )
+        ;
+        this.hashTableReverse = new Map( data.hashTableReverse.map( (
+            [ length, entries ]: [ number, [ string, string ][] ] ) => [ length, new Map( entries ) ] )
+        );
 
         // Set total size
         this.hashTablesSaveLength = this.getCurrenHashTablesLength();

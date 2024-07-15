@@ -12,7 +12,7 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -375,7 +375,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
     private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
-        const customIdParts = interaction.customId.split( UI_GENERIC_SEPARATOR, 3 );
+        const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
 
         switch ( customIdParts[ 1 ] ) {
             case "VertixBot/UI-V2/ClaimVoteStepInButton":

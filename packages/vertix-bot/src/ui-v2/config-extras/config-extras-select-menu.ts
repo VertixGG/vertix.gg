@@ -3,7 +3,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 
-import { UI_GENERIC_SEPARATOR, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { APISelectMenuOption } from "discord.js";
 
@@ -47,11 +47,11 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         const result: APISelectMenuOption[] = [
             {
                 label: dynamicChannelMentionableLabel + " " + state,
-                value: "dynamicChannelMentionable" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" ),
+                value: "dynamicChannelMentionable" + UI_CUSTOM_ID_SEPARATOR + ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" ),
             },
             {
                 label: dynamicChannelAutoSaveLabel + " " + state,
-                value: "dynamicChannelAutoSave" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelAutoSave ? "0" : "1" ),
+                value: "dynamicChannelAutoSave" + UI_CUSTOM_ID_SEPARATOR + ( this.uiArgs?.dynamicChannelAutoSave ? "0" : "1" ),
             }
         ];
 
@@ -59,7 +59,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             result.push(
                 {
                     label: dynamicChannelLogsChannelLabel + " " + state,
-                    value: "dynamicChannelLogsChannel" + UI_GENERIC_SEPARATOR + "0", // Always off, since it only turn off button.
+                    value: "dynamicChannelLogsChannel" + UI_CUSTOM_ID_SEPARATOR + "0", // Always off, since it only turn off button.
                 }
             );
         }
@@ -89,7 +89,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         const result = {
                 state: ConfigExtrasSelectMenu.vars.stateOff,
             },
-            optionValue = option.value.split( UI_GENERIC_SEPARATOR, 2 );
+            optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );
 
         if ( "1" === optionValue[ 1 ] ) {
             result.state = ConfigExtrasSelectMenu.vars.stateOn;

@@ -6,7 +6,7 @@ import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-base";
 
@@ -100,7 +100,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         // TODO: There should be some helper or extension of interaction to get the customId parts.
         // EG: interaction.getCustomId( "masterChannelIndex" )
         const customIdParts =
-                this.customIdStrategy.getId( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
+                this.customIdStrategy.getId( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR ),
             masterChannelIndex = parseInt( customIdParts[ 2 ] ),
             masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, false );
 

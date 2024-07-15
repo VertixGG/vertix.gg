@@ -2,7 +2,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { ChannelType, PermissionsBitField, } from "discord.js";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
@@ -291,7 +291,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             values = interaction.values;
 
         values.forEach( ( value ) => {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
@@ -329,7 +329,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             values = interaction.values;
 
         values.forEach( ( value ) => {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelIncludeEveryoneRole":

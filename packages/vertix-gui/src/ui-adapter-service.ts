@@ -2,7 +2,7 @@ import EventEmitter from "node:events";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import { UI_GENERIC_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 import type { Client } from "discord.js";
@@ -105,7 +105,7 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
     }
 
     public get( uiName: string, silent = false ) {
-        uiName = uiName.split( UI_GENERIC_SEPARATOR )[ 0 ];
+        uiName = uiName.split( UI_CUSTOM_ID_SEPARATOR )[ 0 ];
 
         const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterClassType;
 
@@ -161,7 +161,7 @@ export class UIAdapterService extends ServiceWithDependenciesBase<{
         // In order to have all hashes generated before the UI is created.
         for ( const entity of entities ) {
             this.services.uiHashService.generateId(
-                UIClass.getName() + UI_GENERIC_SEPARATOR + entity.getName()
+                UIClass.getName() + UI_CUSTOM_ID_SEPARATOR + entity.getName()
             );
         }
 

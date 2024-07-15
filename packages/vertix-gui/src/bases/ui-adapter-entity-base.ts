@@ -21,7 +21,7 @@ import { EntityCallbackNotFoundError } from "@vertix.gg/gui/src/bases/errors/ent
 
 import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown-element-type-error";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIComponentConstructor, UIComponentTypeConstructor, UICreateComponentArgs, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
@@ -177,7 +177,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
                         data.customId = entity.attributes.custom_id || this.customIdStrategy.generateId(
-                            this.getName() + UI_GENERIC_SEPARATOR + entity.name
+                            this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
                         );
                     }
 

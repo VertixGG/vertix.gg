@@ -26,7 +26,7 @@ import { UIAdapterEntityBase } from "@vertix.gg/gui/src/bases/ui-adapter-entity-
 
 import { UIArgsManager } from "@vertix.gg/gui/src/bases/ui-args-manager";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIInteractionMiddleware } from "@vertix.gg/gui/src/bases/ui-interaction-middleware";
 
@@ -404,7 +404,7 @@ export abstract class UIAdapterBase<
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
         const customId = this.customIdStrategy.getId( interaction.customId ),
-            entityName = customId.split( UI_GENERIC_SEPARATOR )[ 1 ];
+            entityName = customId.split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
 
         this.$$.staticDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
 
@@ -446,7 +446,7 @@ export abstract class UIAdapterBase<
         const message =  this.getMessage( "reply", interaction, sendArgs ),
             shouldDeletePreviousInteraction = deletePreviousInteraction && ! interaction.isCommand() && interaction.message?.id,
             messageId = shouldDeletePreviousInteraction && interaction.message?.id || 0,
-            interactionInternalId = interaction.user.id + UI_GENERIC_SEPARATOR + messageId;
+            interactionInternalId = interaction.user.id + UI_CUSTOM_ID_SEPARATOR + messageId;
 
         if ( shouldDeletePreviousInteraction && this.$$.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.
@@ -635,7 +635,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.customIdStrategy.getId( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
+            customId: this.customIdStrategy.getId( this.getName() + UI_CUSTOM_ID_SEPARATOR + modal.getName() ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }
@@ -763,7 +763,7 @@ export abstract class UIAdapterBase<
             const buttonData = await button.build();
 
             buttonData.attributes.customId = this.customIdStrategy
-                .generateId( this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID );
+                .generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + REGENERATE_BUTTON_ID );
 
             const buttonBuilder = new ButtonBuilder( buttonData.attributes );
 

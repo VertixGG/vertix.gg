@@ -4,7 +4,7 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-exu-base";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
@@ -347,7 +347,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             values = interaction.values;
 
         for ( const value of values ) {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
@@ -409,7 +409,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             values = interaction.values;
 
         values.forEach( ( value ) => {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelIncludeEveryoneRole":

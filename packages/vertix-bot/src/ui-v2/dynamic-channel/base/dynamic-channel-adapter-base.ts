@@ -7,7 +7,7 @@ import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/base/_dynamic-channel-requirements";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
@@ -23,8 +23,8 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<VoiceChann
         return "VertixBot/UI-V2/DynamicChannelAdapterBase";
     }
 
-    public constructor( uiAdapterService: UIAdapterService ) {
-        super( uiAdapterService );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }

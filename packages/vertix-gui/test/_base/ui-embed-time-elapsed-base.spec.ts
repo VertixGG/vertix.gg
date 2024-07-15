@@ -1,6 +1,6 @@
 import { jest } from "@jest/globals";
 
-import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
 import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
 
@@ -30,12 +30,7 @@ describe( "VertixGUI/EmbedElapsedTimeBase", () => {
     let embedInstance: UIEmbedElapsedTimeBaseMock;
 
     beforeEach( async () => {
-        ServiceLocatorMock.mockOrigin();
-
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
+        await TestWithServiceLocatorMock.withUIServiceMock();
 
         embedInstance = new UIEmbedElapsedTimeBaseMock();
 
@@ -43,7 +38,6 @@ describe( "VertixGUI/EmbedElapsedTimeBase", () => {
     } );
 
     afterEach( () => {
-        ServiceLocatorMock.reset();
 
         jest.clearAllTimers();
     } );

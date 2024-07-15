@@ -2,7 +2,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import  { Logger } from "@vertix.gg/base/src/modules/logger";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
@@ -13,10 +13,10 @@ import {
     DEFAULT_SETUP_PERMISSIONS
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
-
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
+
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 export class AdminAdapterExuBase<
     TChannel extends UIAdapterStartContext,
@@ -30,8 +30,8 @@ export class AdminAdapterExuBase<
         return "VertixBot/UI-V2/AdminAdapterExuBase";
     }
 
-    public constructor( uiAdapterService: UIAdapterService ) {
-        super( uiAdapterService );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
@@ -57,7 +57,7 @@ export class AdminAdapterExuBase<
                     `🔐 Bot missing permissions" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
                 );
 
-                await this.uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                await this.uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                     missingPermissions,
                     omitterDisplayName: interaction.guild.client.user.username,
                 } );

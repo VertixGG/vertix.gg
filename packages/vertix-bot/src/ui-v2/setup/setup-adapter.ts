@@ -6,7 +6,7 @@ import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-base";
 
@@ -100,7 +100,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         // TODO: There should be some helper or extension of interaction to get the customId parts.
         // EG: interaction.getCustomId( "masterChannelIndex" )
         const customIdParts =
-                this.customIdStrategy.getId( interaction.customId ).split( UI_GENERIC_SEPARATOR ),
+                this.customIdStrategy.getId( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR ),
             masterChannelIndex = parseInt( customIdParts[ 2 ] ),
             masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, false );
 
@@ -112,7 +112,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         const masterChannelDB = masterChannels[ masterChannelIndex ];
 
-        await this.uiAdapterService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
+        await this.uiService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
             masterChannelIndex,
             masterChannelDB
         } );
@@ -142,7 +142,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         const { masterChannelData } = ConfigManager.$
             .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
 
-        this.uiAdapterService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
+        this.uiService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: masterChannelData.dynamicChannelButtonsTemplate,
 
             dynamicChannelMentionable: masterChannelData.dynamicChannelMentionable,
@@ -183,6 +183,6 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onLanguageChooseClicked( interaction: DefaultInteraction ) {
-        this.uiAdapterService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
+        this.uiService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
     }
 }

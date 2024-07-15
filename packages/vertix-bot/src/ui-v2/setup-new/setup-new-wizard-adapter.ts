@@ -2,7 +2,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { ChannelType, PermissionsBitField, } from "discord.js";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
@@ -21,7 +21,7 @@ import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui-v2/setup/setu
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
 import type {
     UIDefaultButtonChannelTextInteraction,
@@ -29,9 +29,12 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
-import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
+
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction
@@ -89,8 +92,8 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         };
     }
 
-    public constructor( uiService: UIAdapterService ) {
-        super( uiService );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }
@@ -236,7 +239,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     protected async regenerate( interaction: MessageComponentInteraction<"cached"> ): Promise<void> {
-        this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+        this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
     }
 
     private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
@@ -291,7 +294,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             values = interaction.values;
 
         values.forEach( ( value ) => {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
@@ -329,7 +332,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             values = interaction.values;
 
         values.forEach( ( value ) => {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelIncludeEveryoneRole":

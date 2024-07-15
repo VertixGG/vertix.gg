@@ -3,7 +3,7 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 export abstract class CacheBase<CacheResult> extends InitializeBase {
-    private cache: Map<string, CacheResult>;
+    private readonly cache: Map<string, CacheResult>;
 
     private cacheDebugger: Debugger;
 

@@ -6,9 +6,8 @@ import { Commands } from "@vertix.gg/bot/src/commands";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
-
-import type UIHashService from "@vertix.gg/gui/src/ui-hash-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 import type { Client, CommandInteraction, Interaction } from "discord.js";
 
@@ -22,7 +21,7 @@ export function interactionHandler( client: Client ) {
                 .getIdSilent( interaction.customId );
 
             const adapter = ServiceLocator.$
-                .get<UIAdapterService>( "VertixGUI/UIAdapterService" )
+                .get<UIService>( "VertixGUI/UIService" )
                 .get( customId, true );
 
             GlobalLogger.$.log( interactionHandler,

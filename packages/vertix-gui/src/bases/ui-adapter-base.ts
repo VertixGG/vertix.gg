@@ -26,7 +26,7 @@ import { UIAdapterEntityBase } from "@vertix.gg/gui/src/bases/ui-adapter-entity-
 
 import { UIArgsManager } from "@vertix.gg/gui/src/bases/ui-args-manager";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIInteractionMiddleware } from "@vertix.gg/gui/src/bases/ui-interaction-middleware";
 
@@ -34,10 +34,10 @@ import { UI_LANGUAGES_INITIAL_CODE } from "@vertix.gg/gui/src/bases/ui-language-
 
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type {
     BaseMessageOptions,
@@ -70,7 +70,7 @@ export abstract class UIAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
 > extends UIAdapterEntityBase {
-    private static logger: Logger = new Logger( this.getName() );
+    private static staticLogger: Logger = new Logger( this.getName() );
     private static staticDebugger = createDebugger( this.getName(), "UI" );
 
     private static validatedOnce = false;
@@ -127,7 +127,6 @@ export abstract class UIAdapterBase<
     private dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
 
     protected uiService: UIService;
-    protected uiAdapterService: UIAdapterService;
 
     public static getName() {
         return "VertixGUI/UIAdapterBase";
@@ -202,7 +201,6 @@ export abstract class UIAdapterBase<
         super( options );
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
-        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
         if ( this.$$.staticDebugger.isEnabled() ) {
             this.$$.staticDebugger.enableCleanupDebug( this );
@@ -217,13 +215,13 @@ export abstract class UIAdapterBase<
         if ( ! this.shouldDisableMiddleware || ! this.shouldDisableMiddleware() ) {
             new UIInteractionMiddleware( this, {
                 onChannelFailed: async ( channel, channelTypes ) => {
-                    await this.uiAdapterService.get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
+                    await this.uiService.get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
                         channelTypes,
                     } );
                 },
 
                 onInteractionFailed: async ( interaction, missingPermissions ) => {
-                    await this.uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                    await this.uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                         missingPermissions,
                     } );
                 },
@@ -283,7 +281,7 @@ export abstract class UIAdapterBase<
 
         if ( channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel ) {
             const result = await channel.send( message ).catch( ( e ) => {
-                this.$$.logger.error( this.ephemeral, "", e );
+                this.$$.staticLogger.error( this.ephemeral, "", e );
 
                 return null;
             } );
@@ -310,10 +308,10 @@ export abstract class UIAdapterBase<
 
         await this.build( argsFromManager, "send-to-user", guildId );
 
-        await ( await this.uiAdapterService.getClient().users.fetch( userId ) )
+        await ( await this.uiService.getClient().users.fetch( userId ) )
             .send( this.getMessage() )
             .catch(
-                () => this.$$.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
+                () => this.$$.staticLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
             );
     }
 
@@ -361,13 +359,13 @@ export abstract class UIAdapterBase<
                 components: reindexDisabledComponents,
                 embeds: message.embeds,
             } ).catch( ( e ) => {
-                this.$$.logger.error( this.editReply, "", e );
+                this.$$.staticLogger.error( this.editReply, "", e );
             } );
         } else {
             if ( ! interaction.isCommand() && ! interaction.deferred ) {
                 // TODO: Use dedicated method.
                 if ( false === await interaction.deferUpdate().catch( ( e ) => {
-                    this.$$.logger.error( this.editReply, "", e );
+                    this.$$.staticLogger.error( this.editReply, "", e );
 
                     return false;
                 } ) ) {
@@ -377,7 +375,7 @@ export abstract class UIAdapterBase<
         }
 
         return await interaction.editReply( message ).catch( ( e ) => {
-            this.$$.logger.error( this.editReply, "", e );
+            this.$$.staticLogger.error( this.editReply, "", e );
         } );
     }
 
@@ -404,12 +402,12 @@ export abstract class UIAdapterBase<
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
         const customId = this.customIdStrategy.getId( interaction.customId ),
-            entityName = customId.split( UI_GENERIC_SEPARATOR )[ 1 ];
+            entityName = customId.split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
 
         this.$$.staticDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
 
         if ( interaction.isMessageComponent() && REGENERATE_BUTTON_ID === entityName && this.regenerate ) {
-            this.$$.logger.admin( this.run,
+            this.$$.staticLogger.admin( this.run,
                 `⚡ Regenerating: '${ this.getName() }' - (${ interaction.guild?.name }) (${ interaction.guild?.memberCount })`
             );
 
@@ -446,7 +444,7 @@ export abstract class UIAdapterBase<
         const message =  this.getMessage( "reply", interaction, sendArgs ),
             shouldDeletePreviousInteraction = deletePreviousInteraction && ! interaction.isCommand() && interaction.message?.id,
             messageId = shouldDeletePreviousInteraction && interaction.message?.id || 0,
-            interactionInternalId = interaction.user.id + UI_GENERIC_SEPARATOR + messageId;
+            interactionInternalId = interaction.user.id + UI_CUSTOM_ID_SEPARATOR + messageId;
 
         if ( shouldDeletePreviousInteraction && this.$$.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.
@@ -455,7 +453,7 @@ export abstract class UIAdapterBase<
 
             // TODO: Avoid catching here.
             await previousInteraction.deleteReply().catch( ( e ) => {
-                this.$$.logger.error( caller, "", e );
+                this.$$.staticLogger.error( caller, "", e );
             } );
         }
 
@@ -470,7 +468,7 @@ export abstract class UIAdapterBase<
                 };
             }
         } ).catch( ( e ) => {
-            this.$$.logger.error( caller, "", e );
+            this.$$.staticLogger.error( caller, "", e );
         } );
     }
 
@@ -496,7 +494,7 @@ export abstract class UIAdapterBase<
             modal = this.buildModal( modalInstance );
 
         await interaction.showModal( modal )
-            .catch( ( error ) => this.$$.logger.error( this.showModal, "", error ) )
+            .catch( ( error ) => this.$$.staticLogger.error( this.showModal, "", error ) )
             .then( () => {
                 // this.deleteArgs( this.getArgsId( interaction as TInteraction ) );
             } );
@@ -550,7 +548,7 @@ export abstract class UIAdapterBase<
 
         if ( supported ) {
             const messages = await channel.messages.fetch().catch( ( e ) => {
-                this.$$.logger.error( this.deleteRelatedComponentMessagesInternal, "", e );
+                this.$$.staticLogger.error( this.deleteRelatedComponentMessagesInternal, "", e );
             } );
 
             if ( ! messages ) {
@@ -584,7 +582,7 @@ export abstract class UIAdapterBase<
 
             if ( key.includes( interaction.user.id ) && it.rawCustomId === customId ) {
                 await it.interaction.deleteReply().catch( ( e ) => {
-                    this.$$.logger.error( this.ephemeral, "", e );
+                    this.$$.staticLogger.error( this.ephemeral, "", e );
                 } );
 
                 delete this.$$.ephemeralInteractions[ key ];
@@ -635,7 +633,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.customIdStrategy.getId( this.getName() + UI_GENERIC_SEPARATOR + modal.getName() ),
+            customId: this.customIdStrategy.getId( this.getName() + UI_CUSTOM_ID_SEPARATOR + modal.getName() ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }
@@ -733,7 +731,7 @@ export abstract class UIAdapterBase<
         if ( ! interaction.isCommand() ) {
             // Use main deferUpdate method.
             await interaction.deferUpdate().catch( ( e ) => {
-                this.$$.logger.error( this.isArgsExpiredInternal, `Interaction id: '${ interaction.id }' failed to deferUpdate.`, e );
+                this.$$.staticLogger.error( this.isArgsExpiredInternal, `Interaction id: '${ interaction.id }' failed to deferUpdate.`, e );
             } );
         }
 
@@ -745,7 +743,7 @@ export abstract class UIAdapterBase<
 
         errorLog += " has expired.";
 
-        this.$$.logger.warn( this.isArgsExpiredInternal, errorLog );
+        this.$$.staticLogger.warn( this.isArgsExpiredInternal, errorLog );
 
         const options: InteractionEditReplyOptions = {
             components: [],
@@ -755,7 +753,7 @@ export abstract class UIAdapterBase<
 
         // TODO: Make dedicated method for this.
         // TODO: Add to FAQ.
-        const { RegenerateButton } = this.uiAdapterService.$$.getSystemElements();
+        const { RegenerateButton } = this.uiService.$$.getSystemElements();
 
         if ( RegenerateButton && this.regenerate ) {
             const button = new RegenerateButton();
@@ -763,7 +761,7 @@ export abstract class UIAdapterBase<
             const buttonData = await button.build();
 
             buttonData.attributes.customId = this.customIdStrategy
-                .generateId( this.getName() + UI_GENERIC_SEPARATOR + REGENERATE_BUTTON_ID );
+                .generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + REGENERATE_BUTTON_ID );
 
             const buttonBuilder = new ButtonBuilder( buttonData.attributes );
 

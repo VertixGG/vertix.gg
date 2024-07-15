@@ -3,7 +3,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 
-import { UI_GENERIC_SEPARATOR, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { APISelectMenuOption } from "discord.js";
 
@@ -41,7 +41,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
 
         return [ {
             label: dynamicChannelIncludeEveryoneRoleLabel + " " + state,
-            value: "dynamicChannelIncludeEveryoneRole" + UI_GENERIC_SEPARATOR + ( this.uiArgs?.dynamicChannelIncludeEveryoneRole ? "0" : "1" ),
+            value: "dynamicChannelIncludeEveryoneRole" + UI_CUSTOM_ID_SEPARATOR + ( this.uiArgs?.dynamicChannelIncludeEveryoneRole ? "0" : "1" ),
             emoji: "🛡️" as any,
         } ];
     }
@@ -66,7 +66,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
         const result = {
                 state: VerifiedRolesEveryoneSelectMenu.vars.stateOff,
             },
-            optionValue = option.value.split( UI_GENERIC_SEPARATOR, 2 );
+            optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );
 
         if ( "1" === optionValue[ 1 ] ) {
             result.state = VerifiedRolesEveryoneSelectMenu.vars.stateOn;

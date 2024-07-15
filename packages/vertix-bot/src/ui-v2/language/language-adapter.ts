@@ -34,12 +34,12 @@ export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDe
 
         await GuildDataManager.$.setLanguage( interaction.guild, language );
 
-        this.uiAdapterService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {
+        this.uiService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {
             _language: language
         } );
     }
 
     private async onDoneClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+        this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
     }
 }

@@ -12,13 +12,13 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 // import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
@@ -34,7 +34,7 @@ const FALLBACK_OWNERSHIP_TIMER_INTERVAL = 30 * 1000, // Half minute.
     FALLBACK_OWNERSHIP_TIMEOUT = 10 * 60 * 1000; // 10 minutes.
 
 export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
-    uiAdapterService: UIAdapterService;
+    uiService: UIService;
     dynamicChannelService: DynamicChannelService;
 }> {
     private readonly debugger: Debugger = new Debugger( this, "",
@@ -98,7 +98,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
     public getDependencies() {
         return {
-            uiAdapterService: "VertixGUI/UIAdapterService",
+            uiService: "VertixGUI/UIService",
             dynamicChannelService: "VertixBot/Services/DynamicChannel"
         };
     }
@@ -187,7 +187,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
      * so timer can handle them later, the function is called on bot start.
      */
     public async handleAbandonedChannels( client: Client, specificChannels?: VoiceChannel[], specificChannelsDB?: ChannelResult[] ) {
-        await this.services.uiAdapterService.waitForAdapter( "VertixBot/UI-V2/ClaimStartAdapter" );
+        await this.services.uiService.waitForAdapter( "VertixBot/UI-V2/ClaimStartAdapter" );
 
         this.debugger.dumpDown( this.handleAbandonedChannels, {
             specificChannels,
@@ -225,7 +225,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
                 // TODO: Not good place for this.
                 if ( ! this.ownerShipTimerInterval ) {
                     // Remove old "Claim Channel" button.
-                    await this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimStartAdapter" )
+                    await this.services.uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )
                         ?.deleteRelatedComponentMessagesInternal( channel );
                 }
 
@@ -306,7 +306,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
         switch ( state ) {
             default:
             case "idle":
-                const { uiAdapterService, dynamicChannelService } = this.services;
+                const { uiService, dynamicChannelService } = this.services;
 
                 this.logger.admin( this.handleVoteRequest,
                     `😈  Claim start button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
@@ -318,13 +318,13 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
                         `😈  Owner: "${ interaction.member.displayName }" reclaim his channel - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
                     );
 
-                    await uiAdapterService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.deletedStartedMessagesInternal( interaction.channel );
+                    await uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.deletedStartedMessagesInternal( interaction.channel );
 
                     this.unmarkChannelAsClaimable( interaction.channel );
 
                     dynamicChannelService.editPrimaryMessageDebounce( interaction.channel as VoiceChannel );
 
-                    await uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )?.ephemeralWithStep(
+                    await uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )?.ephemeralWithStep(
                         interaction,
                         "VertixBot/UI-V2/ClaimResultOwnerStop",
                     );
@@ -375,7 +375,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
     private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
-        const customIdParts = interaction.customId.split( UI_GENERIC_SEPARATOR, 3 );
+        const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
 
         switch ( customIdParts[ 1 ] ) {
             case "VertixBot/UI-V2/ClaimVoteStepInButton":
@@ -402,11 +402,11 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
         switch ( DynamicChannelVoteManager.$.addCandidate( interaction ) ) {
             case "success":
-                return this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultAddedSuccessfully" );
 
             case "already":
-                return this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultAlreadyAdded" );
         }
 
@@ -423,18 +423,18 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
         switch ( state ) {
             case "self-manage":
-                return this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted" );
 
             case "success":
-                return this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVotedSuccessfully", { targetId } );
 
             case "already":
                 const previousVoteTargetId = DynamicChannelVoteManager.$.getVotedFor( interaction );
 
                 if ( previousVoteTargetId === targetId ) {
-                    return this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                    return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
                         ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame", { targetId } );
                 }
 
@@ -442,7 +442,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
                     added = DynamicChannelVoteManager.$.addVote( interaction, targetId ).toString();
 
                 if ( previousVoteTargetId && [ removed, added ].every( i => "success" === i ) ) {
-                    return this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                    return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
                         ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully", {
                             prevUserId: previousVoteTargetId,
                             currentUserId: targetId,
@@ -490,7 +490,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
                 // TODO: It will not works without empty args.... remove '{}' from `editReply` method.
 
                 // TODO: Remove catch.
-                await this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimVoteAdapter" )?.editMessage( message, {} );
+                await this.services.uiService.get( "VertixBot/UI-V2/ClaimVoteAdapter" )?.editMessage( message, {} );
         }
     }
 
@@ -547,7 +547,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
             this.services.dynamicChannelService.editPrimaryMessageDebounce( channel as VoiceChannel );
 
-            await this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.send( channel, {} );
+            await this.services.uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.send( channel, {} );
 
             // Remove from abandon list.
             this.removeChannelOwnerTracking( ownerId, channel.id );
@@ -590,7 +590,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
     }
 
     private async onBotReady( client: Client<true> ) {
-        this.handleAbandonedChannels( client );
+        await this.handleAbandonedChannels( client );
     }
 
     private async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
@@ -599,7 +599,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
         if ( "idle" === state ) {
             this.removeChannelOwnerTracking( owner.id, channel.id );
 
-            await this.services.uiAdapterService.get( "VertixBot/UI-V2/ClaimStartAdapter" )
+            await this.services.uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )
                 ?.deletedStartedMessagesInternal( channel );
         }
     }

@@ -7,7 +7,7 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
 
 import type { Debugger } from "@vertix.gg/base/src/modules/debugger";
@@ -54,7 +54,7 @@ export class UIHashService extends ServiceBase {
         return this.constructor as typeof UIHashService;
     }
 
-    public generateId( id: string, separator = UI_GENERIC_SEPARATOR, maxLength = UI_MAX_CUSTOM_ID_LENGTH, shouldSign = true ): string {
+    public generateId( id: string, separator = UI_CUSTOM_ID_SEPARATOR, maxLength = UI_MAX_CUSTOM_ID_LENGTH, shouldSign = true ): string {
         if ( this.hashTable.has( maxLength ) && this.hashTable.get( maxLength )!.has( id ) ) {
             return this.hashTable.get( maxLength )!.get( id )!;
         }
@@ -73,10 +73,22 @@ export class UIHashService extends ServiceBase {
                 }
             );
 
+            let signOnce = false;
+
+            // First part should be signed if `signOnce` is true
+            const shouldSignOnce = () => {
+                if ( shouldSign && ! signOnce ) {
+                    signOnce = true;
+                    return true;
+                }
+
+                return false;
+            };
+
             const totalSeparatorLength = ( parted.length - 1 ) * separator.length;
             const maxLenForPart = Math.floor( ( maxLength - totalSeparatorLength ) / parted.length ),
                 hashedParts = parted.map( /* no signature for parts */
-                    ( part ) => this.generateId( part, separator, maxLenForPart, false )
+                    ( part ) => this.generateId( part, separator, maxLenForPart, shouldSignOnce() )
                 ),
                 result = hashedParts.join( separator );
 
@@ -115,11 +127,12 @@ export class UIHashService extends ServiceBase {
         return hash;
     }
 
-    public getId( hash: string, separator: string | null = UI_GENERIC_SEPARATOR, options = {
-        silent: false
+    public getId( hash: string, separator: string | null = UI_CUSTOM_ID_SEPARATOR, options = {
+        silent: false,
+        shouldCheckSignature: true
     } ): string {
         // If hash is not signed, then it's not a hash.
-        if ( ! hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+        if ( options.shouldCheckSignature && ! hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
             if ( ! options.silent ) {
                 if ( this.debugger.isEnabled() ) {
                     throw new Error( `Hash: '${ hash }' is not signed` );
@@ -138,8 +151,10 @@ export class UIHashService extends ServiceBase {
                 this.getId, "Getting id from hashed parts:", hashedParts
             );
 
-            const result = hashedParts.map( ( part ) => this.getId( part, separator ) )
-                .join( separator! );
+            const result = hashedParts.map( ( part ) => this.getId( part, separator, {
+                shouldCheckSignature: false,
+                silent: options.silent
+            } ) ).join( separator! );
 
             this.debugger.log(
                 this.getId, "Got id:", { hashedParts, result, resultLen: result.length }
@@ -166,7 +181,7 @@ export class UIHashService extends ServiceBase {
     }
 
     public getIdSilent( hash: string ) {
-        return this.getId( hash, UI_GENERIC_SEPARATOR, { silent: true } );
+        return this.getId( hash, UI_CUSTOM_ID_SEPARATOR, { silent: true, shouldCheckSignature: true } );
     }
 
     public loadTablesFromFile( filePath = process.cwd() + "/ui-hash-tables.json" ) {

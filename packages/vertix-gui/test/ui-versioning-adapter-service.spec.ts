@@ -5,29 +5,29 @@ import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 import type { UIVersioningAdapterService } from "@vertix.gg/gui/src/ui-versioning-adapter-service";
 
 import type { Base } from "discord.js";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 // Mock original ServiceLocator.
 ServiceLocatorMock.mockOrigin();
 
+let uiService: UIService;
 let versioningService: UIVersioningAdapterService;
-let adapterService: UIAdapterService;
 
 describe( "VertixGUI/UIVersioningAdapterService", () => {
 
     beforeEach( async () => {
-        await TestWithServiceLocatorMock.withUIAdapterServiceMock();
+        await TestWithServiceLocatorMock.withUIServiceMock();
 
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/gui/src/ui-versioning-adapter-service" ) ).UIVersioningAdapterService );
 
         // Await for all services to be registered.
         await ServiceLocatorMock.$.waitForAll();
 
+        uiService = ServiceLocatorMock.$.get( "VertixGUI/UIService" );
         versioningService = ServiceLocatorMock.$.get( "VertixGUI/UIVersioningAdapterService" );
-        adapterService = ServiceLocatorMock.$.get( "VertixGUI/UIAdapterService" );
     } );
 
     it( "should register versions correctly within the given range", () => {
@@ -65,7 +65,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         ];
 
         // Register fake adapter name
-        await adapterService.registerAdapters( adapters );
+        await uiService.registerAdapters( adapters );
 
         versioningService.registerVersions( [ 1, 3 ] );
 
@@ -95,7 +95,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         ];
 
         // Register fake adapter name
-        await adapterService.registerAdapters( adapters );
+        await uiService.registerAdapters( adapters );
 
         versioningService.registerVersions( [ 1, 3 ] );
 

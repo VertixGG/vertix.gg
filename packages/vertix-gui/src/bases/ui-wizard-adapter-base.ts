@@ -9,11 +9,11 @@ import type {
     UIExecutionSteps
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
-
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
+
+import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 export type UIWizardComponentConstructor = { new( args?: UICreateComponentArgs ): UIWizardComponentBase };
 export type UIWizardComponentTypeConstructor = typeof UIWizardComponentBase & UIWizardComponentConstructor;
@@ -63,8 +63,8 @@ export class UIWizardAdapterBase<
         return result;
     }
 
-    public constructor( uiService: UIAdapterService ) {
-        super( uiService );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.staticWizardAdapter = this.constructor as typeof UIWizardAdapterBase;
     }
@@ -96,7 +96,7 @@ export class UIWizardAdapterBase<
             WizardBackButton,
             WizardNextButton,
             WizardFinishButton,
-        } = this.uiAdapterService.$$.getSystemElements() as {
+        } = this.uiService.$$.getSystemElements() as {
             [ key: string ]: UIElementButtonBase;
         };
 

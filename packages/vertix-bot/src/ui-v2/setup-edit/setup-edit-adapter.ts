@@ -4,14 +4,17 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui-v2/_general/admin/admin-adapter-exu-base";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui-v2/setup-edit/setup-edit-component";
 import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui-v2/setup/setup-master-edit-button";
 
+import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
+
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type {
@@ -21,13 +24,11 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
-import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction |
@@ -77,8 +78,8 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         };
     }
 
-    public constructor( uiManager: UIAdapterService ) {
-        super( uiManager );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.appService = ServiceLocator.$.get( "VertixBot/Services/App" );
     }
@@ -207,7 +208,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     protected async regenerate( interaction: MessageComponentInteraction<"cached"> ): Promise<void> {
-        this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+        this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
     }
 
     private async onSetupMasterEditButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
@@ -335,7 +336,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             case "VertixBot/UI-V2/SetupEditMaster":
                 this.deleteArgs( interaction );
 
-                this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+                this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
                 break;
         }
 
@@ -347,7 +348,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             values = interaction.values;
 
         for ( const value of values ) {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelMentionable":
@@ -409,7 +410,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             values = interaction.values;
 
         values.forEach( ( value ) => {
-            const parted = value.split( UI_GENERIC_SEPARATOR );
+            const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
             switch ( parted[ 0 ] ) {
                 case "dynamicChannelIncludeEveryoneRole":

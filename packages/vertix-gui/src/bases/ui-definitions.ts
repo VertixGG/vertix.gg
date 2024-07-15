@@ -20,8 +20,7 @@ export enum UIInstancesTypes {
 export const UI_ELEMENTS_DEPTH = 2,
     UI_ELEMENTS_DEFAULT_MAX_PER_ROW = 3;
 
-// TODO: Check usage and rename to `UI_CUSTOM_ID_SEPARATOR`
-export const UI_GENERIC_SEPARATOR = ":";
+export const UI_CUSTOM_ID_SEPARATOR = ":";
 
 export const UI_IMAGE_EMPTY_LINE_URL = "https://i.imgur.com/NthLO3W.png";
 

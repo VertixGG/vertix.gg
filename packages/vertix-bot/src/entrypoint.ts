@@ -31,20 +31,16 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
-import type UIVersioningAdapterService from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+import type { Client } from "discord.js";
+
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type { UIVersioningAdapterService } from "@vertix.gg/gui/src/ui-versioning-adapter-service";
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
-
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
-
-import type UIService from "@vertix.gg/gui/src/ui-service";
-
-import type { Client } from "discord.js";
 
 async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
         import("@vertix.gg/gui/src/ui-service"),
-        import("@vertix.gg/gui/src/ui-adapter-service"),
         import("@vertix.gg/gui/src/ui-hash-service"),
         import("@vertix.gg/gui/src/ui-versioning-adapter-service"),
     ] );
@@ -86,14 +82,14 @@ async function registerServices() {
 async function registerUIAdapters() {
     // Register UI adapters
     const uiModuleV2 = await import("@vertix.gg/bot/src/ui-v2/ui-module"),
-        uiAdapterService = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" );
+        uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/regenerate/ui-regenerate-button" ),
         { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-back-button" ),
         { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-next-button" ),
         { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-finish-button" );
 
-    uiAdapterService.$$.registerSystemElements( {
+    uiService.$$.registerSystemElements( {
         RegenerateButton: UIRegenerateButton,
         WizardBackButton: UIWizardBackButton,
         WizardNextButton: UIWizardNextButton,
@@ -103,14 +99,14 @@ async function registerUIAdapters() {
     const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui-v2/_general/invalid-channel-type/invalid-channel-type-component" ),
         { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui-v2/_general/missing-permissions/missing-permissions-component" );
 
-    uiAdapterService.$$.registerSystemComponents( {
+    uiService.$$.registerSystemComponents( {
         InvalidChannelTypeComponent: InvalidChannelTypeComponent,
         MissingPermissionsComponent: MissingPermissionsComponent
     } );
 
-    await uiAdapterService.registerInternalAdapters();
+    await uiService.registerInternalAdapters();
 
-    await uiAdapterService.registerModule( uiModuleV2.default );
+    await uiService.registerModule( uiModuleV2.default );
 }
 
 async function registerUILanguageManager() {

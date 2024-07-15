@@ -5,14 +5,23 @@ import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
 import type { APIBaseComponent, ComponentType } from "discord.js";
 
 import type { UIType } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
 
 export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> extends UITemplateBase {
+    protected readonly uiLanguageManager: UILanguageManagerInterface;
+
     public static getName() {
         return "VertixGUI/UIElementBase";
     }
 
     public static getType(): UIType {
         return "element";
+    }
+
+    public constructor() {
+        super();
+
+        this.uiLanguageManager = this.uiService.getUILanguageManager();
     }
 
     public static getComponentType(): ComponentType {

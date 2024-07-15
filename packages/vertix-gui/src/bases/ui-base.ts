@@ -1,15 +1,12 @@
 import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
-
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 export abstract class UIBase extends ObjectBase {
     protected readonly hierarchyNames: string[];
 
     protected readonly uiService: UIService;
-    protected readonly uiLanguageManager: UILanguageManagerInterface;
 
     public static getName() {
         return "VertixGUI/UIBase";
@@ -23,7 +20,6 @@ export abstract class UIBase extends ObjectBase {
         this.ensureGetNameExtended();
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService");
-        this.uiLanguageManager = this.uiService.getUILanguageManager();
 
         this.initialize?.();
     }

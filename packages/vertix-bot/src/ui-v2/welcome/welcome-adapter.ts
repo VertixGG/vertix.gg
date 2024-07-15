@@ -50,7 +50,7 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
 
     protected onEntityMap() {
         this.bindButton( "VertixBot/UI-V2/WelcomeSetupButton", async ( interaction ) => {
-            await this.uiAdapterService.get( "VertixBot/UI-V2/SetupAdapter" )?.ephemeral( interaction );
+            await this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.ephemeral( interaction );
 
             const argsId = this.getArgsManager().getArgsId( interaction );
 

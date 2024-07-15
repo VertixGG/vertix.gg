@@ -1,4 +1,4 @@
-import { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import UIService from "@vertix.gg/gui/src/ui-service";
 
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
@@ -41,7 +41,7 @@ export class UIWizardComponentBase extends UIComponentBase {
     }
 
     public static getElementsGroups() {
-        const systemElements = UIAdapterService.getSystemElements();
+        const systemElements = UIService.getSystemElements();
 
         const wizardControlButtons = [
             systemElements.WizardBackButton,

@@ -34,10 +34,10 @@ import { UI_LANGUAGES_INITIAL_CODE } from "@vertix.gg/gui/src/bases/ui-language-
 
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
 
 import type {
     BaseMessageOptions,
@@ -127,7 +127,6 @@ export abstract class UIAdapterBase<
     private dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
 
     protected uiService: UIService;
-    protected uiAdapterService: UIAdapterService;
 
     public static getName() {
         return "VertixGUI/UIAdapterBase";
@@ -202,7 +201,6 @@ export abstract class UIAdapterBase<
         super( options );
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
-        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
         if ( this.$$.staticDebugger.isEnabled() ) {
             this.$$.staticDebugger.enableCleanupDebug( this );
@@ -217,13 +215,13 @@ export abstract class UIAdapterBase<
         if ( ! this.shouldDisableMiddleware || ! this.shouldDisableMiddleware() ) {
             new UIInteractionMiddleware( this, {
                 onChannelFailed: async ( channel, channelTypes ) => {
-                    await this.uiAdapterService.get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
+                    await this.uiService.get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )?.ephemeral( channel, {
                         channelTypes,
                     } );
                 },
 
                 onInteractionFailed: async ( interaction, missingPermissions ) => {
-                    await this.uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+                    await this.uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
                         missingPermissions,
                     } );
                 },
@@ -310,7 +308,7 @@ export abstract class UIAdapterBase<
 
         await this.build( argsFromManager, "send-to-user", guildId );
 
-        await ( await this.uiAdapterService.getClient().users.fetch( userId ) )
+        await ( await this.uiService.getClient().users.fetch( userId ) )
             .send( this.getMessage() )
             .catch(
                 () => this.$$.staticLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
@@ -755,7 +753,7 @@ export abstract class UIAdapterBase<
 
         // TODO: Make dedicated method for this.
         // TODO: Add to FAQ.
-        const { RegenerateButton } = this.uiAdapterService.$$.getSystemElements();
+        const { RegenerateButton } = this.uiService.$$.getSystemElements();
 
         if ( RegenerateButton && this.regenerate ) {
             const button = new RegenerateButton();

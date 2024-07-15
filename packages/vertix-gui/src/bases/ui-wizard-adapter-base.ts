@@ -96,7 +96,7 @@ export class UIWizardAdapterBase<
             WizardBackButton,
             WizardNextButton,
             WizardFinishButton,
-        } = this.uiAdapterService.$$.getSystemElements() as {
+        } = this.uiService.$$.getSystemElements() as {
             [ key: string ]: UIElementButtonBase;
         };
 

@@ -112,7 +112,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         const masterChannelDB = masterChannels[ masterChannelIndex ];
 
-        await this.uiAdapterService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
+        await this.uiService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
             masterChannelIndex,
             masterChannelDB
         } );
@@ -142,7 +142,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         const { masterChannelData } = ConfigManager.$
             .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
 
-        this.uiAdapterService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
+        this.uiService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: masterChannelData.dynamicChannelButtonsTemplate,
 
             dynamicChannelMentionable: masterChannelData.dynamicChannelMentionable,
@@ -183,6 +183,6 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onLanguageChooseClicked( interaction: DefaultInteraction ) {
-        this.uiAdapterService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
+        this.uiService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
     }
 }

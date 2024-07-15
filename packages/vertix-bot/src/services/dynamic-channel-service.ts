@@ -1,6 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { gToken } from "@vertix.gg/base/src/discord/login";
@@ -87,17 +88,15 @@ import type {
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
-import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
-
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
-
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
-    uiAdapterService: UIAdapterService,
+    uiService: UIService,
     channelService: ChannelService,
 }> {
     private readonly debugger: Debugger;
@@ -137,7 +136,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixGUI/UIAdapterService",
+            uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
         };
     }
@@ -609,7 +608,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
-        return this.services.uiAdapterService.get( "VertixBot/UI-V2/DynamicChannelAdapter" )
+        return this.services.uiService.get( "VertixBot/UI-V2/DynamicChannelAdapter" )
             ?.send( channel, sendArgs );
     }
 
@@ -905,7 +904,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             editMessageArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
-        await this.services.uiAdapterService.get( "VertixBot/UI-V2/DynamicChannelAdapter" )
+        await this.services.uiService.get( "VertixBot/UI-V2/DynamicChannelAdapter" )
             ?.editMessage( message, editMessageArgs )
             .catch( ( e: any ) => this.logger.error( this.editPrimaryMessage, "", e ) )
             .then( () => this.logger.info( this.editPrimaryMessage,

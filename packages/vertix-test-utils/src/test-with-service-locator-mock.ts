@@ -18,26 +18,11 @@ export class TestWithServiceLocatorMock {
         this.beforeEach();
 
         ServiceLocatorMock.$.register(
-            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock
-        );
-        ServiceLocatorMock.$.register(
             ( await import( "@vertix.gg/test-utils/src/__mock__/ui-hash-service-mock" ) ).UIHashServiceMock
         );
 
-        await this.afterEach();
-    }
-
-    public static async withUIAdapterServiceMock() {
-        this.beforeEach();
-
         ServiceLocatorMock.$.register(
             ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock
-        );
-        ServiceLocatorMock.$.register(
-            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-hash-service-mock" ) ).UIHashServiceMock
-        );
-        ServiceLocatorMock.$.register(
-            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-adapter-service-mock" ) ).UIAdapterServiceMock
         );
 
         await this.afterEach();

@@ -11,7 +11,7 @@ import {
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyContext ) => {
     if ( ! interaction.channel )  {
@@ -26,7 +26,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
         return false;
     }
 
-    const uiAdapterService = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" );
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     if ( interaction.user.id !== dynamicChannelDB.userOwnerId ) {
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelDB.channelId );
@@ -35,7 +35,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
             return false;
         }
 
-        await uiAdapterService.get( "VertixBot/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
+        await uiService.get( "VertixBot/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
             masterChannelId: masterChannelDB.channelId,
         } );
 
@@ -60,7 +60,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
 
         GlobalLogger.$.log( dynamicChannelRequirements, `Guild id: '${ interaction.guildId }' - Required permissions:`, missingPermissions );
 
-        await uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+        await uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
             missingPermissions,
             omitterDisplayName: interaction.guild.client.user.username,
         } );

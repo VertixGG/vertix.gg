@@ -1,16 +1,15 @@
-import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
-
 import fetch from "cross-fetch";
 
 import { EmbedBuilder } from "discord.js";
 
+import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
+
 import { VERTIX_OWNERS_IDS } from "@vertix.gg/bot/src/definitions/app";
 
-import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
-
 import type { Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
+
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 const OWNER_COMMAND_SYNTAX = {
     embed: "!embed <#channel_id> <https://message_url.com>",
@@ -19,7 +18,7 @@ const OWNER_COMMAND_SYNTAX = {
 
 export class DirectMessageService extends ServiceWithDependenciesBase<{
     appService: AppService,
-    uiAdapterService: UIAdapterService,
+    uiService: UIService,
 }> {
     private feedbackSentIds: Map<string, string> = new Map();
 
@@ -30,7 +29,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixGUI/UIAdapterService",
+            uiService: "VertixGUI/UIService",
         };
     }
 
@@ -57,7 +56,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        const adapter = this.services.uiAdapterService
+        const adapter = this.services.uiService
             .get( "VertixBot/UI-V2/FeedbackAdapter" );
 
         if ( ! adapter ) {
@@ -157,7 +156,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     }
 
     public async sendLeaveMessageToOwner( guild: Guild ) {
-        const adapter = this.services.uiAdapterService
+        const adapter = this.services.uiService
             .get( "VertixBot/UI-V2/FeedbackAdapter" );
 
         if ( ! adapter ) {

@@ -53,15 +53,23 @@ describe( "VertixGUI/UIHashService", () => {
             const id = "this-is-a-string-with-separator";
 
             // Act
-            const hash = uiHashService.generateId( id, "-" );
+            const hash = uiHashService.generateId( id, "-", UI_MAX_CUSTOM_ID_LENGTH, true );
 
-            let signOnce = true;
+            let signOnce = false;
+            const shouldSignOnce = () => {
+                if ( ! signOnce ) {
+                    signOnce = true;
+                    return true;
+                }
+
+                return false;
+            };
 
             // Assert
             const parts = id.split( "-" );
             const expectedHash = parts
-                .map( ( part ) => uiHashService.$$.generateHash( part, 15, signOnce && ( signOnce = false ) ) )
-                .join( "-" );
+                .map( ( part ) => uiHashService.$$.generateHash( part, 15, shouldSignOnce() ) )
+                    .join( "-" );
 
             expect( hash ).toBe( expectedHash );
             expect( uiHashService.getId( hash, "-" ) ).toBe( id );
@@ -71,14 +79,24 @@ describe( "VertixGUI/UIHashService", () => {
             // Arrange
             const id = "this/is/a/string/with/multiple/separators";
 
+            let signOnce = false;
+            const shouldSignOnce = () => {
+                if ( ! signOnce ) {
+                    signOnce = true;
+                    return true;
+                }
+
+                return false;
+            };
+
             // Act
-            const hash = uiHashService.generateId( id, "/", 100 );
+            const hash = uiHashService.generateId( id, "/", 100, true );
 
             // Assert
             const parts = id.split( "/" );
 
             const expectedHash = parts
-                .map( ( part ) => uiHashService.$$.generateHash( part, 100 / parts.length - 1 ) )
+                .map( ( part ) => uiHashService.$$.generateHash( part, 100 / parts.length - 1, shouldSignOnce() ) )
                 .join( "/" );
 
             expect( hash ).toBe( expectedHash );
@@ -103,7 +121,7 @@ describe( "VertixGUI/UIHashService", () => {
 
             // Act + Assert
             expect( () => uiHashService.generateId( id, "-", 5 ) ).toThrowError(
-                "Generated id is 11 characters long, max length: 5"
+                "Generated id is 13 characters long, max length: 5"
             );
         } );
 
@@ -181,7 +199,7 @@ describe( "VertixGUI/UIHashService", () => {
 
                 const expectedMaxLengthHash = ( uiHashService.$$.HASH_SIGNATURE + expectedHash.repeat(
                     Math.ceil( UI_MAX_CUSTOM_ID_LENGTH / expectedHash.length )
-                )).slice( 0, UI_MAX_CUSTOM_ID_LENGTH );
+                ) ).slice( 0, UI_MAX_CUSTOM_ID_LENGTH );
 
                 // Assert.
                 expect( hash.length ).toEqual( UI_MAX_CUSTOM_ID_LENGTH );

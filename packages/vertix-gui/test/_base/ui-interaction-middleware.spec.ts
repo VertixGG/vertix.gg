@@ -37,7 +37,7 @@ const guild = new GuildMock( client, {
 
 describe( "VertixGUI/UIInteractionMiddleware", () => {
     beforeEach( async () => {
-        await TestWithServiceLocatorMock.withUIAdapterServiceMock();
+        await TestWithServiceLocatorMock.withUIServiceMock();
 
         EventBusMock.reset();
 
@@ -68,7 +68,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
                 return [ChannelType.GuildNews];
             }
 
-        }( ServiceLocatorMock.$.get( "VertixGUI/UIAdapterService" ) );
+        }( {} );
 
         // Act.
         const act = () => adapter.send( channel );
@@ -99,7 +99,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
             public getChannelTypes() {
                 return [ChannelType.GuildVoice];
             }
-        }( ServiceLocatorMock.$.get( "VertixGUI/UIAdapterService" ) );
+        }( {} );
 
         // Act.
         const act = () => adapter.send( channel );

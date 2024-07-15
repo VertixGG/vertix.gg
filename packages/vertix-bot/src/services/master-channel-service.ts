@@ -36,9 +36,9 @@ import {
     DynamicChannelElementsGroup
 } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
-import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
+import type UIService from "@vertix.gg/gui/src/ui-service";
 
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
@@ -94,7 +94,7 @@ const MAX_TIMEOUT_PER_CREATE = 10 * 1000;
 
 export class MasterChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
-    uiAdapterService: UIAdapterService,
+    uiService: UIService,
     channelService: ChannelService,
     dynamicChannelService: DynamicChannelService,
 }> {
@@ -132,7 +132,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixGUI/UIAdapterService",
+            uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel",
         };
@@ -269,7 +269,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 // Send DM message to the user with missing permissions.
                 if ( newState.member?.id ) {
                     const missingPermissionsAdapter = this.services
-                        .uiAdapterService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" );
+                        .uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" );
 
                     if ( ! missingPermissionsAdapter ) {
                         this.logger.error( this.onJoinMasterChannel,

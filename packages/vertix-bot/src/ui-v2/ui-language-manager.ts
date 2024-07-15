@@ -70,7 +70,7 @@ import type {
 import type { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 import type { UIElementChannelSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-channel-select-menu";
@@ -87,7 +87,7 @@ interface UILanguageManagerValidateOptions {
 export class UILanguageManager extends InitializeBase implements UILanguageManagerInterface {
     private static instance: UILanguageManager;
 
-    private uiAdapterService: UIAdapterService;
+    private uiService: UIService;
 
     private uiAvailableLanguages = new Map<string, UILanguageJSON>();
 
@@ -112,7 +112,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     public constructor() {
         super();
 
-        this.uiAdapterService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
+        this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
     }
 
     public getAvailableLanguages() {
@@ -364,7 +364,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     private async extractEntitiesLanguage() {
         const allComponents: UIComponentTypeConstructor[] = [];
 
-        ( this.uiAdapterService.getAll() ).forEach( ( adapter ) => {
+        ( this.uiService.getAll() ).forEach( ( adapter ) => {
             const AdapterType = adapter as typeof UIAdapterBase;
 
             // TODO Temporary - Skip feedback adapter by name.

@@ -4,7 +4,6 @@ import { DEFAULT_UI_NAMESPACE_SEPARATOR, DEFAULT_UI_PREFIX } from "@vertix.gg/gu
 
 import { UIVersionStrategyBase } from "@vertix.gg/gui/src/bases/ui-version-strategy-base";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { Base } from "discord.js";
@@ -23,7 +22,6 @@ class FallBackVersionStrategy extends UIVersionStrategyBase {
 
 export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
     uiService: UIService;
-    uiAdapterService: UIAdapterService;
 }> {
     private versions = new Map<number, string>();
     private versionReverse = new Map<string, number>();
@@ -39,7 +37,6 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             uiService: "VertixGUI/UIService",
-            uiAdapterService: "VertixGUI/UIAdapterService",
         };
     }
 
@@ -75,7 +72,7 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
         const adapterNameWithVersion =
             this.formAdapterNameWithVersion( adapterName, version, prefix, separator );
 
-        return this.services.uiAdapterService.get( adapterNameWithVersion );
+        return this.services.uiService.get( adapterNameWithVersion );
     }
 
     /**

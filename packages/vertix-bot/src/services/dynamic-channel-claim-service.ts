@@ -324,7 +324,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
                     dynamicChannelService.editPrimaryMessageDebounce( interaction.channel as VoiceChannel );
 
-                    await uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )?.ephemeralWithStep(
+                    await uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )?.ephemeralWithStep(
                         interaction,
                         "VertixBot/UI-V2/ClaimResultOwnerStop",
                     );
@@ -402,11 +402,11 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
         switch ( DynamicChannelVoteManager.$.addCandidate( interaction ) ) {
             case "success":
-                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultAddedSuccessfully" );
 
             case "already":
-                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultAlreadyAdded" );
         }
 
@@ -423,18 +423,18 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
 
         switch ( state ) {
             case "self-manage":
-                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted" );
 
             case "success":
-                return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                return this.services.uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )
                     ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVotedSuccessfully", { targetId } );
 
             case "already":
                 const previousVoteTargetId = DynamicChannelVoteManager.$.getVotedFor( interaction );
 
                 if ( previousVoteTargetId === targetId ) {
-                    return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                    return this.services.uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )
                         ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame", { targetId } );
                 }
 
@@ -442,7 +442,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
                     added = DynamicChannelVoteManager.$.addVote( interaction, targetId ).toString();
 
                 if ( previousVoteTargetId && [ removed, added ].every( i => "success" === i ) ) {
-                    return this.services.uiService.get( "VertixBot/UI-V2/ClaimResultAdapter" )
+                    return this.services.uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )
                         ?.ephemeralWithStep( interaction, "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully", {
                             prevUserId: previousVoteTargetId,
                             currentUserId: targetId,

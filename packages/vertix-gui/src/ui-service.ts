@@ -46,8 +46,18 @@ import type {
     UIModalLanguageContent
 } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
+import type { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
+import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
+
 const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER_INTERVAL ) ||
     300000; // 5 minutes.
+
+export type TAdapterMapping = {
+    "base": UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>,
+    "execution": UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>,
+    "wizard": UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
+}
 
 export class UIService extends ServiceWithDependenciesBase<{
     uiHashService: UIHashService,
@@ -141,7 +151,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.client;
     }
 
-    public get( uiName: string, silent = false ) {
+    public get<T extends keyof TAdapterMapping = "base">( uiName: string, silent = false ): TAdapterMapping[T] | undefined {
         uiName = uiName.split( UI_CUSTOM_ID_SEPARATOR )[ 0 ];
 
         const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterClassType;
@@ -155,10 +165,10 @@ export class UIService extends ServiceWithDependenciesBase<{
         }
 
         if ( UIClass.isDynamic() ) {
-            return this.createInstance( uiName );
+            return this.createInstance( uiName ) as TAdapterMapping[T];
         }
 
-        return this.uiAdaptersStaticInstances.get( uiName );
+        return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
     public async registerModule( Module: TModuleConstructor ) {

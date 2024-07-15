@@ -4,9 +4,7 @@ import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import {
-    UIAdapterExecutionStepsBase,
-} from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
+import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
 import { ClaimVoteComponent } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-component";
 
@@ -14,13 +12,14 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
+import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
-import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
+
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
+import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
@@ -65,8 +64,8 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         };
     }
 
-    public constructor( uiAdapterService: UIAdapterService ) {
-        super( uiAdapterService );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.dynamicChannelClaimService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannelClaim");
     }

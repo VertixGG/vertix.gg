@@ -21,7 +21,7 @@ import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui-v2/setup/setu
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
+import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
 import type {
     UIDefaultButtonChannelTextInteraction,
@@ -29,9 +29,12 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultStringSelectRolesChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
-import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
+
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
 type Interactions =
     UIDefaultButtonChannelTextInteraction
@@ -89,8 +92,8 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         };
     }
 
-    public constructor( uiService: UIAdapterService ) {
-        super( uiService );
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
 
         this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }

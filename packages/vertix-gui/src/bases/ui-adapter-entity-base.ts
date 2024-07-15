@@ -190,7 +190,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                             component = new TextInputBuilder( data );
                             break;
 
-                        case ComponentType.SelectMenu:
+                        case ComponentType.StringSelect:
                             if ( ! data.options.length ) {
                                 // TODO: Warning.
                                 return null;

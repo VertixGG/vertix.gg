@@ -590,7 +590,7 @@ export class DynamicChannelClaimService extends ServiceWithDependenciesBase<{
     }
 
     private async onBotReady( client: Client<true> ) {
-        this.handleAbandonedChannels( client );
+        await this.handleAbandonedChannels( client );
     }
 
     private async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {

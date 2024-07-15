@@ -126,13 +126,13 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
     public static getEmbedEmojis( ids: number[] ) {
         const emojis: string[] = [];
 
-        Promise.all( ids.map( async ( id ) => {
+        ids.forEach( id => {
             const item = DynamicChannelElementsGroup.getById( id );
 
             if ( item ) {
-                emojis.push( ( item.getEmojiForEmbed() ) );
+                emojis.push( item.getEmojiForEmbed() );
             }
-        } ) );
+        } );
 
         return emojis;
     }

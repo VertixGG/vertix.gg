@@ -459,7 +459,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                     } );
                     break;
 
-                case ComponentType.SelectMenu:
+                case ComponentType.StringSelect:
                 case ComponentType.UserSelect:
                 case ComponentType.RoleSelect:
                 case ComponentType.ChannelSelect:

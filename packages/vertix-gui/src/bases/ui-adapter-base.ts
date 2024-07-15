@@ -504,6 +504,10 @@ export abstract class UIAdapterBase<
         return this.getComponent().waitUntilInitialized();
     }
 
+    public getStartedMessages( channel: TChannel ) {
+        return this.channelStartedMessages.get( channel.id );
+    }
+
     public getPermissions(): PermissionsBitField {
         throw new ForceMethodImplementation( this, "getPermissions" );
     }

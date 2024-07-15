@@ -1,5 +1,4 @@
 export { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui-v2/_general/not-your-channel/not-your-channel-adapter";
-export { MissingPermissionsAdapter } from "@vertix.gg/gui/src/internal-adapters/missing-permissions-adapter";
 export { ClaimResultAdapter } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-adapter";
 export { ClaimStartAdapter } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-adapter";
 export { ClaimVoteAdapter } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-adapter";

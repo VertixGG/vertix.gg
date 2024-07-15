@@ -32,7 +32,7 @@ describe( "VertixGUI/UIHashService", () => {
             const hash = uiHashService.generateId( id );
 
             // Assert
-            expect( hash ).toBe( uiHashService.$$.generateHash( id, 100 ) );
+            expect( hash ).toBe( uiHashService.$$.generateHash( id, 100, true ) );
             expect( uiHashService.getId( hash ) ).toBe( id );
         } );
 
@@ -44,7 +44,7 @@ describe( "VertixGUI/UIHashService", () => {
             const hash = uiHashService.generateId( id );
 
             // Assert
-            expect( hash ).toBe( uiHashService.$$.generateHash( id, 100 ) );
+            expect( hash ).toBe( uiHashService.$$.generateHash( id, 100, true ) );
             expect( uiHashService.getId( hash ) ).toBe( id );
         } );
 
@@ -55,10 +55,12 @@ describe( "VertixGUI/UIHashService", () => {
             // Act
             const hash = uiHashService.generateId( id, "-" );
 
+            let signOnce = true;
+
             // Assert
             const parts = id.split( "-" );
             const expectedHash = parts
-                .map( ( part ) => uiHashService.$$.generateHash( part, 15 ) )
+                .map( ( part ) => uiHashService.$$.generateHash( part, 15, signOnce && ( signOnce = false ) ) )
                 .join( "-" );
 
             expect( hash ).toBe( expectedHash );
@@ -170,16 +172,16 @@ describe( "VertixGUI/UIHashService", () => {
                 const input = "anyString";
 
                 // Act.
-                const hash = uiHashService.$$.generateHash( input );
+                const hash = uiHashService.$$.generateHash( input, UI_MAX_CUSTOM_ID_LENGTH, true );
 
                 const expectedHash = crypto
                     .createHash( "md5" )
                     .update( input )
                     .digest( "hex" );
 
-                const expectedMaxLengthHash = expectedHash.repeat(
+                const expectedMaxLengthHash = ( uiHashService.$$.HASH_SIGNATURE + expectedHash.repeat(
                     Math.ceil( UI_MAX_CUSTOM_ID_LENGTH / expectedHash.length )
-                ).slice( 0, UI_MAX_CUSTOM_ID_LENGTH );
+                )).slice( 0, UI_MAX_CUSTOM_ID_LENGTH );
 
                 // Assert.
                 expect( hash.length ).toEqual( UI_MAX_CUSTOM_ID_LENGTH );

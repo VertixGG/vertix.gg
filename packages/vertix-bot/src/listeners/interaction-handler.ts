@@ -6,10 +6,11 @@ import { Commands } from "@vertix.gg/bot/src/commands";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
-import type { Client, CommandInteraction, Interaction } from "discord.js";
+import type UIAdapterService from "@vertix.gg/gui/src/ui-adapter-service";
 
-import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
-import type { UIAdapterService } from "@vertix.gg/gui/src/ui-adapter-service";
+import type UIHashService from "@vertix.gg/gui/src/ui-hash-service";
+
+import type { Client, CommandInteraction, Interaction } from "discord.js";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -17,16 +18,16 @@ export function interactionHandler( client: Client ) {
             ( interaction instanceof MessageComponentInteraction ) ||
             ( interaction instanceof ModalSubmitInteraction )
         ) {
-            const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" );
+            const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" )
+                .getIdSilent( interaction.customId );
 
-            const realCustomId = uiHashService.generateId( interaction.customId );
+            const adapter = ServiceLocator.$
+                .get<UIAdapterService>( "VertixGUI/UIAdapterService" )
+                .get( customId, true );
 
             GlobalLogger.$.log( interactionHandler,
-                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ realCustomId }' was used by '${ interaction.user.username }'`
+                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ customId }' was used by '${ interaction.user.username }'`
             );
-
-            const adapter = ServiceLocator.$.get<UIAdapterService>( "VertixGUI/UIAdapterService" )
-                .get( realCustomId, true );
 
             if ( adapter ) {
                 await adapter.run( interaction );

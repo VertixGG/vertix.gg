@@ -6,8 +6,6 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import type { Client } from "discord.js";
-
 import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import type {
@@ -33,8 +31,6 @@ const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER
     300000; // 5 minutes.
 
 export class UIService extends ServiceBase {
-    private static instance: UIService;
-
     private static cleanupTimerInterval: NodeJS.Timeout;
 
     private uiLanguageManager: UILanguageManagerInterface | null = null;
@@ -43,22 +39,13 @@ export class UIService extends ServiceBase {
         return "VertixGUI/UIService";
     }
 
-    // TODO: This method should be removed everywhere.
-    // public static getInstance() {
-    //     return UIService.instance;
-    // }
-
     protected static setupCleanupTimerInterval() {
         if ( ! UIService.cleanupTimerInterval ) {
             UIService.cleanupTimerInterval = setInterval( UIAdapterBase.cleanupTimer, ADAPTER_CLEANUP_TIMER_INTERVAL );
         }
     }
 
-    public static get $() {
-        return UIService.instance;
-    }
-
-    public constructor( private client: Client<true> ) {
+    public constructor() {
         super();
 
         ( this.constructor as typeof UIService ).setupCleanupTimerInterval();

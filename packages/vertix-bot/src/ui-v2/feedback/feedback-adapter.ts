@@ -68,7 +68,7 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
         const inviteLink = interaction.fields.getTextInputValue(
-        this.uiHashService.generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" )
+        this.customIdStrategy.generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" )
         );
 
         const tagName = interaction.user.tag,
@@ -88,9 +88,9 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
     private async informCollector( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
-        const feedbackInputTitleId = this.uiHashService
+        const feedbackInputTitleId = this.customIdStrategy
                 .generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputTitle" ),
-            feedbackInputDescriptionId = this.uiHashService
+            feedbackInputDescriptionId = this.customIdStrategy
                 .generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputDescription" );
 
         const tagName = interaction.user.tag,

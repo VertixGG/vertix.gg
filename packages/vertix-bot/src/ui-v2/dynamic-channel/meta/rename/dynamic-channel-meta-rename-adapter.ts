@@ -81,7 +81,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
     }
 
     private async onModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
-        const renameButtonId = this.uiHashService
+        const renameButtonId = this.customIdStrategy
             .generateId( "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter:VertixBot/UI-V2/DynamicChannelMetaRenameInput" );
 
         let newChannelName = interaction.fields.getTextInputValue(renameButtonId ),

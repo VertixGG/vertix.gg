@@ -94,7 +94,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     private uiInitialLanguage!: UILanguageJSON;
 
     public static getName() {
-        return "VertixBot/UI-V2/LanguageManager";
+        return "Vertix/UI-V2/LanguageManager";
     }
 
     public static getInstance() {
@@ -367,8 +367,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         ( this.uiService.getAll() ).forEach( ( adapter ) => {
             const AdapterType = adapter as typeof UIAdapterBase;
 
-            // TODO Temporary - Skip feedback adapter by name.
-            if ( AdapterType.getName() === "VertixBot/UI-V2/FeedbackAdapter" ) {
+            if ( ! AdapterType.isMultiLanguage() ) {
+                this.logger.log( this.ensureInitialLanguage,
+                    `Adapter with name: '${ AdapterType.getName() }' is not multilanguage, skipping...`
+                );
                 return;
             }
 

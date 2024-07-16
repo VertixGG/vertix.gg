@@ -2,7 +2,7 @@ import { jest } from "@jest/globals";
 
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
-import { ClaimVoteStepInEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-step-in-embed";
+import { ClaimVoteStepInEmbed } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-step-in-embed";
 
 describe( "Vertix/UI-V2/ClaimVoteStepInEmbed", () => {
     beforeEach( async () => {

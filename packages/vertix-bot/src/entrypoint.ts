@@ -25,11 +25,11 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { config } from "dotenv";
 
+import { UILanguageManager } from "@vertix.gg/bot/src/ui/ui-language-manager";
+
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
-
-import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager";
 
 import type { Client } from "discord.js";
 
@@ -80,14 +80,14 @@ async function registerServices() {
 
 async function registerUIAdapters() {
     // Register UI adapters
-    const uiModuleV2 = await import("@vertix.gg/bot/src/ui-v2/ui-module"),
-        uiGeneralModule = await import( "@vertix.gg/bot/src/ui-general/ui-module" ),
+    const uiModuleV2 = await import("@vertix.gg/bot/src/ui/v2/ui-module"),
+        uiGeneralModule = await import( "@vertix.gg/bot/src/ui/general/ui-module" ),
         uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
-    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/regenerate/ui-regenerate-button" ),
-        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-back-button" ),
-        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-next-button" ),
-        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/wizard/ui-wizard-finish-button" );
+    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/regenerate/ui-regenerate-button" ),
+        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-back-button" ),
+        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-next-button" ),
+        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-finish-button" );
 
     uiService.$$.registerSystemElements( {
         RegenerateButton: UIRegenerateButton,
@@ -96,8 +96,8 @@ async function registerUIAdapters() {
         WizardFinishButton: UIWizardFinishButton
     } );
 
-    const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui-v2/_general/invalid-channel-type/invalid-channel-type-component" ),
-        { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui-v2/_general/missing-permissions/missing-permissions-component" );
+    const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui/v2/_general/invalid-channel-type/invalid-channel-type-component" ),
+        { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui/v2/_general/missing-permissions/missing-permissions-component" );
 
     uiService.$$.registerSystemComponents( {
         InvalidChannelTypeComponent: InvalidChannelTypeComponent,

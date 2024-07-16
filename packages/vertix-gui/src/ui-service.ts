@@ -1,4 +1,5 @@
 import EventEmitter from "node:events";
+
 import process from "process";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
@@ -7,35 +8,22 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import { UI_CUSTOM_ID_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
-import type { Client } from "discord.js";
-
-import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
-
-import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
-
-import type {
-    TPossibleAdapters,
-    TAdapterConstructor,
-    TAdapterClassType,
-    TAdapterRegisterOptions,
-} from "src/definitions/ui-adapter-declaration";
-
-import type { TModuleConstructor } from "@vertix.gg/gui/src/definitions/ui-module-declration";
-
-import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import type { UIElementChannelSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-channel-select-menu";
 import type { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 import type { UIElementRoleSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-role-select-menu";
 import type { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 import type { UIElementUserSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-user-select-menu";
-import type { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
-import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
-import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
+import type { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
+
+import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type {
     UIElementButtonLanguageContent,
@@ -45,19 +33,43 @@ import type {
     UIMarkdownLanguageContent,
     UIModalLanguageContent
 } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+import type { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 
-import type { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
-import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 
-const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER_INTERVAL ) ||
-    300000; // 5 minutes.
+import type { TModuleConstructor } from "@vertix.gg/gui/src/definitions/ui-module-declration";
+
+import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
+
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+import type { Client } from "discord.js";
+
+import type {
+    TAdapterClassType,
+    TAdapterConstructor,
+    TAdapterRegisterOptions,
+    TPossibleAdapters,
+} from "src/definitions/ui-adapter-declaration";
 
 export type TAdapterMapping = {
     "base": UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>,
     "execution": UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>,
     "wizard": UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
 }
+
+interface WaitForAdapterOptions {
+    timeout?: number;
+    silent?: boolean;
+}
+
+const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER_INTERVAL ) ||
+    300000; // 5 minutes.
+
+const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
+    timeout: 0,
+    silent: false
+};
 
 export class UIService extends ServiceWithDependenciesBase<{
     uiHashService: UIHashService,
@@ -122,7 +134,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public constructor( protected client: Client<true>) {
+    public constructor( protected client: Client<true> ) {
         super( arguments );
 
         if ( ! client ) {
@@ -226,21 +238,45 @@ export class UIService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async waitForAdapter( uiName: string, options = { timeout: 0 } ) {
-        return new Promise<void>( ( resolve, reject ) => {
-            const callback = ( name: string ) => {
-                if ( name === uiName ) {
-                    this.$$.emitter.off( "adapter-registered", callback );
-                    resolve();
-                }
+    public async waitForAdapter<T extends keyof TAdapterMapping = "base">( uiName: string, options = ADAPTER_WAITFOR_DEFAULT_OPTIONS ): Promise<TAdapterMapping[T] | undefined> {
+        return new Promise( ( resolve, reject ) => {
+            const adapter = this.get<T>( uiName, true );
 
-                setTimeout( () => {
-                    reject( new Error( `User interface '${ uiName }' does not exist` ) );
-                }, options.timeout );
+            if ( adapter ) {
+                return resolve( adapter );
+            }
+
+            const handleAdapterRegisteredEvent = ( name: string ) => {
+                if ( name === uiName ) {
+                    this.$$.emitter.off( "adapter-registered", handleAdapterRegisteredEvent );
+                    return resolve( this.get<T>( uiName, true )! );
+                }
             };
 
-            this.$$.emitter.on( "adapter-registered", callback );
+            this.$$.emitter.on( "adapter-registered", handleAdapterRegisteredEvent );
+
+            const handleTimeout = () => {
+                this.$$.emitter.off( "adapter-registered", handleAdapterRegisteredEvent );
+                if ( options.silent ) {
+                    return resolve( undefined );
+                }
+                reject( new Error( `User interface '${ uiName }' not found in timeout of ${ options.timeout }ms` ) );
+            };
+
+            setTimeout( handleTimeout, options.timeout );
         } );
+    }
+
+    public async waitForAdapters<T extends keyof TAdapterMapping = "base">( uiNames: string[], options = ADAPTER_WAITFOR_DEFAULT_OPTIONS ) {
+        if ( ! uiNames.length ) {
+            throw new Error( "Requested adapters array is empty" );
+        }
+
+        const result = ( await Promise.all(
+            uiNames.map( uiName => this.waitForAdapter( uiName, options ) )
+        ) ).filter( Boolean );
+
+        return result as TAdapterMapping[T][];
     }
 
     public registerUILanguageManager( uiLanguageManager: UILanguageManagerInterface ) {

@@ -1,6 +1,6 @@
 import fetch from "cross-fetch";
 
-import { EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
@@ -44,6 +44,14 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     }
 
     public async onMessage( message: Message ) {
+        if ( message.author.bot ) {
+            return;
+        }
+
+        if ( message.channel.type !== ChannelType.DM ) {
+            return;
+        }
+
         this.logger.admin( this.onMessage,
             `💬 Vertix received DM from '${ message.author.tag }' content: '${ message.content }'`
         );
@@ -57,7 +65,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         }
 
         const adapter = this.services.uiService
-            .get( "VertixBot/UI-V2/FeedbackAdapter" );
+            .get( "VertixBot/UI-General/FeedbackAdapter" );
 
         if ( ! adapter ) {
             this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );
@@ -157,7 +165,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 
     public async sendLeaveMessageToOwner( guild: Guild ) {
         const adapter = this.services.uiService
-            .get( "VertixBot/UI-V2/FeedbackAdapter" );
+            .get( "VertixBot/UI-General/FeedbackAdapter" );
 
         if ( ! adapter ) {
             this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );

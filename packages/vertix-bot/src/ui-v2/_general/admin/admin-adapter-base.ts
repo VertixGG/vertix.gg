@@ -20,7 +20,7 @@ export class AdminAdapterBase<
     protected static dedicatedLogger = new Logger( this.getName() );
 
     public static getName() {
-        return "VertixBot/UI-V2/AdminAdapterBase";
+        return "Vertix/UI-V2/AdminAdapterBase";
     }
 
     public getPermissions(): PermissionsBitField {

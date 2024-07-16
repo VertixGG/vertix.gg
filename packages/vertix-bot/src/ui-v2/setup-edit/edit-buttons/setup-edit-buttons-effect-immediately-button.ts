@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class SetupEditButtonsEffectImmediatelyButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton";
+        return "Vertix/UI-V2/SetupEditButtonsEffectImmediatelyButton";
     }
 
     public static getInstanceType() {

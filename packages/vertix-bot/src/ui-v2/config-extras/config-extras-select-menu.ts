@@ -19,7 +19,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/ConfigExtrasSelectMenu";
+        return "Vertix/UI-V2/ConfigExtrasSelectMenu";
     }
 
     public static getInstanceType() {

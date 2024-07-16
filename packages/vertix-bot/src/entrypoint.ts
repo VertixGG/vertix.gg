@@ -64,7 +64,6 @@ async function registerServices() {
 
         import("@vertix.gg/bot/src/services/channel-service"),
         import("@vertix.gg/bot/src/services/dynamic-channel-service"),
-        import("@vertix.gg/bot/src/services/dynamic-channel-claim-service"),
         import("@vertix.gg/bot/src/services/master-channel-service")
     ] );
 
@@ -82,6 +81,7 @@ async function registerServices() {
 async function registerUIAdapters() {
     // Register UI adapters
     const uiModuleV2 = await import("@vertix.gg/bot/src/ui-v2/ui-module"),
+        uiGeneralModule = await import( "@vertix.gg/bot/src/ui-general/ui-module" ),
         uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui-v2/_general/regenerate/ui-regenerate-button" ),
@@ -107,6 +107,7 @@ async function registerUIAdapters() {
     await uiService.registerInternalAdapters();
 
     await uiService.registerModule( uiModuleV2.default );
+    await uiService.registerModule( uiGeneralModule.default );
 }
 
 async function registerUILanguageManager() {

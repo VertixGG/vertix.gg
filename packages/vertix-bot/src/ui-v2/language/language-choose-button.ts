@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class LanguageChooseButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/LanguageChooseButton";
+        return "Vertix/UI-V2/LanguageChooseButton";
     }
 
     public static getInstanceType() {

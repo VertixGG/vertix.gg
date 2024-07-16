@@ -1,27 +1,26 @@
-import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
-
-import { AuditLogEvent, ChannelType  } from "discord.js";
-
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { AuditLogEvent, ChannelType } from "discord.js";
+
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
-import type { TextChannel , User , Client, Guild } from "discord.js";
-
-import type { UIService } from "@vertix.gg/gui/src/ui-service";
-import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-message-service";
+
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+import type { UIVersioningAdapterService } from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+import type { Client, Guild, TextChannel, User } from "discord.js";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
 
 export class GuildManager extends InitializeBase {
     private static instance: GuildManager;
 
-    private uiService: UIService;
+    private uiAdapterVersioningService: UIVersioningAdapterService;
 
     private dmService: DirectMessageService;
 
@@ -50,7 +49,7 @@ export class GuildManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
+        this.uiAdapterVersioningService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
 
         this.dmService = ServiceLocator.$.get( "VertixBot/Services/DirectMessage" );
 
@@ -127,7 +126,10 @@ export class GuildManager extends InitializeBase {
     }
 
     public async onJoined( guild: Guild, defaultChannel: TextChannel, user?: User ) {
-        await this.uiService.get( "VertixBot/UI-V2/WelcomeAdapter" )?.send( defaultChannel, user ? {
+        const welcomeAdapter = await this.uiAdapterVersioningService
+            .get( "Vertix/WelcomeAdapter", guild );
+
+        welcomeAdapter?.send( defaultChannel, user ? {
             userId: user.id,
         } : undefined );
     }

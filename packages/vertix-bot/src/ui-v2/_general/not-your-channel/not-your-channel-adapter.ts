@@ -9,7 +9,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 
 export class NotYourChannelAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
     public static getName() {
-        return "VertixBot/UI-V2/NotYourChannelAdapter";
+        return "Vertix/UI-V2/NotYourChannelAdapter";
     }
 
     public static getComponent() {

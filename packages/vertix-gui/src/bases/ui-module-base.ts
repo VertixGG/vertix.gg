@@ -6,7 +6,7 @@ import { DEFAULT_UI_NAMESPACE_SEPARATOR } from "@vertix.gg/gui/src/definitions/u
 
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 
-import type { TAdapterClassType } from "src/definitions/ui-adapter-declaration";
+import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 export abstract class UIModuleBase extends UIBase {
     public customIdStrategy: UICustomIdStrategyBase;

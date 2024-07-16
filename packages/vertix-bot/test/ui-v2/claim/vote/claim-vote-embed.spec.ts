@@ -4,7 +4,7 @@ import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-
 
 import { ClaimVoteEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-embed";
 
-describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
+describe( "Vertix/UI-V2/ClaimVoteEmbed", () => {
     beforeEach( async () => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
@@ -26,7 +26,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
 
         // Assert.
         expect( result ).toEqual( {
-            "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteEmbed",
             "type": "embed",
             "attributes": {
                 "title": "👑  0 Candidates wish to claim this channel",
@@ -56,7 +56,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
 
         // Assert.
         expect( result ).toEqual( {
-            "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteEmbed",
             "type": "embed",
             "attributes": {
                 "title": "👑  3 Candidates wish to claim this channel",

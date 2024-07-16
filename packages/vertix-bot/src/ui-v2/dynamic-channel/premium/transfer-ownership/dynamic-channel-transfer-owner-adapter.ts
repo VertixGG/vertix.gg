@@ -30,7 +30,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
     private static acceptedInteraction: Map<string, AcceptedInteraction> = new Map<string, AcceptedInteraction>();
 
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter";
+        return "Vertix/UI-V2/DynamicChannelTransferOwnerAdapter";
     }
 
     public static getComponent() {
@@ -46,24 +46,24 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
     protected static getExecutionSteps() {
         return {
             default: {},
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerSelectUser": {
-                embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup",
-                elementsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup",
+            "Vertix/UI-V2/DynamicChannelTransferOwnerSelectUser": {
+                embedsGroup: "Vertix/UI-V2/DynamicChannelTransferOwnerEmbedGroup",
+                elementsGroup: "Vertix/UI-V2/DynamicChannelTransferOwnerUserMenuGroup",
             },
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelected": {
-                embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
-                elementsGroup: "VertixBot/UI-V2/YesNoElementsGroup",
+            "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelected": {
+                embedsGroup: "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
+                elementsGroup: "Vertix/UI-V2/YesNoElementsGroup",
             },
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerSuccess": {
-                embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup",
-            },
-
-            "VertixBot/UI-V2/DynamicChannelTransferDisabledByClaim": {
-                embedsGroup: "VertixBot/UI-V2/DisabledWhileClaimEmbedGroup",
+            "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess": {
+                embedsGroup: "Vertix/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup",
             },
 
-            "VertixBot/UI-V2/DynamicChannelTransferError": {
-                embedsGroup: "VertixBot/UI-V2/SomethingWentWrongEmbedGroup",
+            "Vertix/UI-V2/DynamicChannelTransferDisabledByClaim": {
+                embedsGroup: "Vertix/UI-V2/DisabledWhileClaimEmbedGroup",
+            },
+
+            "Vertix/UI-V2/DynamicChannelTransferError": {
+                embedsGroup: "Vertix/UI-V2/SomethingWentWrongEmbedGroup",
             },
         };
     }
@@ -74,7 +74,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
 
     protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
         switch ( this.getCurrentExecutionStep()?.name ) {
-            case "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelected":
+            case "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelected":
                 return {
                     userDisplayName: argsFromManager?.userDisplayName,
                 };
@@ -85,22 +85,22 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
 
     protected onEntityMap() {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+            "Vertix/UI-V2/DynamicChannelTransferOwnerButton",
             this.onTransferOwnerButtonClicked
         );
 
         this.bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
+            "Vertix/UI-V2/DynamicChannelTransferOwnerUserMenu",
             this.onTransferOwnerUserSelected
         );
 
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/YesButton",
+            "Vertix/UI-V2/YesButton",
             this.onYesButtonClicked
         );
 
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/NoButton",
+            "Vertix/UI-V2/NoButton",
             this.onNoButtonClicked
         );
     }
@@ -111,7 +111,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         //     return;
         // }
 
-        await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferOwnerSelectUser" );
+        await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSelectUser" );
     }
 
     private async onTransferOwnerUserSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
@@ -123,7 +123,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             return;
         }
 
-        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelected", {
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelected", {
             userDisplayName: target.displayName,
         } );
 
@@ -152,7 +152,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
 
         if ( "active" === state ) {
-            await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferDisabledByClaim" );
+            await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferDisabledByClaim" );
             return;
         }
 
@@ -162,20 +162,20 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         this.clearAcceptedInteraction( interaction );
 
         if ( ! acceptedInteraction ) {
-            await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferError" );
+            await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferError" );
             return;
         }
 
         const target = interaction.guild.members.cache.get( acceptedInteraction.selectedUserId );
 
         if ( ! target ) {
-            await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferError" );
+            await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferError" );
             return;
         }
 
         await this.dynamicChannelService.editChannelOwner( target.id, interaction.user.id, interaction.channel, "transfer" );
 
-        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferOwnerSuccess" );
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess" );
     }
 
     private async onNoButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
@@ -183,11 +183,11 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
 
         await this.deleteRelatedEphemeralInteractionsInternal(
             interaction,
-            "VertixBot/UI-V2/DynamicChannelAdapter:VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+            "Vertix/UI-V2/DynamicChannelAdapter:Vertix/UI-V2/DynamicChannelTransferOwnerButton",
             1
         );
 
-        //await this.editReplyWithStep( interaction, "VertixBot/UI-V2/DynamicChannelTransferOwnerSelectUser" );
+        //await this.editReplyWithStep( interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSelectUser" );
     }
 
     private clearAcceptedInteraction( interaction: UIDefaultButtonChannelVoiceInteraction ) {

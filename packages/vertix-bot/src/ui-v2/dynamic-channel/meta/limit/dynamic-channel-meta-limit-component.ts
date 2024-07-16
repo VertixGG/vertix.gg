@@ -13,7 +13,7 @@ import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui-v2/_general/somet
 
 export class DynamicChannelMetaLimitComponent extends UIComponentBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaLimitComponent";
+        return "Vertix/UI-V2/DynamicChannelMetaLimitComponent";
     }
 
     public static getInstanceType() {

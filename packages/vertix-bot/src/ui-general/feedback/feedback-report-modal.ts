@@ -1,12 +1,12 @@
 import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { FeedbackInputTitle } from "@vertix.gg/bot/src/ui-v2/feedback/modal-elements/feedback-input-title";
-import { FeedbackInputDescription } from "@vertix.gg/bot/src/ui-v2/feedback/modal-elements/feedback-input-description";
+import { FeedbackInputTitle } from "@vertix.gg/bot/src/ui-general/feedback/modal-elements/feedback-input-title";
+import { FeedbackInputDescription } from "@vertix.gg/bot/src/ui-general/feedback/modal-elements/feedback-input-description";
 
-export class FeedbackModal extends UIModalBase {
+export class FeedbackReportModal extends UIModalBase {
     public static getName() {
-        return "VertixBot/UI-V2/FeedbackModal";
+        return "VertixBot/UI-General/FeedbackReportModal";
     }
 
     public static getInstanceType() {
@@ -14,7 +14,7 @@ export class FeedbackModal extends UIModalBase {
     }
 
     protected getTitle() {
-        return "Submit Feedback";
+        return "Submit a issue";
     }
 
     public static getInputElements() {

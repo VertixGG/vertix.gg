@@ -4,9 +4,9 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class FeedbackInviteDeveloperButton extends UIElementButtonBase {
+export class FeedbackSuggestionButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/FeedbackInviteDeveloperButton";
+        return "VertixBot/UI-General/FeedbackSuggestionButton";
     }
 
     public static getInstanceType() {
@@ -14,14 +14,14 @@ export class FeedbackInviteDeveloperButton extends UIElementButtonBase {
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "primary" );
+        return Promise.resolve( "secondary" );
     }
 
     protected async getLabel() {
-        return "Invite Vertix Developer";
+        return "Suggest Your Idea";
     }
 
     protected async getEmoji() {
-        return "💌";
+        return "💡";
     }
 }

@@ -31,7 +31,7 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
     private static allButtonsByName: ButtonsMap = {};
 
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelElementsGroup";
+        return "Vertix/UI-V2/DynamicChannelElementsGroup";
     }
 
     private static getItemFromMap( map: ButtonsMap, key: string ): DynamicChannelButtonBase | undefined {

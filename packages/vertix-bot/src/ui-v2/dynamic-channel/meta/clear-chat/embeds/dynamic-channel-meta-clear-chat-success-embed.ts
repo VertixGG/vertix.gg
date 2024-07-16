@@ -13,7 +13,7 @@ export class DynamicChannelMetaClearChatSuccessEmbed extends UIEmbedBase {
     };
 
     public static getName(): string {
-        return "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed";
+        return "Vertix/UI-V2/DynamicChannelMetaClearChatSuccessEmbed";
     }
 
     public static getInstanceType() {

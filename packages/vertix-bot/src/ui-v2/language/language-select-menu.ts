@@ -9,7 +9,7 @@ import { UILanguageManager } from "@vertix.gg/bot/src/ui-v2/ui-language-manager"
 
 export class LanguageSelectMenu extends UIElementStringSelectMenu {
     public static getName() {
-        return "VertixBot/UI-V2/LanguageSelectMenu";
+        return "Vertix/UI-V2/LanguageSelectMenu";
     }
 
     public static getInstanceType() {

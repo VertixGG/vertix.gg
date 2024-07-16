@@ -1,7 +1,7 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import { FeedbackComponent } from "@vertix.gg/bot/src/ui-v2/feedback/feedback-component";
+import { FeedbackComponent } from "@vertix.gg/bot/src/ui-general/feedback/feedback-component";
 
 import { VERTIX_DEFAULT_SURVEY_COLLECTOR_ID } from "@vertix.gg/bot/src/definitions/app";
 
@@ -11,11 +11,15 @@ import type { ModalSubmitInteraction } from "discord.js";
 
 export class FeedbackAdapter extends UIAdapterBase<any, any> {
     public static getName() {
-        return "VertixBot/UI-V2/FeedbackAdapter";
+        return "VertixBot/UI-General/FeedbackAdapter";
     }
 
     public static getComponent() {
         return FeedbackComponent;
+    }
+
+    public static isMultiLanguage() {
+        return false;
     }
 
     protected getReplyArgs() {
@@ -24,20 +28,20 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
 
     protected onEntityMap() {
         this.bindModalWithButton(
-            "VertixBot/UI-V2/FeedbackReportButton",
-            "VertixBot/UI-V2/FeedbackReportModal",
+            "VertixBot/UI-General/FeedbackReportButton",
+            "VertixBot/UI-General/FeedbackReportModal",
             this.onReportModalSubmitted
         );
 
         this.bindModalWithButton(
-            "VertixBot/UI-V2/FeedbackSuggestionButton",
-            "VertixBot/UI-V2/FeedbackModal",
+            "VertixBot/UI-General/FeedbackSuggestionButton",
+            "VertixBot/UI-General/FeedbackModal",
             this.onSuggestionModalSubmitted
         );
 
         this.bindModalWithButton(
-            "VertixBot/UI-V2/FeedbackInviteDeveloperButton",
-            "VertixBot/UI-V2/FeedbackInviteDeveloperModal",
+            "VertixBot/UI-General/FeedbackInviteDeveloperButton",
+            "VertixBot/UI-General/FeedbackInviteDeveloperModal",
             this.onInviteDeveloperModalSubmitted
         );
     }
@@ -68,7 +72,7 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
         const inviteLink = interaction.fields.getTextInputValue(
-        this.customIdStrategy.generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputUrl" )
+        this.customIdStrategy.generateId( "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputUrl" )
         );
 
         const tagName = interaction.user.tag,
@@ -89,9 +93,9 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
         const feedbackInputTitleId = this.customIdStrategy
-                .generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputTitle" ),
+                .generateId( "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputTitle" ),
             feedbackInputDescriptionId = this.customIdStrategy
-                .generateId( "VertixBot/UI-V2/FeedbackAdapter:VertixBot/UI-V2/FeedbackInputDescription" );
+                .generateId( "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputDescription" );
 
         const tagName = interaction.user.tag,
             title = interaction.fields.getTextInputValue( feedbackInputTitleId ),

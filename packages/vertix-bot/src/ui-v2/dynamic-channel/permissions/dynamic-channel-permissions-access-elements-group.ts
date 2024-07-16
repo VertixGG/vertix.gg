@@ -10,7 +10,7 @@ import {
 
 export class DynamicChannelPermissionsAccessElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup";
+        return "Vertix/UI-V2/DynamicChannelPermissionsAccessElementsGroup";
     }
 
     public static getItems() {

@@ -17,7 +17,7 @@ export class ChannelNameTemplateEmbed extends UIEmbedBase {
         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
 
     public static getName() {
-        return "VertixBot/UI-V2/ChannelNameTemplateEmbed";
+        return "Vertix/UI-V2/ChannelNameTemplateEmbed";
     }
 
     protected getTitle(): string {

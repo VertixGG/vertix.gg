@@ -11,7 +11,7 @@ import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui-v2/_general/somet
 
 export class DynamicChannelPremiumResetChannelComponent extends UIComponentBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent";
+        return "Vertix/UI-V2/DynamicChannelPremiumResetChannelComponent";
     }
 
     public static getInstanceType() {

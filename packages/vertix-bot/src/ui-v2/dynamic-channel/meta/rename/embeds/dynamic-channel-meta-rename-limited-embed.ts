@@ -16,7 +16,7 @@ export class DynamicChannelMetaRenameLimitedEmbed extends UIEmbedElapsedTimeBase
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed";
+        return "Vertix/UI-V2/DynamicChannelMetaRenameLimitedEmbed";
     }
 
     public static getInstanceType() {

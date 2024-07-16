@@ -4,9 +4,9 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class FeedbackSuggestionButton extends UIElementButtonBase {
+export class FeedbackReportButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/FeedbackSuggestionButton";
+        return "VertixBot/UI-General/FeedbackReportButton";
     }
 
     public static getInstanceType() {
@@ -18,10 +18,10 @@ export class FeedbackSuggestionButton extends UIElementButtonBase {
     }
 
     protected async getLabel() {
-        return "Suggest Your Idea";
+        return "Report a problem";
     }
 
     protected async getEmoji() {
-        return "💡";
+        return "💥";
     }
 }

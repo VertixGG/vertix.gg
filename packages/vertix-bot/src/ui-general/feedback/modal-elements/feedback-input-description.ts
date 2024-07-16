@@ -4,9 +4,9 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class FeedbackInputTitle extends UIElementInputBase {
+export class FeedbackInputDescription extends UIElementInputBase {
     public static getName() {
-        return "VertixBot/UI-V2/FeedbackInputTitle";
+        return "VertixBot/UI-General/FeedbackInputDescription";
     }
 
     public static getInstanceType() {
@@ -14,18 +14,18 @@ export class FeedbackInputTitle extends UIElementInputBase {
     }
 
     protected async getStyle(): Promise<UIInputStyleTypes> {
-        return "short";
+        return "long";
     }
 
     protected async getLabel(): Promise<string> {
-        return "Title";
+        return "Description";
     }
 
     protected async getMinLength(): Promise<number> {
-        return 5;
+        return 10;
     }
 
     protected async getMaxLength(): Promise<number> {
-        return 50;
+        return 2000;
     }
 }

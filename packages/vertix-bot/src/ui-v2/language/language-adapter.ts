@@ -12,7 +12,7 @@ import type { BaseGuildTextChannel } from "discord.js";
 
 export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction > {
     public static getName() {
-        return "VertixBot/UI-V2/LanguageAdapter";
+        return "Vertix/UI-V2/LanguageAdapter";
     }
 
     public static getComponent() {
@@ -24,9 +24,9 @@ export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDe
     }
 
     protected onEntityMap() {
-        this.bindSelectMenu( "VertixBot/UI-V2/LanguageSelectMenu", this.onLanguageSelected );
+        this.bindSelectMenu( "Vertix/UI-V2/LanguageSelectMenu", this.onLanguageSelected );
 
-        this.bindButton( "VertixBot/UI-V2/DoneButton", this.onDoneClicked );
+        this.bindButton( "Vertix/UI-V2/DoneButton", this.onDoneClicked );
     }
 
     private async onLanguageSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -34,12 +34,12 @@ export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDe
 
         await GuildDataManager.$.setLanguage( interaction.guild, language );
 
-        this.uiService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {
+        this.uiService.get( "Vertix/UI-V2/LanguageAdapter" )?.editReply( interaction, {
             _language: language
         } );
     }
 
     private async onDoneClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        this.uiService.get( "VertixBot/UI-V2/SetupAdapter" )?.editReply( interaction );
+        this.uiService.get( "Vertix/UI-V2/SetupAdapter" )?.editReply( interaction );
     }
 }

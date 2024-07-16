@@ -12,7 +12,7 @@ export class NotYourChannelEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/NotYourChannelEmbed";
+        return "Vertix/UI-V2/NotYourChannelEmbed";
     }
 
     public static getInstanceType() {

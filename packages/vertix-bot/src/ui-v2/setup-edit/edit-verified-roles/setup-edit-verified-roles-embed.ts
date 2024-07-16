@@ -14,7 +14,7 @@ export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed";
+        return "Vertix/UI-V2/SetupEditVerifiedRolesEmbed";
     }
 
     public static getInstanceType() {

@@ -13,7 +13,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
     public static getName() {
-        return "VertixBot/UI-V2/ClaimVoteResultsMarkdown";
+        return "Vertix/UI-V2/ClaimVoteResultsMarkdown";
     }
 
     public static getInstanceType() {

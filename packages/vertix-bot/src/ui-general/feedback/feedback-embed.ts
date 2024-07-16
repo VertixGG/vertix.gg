@@ -5,7 +5,7 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 export class FeedbackEmbed extends UIEmbedBase {
     public static getName() {
-        return "VertixBot/UI-V2/FeedbackEmbed";
+        return "VertixBot/UI-General/FeedbackEmbed";
     }
 
     public static getInstanceType() {

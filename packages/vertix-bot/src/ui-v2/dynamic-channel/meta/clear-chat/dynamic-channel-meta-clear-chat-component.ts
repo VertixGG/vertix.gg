@@ -15,7 +15,7 @@ import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui-v2/_general/somet
 
 export class DynamicChannelMetaClearChatComponent extends UIComponentBase {
     public static getName(): string {
-        return "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent";
+        return "Vertix/UI-V2/DynamicChannelMetaClearChatComponent";
     }
 
     public static getInstanceType() {

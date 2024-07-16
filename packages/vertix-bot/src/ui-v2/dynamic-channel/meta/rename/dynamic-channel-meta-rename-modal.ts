@@ -5,7 +5,7 @@ import { DynamicChannelMetaRenameInput } from "@vertix.gg/bot/src/ui-v2/dynamic-
 
 export class DynamicChannelMetaRenameModal extends UIModalBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaRenameModal";
+        return "Vertix/UI-V2/DynamicChannelMetaRenameModal";
     }
 
     public static getInstanceType() {

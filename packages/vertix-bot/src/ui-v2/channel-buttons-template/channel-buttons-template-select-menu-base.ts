@@ -12,7 +12,7 @@ const allItems = DynamicChannelElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectMenu {
     public static getName() {
-        return "VertixBot/UI-V2/ButtonsSelectMenuBase";
+        return "Vertix/UI-V2/ButtonsSelectMenuBase";
     }
 
     public static getInstanceType() {

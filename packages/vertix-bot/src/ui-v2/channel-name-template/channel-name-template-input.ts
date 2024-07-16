@@ -13,7 +13,7 @@ export class ChannelNameTemplateInput extends UIElementInputBase {
         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
 
     public static getName() {
-        return "VertixBot/UI-V2/ChannelNameTemplateInput";
+        return "Vertix/UI-V2/ChannelNameTemplateInput";
     }
 
     public static getInstanceType() {

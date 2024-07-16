@@ -63,6 +63,10 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         throw new ForceMethodImplementation( this.getName(), this.getComponent.name );
     }
 
+    public static isMultiLanguage() {
+        return true;
+    }
+
     protected static getExcludedElements(): UIEntityTypes {
         return [];
     }

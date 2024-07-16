@@ -8,7 +8,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class ClaimVoteAddButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/ClaimVoteAddButton";
+        return "Vertix/UI-V2/ClaimVoteAddButton";
     }
 
     public static getInstanceType() {

@@ -17,7 +17,7 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/InvalidChannelTypeEmbed";
+        return "Vertix/UI-V2/InvalidChannelTypeEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

@@ -5,7 +5,7 @@ import { NotYourChannelEmbed } from "@vertix.gg/bot/src/ui-v2/_general/not-your-
 
 export class NotYourChannelComponent extends UIComponentBase {
     public static getName() {
-        return "VertixBot/UI-V2/NotYourChannelComponent";
+        return "Vertix/UI-V2/NotYourChannelComponent";
     }
 
     public static getInstanceType() {

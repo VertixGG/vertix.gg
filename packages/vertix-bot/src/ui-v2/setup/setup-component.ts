@@ -10,7 +10,7 @@ import { BadwordsModal } from "@vertix.gg/bot/src/ui-v2/badwords/badwords-modal"
 
 export class SetupComponent extends UIComponentBase {
     public static getName() {
-        return "VertixBot/UI-V2/SetupComponent";
+        return "Vertix/UI-V2/SetupComponent";
     }
 
     public static getInstanceType() {
@@ -37,10 +37,10 @@ export class SetupComponent extends UIComponentBase {
     }
 
     protected static getDefaultElementsGroup() {
-        return "VertixBot/UI-V2/SetupElementsGroup";
+        return "Vertix/UI-V2/SetupElementsGroup";
     }
 
     protected static getDefaultEmbedsGroup() {
-        return "VertixBot/UI-V2/SetupEmbedGroup";
+        return "Vertix/UI-V2/SetupEmbedGroup";
     }
 }

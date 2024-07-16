@@ -6,6 +6,8 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
 import { ClaimVoteComponent } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-component";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
@@ -14,22 +16,17 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
 
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-
 import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
-import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
 }
 
 export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, DefaultInteraction> {
-    protected dynamicChannelClaimService: DynamicChannelClaimService;
-
     public static getName() {
-        return "VertixBot/UI-V2/ClaimVoteAdapter";
+        return "Vertix/UI-V2/ClaimVoteAdapter";
     }
 
     public static getComponent() {
@@ -38,36 +35,30 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
 
     protected static getExecutionSteps() {
         return {
-            "VertixBot/UI-V2/ClaimStepIn": {
-                embedsGroup: "VertixBot/UI-V2/ClaimVoteStepInEmbedGroup",
-                elementsGroup: "VertixBot/UI-V2/ClaimVoteStepInButtonGroup",
+            "Vertix/UI-V2/ClaimStepIn": {
+                embedsGroup: "Vertix/UI-V2/ClaimVoteStepInEmbedGroup",
+                elementsGroup: "Vertix/UI-V2/ClaimVoteStepInButtonGroup",
                 getConditions: ( { context }: UIExecutionConditionArgs ) =>
                     [ "starting", "active" ].includes( DynamicChannelVoteManager.$.getState( context.channelId as string ) ) &&
                     DynamicChannelVoteManager.$.getCandidatesCount( context.channelId as string ) < 2
             },
-            "VertixBot/UI-V2/ClaimVoteProcess": {
-                embedsGroup: "VertixBot/UI-V2/ClaimVoteEmbedGroup",
-                elementsGroup: "VertixBot/UI-V2/ClaimVoteElementsGroup",
+            "Vertix/UI-V2/ClaimVoteProcess": {
+                embedsGroup: "Vertix/UI-V2/ClaimVoteEmbedGroup",
+                elementsGroup: "Vertix/UI-V2/ClaimVoteElementsGroup",
                 getConditions: ( { context }: UIExecutionConditionArgs ) =>
                     DynamicChannelVoteManager.$.getState( context.channelId as string ) === "active" &&
                     DynamicChannelVoteManager.$.getCandidatesCount( context.channelId as string ) > 1
             },
-            "VertixBot/UI-V2/ClaimVoteWon": {
-                embedsGroup: "VertixBot/UI-V2/ClaimVoteWonEmbedGroup",
+            "Vertix/UI-V2/ClaimVoteWon": {
+                embedsGroup: "Vertix/UI-V2/ClaimVoteWonEmbedGroup",
                 getConditions: ( { context }: UIExecutionConditionArgs ) =>
                     DynamicChannelVoteManager.$.isTimeExpired( context.channelId as string )
             },
 
             bypass: {
-                markdownGroup: "VertixBot/UI-V2/ClaimVoteResultsMarkdownGroup",
+                markdownGroup: "Vertix/UI-V2/ClaimVoteResultsMarkdownGroup",
             }
         };
-    }
-
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
-
-        this.dynamicChannelClaimService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannelClaim");
     }
 
     public getPermissions(): PermissionsBitField {
@@ -98,19 +89,19 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
 
         if ( "run" === from ) {
             switch ( stepName ) {
-                case "VertixBot/UI-V2/ClaimStepIn":
-                    this.bindButton( "VertixBot/UI-V2/ClaimVoteStepInButton", this.handleVoteRequest.bind( this ) );
+                case "Vertix/UI-V2/ClaimStepIn":
+                    this.bindButton( "Vertix/UI-V2/ClaimVoteStepInButton", this.handleVoteRequest.bind( this ) );
                     break;
 
-                case "VertixBot/UI-V2/ClaimVoteProcess":
-                    this.bindButton( "VertixBot/UI-V2/ClaimVoteStepInButton", this.handleVoteRequest.bind( this ) );
-                    this.bindButton( "VertixBot/UI-V2/ClaimVoteAddButton", this.handleVoteRequest.bind( this ) );
+                case "Vertix/UI-V2/ClaimVoteProcess":
+                    this.bindButton( "Vertix/UI-V2/ClaimVoteStepInButton", this.handleVoteRequest.bind( this ) );
+                    this.bindButton( "Vertix/UI-V2/ClaimVoteAddButton", this.handleVoteRequest.bind( this ) );
                     break;
             }
         }
 
-        if ( stepName === "VertixBot/UI-V2/ClaimVoteWon" && Object.keys( args.results ).length > 1 ) {
-            this.getComponent().switchMarkdownsGroup( "VertixBot/UI-V2/ClaimVoteResultsMarkdownGroup" );
+        if ( args.results && stepName === "Vertix/UI-V2/ClaimVoteWon" && Object.keys( args.results ).length > 1 ) {
+            this.getComponent().switchMarkdownsGroup( "Vertix/UI-V2/ClaimVoteResultsMarkdownGroup" );
         }
     }
 
@@ -118,11 +109,12 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         channel: VoiceChannel
     } ): Promise<void> {
         switch ( stepName ) {
-            case "VertixBot/UI-V2/ClaimVoteWon":
+            case "Vertix/UI-V2/ClaimVoteWon":
                 // TODO: Dedicated method
                 const args = await this.getReplyArgs( interaction );
 
-                this.dynamicChannelClaimService.unmarkChannelAsClaimable( interaction.channel );
+                DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
+                    .unmarkChannelAsClaimable( interaction.channel );
 
                 await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel")
                     .editChannelOwner(
@@ -137,7 +129,8 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
     }
 
     protected async handleVoteRequest( interaction: DefaultInteraction ) {
-        await this.dynamicChannelClaimService.handleVoteRequest( interaction );
+        await DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
+            .handleVoteRequest( interaction );
     }
 
     private async getAllArgs( context: DefaultInteraction | Message<true> ) {
@@ -146,11 +139,11 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         const stepName = this.getCurrentExecutionStep()?.name;
 
         switch ( stepName ) {
-            case "VertixBot/UI-V2/ClaimStepIn":
+            case "Vertix/UI-V2/ClaimStepIn":
                 await this.setBasicArgs( context, args );
                 break;
 
-            case "VertixBot/UI-V2/ClaimVoteProcess":
+            case "Vertix/UI-V2/ClaimVoteProcess":
                 await this.setBasicArgs( context, args );
 
                 args.results = DynamicChannelVoteManager.$.getResults( context.channelId );
@@ -161,7 +154,7 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
                 } ) );
                 break;
 
-            case "VertixBot/UI-V2/ClaimVoteWon":
+            case "Vertix/UI-V2/ClaimVoteWon":
                 const dynamicChannelDB = await ChannelModel.$.getByChannelId( context.channelId );
 
                 if ( ! dynamicChannelDB ) {

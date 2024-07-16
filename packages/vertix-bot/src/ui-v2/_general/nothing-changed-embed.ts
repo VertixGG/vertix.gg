@@ -5,7 +5,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class NothingChangedEmbed extends UIEmbedBase {
     public static getName() {
-        return "VertixBot/UI-V2/NothingChangedEmbed";
+        return "Vertix/UI-V2/NothingChangedEmbed";
     }
 
     public static getInstanceType() {

@@ -35,7 +35,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
             return false;
         }
 
-        await uiService.get( "VertixBot/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
+        await uiService.get( "Vertix/UI-V2/NotYourChannelAdapter" )?.ephemeral( interaction, {
             masterChannelId: masterChannelDB.channelId,
         } );
 

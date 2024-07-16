@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class UIWizardFinishButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/WizardFinishButton";
+        return "Vertix/UI-V2/WizardFinishButton";
     }
 
     public static getInstanceType() {

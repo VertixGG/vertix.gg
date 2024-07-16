@@ -27,7 +27,7 @@ export class AdminAdapterExuBase<
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
-        return "VertixBot/UI-V2/AdminAdapterExuBase";
+        return "Vertix/UI-V2/AdminAdapterExuBase";
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

@@ -8,7 +8,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupMaxMasterChannelsEmbed extends UIEmbedBase {
     public static getName() {
-        return "VertixBot/UI-V2/SetupMaxMasterChannelsEmbed";
+        return "Vertix/UI-V2/SetupMaxMasterChannelsEmbed";
     }
 
     public static getInstanceType() {

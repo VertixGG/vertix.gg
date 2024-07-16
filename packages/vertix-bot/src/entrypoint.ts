@@ -64,7 +64,6 @@ async function registerServices() {
 
         import("@vertix.gg/bot/src/services/channel-service"),
         import("@vertix.gg/bot/src/services/dynamic-channel-service"),
-        import("@vertix.gg/bot/src/services/dynamic-channel-claim-service"),
         import("@vertix.gg/bot/src/services/master-channel-service")
     ] );
 

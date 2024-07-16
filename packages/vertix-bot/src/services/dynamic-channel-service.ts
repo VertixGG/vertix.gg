@@ -54,6 +54,8 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
+import type UIVersioningAdapterService from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+
 import type { Guild ,
     APIPartialChannel,
     GuildMember,
@@ -96,8 +98,9 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
-    uiService: UIService,
     channelService: ChannelService,
+    uiService: UIService,
+    uiVersioningAdapterService: UIVersioningAdapterService,
 }> {
     private readonly debugger: Debugger;
 
@@ -136,8 +139,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
+            uiService: "VertixGUI/UIService",
+            uiVersioningAdapterService: "VertixGUI/UIVersioningAdapterService",
         };
     }
 
@@ -608,7 +612,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
-        return this.services.uiService.get( "VertixBot/UI-V2/DynamicChannelAdapter" )
+        return ( await this.services.uiVersioningAdapterService.get( "Vertix/DynamicChannelAdapter", channel.guild ) )
             ?.send( channel, sendArgs );
     }
 
@@ -904,8 +908,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             editMessageArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
-        await this.services.uiService.get( "VertixBot/UI-V2/DynamicChannelAdapter" )
-            ?.editMessage( message, editMessageArgs )
+        const dynamicChannelAdapter = await this.services.uiVersioningAdapterService.get(
+            "Vertix/DynamicChannelAdapter",
+            channel.guild,
+        );
+
+        await dynamicChannelAdapter?.editMessage( message, editMessageArgs )
             .catch( ( e: any ) => this.logger.error( this.editPrimaryMessage, "", e ) )
             .then( () => this.logger.info( this.editPrimaryMessage,
                 `Guild id: '${ channel.guildId }' channel id: '${ channel.id }' - Editing primary message with id: '${ message.id }' succeeded`

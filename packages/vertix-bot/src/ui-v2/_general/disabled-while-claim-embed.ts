@@ -5,7 +5,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DisabledWhileClaimEmbed extends UIEmbedBase {
     public static getName() {
-        return "VertixBot/UI-V2/DisabledWhileClaimEmbed";
+        return "Vertix/UI-V2/DisabledWhileClaimEmbed";
     }
 
     public static getInstanceType() {

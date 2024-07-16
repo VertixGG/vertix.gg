@@ -11,13 +11,13 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 import type { UIAdapterReplyContext, UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
-import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 export abstract class DynamicChannelAdapterExuBase<TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction> extends UIAdapterExecutionStepsBase<VoiceChannel, TInteraction> {
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelAdapterExuBase";
+        return "Vertix/UI-V2/DynamicChannelAdapterExuBase";
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

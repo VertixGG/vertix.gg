@@ -42,7 +42,7 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/SetupEditEmbed";
+        return "Vertix/UI-V2/SetupEditEmbed";
     }
 
     public static getInstanceType() {

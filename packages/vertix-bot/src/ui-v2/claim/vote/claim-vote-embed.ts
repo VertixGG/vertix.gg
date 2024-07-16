@@ -26,7 +26,7 @@ export class ClaimVoteEmbed extends UIEmbedElapsedTimeBase {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/ClaimVoteEmbed";
+        return "Vertix/UI-V2/ClaimVoteEmbed";
     }
 
     public static getInstanceType() {

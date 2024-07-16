@@ -13,7 +13,7 @@ import type { VoiceChannel } from "discord.js";
 
 export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaClearChatAdapter";
+        return "Vertix/UI-V2/DynamicChannelMetaClearChatAdapter";
     }
 
     public static getComponent() {
@@ -32,7 +32,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
     }
 
     protected onEntityMap() {
-        this.bindButton( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", this.onClearChatButtonClicked );
+        this.bindButton( "Vertix/UI-V2/DynamicChannelMetaClearChatButton", this.onClearChatButtonClicked );
     }
 
     private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
@@ -42,7 +42,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
             case "success":
                 await interaction.deferUpdate();
 
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup" );
 
                 // Search embeds with "🧹" in title and delete them.
                 const messages = await interaction.channel.messages.fetch();
@@ -68,11 +68,11 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
                 return; // # NOTE: return is required here, otherwise the code below will be executed.
 
             case "nothing-to-delete":
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup" );
                 break;
 
             default:
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V2/SomethingWentWrongEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/SomethingWentWrongEmbedGroup" );
         }
 
         await this.ephemeral( interaction );

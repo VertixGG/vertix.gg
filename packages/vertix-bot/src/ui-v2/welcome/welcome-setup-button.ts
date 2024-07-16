@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class WelcomeSetupButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/WelcomeSetupButton";
+        return "Vertix/UI-V2/WelcomeSetupButton";
     }
 
     public static getInstanceType() {

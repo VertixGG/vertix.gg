@@ -6,7 +6,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
  */
 export class ClaimResultStepInEmbed extends UIEmbedBase {
     public static getName() {
-        return "VertixBot/UI-V2/ClaimResultStepInEmbed";
+        return "Vertix/UI-V2/ClaimResultStepInEmbed";
     }
 
     public static getInstanceType() {

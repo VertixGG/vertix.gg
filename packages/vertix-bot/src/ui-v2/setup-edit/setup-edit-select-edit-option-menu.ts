@@ -4,7 +4,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
     public static getName() {
-        return "VertixBot/UI-V2/SetupEditSelectEditOptionMenu";
+        return "Vertix/UI-V2/SetupEditSelectEditOptionMenu";
     }
 
     public static getInstanceType() {

@@ -8,7 +8,7 @@ import { DoneButton } from "@vertix.gg/bot/src/ui-v2/_general/done-button";
 
 export class SetupEditButtonsElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "VertixBot/UI-V2/SetupEditButtonsElementsGroup";
+        return "Vertix/UI-V2/SetupEditButtonsElementsGroup";
     }
 
     public static getItems() {

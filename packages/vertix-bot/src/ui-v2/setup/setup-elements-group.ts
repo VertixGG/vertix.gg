@@ -13,7 +13,7 @@ import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types
 
 export class SetupElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "VertixBot/UI-V2/SetupElementsGroup";
+        return "Vertix/UI-V2/SetupElementsGroup";
     }
 
     public static getItems( args?: ISetupArgs ) {

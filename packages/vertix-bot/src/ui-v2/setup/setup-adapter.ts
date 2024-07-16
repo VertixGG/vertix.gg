@@ -35,7 +35,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     private masterChannelService: MasterChannelService;
 
     public static getName() {
-        return "VertixBot/UI-V2/SetupAdapter";
+        return "Vertix/UI-V2/SetupAdapter";
     }
 
     public static getComponent() {
@@ -72,25 +72,25 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     protected async onBeforeBuild( args: UIArgs, from: string, interaction?: DefaultInteraction ) {
         if ( "run" === from ) {
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V2/SetupMasterEditButton",
+                "Vertix/UI-V2/SetupMasterEditButton",
                 this.onEditMasterChannelClicked
             );
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V2/SetupMasterCreateButton",
+                "Vertix/UI-V2/SetupMasterCreateButton",
                 this.onCreateMasterChannelClicked
             );
 
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V2/SetupBadwordsEditButton",
+                "Vertix/UI-V2/SetupBadwordsEditButton",
                 this.onEditBadwordsClicked
             );
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V2/LanguageChooseButton",
+                "Vertix/UI-V2/LanguageChooseButton",
                 this.onLanguageChooseClicked
             );
 
             this.bindModal<UIDefaultModalChannelTextInteraction>(
-                "VertixBot/UI-V2/BadwordsModal",
+                "Vertix/UI-V2/BadwordsModal",
                 this.onBadwordsModalSubmitted
             );
         }
@@ -112,7 +112,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         const masterChannelDB = masterChannels[ masterChannelIndex ];
 
-        await this.uiService.get( "VertixBot/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
+        await this.uiService.get( "Vertix/UI-V2/SetupEditAdapter" )?.runInitial( interaction, {
             masterChannelIndex,
             masterChannelDB
         } );
@@ -130,7 +130,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             const component = this.getComponent();
 
             component.clearElements();
-            component.switchEmbedsGroup( "VertixBot/UI-V2/SetupMaxMasterChannelsEmbedGroup" );
+            component.switchEmbedsGroup( "Vertix/UI-V2/SetupMaxMasterChannelsEmbedGroup" );
 
             await this.ephemeral( interaction, {
                 maxMasterChannels: limit
@@ -142,7 +142,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         const { masterChannelData } = ConfigManager.$
             .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
 
-        this.uiService.get( "VertixBot/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
+        this.uiService.get( "Vertix/UI-V2/SetupNewWizardAdapter" )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: masterChannelData.dynamicChannelButtonsTemplate,
 
             dynamicChannelMentionable: masterChannelData.dynamicChannelMentionable,
@@ -159,12 +159,12 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onEditBadwordsClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        await this.showModal( "VertixBot/UI-V2/BadwordsModal", interaction );
+        await this.showModal( "Vertix/UI-V2/BadwordsModal", interaction );
     }
 
     private async onBadwordsModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
         const badwordsInputId = this.customIdStrategy
-                .generateId( "VertixBot/UI-V2/SetupAdapter:VertixBot/UI-V2/BadwordsInput" );
+                .generateId( "Vertix/UI-V2/SetupAdapter:Vertix/UI-V2/BadwordsInput" );
 
         const value = interaction.fields.getTextInputValue( badwordsInputId ),
             newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( value ) )
@@ -183,6 +183,6 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     private async onLanguageChooseClicked( interaction: DefaultInteraction ) {
-        this.uiService.get( "VertixBot/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
+        this.uiService.get( "Vertix/UI-V2/LanguageAdapter" )?.editReply( interaction, {} );
     }
 }

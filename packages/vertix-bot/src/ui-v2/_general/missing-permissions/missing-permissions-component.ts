@@ -5,7 +5,7 @@ import { MissingPermissionsEmbed } from "@vertix.gg/bot/src/ui-v2/_general/missi
 
 export class MissingPermissionsComponent extends UIComponentBase {
     public static getName() {
-        return "VertixBot/UI-V2/MissingPermissionsComponent";
+        return "Vertix/UI-V2/MissingPermissionsComponent";
     }
 
     public static getInstanceType() {

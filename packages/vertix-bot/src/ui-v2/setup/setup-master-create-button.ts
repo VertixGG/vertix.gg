@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class SetupMasterCreateButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-V2/SetupMasterCreateButton";
+        return "Vertix/UI-V2/SetupMasterCreateButton";
     }
 
     public static getInstanceType() {

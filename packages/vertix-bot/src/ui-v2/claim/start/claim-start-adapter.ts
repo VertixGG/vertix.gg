@@ -1,15 +1,14 @@
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
 import { ClaimStartComponent } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-component";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
-
-import type { DynamicChannelClaimService } from "src/services/dynamic-channel-claim-service";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
@@ -20,7 +19,7 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 
 export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultInteraction> {
     public static getName() {
-        return "VertixBot/UI-V2/ClaimStartAdapter";
+        return "Vertix/UI-V2/ClaimStartAdapter";
     }
 
     public static getComponent() {
@@ -49,18 +48,17 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
             ownerId: channelDB.userOwnerId,
             channelId: channel.id,
             ownerDisplayName: await guildGetMemberDisplayName( channel.guild, channelDB.userOwnerId ),
-            absentInterval: ServiceLocator.$
-                .get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim")
+            absentInterval: DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
                 .getChannelOwnershipTimeout(),
         };
     }
 
     protected onEntityMap() {
-        this.bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimStartButton", this.onClaimStartButtonClicked );
+        this.bindButton<DefaultInteraction>( "Vertix/UI-V2/ClaimStartButton", this.onClaimStartButtonClicked );
     }
 
     private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
-        await ServiceLocator.$.get<DynamicChannelClaimService>( "VertixBot/Services/DynamicChannelClaim")
+        await DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
             .handleVoteRequest( interaction );
     }
 }

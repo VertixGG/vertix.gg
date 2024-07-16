@@ -7,7 +7,7 @@ import { ChannelNameTemplateInput } from "@vertix.gg/bot/src/ui-v2/channel-name-
 
 export class ChannelNameTemplateModal extends UIModalBase {
     public static getName() {
-        return "VertixBot/UI-V2/ChannelNameTemplateModal";
+        return "Vertix/UI-V2/ChannelNameTemplateModal";
     }
 
     public static getInstanceType() {

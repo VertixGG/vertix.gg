@@ -8,7 +8,7 @@ import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 export class BadwordsInput extends UIElementInputBase {
     public static getName() {
-        return "VertixBot/UI-V2/BadwordsInput";
+        return "Vertix/UI-V2/BadwordsInput";
     }
 
     public static getInstanceType() {

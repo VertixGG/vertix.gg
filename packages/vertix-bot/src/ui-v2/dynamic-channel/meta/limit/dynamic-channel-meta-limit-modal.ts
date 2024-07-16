@@ -7,7 +7,7 @@ import {
 
 export class DynamicChannelMetaLimitModal extends UIModalBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaLimitModal";
+        return "Vertix/UI-V2/DynamicChannelMetaLimitModal";
     }
 
     public static getInstanceType() {

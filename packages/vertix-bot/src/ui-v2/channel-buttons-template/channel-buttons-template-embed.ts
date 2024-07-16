@@ -19,7 +19,7 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "VertixBot/UI-V2/ChannelButtonsTemplateEmbed";
+        return "Vertix/UI-V2/ChannelButtonsTemplateEmbed";
     }
 
     protected getDescription(): string {

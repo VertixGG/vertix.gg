@@ -22,6 +22,10 @@ import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import {
+    DynamicChannelElementsGroup
+} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+
+import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
 } from "@vertix.gg/bot/src/definitions/master-channel";
@@ -31,10 +35,6 @@ import { CategoryModel } from "@vertix.gg/bot/src/models/category-model";
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
-
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
 

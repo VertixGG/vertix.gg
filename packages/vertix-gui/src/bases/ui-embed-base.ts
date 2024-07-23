@@ -1,10 +1,15 @@
 import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
 
-import type { APIEmbedField, APIEmbedThumbnail } from "discord.js";
-
-import type { UIArgs, UIBaseTemplateOptions, UIEmbedArrayOptions, UIType } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type {
+    UIArgs,
+    UIBaseTemplateOptions,
+    UIEmbedArrayOptions,
+    UIType
+} from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+
+import type { APIEmbedField, APIEmbedThumbnail } from "discord.js";
 
 export abstract class UIEmbedBase extends UITemplateBase {
     private content: UIEmbedLanguageContent | undefined;
@@ -98,20 +103,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
             };
         }
 
-        const data = this.parseLogicInternal( {
-                ... this.getInternalLogic( this.uiArgs ),
-                ... this.getLogic( this.uiArgs ),
-                ... await this.getLogicAsync( this.uiArgs ),
-            },
-            content?.options || {},
-            content?.arrayOptions || {},
-        );
-
-        const template = this.composeTemplate(
-            attributes,
-            data,
-            content?.options || {},
-        );
+        const template = await this.generateTemplate( content, attributes );
 
         if ( template.footer?.length ) {
             template.footer = {
@@ -174,12 +166,32 @@ export abstract class UIEmbedBase extends UITemplateBase {
     protected getInternalOptions(): UIBaseTemplateOptions {
         return {};
     }
-
     /**
      * Function getInternalLogic() :: Used to extend the logic object.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected getInternalLogic( args?: UIArgs ) {
         return {};
+    }
+
+    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
+        const data = await this.parseData( content );
+
+        return this.composeTemplate(
+            attributes,
+            data,
+            content?.options || {},
+        );
+    }
+
+    private async parseData( content: undefined | UIEmbedLanguageContent ) {
+        return this.parseLogicInternal( {
+                ... this.getInternalLogic( this.uiArgs ),
+                ... this.getLogic( this.uiArgs ),
+                ... await this.getLogicAsync( this.uiArgs ),
+            },
+            content?.options || {},
+            content?.arrayOptions || {},
+        );
     }
 }

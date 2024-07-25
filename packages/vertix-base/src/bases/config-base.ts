@@ -1,12 +1,14 @@
 import crypto from "node:crypto";
 
+import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
 
-import { ConfigModel } from "@vertix.gg/base/src/models/config-model";
+import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
-import type { VersionType } from "@vertix.gg/base/src/models/config-model";
+import type { VersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 interface ConfigBaseDefaultsInterface {
     [ key: string ]: any;
@@ -17,6 +19,7 @@ interface ConfigBaseMetaInterface {
     key: string;
     version: VersionType;
 }
+
 interface ConfigBaseInterface<
     TDefaults extends ConfigBaseDefaultsInterface = ConfigBaseDefaultsInterface,
     TData extends TDefaults = TDefaults,
@@ -30,6 +33,11 @@ interface ConfigBaseInterface<
 export abstract class ConfigBase<
     TConfig extends ConfigBaseInterface
 > extends InitializeBase {
+    protected static configModel = new ( DataVersioningModelFactory<
+        PrismaBot.Config,
+        PrismaBot.Prisma.ConfigDelegate
+    >( PrismaBotClient.getPrismaClient().config ) );
+
     protected config: TConfig = {} as TConfig;
 
     public abstract getConfigName(): string;
@@ -38,12 +46,8 @@ export abstract class ConfigBase<
 
     protected abstract getDefaults(): TConfig["defaults"];
 
-    protected getConfigModel() {
-        return ConfigModel.$;
-    }
-
     protected get model() {
-        return this.getConfigModel();
+        return this.$$.configModel;
     }
 
     public constructor( shouldInitialize = true ) {
@@ -83,15 +87,15 @@ export abstract class ConfigBase<
     };
 
     public get defaults() {
-        return <TConfig["defaults"]>this.config.defaults;
+        return <TConfig["defaults"]> this.config.defaults;
     }
 
     public get meta() {
-        return <TConfig["meta"]>this.config.meta;
+        return <TConfig["meta"]> this.config.meta;
     }
 
     public get data() {
-        return <TConfig["data"]>this.config.data;
+        return <TConfig["data"]> this.config.data;
     }
 
     public getKeys<
@@ -113,9 +117,9 @@ export abstract class ConfigBase<
             const asArray = Object.entries( obj ),
                 data = Buffer.from( asArray.map( i => i.join( ":" ) ).join( ";" ) );
 
-            return crypto.createHash("sha256")
-                .update(data)
-                .digest("hex");
+            return crypto.createHash( "sha256" )
+                .update( data )
+                .digest( "hex" );
         };
 
         const checksumA = checksum( objA ),

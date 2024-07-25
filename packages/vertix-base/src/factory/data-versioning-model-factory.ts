@@ -6,7 +6,7 @@ import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory"
 
 import type { TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 
-type VersionType = `${ number }.${ number }.${ number }`;
+export type VersionType = `${ number }.${ number }.${ number }`;
 
 const CONFIG_DEFAULT_VERSION: VersionType = "0.0.0";
 

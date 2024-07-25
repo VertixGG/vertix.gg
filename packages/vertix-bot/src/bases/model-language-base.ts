@@ -1,6 +1,6 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
-import { ModelBaseCached } from "@vertix.gg/base/src/bases/model-base";
+import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -13,7 +13,7 @@ export interface TModelHelper<T> {
 /**
  * Wasted too much time on this, didn't find a good solution.
  */
-export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<PrismaBot.PrismaClient, TPayloadWithContent> {
+export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCachedWithClient<PrismaBot.PrismaClient, TPayloadWithContent> {
     public static getName(): string {
         return "VertixBot/Bases/ModelLanguageBase";
     }

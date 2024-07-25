@@ -48,4 +48,10 @@ export abstract class ObjectBase {
     }
 }
 
+export abstract class TObjectMixinBase extends ObjectBase {
+    protected constructor( ... _args: any[]) {
+        super();
+    }
+}
+
 export default ObjectBase;

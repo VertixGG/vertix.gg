@@ -18,11 +18,11 @@ type TDefaultTypesMapping = {
     [ dataTypes.array ]: any[];
 };
 
-type keys = keyof typeof dataTypes;
+export type TDataTypeKeys = keyof typeof dataTypes;
 
-type TDataType = {
-    [Key in keys]: TDefaultTypesMapping[typeof dataTypes[Key]];
-}[keys];
+export type TDataType = {
+    [Key in TDataTypeKeys]: TDefaultTypesMapping[typeof dataTypes[Key]];
+}[TDataTypeKeys];
 
 export interface TDefaultResult {
     object: PrismaBot.Prisma.JsonValue | null
@@ -80,18 +80,34 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
         protected getValueAsType<T extends TDataType>( result: TDefaultResult ) {
             switch ( result.type ) {
                 case dataTypes.string:
-                    return result.value!.toString() as TDefaultTypesMapping[typeof dataTypes.string] as T;
+                    return result.value!.toString() as T;
                 case dataTypes.number:
-                    return Number( result.value ) as TDefaultTypesMapping[typeof dataTypes.number] as T;
+                    return Number( result.value ) as T;
                 case dataTypes.boolean:
-                    return Boolean( result.value ) as TDefaultTypesMapping[typeof dataTypes.boolean] as T;
+                    return result.value === "true" as T;
                 case dataTypes.object:
-                    return result.object as TDefaultTypesMapping[typeof dataTypes.object] as T;
+                    return result.object as T;
                 case dataTypes.array:
-                    return result.values as TDefaultTypesMapping[typeof dataTypes.array] as T;
+                    return result.values as T;
             }
 
             throw new Error( `Unknown type: ${ result.type }` );
+        }
+
+        protected transformValue<TValue extends TDataType, TType extends TDataTypeKeys>( value: TValue, type: TType ) {
+            let newValue;
+            switch ( type ) {
+                case dataTypes.boolean:
+                case dataTypes.string:
+                case dataTypes.number:
+                    newValue = value.toString();
+                    break;
+
+                default:
+                    newValue = value;
+            }
+
+            return newValue;
         }
     }
 

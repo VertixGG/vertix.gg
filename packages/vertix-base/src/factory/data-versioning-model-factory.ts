@@ -1,3 +1,5 @@
+import util from "node:util";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
@@ -6,9 +8,7 @@ import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory"
 
 import type { TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 
-export type VersionType = `${ number }.${ number }.${ number }`;
-
-const CONFIG_DEFAULT_VERSION: VersionType = "0.0.0";
+export type TVersionType = `${ number }.${ number }.${ number }`;
 
 interface TBaseModel {
     create( ... args: any[] ): any;
@@ -16,19 +16,42 @@ interface TBaseModel {
     findUnique( ... args: any[] ): any,
 }
 
-export function DataVersioningModelFactory<TModelResult extends TDefaultResult, const TModel extends TBaseModel >(
+export interface TDataVersioningDefaultUniqueKeys {
+    key: string;
+    version: TVersionType;
+}
+
+export interface TDataVersioningOptions {
+    include?: Record<string, any>;
+    cache: boolean;
+}
+
+export function DataVersioningModelFactory<
+    TModelResult extends TDefaultResult,
+    TModel extends TBaseModel,
+    TUniqueKeys extends TDataVersioningDefaultUniqueKeys = TDataVersioningDefaultUniqueKeys
+>(
     model: TModel,
-    defaultVersion = CONFIG_DEFAULT_VERSION,
+    options: {
+        modelNamespace?: string,
+        shouldDebugCache?: boolean,
+        shouldDebugModel?: boolean
+    } = {}
 ) {
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
         public static getName() {
-            return "VertixBase/Factory/VersioningModel";
+            return options.modelNamespace ?? "VertixBase/Factory/VersioningModel";
         }
 
         public constructor(
-            // TODO: Env name should comes from above
-            shouldDebugCache = isDebugEnabled( "CACHE", VersioningModel.getName() ),
-            shouldDebugModel = isDebugEnabled( "MODEL", VersioningModel.getName() )
+            shouldDebugCache = ( undefined === typeof options.shouldDebugCache
+                ? isDebugEnabled( "CACHE", VersioningModel.getName() ) :
+                options.shouldDebugCache
+            ),
+            shouldDebugModel = ( undefined === typeof options.shouldDebugModel
+                ? isDebugEnabled( "MODEL", VersioningModel.getName() ) :
+                options.shouldDebugModel
+            )
         ) {
             super( shouldDebugCache, shouldDebugModel );
         }
@@ -37,20 +60,41 @@ export function DataVersioningModelFactory<TModelResult extends TDefaultResult, 
             return model;
         }
 
-        public async get<T extends ReturnType<typeof this.getValueAsType>>( key: string, version = defaultVersion, cache = true ) {
-            const cacheKey = this.generateCacheKey( key, version );
+        protected getUniqueKeyName() {
+            return "key_version";
+        }
 
-            let result = cache ? this.getCache( cacheKey ) : null;
+        /**
+         * Function `get()<T>` - Fetches a value from the cache or the database.
+         * The main purpose of this function is to find a value associated with a provided key and version.
+         * It attempts to retrieve the value from the cache first.
+         * If not present in the cache, it queries the database.
+         * If the value is found in the database, it stores the value in the cache for future faster access.
+         * Finally, it converts the fetched value to the appropriate type using the getValueAsType method.
+         *
+         * @returns The value associated with the key and version, converted to the appropriate type, or null if not found.
+         **/
+        public async get<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, options: TDataVersioningOptions = {
+            cache: true,
+        } ) {
+            const keysArray = Object.values( keys ) as string[];
+
+            const cacheKey = this.generateCacheKey( ... keysArray );
+
+            let result = options.cache ? this.getCache( cacheKey ) : null;
 
             if ( ! result ) {
-                result = await this.getModel().findUnique( {
+                const args = {
                     where: {
-                        key_version: {
-                            key,
-                            version
-                        }
+                        [ this.getUniqueKeyName() ]: keys
                     }
-                } );
+                } as any;
+
+                if ( options.include ) {
+                    args.include = options.include;
+                }
+
+                result = await this.getModel().findUnique( args );
 
                 if ( result ) {
                     this.setCache( cacheKey, result );
@@ -60,35 +104,53 @@ export function DataVersioningModelFactory<TModelResult extends TDefaultResult, 
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
-        public async create<T extends ReturnType<typeof this.getValueAsType>>( key: string, value: T, version = defaultVersion ) {
+        /**
+         * Function `create<T>()` - Creates a new entry in the database and cache
+         *
+         * This function is responsible for creating a new entry in the data model and updating the cache. It works by
+         * checking if the specified key and version combination already exists using the `get` method. If the entry
+         * already exists, it logs an error and skips creation. If the entry does not exist, it proceeds to determine
+         * the data type of the value using the `getDataType` method, then it creates the new entry in the data model.
+         * It updates the cache with the new entry if creation is successful and finally returns the entry converted
+         * to the appropriate type using the `getValueAsType` method.
+         *
+         * @returns The newly created entry, converted to the appropriate type, or null if creation failed.
+         **/
+        public async create<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
             // Check if exists
-            if ( await this.get( key, version, true ) ) {
-                this.logger.error( this.create, `Key: '${ key }', version: '${ version }' already exists, skipping creation.` );
+            if ( await this.get( keys ) ) {
+                this.logger.error( this.create, `Keys: ${ util.inspect( keys ) } already exists` );
             }
 
             const dataType = this.getDataType( value );
 
             const result = await this.getModel().create<TModelResult>( {
                 data: {
-                    key,
-                    version,
+                    ... keys,
+
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: value
+                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
                 }
             } );
 
             if ( result ) {
-                this.setCache( this.generateCacheKey( result.key, result.version ), result );
+                const keysArray = Object.values( keys ) as string[];
+
+                this.setCache( this.generateCacheKey( ... keysArray ), result );
             }
 
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
-        private generateCacheKey( key: string, version: string ) {
-            return key + "|" + version;
-        }
+        private generateCacheKey( key: string, version: string ): string
+        private generateCacheKey( ... args: string[] ): string
+        private generateCacheKey( ... args: string[] ) {
+            return args.join( "|" );
+        };
     }
 
     return VersioningModel;
 }
 
+export type TDataVersioningModel<TModelResult extends TDefaultResult, TModel extends TBaseModel>
+    = ReturnType<typeof DataVersioningModelFactory<TModelResult, TModel>>;

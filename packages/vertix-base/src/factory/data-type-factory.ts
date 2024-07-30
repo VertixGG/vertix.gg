@@ -71,7 +71,7 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
         };
 
         /**
-         * Function getValuesAsType() : Returns the value as the specified type.
+         * Function `getValuesAsType()` - Returns the value as the specified type.
          * The function extracts the value from `config` filed according to the `type` field.
          *
          * EG: `dataTypeEnum.object` will use `config.object`
@@ -84,7 +84,7 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
                 case dataTypes.number:
                     return Number( result.value ) as T;
                 case dataTypes.boolean:
-                    return result.value === "true" as T;
+                    return ( result.value === "true" ) as T;
                 case dataTypes.object:
                     return result.object as T;
                 case dataTypes.array:

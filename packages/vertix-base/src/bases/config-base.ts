@@ -8,7 +8,7 @@ import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
 
 import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
-import type { VersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 interface ConfigBaseDefaultsInterface {
     [ key: string ]: any;
@@ -17,7 +17,7 @@ interface ConfigBaseDefaultsInterface {
 interface ConfigBaseMetaInterface {
     name: string;
     key: string;
-    version: VersionType;
+    version: TVersionType;
 }
 
 interface ConfigBaseInterface<
@@ -36,13 +36,15 @@ export abstract class ConfigBase<
     protected static configModel = new ( DataVersioningModelFactory<
         PrismaBot.Config,
         PrismaBot.Prisma.ConfigDelegate
-    >( PrismaBotClient.getPrismaClient().config ) );
+    >( PrismaBotClient.getPrismaClient().config, {
+        modelNamespace: "VertixBase/Models/Config"
+    } ) );
 
     protected config: TConfig = {} as TConfig;
 
     public abstract getConfigName(): string;
 
-    public abstract getVersion(): VersionType;
+    public abstract getVersion(): TVersionType;
 
     protected abstract getDefaults(): TConfig["defaults"];
 
@@ -59,12 +61,12 @@ export abstract class ConfigBase<
             defaults = this.getDefaults(),
             version = this.getVersion();
 
-        let currentConfig = await this.model.get<TConfig>( key, version );
+        let currentConfig = await this.model.get<TConfig>( { key, version } );
 
         if ( ! currentConfig ) {
-            await this.model.create<TConfig["defaults"]>( key, defaults, version );
+            await this.model.create<TConfig["defaults"]>( { key, version }, defaults );
 
-            currentConfig = await this.model.get<TConfig>( key, version );
+            currentConfig = await this.model.get<TConfig>( { key, version } );
 
             if ( ! currentConfig ) {
                 throw new Error( `Failed to initialize: '${ this.$$.getName() }'` );
@@ -113,9 +115,19 @@ export abstract class ConfigBase<
 
     private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
         // Validate checksum
+        const extractEntries = ( obj: Record<string, any>, prefix = "" ): [ string, any ][] => {
+            return Object.entries( obj ).flatMap( ( [ key, value ] ) => {
+                const newKey = prefix ? `${ prefix }.${ key }` : key;
+                if ( typeof value === "object" && value !== null ) {
+                    return extractEntries( value, newKey );
+                }
+                return [ [ newKey, value ] ];
+            } );
+        };
+
         const checksum = ( obj: Record<string, any> ) => {
-            const asArray = Object.entries( obj ),
-                data = Buffer.from( asArray.map( i => i.join( ":" ) ).join( ";" ) );
+            const entries = extractEntries( obj );
+            const data = Buffer.from( entries.map( ( [ key, value ] ) => `${ key }:${ value }` ).join( ";" ) );
 
             return crypto.createHash( "sha256" )
                 .update( data )

@@ -310,6 +310,8 @@ export class PermissionsManager extends InitializeBase {
     }
 
     public async editChannelRolesPermissions( channel: VoiceBasedChannel, roles: string[], permissions: PermissionOverwriteOptions ): Promise<void> {
+        this.debugger.dumpDown( this.editChannelRolesPermissions, permissions, "Permissions" );
+
         return new Promise( ( resolve, reject ) => {
             for ( const roleId of roles ) {
                 const role = channel.guild.roles.cache.get( roleId );
@@ -320,10 +322,10 @@ export class PermissionsManager extends InitializeBase {
                     continue;
                 }
 
-                channel.permissionOverwrites.edit( role, permissions ).catch( reject );
+                channel.permissionOverwrites.edit( role, permissions )
+                    .catch( reject )
+                    .then( () => resolve() );
             }
-
-            resolve();
         } );
     }
 }

@@ -4,10 +4,8 @@ import { DEFAULT_UI_NAMESPACE_SEPARATOR, DEFAULT_UI_PREFIX } from "@vertix.gg/gu
 
 import { UIVersionStrategyBase } from "@vertix.gg/gui/src/bases/ui-version-strategy-base";
 
-import type UIService from "@vertix.gg/gui/src/ui-service";
-
 import type { Base } from "discord.js";
-import type { TPossibleAdapters } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIService, TAdapterMapping } from "@vertix.gg/gui/src/ui-service";
 
 class FallBackVersionStrategy extends UIVersionStrategyBase {
     public static getName() {
@@ -15,16 +13,16 @@ class FallBackVersionStrategy extends UIVersionStrategyBase {
     }
 
     public async determine() {
-        // Return first version
+        // Return the first version
         return this.versions.keys().next().value;
     }
 }
 
-export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
+export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
     uiService: UIService;
 }> {
     private versions = new Map<number, string>();
-    private versionReverse = new Map<string, number>();
+    private versionNames = new Map<string, number>();
 
     private versionStrategies: ( UIVersionStrategyBase )[] = [
         new FallBackVersionStrategy( this.versions ),
@@ -41,7 +39,7 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
     }
 
     public registerVersions( range: [ number, number ], prefix = DEFAULT_UI_PREFIX ) {
-        // If already have versions then throw an error
+        // If already have versions, then throw an error
         if ( this.versions.size ) {
             throw new Error( "Versions already registered" );
         }
@@ -50,7 +48,7 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
 
         for ( let i = start ; i <= end ; i++ ) {
             this.versions.set( i, `${ prefix }${ i }` );
-            this.versionReverse.set( `${ prefix }${ i }`, i );
+            this.versionNames.set( `${ prefix }${ i }`, i );
         }
     }
 
@@ -58,10 +56,10 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
         this.versionStrategies.push( new strategy( this.versions ) );
     }
 
-    public async get( adapterName: string, context: Base, options: {
+    public async get<T extends keyof TAdapterMapping = "base">( adapterName: string, context: Base, options: {
         prefix?: string;
         separator?: string;
-    } = {} ): Promise<TPossibleAdapters | undefined> {
+    } = {} ){
         const {
             prefix = DEFAULT_UI_PREFIX,
             separator = DEFAULT_UI_NAMESPACE_SEPARATOR,
@@ -72,11 +70,15 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
         const adapterNameWithVersion =
             this.formAdapterNameWithVersion( adapterName, version, prefix, separator );
 
-        return this.services.uiService.get( adapterNameWithVersion );
+        return this.services.uiService.get<T>( adapterNameWithVersion );
+    }
+
+    public getAllVersions() {
+        return this.versions;
     }
 
     /**
-     * Function formAdapterNameWithVersion() : Get adapter name with version.
+     * Function `formAdapterNameWithVersion()` - Get adapter name with version.
      *
      * TODO: This should be fully configurable.
      * Version should stand after the first part of the adapter name
@@ -89,12 +91,9 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
         return `${ firstPart }${ separator }${ prefix }${ version }${ separator }${ restParts.join( "/" ) }`;
     }
 
-    public getAllVersions() {
-        return this.versions;
-    }
-
     public async determineVersion( context: Base ) {
-        for ( const versionStrategy of this.versionStrategies.reverse() ) {
+        // `Slice` used to get copy of an array
+        for ( const versionStrategy of this.versionStrategies.slice().reverse() ) {
             const tryVersion = await versionStrategy.determine( context );
 
             if ( tryVersion ) {
@@ -106,4 +105,4 @@ export class UIVersioningAdapterService extends ServiceWithDependenciesBase<{
     }
 }
 
-export default UIVersioningAdapterService;
+export default UIAdapterVersioningService;

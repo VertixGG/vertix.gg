@@ -7,14 +7,9 @@ import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
 import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
 export type TVersionType = `${ number }.${ number }.${ number }`;
-
-interface TBaseModel {
-    create( ... args: any[] ): any;
-    create<T>( ... args: any[] ): Promise<T>;
-    findUnique( ... args: any[] ): any,
-}
 
 export interface TDataVersioningDefaultUniqueKeys {
     key: string;
@@ -28,7 +23,7 @@ export interface TDataVersioningOptions {
 
 export function DataVersioningModelFactory<
     TModelResult extends TDefaultResult,
-    TModel extends TBaseModel,
+    TModel extends TBaseModelStub,
     TUniqueKeys extends TDataVersioningDefaultUniqueKeys = TDataVersioningDefaultUniqueKeys
 >(
     model: TModel,
@@ -133,14 +128,78 @@ export function DataVersioningModelFactory<
                 }
             } );
 
-            if ( result ) {
-                const keysArray = Object.values( keys ) as string[];
+            this.setCacheResult( keys, result );
 
-                this.setCache( this.generateCacheKey( ... keysArray ), result );
+            return result ? this.getValueAsType<T>( result ) : null;
+        }
+
+        public async update<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
+            const dataType = this.getDataType( value );
+
+            const result = await this.getModel().update<TModelResult>( {
+                where: {
+                    [ this.getUniqueKeyName() ]: keys
+                },
+                data: {
+                    type: dataType,
+                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                }
+            } );
+
+            // Delete cache
+            if ( result ) {
+                this.deleteCacheForKeys( keys );
             }
 
             return result ? this.getValueAsType<T>( result ) : null;
         }
+
+        public async upsert<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
+            const dataType = this.getDataType( value );
+
+            const result = await this.getModel().upsert<TModelResult>( {
+                where: {
+                    [ this.getUniqueKeyName() ]: keys
+                },
+                update: {
+                    type: dataType,
+                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                },
+                create: {
+                    ... keys,
+
+                    type: dataType,
+                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                }
+            } );
+
+            // Delete cache only if already exists
+            this.deleteCacheIfAlreadyExists( keys );
+
+            return result ? this.getValueAsType<T>( result ) : null;
+        }
+
+        private setCacheResult( keys: TUniqueKeys, result: TModelResult ) {
+            const keysArray = Object.values( keys ) as string[];
+
+            this.setCache( this.generateCacheKey( ... keysArray ), result );
+        }
+
+        private deleteCacheForKeys( keys: TUniqueKeys ) {
+            const keysArray = Object.values( keys ) as string[];
+
+            this.deleteCache( this.generateCacheKey( ... keysArray ) );
+        }
+
+        private deleteCacheIfAlreadyExists( keys: TUniqueKeys ) {
+            const keysArray = Object.values( keys ) as string[];
+
+            const cacheKey = this.generateCacheKey( ... keysArray );
+
+            if ( this.getCache( cacheKey ) ) {
+                this.deleteCache( cacheKey );
+            }
+        };
 
         private generateCacheKey( key: string, version: string ): string
         private generateCacheKey( ... args: string[] ): string
@@ -152,5 +211,5 @@ export function DataVersioningModelFactory<
     return VersioningModel;
 }
 
-export type TDataVersioningModel<TModelResult extends TDefaultResult, TModel extends TBaseModel>
+export type TDataVersioningModel<TModelResult extends TDefaultResult, TModel extends TBaseModelStub>
     = ReturnType<typeof DataVersioningModelFactory<TModelResult, TModel>>;

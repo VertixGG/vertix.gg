@@ -33,12 +33,14 @@ export abstract class UIAdapterExecutionStepsBase<
         return "VertixGUI/UIAdapterExecutionStepsBase";
     }
 
-    public static validate() {
+    public static validate( skipDefaultGroups = false ) {
+        const component = this.getComponent();
+
         // If one of the entities group are specify but there are no execution steps for them.
         const excludedElements = this.getExcludedElementsInternal(),
-            elementsGroups = this.getComponent().getElementsGroups(),
-            embedsGroups = this.getComponent().getEmbedsGroups(),
-            markdownGroups = this.getComponent().getMarkdownsGroups(),
+            elementsGroups = component.getElementsGroups(),
+            embedsGroups = component.getEmbedsGroups(),
+            markdownGroups = component.getMarkdownsGroups(),
             executionStepsValues = this.getExecutionStepsArray(),
             possibleGroups = [ ... elementsGroups, ... embedsGroups, ... markdownGroups ],
             possibleSteps = executionStepsValues.reduce( ( acc, step ) => {
@@ -57,6 +59,23 @@ export abstract class UIAdapterExecutionStepsBase<
 
                 return acc;
             }, [] as string[] );
+
+        if ( skipDefaultGroups ) {
+            const defaultElementsGroup = component.getDefaultElementsGroup(),
+                defaultEmbedsGroup = component.getDefaultEmbedsGroup(),
+                defaultMarkdownsGroup = component.getDefaultMarkdownsGroup(),
+                defaultPossibleGroups = [ defaultElementsGroup, defaultEmbedsGroup, defaultMarkdownsGroup ]
+                    .filter( Boolean );
+
+            // If they match possibleGroups then remove them
+            defaultPossibleGroups.forEach( ( group ) => {
+                const index = possibleGroups.findIndex( ( possibleGroup ) => possibleGroup.getName() === group );
+
+                if ( index > -1 ) {
+                    possibleGroups.splice( index, 1 );
+                }
+            } );
+        }
 
         // Check if all the entities groups are in the execution steps.
         for ( const group of possibleGroups ) {
@@ -102,7 +121,7 @@ export abstract class UIAdapterExecutionStepsBase<
         const initialStep = this.getInitialStep();
 
         if ( this.getCurrentExecutionStep() !== initialStep ) {
-            this.setStep( channel,initialStep );
+            this.setStepInternal( channel,initialStep );
         }
 
         return super.send( channel, sendArgs );
@@ -166,16 +185,7 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     public async ephemeralWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs, shouldDeletePreviousInteraction = this.shouldDeletePreviousReply?.() || false ) {
-        const step = this.staticAdapterExecution.getExecutionStepsInternal()[ stepName ];
-
-        if ( ! step ) {
-            throw new Error( `Missing execution step: '${ stepName }'` );
-        }
-
-        this.setStep( interaction,{
-            name: stepName,
-            ... step
-        } );
+        this.setStep( stepName, interaction );
 
         return super.ephemeral( interaction, sendArgs, shouldDeletePreviousInteraction );
     }
@@ -197,7 +207,7 @@ export abstract class UIAdapterExecutionStepsBase<
                 };
 
                 if ( step.getConditions( args ) ) {
-                    this.setStep( interaction as TInteraction, step );
+                    this.setStepInternal( interaction as TInteraction, step );
                 }
             }
         }
@@ -238,6 +248,19 @@ export abstract class UIAdapterExecutionStepsBase<
         }, interaction, sendArgs );
     }
 
+    protected setStep( stepName: string, interaction: TInteraction ) {
+        const step = this.staticAdapterExecution.getExecutionStepsInternal()[ stepName ];
+
+        if ( ! step ) {
+            throw new Error( `Missing execution step: '${ stepName }'` );
+        }
+
+        this.setStepInternal( interaction, {
+            name: stepName,
+            ... step
+        } );
+    }
+
     protected getComponentCreateArgs(): UICreateComponentArgs {
         const stepData = this.getStepDataWithEntities( this.getInitialStep() );
 
@@ -275,14 +298,14 @@ export abstract class UIAdapterExecutionStepsBase<
         return executionSteps.slice( index + 1 );
     }
 
-    private setStep( context: Message<true>|TInteraction|TChannel, step: UIExecutionStepItem ) {
+    private setStepInternal( context: Message<true>|TInteraction|TChannel, step: UIExecutionStepItem ) {
         const stepData = this.getStepDataWithEntities( step ),
             component = this.getComponent();
 
-        this.staticAdapterExecution.adapterExecutionDebugger.dumpDown( this.setStep, step );
+        this.staticAdapterExecution.adapterExecutionDebugger.dumpDown( this.setStepInternal, step );
 
-        if ( ! stepData.markdownGroup ) {
-            component.clearElements();
+        if ( ! stepData.embedsGroup ) {
+            component.clearEmbeds();
         } if ( stepData.entities.embedsGroupType ) {
             component.switchEmbedsGroup( stepData.entities.embedsGroupType );
         }
@@ -347,7 +370,7 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     private async executeEditReplyStep( step: UIExecutionStepItem, interaction: TInteraction, sendArgs?: UIArgs ) {
-        this.setStep( interaction, step );
+        this.setStepInternal( interaction, step );
 
         const result = super.editReply( interaction, sendArgs );
 
@@ -359,7 +382,7 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     private async executeEditMessageStep( step: UIExecutionStepItem, message: Message<true>, sendArgs?: UIArgs ) {
-        this.setStep( message, step );
+        this.setStepInternal( message, step );
 
         const result = super.editMessage( message, sendArgs );
 

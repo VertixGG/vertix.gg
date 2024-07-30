@@ -1,13 +1,14 @@
-import UIService from "@vertix.gg/gui/src/ui-service";
+import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
+
+import { UIWizardElementsGroupWrapperGenerator } from "@vertix.gg/gui/src/bases/ui-wizard-elements-group-wrapper-generator";
 
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
-import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
@@ -41,73 +42,18 @@ export class UIWizardComponentBase extends UIComponentBase {
     }
 
     public static getElementsGroups() {
-        const systemElements = UIService.getSystemElements();
+        const wizardControlButtons = this.getControlButtons();
 
-        const wizardControlButtons = [
-            systemElements.WizardBackButton,
-            systemElements.WizardNextButton,
-            systemElements.WizardFinishButton,
-        ];
-
-        if ( ! wizardControlButtons.every( Boolean ) ) {
-            throw new Error( "Wizard control buttons are not registered." );
-        }
-
-        const components = this.getComponents();
-
-        return components.map( ( component ) => {
-            return class extends UIElementsGroupBase {
-                public static getName() {
-                    return component.getName() + "/ElementsGroup";
-                }
-
-                public static getItems( args: UIArgs ) { // For one modal submit it called so many times.
-                    const currentElements: any[][] = [];
-
-                    // TODO: Fix this, avoid non multi-dimensional arrays.
-                    const elements = component.getElements();
-
-                    if ( Array.isArray( elements[ 0 ] ) ) {
-                        elements.forEach( ( row ) => {
-                            currentElements.push( row as any );
-                        } );
-                    } else {
-                        currentElements.push( [ elements] as any );
-                    }
-
-                    if ( args ) {
-                        const currentIndex = components.findIndex( ( i ) => i.getName() === args._step );
-
-                        // TODO: It should not work like this, shallow copy should be enough.
-                        args._wizardIsBackButtonDisabled = false;
-                        args._wizardIsNextButtonDisabled = false;
-                        args._wizardIsFinishButtonDisabled = false;
-                        args._wizardIsNextButtonAvailable = false;
-                        args._wizardIsFinishButtonAvailable = false;
-
-                        if ( 0 === currentIndex ) {
-                            args._wizardIsBackButtonDisabled = true;
-                        } else if ( currentIndex === components.length - 1 ) {
-                            args._wizardIsNextButtonDisabled = true;
-                        }
-
-                        if ( currentIndex !== components.length - 1 ) {
-                            args._wizardIsNextButtonAvailable = true;
-                        } else {
-                            args._wizardIsFinishButtonAvailable = true;
-                        }
-
-                        if ( args._wizardShouldDisableFinishButton ) {
-                            args._wizardIsFinishButtonDisabled = true;
-                        }
-                    }
-
-                    currentElements.push( [ ...wizardControlButtons ] );
-
-                    return currentElements;
-                }
-            };
-        } );
+        return this.getComponents().map( component =>
+            UIWizardElementsGroupWrapperGenerator( {
+                componentName: component.getName(),
+                componentElements: component.getElements(),
+                components: this.getComponents(),
+                controlButtons: wizardControlButtons,
+                UIElementsGroupBaseClass: this.getElementsGroupBaseClass(),
+                UIElementsGroupExtendClass: this.getElementsGroupExtendClass(),
+            } )
+        );
     }
 
     public static validate() {
@@ -119,6 +65,24 @@ export class UIWizardComponentBase extends UIComponentBase {
         return super.validate();
     }
 
+    // TODO: Try remove.
+    public static getDefaultElementsGroup(): string | null {
+        return null;
+    }
+
+    // TODO: Try remove.
+    public static getDefaultEmbedsGroup(): string | null {
+        return null;
+    }
+
+    protected static getElementsGroupBaseClass() {
+        return UIElementsGroupBase;
+    }
+
+    protected static getElementsGroupExtendClass(): typeof UIElementsGroupBase | undefined {
+        return undefined;
+    }
+
     protected static getModals() {
         const modals = this.getComponents().map( ( component ) => {
             return component.getModals();
@@ -127,11 +91,19 @@ export class UIWizardComponentBase extends UIComponentBase {
         return modals as typeof UIModalBase[];
     }
 
-    protected static getDefaultElementsGroup() {
-        return null;
-    }
+    protected static getControlButtons() {
+        const systemElements = UIService.getSystemElements();
 
-    protected static getDefaultEmbedsGroup() {
-        return null;
+        const wizardControlButtons = [
+            systemElements.WizardBackButton!,
+            systemElements.WizardNextButton!,
+            systemElements.WizardFinishButton!,
+        ];
+
+        if ( ! wizardControlButtons.every( Boolean ) ) {
+            throw new Error( "Wizard control buttons are not registered." );
+        }
+
+        return wizardControlButtons;
     }
 }

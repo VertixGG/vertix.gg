@@ -54,6 +54,16 @@ export type MarkdownContentLanguage = $Result.DefaultSelection<Prisma.$MarkdownC
  */
 export type ModalContentLanguage = $Result.DefaultSelection<Prisma.$ModalContentLanguagePayload>
 /**
+ * Model Config
+ * 
+ */
+export type Config = $Result.DefaultSelection<Prisma.$ConfigPayload>
+/**
+ * Model Category
+ * 
+ */
+export type Category = $Result.DefaultSelection<Prisma.$CategoryPayload>
+/**
  * Model Guild
  * 
  */
@@ -63,11 +73,6 @@ export type Guild = $Result.DefaultSelection<Prisma.$GuildPayload>
  * 
  */
 export type GuildData = $Result.DefaultSelection<Prisma.$GuildDataPayload>
-/**
- * Model Category
- * 
- */
-export type Category = $Result.DefaultSelection<Prisma.$CategoryPayload>
 /**
  * Model Channel
  * 
@@ -88,6 +93,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  * 
  */
 export type UserData = $Result.DefaultSelection<Prisma.$UserDataPayload>
+/**
+ * Model UserChannelData
+ * 
+ */
+export type UserChannelData = $Result.DefaultSelection<Prisma.$UserChannelDataPayload>
 /**
  * Model ElementButtonLanguage
  * 
@@ -118,17 +128,23 @@ export type MarkdownLanguage = $Result.DefaultSelection<Prisma.$MarkdownLanguage
  * 
  */
 export type ModalLanguage = $Result.DefaultSelection<Prisma.$ModalLanguagePayload>
-/**
- * Model Config
- * 
- */
-export type Config = $Result.DefaultSelection<Prisma.$ConfigPayload>
 
 /**
  * Enums
  */
 export namespace $Enums {
-  export const E_INTERNAL_CHANNEL_TYPES: {
+  export const E_DATA_TYPES: {
+  string: 'string',
+  number: 'number',
+  boolean: 'boolean',
+  object: 'object',
+  array: 'array'
+};
+
+export type E_DATA_TYPES = (typeof E_DATA_TYPES)[keyof typeof E_DATA_TYPES]
+
+
+export const E_INTERNAL_CHANNEL_TYPES: {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
   DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
   MASTER_CREATE_CHANNEL: 'MASTER_CREATE_CHANNEL'
@@ -136,26 +152,15 @@ export namespace $Enums {
 
 export type E_INTERNAL_CHANNEL_TYPES = (typeof E_INTERNAL_CHANNEL_TYPES)[keyof typeof E_INTERNAL_CHANNEL_TYPES]
 
-
-export const E_DATA_TYPES: {
-  STRING: 'STRING',
-  NUMBER: 'NUMBER',
-  BOOLEAN: 'BOOLEAN',
-  OBJECT: 'OBJECT',
-  ARRAY: 'ARRAY'
-};
-
-export type E_DATA_TYPES = (typeof E_DATA_TYPES)[keyof typeof E_DATA_TYPES]
-
 }
-
-export type E_INTERNAL_CHANNEL_TYPES = $Enums.E_INTERNAL_CHANNEL_TYPES
-
-export const E_INTERNAL_CHANNEL_TYPES: typeof $Enums.E_INTERNAL_CHANNEL_TYPES
 
 export type E_DATA_TYPES = $Enums.E_DATA_TYPES
 
 export const E_DATA_TYPES: typeof $Enums.E_DATA_TYPES
+
+export type E_INTERNAL_CHANNEL_TYPES = $Enums.E_INTERNAL_CHANNEL_TYPES
+
+export const E_INTERNAL_CHANNEL_TYPES: typeof $Enums.E_INTERNAL_CHANNEL_TYPES
 
 /**
  * ##  Prisma Client ʲˢ
@@ -164,8 +169,8 @@ export const E_DATA_TYPES: typeof $Enums.E_DATA_TYPES
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Guilds
- * const guilds = await prisma.guild.findMany()
+ * // Fetch zero or more Configs
+ * const configs = await prisma.config.findMany()
  * ```
  *
  * 
@@ -185,8 +190,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Guilds
-   * const guilds = await prisma.guild.findMany()
+   * // Fetch zero or more Configs
+   * const configs = await prisma.config.findMany()
    * ```
    *
    * 
@@ -248,6 +253,26 @@ export class PrismaClient<
   $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
 
       /**
+   * `prisma.config`: Exposes CRUD operations for the **Config** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Configs
+    * const configs = await prisma.config.findMany()
+    * ```
+    */
+  get config(): Prisma.ConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.category`: Exposes CRUD operations for the **Category** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Categories
+    * const categories = await prisma.category.findMany()
+    * ```
+    */
+  get category(): Prisma.CategoryDelegate<ExtArgs>;
+
+  /**
    * `prisma.guild`: Exposes CRUD operations for the **Guild** model.
     * Example usage:
     * ```ts
@@ -266,16 +291,6 @@ export class PrismaClient<
     * ```
     */
   get guildData(): Prisma.GuildDataDelegate<ExtArgs>;
-
-  /**
-   * `prisma.category`: Exposes CRUD operations for the **Category** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Categories
-    * const categories = await prisma.category.findMany()
-    * ```
-    */
-  get category(): Prisma.CategoryDelegate<ExtArgs>;
 
   /**
    * `prisma.channel`: Exposes CRUD operations for the **Channel** model.
@@ -316,6 +331,16 @@ export class PrismaClient<
     * ```
     */
   get userData(): Prisma.UserDataDelegate<ExtArgs>;
+
+  /**
+   * `prisma.userChannelData`: Exposes CRUD operations for the **UserChannelData** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserChannelData
+    * const userChannelData = await prisma.userChannelData.findMany()
+    * ```
+    */
+  get userChannelData(): Prisma.UserChannelDataDelegate<ExtArgs>;
 
   /**
    * `prisma.elementButtonLanguage`: Exposes CRUD operations for the **ElementButtonLanguage** model.
@@ -376,16 +401,6 @@ export class PrismaClient<
     * ```
     */
   get modalLanguage(): Prisma.ModalLanguageDelegate<ExtArgs>;
-
-  /**
-   * `prisma.config`: Exposes CRUD operations for the **Config** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Configs
-    * const configs = await prisma.config.findMany()
-    * ```
-    */
-  get config(): Prisma.ConfigDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -443,7 +458,7 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 5.16.1
+   * Prisma Client JS version: 5.16.2
    * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
    */
   export type PrismaVersion = {
@@ -863,20 +878,21 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    Config: 'Config',
+    Category: 'Category',
     Guild: 'Guild',
     GuildData: 'GuildData',
-    Category: 'Category',
     Channel: 'Channel',
     ChannelData: 'ChannelData',
     User: 'User',
     UserData: 'UserData',
+    UserChannelData: 'UserChannelData',
     ElementButtonLanguage: 'ElementButtonLanguage',
     ElementTextInputLanguage: 'ElementTextInputLanguage',
     ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',
     EmbedLanguage: 'EmbedLanguage',
     MarkdownLanguage: 'MarkdownLanguage',
-    ModalLanguage: 'ModalLanguage',
-    Config: 'Config'
+    ModalLanguage: 'ModalLanguage'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -892,10 +908,158 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "guild" | "guildData" | "category" | "channel" | "channelData" | "user" | "userData" | "elementButtonLanguage" | "elementTextInputLanguage" | "elementSelectMenuLanguage" | "embedLanguage" | "markdownLanguage" | "modalLanguage" | "config"
+      modelProps: "config" | "category" | "guild" | "guildData" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "elementButtonLanguage" | "elementTextInputLanguage" | "elementSelectMenuLanguage" | "embedLanguage" | "markdownLanguage" | "modalLanguage"
       txIsolationLevel: never
     }
     model: {
+      Config: {
+        payload: Prisma.$ConfigPayload<ExtArgs>
+        fields: Prisma.ConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.ConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          findMany: {
+            args: Prisma.ConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>[]
+          }
+          create: {
+            args: Prisma.ConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          createMany: {
+            args: Prisma.ConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.ConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          update: {
+            args: Prisma.ConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.ConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.ConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateConfig>
+          }
+          groupBy: {
+            args: Prisma.ConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ConfigGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.ConfigFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.ConfigAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.ConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<ConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      Category: {
+        payload: Prisma.$CategoryPayload<ExtArgs>
+        fields: Prisma.CategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.CategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          findMany: {
+            args: Prisma.CategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
+          create: {
+            args: Prisma.CategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          createMany: {
+            args: Prisma.CategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.CategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          update: {
+            args: Prisma.CategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.CategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.CategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCategory>
+          }
+          groupBy: {
+            args: Prisma.CategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CategoryGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.CategoryFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.CategoryAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.CategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<CategoryCountAggregateOutputType> | number
+          }
+        }
+      }
       Guild: {
         payload: Prisma.$GuildPayload<ExtArgs>
         fields: Prisma.GuildFieldRefs
@@ -1041,80 +1205,6 @@ export namespace Prisma {
           count: {
             args: Prisma.GuildDataCountArgs<ExtArgs>
             result: $Utils.Optional<GuildDataCountAggregateOutputType> | number
-          }
-        }
-      }
-      Category: {
-        payload: Prisma.$CategoryPayload<ExtArgs>
-        fields: Prisma.CategoryFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.CategoryFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.CategoryFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          findFirst: {
-            args: Prisma.CategoryFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.CategoryFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          findMany: {
-            args: Prisma.CategoryFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
-          }
-          create: {
-            args: Prisma.CategoryCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          createMany: {
-            args: Prisma.CategoryCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          delete: {
-            args: Prisma.CategoryDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          update: {
-            args: Prisma.CategoryUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          deleteMany: {
-            args: Prisma.CategoryDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.CategoryUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.CategoryUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          aggregate: {
-            args: Prisma.CategoryAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCategory>
-          }
-          groupBy: {
-            args: Prisma.CategoryGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CategoryGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.CategoryFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.CategoryAggregateRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          count: {
-            args: Prisma.CategoryCountArgs<ExtArgs>
-            result: $Utils.Optional<CategoryCountAggregateOutputType> | number
           }
         }
       }
@@ -1411,6 +1501,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserDataCountArgs<ExtArgs>
             result: $Utils.Optional<UserDataCountAggregateOutputType> | number
+          }
+        }
+      }
+      UserChannelData: {
+        payload: Prisma.$UserChannelDataPayload<ExtArgs>
+        fields: Prisma.UserChannelDataFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserChannelDataFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserChannelDataFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          findFirst: {
+            args: Prisma.UserChannelDataFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserChannelDataFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          findMany: {
+            args: Prisma.UserChannelDataFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>[]
+          }
+          create: {
+            args: Prisma.UserChannelDataCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          createMany: {
+            args: Prisma.UserChannelDataCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.UserChannelDataDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          update: {
+            args: Prisma.UserChannelDataUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserChannelDataDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserChannelDataUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.UserChannelDataUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          aggregate: {
+            args: Prisma.UserChannelDataAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserChannelData>
+          }
+          groupBy: {
+            args: Prisma.UserChannelDataGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserChannelDataGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.UserChannelDataFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.UserChannelDataAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.UserChannelDataCountArgs<ExtArgs>
+            result: $Utils.Optional<UserChannelDataCountAggregateOutputType> | number
           }
         }
       }
@@ -1858,80 +2022,6 @@ export namespace Prisma {
           }
         }
       }
-      Config: {
-        payload: Prisma.$ConfigPayload<ExtArgs>
-        fields: Prisma.ConfigFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.ConfigFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.ConfigFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
-          }
-          findFirst: {
-            args: Prisma.ConfigFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.ConfigFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
-          }
-          findMany: {
-            args: Prisma.ConfigFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>[]
-          }
-          create: {
-            args: Prisma.ConfigCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
-          }
-          createMany: {
-            args: Prisma.ConfigCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          delete: {
-            args: Prisma.ConfigDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
-          }
-          update: {
-            args: Prisma.ConfigUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
-          }
-          deleteMany: {
-            args: Prisma.ConfigDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.ConfigUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.ConfigUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
-          }
-          aggregate: {
-            args: Prisma.ConfigAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateConfig>
-          }
-          groupBy: {
-            args: Prisma.ConfigGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ConfigGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.ConfigFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.ConfigAggregateRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          count: {
-            args: Prisma.ConfigCountArgs<ExtArgs>
-            result: $Utils.Optional<ConfigCountAggregateOutputType> | number
-          }
-        }
-      }
     }
   } & {
     other: {
@@ -2143,10 +2233,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     data: number
+    channelData: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | UserCountOutputTypeCountDataArgs
+    channelData?: boolean | UserCountOutputTypeCountChannelDataArgs
   }
 
   // Custom InputTypes
@@ -2165,6 +2257,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserDataWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserChannelDataWhereInput
   }
 
 
@@ -2637,6 +2736,1862 @@ export namespace Prisma {
      * Select specific fields to fetch from the ModalContentLanguage
      */
     select?: ModalContentLanguageSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Config
+   */
+
+  export type AggregateConfig = {
+    _count: ConfigCountAggregateOutputType | null
+    _min: ConfigMinAggregateOutputType | null
+    _max: ConfigMaxAggregateOutputType | null
+  }
+
+  export type ConfigMinAggregateOutputType = {
+    id: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ConfigMaxAggregateOutputType = {
+    id: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ConfigCountAggregateOutputType = {
+    id: number
+    key: number
+    version: number
+    type: number
+    object: number
+    value: number
+    values: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ConfigMinAggregateInputType = {
+    id?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ConfigMaxAggregateInputType = {
+    id?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ConfigCountAggregateInputType = {
+    id?: true
+    key?: true
+    version?: true
+    type?: true
+    object?: true
+    value?: true
+    values?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Config to aggregate.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Configs
+    **/
+    _count?: true | ConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ConfigMaxAggregateInputType
+  }
+
+  export type GetConfigAggregateType<T extends ConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateConfig[P]>
+      : GetScalarType<T[P], AggregateConfig[P]>
+  }
+
+
+
+
+  export type ConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ConfigWhereInput
+    orderBy?: ConfigOrderByWithAggregationInput | ConfigOrderByWithAggregationInput[]
+    by: ConfigScalarFieldEnum[] | ConfigScalarFieldEnum
+    having?: ConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ConfigCountAggregateInputType | true
+    _min?: ConfigMinAggregateInputType
+    _max?: ConfigMaxAggregateInputType
+  }
+
+  export type ConfigGroupByOutputType = {
+    id: string
+    key: string
+    version: string
+    type: $Enums.E_DATA_TYPES
+    object: JsonValue | null
+    value: string | null
+    values: string[]
+    createdAt: Date
+    updatedAt: Date
+    _count: ConfigCountAggregateOutputType | null
+    _min: ConfigMinAggregateOutputType | null
+    _max: ConfigMaxAggregateOutputType | null
+  }
+
+  type GetConfigGroupByPayload<T extends ConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], ConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["config"]>
+
+
+  export type ConfigSelectScalar = {
+    id?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $ConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Config"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      key: string
+      version: string
+      type: $Enums.E_DATA_TYPES
+      object: Prisma.JsonValue | null
+      value: string | null
+      values: string[]
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["config"]>
+    composites: {}
+  }
+
+  type ConfigGetPayload<S extends boolean | null | undefined | ConfigDefaultArgs> = $Result.GetResult<Prisma.$ConfigPayload, S>
+
+  type ConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ConfigCountAggregateInputType | true
+    }
+
+  export interface ConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Config'], meta: { name: 'Config' } }
+    /**
+     * Find zero or one Config that matches the filter.
+     * @param {ConfigFindUniqueArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ConfigFindUniqueArgs>(args: SelectSubset<T, ConfigFindUniqueArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Config that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ConfigFindUniqueOrThrowArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Config that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigFindFirstArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ConfigFindFirstArgs>(args?: SelectSubset<T, ConfigFindFirstArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Config that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigFindFirstOrThrowArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Configs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Configs
+     * const configs = await prisma.config.findMany()
+     * 
+     * // Get first 10 Configs
+     * const configs = await prisma.config.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const configWithIdOnly = await prisma.config.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ConfigFindManyArgs>(args?: SelectSubset<T, ConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Config.
+     * @param {ConfigCreateArgs} args - Arguments to create a Config.
+     * @example
+     * // Create one Config
+     * const Config = await prisma.config.create({
+     *   data: {
+     *     // ... data to create a Config
+     *   }
+     * })
+     * 
+     */
+    create<T extends ConfigCreateArgs>(args: SelectSubset<T, ConfigCreateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Configs.
+     * @param {ConfigCreateManyArgs} args - Arguments to create many Configs.
+     * @example
+     * // Create many Configs
+     * const config = await prisma.config.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ConfigCreateManyArgs>(args?: SelectSubset<T, ConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Config.
+     * @param {ConfigDeleteArgs} args - Arguments to delete one Config.
+     * @example
+     * // Delete one Config
+     * const Config = await prisma.config.delete({
+     *   where: {
+     *     // ... filter to delete one Config
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ConfigDeleteArgs>(args: SelectSubset<T, ConfigDeleteArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Config.
+     * @param {ConfigUpdateArgs} args - Arguments to update one Config.
+     * @example
+     * // Update one Config
+     * const config = await prisma.config.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ConfigUpdateArgs>(args: SelectSubset<T, ConfigUpdateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Configs.
+     * @param {ConfigDeleteManyArgs} args - Arguments to filter Configs to delete.
+     * @example
+     * // Delete a few Configs
+     * const { count } = await prisma.config.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ConfigDeleteManyArgs>(args?: SelectSubset<T, ConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Configs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Configs
+     * const config = await prisma.config.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ConfigUpdateManyArgs>(args: SelectSubset<T, ConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Config.
+     * @param {ConfigUpsertArgs} args - Arguments to update or create a Config.
+     * @example
+     * // Update or create a Config
+     * const config = await prisma.config.upsert({
+     *   create: {
+     *     // ... data to create a Config
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Config we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ConfigUpsertArgs>(args: SelectSubset<T, ConfigUpsertArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+    /**
+     * Find zero or more Configs that matches the filter.
+     * @param {ConfigFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const config = await prisma.config.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+     */
+    findRaw(args?: ConfigFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Config.
+     * @param {ConfigAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const config = await prisma.config.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: ConfigAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Configs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigCountArgs} args - Arguments to filter Configs to count.
+     * @example
+     * // Count the number of Configs
+     * const count = await prisma.config.count({
+     *   where: {
+     *     // ... the filter for the Configs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ConfigCountArgs>(
+      args?: Subset<T, ConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Config.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ConfigAggregateArgs>(args: Subset<T, ConfigAggregateArgs>): Prisma.PrismaPromise<GetConfigAggregateType<T>>
+
+    /**
+     * Group by Config.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ConfigGroupByArgs['orderBy'] }
+        : { orderBy?: ConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Config model
+   */
+  readonly fields: ConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Config.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Config model
+   */ 
+  interface ConfigFieldRefs {
+    readonly id: FieldRef<"Config", 'String'>
+    readonly key: FieldRef<"Config", 'String'>
+    readonly version: FieldRef<"Config", 'String'>
+    readonly type: FieldRef<"Config", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"Config", 'Json'>
+    readonly value: FieldRef<"Config", 'String'>
+    readonly values: FieldRef<"Config", 'String[]'>
+    readonly createdAt: FieldRef<"Config", 'DateTime'>
+    readonly updatedAt: FieldRef<"Config", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Config findUnique
+   */
+  export type ConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config findUniqueOrThrow
+   */
+  export type ConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config findFirst
+   */
+  export type ConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Configs.
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Configs.
+     */
+    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Config findFirstOrThrow
+   */
+  export type ConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Configs.
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Configs.
+     */
+    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Config findMany
+   */
+  export type ConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Configs to fetch.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Configs.
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Config create
+   */
+  export type ConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to create a Config.
+     */
+    data: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
+  }
+
+  /**
+   * Config createMany
+   */
+  export type ConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Configs.
+     */
+    data: ConfigCreateManyInput | ConfigCreateManyInput[]
+  }
+
+  /**
+   * Config update
+   */
+  export type ConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to update a Config.
+     */
+    data: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
+    /**
+     * Choose, which Config to update.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config updateMany
+   */
+  export type ConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Configs.
+     */
+    data: XOR<ConfigUpdateManyMutationInput, ConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which Configs to update
+     */
+    where?: ConfigWhereInput
+  }
+
+  /**
+   * Config upsert
+   */
+  export type ConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * The filter to search for the Config to update in case it exists.
+     */
+    where: ConfigWhereUniqueInput
+    /**
+     * In case the Config found by the `where` argument doesn't exist, create a new Config with this data.
+     */
+    create: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
+    /**
+     * In case the Config was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * Config delete
+   */
+  export type ConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter which Config to delete.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config deleteMany
+   */
+  export type ConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Configs to delete
+     */
+    where?: ConfigWhereInput
+  }
+
+  /**
+   * Config findRaw
+   */
+  export type ConfigFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Config aggregateRaw
+   */
+  export type ConfigAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Config without action
+   */
+  export type ConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Category
+   */
+
+  export type AggregateCategory = {
+    _count: CategoryCountAggregateOutputType | null
+    _avg: CategoryAvgAggregateOutputType | null
+    _sum: CategorySumAggregateOutputType | null
+    _min: CategoryMinAggregateOutputType | null
+    _max: CategoryMaxAggregateOutputType | null
+  }
+
+  export type CategoryAvgAggregateOutputType = {
+    createdAtDiscord: number | null
+  }
+
+  export type CategorySumAggregateOutputType = {
+    createdAtDiscord: number | null
+  }
+
+  export type CategoryMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    categoryId: string | null
+    guildId: string | null
+    createdAtDiscord: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CategoryMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    categoryId: string | null
+    guildId: string | null
+    createdAtDiscord: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CategoryCountAggregateOutputType = {
+    id: number
+    name: number
+    categoryId: number
+    guildId: number
+    createdAtDiscord: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CategoryAvgAggregateInputType = {
+    createdAtDiscord?: true
+  }
+
+  export type CategorySumAggregateInputType = {
+    createdAtDiscord?: true
+  }
+
+  export type CategoryMinAggregateInputType = {
+    id?: true
+    name?: true
+    categoryId?: true
+    guildId?: true
+    createdAtDiscord?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CategoryMaxAggregateInputType = {
+    id?: true
+    name?: true
+    categoryId?: true
+    guildId?: true
+    createdAtDiscord?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CategoryCountAggregateInputType = {
+    id?: true
+    name?: true
+    categoryId?: true
+    guildId?: true
+    createdAtDiscord?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Category to aggregate.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Categories
+    **/
+    _count?: true | CategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CategoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CategorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CategoryMaxAggregateInputType
+  }
+
+  export type GetCategoryAggregateType<T extends CategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCategory[P]>
+      : GetScalarType<T[P], AggregateCategory[P]>
+  }
+
+
+
+
+  export type CategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CategoryWhereInput
+    orderBy?: CategoryOrderByWithAggregationInput | CategoryOrderByWithAggregationInput[]
+    by: CategoryScalarFieldEnum[] | CategoryScalarFieldEnum
+    having?: CategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CategoryCountAggregateInputType | true
+    _avg?: CategoryAvgAggregateInputType
+    _sum?: CategorySumAggregateInputType
+    _min?: CategoryMinAggregateInputType
+    _max?: CategoryMaxAggregateInputType
+  }
+
+  export type CategoryGroupByOutputType = {
+    id: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt: Date
+    updatedAt: Date
+    _count: CategoryCountAggregateOutputType | null
+    _avg: CategoryAvgAggregateOutputType | null
+    _sum: CategorySumAggregateOutputType | null
+    _min: CategoryMinAggregateOutputType | null
+    _max: CategoryMaxAggregateOutputType | null
+  }
+
+  type GetCategoryGroupByPayload<T extends CategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], CategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    categoryId?: boolean
+    guildId?: boolean
+    createdAtDiscord?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["category"]>
+
+
+  export type CategorySelectScalar = {
+    id?: boolean
+    name?: boolean
+    categoryId?: boolean
+    guildId?: boolean
+    createdAtDiscord?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Category"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      categoryId: string
+      guildId: string
+      createdAtDiscord: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["category"]>
+    composites: {}
+  }
+
+  type CategoryGetPayload<S extends boolean | null | undefined | CategoryDefaultArgs> = $Result.GetResult<Prisma.$CategoryPayload, S>
+
+  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: CategoryCountAggregateInputType | true
+    }
+
+  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Category'], meta: { name: 'Category' } }
+    /**
+     * Find zero or one Category that matches the filter.
+     * @param {CategoryFindUniqueArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CategoryFindUniqueArgs>(args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Category that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {CategoryFindUniqueOrThrowArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Category that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindFirstArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CategoryFindFirstArgs>(args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Category that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindFirstOrThrowArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Categories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Categories
+     * const categories = await prisma.category.findMany()
+     * 
+     * // Get first 10 Categories
+     * const categories = await prisma.category.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const categoryWithIdOnly = await prisma.category.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CategoryFindManyArgs>(args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Category.
+     * @param {CategoryCreateArgs} args - Arguments to create a Category.
+     * @example
+     * // Create one Category
+     * const Category = await prisma.category.create({
+     *   data: {
+     *     // ... data to create a Category
+     *   }
+     * })
+     * 
+     */
+    create<T extends CategoryCreateArgs>(args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Categories.
+     * @param {CategoryCreateManyArgs} args - Arguments to create many Categories.
+     * @example
+     * // Create many Categories
+     * const category = await prisma.category.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CategoryCreateManyArgs>(args?: SelectSubset<T, CategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Category.
+     * @param {CategoryDeleteArgs} args - Arguments to delete one Category.
+     * @example
+     * // Delete one Category
+     * const Category = await prisma.category.delete({
+     *   where: {
+     *     // ... filter to delete one Category
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CategoryDeleteArgs>(args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Category.
+     * @param {CategoryUpdateArgs} args - Arguments to update one Category.
+     * @example
+     * // Update one Category
+     * const category = await prisma.category.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CategoryUpdateArgs>(args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Categories.
+     * @param {CategoryDeleteManyArgs} args - Arguments to filter Categories to delete.
+     * @example
+     * // Delete a few Categories
+     * const { count } = await prisma.category.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CategoryDeleteManyArgs>(args?: SelectSubset<T, CategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Categories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Categories
+     * const category = await prisma.category.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CategoryUpdateManyArgs>(args: SelectSubset<T, CategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Category.
+     * @param {CategoryUpsertArgs} args - Arguments to update or create a Category.
+     * @example
+     * // Update or create a Category
+     * const category = await prisma.category.upsert({
+     *   create: {
+     *     // ... data to create a Category
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Category we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+    /**
+     * Find zero or more Categories that matches the filter.
+     * @param {CategoryFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const category = await prisma.category.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+     */
+    findRaw(args?: CategoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Category.
+     * @param {CategoryAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const category = await prisma.category.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: CategoryAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Categories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryCountArgs} args - Arguments to filter Categories to count.
+     * @example
+     * // Count the number of Categories
+     * const count = await prisma.category.count({
+     *   where: {
+     *     // ... the filter for the Categories we want to count
+     *   }
+     * })
+    **/
+    count<T extends CategoryCountArgs>(
+      args?: Subset<T, CategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Category.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CategoryAggregateArgs>(args: Subset<T, CategoryAggregateArgs>): Prisma.PrismaPromise<GetCategoryAggregateType<T>>
+
+    /**
+     * Group by Category.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CategoryGroupByArgs['orderBy'] }
+        : { orderBy?: CategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Category model
+   */
+  readonly fields: CategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Category.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Category model
+   */ 
+  interface CategoryFieldRefs {
+    readonly id: FieldRef<"Category", 'String'>
+    readonly name: FieldRef<"Category", 'String'>
+    readonly categoryId: FieldRef<"Category", 'String'>
+    readonly guildId: FieldRef<"Category", 'String'>
+    readonly createdAtDiscord: FieldRef<"Category", 'Int'>
+    readonly createdAt: FieldRef<"Category", 'DateTime'>
+    readonly updatedAt: FieldRef<"Category", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Category findUnique
+   */
+  export type CategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category findUniqueOrThrow
+   */
+  export type CategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category findFirst
+   */
+  export type CategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category findFirstOrThrow
+   */
+  export type CategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category findMany
+   */
+  export type CategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Categories to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category create
+   */
+  export type CategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * The data needed to create a Category.
+     */
+    data: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
+  }
+
+  /**
+   * Category createMany
+   */
+  export type CategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Categories.
+     */
+    data: CategoryCreateManyInput | CategoryCreateManyInput[]
+  }
+
+  /**
+   * Category update
+   */
+  export type CategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * The data needed to update a Category.
+     */
+    data: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
+    /**
+     * Choose, which Category to update.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category updateMany
+   */
+  export type CategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Categories.
+     */
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Categories to update
+     */
+    where?: CategoryWhereInput
+  }
+
+  /**
+   * Category upsert
+   */
+  export type CategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * The filter to search for the Category to update in case it exists.
+     */
+    where: CategoryWhereUniqueInput
+    /**
+     * In case the Category found by the `where` argument doesn't exist, create a new Category with this data.
+     */
+    create: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
+    /**
+     * In case the Category was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * Category delete
+   */
+  export type CategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter which Category to delete.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category deleteMany
+   */
+  export type CategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Categories to delete
+     */
+    where?: CategoryWhereInput
+  }
+
+  /**
+   * Category findRaw
+   */
+  export type CategoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Category aggregateRaw
+   */
+  export type CategoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Category without action
+   */
+  export type CategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
   }
 
 
@@ -3626,8 +5581,9 @@ export namespace Prisma {
   export type GuildDataMinAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3636,8 +5592,9 @@ export namespace Prisma {
   export type GuildDataMaxAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3646,10 +5603,11 @@ export namespace Prisma {
   export type GuildDataCountAggregateOutputType = {
     id: number
     key: number
+    version: number
     type: number
     object: number
+    value: number
     values: number
-    version: number
     ownerId: number
     createdAt: number
     updatedAt: number
@@ -3660,8 +5618,9 @@ export namespace Prisma {
   export type GuildDataMinAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -3670,8 +5629,9 @@ export namespace Prisma {
   export type GuildDataMaxAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -3680,10 +5640,11 @@ export namespace Prisma {
   export type GuildDataCountAggregateInputType = {
     id?: true
     key?: true
+    version?: true
     type?: true
     object?: true
+    value?: true
     values?: true
-    version?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -3765,10 +5726,11 @@ export namespace Prisma {
   export type GuildDataGroupByOutputType = {
     id: string
     key: string
-    type: string
+    version: string
+    type: $Enums.E_DATA_TYPES
     object: JsonValue | null
+    value: string | null
     values: string[]
-    version: string | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -3794,10 +5756,11 @@ export namespace Prisma {
   export type GuildDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3808,10 +5771,11 @@ export namespace Prisma {
   export type GuildDataSelectScalar = {
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3829,10 +5793,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       key: string
-      type: string
+      version: string
+      type: $Enums.E_DATA_TYPES
       object: Prisma.JsonValue | null
+      value: string | null
       values: string[]
-      version: string | null
       ownerId: string
       createdAt: Date
       updatedAt: Date
@@ -4231,10 +6196,11 @@ export namespace Prisma {
   interface GuildDataFieldRefs {
     readonly id: FieldRef<"GuildData", 'String'>
     readonly key: FieldRef<"GuildData", 'String'>
-    readonly type: FieldRef<"GuildData", 'String'>
-    readonly object: FieldRef<"GuildData", 'Json'>
-    readonly values: FieldRef<"GuildData", 'String[]'>
     readonly version: FieldRef<"GuildData", 'String'>
+    readonly type: FieldRef<"GuildData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"GuildData", 'Json'>
+    readonly value: FieldRef<"GuildData", 'String'>
+    readonly values: FieldRef<"GuildData", 'String[]'>
     readonly ownerId: FieldRef<"GuildData", 'String'>
     readonly createdAt: FieldRef<"GuildData", 'DateTime'>
     readonly updatedAt: FieldRef<"GuildData", 'DateTime'>
@@ -4575,944 +6541,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Category
-   */
-
-  export type AggregateCategory = {
-    _count: CategoryCountAggregateOutputType | null
-    _avg: CategoryAvgAggregateOutputType | null
-    _sum: CategorySumAggregateOutputType | null
-    _min: CategoryMinAggregateOutputType | null
-    _max: CategoryMaxAggregateOutputType | null
-  }
-
-  export type CategoryAvgAggregateOutputType = {
-    createdAtDiscord: number | null
-  }
-
-  export type CategorySumAggregateOutputType = {
-    createdAtDiscord: number | null
-  }
-
-  export type CategoryMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    categoryId: string | null
-    guildId: string | null
-    createdAtDiscord: number | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type CategoryMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    categoryId: string | null
-    guildId: string | null
-    createdAtDiscord: number | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type CategoryCountAggregateOutputType = {
-    id: number
-    name: number
-    categoryId: number
-    guildId: number
-    createdAtDiscord: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type CategoryAvgAggregateInputType = {
-    createdAtDiscord?: true
-  }
-
-  export type CategorySumAggregateInputType = {
-    createdAtDiscord?: true
-  }
-
-  export type CategoryMinAggregateInputType = {
-    id?: true
-    name?: true
-    categoryId?: true
-    guildId?: true
-    createdAtDiscord?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type CategoryMaxAggregateInputType = {
-    id?: true
-    name?: true
-    categoryId?: true
-    guildId?: true
-    createdAtDiscord?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type CategoryCountAggregateInputType = {
-    id?: true
-    name?: true
-    categoryId?: true
-    guildId?: true
-    createdAtDiscord?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type CategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Category to aggregate.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Categories
-    **/
-    _count?: true | CategoryCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: CategoryAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: CategorySumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CategoryMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CategoryMaxAggregateInputType
-  }
-
-  export type GetCategoryAggregateType<T extends CategoryAggregateArgs> = {
-        [P in keyof T & keyof AggregateCategory]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCategory[P]>
-      : GetScalarType<T[P], AggregateCategory[P]>
-  }
-
-
-
-
-  export type CategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CategoryWhereInput
-    orderBy?: CategoryOrderByWithAggregationInput | CategoryOrderByWithAggregationInput[]
-    by: CategoryScalarFieldEnum[] | CategoryScalarFieldEnum
-    having?: CategoryScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CategoryCountAggregateInputType | true
-    _avg?: CategoryAvgAggregateInputType
-    _sum?: CategorySumAggregateInputType
-    _min?: CategoryMinAggregateInputType
-    _max?: CategoryMaxAggregateInputType
-  }
-
-  export type CategoryGroupByOutputType = {
-    id: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt: Date
-    updatedAt: Date
-    _count: CategoryCountAggregateOutputType | null
-    _avg: CategoryAvgAggregateOutputType | null
-    _sum: CategorySumAggregateOutputType | null
-    _min: CategoryMinAggregateOutputType | null
-    _max: CategoryMaxAggregateOutputType | null
-  }
-
-  type GetCategoryGroupByPayload<T extends CategoryGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CategoryGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CategoryGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CategoryGroupByOutputType[P]>
-            : GetScalarType<T[P], CategoryGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type CategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    categoryId?: boolean
-    guildId?: boolean
-    createdAtDiscord?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["category"]>
-
-
-  export type CategorySelectScalar = {
-    id?: boolean
-    name?: boolean
-    categoryId?: boolean
-    guildId?: boolean
-    createdAtDiscord?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-
-  export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Category"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      categoryId: string
-      guildId: string
-      createdAtDiscord: number
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["category"]>
-    composites: {}
-  }
-
-  type CategoryGetPayload<S extends boolean | null | undefined | CategoryDefaultArgs> = $Result.GetResult<Prisma.$CategoryPayload, S>
-
-  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: CategoryCountAggregateInputType | true
-    }
-
-  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Category'], meta: { name: 'Category' } }
-    /**
-     * Find zero or one Category that matches the filter.
-     * @param {CategoryFindUniqueArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends CategoryFindUniqueArgs>(args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one Category that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {CategoryFindUniqueOrThrowArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first Category that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryFindFirstArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends CategoryFindFirstArgs>(args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first Category that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryFindFirstOrThrowArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more Categories that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Categories
-     * const categories = await prisma.category.findMany()
-     * 
-     * // Get first 10 Categories
-     * const categories = await prisma.category.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const categoryWithIdOnly = await prisma.category.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends CategoryFindManyArgs>(args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a Category.
-     * @param {CategoryCreateArgs} args - Arguments to create a Category.
-     * @example
-     * // Create one Category
-     * const Category = await prisma.category.create({
-     *   data: {
-     *     // ... data to create a Category
-     *   }
-     * })
-     * 
-     */
-    create<T extends CategoryCreateArgs>(args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many Categories.
-     * @param {CategoryCreateManyArgs} args - Arguments to create many Categories.
-     * @example
-     * // Create many Categories
-     * const category = await prisma.category.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends CategoryCreateManyArgs>(args?: SelectSubset<T, CategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a Category.
-     * @param {CategoryDeleteArgs} args - Arguments to delete one Category.
-     * @example
-     * // Delete one Category
-     * const Category = await prisma.category.delete({
-     *   where: {
-     *     // ... filter to delete one Category
-     *   }
-     * })
-     * 
-     */
-    delete<T extends CategoryDeleteArgs>(args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one Category.
-     * @param {CategoryUpdateArgs} args - Arguments to update one Category.
-     * @example
-     * // Update one Category
-     * const category = await prisma.category.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends CategoryUpdateArgs>(args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more Categories.
-     * @param {CategoryDeleteManyArgs} args - Arguments to filter Categories to delete.
-     * @example
-     * // Delete a few Categories
-     * const { count } = await prisma.category.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends CategoryDeleteManyArgs>(args?: SelectSubset<T, CategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Categories.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Categories
-     * const category = await prisma.category.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends CategoryUpdateManyArgs>(args: SelectSubset<T, CategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Category.
-     * @param {CategoryUpsertArgs} args - Arguments to update or create a Category.
-     * @example
-     * // Update or create a Category
-     * const category = await prisma.category.upsert({
-     *   create: {
-     *     // ... data to create a Category
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Category we want to update
-     *   }
-     * })
-     */
-    upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-    /**
-     * Find zero or more Categories that matches the filter.
-     * @param {CategoryFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const category = await prisma.category.findRaw({
-     *   filter: { age: { $gt: 25 } } 
-     * })
-     */
-    findRaw(args?: CategoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Category.
-     * @param {CategoryAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const category = await prisma.category.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: CategoryAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
-
-
-    /**
-     * Count the number of Categories.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryCountArgs} args - Arguments to filter Categories to count.
-     * @example
-     * // Count the number of Categories
-     * const count = await prisma.category.count({
-     *   where: {
-     *     // ... the filter for the Categories we want to count
-     *   }
-     * })
-    **/
-    count<T extends CategoryCountArgs>(
-      args?: Subset<T, CategoryCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CategoryCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Category.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CategoryAggregateArgs>(args: Subset<T, CategoryAggregateArgs>): Prisma.PrismaPromise<GetCategoryAggregateType<T>>
-
-    /**
-     * Group by Category.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends CategoryGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: CategoryGroupByArgs['orderBy'] }
-        : { orderBy?: CategoryGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, CategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Category model
-   */
-  readonly fields: CategoryFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Category.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Category model
-   */ 
-  interface CategoryFieldRefs {
-    readonly id: FieldRef<"Category", 'String'>
-    readonly name: FieldRef<"Category", 'String'>
-    readonly categoryId: FieldRef<"Category", 'String'>
-    readonly guildId: FieldRef<"Category", 'String'>
-    readonly createdAtDiscord: FieldRef<"Category", 'Int'>
-    readonly createdAt: FieldRef<"Category", 'DateTime'>
-    readonly updatedAt: FieldRef<"Category", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Category findUnique
-   */
-  export type CategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category findUniqueOrThrow
-   */
-  export type CategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category findFirst
-   */
-  export type CategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Categories.
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Categories.
-     */
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
-  }
-
-  /**
-   * Category findFirstOrThrow
-   */
-  export type CategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Categories.
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Categories.
-     */
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
-  }
-
-  /**
-   * Category findMany
-   */
-  export type CategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Categories to fetch.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Categories.
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
-  }
-
-  /**
-   * Category create
-   */
-  export type CategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * The data needed to create a Category.
-     */
-    data: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
-  }
-
-  /**
-   * Category createMany
-   */
-  export type CategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Categories.
-     */
-    data: CategoryCreateManyInput | CategoryCreateManyInput[]
-  }
-
-  /**
-   * Category update
-   */
-  export type CategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * The data needed to update a Category.
-     */
-    data: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
-    /**
-     * Choose, which Category to update.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category updateMany
-   */
-  export type CategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Categories.
-     */
-    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
-    /**
-     * Filter which Categories to update
-     */
-    where?: CategoryWhereInput
-  }
-
-  /**
-   * Category upsert
-   */
-  export type CategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * The filter to search for the Category to update in case it exists.
-     */
-    where: CategoryWhereUniqueInput
-    /**
-     * In case the Category found by the `where` argument doesn't exist, create a new Category with this data.
-     */
-    create: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
-    /**
-     * In case the Category was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
-  }
-
-  /**
-   * Category delete
-   */
-  export type CategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter which Category to delete.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category deleteMany
-   */
-  export type CategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Categories to delete
-     */
-    where?: CategoryWhereInput
-  }
-
-  /**
-   * Category findRaw
-   */
-  export type CategoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Category aggregateRaw
-   */
-  export type CategoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Category without action
-   */
-  export type CategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
   }
 
 
@@ -6569,8 +7597,9 @@ export namespace Prisma {
   export type ChannelDataMinAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6579,8 +7608,9 @@ export namespace Prisma {
   export type ChannelDataMaxAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6589,10 +7619,11 @@ export namespace Prisma {
   export type ChannelDataCountAggregateOutputType = {
     id: number
     key: number
+    version: number
     type: number
     object: number
+    value: number
     values: number
-    version: number
     ownerId: number
     createdAt: number
     updatedAt: number
@@ -6603,8 +7634,9 @@ export namespace Prisma {
   export type ChannelDataMinAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6613,8 +7645,9 @@ export namespace Prisma {
   export type ChannelDataMaxAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6623,10 +7656,11 @@ export namespace Prisma {
   export type ChannelDataCountAggregateInputType = {
     id?: true
     key?: true
+    version?: true
     type?: true
     object?: true
+    value?: true
     values?: true
-    version?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6708,10 +7742,11 @@ export namespace Prisma {
   export type ChannelDataGroupByOutputType = {
     id: string
     key: string
-    type: string
+    version: string
+    type: $Enums.E_DATA_TYPES
     object: JsonValue | null
+    value: string | null
     values: string[]
-    version: string | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -6737,10 +7772,11 @@ export namespace Prisma {
   export type ChannelDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6751,10 +7787,11 @@ export namespace Prisma {
   export type ChannelDataSelectScalar = {
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6772,10 +7809,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       key: string
-      type: string
+      version: string
+      type: $Enums.E_DATA_TYPES
       object: Prisma.JsonValue | null
+      value: string | null
       values: string[]
-      version: string | null
       ownerId: string
       createdAt: Date
       updatedAt: Date
@@ -7174,10 +8212,11 @@ export namespace Prisma {
   interface ChannelDataFieldRefs {
     readonly id: FieldRef<"ChannelData", 'String'>
     readonly key: FieldRef<"ChannelData", 'String'>
-    readonly type: FieldRef<"ChannelData", 'String'>
-    readonly object: FieldRef<"ChannelData", 'Json'>
-    readonly values: FieldRef<"ChannelData", 'String[]'>
     readonly version: FieldRef<"ChannelData", 'String'>
+    readonly type: FieldRef<"ChannelData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"ChannelData", 'Json'>
+    readonly value: FieldRef<"ChannelData", 'String'>
+    readonly values: FieldRef<"ChannelData", 'String[]'>
     readonly ownerId: FieldRef<"ChannelData", 'String'>
     readonly createdAt: FieldRef<"ChannelData", 'DateTime'>
     readonly updatedAt: FieldRef<"ChannelData", 'DateTime'>
@@ -7686,6 +8725,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     data?: boolean | User$dataArgs<ExtArgs>
+    channelData?: boolean | User$channelDataArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -7700,6 +8740,7 @@ export namespace Prisma {
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | User$dataArgs<ExtArgs>
+    channelData?: boolean | User$channelDataArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -7707,6 +8748,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       data: Prisma.$UserDataPayload<ExtArgs>[]
+      channelData: Prisma.$UserChannelDataPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8078,6 +9120,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     data<T extends User$dataArgs<ExtArgs> = {}>(args?: Subset<T, User$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany"> | Null>
+    channelData<T extends User$channelDataArgs<ExtArgs> = {}>(args?: Subset<T, User$channelDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8458,6 +9501,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.channelData
+   */
+  export type User$channelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    where?: UserChannelDataWhereInput
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    cursor?: UserChannelDataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8485,8 +9548,9 @@ export namespace Prisma {
   export type UserDataMinAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8495,8 +9559,9 @@ export namespace Prisma {
   export type UserDataMaxAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8505,10 +9570,11 @@ export namespace Prisma {
   export type UserDataCountAggregateOutputType = {
     id: number
     key: number
+    version: number
     type: number
     object: number
+    value: number
     values: number
-    version: number
     ownerId: number
     createdAt: number
     updatedAt: number
@@ -8519,8 +9585,9 @@ export namespace Prisma {
   export type UserDataMinAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -8529,8 +9596,9 @@ export namespace Prisma {
   export type UserDataMaxAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -8539,10 +9607,11 @@ export namespace Prisma {
   export type UserDataCountAggregateInputType = {
     id?: true
     key?: true
+    version?: true
     type?: true
     object?: true
+    value?: true
     values?: true
-    version?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -8624,10 +9693,11 @@ export namespace Prisma {
   export type UserDataGroupByOutputType = {
     id: string
     key: string
-    type: string
+    version: string
+    type: $Enums.E_DATA_TYPES
     object: JsonValue | null
+    value: string | null
     values: string[]
-    version: string | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -8653,10 +9723,11 @@ export namespace Prisma {
   export type UserDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8667,10 +9738,11 @@ export namespace Prisma {
   export type UserDataSelectScalar = {
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8688,10 +9760,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       key: string
-      type: string
+      version: string
+      type: $Enums.E_DATA_TYPES
       object: Prisma.JsonValue | null
+      value: string | null
       values: string[]
-      version: string | null
       ownerId: string
       createdAt: Date
       updatedAt: Date
@@ -9090,10 +10163,11 @@ export namespace Prisma {
   interface UserDataFieldRefs {
     readonly id: FieldRef<"UserData", 'String'>
     readonly key: FieldRef<"UserData", 'String'>
-    readonly type: FieldRef<"UserData", 'String'>
-    readonly object: FieldRef<"UserData", 'Json'>
-    readonly values: FieldRef<"UserData", 'String[]'>
     readonly version: FieldRef<"UserData", 'String'>
+    readonly type: FieldRef<"UserData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"UserData", 'Json'>
+    readonly value: FieldRef<"UserData", 'String'>
+    readonly values: FieldRef<"UserData", 'String[]'>
     readonly ownerId: FieldRef<"UserData", 'String'>
     readonly createdAt: FieldRef<"UserData", 'DateTime'>
     readonly updatedAt: FieldRef<"UserData", 'DateTime'>
@@ -9434,6 +10508,993 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UserChannelData
+   */
+
+  export type AggregateUserChannelData = {
+    _count: UserChannelDataCountAggregateOutputType | null
+    _min: UserChannelDataMinAggregateOutputType | null
+    _max: UserChannelDataMaxAggregateOutputType | null
+  }
+
+  export type UserChannelDataMinAggregateOutputType = {
+    id: string | null
+    channelId: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    ownerId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserChannelDataMaxAggregateOutputType = {
+    id: string | null
+    channelId: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    ownerId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserChannelDataCountAggregateOutputType = {
+    id: number
+    channelId: number
+    key: number
+    version: number
+    type: number
+    object: number
+    value: number
+    values: number
+    ownerId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UserChannelDataMinAggregateInputType = {
+    id?: true
+    channelId?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserChannelDataMaxAggregateInputType = {
+    id?: true
+    channelId?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserChannelDataCountAggregateInputType = {
+    id?: true
+    channelId?: true
+    key?: true
+    version?: true
+    type?: true
+    object?: true
+    value?: true
+    values?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UserChannelDataAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserChannelData to aggregate.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserChannelData
+    **/
+    _count?: true | UserChannelDataCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserChannelDataMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserChannelDataMaxAggregateInputType
+  }
+
+  export type GetUserChannelDataAggregateType<T extends UserChannelDataAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserChannelData]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserChannelData[P]>
+      : GetScalarType<T[P], AggregateUserChannelData[P]>
+  }
+
+
+
+
+  export type UserChannelDataGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserChannelDataWhereInput
+    orderBy?: UserChannelDataOrderByWithAggregationInput | UserChannelDataOrderByWithAggregationInput[]
+    by: UserChannelDataScalarFieldEnum[] | UserChannelDataScalarFieldEnum
+    having?: UserChannelDataScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserChannelDataCountAggregateInputType | true
+    _min?: UserChannelDataMinAggregateInputType
+    _max?: UserChannelDataMaxAggregateInputType
+  }
+
+  export type UserChannelDataGroupByOutputType = {
+    id: string
+    channelId: string
+    key: string
+    version: string
+    type: $Enums.E_DATA_TYPES
+    object: JsonValue | null
+    value: string | null
+    values: string[]
+    ownerId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: UserChannelDataCountAggregateOutputType | null
+    _min: UserChannelDataMinAggregateOutputType | null
+    _max: UserChannelDataMaxAggregateOutputType | null
+  }
+
+  type GetUserChannelDataGroupByPayload<T extends UserChannelDataGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserChannelDataGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserChannelDataGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserChannelDataGroupByOutputType[P]>
+            : GetScalarType<T[P], UserChannelDataGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserChannelDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channelId?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userChannelData"]>
+
+
+  export type UserChannelDataSelectScalar = {
+    id?: boolean
+    channelId?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UserChannelDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $UserChannelDataPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserChannelData"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      channelId: string
+      key: string
+      version: string
+      type: $Enums.E_DATA_TYPES
+      object: Prisma.JsonValue | null
+      value: string | null
+      values: string[]
+      ownerId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["userChannelData"]>
+    composites: {}
+  }
+
+  type UserChannelDataGetPayload<S extends boolean | null | undefined | UserChannelDataDefaultArgs> = $Result.GetResult<Prisma.$UserChannelDataPayload, S>
+
+  type UserChannelDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<UserChannelDataFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: UserChannelDataCountAggregateInputType | true
+    }
+
+  export interface UserChannelDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserChannelData'], meta: { name: 'UserChannelData' } }
+    /**
+     * Find zero or one UserChannelData that matches the filter.
+     * @param {UserChannelDataFindUniqueArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserChannelDataFindUniqueArgs>(args: SelectSubset<T, UserChannelDataFindUniqueArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one UserChannelData that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {UserChannelDataFindUniqueOrThrowArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first UserChannelData that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataFindFirstArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserChannelDataFindFirstArgs>(args?: SelectSubset<T, UserChannelDataFindFirstArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first UserChannelData that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataFindFirstOrThrowArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more UserChannelData that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserChannelData
+     * const userChannelData = await prisma.userChannelData.findMany()
+     * 
+     * // Get first 10 UserChannelData
+     * const userChannelData = await prisma.userChannelData.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userChannelDataWithIdOnly = await prisma.userChannelData.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserChannelDataFindManyArgs>(args?: SelectSubset<T, UserChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a UserChannelData.
+     * @param {UserChannelDataCreateArgs} args - Arguments to create a UserChannelData.
+     * @example
+     * // Create one UserChannelData
+     * const UserChannelData = await prisma.userChannelData.create({
+     *   data: {
+     *     // ... data to create a UserChannelData
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserChannelDataCreateArgs>(args: SelectSubset<T, UserChannelDataCreateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many UserChannelData.
+     * @param {UserChannelDataCreateManyArgs} args - Arguments to create many UserChannelData.
+     * @example
+     * // Create many UserChannelData
+     * const userChannelData = await prisma.userChannelData.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserChannelDataCreateManyArgs>(args?: SelectSubset<T, UserChannelDataCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a UserChannelData.
+     * @param {UserChannelDataDeleteArgs} args - Arguments to delete one UserChannelData.
+     * @example
+     * // Delete one UserChannelData
+     * const UserChannelData = await prisma.userChannelData.delete({
+     *   where: {
+     *     // ... filter to delete one UserChannelData
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserChannelDataDeleteArgs>(args: SelectSubset<T, UserChannelDataDeleteArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one UserChannelData.
+     * @param {UserChannelDataUpdateArgs} args - Arguments to update one UserChannelData.
+     * @example
+     * // Update one UserChannelData
+     * const userChannelData = await prisma.userChannelData.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserChannelDataUpdateArgs>(args: SelectSubset<T, UserChannelDataUpdateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more UserChannelData.
+     * @param {UserChannelDataDeleteManyArgs} args - Arguments to filter UserChannelData to delete.
+     * @example
+     * // Delete a few UserChannelData
+     * const { count } = await prisma.userChannelData.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserChannelDataDeleteManyArgs>(args?: SelectSubset<T, UserChannelDataDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserChannelData
+     * const userChannelData = await prisma.userChannelData.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserChannelDataUpdateManyArgs>(args: SelectSubset<T, UserChannelDataUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one UserChannelData.
+     * @param {UserChannelDataUpsertArgs} args - Arguments to update or create a UserChannelData.
+     * @example
+     * // Update or create a UserChannelData
+     * const userChannelData = await prisma.userChannelData.upsert({
+     *   create: {
+     *     // ... data to create a UserChannelData
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserChannelData we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserChannelDataUpsertArgs>(args: SelectSubset<T, UserChannelDataUpsertArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+    /**
+     * Find zero or more UserChannelData that matches the filter.
+     * @param {UserChannelDataFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const userChannelData = await prisma.userChannelData.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+     */
+    findRaw(args?: UserChannelDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a UserChannelData.
+     * @param {UserChannelDataAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const userChannelData = await prisma.userChannelData.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: UserChannelDataAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataCountArgs} args - Arguments to filter UserChannelData to count.
+     * @example
+     * // Count the number of UserChannelData
+     * const count = await prisma.userChannelData.count({
+     *   where: {
+     *     // ... the filter for the UserChannelData we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserChannelDataCountArgs>(
+      args?: Subset<T, UserChannelDataCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserChannelDataCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserChannelDataAggregateArgs>(args: Subset<T, UserChannelDataAggregateArgs>): Prisma.PrismaPromise<GetUserChannelDataAggregateType<T>>
+
+    /**
+     * Group by UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserChannelDataGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserChannelDataGroupByArgs['orderBy'] }
+        : { orderBy?: UserChannelDataGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserChannelDataGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserChannelDataGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserChannelData model
+   */
+  readonly fields: UserChannelDataFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserChannelData.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserChannelData model
+   */ 
+  interface UserChannelDataFieldRefs {
+    readonly id: FieldRef<"UserChannelData", 'String'>
+    readonly channelId: FieldRef<"UserChannelData", 'String'>
+    readonly key: FieldRef<"UserChannelData", 'String'>
+    readonly version: FieldRef<"UserChannelData", 'String'>
+    readonly type: FieldRef<"UserChannelData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"UserChannelData", 'Json'>
+    readonly value: FieldRef<"UserChannelData", 'String'>
+    readonly values: FieldRef<"UserChannelData", 'String[]'>
+    readonly ownerId: FieldRef<"UserChannelData", 'String'>
+    readonly createdAt: FieldRef<"UserChannelData", 'DateTime'>
+    readonly updatedAt: FieldRef<"UserChannelData", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserChannelData findUnique
+   */
+  export type UserChannelDataFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData findUniqueOrThrow
+   */
+  export type UserChannelDataFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData findFirst
+   */
+  export type UserChannelDataFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserChannelData.
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserChannelData.
+     */
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * UserChannelData findFirstOrThrow
+   */
+  export type UserChannelDataFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserChannelData.
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserChannelData.
+     */
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * UserChannelData findMany
+   */
+  export type UserChannelDataFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserChannelData.
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * UserChannelData create
+   */
+  export type UserChannelDataCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserChannelData.
+     */
+    data: XOR<UserChannelDataCreateInput, UserChannelDataUncheckedCreateInput>
+  }
+
+  /**
+   * UserChannelData createMany
+   */
+  export type UserChannelDataCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserChannelData.
+     */
+    data: UserChannelDataCreateManyInput | UserChannelDataCreateManyInput[]
+  }
+
+  /**
+   * UserChannelData update
+   */
+  export type UserChannelDataUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserChannelData.
+     */
+    data: XOR<UserChannelDataUpdateInput, UserChannelDataUncheckedUpdateInput>
+    /**
+     * Choose, which UserChannelData to update.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData updateMany
+   */
+  export type UserChannelDataUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserChannelData.
+     */
+    data: XOR<UserChannelDataUpdateManyMutationInput, UserChannelDataUncheckedUpdateManyInput>
+    /**
+     * Filter which UserChannelData to update
+     */
+    where?: UserChannelDataWhereInput
+  }
+
+  /**
+   * UserChannelData upsert
+   */
+  export type UserChannelDataUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserChannelData to update in case it exists.
+     */
+    where: UserChannelDataWhereUniqueInput
+    /**
+     * In case the UserChannelData found by the `where` argument doesn't exist, create a new UserChannelData with this data.
+     */
+    create: XOR<UserChannelDataCreateInput, UserChannelDataUncheckedCreateInput>
+    /**
+     * In case the UserChannelData was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserChannelDataUpdateInput, UserChannelDataUncheckedUpdateInput>
+  }
+
+  /**
+   * UserChannelData delete
+   */
+  export type UserChannelDataDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter which UserChannelData to delete.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData deleteMany
+   */
+  export type UserChannelDataDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserChannelData to delete
+     */
+    where?: UserChannelDataWhereInput
+  }
+
+  /**
+   * UserChannelData findRaw
+   */
+  export type UserChannelDataFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * UserChannelData aggregateRaw
+   */
+  export type UserChannelDataAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * UserChannelData without action
+   */
+  export type UserChannelDataDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
   }
 
 
@@ -14940,926 +17001,36 @@ export namespace Prisma {
 
 
   /**
-   * Model Config
-   */
-
-  export type AggregateConfig = {
-    _count: ConfigCountAggregateOutputType | null
-    _min: ConfigMinAggregateOutputType | null
-    _max: ConfigMaxAggregateOutputType | null
-  }
-
-  export type ConfigMinAggregateOutputType = {
-    id: string | null
-    key: string | null
-    version: string | null
-    type: $Enums.E_DATA_TYPES | null
-    value: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type ConfigMaxAggregateOutputType = {
-    id: string | null
-    key: string | null
-    version: string | null
-    type: $Enums.E_DATA_TYPES | null
-    value: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type ConfigCountAggregateOutputType = {
-    id: number
-    key: number
-    version: number
-    type: number
-    object: number
-    value: number
-    values: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type ConfigMinAggregateInputType = {
-    id?: true
-    key?: true
-    version?: true
-    type?: true
-    value?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type ConfigMaxAggregateInputType = {
-    id?: true
-    key?: true
-    version?: true
-    type?: true
-    value?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type ConfigCountAggregateInputType = {
-    id?: true
-    key?: true
-    version?: true
-    type?: true
-    object?: true
-    value?: true
-    values?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type ConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Config to aggregate.
-     */
-    where?: ConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Configs to fetch.
-     */
-    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: ConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Configs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Configs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Configs
-    **/
-    _count?: true | ConfigCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: ConfigMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: ConfigMaxAggregateInputType
-  }
-
-  export type GetConfigAggregateType<T extends ConfigAggregateArgs> = {
-        [P in keyof T & keyof AggregateConfig]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateConfig[P]>
-      : GetScalarType<T[P], AggregateConfig[P]>
-  }
-
-
-
-
-  export type ConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ConfigWhereInput
-    orderBy?: ConfigOrderByWithAggregationInput | ConfigOrderByWithAggregationInput[]
-    by: ConfigScalarFieldEnum[] | ConfigScalarFieldEnum
-    having?: ConfigScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: ConfigCountAggregateInputType | true
-    _min?: ConfigMinAggregateInputType
-    _max?: ConfigMaxAggregateInputType
-  }
-
-  export type ConfigGroupByOutputType = {
-    id: string
-    key: string
-    version: string
-    type: $Enums.E_DATA_TYPES
-    object: JsonValue | null
-    value: string | null
-    values: string[]
-    createdAt: Date
-    updatedAt: Date
-    _count: ConfigCountAggregateOutputType | null
-    _min: ConfigMinAggregateOutputType | null
-    _max: ConfigMaxAggregateOutputType | null
-  }
-
-  type GetConfigGroupByPayload<T extends ConfigGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<ConfigGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof ConfigGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], ConfigGroupByOutputType[P]>
-            : GetScalarType<T[P], ConfigGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type ConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    key?: boolean
-    version?: boolean
-    type?: boolean
-    object?: boolean
-    value?: boolean
-    values?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["config"]>
-
-
-  export type ConfigSelectScalar = {
-    id?: boolean
-    key?: boolean
-    version?: boolean
-    type?: boolean
-    object?: boolean
-    value?: boolean
-    values?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-
-  export type $ConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Config"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      key: string
-      version: string
-      type: $Enums.E_DATA_TYPES
-      object: Prisma.JsonValue | null
-      value: string | null
-      values: string[]
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["config"]>
-    composites: {}
-  }
-
-  type ConfigGetPayload<S extends boolean | null | undefined | ConfigDefaultArgs> = $Result.GetResult<Prisma.$ConfigPayload, S>
-
-  type ConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: ConfigCountAggregateInputType | true
-    }
-
-  export interface ConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Config'], meta: { name: 'Config' } }
-    /**
-     * Find zero or one Config that matches the filter.
-     * @param {ConfigFindUniqueArgs} args - Arguments to find a Config
-     * @example
-     * // Get one Config
-     * const config = await prisma.config.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends ConfigFindUniqueArgs>(args: SelectSubset<T, ConfigFindUniqueArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one Config that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {ConfigFindUniqueOrThrowArgs} args - Arguments to find a Config
-     * @example
-     * // Get one Config
-     * const config = await prisma.config.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends ConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first Config that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigFindFirstArgs} args - Arguments to find a Config
-     * @example
-     * // Get one Config
-     * const config = await prisma.config.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends ConfigFindFirstArgs>(args?: SelectSubset<T, ConfigFindFirstArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first Config that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigFindFirstOrThrowArgs} args - Arguments to find a Config
-     * @example
-     * // Get one Config
-     * const config = await prisma.config.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends ConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more Configs that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Configs
-     * const configs = await prisma.config.findMany()
-     * 
-     * // Get first 10 Configs
-     * const configs = await prisma.config.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const configWithIdOnly = await prisma.config.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends ConfigFindManyArgs>(args?: SelectSubset<T, ConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a Config.
-     * @param {ConfigCreateArgs} args - Arguments to create a Config.
-     * @example
-     * // Create one Config
-     * const Config = await prisma.config.create({
-     *   data: {
-     *     // ... data to create a Config
-     *   }
-     * })
-     * 
-     */
-    create<T extends ConfigCreateArgs>(args: SelectSubset<T, ConfigCreateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many Configs.
-     * @param {ConfigCreateManyArgs} args - Arguments to create many Configs.
-     * @example
-     * // Create many Configs
-     * const config = await prisma.config.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends ConfigCreateManyArgs>(args?: SelectSubset<T, ConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a Config.
-     * @param {ConfigDeleteArgs} args - Arguments to delete one Config.
-     * @example
-     * // Delete one Config
-     * const Config = await prisma.config.delete({
-     *   where: {
-     *     // ... filter to delete one Config
-     *   }
-     * })
-     * 
-     */
-    delete<T extends ConfigDeleteArgs>(args: SelectSubset<T, ConfigDeleteArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one Config.
-     * @param {ConfigUpdateArgs} args - Arguments to update one Config.
-     * @example
-     * // Update one Config
-     * const config = await prisma.config.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends ConfigUpdateArgs>(args: SelectSubset<T, ConfigUpdateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more Configs.
-     * @param {ConfigDeleteManyArgs} args - Arguments to filter Configs to delete.
-     * @example
-     * // Delete a few Configs
-     * const { count } = await prisma.config.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends ConfigDeleteManyArgs>(args?: SelectSubset<T, ConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Configs.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Configs
-     * const config = await prisma.config.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends ConfigUpdateManyArgs>(args: SelectSubset<T, ConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Config.
-     * @param {ConfigUpsertArgs} args - Arguments to update or create a Config.
-     * @example
-     * // Update or create a Config
-     * const config = await prisma.config.upsert({
-     *   create: {
-     *     // ... data to create a Config
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Config we want to update
-     *   }
-     * })
-     */
-    upsert<T extends ConfigUpsertArgs>(args: SelectSubset<T, ConfigUpsertArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-    /**
-     * Find zero or more Configs that matches the filter.
-     * @param {ConfigFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const config = await prisma.config.findRaw({
-     *   filter: { age: { $gt: 25 } } 
-     * })
-     */
-    findRaw(args?: ConfigFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Config.
-     * @param {ConfigAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const config = await prisma.config.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: ConfigAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
-
-
-    /**
-     * Count the number of Configs.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigCountArgs} args - Arguments to filter Configs to count.
-     * @example
-     * // Count the number of Configs
-     * const count = await prisma.config.count({
-     *   where: {
-     *     // ... the filter for the Configs we want to count
-     *   }
-     * })
-    **/
-    count<T extends ConfigCountArgs>(
-      args?: Subset<T, ConfigCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], ConfigCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Config.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends ConfigAggregateArgs>(args: Subset<T, ConfigAggregateArgs>): Prisma.PrismaPromise<GetConfigAggregateType<T>>
-
-    /**
-     * Group by Config.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ConfigGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends ConfigGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ConfigGroupByArgs['orderBy'] }
-        : { orderBy?: ConfigGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, ConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Config model
-   */
-  readonly fields: ConfigFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Config.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__ConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Config model
-   */ 
-  interface ConfigFieldRefs {
-    readonly id: FieldRef<"Config", 'String'>
-    readonly key: FieldRef<"Config", 'String'>
-    readonly version: FieldRef<"Config", 'String'>
-    readonly type: FieldRef<"Config", 'E_DATA_TYPES'>
-    readonly object: FieldRef<"Config", 'Json'>
-    readonly value: FieldRef<"Config", 'String'>
-    readonly values: FieldRef<"Config", 'String[]'>
-    readonly createdAt: FieldRef<"Config", 'DateTime'>
-    readonly updatedAt: FieldRef<"Config", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Config findUnique
-   */
-  export type ConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which Config to fetch.
-     */
-    where: ConfigWhereUniqueInput
-  }
-
-  /**
-   * Config findUniqueOrThrow
-   */
-  export type ConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which Config to fetch.
-     */
-    where: ConfigWhereUniqueInput
-  }
-
-  /**
-   * Config findFirst
-   */
-  export type ConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which Config to fetch.
-     */
-    where?: ConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Configs to fetch.
-     */
-    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Configs.
-     */
-    cursor?: ConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Configs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Configs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Configs.
-     */
-    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
-  }
-
-  /**
-   * Config findFirstOrThrow
-   */
-  export type ConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which Config to fetch.
-     */
-    where?: ConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Configs to fetch.
-     */
-    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Configs.
-     */
-    cursor?: ConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Configs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Configs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Configs.
-     */
-    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
-  }
-
-  /**
-   * Config findMany
-   */
-  export type ConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which Configs to fetch.
-     */
-    where?: ConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Configs to fetch.
-     */
-    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Configs.
-     */
-    cursor?: ConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Configs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Configs.
-     */
-    skip?: number
-    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
-  }
-
-  /**
-   * Config create
-   */
-  export type ConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * The data needed to create a Config.
-     */
-    data: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
-  }
-
-  /**
-   * Config createMany
-   */
-  export type ConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Configs.
-     */
-    data: ConfigCreateManyInput | ConfigCreateManyInput[]
-  }
-
-  /**
-   * Config update
-   */
-  export type ConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * The data needed to update a Config.
-     */
-    data: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
-    /**
-     * Choose, which Config to update.
-     */
-    where: ConfigWhereUniqueInput
-  }
-
-  /**
-   * Config updateMany
-   */
-  export type ConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Configs.
-     */
-    data: XOR<ConfigUpdateManyMutationInput, ConfigUncheckedUpdateManyInput>
-    /**
-     * Filter which Configs to update
-     */
-    where?: ConfigWhereInput
-  }
-
-  /**
-   * Config upsert
-   */
-  export type ConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * The filter to search for the Config to update in case it exists.
-     */
-    where: ConfigWhereUniqueInput
-    /**
-     * In case the Config found by the `where` argument doesn't exist, create a new Config with this data.
-     */
-    create: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
-    /**
-     * In case the Config was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
-  }
-
-  /**
-   * Config delete
-   */
-  export type ConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-    /**
-     * Filter which Config to delete.
-     */
-    where: ConfigWhereUniqueInput
-  }
-
-  /**
-   * Config deleteMany
-   */
-  export type ConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Configs to delete
-     */
-    where?: ConfigWhereInput
-  }
-
-  /**
-   * Config findRaw
-   */
-  export type ConfigFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Config aggregateRaw
-   */
-  export type ConfigAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Config without action
-   */
-  export type ConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Config
-     */
-    select?: ConfigSelect<ExtArgs> | null
-  }
-
-
-  /**
    * Enums
    */
+
+  export const ConfigScalarFieldEnum: {
+    id: 'id',
+    key: 'key',
+    version: 'version',
+    type: 'type',
+    object: 'object',
+    value: 'value',
+    values: 'values',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ConfigScalarFieldEnum = (typeof ConfigScalarFieldEnum)[keyof typeof ConfigScalarFieldEnum]
+
+
+  export const CategoryScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    categoryId: 'categoryId',
+    guildId: 'guildId',
+    createdAtDiscord: 'createdAtDiscord',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
 
   export const GuildScalarFieldEnum: {
     id: 'id',
@@ -15877,29 +17048,17 @@ export namespace Prisma {
   export const GuildDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
+    version: 'version',
     type: 'type',
     object: 'object',
+    value: 'value',
     values: 'values',
-    version: 'version',
     ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type GuildDataScalarFieldEnum = (typeof GuildDataScalarFieldEnum)[keyof typeof GuildDataScalarFieldEnum]
-
-
-  export const CategoryScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    categoryId: 'categoryId',
-    guildId: 'guildId',
-    createdAtDiscord: 'createdAtDiscord',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
   export const ChannelScalarFieldEnum: {
@@ -15921,10 +17080,11 @@ export namespace Prisma {
   export const ChannelDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
+    version: 'version',
     type: 'type',
     object: 'object',
+    value: 'value',
     values: 'values',
-    version: 'version',
     ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -15947,16 +17107,34 @@ export namespace Prisma {
   export const UserDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
+    version: 'version',
     type: 'type',
     object: 'object',
+    value: 'value',
     values: 'values',
-    version: 'version',
     ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type UserDataScalarFieldEnum = (typeof UserDataScalarFieldEnum)[keyof typeof UserDataScalarFieldEnum]
+
+
+  export const UserChannelDataScalarFieldEnum: {
+    id: 'id',
+    channelId: 'channelId',
+    key: 'key',
+    version: 'version',
+    type: 'type',
+    object: 'object',
+    value: 'value',
+    values: 'values',
+    ownerId: 'ownerId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UserChannelDataScalarFieldEnum = (typeof UserChannelDataScalarFieldEnum)[keyof typeof UserChannelDataScalarFieldEnum]
 
 
   export const ElementButtonLanguageScalarFieldEnum: {
@@ -16019,21 +17197,6 @@ export namespace Prisma {
   export type ModalLanguageScalarFieldEnum = (typeof ModalLanguageScalarFieldEnum)[keyof typeof ModalLanguageScalarFieldEnum]
 
 
-  export const ConfigScalarFieldEnum: {
-    id: 'id',
-    key: 'key',
-    version: 'version',
-    type: 'type',
-    object: 'object',
-    value: 'value',
-    values: 'values',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type ConfigScalarFieldEnum = (typeof ConfigScalarFieldEnum)[keyof typeof ConfigScalarFieldEnum]
-
-
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -16070,9 +17233,23 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'E_DATA_TYPES'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type EnumE_DATA_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_DATA_TYPES'>
+    
+
+
+  /**
+   * Reference to a field of type 'E_DATA_TYPES[]'
+   */
+  export type ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_DATA_TYPES[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -16091,13 +17268,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -16112,6 +17282,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'E_INTERNAL_CHANNEL_TYPES'
    */
   export type EnumE_INTERNAL_CHANNEL_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_INTERNAL_CHANNEL_TYPES'>
@@ -16122,20 +17299,6 @@ export namespace Prisma {
    * Reference to a field of type 'E_INTERNAL_CHANNEL_TYPES[]'
    */
   export type ListEnumE_INTERNAL_CHANNEL_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_INTERNAL_CHANNEL_TYPES[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'E_DATA_TYPES'
-   */
-  export type EnumE_DATA_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_DATA_TYPES'>
-    
-
-
-  /**
-   * Reference to a field of type 'E_DATA_TYPES[]'
-   */
-  export type ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_DATA_TYPES[]'>
     
 
 
@@ -16155,6 +17318,143 @@ export namespace Prisma {
    * Deep Input Types
    */
 
+
+  export type ConfigWhereInput = {
+    AND?: ConfigWhereInput | ConfigWhereInput[]
+    OR?: ConfigWhereInput[]
+    NOT?: ConfigWhereInput | ConfigWhereInput[]
+    id?: StringFilter<"Config"> | string
+    key?: StringFilter<"Config"> | string
+    version?: StringFilter<"Config"> | string
+    type?: EnumE_DATA_TYPESFilter<"Config"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"Config">
+    value?: StringNullableFilter<"Config"> | string | null
+    values?: StringNullableListFilter<"Config">
+    createdAt?: DateTimeFilter<"Config"> | Date | string
+    updatedAt?: DateTimeFilter<"Config"> | Date | string
+  }
+
+  export type ConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    key_version?: ConfigKeyVersionCompoundUniqueInput
+    AND?: ConfigWhereInput | ConfigWhereInput[]
+    OR?: ConfigWhereInput[]
+    NOT?: ConfigWhereInput | ConfigWhereInput[]
+    key?: StringFilter<"Config"> | string
+    version?: StringFilter<"Config"> | string
+    type?: EnumE_DATA_TYPESFilter<"Config"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"Config">
+    value?: StringNullableFilter<"Config"> | string | null
+    values?: StringNullableListFilter<"Config">
+    createdAt?: DateTimeFilter<"Config"> | Date | string
+    updatedAt?: DateTimeFilter<"Config"> | Date | string
+  }, "id" | "key_version">
+
+  export type ConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ConfigCountOrderByAggregateInput
+    _max?: ConfigMaxOrderByAggregateInput
+    _min?: ConfigMinOrderByAggregateInput
+  }
+
+  export type ConfigScalarWhereWithAggregatesInput = {
+    AND?: ConfigScalarWhereWithAggregatesInput | ConfigScalarWhereWithAggregatesInput[]
+    OR?: ConfigScalarWhereWithAggregatesInput[]
+    NOT?: ConfigScalarWhereWithAggregatesInput | ConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Config"> | string
+    key?: StringWithAggregatesFilter<"Config"> | string
+    version?: StringWithAggregatesFilter<"Config"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"Config"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableWithAggregatesFilter<"Config">
+    value?: StringNullableWithAggregatesFilter<"Config"> | string | null
+    values?: StringNullableListFilter<"Config">
+    createdAt?: DateTimeWithAggregatesFilter<"Config"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Config"> | Date | string
+  }
+
+  export type CategoryWhereInput = {
+    AND?: CategoryWhereInput | CategoryWhereInput[]
+    OR?: CategoryWhereInput[]
+    NOT?: CategoryWhereInput | CategoryWhereInput[]
+    id?: StringFilter<"Category"> | string
+    name?: StringFilter<"Category"> | string
+    categoryId?: StringFilter<"Category"> | string
+    guildId?: StringFilter<"Category"> | string
+    createdAtDiscord?: IntFilter<"Category"> | number
+    createdAt?: DateTimeFilter<"Category"> | Date | string
+    updatedAt?: DateTimeFilter<"Category"> | Date | string
+  }
+
+  export type CategoryOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    categoryId?: SortOrder
+    guildId?: SortOrder
+    createdAtDiscord?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CategoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CategoryWhereInput | CategoryWhereInput[]
+    OR?: CategoryWhereInput[]
+    NOT?: CategoryWhereInput | CategoryWhereInput[]
+    name?: StringFilter<"Category"> | string
+    categoryId?: StringFilter<"Category"> | string
+    guildId?: StringFilter<"Category"> | string
+    createdAtDiscord?: IntFilter<"Category"> | number
+    createdAt?: DateTimeFilter<"Category"> | Date | string
+    updatedAt?: DateTimeFilter<"Category"> | Date | string
+  }, "id">
+
+  export type CategoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    categoryId?: SortOrder
+    guildId?: SortOrder
+    createdAtDiscord?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CategoryCountOrderByAggregateInput
+    _avg?: CategoryAvgOrderByAggregateInput
+    _max?: CategoryMaxOrderByAggregateInput
+    _min?: CategoryMinOrderByAggregateInput
+    _sum?: CategorySumOrderByAggregateInput
+  }
+
+  export type CategoryScalarWhereWithAggregatesInput = {
+    AND?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
+    OR?: CategoryScalarWhereWithAggregatesInput[]
+    NOT?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Category"> | string
+    name?: StringWithAggregatesFilter<"Category"> | string
+    categoryId?: StringWithAggregatesFilter<"Category"> | string
+    guildId?: StringWithAggregatesFilter<"Category"> | string
+    createdAtDiscord?: IntWithAggregatesFilter<"Category"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
+  }
 
   export type GuildWhereInput = {
     AND?: GuildWhereInput | GuildWhereInput[]
@@ -16227,10 +17527,11 @@ export namespace Prisma {
     NOT?: GuildDataWhereInput | GuildDataWhereInput[]
     id?: StringFilter<"GuildData"> | string
     key?: StringFilter<"GuildData"> | string
-    type?: StringFilter<"GuildData"> | string
+    version?: StringFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"GuildData">
+    value?: StringNullableFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableFilter<"GuildData"> | string | null
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
@@ -16240,10 +17541,11 @@ export namespace Prisma {
   export type GuildDataOrderByWithRelationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16252,28 +17554,30 @@ export namespace Prisma {
 
   export type GuildDataWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    ownerId_key?: GuildDataOwnerIdKeyCompoundUniqueInput
+    ownerId_key_version?: GuildDataOwnerIdKeyVersionCompoundUniqueInput
     AND?: GuildDataWhereInput | GuildDataWhereInput[]
     OR?: GuildDataWhereInput[]
     NOT?: GuildDataWhereInput | GuildDataWhereInput[]
     key?: StringFilter<"GuildData"> | string
-    type?: StringFilter<"GuildData"> | string
+    version?: StringFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"GuildData">
+    value?: StringNullableFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableFilter<"GuildData"> | string | null
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
     guild?: XOR<GuildRelationFilter, GuildWhereInput>
-  }, "id" | "ownerId_key">
+  }, "id" | "ownerId_key_version">
 
   export type GuildDataOrderByWithAggregationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16288,77 +17592,14 @@ export namespace Prisma {
     NOT?: GuildDataScalarWhereWithAggregatesInput | GuildDataScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"GuildData"> | string
     key?: StringWithAggregatesFilter<"GuildData"> | string
-    type?: StringWithAggregatesFilter<"GuildData"> | string
+    version?: StringWithAggregatesFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableWithAggregatesFilter<"GuildData">
+    value?: StringNullableWithAggregatesFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableWithAggregatesFilter<"GuildData"> | string | null
     ownerId?: StringWithAggregatesFilter<"GuildData"> | string
     createdAt?: DateTimeWithAggregatesFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GuildData"> | Date | string
-  }
-
-  export type CategoryWhereInput = {
-    AND?: CategoryWhereInput | CategoryWhereInput[]
-    OR?: CategoryWhereInput[]
-    NOT?: CategoryWhereInput | CategoryWhereInput[]
-    id?: StringFilter<"Category"> | string
-    name?: StringFilter<"Category"> | string
-    categoryId?: StringFilter<"Category"> | string
-    guildId?: StringFilter<"Category"> | string
-    createdAtDiscord?: IntFilter<"Category"> | number
-    createdAt?: DateTimeFilter<"Category"> | Date | string
-    updatedAt?: DateTimeFilter<"Category"> | Date | string
-  }
-
-  export type CategoryOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    categoryId?: SortOrder
-    guildId?: SortOrder
-    createdAtDiscord?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type CategoryWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: CategoryWhereInput | CategoryWhereInput[]
-    OR?: CategoryWhereInput[]
-    NOT?: CategoryWhereInput | CategoryWhereInput[]
-    name?: StringFilter<"Category"> | string
-    categoryId?: StringFilter<"Category"> | string
-    guildId?: StringFilter<"Category"> | string
-    createdAtDiscord?: IntFilter<"Category"> | number
-    createdAt?: DateTimeFilter<"Category"> | Date | string
-    updatedAt?: DateTimeFilter<"Category"> | Date | string
-  }, "id">
-
-  export type CategoryOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    categoryId?: SortOrder
-    guildId?: SortOrder
-    createdAtDiscord?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: CategoryCountOrderByAggregateInput
-    _avg?: CategoryAvgOrderByAggregateInput
-    _max?: CategoryMaxOrderByAggregateInput
-    _min?: CategoryMinOrderByAggregateInput
-    _sum?: CategorySumOrderByAggregateInput
-  }
-
-  export type CategoryScalarWhereWithAggregatesInput = {
-    AND?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
-    OR?: CategoryScalarWhereWithAggregatesInput[]
-    NOT?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Category"> | string
-    name?: StringWithAggregatesFilter<"Category"> | string
-    categoryId?: StringWithAggregatesFilter<"Category"> | string
-    guildId?: StringWithAggregatesFilter<"Category"> | string
-    createdAtDiscord?: IntWithAggregatesFilter<"Category"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
   }
 
   export type ChannelWhereInput = {
@@ -16449,10 +17690,11 @@ export namespace Prisma {
     NOT?: ChannelDataWhereInput | ChannelDataWhereInput[]
     id?: StringFilter<"ChannelData"> | string
     key?: StringFilter<"ChannelData"> | string
-    type?: StringFilter<"ChannelData"> | string
+    version?: StringFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"ChannelData">
+    value?: StringNullableFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableFilter<"ChannelData"> | string | null
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
@@ -16462,10 +17704,11 @@ export namespace Prisma {
   export type ChannelDataOrderByWithRelationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16474,28 +17717,30 @@ export namespace Prisma {
 
   export type ChannelDataWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    ownerId_key?: ChannelDataOwnerIdKeyCompoundUniqueInput
+    ownerId_key_version?: ChannelDataOwnerIdKeyVersionCompoundUniqueInput
     AND?: ChannelDataWhereInput | ChannelDataWhereInput[]
     OR?: ChannelDataWhereInput[]
     NOT?: ChannelDataWhereInput | ChannelDataWhereInput[]
     key?: StringFilter<"ChannelData"> | string
-    type?: StringFilter<"ChannelData"> | string
+    version?: StringFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"ChannelData">
+    value?: StringNullableFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableFilter<"ChannelData"> | string | null
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
     channel?: XOR<ChannelRelationFilter, ChannelWhereInput>
-  }, "id" | "ownerId_key">
+  }, "id" | "ownerId_key_version">
 
   export type ChannelDataOrderByWithAggregationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16510,10 +17755,11 @@ export namespace Prisma {
     NOT?: ChannelDataScalarWhereWithAggregatesInput | ChannelDataScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ChannelData"> | string
     key?: StringWithAggregatesFilter<"ChannelData"> | string
-    type?: StringWithAggregatesFilter<"ChannelData"> | string
+    version?: StringWithAggregatesFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableWithAggregatesFilter<"ChannelData">
+    value?: StringNullableWithAggregatesFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableWithAggregatesFilter<"ChannelData"> | string | null
     ownerId?: StringWithAggregatesFilter<"ChannelData"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ChannelData"> | Date | string
@@ -16529,6 +17775,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     data?: UserDataListRelationFilter
+    channelData?: UserChannelDataListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -16538,6 +17785,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     data?: UserDataOrderByRelationAggregateInput
+    channelData?: UserChannelDataOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -16550,6 +17798,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     data?: UserDataListRelationFilter
+    channelData?: UserChannelDataListRelationFilter
   }, "id" | "userId">
 
   export type UserOrderByWithAggregationInput = {
@@ -16580,10 +17829,11 @@ export namespace Prisma {
     NOT?: UserDataWhereInput | UserDataWhereInput[]
     id?: StringFilter<"UserData"> | string
     key?: StringFilter<"UserData"> | string
-    type?: StringFilter<"UserData"> | string
+    version?: StringFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"UserData">
+    value?: StringNullableFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableFilter<"UserData"> | string | null
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
@@ -16593,10 +17843,11 @@ export namespace Prisma {
   export type UserDataOrderByWithRelationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16605,28 +17856,30 @@ export namespace Prisma {
 
   export type UserDataWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    ownerId_key?: UserDataOwnerIdKeyCompoundUniqueInput
+    ownerId_key_version?: UserDataOwnerIdKeyVersionCompoundUniqueInput
     AND?: UserDataWhereInput | UserDataWhereInput[]
     OR?: UserDataWhereInput[]
     NOT?: UserDataWhereInput | UserDataWhereInput[]
     key?: StringFilter<"UserData"> | string
-    type?: StringFilter<"UserData"> | string
+    version?: StringFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"UserData">
+    value?: StringNullableFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableFilter<"UserData"> | string | null
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "ownerId_key">
+  }, "id" | "ownerId_key_version">
 
   export type UserDataOrderByWithAggregationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16641,13 +17894,100 @@ export namespace Prisma {
     NOT?: UserDataScalarWhereWithAggregatesInput | UserDataScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"UserData"> | string
     key?: StringWithAggregatesFilter<"UserData"> | string
-    type?: StringWithAggregatesFilter<"UserData"> | string
+    version?: StringWithAggregatesFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableWithAggregatesFilter<"UserData">
+    value?: StringNullableWithAggregatesFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableWithAggregatesFilter<"UserData"> | string | null
     ownerId?: StringWithAggregatesFilter<"UserData"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserData"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserData"> | Date | string
+  }
+
+  export type UserChannelDataWhereInput = {
+    AND?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    OR?: UserChannelDataWhereInput[]
+    NOT?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    id?: StringFilter<"UserChannelData"> | string
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type UserChannelDataOrderByWithRelationInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type UserChannelDataWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    ownerId_channelId_key_version?: UserChannelDataOwnerIdChannelIdKeyVersionCompoundUniqueInput
+    AND?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    OR?: UserChannelDataWhereInput[]
+    NOT?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "ownerId_channelId_key_version">
+
+  export type UserChannelDataOrderByWithAggregationInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UserChannelDataCountOrderByAggregateInput
+    _max?: UserChannelDataMaxOrderByAggregateInput
+    _min?: UserChannelDataMinOrderByAggregateInput
+  }
+
+  export type UserChannelDataScalarWhereWithAggregatesInput = {
+    AND?: UserChannelDataScalarWhereWithAggregatesInput | UserChannelDataScalarWhereWithAggregatesInput[]
+    OR?: UserChannelDataScalarWhereWithAggregatesInput[]
+    NOT?: UserChannelDataScalarWhereWithAggregatesInput | UserChannelDataScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserChannelData"> | string
+    channelId?: StringWithAggregatesFilter<"UserChannelData"> | string
+    key?: StringWithAggregatesFilter<"UserChannelData"> | string
+    version?: StringWithAggregatesFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableWithAggregatesFilter<"UserChannelData">
+    value?: StringNullableWithAggregatesFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringWithAggregatesFilter<"UserChannelData"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UserChannelData"> | Date | string
   }
 
   export type ElementButtonLanguageWhereInput = {
@@ -16968,77 +18308,150 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ModalLanguage"> | Date | string
   }
 
-  export type ConfigWhereInput = {
-    AND?: ConfigWhereInput | ConfigWhereInput[]
-    OR?: ConfigWhereInput[]
-    NOT?: ConfigWhereInput | ConfigWhereInput[]
-    id?: StringFilter<"Config"> | string
-    key?: StringFilter<"Config"> | string
-    version?: StringFilter<"Config"> | string
-    type?: EnumE_DATA_TYPESFilter<"Config"> | $Enums.E_DATA_TYPES
-    object?: JsonNullableFilter<"Config">
-    value?: StringNullableFilter<"Config"> | string | null
-    values?: StringNullableListFilter<"Config">
-    createdAt?: DateTimeFilter<"Config"> | Date | string
-    updatedAt?: DateTimeFilter<"Config"> | Date | string
-  }
-
-  export type ConfigOrderByWithRelationInput = {
-    id?: SortOrder
-    key?: SortOrder
-    version?: SortOrder
-    type?: SortOrder
-    object?: SortOrder
-    value?: SortOrder
-    values?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type ConfigWhereUniqueInput = Prisma.AtLeast<{
+  export type ConfigCreateInput = {
     id?: string
-    key_version?: ConfigKeyVersionCompoundUniqueInput
-    AND?: ConfigWhereInput | ConfigWhereInput[]
-    OR?: ConfigWhereInput[]
-    NOT?: ConfigWhereInput | ConfigWhereInput[]
-    key?: StringFilter<"Config"> | string
-    version?: StringFilter<"Config"> | string
-    type?: EnumE_DATA_TYPESFilter<"Config"> | $Enums.E_DATA_TYPES
-    object?: JsonNullableFilter<"Config">
-    value?: StringNullableFilter<"Config"> | string | null
-    values?: StringNullableListFilter<"Config">
-    createdAt?: DateTimeFilter<"Config"> | Date | string
-    updatedAt?: DateTimeFilter<"Config"> | Date | string
-  }, "id" | "key_version">
-
-  export type ConfigOrderByWithAggregationInput = {
-    id?: SortOrder
-    key?: SortOrder
-    version?: SortOrder
-    type?: SortOrder
-    object?: SortOrder
-    value?: SortOrder
-    values?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: ConfigCountOrderByAggregateInput
-    _max?: ConfigMaxOrderByAggregateInput
-    _min?: ConfigMinOrderByAggregateInput
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: ConfigCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type ConfigScalarWhereWithAggregatesInput = {
-    AND?: ConfigScalarWhereWithAggregatesInput | ConfigScalarWhereWithAggregatesInput[]
-    OR?: ConfigScalarWhereWithAggregatesInput[]
-    NOT?: ConfigScalarWhereWithAggregatesInput | ConfigScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Config"> | string
-    key?: StringWithAggregatesFilter<"Config"> | string
-    version?: StringWithAggregatesFilter<"Config"> | string
-    type?: EnumE_DATA_TYPESWithAggregatesFilter<"Config"> | $Enums.E_DATA_TYPES
-    object?: JsonNullableWithAggregatesFilter<"Config">
-    value?: StringNullableWithAggregatesFilter<"Config"> | string | null
-    values?: StringNullableListFilter<"Config">
-    createdAt?: DateTimeWithAggregatesFilter<"Config"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Config"> | Date | string
+  export type ConfigUncheckedCreateInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: ConfigCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ConfigUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConfigUncheckedUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConfigCreateManyInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: ConfigCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ConfigUpdateManyMutationInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConfigUncheckedUpdateManyInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryCreateInput = {
+    id?: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CategoryUncheckedCreateInput = {
+    id?: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CategoryUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryUncheckedUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryCreateManyInput = {
+    id?: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CategoryUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryUncheckedUpdateManyInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildCreateInput = {
@@ -17114,10 +18527,11 @@ export namespace Prisma {
   export type GuildDataCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     guild: GuildCreateNestedOneWithoutDataInput
@@ -17126,10 +18540,11 @@ export namespace Prisma {
   export type GuildDataUncheckedCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17137,10 +18552,11 @@ export namespace Prisma {
 
   export type GuildDataUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guild?: GuildUpdateOneRequiredWithoutDataNestedInput
@@ -17148,10 +18564,11 @@ export namespace Prisma {
 
   export type GuildDataUncheckedUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17160,10 +18577,11 @@ export namespace Prisma {
   export type GuildDataCreateManyInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17171,87 +18589,23 @@ export namespace Prisma {
 
   export type GuildDataUpdateManyMutationInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildDataUncheckedUpdateManyInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryCreateInput = {
-    id?: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CategoryUncheckedCreateInput = {
-    id?: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CategoryUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryUncheckedUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryCreateManyInput = {
-    id?: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CategoryUpdateManyMutationInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryUncheckedUpdateManyInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17350,10 +18704,11 @@ export namespace Prisma {
   export type ChannelDataCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channel: ChannelCreateNestedOneWithoutDataInput
@@ -17362,10 +18717,11 @@ export namespace Prisma {
   export type ChannelDataUncheckedCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17373,10 +18729,11 @@ export namespace Prisma {
 
   export type ChannelDataUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channel?: ChannelUpdateOneRequiredWithoutDataNestedInput
@@ -17384,10 +18741,11 @@ export namespace Prisma {
 
   export type ChannelDataUncheckedUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17396,10 +18754,11 @@ export namespace Prisma {
   export type ChannelDataCreateManyInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17407,20 +18766,22 @@ export namespace Prisma {
 
   export type ChannelDataUpdateManyMutationInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelDataUncheckedUpdateManyInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17433,6 +18794,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     data?: UserDataCreateNestedManyWithoutUserInput
+    channelData?: UserChannelDataCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -17442,6 +18804,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     data?: UserDataUncheckedCreateNestedManyWithoutUserInput
+    channelData?: UserChannelDataUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -17450,6 +18813,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: UserDataUpdateManyWithoutUserNestedInput
+    channelData?: UserChannelDataUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -17458,6 +18822,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: UserDataUncheckedUpdateManyWithoutUserNestedInput
+    channelData?: UserChannelDataUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -17485,10 +18850,11 @@ export namespace Prisma {
   export type UserDataCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutDataInput
@@ -17497,10 +18863,11 @@ export namespace Prisma {
   export type UserDataUncheckedCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17508,10 +18875,11 @@ export namespace Prisma {
 
   export type UserDataUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutDataNestedInput
@@ -17519,10 +18887,11 @@ export namespace Prisma {
 
   export type UserDataUncheckedUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17531,10 +18900,11 @@ export namespace Prisma {
   export type UserDataCreateManyInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17542,20 +18912,115 @@ export namespace Prisma {
 
   export type UserDataUpdateManyMutationInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserDataUncheckedUpdateManyInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataCreateInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChannelDataInput
+  }
+
+  export type UserChannelDataUncheckedCreateInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataUpdateInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChannelDataNestedInput
+  }
+
+  export type UserChannelDataUncheckedUpdateInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataCreateManyInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataUpdateManyMutationInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateManyInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17915,86 +19380,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ConfigCreateInput = {
-    id?: string
-    key: string
-    version: string
-    type?: $Enums.E_DATA_TYPES
-    object?: InputJsonValue | null
-    value?: string | null
-    values?: ConfigCreatevaluesInput | string[]
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ConfigUncheckedCreateInput = {
-    id?: string
-    key: string
-    version: string
-    type?: $Enums.E_DATA_TYPES
-    object?: InputJsonValue | null
-    value?: string | null
-    values?: ConfigCreatevaluesInput | string[]
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ConfigUpdateInput = {
-    key?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
-    object?: InputJsonValue | InputJsonValue | null
-    value?: NullableStringFieldUpdateOperationsInput | string | null
-    values?: ConfigUpdatevaluesInput | string[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ConfigUncheckedUpdateInput = {
-    key?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
-    object?: InputJsonValue | InputJsonValue | null
-    value?: NullableStringFieldUpdateOperationsInput | string | null
-    values?: ConfigUpdatevaluesInput | string[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ConfigCreateManyInput = {
-    id?: string
-    key: string
-    version: string
-    type?: $Enums.E_DATA_TYPES
-    object?: InputJsonValue | null
-    value?: string | null
-    values?: ConfigCreatevaluesInput | string[]
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ConfigUpdateManyMutationInput = {
-    key?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
-    object?: InputJsonValue | InputJsonValue | null
-    value?: NullableStringFieldUpdateOperationsInput | string | null
-    values?: ConfigUpdatevaluesInput | string[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ConfigUncheckedUpdateManyInput = {
-    key?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
-    object?: InputJsonValue | InputJsonValue | null
-    value?: NullableStringFieldUpdateOperationsInput | string | null
-    values?: ConfigUpdatevaluesInput | string[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -18010,9 +19395,47 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type EnumE_DATA_TYPESFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
+  }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    isSet?: boolean
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    isSet?: boolean
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -18026,56 +19449,41 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-    isSet?: boolean
+  export type ConfigKeyVersionCompoundUniqueInput = {
+    key: string
+    version: string
   }
 
-  export type GuildDataListRelationFilter = {
-    every?: GuildDataWhereInput
-    some?: GuildDataWhereInput
-    none?: GuildDataWhereInput
-  }
-
-  export type GuildDataOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type GuildCountOrderByAggregateInput = {
+  export type ConfigCountOrderByAggregateInput = {
     id?: SortOrder
-    guildId?: SortOrder
-    name?: SortOrder
-    isInGuild?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    updatedAtInternal?: SortOrder
   }
 
-  export type GuildMaxOrderByAggregateInput = {
+  export type ConfigMaxOrderByAggregateInput = {
     id?: SortOrder
-    guildId?: SortOrder
-    name?: SortOrder
-    isInGuild?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    updatedAtInternal?: SortOrder
   }
 
-  export type GuildMinOrderByAggregateInput = {
+  export type ConfigMinOrderByAggregateInput = {
     id?: SortOrder
-    guildId?: SortOrder
-    name?: SortOrder
-    isInGuild?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    updatedAtInternal?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -18096,119 +19504,14 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type EnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel> | $Enums.E_DATA_TYPES
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-    isSet?: boolean
-  }
-  export type JsonNullableFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    isSet?: boolean
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-    isSet?: boolean
-  }
-
-  export type GuildRelationFilter = {
-    is?: GuildWhereInput
-    isNot?: GuildWhereInput
-  }
-
-  export type GuildDataOwnerIdKeyCompoundUniqueInput = {
-    ownerId: string
-    key: string
-  }
-
-  export type GuildDataCountOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    object?: SortOrder
-    values?: SortOrder
-    version?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type GuildDataMaxOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    version?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type GuildDataMinOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    version?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+    _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
+    _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -18243,6 +19546,20 @@ export namespace Prisma {
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
     isSet?: boolean
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -18308,6 +19625,132 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+    isSet?: boolean
+  }
+
+  export type GuildDataListRelationFilter = {
+    every?: GuildDataWhereInput
+    some?: GuildDataWhereInput
+    none?: GuildDataWhereInput
+  }
+
+  export type GuildDataOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type GuildCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    name?: SortOrder
+    isInGuild?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    updatedAtInternal?: SortOrder
+  }
+
+  export type GuildMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    name?: SortOrder
+    isInGuild?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    updatedAtInternal?: SortOrder
+  }
+
+  export type GuildMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    name?: SortOrder
+    isInGuild?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    updatedAtInternal?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type GuildRelationFilter = {
+    is?: GuildWhereInput
+    isNot?: GuildWhereInput
+  }
+
+  export type GuildDataOwnerIdKeyVersionCompoundUniqueInput = {
+    ownerId: string
+    key: string
+    version: string
+  }
+
+  export type GuildDataCountOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildDataMaxOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildDataMinOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel = never> = {
@@ -18389,18 +19832,20 @@ export namespace Prisma {
     isNot?: ChannelWhereInput
   }
 
-  export type ChannelDataOwnerIdKeyCompoundUniqueInput = {
+  export type ChannelDataOwnerIdKeyVersionCompoundUniqueInput = {
     ownerId: string
     key: string
+    version: string
   }
 
   export type ChannelDataCountOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18409,8 +19854,9 @@ export namespace Prisma {
   export type ChannelDataMaxOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18419,8 +19865,9 @@ export namespace Prisma {
   export type ChannelDataMinOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18432,7 +19879,17 @@ export namespace Prisma {
     none?: UserDataWhereInput
   }
 
+  export type UserChannelDataListRelationFilter = {
+    every?: UserChannelDataWhereInput
+    some?: UserChannelDataWhereInput
+    none?: UserChannelDataWhereInput
+  }
+
   export type UserDataOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserChannelDataOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18465,18 +19922,20 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type UserDataOwnerIdKeyCompoundUniqueInput = {
+  export type UserDataOwnerIdKeyVersionCompoundUniqueInput = {
     ownerId: string
     key: string
+    version: string
   }
 
   export type UserDataCountOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18485,8 +19944,9 @@ export namespace Prisma {
   export type UserDataMaxOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18495,8 +19955,54 @@ export namespace Prisma {
   export type UserDataMinOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserChannelDataOwnerIdChannelIdKeyVersionCompoundUniqueInput = {
+    ownerId: string
+    channelId: string
+    key: string
+    version: string
+  }
+
+  export type UserChannelDataCountOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserChannelDataMaxOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserChannelDataMinOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18746,58 +20252,38 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type EnumE_DATA_TYPESFilter<$PrismaModel = never> = {
-    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
+  export type ConfigCreatevaluesInput = {
+    set: string[]
   }
 
-  export type ConfigKeyVersionCompoundUniqueInput = {
-    key: string
-    version: string
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
   }
 
-  export type ConfigCountOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    version?: SortOrder
-    type?: SortOrder
-    object?: SortOrder
-    value?: SortOrder
-    values?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+  export type EnumE_DATA_TYPESFieldUpdateOperationsInput = {
+    set?: $Enums.E_DATA_TYPES
   }
 
-  export type ConfigMaxOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    version?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+    unset?: boolean
   }
 
-  export type ConfigMinOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    version?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+  export type ConfigUpdatevaluesInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
-  export type EnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    not?: NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel> | $Enums.E_DATA_TYPES
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
-    _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type GuildDataCreateNestedManyWithoutGuildInput = {
@@ -18814,16 +20300,8 @@ export namespace Prisma {
     connect?: GuildDataWhereUniqueInput | GuildDataWhereUniqueInput[]
   }
 
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
-  }
-
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -18874,25 +20352,12 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-    unset?: boolean
-  }
-
   export type GuildUpdateOneRequiredWithoutDataNestedInput = {
     create?: XOR<GuildCreateWithoutDataInput, GuildUncheckedCreateWithoutDataInput>
     connectOrCreate?: GuildCreateOrConnectWithoutDataInput
     upsert?: GuildUpsertWithoutDataInput
     connect?: GuildWhereUniqueInput
     update?: XOR<XOR<GuildUpdateToOneWithWhereWithoutDataInput, GuildUpdateWithoutDataInput>, GuildUncheckedUpdateWithoutDataInput>
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ChannelDataCreateNestedManyWithoutChannelInput = {
@@ -18971,11 +20436,25 @@ export namespace Prisma {
     connect?: UserDataWhereUniqueInput | UserDataWhereUniqueInput[]
   }
 
+  export type UserChannelDataCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+  }
+
   export type UserDataUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserDataCreateWithoutUserInput, UserDataUncheckedCreateWithoutUserInput> | UserDataCreateWithoutUserInput[] | UserDataUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserDataCreateOrConnectWithoutUserInput | UserDataCreateOrConnectWithoutUserInput[]
     createMany?: UserDataCreateManyUserInputEnvelope
     connect?: UserDataWhereUniqueInput | UserDataWhereUniqueInput[]
+  }
+
+  export type UserChannelDataUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
   }
 
   export type UserDataUpdateManyWithoutUserNestedInput = {
@@ -18992,6 +20471,20 @@ export namespace Prisma {
     deleteMany?: UserDataScalarWhereInput | UserDataScalarWhereInput[]
   }
 
+  export type UserChannelDataUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    upsert?: UserChannelDataUpsertWithWhereUniqueWithoutUserInput | UserChannelDataUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    set?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    disconnect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    delete?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    update?: UserChannelDataUpdateWithWhereUniqueWithoutUserInput | UserChannelDataUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserChannelDataUpdateManyWithWhereWithoutUserInput | UserChannelDataUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+  }
+
   export type UserDataUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserDataCreateWithoutUserInput, UserDataUncheckedCreateWithoutUserInput> | UserDataCreateWithoutUserInput[] | UserDataUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserDataCreateOrConnectWithoutUserInput | UserDataCreateOrConnectWithoutUserInput[]
@@ -19004,6 +20497,20 @@ export namespace Prisma {
     update?: UserDataUpdateWithWhereUniqueWithoutUserInput | UserDataUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserDataUpdateManyWithWhereWithoutUserInput | UserDataUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserDataScalarWhereInput | UserDataScalarWhereInput[]
+  }
+
+  export type UserChannelDataUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    upsert?: UserChannelDataUpsertWithWhereUniqueWithoutUserInput | UserChannelDataUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    set?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    disconnect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    delete?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    update?: UserChannelDataUpdateWithWhereUniqueWithoutUserInput | UserChannelDataUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserChannelDataUpdateManyWithWhereWithoutUserInput | UserChannelDataUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
   }
 
   export type UserDataCreatevaluesInput = {
@@ -19027,6 +20534,29 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutDataInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDataInput, UserUpdateWithoutDataInput>, UserUncheckedUpdateWithoutDataInput>
+  }
+
+  export type UserChannelDataCreatevaluesInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutChannelDataInput = {
+    create?: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChannelDataInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserChannelDataUpdatevaluesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutChannelDataNestedInput = {
+    create?: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChannelDataInput
+    upsert?: UserUpsertWithoutChannelDataInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChannelDataInput, UserUpdateWithoutChannelDataInput>, UserUncheckedUpdateWithoutChannelDataInput>
   }
 
   export type LanguageCreateEnvelopeInput = {
@@ -19130,19 +20660,6 @@ export namespace Prisma {
     update?: ModalContentLanguageUpdateInput
   }
 
-  export type ConfigCreatevaluesInput = {
-    set: string[]
-  }
-
-  export type EnumE_DATA_TYPESFieldUpdateOperationsInput = {
-    set?: $Enums.E_DATA_TYPES
-  }
-
-  export type ConfigUpdatevaluesInput = {
-    set?: string[]
-    push?: string | string[]
-  }
-
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -19157,9 +20674,26 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedEnumE_DATA_TYPESFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    isSet?: boolean
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -19171,18 +20705,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-    isSet?: boolean
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -19213,41 +20735,14 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel> | $Enums.E_DATA_TYPES
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-    isSet?: boolean
+    _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
+    _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
   }
 
   export type NestedIntNullableFilter<$PrismaModel = never> = {
@@ -19259,21 +20754,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-    isSet?: boolean
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
     isSet?: boolean
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> = 
@@ -19307,6 +20787,20 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -19332,6 +20826,46 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+    isSet?: boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+    isSet?: boolean
   }
 
   export type NestedEnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel = never> = {
@@ -19418,30 +20952,14 @@ export namespace Prisma {
     title?: StringFilter<"ModalContentLanguage"> | string
   }
 
-  export type NestedEnumE_DATA_TYPESFilter<$PrismaModel = never> = {
-    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
-  }
-
-  export type NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
-    not?: NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel> | $Enums.E_DATA_TYPES
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
-    _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
-  }
-
   export type GuildDataCreateWithoutGuildInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19449,10 +20967,11 @@ export namespace Prisma {
   export type GuildDataUncheckedCreateWithoutGuildInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19488,10 +21007,11 @@ export namespace Prisma {
     NOT?: GuildDataScalarWhereInput | GuildDataScalarWhereInput[]
     id?: StringFilter<"GuildData"> | string
     key?: StringFilter<"GuildData"> | string
-    type?: StringFilter<"GuildData"> | string
+    version?: StringFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"GuildData">
+    value?: StringNullableFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableFilter<"GuildData"> | string | null
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
@@ -19554,10 +21074,11 @@ export namespace Prisma {
   export type ChannelDataCreateWithoutChannelInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19565,10 +21086,11 @@ export namespace Prisma {
   export type ChannelDataUncheckedCreateWithoutChannelInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19604,10 +21126,11 @@ export namespace Prisma {
     NOT?: ChannelDataScalarWhereInput | ChannelDataScalarWhereInput[]
     id?: StringFilter<"ChannelData"> | string
     key?: StringFilter<"ChannelData"> | string
-    type?: StringFilter<"ChannelData"> | string
+    version?: StringFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"ChannelData">
+    value?: StringNullableFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableFilter<"ChannelData"> | string | null
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
@@ -19682,10 +21205,11 @@ export namespace Prisma {
   export type UserDataCreateWithoutUserInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19693,10 +21217,11 @@ export namespace Prisma {
   export type UserDataUncheckedCreateWithoutUserInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19708,6 +21233,41 @@ export namespace Prisma {
 
   export type UserDataCreateManyUserInputEnvelope = {
     data: UserDataCreateManyUserInput | UserDataCreateManyUserInput[]
+  }
+
+  export type UserChannelDataCreateWithoutUserInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataUncheckedCreateWithoutUserInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataCreateOrConnectWithoutUserInput = {
+    where: UserChannelDataWhereUniqueInput
+    create: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserChannelDataCreateManyUserInputEnvelope = {
+    data: UserChannelDataCreateManyUserInput | UserChannelDataCreateManyUserInput[]
   }
 
   export type UserDataUpsertWithWhereUniqueWithoutUserInput = {
@@ -19732,13 +21292,47 @@ export namespace Prisma {
     NOT?: UserDataScalarWhereInput | UserDataScalarWhereInput[]
     id?: StringFilter<"UserData"> | string
     key?: StringFilter<"UserData"> | string
-    type?: StringFilter<"UserData"> | string
+    version?: StringFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"UserData">
+    value?: StringNullableFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableFilter<"UserData"> | string | null
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
+  }
+
+  export type UserChannelDataUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserChannelDataWhereUniqueInput
+    update: XOR<UserChannelDataUpdateWithoutUserInput, UserChannelDataUncheckedUpdateWithoutUserInput>
+    create: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserChannelDataUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserChannelDataWhereUniqueInput
+    data: XOR<UserChannelDataUpdateWithoutUserInput, UserChannelDataUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserChannelDataUpdateManyWithWhereWithoutUserInput = {
+    where: UserChannelDataScalarWhereInput
+    data: XOR<UserChannelDataUpdateManyMutationInput, UserChannelDataUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserChannelDataScalarWhereInput = {
+    AND?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+    OR?: UserChannelDataScalarWhereInput[]
+    NOT?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+    id?: StringFilter<"UserChannelData"> | string
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
   }
 
   export type UserCreateWithoutDataInput = {
@@ -19747,6 +21341,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    channelData?: UserChannelDataCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDataInput = {
@@ -19755,6 +21350,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    channelData?: UserChannelDataUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDataInput = {
@@ -19778,6 +21374,7 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelData?: UserChannelDataUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDataInput = {
@@ -19785,6 +21382,57 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelData?: UserChannelDataUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutChannelDataInput = {
+    id?: string
+    userId: string
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    data?: UserDataCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutChannelDataInput = {
+    id?: string
+    userId: string
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    data?: UserDataUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutChannelDataInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+  }
+
+  export type UserUpsertWithoutChannelDataInput = {
+    update: XOR<UserUpdateWithoutChannelDataInput, UserUncheckedUpdateWithoutChannelDataInput>
+    create: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutChannelDataInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutChannelDataInput, UserUncheckedUpdateWithoutChannelDataInput>
+  }
+
+  export type UserUpdateWithoutChannelDataInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    data?: UserDataUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutChannelDataInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    data?: UserDataUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LanguageUpdateInput = {
@@ -19841,40 +21489,44 @@ export namespace Prisma {
   export type GuildDataCreateManyGuildInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type GuildDataUpdateWithoutGuildInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildDataUncheckedUpdateWithoutGuildInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildDataUncheckedUpdateManyWithoutGuildInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19882,40 +21534,44 @@ export namespace Prisma {
   export type ChannelDataCreateManyChannelInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ChannelDataUpdateWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelDataUncheckedUpdateWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelDataUncheckedUpdateManyWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19923,40 +21579,93 @@ export namespace Prisma {
   export type UserDataCreateManyUserInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataCreateManyUserInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type UserDataUpdateWithoutUserInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserDataUncheckedUpdateWithoutUserInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserDataUncheckedUpdateManyWithoutUserInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUpdateWithoutUserInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateWithoutUserInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateManyWithoutUserInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20038,6 +21747,14 @@ export namespace Prisma {
      */
     export type ModalContentLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ModalContentLanguageDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use ConfigDefaultArgs instead
+     */
+    export type ConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ConfigDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use CategoryDefaultArgs instead
+     */
+    export type CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CategoryDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use GuildDefaultArgs instead
      */
     export type GuildArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildDefaultArgs<ExtArgs>
@@ -20045,10 +21762,6 @@ export namespace Prisma {
      * @deprecated Use GuildDataDefaultArgs instead
      */
     export type GuildDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildDataDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use CategoryDefaultArgs instead
-     */
-    export type CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CategoryDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ChannelDefaultArgs instead
      */
@@ -20065,6 +21778,10 @@ export namespace Prisma {
      * @deprecated Use UserDataDefaultArgs instead
      */
     export type UserDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDataDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use UserChannelDataDefaultArgs instead
+     */
+    export type UserChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserChannelDataDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ElementButtonLanguageDefaultArgs instead
      */
@@ -20089,10 +21806,6 @@ export namespace Prisma {
      * @deprecated Use ModalLanguageDefaultArgs instead
      */
     export type ModalLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ModalLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ConfigDefaultArgs instead
-     */
-    export type ConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ConfigDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

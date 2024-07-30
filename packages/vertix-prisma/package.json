@@ -20,6 +20,10 @@
         "./._bot-client-internal": {
             "require": "./src/prisma-bot-client/index.js",
             "types": "./src/prisma-bot-client/index.d.ts"
+        },
+        "./._bot-client-library": {
+            "require": "./src/prisma-bot-client/runtime/library.js",
+            "types": "./src/prisma-bot-client/runtime/library.d.ts"
         }
     }
 }

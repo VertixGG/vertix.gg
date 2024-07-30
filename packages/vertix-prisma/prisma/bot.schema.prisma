@@ -39,6 +39,7 @@ model Config {
   // ---
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+
   // ---
   @@unique([key, version])
 }
@@ -72,7 +73,7 @@ model Guild {
 }
 
 model GuildData {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   key       String
   version   String
@@ -82,11 +83,11 @@ model GuildData {
   value     String?
   values    String[]
   // ---
-  ownerId   String   @db.ObjectId
-  guild     Guild    @relation("GuildData", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String       @db.ObjectId
+  guild     Guild        @relation("GuildData", fields: [ownerId], references: [id], onDelete: Cascade)
   // ---
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
 }
@@ -112,7 +113,7 @@ model Channel {
 }
 
 model ChannelData {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   key       String
   version   String
@@ -122,29 +123,30 @@ model ChannelData {
   value     String?
   values    String[]
   // ---
-  ownerId   String   @db.ObjectId
-  channel   Channel  @relation("ChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String       @db.ObjectId
+  channel   Channel      @relation("ChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
   // ---
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
 }
 
 model User {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  userId    String     @unique
-  username  String?
+  userId      String            @unique
+  username    String?
   // ---
-  data      UserData[] @relation("UserData")
+  data        UserData[]        @relation("UserData")
+  channelData UserChannelData[] @relation("UserChannelData")
   // ---
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
 
 model UserData {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   key       String
   version   String
@@ -154,13 +156,35 @@ model UserData {
   value     String?
   values    String[]
   // ---
-  ownerId   String   @db.ObjectId
-  user      User     @relation("UserData", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String       @db.ObjectId
+  user      User         @relation("UserData", fields: [ownerId], references: [id], onDelete: Cascade)
   // ---
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
+}
+
+model UserChannelData {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  channelId String
+  // ---
+  key       String
+  version   String
+  type      E_DATA_TYPES @default(string)
+  // ---
+  object    Json?
+  value     String?
+  values    String[]
+  // ---
+  ownerId   String       @db.ObjectId
+  user      User         @relation("UserChannelData", fields: [ownerId], references: [id], onDelete: Cascade)
+  // ----
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([ownerId, channelId, key, version])
 }
 
 // Language.

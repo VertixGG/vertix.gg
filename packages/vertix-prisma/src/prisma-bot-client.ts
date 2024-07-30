@@ -9,6 +9,7 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import type * as PrismaTypes from "@vertix.gg/prisma/._bot-client-internal";
+import type * as PrismaLibrary from "@vertix.gg/prisma/._bot-client-library";
 
 const require = module.createRequire( import.meta.url );
 
@@ -137,3 +138,4 @@ export class PrismaBotClient extends ObjectBase {
 global.PrismaBot = Prisma;
 
 export { Prisma as PrismaBot };
+export type { PrismaLibrary as PrismaBotLibrary };

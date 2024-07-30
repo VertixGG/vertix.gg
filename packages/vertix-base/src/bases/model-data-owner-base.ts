@@ -4,30 +4,24 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
-import type { TVersionType , TDataVersioningDefaultUniqueKeys } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
-import type { TDataType, TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+import type { TWithOptionalProps } from "@vertix.gg/utils/src/common-types";
 
-// TODO: Duplicate code, should be moved to a shared location
-interface TBaseModel {
-    create( ... args: any[] ): any;
-    create<T>( ... args: any[] ): Promise<T>;
-    findUnique( ... args: any[] ): any,
-}
+import type {
+    TVersionType,
+    TDataVersioningDefaultUniqueKeys
+} from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { TDataType, TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
 interface TDataOwnerDefaultUniqueKeys extends TDataVersioningDefaultUniqueKeys {
     ownerId: string;
 }
 
-interface TDataOwnerUniqueKeysVersionOptional extends Omit<TDataOwnerDefaultUniqueKeys, "version"> {
-    version?: string;
-}
-
-interface TDataOwnerUniqueKeysWithoutOwner extends Omit<TDataOwnerUniqueKeysVersionOptional, "ownerId"> {
-}
 export abstract class DataOwnerModelBase<
-    TModel extends TBaseModel,
-    TDataModel extends TBaseModel,
+    TModel extends TBaseModelStub,
+    TDataModel extends TBaseModelStub,
     TDataModelResult extends TDefaultResult = TDefaultResult,
+    TDataKeys extends TDataOwnerDefaultUniqueKeys = TDataOwnerDefaultUniqueKeys
 > extends InitializeBase {
     private dataVersioningModel;
 
@@ -50,7 +44,7 @@ export abstract class DataOwnerModelBase<
         const DataModelVersioning = class extends DataVersioningModelFactory<
             TDataModelResult,
             TDataModel,
-            TDataOwnerDefaultUniqueKeys
+            TDataKeys
         >( dataModel, dataModelOptions ) {
 
             protected getUniqueKeyName() {
@@ -69,39 +63,95 @@ export abstract class DataOwnerModelBase<
 
     protected abstract getDataUniqueKeyName(): string;
 
-    protected async create<T extends TDataType>( keys: TDataOwnerUniqueKeysVersionOptional, value: T ) {
-        return this.dataVersioningModel.create<T>( { ... keys, version: this.getDataVersion() }, value );
+    protected async create<T extends TDataType>( keys: TWithOptionalProps<TDataKeys, "version">, value: T ) {
+        return this.dataVersioningModel.create<T>( this.normalizeKeys( keys ), value );
+    }
+
+    protected async update<T extends TDataType>( keys: TWithOptionalProps<TDataKeys, "version">, value: T ) {
+        return this.dataVersioningModel.update<T>( this.normalizeKeys( keys ), value );
+    }
+
+    protected async upsert<T extends TDataType>( keys: TWithOptionalProps<TDataKeys, "version">, value: T ) {
+        return this.dataVersioningModel.upsert<T>( this.normalizeKeys( keys ), value );
+    }
+
+    protected async get<T extends TDataType>( keys: TWithOptionalProps<TDataKeys, "version">, cache = true ) {
+        return await this.dataVersioningModel.get( this.normalizeKeys( keys ), { cache } ) as T;
     }
 
     protected async createByOwner<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
-        keys: TDataOwnerUniqueKeysWithoutOwner,
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
         value: T
+    ) {
+        const keysWithOwner = await this.getKeysWithOwner( keys, args, this.createByOwner );
+        if ( ! keysWithOwner ) return null;
+
+        return this.create<T>( keysWithOwner, value );
+    }
+
+    protected async updateByOwner<T extends TDataType>(
+        args: Parameters<TModel["findUnique"]>[0],
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
+        value: T
+    ) {
+        const keysWithOwner = await this.getKeysWithOwner( keys, args, this.updateByOwner );
+        if ( ! keysWithOwner ) return null;
+
+        return this.update<T>( keysWithOwner, value );
+    }
+
+    protected async upsertByOwner<T extends TDataType>(
+        args: Parameters<TModel["findUnique"]>[0],
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
+        value: T
+    ) {
+        const keysWithOwner = await this.getKeysWithOwner( keys, args, this.upsertByOwner );
+        if ( ! keysWithOwner ) return null;
+
+        return this.upsert<T>( keysWithOwner, value );
+    }
+
+    protected async getByOwner<T extends TDataType>(
+        args: Parameters<TModel["findUnique"]>[0],
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
+        cache = true
+    ) {
+        const keysWithOwner = await this.getKeysWithOwner( keys, args, this.getByOwner );
+        if ( ! keysWithOwner ) return null;
+
+        return this.get<T>( keysWithOwner, cache );
+    }
+
+    protected async getKeysWithOwner(
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
+        args: Parameters<TModel["findUnique"]>[0],
+        method: Function
     ) {
         const owner = await this.getModel().findUnique( args );
 
         if ( ! owner ) {
-            this.logger.error( this.createByOwner, `Owner not found: ${ util.inspect( args ) }` );
+            this.logger.error( method, `Owner not found: ${ util.inspect( args ) }` );
             return null;
         }
 
-        return this.create<T>( { ... keys, ownerId: owner.id }, value );
+        return { ... keys, ... this.getOwnerKeys( owner ) } as TWithOptionalProps<TDataKeys, "version">;
     }
 
-    protected async get( keys: TDataOwnerUniqueKeysVersionOptional, cache = true ) {
-        keys.version = keys.version ?? this.getDataVersion();
+    protected getOwnerKeys( context: any ): object {
+        return {
+            ownerId: context.id,
+        };
+    };
 
-        return this.dataVersioningModel.get( keys as TDataOwnerDefaultUniqueKeys, { cache } );
-    }
+    private normalizeKeys( keys: TWithOptionalProps<TDataKeys, "version"> ): TDataKeys {
+        keys = {
+            ...keys,
 
-    protected async getByOwner( args: Parameters<TModel["findUnique"]>[0], keys: TDataOwnerUniqueKeysWithoutOwner, cache = true ) {
-        const owner = await this.getModel().findUnique( args );
+            version: keys.version ?? this.getDataVersion(),
+            key: `${this.getName()}/${keys.key}`
+        };
 
-        if ( ! owner ) {
-            this.logger.error( this.getByOwner, `Owner not found: ${ util.inspect( args ) }` );
-            return null;
-        }
-
-        return this.get( { ... keys, ownerId: owner.id }, cache );
-    }
+        return keys as TDataKeys;
+    };
 }

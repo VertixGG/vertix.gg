@@ -113,6 +113,13 @@ export abstract class UIAdapterExecutionStepsBase<
             this.getCurrentExecutionStep( interaction )
         );
 
+        /**
+         * Conditions are used to determine the current step to execute.
+         * If condition matches, then the step is executed.
+         * The use of conditions is optional, and the use case is only in Dynamic Adapters.
+         *
+         * TODO: Remove `getConditions` - This is not intuitive and should be replaced with a better solution.
+         */
         if ( executionSteps?.at( 0 )?.getConditions ) {
             for ( const step of executionSteps ) {
                 if ( ! step.getConditions ) {

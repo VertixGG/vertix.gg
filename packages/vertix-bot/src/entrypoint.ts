@@ -42,7 +42,7 @@ async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
         import("@vertix.gg/gui/src/ui-service"),
         import("@vertix.gg/gui/src/ui-hash-service"),
-        import("@vertix.gg/gui/src/ui-versioning-adapter-service"),
+        import("@vertix.gg/gui/src/ui-adapter-versioning-service"),
     ] );
 
     uiServices.forEach( service => {
@@ -142,8 +142,8 @@ async function registerUIVersionStrategies() {
 
     const versionStrategies = await Promise.all( [
             await import("@vertix.gg/base/src/version-strategies/ui-guild-version-strategy"),
-        ]),
-        uiVersioningAdapterService = ServiceLocator.$.get<UIVersioningAdapterService>( "VertixGUI/UIVersioningAdapterService" );
+        ] ),
+        uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>( "VertixGUI/UIVersioningAdapterService" );
 
     uiVersioningAdapterService.registerVersions( [ 2, 3 ] );
 

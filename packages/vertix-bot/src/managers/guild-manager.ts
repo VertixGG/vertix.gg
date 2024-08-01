@@ -12,7 +12,7 @@ import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-message-service";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
-import type { UIVersioningAdapterService } from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 import type { Client, Guild, TextChannel, User } from "discord.js";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
@@ -20,7 +20,7 @@ const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
 export class GuildManager extends InitializeBase {
     private static instance: GuildManager;
 
-    private uiAdapterVersioningService: UIVersioningAdapterService;
+    private uiAdapterVersioningService: UIAdapterVersioningService;
 
     private dmService: DirectMessageService;
 

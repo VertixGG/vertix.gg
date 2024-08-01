@@ -4,7 +4,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type { Client, CommandInteraction } from "discord.js";
 

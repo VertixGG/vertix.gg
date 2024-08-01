@@ -34,7 +34,7 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 import type { Client } from "discord.js";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
-import type { UIVersioningAdapterService } from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 

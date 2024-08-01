@@ -392,6 +392,23 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
+    public async getConnectVisibilityState( channel: VoiceChannel ) {
+        let result;
+
+        const state = await this.getChannelState( channel ),
+            visibilityState = await this.getChannelVisibilityState( channel );
+
+        if ( "hidden" === visibilityState ) {
+            result = "hidden";
+        } else if ( "private" === state ) {
+            result = "private";
+        } else {
+            result = "public";
+        }
+
+        return result;
+    }
+
     public async createDynamicChannel( args: IDynamicChannelCreateArgs ) {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
@@ -725,7 +742,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 );
         }
 
-        await editStatePromise?.catch( ( error ) => this.logger.error( this.editChannelState, "", error ) ).then( () => result.code = DynamicEditChannelStateResultCode.Success );
+        await editStatePromise
+            ?.catch( ( error ) => this.logger.error( this.editChannelState, "", error ) )
+            .then( () => result.code = DynamicEditChannelStateResultCode.Success );
 
         await this.log( initiator, channel, this.editChannelState, newState, { result } );
 
@@ -814,6 +833,82 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
+    public async editChannelConnectVisibilityState( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, newState: ChannelVisibilityState | ChannelState ) {
+        let state: ChannelState = "unknown",
+            visibilityState: ChannelVisibilityState = "unknown";
+
+        const roles = await this.getVerifiedRoles( channel );
+
+        switch ( newState ) {
+            case "public":
+            case "private":
+                state = newState;
+                visibilityState = "shown";
+
+                break;
+            case "shown":
+            case "hidden":
+                state = "public";
+                visibilityState = newState;
+
+                break;
+            default:
+                this.logger.error( this.editChannelConnectVisibilityState,
+                    `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
+                    `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
+                );
+        }
+
+        // Check if state is already the same
+        const currentState = await this.getChannelState( channel ),
+            currentVisibilityState = await this.getChannelVisibilityState( channel );
+
+        if ( currentState === state && currentVisibilityState === visibilityState ) {
+            return;
+        }
+
+        await PermissionsManager.$.ensureChannelBoConnectivityPermissions( channel );
+
+        const editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+            Connect: state === "public",
+            ViewChannel: visibilityState === "shown",
+        });
+
+        await editStatePromise.catch( ( error ) => this.logger.error( this.editChannelConnectVisibilityState, "", error ) );
+
+        // TODO: Check logs
+        await this.log( initiator, channel, this.editChannelConnectVisibilityState, newState, {} );
+
+        await UserDataManager.$.setMasterDataEnsheathed( initiator as Interaction, channel, {
+            [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: state,
+            [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: visibilityState,
+        } );
+
+        this.editPrimaryMessageDebounce( channel );
+    }
+
+    public async editChannelRegion( newRegion: string, channel: VoiceChannel ) {
+        let region: string | null = newRegion;
+
+        const oldRegion = channel.rtcRegion;
+
+        if ( oldRegion === newRegion ) {
+            return;
+        }
+
+        if ( "auto" === region ) {
+            region = null;
+        }
+
+        await channel.setRTCRegion( region ).catch( ( error ) => {
+            this.logger.error( this.editChannelRegion, "", error );
+        } );
+
+        // TODO: Add Log and db save.
+
+        this.editPrimaryMessageDebounce( channel );
+    }
+
     public async editChannelOwner( newOwnerId: string, previousOwnerId: string, channel: VoiceChannel, from: "claim" | "transfer" ) {
         const logError = () => {
             this.logger.error( this.editChannelOwner,
@@ -880,12 +975,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( ! message ) {
             this.logger.warn( this.editPrimaryMessage,
-                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
-            return;
-        }
-
-        if ( ! this.isPrimaryMessage( message ) ) {
-            this.logger.error( this.editPrimaryMessage,
                 `Guild id: '${ channel.guildId }' - Cannot find primary message in channel id: '${ channel.id }'` );
             return;
         }

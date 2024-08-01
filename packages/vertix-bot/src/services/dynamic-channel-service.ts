@@ -54,7 +54,7 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type UIVersioningAdapterService from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type { Guild ,
     APIPartialChannel,
@@ -100,7 +100,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
     channelService: ChannelService,
     uiService: UIService,
-    uiVersioningAdapterService: UIVersioningAdapterService,
+    uiVersioningAdapterService: UIAdapterVersioningService,
 }> {
     private readonly debugger: Debugger;
 

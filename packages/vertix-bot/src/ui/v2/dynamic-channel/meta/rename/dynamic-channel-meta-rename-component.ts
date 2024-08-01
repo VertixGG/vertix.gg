@@ -36,7 +36,7 @@ export class DynamicChannelMetaRenameComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         // By default, its handles only the modal.
         return null;
     }

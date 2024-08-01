@@ -43,7 +43,7 @@ export class UIModuleV2 extends UIModuleBase {
 
             dynamicChannelClaimButtonId:
                 DynamicChannelElementsGroup.getByName( "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton" )!
-                    .getId(),
+                    .getId().toString(),
 
             steps: {
                 claimResultAddedSuccessfully: "Vertix/UI-V2/ClaimResultAddedSuccessfully",

@@ -27,11 +27,11 @@ export class WelcomeComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup() {
         return "Vertix/UI-V2/WelcomeElementsGroup";
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return "Vertix/UI-V2/WelcomeEmbed";
     }
 }

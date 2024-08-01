@@ -52,11 +52,12 @@
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
+        "discord-api-types": "latest",
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",
         "ts-mockito": "latest",
-        "tsx": "^4.16.2",
+        "tsx": "^4.16.4",
         "typescript": "latest"
     },
     "packageManager": "bun@1.1.18"

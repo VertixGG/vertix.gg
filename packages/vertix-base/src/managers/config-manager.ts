@@ -20,7 +20,7 @@ export class ConfigManager extends SingletonBase {
         super();
     }
 
-    public async register<T extends ConfigBase<ConfigBaseInterface>>( Config: new( ... args: any[] ) => T ) {
+    public async register<T extends ConfigBase<ConfigBaseInterface>>( Config: new ( ...args: any []) => T ) {
         const config = new Config( false ),
             key = this.generateKey( config );
 

@@ -31,6 +31,8 @@ import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
+import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
+
 import type { Client } from "discord.js";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
@@ -126,13 +128,13 @@ async function registerConfigs() {
         import("@vertix.gg/bot/src/config/master-channel-config")
     ] );
 
-    configs.forEach( config => {
+    await Promise.all( configs.map( async config => {
         GlobalLogger.$.debug( registerConfigs, `Registering config: '${ config.default.getName() }'` );
 
-        ConfigManager.$.register( config.default );
+        await ConfigManager.$.register<ConfigBase<ConfigBaseInterface>>( config.default );
 
         GlobalLogger.$.debug( registerConfigs, `Config registered: '${ config.default.getName() }'` );
-    } );
+    } ) );
 
     GlobalLogger.$.info( registerConfigs, "Configs are registered" );
 }

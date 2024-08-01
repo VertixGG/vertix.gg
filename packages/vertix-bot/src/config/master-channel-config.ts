@@ -33,7 +33,7 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
             masterChannelData: {
                 dynamicChannelAutoSave: false,
 
-                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
+                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId().toString() ),
 
                 dynamicChannelLogsChannelId: null,
 

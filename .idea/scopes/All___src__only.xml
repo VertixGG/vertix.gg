@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="All (.src) only" pattern="file[vertix-bot]:packages/vertix-base/src//*||file[vertix-bot]:packages/vertix-bot/src//*||file[vertix-bot]:packages/vertix-gui/src//*||file[vertix-bot]:packages/vertix-prisma/src//*||file[vertix-bot]:packages/vertix-test-utils/src//*||file[vertix-bot]:packages/vertix-utils/src//*" />
+</component>

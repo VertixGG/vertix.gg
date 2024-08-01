@@ -347,12 +347,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 const result = await ChannelDataManager.$.getSettingsData(
                     channelDB.id,
                     DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
-                    true );
+                    true
+                );
 
                 if ( result?.object?.[ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ] ) {
                     message = channel.messages.cache.get( result.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ] );
 
-                    if ( ! this.isPrimaryMessage( message ) ) {
+                    if ( ! message || ! this.isPrimaryMessage( message ) ) {
                         source = "fetch";
                         message = await channel.messages.fetch( result.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ] );
                     }

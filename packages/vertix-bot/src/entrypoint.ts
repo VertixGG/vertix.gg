@@ -81,11 +81,14 @@ async function registerServices() {
 }
 
 async function registerUIAdapters() {
-    // Register UI adapters
-    const uiModuleV2 = await import("@vertix.gg/bot/src/ui/v2/ui-module"),
-        uiGeneralModule = await import( "@vertix.gg/bot/src/ui/general/ui-module" ),
-        uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+    const uiModules = await Promise.all( [
+        import("@vertix.gg/bot/src/ui/general/ui-module" ),
+        import("@vertix.gg/bot/src/ui/v2/ui-module"),
+    ] );
 
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+
+    // TODO: Current wizard buttons for V3, are unused, those should become module specific.
     const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/regenerate/ui-regenerate-button" ),
         { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-back-button" ),
         { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-next-button" ),
@@ -108,8 +111,14 @@ async function registerUIAdapters() {
 
     await uiService.registerInternalAdapters();
 
-    await uiService.registerModule( uiModuleV2.default );
-    await uiService.registerModule( uiGeneralModule.default );
+    uiModules.forEach( module => {
+        GlobalLogger.$.debug( registerUIAdapters, `Registering UI module: '${ module.default.getName() }'` );
+
+        uiService.registerModule( module.default );
+
+        GlobalLogger.$.debug( registerUIAdapters, `UI module registered: '${ module.default.getName() }'` );
+    } );
+
 }
 
 async function registerUILanguageManager() {

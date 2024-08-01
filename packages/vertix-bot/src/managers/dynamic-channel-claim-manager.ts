@@ -59,7 +59,7 @@ interface TDynamicChannelClaimManagerRegisterArgs {
     steps: TDynamicChannelClaimAdapterSteps,
     entities: TDynamicChannelClaimAdapterEntities,
 
-    dynamicChannelClaimButtonId: number,
+    dynamicChannelClaimButtonId: string,
 
     ownershipTimeout?: number,
     ownershipTimerInterval?: number,
@@ -133,7 +133,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         private adapters: TDynamicChannelClaimAdapters,
         private steps: TDynamicChannelClaimAdapterSteps,
         private entities: TDynamicChannelClaimAdapterEntities,
-        private dynamicChannelClaimButtonId: number,
+        private dynamicChannelClaimButtonId: string,
         private ownershipTimeout: number,
         private ownershipTimerInterval: number,
     ) {

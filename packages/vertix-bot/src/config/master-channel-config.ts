@@ -33,7 +33,7 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
             masterChannelData: {
                 dynamicChannelAutoSave: false,
 
-                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId().toString() ),
+                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
 
                 dynamicChannelLogsChannelId: null,
 
@@ -51,11 +51,6 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
                 dynamicChannelStatePrivate: "🔴",
                 dynamicChannelStatePublic: "🟢",
-
-                // dynamicChannelPrimaryMessageTitle: "༄ Manage your Dynamic Channel",
-                // dynamicChannelPrimaryMessageDescription: "Embrace the responsibility of overseeing your dynamic channel," +
-                //     "diligently customizing it according to your discerning preferences.\n\n" +
-                //     "Please be advised that the privilege to make alterations is vested solely of the channel owner.",
 
                 masterChannelMaximumFreeChannels: 6,
                 masterChannelName: "➕ New Channel",

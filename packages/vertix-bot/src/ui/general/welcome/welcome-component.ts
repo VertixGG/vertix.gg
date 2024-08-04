@@ -1,12 +1,12 @@
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { WelcomeElementsGroup } from "@vertix.gg/bot/src/ui/v2/welcome/welcome-elements-group";
-import { WelcomeEmbed } from "@vertix.gg/bot/src/ui/v2/welcome/welcome-embed";
+import { WelcomeElementsGroup } from "@vertix.gg/bot/src/ui/general/welcome/welcome-elements-group";
+import { WelcomeEmbed } from "@vertix.gg/bot/src/ui/general/welcome/welcome-embed";
 
 export class WelcomeComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/WelcomeComponent";
+        return "VertixBot/UI-General/WelcomeComponent";
     }
 
     public static getInstanceType() {
@@ -28,10 +28,10 @@ export class WelcomeComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V2/WelcomeElementsGroup";
+        return "VertixBot/UI-General/WelcomeElementsGroup";
     }
 
     public static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V2/WelcomeEmbed";
+        return "VertixBot/UI-General/WelcomeEmbed";
     }
 }

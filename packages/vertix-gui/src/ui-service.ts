@@ -183,7 +183,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
-    public async registerModule( Module: TModuleConstructor ) {
+    public async registerModule<T extends TModuleConstructor>( Module: T ) {
         Module.validate();
 
         const adapters = Module.getAdapters();

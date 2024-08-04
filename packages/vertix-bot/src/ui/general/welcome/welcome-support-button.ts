@@ -4,7 +4,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class WelcomeSupportButton extends UIElementButtonUrlBase {
     public static getName() {
-        return "Vertix/UI-V3/WelcomeSupportButton";
+        return "VertixBot/UI-General/WelcomeSupportButton";
     }
 
     public static getInstanceType() {

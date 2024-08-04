@@ -1,8 +1,12 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { ChannelType, PermissionFlagsBits, PermissionsBitField } from "discord.js";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import { WelcomeComponent } from "@vertix.gg/bot/src/ui/v3/welcome/welcome-component";
+import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
+
+import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type { BaseMessageOptions, VoiceChannel } from "discord.js";
 
@@ -11,7 +15,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 
 export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
     public static getName() {
-        return "Vertix/UI-V3/WelcomeAdapter";
+        return "VertixBot/UI-General/WelcomeAdapter";
     }
 
     public static getComponent() {
@@ -49,8 +53,12 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
     }
 
     protected onEntityMap() {
-        this.bindButton( "Vertix/UI-V3/WelcomeSetupButton", async ( interaction ) => {
-            await this.uiAdapterService.get( "Vertix/UI-V3/SetupAdapter" )?.ephemeral( interaction );
+        this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async ( interaction ) => {
+            const uiService =
+                    ServiceLocator.$.get<UIAdapterVersioningService>( "VertixGUI/UIVersioningAdapterService" ),
+                uiAdapter = await uiService.get( "Vertix/SetupAdapter", interaction.guild );
+
+            await uiAdapter?.ephemeral( interaction );
 
             const argsId = this.getArgsManager().getArgsId( interaction );
 

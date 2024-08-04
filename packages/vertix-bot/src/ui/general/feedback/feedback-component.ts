@@ -11,7 +11,7 @@ import { FeedbackModal } from "@vertix.gg/bot/src/ui/general/feedback/feedback-m
 import { FeedbackReportModal } from "@vertix.gg/bot/src/ui/general/feedback/feedback-report-modal";
 import { FeedbackInviteDeveloperModal } from "@vertix.gg/bot/src/ui/general/feedback/feedback-invite-developer-modal";
 
-import { WelcomeSupportButton } from "@vertix.gg/bot/src/ui/v2/welcome/welcome-support-button";
+import { WelcomeSupportButton } from "@vertix.gg/bot/src/ui/general/welcome/welcome-support-button";
 
 export class FeedbackComponent extends UIComponentBase {
     public static getName() {

@@ -142,19 +142,19 @@
                 }
             },
             {
-                "name": "Vertix/UI-V2/WelcomeInviteButton",
+                "name": "VertixBot/UI-General/WelcomeInviteButton",
                 "content": {
                     "label": "Προσκάλεσε το Vertix"
                 }
             },
             {
-                "name": "Vertix/UI-V2/WelcomeSetupButton",
+                "name": "VertixBot/UI-General/WelcomeSetupButton",
                 "content": {
                     "label": "Εγκατάσταση"
                 }
             },
             {
-                "name": "Vertix/UI-V2/WelcomeSupportButton",
+                "name": "VertixBot/UI-General/WelcomeSupportButton",
                 "content": {
                     "label": "Διακομιστής (Server) Κοινότητας"
                 }
@@ -1203,7 +1203,7 @@
             }
         },
         {
-            "name": "Vertix/UI-V2/WelcomeEmbed",
+            "name": "VertixBot/UI-General/WelcomeEmbed",
             "content": {
                 "title": "༄ Το Vertix έφτασε, ας ξεκινήσουμε!",
                 "description": "Καλώς ήρθες στο Vertix, μια εξαιρετική προσθήκη στον διακομιστή σου!\nΑς συνεργαστούμε για να κάνουμε τον διακομιστή σου ακόμη καλύτερο.\n\n**Εγκατάσταση Bot**\n- Γράψε `/setup` ή πάτησε το `(🛠 Setup)` κουμπί.\n- Πάτα το `(➕ Create Master Channel)`\n- Ακολούθα τις οδηγίες.\n\nΕξακολουθείς να μην είσαι σίγουρος? Δες τις οδηγίες [βήμα προς βήμα](https://vertix.gg/posts/how-to-setup) .\n\nΠάντα μπορείς να επεξεργαστείς της διαμορφώσεις χρησιμοποιόντας την εντολή `/setup`.\n\nΕάν χρειάζεσαι βοήθεια ή έχεις οποιαδήποτε πρόταση, είσαι ευπρόσδεκτος να συνδεθείς στον επίσημο διακομιστή της κοινότητας του Vertix! Είμαστε πολύ χαρούμενοι να σε βοηθήσουμε και να ακούσουμε τις προτάσεις σου.\n\nΣυνδέσου σε εμάς: https://discord.gg/dEwKeQefUU"

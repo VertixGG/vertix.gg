@@ -12,7 +12,7 @@ import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-message-service";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
-import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { Client, Guild, TextChannel, User } from "discord.js";
 
 const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
@@ -20,7 +20,7 @@ const DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY = 1000 * 60 * 10; // 10 minutes.
 export class GuildManager extends InitializeBase {
     private static instance: GuildManager;
 
-    private uiAdapterVersioningService: UIAdapterVersioningService;
+    private uiService: UIService;
 
     private dmService: DirectMessageService;
 
@@ -49,7 +49,7 @@ export class GuildManager extends InitializeBase {
     public constructor() {
         super();
 
-        this.uiAdapterVersioningService = ServiceLocator.$.get( "VertixGUI/UIAdapterService" );
+        this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
 
         this.dmService = ServiceLocator.$.get( "VertixBot/Services/DirectMessage" );
 
@@ -126,8 +126,7 @@ export class GuildManager extends InitializeBase {
     }
 
     public async onJoined( guild: Guild, defaultChannel: TextChannel, user?: User ) {
-        const welcomeAdapter = await this.uiAdapterVersioningService
-            .get( "Vertix/WelcomeAdapter", guild );
+        const welcomeAdapter = this.uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 
         welcomeAdapter?.send( defaultChannel, user ? {
             userId: user.id,

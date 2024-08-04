@@ -142,19 +142,19 @@
                 }
             },
             {
-                "name": "Vertix/UI-V2/WelcomeInviteButton",
+                "name": "VertixBot/UI-General/WelcomeInviteButton",
                 "content": {
                     "label": "Invite Vertix"
                 }
             },
             {
-                "name": "Vertix/UI-V2/WelcomeSetupButton",
+                "name": "VertixBot/UI-General/WelcomeSetupButton",
                 "content": {
                     "label": "Setup"
                 }
             },
             {
-                "name": "Vertix/UI-V2/WelcomeSupportButton",
+                "name": "VertixBot/UI-General/WelcomeSupportButton",
                 "content": {
                     "label": "Community Server"
                 }
@@ -1203,7 +1203,7 @@
             }
         },
         {
-            "name": "Vertix/UI-V2/WelcomeEmbed",
+            "name": "VertixBot/UI-General/WelcomeEmbed",
             "content": {
                 "title": "༄ Vertix is here, let's get started!",
                 "description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU"

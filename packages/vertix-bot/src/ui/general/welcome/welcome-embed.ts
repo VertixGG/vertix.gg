@@ -7,7 +7,7 @@ export class WelcomeEmbed extends UIEmbedBase {
     private static vars = {};
 
     public static getName() {
-        return "Vertix/UI-V3/WelcomeEmbed";
+        return "VertixBot/UI-General/WelcomeEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

@@ -29,13 +29,11 @@ export interface MasterChannelDefaultsInterfaceV3 extends MasterChannelDefaultsI
 export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
     masterChannelData: MasterChannelDataInterface,
     masterChannelDefaults: MasterChannelDefaultsInterface,
-    buttonsIdsEmojisMap: { [ id: string ]: string },
 }> {
 }
 
 export interface MasterChannelConfigInterfaceV3 extends ConfigBaseInterface<{
     masterChannelData: MasterChannelDataInterface,
     masterChannelDefaults: MasterChannelDefaultsInterfaceV3,
-    buttonsIdsEmojisMap: { [ id: string ]: string },
 }> {
 }

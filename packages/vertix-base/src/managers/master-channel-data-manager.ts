@@ -158,19 +158,10 @@ export class MasterChannelDataManager extends ChannelDataManager {
         );
 
         if ( shouldAdminLog ) {
-            function getUsedEmojis( data: MasterChannelConfigInterface["data"], buttons: string[] ) {
-                return Object.entries( data.buttonsIdsEmojisMap )
-                    .filter( ( [ id ] ) => buttons.includes( id ) )
-                    .map( ( [ , emoji ] ) => emoji )
-                    .join( ", " );
-            }
-
-            const previousButtons = await this.getChannelButtonsTemplate( ownerId, true ),
-                previousUsedEmojis = getUsedEmojis( this.config.data, previousButtons ),
-                newUsedEmojis = getUsedEmojis( this.config.data, newButtons );
+            const previousButtons = await this.getChannelButtonsTemplate( ownerId, true );
 
             this.logger.admin( this.setChannelButtonsTemplate,
-                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId }", "${ previousUsedEmojis }" => "${ newUsedEmojis }"`
+                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId }", "${ previousButtons.join( ", " ) }" => "${ newButtons.join( "," ) }"`
             );
         }
 

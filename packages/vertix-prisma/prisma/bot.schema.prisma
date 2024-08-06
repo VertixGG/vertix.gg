@@ -168,7 +168,7 @@ model UserData {
 model UserChannelData {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  channelId String
+  channelId String       @db.ObjectId
   // ---
   key       String
   version   String

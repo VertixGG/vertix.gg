@@ -44,7 +44,6 @@ export class UserDataManager extends ManagerDataBase<UserModel> {
 
     /**
      * Function `setUserMasterData()` - This method sets master data for a given user and voice channel.
-x
      * The function logs the guild and user information.
      * It also attempts to retrieve the master channel database
      * based on the dynamic channel ID.
@@ -53,6 +52,8 @@ x
      * Next, the function ensures that the user exists in the database by creating or updating the user details.
      * It then generates a key based on the master channel's ID. If the data exists for the user and key, it calls
      * the `setMasterData` method to set the user's master data in the master channel.
+     *
+     * TODO: Remove and use `UserChannelDataModel` instead.
      **/
     public async setUserMasterData( initiator: Interaction, channel: VoiceChannel, data: any ) {
         this.logger.log( this.setUserMasterData,

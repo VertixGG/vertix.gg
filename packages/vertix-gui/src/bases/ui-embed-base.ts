@@ -174,17 +174,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return {};
     }
 
-    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
-        const data = await this.parseData( content );
-
-        return this.composeTemplate(
-            attributes,
-            data,
-            content?.options || {},
-        );
-    }
-
-    private async parseData( content: undefined | UIEmbedLanguageContent ) {
+    protected async parseInternalData( content: undefined | UIEmbedLanguageContent ) {
         return this.parseLogicInternal( {
                 ... this.getInternalLogic( this.uiArgs ),
                 ... this.getLogic( this.uiArgs ),
@@ -192,6 +182,16 @@ export abstract class UIEmbedBase extends UITemplateBase {
             },
             content?.options || {},
             content?.arrayOptions || {},
+        );
+    }
+
+    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
+        const data = await this.parseInternalData( content );
+
+        return this.composeTemplate(
+            attributes,
+            data,
+            content?.options || {},
         );
     }
 }

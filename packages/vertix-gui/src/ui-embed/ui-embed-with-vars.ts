@@ -2,6 +2,7 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
+import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
 type Constructor<T = {}> = abstract new ( ... args: any[] ) => T;
 
@@ -40,13 +41,19 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             };
         }
 
-        protected getInternalLogic( uiArgs?: UIArgs ) {
-            const baseResult = super.getLogic( uiArgs );
+        protected async parseInternalData( content: UIEmbedLanguageContent | undefined ) {
+            const baseResult = await super.parseInternalData( content );
 
-            const extendedResult = this.getConcatenatedProperties(
-                ( embed, args ) => embed.getLogic( args ),
-                uiArgs
-            );
+            const extendedResult = {
+                ... this.getConcatenatedProperties(
+                    ( embed, args ) => embed.getLogic( args ),
+                    this.uiArgs,
+                ),
+                ... ( await this.getConcatenatedPropertiesAsync(
+                    async ( embed, args ) => await embed.getLogicAsync( args ),
+                    this.uiArgs,
+                ) ),
+            };
 
             return {
                 ... baseResult,
@@ -55,6 +62,7 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
         }
 
         // TODO: Try static.
+        // TODO: Method does not acknowledge call references.
         public useExternal<
             TInnerVars extends UIEmbedVars,
             TInnerClass extends Constructor<UIEmbedBase>,
@@ -74,7 +82,8 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
         }
 
         private getConcatenatedProperties(
-            getPropertyFunction: ( embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs ) => any, uiArgs?: UIArgs
+            getPropertyFunction: ( embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs ) => any,
+            uiArgs?: UIArgs
         ): any {
             return Object.keys( this.useExternalEmbedVars ).reduce(
                 ( accumulator: object, key: string ) => ( {
@@ -84,6 +93,23 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             );
         }
 
+        private async getConcatenatedPropertiesAsync(
+            getPropertyFunction: ( embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs ) => Promise<any>,
+            uiArgs?: UIArgs
+        ): Promise<any> {
+            const keys = Object.keys( this.useExternalEmbedVars );
+            let accumulator = {};
+
+            for ( const key of keys ) {
+                const result = await getPropertyFunction( this.useExternalEmbedVars[ key ], uiArgs );
+                accumulator = {
+                    ... accumulator,
+                    ... result
+                };
+            }
+
+            return accumulator;
+        }
     };
 
     return UIEmbedWithVarsBase;

@@ -56,15 +56,15 @@ export class UserChannelDataModel extends DataOwnerModelBase<
         return "ownerId_channelId_key_version";
     }
 
-    public async setPrimaryMessage( userId: string, channelId: string, content: { title?: string, description?: string} ) {
-        return this.upsertByOwner( { where: { userId } }, { channelId, key: "PrimaryMessage" }, content );
+    public async setPrimaryMessage( userId: string, channelDBId: string, content: { title?: string, description?: string} ) {
+        return this.upsertByOwner( { where: { userId } }, { channelId: channelDBId, key: "PrimaryMessage" }, content );
     }
 
-    public async getPrimaryMessage( userId: string, channelId: string ) {
+    public async getPrimaryMessage( userId: string, channelDBId: string ) {
         return this.getByOwner<{
             title?: string,
             description?: string
-        }>( { where: { userId } }, { channelId, key: "PrimaryMessage" } );
+        }>( { where: { userId } }, { channelId: channelDBId, key: "PrimaryMessage" } );
     }
 }
 

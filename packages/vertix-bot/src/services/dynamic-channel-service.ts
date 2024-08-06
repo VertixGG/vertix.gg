@@ -1,6 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { UserChannelDataModel } from "@vertix.gg/base/src/models/user-channel-data-model";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -25,12 +26,11 @@ import fetch from "cross-fetch";
 
 import { Routes } from "discord-api-types/v10";
 
-import { ChannelType, EmbedBuilder,  OverwriteType, PermissionsBitField } from "discord.js";
+import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
-
     DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
     DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
     DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS,
@@ -56,8 +56,10 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type {
-    ChannelPrivacyState ,
+import type { Snowflake } from "discord-api-types/v10";
+
+import type { TDynamicChannelConfiguration ,
+    ChannelPrivacyState,
     ActStatus,
     AddStatus,
     ChannelState,
@@ -74,7 +76,8 @@ import type {
 
 import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
-import type { Guild ,
+import type {
+    Guild,
     APIPartialChannel,
     GuildMember,
     Interaction,
@@ -89,7 +92,10 @@ import type { Guild ,
     VoiceChannel
 } from "discord.js";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type {
+    MasterChannelConfigInterface,
+    MasterChannelConfigInterfaceV3
+} from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
@@ -109,6 +115,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
     private config = ConfigManager.$
         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
+
+    private configV3 = ConfigManager.$
+        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", "0.0.3" as const );
 
     private editMessageDebounceMap = new Map<string, NodeJS.Timeout>();
 
@@ -425,6 +434,45 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
+    /**
+     * TODO: This method should be dedicated and used in other places.
+     */
+    public async getChannelConfiguration( channel: VoiceChannel, userId: Snowflake, masterChannelDBId: string, options = {
+        includeRegion: false,
+        includePrimaryMessage: false
+    } ): Promise<TDynamicChannelConfiguration> {
+        const optional: Partial<TDynamicChannelConfiguration> = {};
+
+        if ( options.includeRegion ) {
+            optional.region = channel.rtcRegion ?? "auto";
+        }
+
+        if ( options.includePrimaryMessage ) {
+            const primaryMessage = await UserChannelDataModel.$.getPrimaryMessage( userId, masterChannelDBId );
+
+            if ( primaryMessage?.title ) {
+                optional.primaryMessageTitle = primaryMessage.title;
+            }
+
+            if ( primaryMessage?.description ) {
+                optional.primaryMessageDescription = primaryMessage.description;
+            }
+        }
+
+        return {
+            name: channel.name,
+            userLimit: channel.userLimit,
+
+            state: await this.getChannelState( channel ),
+            visibilityState: await this.getChannelVisibilityState( channel ),
+
+            allowedUserIds: await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
+            blockedUserIds: await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
+
+            ... optional,
+        };
+    }
+
     public async createDynamicChannel( args: IDynamicChannelCreateArgs ) {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
@@ -448,6 +496,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Default channel properties.
         const defaultProperties = {
             ... this.getChannelDefaultInheritedProperties( masterChannel ),
+            // TODO: Move `getChannelDefaultPermissions` to `getChannelDefaultInheritedProperties`.
             ... PermissionsManager.$.getChannelDefaultPermissions(
                 newState.id,
                 masterChannel,
@@ -596,7 +645,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             this.logger.log( this.createDynamicChannel,
                 `Guild id: '${ guild.id }' - User '${ displayName }' moved to dynamic channel '${ dynamicChannelName }'`
             );
-        } ).catch( () => {} );
+        } ).catch( () => {
+        } );
 
         setTimeout( async () => {
             if ( dynamic.channel.isVoiceBased() ) {
@@ -898,7 +948,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             const editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                 Connect: state === "public",
                 ViewChannel: visibilityState === "shown",
-            });
+            } );
 
             await editStatePromise
                 .catch( ( error ) => this.logger.error( this.editChannelPrivacyState, "", error ) )
@@ -1103,7 +1153,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async resetChannel( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ): Promise<IDynamicResetChannelResult> {
+    public async resetChannel( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, options = {
+        includeRegion: false,
+        includePrimaryMessage: false
+    } ): Promise<IDynamicResetChannelResult> {
         let result: IDynamicResetChannelResult = {
             code: DynamicResetChannelResultCode.Error,
         };
@@ -1112,7 +1165,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Reset Channel button has been clicked, channel: '${ channel.name }'`
         );
 
-        // Find master channel.
+        // Find the master channel.
         const master = await this.services.channelService
             .getMasterChannelAndDBbyDynamicChannelId( channel.id );
 
@@ -1121,34 +1174,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
-        const dynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( master.db.id, true ),
-            userOwnerId = master.db.userOwnerId;
+        const userOwnerId = master.db.userOwnerId;
 
-        // if ( ! await TopGGManager.$.isVoted( initiator.user.id ) ) {
-        //     await this.log( initiator, channel, this.resetChannel, "vote" );
-        //
-        //     result.code = DynamicResetChannelResultCode.VoteRequired;
-        //     return result;
-        // }
-
-        const getCurrentChannelState = async ( channel: VoiceChannel ) => {
-                return {
-                    name: channel.name,
-                    userLimit: channel.userLimit,
-
-                    state: await this.getChannelState( channel ),
-                    visibilityState: await this.getChannelVisibilityState( channel ),
-                };
-            },
-            previousChannelState = await getCurrentChannelState( channel ),
-            previousAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
-            previousBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true ),
-            dynamicChannelName = dynamicChannelTemplateName.replace(
+        const previousChannelState = await this.getChannelConfiguration( channel, userOwnerId, master.db.id, options ),
+            defaultDynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( master.db.id, true ),
+            defaultDynamicChannelName = defaultDynamicChannelTemplateName.replace(
                 this.config.defaults.masterChannelDefaults.dynamicChannelUserVar,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
 
-        const renameResult = await this.editChannelNameInternal( channel, dynamicChannelName );
+        const renameResult = await this.editChannelNameInternal( channel, defaultDynamicChannelName );
 
         if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
             result.code = DynamicResetChannelResultCode.SuccessRenameRateLimit;
@@ -1158,43 +1193,56 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // TODO: Ensure it works.
         result.code = DynamicResetChannelResultCode.Success;
 
-        // Edit channel.
-        await channel.edit(
-            // Take defaults from master channel.
-            PermissionsManager.$.getChannelDefaultPermissions(
+        // Edit channel, Take defaults from master channel
+        const success = await channel.edit( {
+            ... PermissionsManager.$.getChannelDefaultPermissions(
                 userOwnerId,
                 master.channel,
                 DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-            )
-        );
+            ),
+            ... this.getChannelDefaultInheritedProperties( master.channel )
+        } )
+            .catch( ( e: any ) => this.logger.error( this.resetChannel, "", e ) )
+            .then( () => true );
 
-        await this.log( initiator, channel, this.resetChannel, "done" );
+        if ( success ) {
+            await this.log( initiator, channel, this.resetChannel, "done" );
 
-        const currentChannelState = await getCurrentChannelState( channel ),
-            currentAllowedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, true, true ),
-            currentBlockedUsers = await this.getChannelUserIdsWithPermissionState( channel, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false, true );
+            if ( options.includePrimaryMessage ) {
+                const { dynamicChannelPrimaryMessageTitle, dynamicChannelPrimaryMessageDescription }
+                    = this.configV3.data.masterChannelDefaults;
 
-        result.oldState = {
-            ... previousChannelState,
-            allowedUserIds: previousAllowedUsers,
-            blockedUserIds: previousBlockedUsers,
-        };
-        result.newState = {
-            ... currentChannelState,
-            allowedUserIds: currentAllowedUsers,
-            blockedUserIds: currentBlockedUsers,
-        };
+                // TODO: `UserChannelDataModel.$.setPrimaryMessageDefaults`
+                await UserChannelDataModel.$.setPrimaryMessage( userOwnerId, master.db.id, {
+                    title: dynamicChannelPrimaryMessageTitle,
+                    description: dynamicChannelPrimaryMessageDescription,
+                } );
+            }
 
-        await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, {
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: currentChannelState.name,
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT ]: currentChannelState.userLimit,
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: currentChannelState.state,
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: currentChannelState.visibilityState,
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS ]: currentAllowedUsers,
-            [ DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS ]: currentBlockedUsers,
-        } );
+            const currentChannelState = await this.getChannelConfiguration( channel, userOwnerId, master.db.id, options );
 
-        this.editPrimaryMessageDebounce( channel );
+            result.oldState = previousChannelState;
+            result.newState = currentChannelState;
+
+            const userData = {
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: currentChannelState.name,
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT ]: currentChannelState.userLimit,
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: currentChannelState.state,
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: currentChannelState.visibilityState,
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS ]: currentChannelState.allowedUserIds,
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS ]: currentChannelState.blockedUserIds,
+            } as any;
+
+            if ( options.includeRegion ) {
+                userData[ DYNAMIC_CHANNEL_SETTINGS_KEY_REGION ] = currentChannelState.region;
+            }
+
+            await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, userData );
+
+            this.editPrimaryMessageDebounce( channel );
+        } else {
+            await this.log( initiator, channel, this.resetChannel, "error" );
+        }
 
         return result;
     }
@@ -1619,7 +1667,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 break;
 
             case this.resetChannel:
-                switch ( action as "vote" | "done" ) {
+                switch ( action as "vote" | "done" | "error" ) {
+                    case "error":
+                        message = `🔄 \`${ initiatorDisplayName }\` tried to reset channel but failed due unknown error`;
+                        break;
+
                     case "vote":
                         message = `🔄 \`${ initiatorDisplayName }\` requested to vote for using premium feature`;
                         break;

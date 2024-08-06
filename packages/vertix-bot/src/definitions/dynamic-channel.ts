@@ -84,20 +84,28 @@ export interface IDynamicClearChatResult {
     deletedCount?: number,
 }
 
-export interface IDynamicResetChannelState {
+/**
+ * Renamed from `IDynamicResetChannelState`
+ */
+export interface TDynamicChannelConfiguration {
     name: string,
     userLimit: number,
     state: ChannelState,
     visibilityState: ChannelVisibilityState,
     allowedUserIds: string[],
     blockedUserIds: string[],
+
+    // @since 0.0.8
+    region?: string,
+    primaryMessageTitle?: string,
+    primaryMessageDescription?: string,
 }
 
 export interface IDynamicResetChannelResult {
     code: DynamicResetChannelResultCode,
 
-    oldState?: IDynamicResetChannelState,
-    newState?: IDynamicResetChannelState,
+    oldState?: TDynamicChannelConfiguration,
+    newState?: TDynamicChannelConfiguration,
 
     rateLimitRetryAfter?: number,
 }

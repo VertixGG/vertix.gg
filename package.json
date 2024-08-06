@@ -35,7 +35,8 @@
     "dependencies": {
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
-        "discord.js": "latest"
+        "discord.js": "latest",
+        "discord-api-types": "latest"
     },
     "devDependencies": {
         "@swc/jest": "latest",
@@ -47,7 +48,6 @@
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
-        "discord-api-types": "latest",
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",

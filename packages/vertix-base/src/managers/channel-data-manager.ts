@@ -5,17 +5,8 @@ import { ManagerDataBase } from "@vertix.gg/base/src/bases/manager-data-base";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 export class ChannelDataManager extends ManagerDataBase<ChannelModel> {
-    private static instance: ChannelDataManager;
-
     public static getName() {
         return "VertixBase/Managers/ChannelData";
-    }
-
-    public static getInstance(): ChannelDataManager {
-        if ( ! ChannelDataManager.instance ) {
-            ChannelDataManager.instance = new ChannelDataManager();
-        }
-        return ChannelDataManager.instance;
     }
 
     public static get $() {

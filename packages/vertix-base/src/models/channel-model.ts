@@ -6,7 +6,7 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
 
-import type { WithRequiredProp } from "@vertix.gg/utils/src/common-types";
+import type { TWithRequiredProp } from "@vertix.gg/utils/src/common-types";
 
 export interface ChannelResult extends PrismaBot.Channel {
     isMaster: boolean;
@@ -105,7 +105,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
     }
 
     public async delete(
-        args: WithRequiredProp< Pick<PrismaBot.Prisma.ChannelWhereUniqueInput, "guildId" | "channelId">, "guildId" >,
+        args: TWithRequiredProp< Pick<PrismaBot.Prisma.ChannelWhereUniqueInput, "guildId" | "channelId">, "guildId" >,
         forEachCachedEntities?: ( value: ChannelResultWithCacheKey ) => void
     ) {
         this.logger.log( this.delete,

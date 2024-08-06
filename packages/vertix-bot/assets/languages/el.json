@@ -5,61 +5,61 @@
     "elements": {
         "buttons": [
             {
-                "name": "VertixBot/UI-V2/ChannelNameTemplateEditButton",
+                "name": "Vertix/UI-V2/ChannelNameTemplateEditButton",
                 "content": {
                     "label": "Επεξεργασία Ονόματος Καναλιού"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/ClaimStartButton",
+                "name": "Vertix/UI-V2/ClaimStartButton",
                 "content": {
                     "label": "Κτήση Καναλιού"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/ClaimVoteAddButton",
+                "name": "Vertix/UI-V2/ClaimVoteAddButton",
                 "content": {
                     "label": "Ψήφισε {displayName}"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/ClaimVoteStepInButton",
+                "name": "Vertix/UI-V2/ClaimVoteStepInButton",
                 "content": {
                     "label": "Ένσταση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DoneButton",
+                "name": "Vertix/UI-V2/DoneButton",
                 "content": {
                     "label": "✓ Ολοκλήρωση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
+                "name": "Vertix/UI-V2/DynamicChannelMetaClearChatButton",
                 "content": {
                     "label": "Εκκαθάριση Συζήτησης"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
+                "name": "Vertix/UI-V2/DynamicChannelMetaLimitButton",
                 "content": {
                     "label": "Όριο Χρηστών"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
+                "name": "Vertix/UI-V2/DynamicChannelMetaRenameButton",
                 "content": {
                     "label": "Μετονομασία"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsAccessButton",
                 "content": {
                     "label": "Πρόσβαση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsStateButton",
                 "content": {
                     "label": "{displayText}",
                     "options": {
@@ -69,7 +69,7 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsVisibilityButton",
                 "content": {
                     "label": "{displayText}",
                     "options": {
@@ -79,61 +79,61 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
+                "name": "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton",
                 "content": {
                     "label": "Κτήση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
+                "name": "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton",
                 "content": {
                     "label": "Επαναφορά Αρχικών Ρυθμίσεων"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+                "name": "Vertix/UI-V2/DynamicChannelTransferOwnerButton",
                 "content": {
                     "label": "Μεταβίβαση Ιδιοκτησίας"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/LanguageChooseButton",
+                "name": "Vertix/UI-V2/LanguageChooseButton",
                 "content": {
                     "label": "Επίλεξε Γλώσσα"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/NoButton",
+                "name": "Vertix/UI-V2/NoButton",
                 "content": {
                     "label": "👎 Όχι"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/SetupBadwordsEditButton",
+                "name": "Vertix/UI-V2/SetupBadwordsEditButton",
                 "content": {
                     "label": "Επεξεργασία Ύβρεων/Απαγορευμένων Λέξεων"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+                "name": "Vertix/UI-V2/SetupEditButtonsEffectImmediatelyButton",
                 "content": {
                     "label": "Άμεσα"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+                "name": "Vertix/UI-V2/SetupEditButtonsEffectNewlyButton",
                 "content": {
                     "label": "Συγκεκριμένη Εφαρμογή"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/SetupMasterCreateButton",
+                "name": "Vertix/UI-V2/SetupMasterCreateButton",
                 "content": {
                     "label": "Δημιουργία Κύριου Καναλιού"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/SetupMasterEditButton",
+                "name": "Vertix/UI-V2/SetupMasterEditButton",
                 "content": {
                     "label": "{masterChannel}{index}",
                     "options": {
@@ -142,43 +142,43 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/WelcomeInviteButton",
+                "name": "VertixBot/UI-General/WelcomeInviteButton",
                 "content": {
                     "label": "Προσκάλεσε το Vertix"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/WelcomeSetupButton",
+                "name": "VertixBot/UI-General/WelcomeSetupButton",
                 "content": {
                     "label": "Εγκατάσταση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/WelcomeSupportButton",
+                "name": "VertixBot/UI-General/WelcomeSupportButton",
                 "content": {
                     "label": "Διακομιστής (Server) Κοινότητας"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/WizardBackButton",
+                "name": "Vertix/UI-V2/WizardBackButton",
                 "content": {
                     "label": "◀ Πίσω"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/WizardFinishButton",
+                "name": "Vertix/UI-V2/WizardFinishButton",
                 "content": {
                     "label": "✔ Ολοκλήρωση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/WizardNextButton",
+                "name": "Vertix/UI-V2/WizardNextButton",
                 "content": {
                     "label": "Επόμενο ▶"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/YesButton",
+                "name": "Vertix/UI-V2/YesButton",
                 "content": {
                     "label": "👍 Ναι"
                 }
@@ -186,28 +186,28 @@
         ],
         "textInputs": [
             {
-                "name": "VertixBot/UI-V2/BadwordsInput",
+                "name": "Vertix/UI-V2/BadwordsInput",
                 "content": {
                     "label": "ΔΙΑΧΩΡΙΣΕ ΜΕΣΩ `,` ΓΙΑ ΜΗ ΑΚΡΙΒΕΙΣ ΑΝΤΙΣΤΟΙΧΙΕΣ ΧΡΗΣΙΜΟΠΟΙΗΣΕ `*`",
                     "placeholder": "None"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/ChannelNameTemplateInput",
+                "name": "Vertix/UI-V2/ChannelNameTemplateInput",
                 "content": {
                     "label": "ΟΡΙΣΕ ΤΟ ΠΡΟΕΠΙΛΕΓΜΕΝΟ ΟΝΟΜΑ ΤΩΝ ΔΥΝΑΜΙΚΩΝ ΚΑΝΑΛΙΩΝ",
                     "placeholder": "{user}'s Κανάλι"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
+                "name": "Vertix/UI-V2/DynamicChannelMetaLimitInput",
                 "content": {
                     "label": "ΟΡΙΟ ΧΡΗΣΤΩΝ (0 ΓΙΑ ΑΠΕΡΙΟΡΙΣΤΟΥΣ)",
                     "placeholder": "0 - 99"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelMetaRenameInput",
+                "name": "Vertix/UI-V2/DynamicChannelMetaRenameInput",
                 "content": {
                     "label": "ΕΠΙΛΕΞΕ ΤΟ ΟΝΟΜΑ ΤΟΥ ΚΑΝΑΛΙΟΥ ΣΟΥ"
                 }
@@ -215,7 +215,7 @@
         ],
         "selectMenus": [
             {
-                "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
+                "name": "Vertix/UI-V2/ChannelButtonsTemplateSelectMenu",
                 "content": {
                     "placeholder": "🎚 Επίλεξε",
                     "selectOptions": [
@@ -250,7 +250,7 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/ConfigExtrasSelectMenu",
+                "name": "Vertix/UI-V2/ConfigExtrasSelectMenu",
                 "content": {
                     "placeholder": "⌘ ∙ Διαμόρφωση",
                     "selectOptions": [
@@ -276,43 +276,43 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsBlockMenu",
                 "content": {
                     "placeholder": "🫵 Απαγόρευσε Πρόσβαση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsDenyMenu",
                 "content": {
                     "placeholder": "👎 Αφαίρεσε Πρόσβαση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsGrantMenu",
                 "content": {
                     "placeholder": "👍 Εξουσιοδότησε Πρόσβαση"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsKickMenu",
                 "content": {
                     "placeholder": "👢 Διώξε Χρήστη"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
+                "name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockMenu",
                 "content": {
                     "placeholder": "🤙 Απαλοιφή Απαγόρευσης Πρόσβασης"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
+                "name": "Vertix/UI-V2/DynamicChannelTransferOwnerUserMenu",
                 "content": {
                     "placeholder": "🔀 Επίλεξε Χρήστη"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/LanguageSelectMenu",
+                "name": "Vertix/UI-V2/LanguageSelectMenu",
                 "content": {
                     "placeholder": "🌍 Επίλεξε Γλώσσα",
                     "selectOptions": [
@@ -329,13 +329,13 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/LogChannelSelectMenu",
+                "name": "Vertix/UI-V2/LogChannelSelectMenu",
                 "content": {
                     "placeholder": "❯❯ ∙ Κανάλι Καταγραφής"
                 }
             },
             {
-                "name": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                "name": "Vertix/UI-V2/SetupEditSelectEditOptionMenu",
                 "content": {
                     "placeholder": "◎ ∙ Επίλεξε Μορφή Επεξεργασίας",
                     "selectOptions": [
@@ -352,7 +352,7 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/VerifiedRolesEveryoneSelectMenu",
+                "name": "Vertix/UI-V2/VerifiedRolesEveryoneSelectMenu",
                 "content": {
                     "placeholder": "🛡️ ∙ Everyone ρόλος",
                     "selectOptions": [
@@ -370,7 +370,7 @@
                 }
             },
             {
-                "name": "VertixBot/UI-V2/VerifiedRolesMenu",
+                "name": "Vertix/UI-V2/VerifiedRolesMenu",
                 "content": {
                     "placeholder": "Επίλεξε Επαληθευμένους Ρόλους"
                 }
@@ -379,63 +379,63 @@
     },
     "embeds": [
         {
-            "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
+            "name": "Vertix/UI-V2/ClaimResultOwnerStopEmbed",
             "content": {
                 "title": "👑  Ανάκτησες την ιδιοκτησία του καναλιού!",
                 "description": "Να γνωρίζεις πως σε περίπτωση που δεν επιστρέψεις εντός **{absentMinutes}** λεπτών, το κανάλι θα ξανά γίνει διαθέσιμο προς κτήση από τους υπόλοιπους.\n"
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
+            "name": "Vertix/UI-V2/ClaimResultStepAlreadyInEmbed",
             "content": {
                 "title": "🤷  Έχεις ήδη υποβάλλει υποψηφιότητα",
                 "description": "Το μήνυμα που θέλεις να περάσεις είναι ξεκάθαρο - όμως έχεις ήδη ψηφίσει τον εαυτό σου ως υποψήφιο ιδιοκτήτη του καναλιού."
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimResultStepInEmbed",
+            "name": "Vertix/UI-V2/ClaimResultStepInEmbed",
             "content": {
                 "title": "😈  Το κανάλι μπορεί να γίνει δικό σου",
                 "description": "Έχεις υποβάλλει τον εαυτό σου ως υποψήφιο ιδιοκτήτη του καναλιού. \nΚαλή Επιτυχία!\n"
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimResultVotedEmbed",
+            "name": "Vertix/UI-V2/ClaimResultVotedEmbed",
             "content": {
                 "title": "🗳️  Έχεις ψηφίσει τον χρήστη {userDisplayName}",
                 "description": "Η ψήφος σου πήγε στον χρήστη <@{userId}> για την απόκτηση διαχειριστικών δικαιωμάτων του καναλιού."
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
+            "name": "Vertix/UI-V2/ClaimResultVotedSameEmbed",
             "content": {
                 "title": "🗳️  Έχεις ήδη ψηφίσει τον χρήστη {userDisplayName}",
                 "description": "Η ψήφος σου έχει πάει στον χρήστη <@{userId}>, μπορείς να ψηφίσεις κάποιον άλλον εάν αλλάξεις γνώμη."
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
+            "name": "Vertix/UI-V2/ClaimResultVoteSelfEmbed",
             "content": {
                 "title": "🤷  Δεν μπορείς να ψηφίσεις τον εαυτό σου",
                 "description": "Είναι καλό το να έχεις πίστη στον εαυτό σου, όμως το ψήφισμα του εαυτού σου δεν επιτρέπεται στην συγκεκριμένη ψηφοφορία."
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
+            "name": "Vertix/UI-V2/ClaimResultVoteUpdatedEmbed",
             "content": {
                 "title": "🗳️  Η ψήφος σου ανανεώθηκε",
                 "description": "Μόλις άλλαξες την ψήφο σου από τον χρήστη <@{prevUserId}> στον <@{currentUserId}> για την απόκτηση διαχειριστικών δικαιωμάτων του καναλιού."
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimStartEmbed",
+            "name": "Vertix/UI-V2/ClaimStartEmbed",
             "content": {
                 "title": "👋  Ο χρήστης {ownerDisplayName} παραίτησε το κανάλι του!",
                 "description": "Ο χρήστης <@{ownerId}> ήταν απών για παραπάνω από {absentMinutes} λεπτά.\nΘα είσαι ο επόμενος ιδιοκτήτης; Πάρε την πρωτοβουλία και κάνε κτήση του καναλιού για να λάβεις διαχειριστικά δικαιώματα!"
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteEmbed",
             "content": {
                 "title": "👑  {candidatesCount} Υποψήφιοι επιθημούν να αποκτήσουν την ιδιοκτησία του καναλιού",
                 "description": "Η αντίστροφη μέτρηση ξεκινά!\nΣε μόλις `{elapsedTimeFormatFraction}`, η ψηφοφορία θα λήξει.\nΣε περίπτωση ισοψηφίας, ο χρήστης <@{userInitiatorId}> θα γίνει ο νέος ιδιοκτήτης.\n\n{candidatesState}",
@@ -475,7 +475,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteStepInEmbed",
             "content": {
                 "title": "👑  Ο χρήστης {userInitiatorDisplayName} επιθημεί να λάβει διαχειριστικά δικαιώματα για το κανάλι",
                 "description": "Εκτός εάν κάποιος κάνει ένσταση, ο χρήστης <@{userInitiatorId}> θα είναι ο διαχειριστής του καναλιού `{elapsedTimeFormatFraction}`.",
@@ -500,7 +500,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/ClaimVoteWonEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteWonEmbed",
             "content": {
                 "title": "👑  {userWonDisplayName} απαίκτησε τα διαχειριστικά δικαιώματα του καναλιού",
                 "description": "{wonMessage}",
@@ -533,14 +533,14 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DisabledWhileClaimEmbed",
+            "name": "Vertix/UI-V2/DisabledWhileClaimEmbed",
             "content": {
                 "title": "😈 Η ενέργεια απενεργοποιήθηκε",
                 "description": "Η ενέργεια παραμένει απενεργοποιημένη κατά τη διαδικασία κτήσης.\n\nΠαρακαλώ ανέμενε μέχρι η διαδικασία κτήσης ολοκληρωθεί."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelEmbed",
             "content": {
                 "title": "༄ Επεξεργάσου το Δυναμικό σου Κανάλι",
                 "description": "Ανάλαβε την ευθύνη της επίβλεψης του δυναμικού σου καναλιού, προσαρμόζοντάς το σύμφωνα με τις απαιτητικές προτιμήσεις σου.\n\nΣημείωση: Η ικανότητητα δημιουργίας τροποποιήσεων προσφέρεται αποκλειστικά από τον ιδιοκτήτη του καναλιού.\n\n_Τρέχουσες Ρυθμίσεις_:\n- Όνομα: **{name}**\n- Όριο Χρηστών: ✋ **{limit}**\n- Κατάσταση: {state}\n- Κάτασταση Ορατότητας: {visibilityState}\n- περιοχή: 🌍 **{region}**",
@@ -565,27 +565,27 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
             "content": {
                 "title": "🧹  Δεν υπάρχουν μηνύματα προς εκκαθάριση",
                 "description": "Σημείωση: μόνο τα non-embeds (κλασικά) μηνύματα μπορούν να διαγραφούν. Τα ενσωματωμένα μηνύμα δεν μπορούν να διαγραφούν."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
             "content": {
                 "title": "🧹  Η συζήτηση διαγράφηκε από τον χρήστη {ownerDisplayName}!",
                 "description": "Συνολικά {totalMessages} μηνύματα διαγράφηκαν."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
             "content": {
                 "title": "🙅  Το όριο χρηστών πρέπει να βρίσκεται μεταξύ {minValue} και {maxValue}"
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
             "content": {
                 "title": "✋  Το όριο χρηστών για το κανάλι αλλάξε σε {userLimit}",
                 "options": {
@@ -597,14 +597,14 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
             "content": {
                 "title": "🙅  Αποτυχία μετονομασίας καναλιού",
                 "description": "Η λέξη `{badword}` έχει κατηγοριοποιηθεί ως υβριστική ή ακατάλληλη από τον διαχειριστική του διακομιστή (server)."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
             "content": {
                 "title": "🙅 Η μετονομασία έγινε πολύ γρήγορα!",
                 "description": "Παρακαλώ περίμενε `{elapsedTimeFormatFraction}` μεχρί την επόμενη μετονομασία {masterChannelMessage}",
@@ -633,13 +633,13 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
             "content": {
                 "title": "✏️  Η ονομασία του καναλιού άλλαξε σε '{channelName}'"
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsAccessEmbed",
             "content": {
                 "title": "👥  Διαχείριση δικαιωμάτων του καναλιού",
                 "description": "\n**_Εγκεκριμένοι Χρήστες_**:\n{allowedUsersDisplay}\n**_Αποκλεισμένοι Χρήστες_**:\n{blockedUsersDisplay}",
@@ -667,7 +667,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsBlockedEmbed",
             "content": {
                 "title": "🫵  Ο Χρήστης Αποκλείστηκε",
                 "description": "Ο χρήστης **{userBlockedDisplayName}** επιτυχώς αποκλείστηκε και δεν έχει πλέον πρόσβαση στο κανάλι!\n\n**_Εγκεκριμένοι Χρήστες_**:\n{allowedUsersDisplay}\n**_Αποκλεισμένοι Χρήστες_**:\n{blockedUsersDisplay}",
@@ -695,7 +695,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsDeniedEmbed",
             "content": {
                 "title": "👎  Η Πρόσβαση Ανακλήθηκε",
                 "description": "Ο χρήστης **{userDeniedDisplayName}** έχασε τα δικαιώματα πρόσβασης και πλέον δεν έχει πρόσβαση στο κανάλι!\n\n**_Εγκεκριμένοι Χρήστες_**:\n{allowedUsersDisplay}\n**_Αποκλεισμένοι Χρήστες_**:\n{blockedUsersDisplay}",
@@ -723,7 +723,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsGrantedEmbed",
             "content": {
                 "title": "👍  Η πρόσβαση εγκρίθηκε",
                 "description": "Ο χρήστης **{userGrantedDisplayName}** προστέθηκε επιτυχώς και έχει πλέον δικαιώματα πρόσβασης!\n\n**_Εγκεκριμένοι Χρήστες_**:\n{allowedUsersDisplay}\n**_Αποκλεισμένοι Χρήστες_**:\n{blockedUsersDisplay}",
@@ -751,7 +751,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsHiddenEmbed",
             "content": {
                 "title": "🙈  Το κανάλι είναι πλέον κρυφό",
                 "description": "Σημείωση: Μόνο οι εγκεκριμένοι χρήστες μπορούν να δουν το κανάλι σου.\n\n{allowedUsersDisplay}\n{message}",
@@ -774,7 +774,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsKickEmbed",
             "content": {
                 "title": "👢  Ο Χρήστης Διώχθηκε",
                 "description": "Ο χρήστης **{userKickedDisplayName}** επιτυχώς διώχθηκε!\n\n**_Εγκεκριμένοι Χρήστες_**:\n{allowedUsersDisplay}\n**_Αποκλεισμένοι Χρήστες_**:\n{blockedUsersDisplay}",
@@ -802,7 +802,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsPrivateEmbed",
             "content": {
                 "title": "🚫  Το κανάλι είναι πλέον Ιδιωτικό",
                 "description": "Σημείωση: Μόνο οι εγκεκριμένοι χρήστες μπορούν να δουν το κανάλι σου.\n\n{allowedUsersDisplay}\n{message}",
@@ -825,20 +825,20 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsPublicEmbed",
             "content": {
                 "title": "🌐  Το κανάλι είναι πλέον Δημόσιο",
                 "description": "Σημείωση: Το κανάλι σου είναι πλέον προσβάσιμο από όλους.\n\nΟι χρήστες **χωρίς** ειδική πρόσβαση στο κανάλι θα μπορέσουν να συνδεθούν εκτός εάν το κανάλι αλλάξει σε κρυφό ή ιδιωτικό."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsShownEmbed",
             "content": {
                 "title": "🐵  Το κανάλι είναι πλέον Ορατό"
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
             "content": {
                 "title": "🤙  Ο Χρήστης Ξεμπλοκαρίστηκε",
                 "description": "Ο χρήστης **{userUnBlockedDisplayName}** επιτυχώς ξεμπλοκαρίστηκε!\n\n**_Εγκεκριμένοι Χρήστες_**:\n{allowedUsersDisplay}\n**_Αποκλεισμένοι Χρήστες_**:\n{blockedUsersDisplay}",
@@ -866,7 +866,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelPremiumResetChannelEmbed",
             "content": {
                 "title": "🔃  Το δυναμικό κανάλι επαναφέρθηκε στις αρχικές του ρυθμίσεις! ",
                 "description": "Οι Ρυθμίσεις επαναφέρθηκαν στις αρχικές:\n\n- Όνομα: **{name}** {nameChanged}\n- Όριο Χρηστών: ✋**{userLimit}** {userLimitChanged}\n- Κατάσταση: {state} {stateChanged}\n- Κατάσταση Ορατότητας: {visibilityState} {visibilityStateChanged}\n- Εγκεκριμένοι Χρήστες: {allowedUsers} {allowedUsersChanged}\n- Αποκλεισμένοι Χρήστες: {blockedUsers} {blockedUsersChanged}{rateLimited}",
@@ -919,28 +919,28 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelTransferOwnerEmbed",
             "content": {
                 "title": "🔀  Μεταβίβαση Ιδιοκτησίας Καναλιού",
                 "description": "Μεταβίβασε την ιδιοκτησία του καναλιού σε άλλον χρήστη.\n\nΕπίλεξε τον χρήστη που επιθυμείς να μεταφέρεις την ιδιοκτησία του καναλιού."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
             "content": {
                 "title": "🔀  Η μεταβίβαση ολοκληρώθηκε επιτυχώς!",
                 "description": "Δεν είσαι πλεόν ο ιδιοκτήτης του καναλιού."
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
+            "name": "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
             "content": {
                 "title": "🔀  Μεταβίβαση Ιδιοκτησίας Καναλιού",
                 "description": "Μεταβίβασε την ιδιοκτησια του καναλιού στον χρήστη{userDisplayName}.\n\n⚠️ Με την μεταβίβαση της ιδιοκτησίας του καναλιού σε άλλον χρήστη, θα χαθούν τα διαχειριστικά σου δικαιώματα.\n\nΕίσαι σίγουρος πως θέλεις να μεταβιβάσεις την ιδιοκτησία του καναλιού στον χρήστη **{userDisplayName}?**"
             }
         },
         {
-            "name": "VertixBot/UI-V2/InvalidChannelTypeEmbed",
+            "name": "Vertix/UI-V2/InvalidChannelTypeEmbed",
             "content": {
                 "title": "# Ωχ! Αυτό το στοιχείο είναι απαγορευμένο σε αυτό το είδος καναλιού.",
                 "description": "Η ενέργεια είναι απαγορευμένη στο συγκεκριμένο είδος καναλιού, αλλά είναι επιτρεπτή σε αυτά τα είδη καναλιών:\n\n{allowedTypes}\n\n Παρακαλώ ξανά εκτέλεσε την ενέργεια σε άλλο κανάλι.",
@@ -953,7 +953,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/LanguageEmbed",
+            "name": "Vertix/UI-V2/LanguageEmbed",
             "content": {
                 "title": "🌍  Επίλεξε Γλώσσα",
                 "description": "__Επιλεγμένη Γλώσσα__: **{currentLanguage}**\n\nΔεν βρήκες την γλώσσα σου?\n\nΜπορείς να έχεις την ευκαιρία να μεταφράσεις την γλώσσα σου!\nΠαρακαλώ επικοινώνησε μαζί μας στο τμήμα υποστήριξης!\n\nΒρήκες λάθος στην μετάφραση; Ενημέρωσέ μας!",
@@ -967,7 +967,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/MissingPermissionsEmbed",
+            "name": "Vertix/UI-V2/MissingPermissionsEmbed",
             "content": {
                 "title": "🔐  Ωχ! Απαιτούνται συγκεκριμένα δικαιώματα",
                 "description": "Ορισμένα δικαιώματα απαιτούνται για την ολοκλήρωση της διαδικασίας, ο χρήστης **{omitterDisplayName}** δεν διαθέτει τα εξής δικαιώματα:\n\n{missingPermissions}",
@@ -980,21 +980,21 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/NothingChangedEmbed",
+            "name": "Vertix/UI-V2/NothingChangedEmbed",
             "content": {
                 "title": "🤷  Τίποτα δεν άλλαξε",
                 "description": "Αυτό μπορεί να συμβεί όταν προσπαθείς να αλλάξεις κάτι που δεν τροποποιείται ή είναι το ίδιο όπως πριν."
             }
         },
         {
-            "name": "VertixBot/UI-V2/NotYourChannelEmbed",
+            "name": "Vertix/UI-V2/NotYourChannelEmbed",
             "content": {
                 "title": "⛔  Αυτό δεν είναι το κανάλι σου!",
                 "description": "Αλλά μπορείς να ανοίξεις το δικό σου κανάλι :)\n\n Απλώς πάτα εδώ: <#{masterChannelId}>"
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
+            "name": "Vertix/UI-V2/SetupEditButtonsEffectEmbed",
             "content": {
                 "title": "🎚  Επεξεργασία Κουμπιών Κύριου Καναλιού #{index}",
                 "description": "Η επεξεργασία κουμπιών θα επηρεάσει τα δυναμικά κανάλια που έχουν δημιουργηθεί από το __Κύριο Κανάλι #{index}__.\n\nΥπάρχουν δύο επιλογές:\n\n- Εφάρμοσε τις αλλαγές σε όλα τα κανάλια\n- Εφάρμοσε τις αλλαγές μόνο στα νέο-φτιαγμένα κανάλια _Δυναμικά Κανάλια_.",
@@ -1002,7 +1002,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
+            "name": "Vertix/UI-V2/SetupEditButtonsEmbed",
             "content": {
                 "title": "🎚  Επεξεργασία Κουμπιών Κύριου Καναλιού #{index}",
                 "description": "Επίλεξε ποια κουμπία επιθημείς να είναι ορατά για τους χρήστες.\n\nΜόνο τα επιλεγμένα κουμπιά θα είναι ορατά.\n_Δυναμικά Κανάλια_ που έχουν δημιουργηθεί από το συγκεκριμένο Κύριο Κανάλι.\n\n",
@@ -1010,7 +1010,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupEditEmbed",
+            "name": "Vertix/UI-V2/SetupEditEmbed",
             "content": {
                 "title": "🔧  Επεξεργασία Κύριου Καναλιού #{index}",
                 "description": "Επεξεργάσου το κύριο κανάλι αναλόγα με τις προτιμήσεις σου.\n\n**_🎛️ Γενικό_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ ID Καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα Δυναμικού Καναλιού: `{dynamicChannelNameTemplate}`\n➤ ∙ Κανάλι Ιστορικού: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή Κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι Ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Διαμόρφωση**\n\n@ ∙ Αναφορά (mention) χρήστη στο κύριο μήνυμα: {configUserMention}\n⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή Καταγραφής Ιστορικού στο προσαρμοσμένο κανάλι: {configLogs}\n\n",
@@ -1059,7 +1059,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
+            "name": "Vertix/UI-V2/SetupEditVerifiedRolesEmbed",
             "content": {
                 "title": "🛡️  Επεξεργασία Επαληθευμένων Ρόλων Του Κύριου Καναλιού #{index}",
                 "description": "Η επεξαργασία των Επαληθευμένων Ρόλων θα επηρεάσει τα δυναμικά κανάλια που έχουν δημιουργηθεί από το Κύριο Κανάλι #{index}.\n\n**_Τρέχοντες Επαληθευμένοι Ρόλοι_**\n\n> {verifiedRolesDisplay}",
@@ -1079,7 +1079,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupEmbed",
+            "name": "Vertix/UI-V2/SetupEmbed",
             "content": {
                 "title": "🛠  Εγκατάσταση Vertix",
                 "description": "Ανακάλυψε τις απεριόριστες δυνατότητες που προσφέρει το **Vertix**!\n Διαμόρφωσε και εξατομίκευσε τον διακομιστή σου στο έπακρο.\n\nΓια να δημιουργήσεις ένα νέο Κύριο Κανάλι απλώς πάτα το:\n`(➕ Create Master Channel)` κουμπί.\n\nΤα Κύρια Κανάλια είναι παραγωγοί των δυναμικών καναλιών , με το κάθε ένα από αυτά να έχει τις δικές του ρυθμίσεις.\n\nΗ λειτουργία ύβρεων/αποκλεισμένων λέξεων επιτρέπει την κοινοτοικού επιπέδου επεξεργασία και ελέγει τις ονομασίες των δυναμικών καναλιών.\n\n_**Τρέχοντα Κύρια Κανάλια**_:\n{masterChannelMessage}\n\n_Τρέχουσες Ύβρεις/Αποκλεισμένες Λέξεις_:\n{badwordsMessage}",
@@ -1118,21 +1118,21 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupMaxMasterChannelsEmbed",
+            "name": "Vertix/UI-V2/SetupMaxMasterChannelsEmbed",
             "content": {
                 "title": "🤷  Έχεις φτάσει το όριο των δημιουργημένων Κυρίων Καναλιών",
                 "description": "Μπορείς να διαμορφώσεις έως **{maxMasterChannels}** Κύρια Κανάλια συνολικά."
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupStep1Embed",
+            "name": "Vertix/UI-V2/SetupStep1Embed",
             "content": {
                 "title": "Βήμα 1 - Όρισε το πρότυπο/προεπιλεγμένο όνομα για τα Δυναμικά Κανάλια",
                 "description": "Μπορείς να ορίσεις ένα συγκεκριμένο όνομα για τα δυναμικά κανάλια.\n\n_Τρέχουσα Προεπιλεγμένη Ονομασία_:\n`{dynamicChannelNameTemplate}`\n\nΜπορείς να διατηρήσεις τις αρχικές ρυθμίσεις πατώντας το κουμπί**( `Επόμενο ▶` )**.\n\nΔεν είσαι σίγουρος για το πως δουλεύει; Δες την [επεξήγηση](https://vertix.gg/setup/1)."
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupStep2Embed",
+            "name": "Vertix/UI-V2/SetupStep2Embed",
             "content": {
                 "title": "Βήμα 2 - Εγκατάσταση Δυναμικών Καναλιών",
                 "description": "Διαμόρφωσε την διαχείριση των Δυναμικών Καναλιών.\n\n**_🎚 Πίνακας Κουμπιών_**\n\n{message}\n**_⚙️ Διαμόρφωση_**\n\n> @ ∙ Αναφορά Χρήστη (mention user) στα κύρια μηνύματα: {configUserMention}\n> ⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n\n Μπορείς να διατηρήσεις τις αρχικές ρυθμίσεις πατώντας το κουμπί **( `Next ▶` )**.\n\nΔεν είσαι σίγουρος για το πως λειτουργεί? Δες την [επεξήγηση](https://vertix.gg/features/dynamic-channels-showcase).",
@@ -1177,7 +1177,7 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SetupStep3Embed",
+            "name": "Vertix/UI-V2/SetupStep3Embed",
             "content": {
                 "title": "Βήμα 3 - Επίλεξε τους Επαληθευμένους Ρόλους",
                 "description": "Επιλέξτε τους ρόλους των οποίων τα δικαιώματα θα επηρεαστούν από την κατάσταση του Δυναμικού Καναλιού.\n\nΟι επαληθευμένοι ρόλοι δεν χρησιμοποιούνται τις περισσότερες φορές, σχεδόν όλοι οι διακομιστές (servers) χρησιμοποιούν τις αρχικές ρυθμίσεις.\n\nΔεν είσαι σίγουρος για το πως δουλεύει?, Δες την [επεξήγηση](https://vertix.gg/setup/3).\n\n**_🛡️ Επαληθευμένοι Ρόλοι_**\n\n> {verifiedRolesDisplay}\n\nΜπορείς να διατηρήσεις τις αρχικές ρυθμίσεις πατώντας το κουμπί **( `✓ Ολοκλήρωση` )**.",
@@ -1196,14 +1196,14 @@
             }
         },
         {
-            "name": "VertixBot/UI-V2/SomethingWentWrongEmbed",
+            "name": "Vertix/UI-V2/SomethingWentWrongEmbed",
             "content": {
                 "title": "🤷 Ωχ, προέκυψε ένα πρόβλημα",
                 "description": "Κάτι πήγε στραβά"
             }
         },
         {
-            "name": "VertixBot/UI-V2/WelcomeEmbed",
+            "name": "VertixBot/UI-General/WelcomeEmbed",
             "content": {
                 "title": "༄ Το Vertix έφτασε, ας ξεκινήσουμε!",
                 "description": "Καλώς ήρθες στο Vertix, μια εξαιρετική προσθήκη στον διακομιστή σου!\nΑς συνεργαστούμε για να κάνουμε τον διακομιστή σου ακόμη καλύτερο.\n\n**Εγκατάσταση Bot**\n- Γράψε `/setup` ή πάτησε το `(🛠 Setup)` κουμπί.\n- Πάτα το `(➕ Create Master Channel)`\n- Ακολούθα τις οδηγίες.\n\nΕξακολουθείς να μην είσαι σίγουρος? Δες τις οδηγίες [βήμα προς βήμα](https://vertix.gg/posts/how-to-setup) .\n\nΠάντα μπορείς να επεξεργαστείς της διαμορφώσεις χρησιμοποιόντας την εντολή `/setup`.\n\nΕάν χρειάζεσαι βοήθεια ή έχεις οποιαδήποτε πρόταση, είσαι ευπρόσδεκτος να συνδεθείς στον επίσημο διακομιστή της κοινότητας του Vertix! Είμαστε πολύ χαρούμενοι να σε βοηθήσουμε και να ακούσουμε τις προτάσεις σου.\n\nΣυνδέσου σε εμάς: https://discord.gg/dEwKeQefUU"
@@ -1212,7 +1212,7 @@
     ],
     "markdowns": [
         {
-            "name": "VertixBot/UI-V2/ClaimVoteResultsMarkdown",
+            "name": "Vertix/UI-V2/ClaimVoteResultsMarkdown",
             "content": {
                 "content": "![]({userWonDisplayAvatarURL})\n\n## Ο χρήστης {userWonDisplayName} απέκτησε διαχειριστικά δικαιώματα και είναι πλεόν ο νέος ιδιοκτήτης!\n\nΠροηγούμενος Ιδιοκτήτης: ~~{previousOwnerDisplayName}~~\n\nΠήρε {elapsedTimeSeconds} δευτερόλεπτα και {resultsLength} υποψήφιους για να ολοκληρωθεί η ψηφοφορία.\n\n## Υποψήφιοι\n\\# | Χρήστης | Ψήφοι\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## Ψήφοι\nΟ Χρήστης | Για τον Υποψήφιο\n:----: | :----:\n{votesForMembersResults}\n"
             }
@@ -1220,25 +1220,25 @@
     ],
     "modals": [
         {
-            "name": "VertixBot/UI-V2/BadwordsModal",
+            "name": "Vertix/UI-V2/BadwordsModal",
             "content": {
                 "title": "Όρισε Υβριστικές/Αποκλεισμένες Λέξεις"
             }
         },
         {
-            "name": "VertixBot/UI-V2/ChannelNameTemplateModal",
+            "name": "Vertix/UI-V2/ChannelNameTemplateModal",
             "content": {
                 "title": "Όρισε το όνομα του Δυναμικού Καναλιού"
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
+            "name": "Vertix/UI-V2/DynamicChannelMetaLimitModal",
             "content": {
                 "title": "Όρισε το Όριο Χρηστών"
             }
         },
         {
-            "name": "VertixBot/UI-V2/DynamicChannelMetaRenameModal",
+            "name": "Vertix/UI-V2/DynamicChannelMetaRenameModal",
             "content": {
                 "title": "Μετονόμασε το Δυναμικό Κανάλι"
             }

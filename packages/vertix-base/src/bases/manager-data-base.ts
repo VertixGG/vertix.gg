@@ -1,3 +1,5 @@
+import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
+
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
@@ -17,13 +19,23 @@ const DEFAULT_OWNER_ID_CACHE_TIMEOUT = /* 1 hour */ 60 * 60 * 1000;
 export abstract class ManagerDataBase<
     ModelType extends IDataModel
 > extends CacheBase<DataResult> implements IDataManager {
+    private static instances: Map<any, any> = new Map();
+
     private ownerIdCache: { [ ownerId: string ]: string } = {};
 
     private dataSourceModel: ModelType;
 
     protected debugger: Debugger;
 
-    public constructor( shouldDebugCache = false ) {
+    public static getInstance<TModelType extends IDataModel, TManager extends ManagerDataBase<TModelType>>( this: new () => TManager): TManager {
+        if ( ! ManagerDataBase.instances.has( this ) ) {
+            ManagerDataBase.instances.set( this, new this() );
+        }
+
+        return ManagerDataBase.instances.get( this );
+    }
+
+    protected constructor( shouldDebugCache = false ) {
         super( shouldDebugCache );
 
         this.debugger = new Debugger( this );
@@ -31,7 +43,7 @@ export abstract class ManagerDataBase<
         this.dataSourceModel = this.getDataSourceModel();
     }
 
-    public async getData( args: IDataGetArgs, isOwnerIdSourceId = false ) {
+    public async getData( args: Omit<IDataGetArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, args.cache );
 
         const { ownerId, key, cache } = args,
@@ -109,7 +121,7 @@ export abstract class ManagerDataBase<
         }, isOwnerIdSourceId );
     }
 
-    public async setData( args: IDataUpdateArgs, isOwnerIdSourceId = false ) {
+    public async setData( args: Omit<IDataUpdateArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, args.cache );
 
         this.logger.info( this.setData,
@@ -214,7 +226,7 @@ export abstract class ManagerDataBase<
         } );
     }
 
-    public async updateData( args: IDataUpdateArgs, dbData: DataResult ) {
+    public async updateData( args: Omit<IDataUpdateArgs, "version">, dbData: DataResult ) {
         const { ownerId, key } = args,
             cacheKey = `${ ownerId }-${ key }`;
 
@@ -228,7 +240,7 @@ export abstract class ManagerDataBase<
         await this.dataSourceModel.setData( args );
     }
 
-    public async deleteData( args: IDataSelectUniqueArgs, isOwnerIdSourceId = false ) {
+    public async deleteData( args: Omit<IDataSelectUniqueArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, true );
 
         this.logger.info( this.deleteData,
@@ -246,7 +258,7 @@ export abstract class ManagerDataBase<
         return await this.dataSourceModel.getAllData();
     }
 
-    public async isExist( ownerId: string, key: string, cache = true ) {
+    public async isExist( ownerId: string, key: string, version = CURRENT_VERSION, cache = true ) {
         this.logger.debug( this.isExist,
             `Checking if data exist for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'`
         );
@@ -266,6 +278,7 @@ export abstract class ManagerDataBase<
         return await this.dataSourceModel.isDataExist( {
             ownerId,
             key,
+            version,
         } );
     }
 

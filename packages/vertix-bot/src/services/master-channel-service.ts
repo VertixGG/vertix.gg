@@ -1,6 +1,9 @@
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import "@vertix.gg/prisma/bot-client";
+import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import {
@@ -13,28 +16,14 @@ import {
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-
-import { DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA } from "@vertix.gg/base/src/definitions/dynamic-channel-defaults";
-
-import {
-    DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
-    DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE, DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
-    DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    DEFAULT_MASTER_CATEGORY_NAME,
-    DEFAULT_MASTER_CHANNEL_CREATE_NAME
-} from "@vertix.gg/base/src/definitions/master-channel-defaults";
+import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
-
 import {
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE,
-    MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES
-} from "@vertix.gg/base/src/definitions/master-channel-data-keys";
+    DynamicChannelElementsGroup
+} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
@@ -47,18 +36,19 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui-v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
-
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
 import type { IChannelEnterGenericArgs, } from "@vertix.gg/bot/src/interfaces/channel";
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
+
+import type {
+    MasterChannelConfigInterface,
+    MasterChannelDataInterface
+} from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type {
     CategoryChannel,
@@ -68,18 +58,10 @@ import type {
     VoiceChannel
 } from "discord.js";
 
-import type { AppService } from "src/services/app-service";
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-interface IMasterChannelCreateCommonArgs {
+interface IMasterChannelCreateCommonArgs extends Partial<MasterChannelDataInterface> {
     userOwnerId: string,
-
-    dynamicChannelNameTemplate?: string,
-    dynamicChannelButtonsTemplate?: number[],
-
-    dynamicChannelMentionable?: boolean,
-    dynamicChannelAutoSave?: boolean,
-
-    dynamicChannelVerifiedRoles?: string[],
 }
 
 interface IMasterChannelCreateInternalArgs extends IMasterChannelCreateCommonArgs {
@@ -112,11 +94,14 @@ const MAX_TIMEOUT_PER_CREATE = 10 * 1000;
 
 export class MasterChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
-    uiAdapterService: UIAdapterService,
+    uiService: UIService,
     channelService: ChannelService,
     dynamicChannelService: DynamicChannelService,
 }> {
     private debugger: Debugger;
+
+    private config = ConfigManager.$
+        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
 
     private requestedChannelMap: Map<string, {
         timestamp: number,
@@ -144,24 +129,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    private async onJoin( args: IChannelEnterGenericArgs ) {
-        const { newState } = args;
-
-        if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
-            await this.onJoinMasterChannel( args );
-        }
-    }
-
-    private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
-        if ( await ChannelModel.$.isMaster( channel.id ) ) {
-            await this.onDeleteMasterChannel( channel );
-        }
-    }
-
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixBot/UI-V2/UIAdapterService",
+            uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel",
         };
@@ -298,7 +269,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 // Send DM message to the user with missing permissions.
                 if ( newState.member?.id ) {
                     const missingPermissionsAdapter = this.services
-                        .uiAdapterService.get( "VertixBot/UI-V2/MissingPermissionsAdapter" );
+                        .uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" );
 
                     if ( ! missingPermissionsAdapter ) {
                         this.logger.error( this.onJoinMasterChannel,
@@ -428,7 +399,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     public async createDefaultMasterCategory( guild: Guild ) {
         return CategoryManager.$.create( {
             guild,
-            name: DEFAULT_MASTER_CATEGORY_NAME,
+            name: this.config.data.masterChannelDefaults.dynamicChannelsCategoryName,
         } );
     }
 
@@ -463,7 +434,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function createMasterChannel() :: Creates channel master of create.
+     * Function `createMasterChannelInternal()` - Creates channel master of create.
      */
     private async createMasterChannelInternal( args: IMasterChannelCreateInternalArgs ) {
         const { guild, parent } = args;
@@ -471,19 +442,19 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         this.logger.info( this.createMasterChannelInternal,
             `Guild id: '${ guild.id }' - Creating master channel for guild: '${ guild.name }' ownerId: '${ args.guild.ownerId }'` );
 
-        // TODO In future, we should use hooks for this. `Commands.on( "channelCreate", ( channel ) => {} );`.
-        const newName = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ] ||
-                DEFAULT_DYNAMIC_CHANNEL_NAME_TEMPLATE,
+        const { masterChannelData } = this.config.data,
+            { masterChannelDefaults } = this.config.data;
 
-            newButtons = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ] ||
-                DEFAULT_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE,
+        const newName = args.dynamicChannelNameTemplate || masterChannelData.dynamicChannelNameTemplate,
+            newButtons = args.dynamicChannelButtonsTemplate || masterChannelData.dynamicChannelButtonsTemplate,
 
-            newMentionable = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] === "boolean" ?
-                args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ] : DEFAULT_DYNAMIC_CHANNEL_MENTIONABLE,
-            newAutoSave = typeof args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] === "boolean" ?
-                args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ] : DEFAULT_DYNAMIC_CHANNEL_AUTOSAVE,
+            newMentionable = typeof args.dynamicChannelMentionable === "boolean" ?
+                args.dynamicChannelMentionable : masterChannelData.dynamicChannelMentionable,
 
-            newVerifiedRoles = args[ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ] || [
+            newAutoSave = typeof args.dynamicChannelAutoSave === "boolean" ?
+                args.dynamicChannelAutoSave : masterChannelData.dynamicChannelAutoSave,
+
+            newVerifiedRoles = args.dynamicChannelVerifiedRoles || [
                 guild.roles.everyone.id
             ];
 
@@ -497,7 +468,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             guild,
             userOwnerId: args.userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: DEFAULT_MASTER_CHANNEL_CREATE_NAME,
+            name: masterChannelDefaults.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
             rtcRegion: "us-west",
@@ -510,24 +481,23 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const masterChannelDB = await result.db;
 
-        await ChannelDataManager.$.setSettingsData( masterChannelDB.id, {
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_NAME_TEMPLATE ]: newName,
-
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_BUTTONS_TEMPLATE ]: newButtons,
-
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_MENTIONABLE ]: newMentionable,
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_AUTOSAVE ]: newAutoSave,
-
-            [ MASTER_CHANNEL_SETTINGS_KEY_DYNAMIC_CHANNEL_VERIFIED_ROLES ]: newVerifiedRoles,
+        await MasterChannelDataManager.$.setAllSettings( masterChannelDB.id, {
+            dynamicChannelAutoSave: newAutoSave,
+            dynamicChannelButtonsTemplate: newButtons,
+            // Since `LogsChannelId` not defined in the creation process, but later via configuration.
+            dynamicChannelLogsChannelId: masterChannelData.dynamicChannelLogsChannelId,
+            dynamicChannelMentionable: newMentionable,
+            dynamicChannelNameTemplate: newName,
+            dynamicChannelVerifiedRoles: newVerifiedRoles,
         } );
 
         // TODO: Duplicate code.
-        const usedButtons = DynamicChannelElementsGroup.getAllItems().filter( ( item ) => {
-                return newButtons.includes( item.getId() );
+        const usedButtons = DynamicChannelElementsGroup.getAll().filter( ( item ) => {
+                return newButtons.includes( item.getId().toString() );
             } ),
-            usedEmojis = DEFAULT_DYNAMIC_CHANNEL_BUTTONS_INTERFACE_SCHEMA.getUsedEmojis(
+            usedEmojis = ( DynamicChannelElementsGroup.getEmbedEmojis(
                 usedButtons.map( ( item ) => item.getId()
-                ) ).join( "," ),
+                )) ).join( "," ),
             usedRoles = newVerifiedRoles.map( ( roleId ) => {
                 if ( roleId === guild.roles.everyone.id ) {
                     return "@everyone";
@@ -541,6 +511,20 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         );
 
         return result;
+    }
+
+    private async onJoin( args: IChannelEnterGenericArgs ) {
+        const { newState } = args;
+
+        if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
+            await this.onJoinMasterChannel( args );
+        }
+    }
+
+    private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
+        if ( await ChannelModel.$.isMaster( channel.id ) ) {
+            await this.onDeleteMasterChannel( channel );
+        }
     }
 }
 

@@ -1,8 +1,8 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
-import { ModelBaseCached } from "@vertix.gg/base/src/bases/model-base";
+import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
-import { UI_GENERIC_SEPARATOR } from "@vertix.gg/bot/src/ui-v2/_base/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export interface TModelHelper<T> {
     findFirst( ... args: any[] ): T;
@@ -13,14 +13,14 @@ export interface TModelHelper<T> {
 /**
  * Wasted too much time on this, didn't find a good solution.
  */
-export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCached<PrismaBot.PrismaClient, TPayloadWithContent> {
+export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends ModelBaseCachedWithClient<PrismaBot.PrismaClient, TPayloadWithContent> {
     public static getName(): string {
         return "VertixBot/Bases/ModelLanguageBase";
     }
 
     public async get( name: string, languageCode: string, cache = true ) {
         // TODO: Find a better way to do this.
-        name = name.split( UI_GENERIC_SEPARATOR, 1 )[ 0 ];
+        name = name.split( UI_CUSTOM_ID_SEPARATOR, 1 )[ 0 ];
 
         this.debugger.log( this.get, `Getting button language for: '${ name }', language code: '${ languageCode }', cache: '${ cache }'` );
 

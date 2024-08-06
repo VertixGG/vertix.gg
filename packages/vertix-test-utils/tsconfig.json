@@ -1,0 +1,25 @@
+{
+    // Extends the configuration from "./tsconfig.paths.json"
+    "extends": "./tsconfig.paths.json",
+
+    // Compiler options
+    "compilerOptions": {
+        "typeRoots": [
+            "../../node_modules/@types",
+            "../../node_modules/"
+        ],
+        "types": [
+            "node",
+        ],
+        "module": "ESNext",
+
+        "moduleResolution": "bundler",
+
+        "strict": true,
+
+        "esModuleInterop": true,
+
+        // Skip lib check
+        "skipLibCheck": true
+    }
+}

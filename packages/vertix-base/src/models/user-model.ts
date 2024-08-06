@@ -10,7 +10,7 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     private static instance: UserModel;
 
     public static getName(): string {
-        return "VertixBase/Models/UserModel";
+        return "VertixBase/Models/User";
     }
 
     public static getInstance(): UserModel {

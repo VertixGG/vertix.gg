@@ -1,11 +1,16 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
+import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
+
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
-import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords";
-
-import { DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS } from "@vertix.gg/base/src/definitions/master-channel-defaults";
-import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/base/src/definitions/guild-data-keys";
+import {
+    DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
+    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
+    DEFAULT_GUILD_SETTINGS_KEY_VERSION
+} from "@vertix.gg/base/src/definitions/guild-data-keys";
 
 import {
     DEFAULT_BADWORDS,
@@ -15,22 +20,16 @@ import {
 
 import { ManagerDataBase } from "@vertix.gg/base/src/bases/manager-data-base";
 
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { Guild } from "discord.js";
+
 interface IGuildSettings {
     maxMasterChannels: number;
 }
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
-    private static instance: GuildDataManager;
-
     public static getName() {
         return "VertixBase/Managers/GuildData";
-    }
-
-    public static getInstance(): GuildDataManager {
-        if ( ! GuildDataManager.instance ) {
-            GuildDataManager.instance = new GuildDataManager();
-        }
-        return GuildDataManager.instance;
     }
 
     public static get $() {
@@ -53,8 +52,11 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             return data.object;
         }
 
+        const { masterChannelDefaults } = ConfigManager.$
+            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
+
         return {
-            maxMasterChannels: DEFAULT_MASTER_MAXIMUM_FREE_CHANNELS,
+            maxMasterChannels: masterChannelDefaults.masterChannelMaximumFreeChannels,
         };
     }
 
@@ -77,6 +79,17 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
     public async getBadwordsFormatted( guildId: string ): Promise<string> {
         return ( await this.getBadwords( guildId ) )
             .join( DEFAULT_BADWORDS_SEPARATOR ) || DEFAULT_BADWORDS_INITIAL_VALUE;
+    }
+
+    public async getUIVersion( guildId: string ): Promise<number> {
+        const version = await this.getData( {
+            ownerId: guildId,
+            key: DEFAULT_GUILD_SETTINGS_KEY_VERSION,
+            default: "0",
+            cache: true,
+        }, true ) || "0";
+
+        return parseInt( version.toString() );
     }
 
     public async setBadwords( guildId: string, badwords: string[] | undefined ) {
@@ -107,7 +120,37 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         };
     }
 
-    public async hasSomeBadword( guildId: string, content: string ): Promise<string | null> {
+    public async setLanguage( guild: Guild, language: string, shouldAdminLog = true ) {
+        await this.setData( {
+            ownerId: guild.id,
+            key: DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
+            default: language,
+            cache: true,
+        }, true );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin( this.setLanguage,
+                `🌍  Language has been modified - "${ language }" (${ guild.name }) (${ guild.memberCount })`
+            );
+        }
+    }
+
+    public async setUIVersion( guild: Guild, version: number, shouldAdminLog = true ) {
+        await this.setData( {
+            ownerId: guild.id,
+            key: DEFAULT_GUILD_SETTINGS_KEY_VERSION,
+            default: version.toString(),
+            cache: true,
+        }, true );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin( this.setUIVersion,
+                `⏫  UI Version has been modified - "${ version }" (${ guild.name }) (${ guild.memberCount })`
+            );
+        }
+    }
+
+    public async hasSomeBadword( guildId: string, content: string ) {
         return badwordsSomeUsed( content, await this.getBadwords( guildId ) );
     }
 

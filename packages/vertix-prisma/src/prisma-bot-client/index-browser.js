@@ -16,12 +16,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 5.15.0
- * Query Engine version: 12e25d8d06f6ea5a0252864dd9a03b1bb51f3022
+ * Prisma Client JS version: 5.17.0
+ * Query Engine version: 393aa359c9ad4a4bb28630fb5613f9c281cde053
  */
 Prisma.prismaVersion = {
-  client: "5.15.0",
-  engine: "12e25d8d06f6ea5a0252864dd9a03b1bb51f3022"
+  client: "5.17.0",
+  engine: "393aa359c9ad4a4bb28630fb5613f9c281cde053"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -112,6 +112,28 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.ConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  categoryId: 'categoryId',
+  guildId: 'guildId',
+  createdAtDiscord: 'createdAtDiscord',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.GuildScalarFieldEnum = {
   id: 'id',
   guildId: 'guildId',
@@ -125,21 +147,12 @@ exports.Prisma.GuildScalarFieldEnum = {
 exports.Prisma.GuildDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
-  version: 'version',
   ownerId: 'ownerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  categoryId: 'categoryId',
-  guildId: 'guildId',
-  createdAtDiscord: 'createdAtDiscord',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -160,10 +173,11 @@ exports.Prisma.ChannelScalarFieldEnum = {
 exports.Prisma.ChannelDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
-  version: 'version',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -180,10 +194,25 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.UserDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserChannelDataScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  key: 'key',
   version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -240,6 +269,14 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.E_DATA_TYPES = exports.$Enums.E_DATA_TYPES = {
+  string: 'string',
+  number: 'number',
+  boolean: 'boolean',
+  object: 'object',
+  array: 'array'
+};
+
 exports.E_INTERNAL_CHANNEL_TYPES = exports.$Enums.E_INTERNAL_CHANNEL_TYPES = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
   DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
@@ -247,13 +284,15 @@ exports.E_INTERNAL_CHANNEL_TYPES = exports.$Enums.E_INTERNAL_CHANNEL_TYPES = {
 };
 
 exports.Prisma.ModelName = {
+  Config: 'Config',
+  Category: 'Category',
   Guild: 'Guild',
   GuildData: 'GuildData',
-  Category: 'Category',
   Channel: 'Channel',
   ChannelData: 'ChannelData',
   User: 'User',
   UserData: 'UserData',
+  UserChannelData: 'UserChannelData',
   ElementButtonLanguage: 'ElementButtonLanguage',
   ElementTextInputLanguage: 'ElementTextInputLanguage',
   ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',

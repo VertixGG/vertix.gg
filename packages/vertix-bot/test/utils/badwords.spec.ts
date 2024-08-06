@@ -1,4 +1,4 @@
-import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords";
+import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
 
 describe( "VertixBot/Utils/Badwords", () => {
 

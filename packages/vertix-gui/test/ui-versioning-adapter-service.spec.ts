@@ -5,23 +5,22 @@ import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIVersioningAdapterService } from "@vertix.gg/gui/src/ui-versioning-adapter-service";
-
 import type { Base } from "discord.js";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 // Mock original ServiceLocator.
 ServiceLocatorMock.mockOrigin();
 
 let uiService: UIService;
-let versioningService: UIVersioningAdapterService;
+let versioningService: UIAdapterVersioningService;
 
 describe( "VertixGUI/UIVersioningAdapterService", () => {
 
     beforeEach( async () => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/gui/src/ui-versioning-adapter-service" ) ).UIVersioningAdapterService );
+        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/gui/src/ui-adapter-versioning-service" ) ).default );
 
         // Await for all services to be registered.
         await ServiceLocatorMock.$.waitForAll();

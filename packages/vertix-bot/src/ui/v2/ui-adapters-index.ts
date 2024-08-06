@@ -13,4 +13,3 @@ export { DynamicChannelPremiumResetChannelAdapter } from "@vertix.gg/bot/src/ui/
 export { LanguageAdapter } from "@vertix.gg/bot/src/ui/v2/language/language-adapter";
 export { SetupAdapter } from "@vertix.gg/bot/src/ui/v2/setup/setup-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v2/setup-new/setup-new-wizard-adapter";
-export { WelcomeAdapter } from "@vertix.gg/bot/src/ui/v2/welcome/welcome-adapter";

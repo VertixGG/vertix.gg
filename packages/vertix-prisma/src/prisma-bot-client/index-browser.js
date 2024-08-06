@@ -16,11 +16,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 5.16.1
+ * Prisma Client JS version: 5.16.2
  * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
  */
 Prisma.prismaVersion = {
-  client: "5.16.1",
+  client: "5.16.2",
   engine: "34ace0eb2704183d2c05b60b52fba5c43c13f303"
 }
 
@@ -112,6 +112,28 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.ConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  categoryId: 'categoryId',
+  guildId: 'guildId',
+  createdAtDiscord: 'createdAtDiscord',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.GuildScalarFieldEnum = {
   id: 'id',
   guildId: 'guildId',
@@ -125,21 +147,12 @@ exports.Prisma.GuildScalarFieldEnum = {
 exports.Prisma.GuildDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
-  version: 'version',
   ownerId: 'ownerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  categoryId: 'categoryId',
-  guildId: 'guildId',
-  createdAtDiscord: 'createdAtDiscord',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -160,10 +173,11 @@ exports.Prisma.ChannelScalarFieldEnum = {
 exports.Prisma.ChannelDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
-  version: 'version',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -180,10 +194,25 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.UserDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserChannelDataScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  key: 'key',
   version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -231,18 +260,6 @@ exports.Prisma.ModalLanguageScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ConfigScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  version: 'version',
-  type: 'type',
-  object: 'object',
-  value: 'value',
-  values: 'values',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -252,35 +269,36 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.E_DATA_TYPES = exports.$Enums.E_DATA_TYPES = {
+  string: 'string',
+  number: 'number',
+  boolean: 'boolean',
+  object: 'object',
+  array: 'array'
+};
+
 exports.E_INTERNAL_CHANNEL_TYPES = exports.$Enums.E_INTERNAL_CHANNEL_TYPES = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
   DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
   MASTER_CREATE_CHANNEL: 'MASTER_CREATE_CHANNEL'
 };
 
-exports.E_DATA_TYPES = exports.$Enums.E_DATA_TYPES = {
-  STRING: 'STRING',
-  NUMBER: 'NUMBER',
-  BOOLEAN: 'BOOLEAN',
-  OBJECT: 'OBJECT',
-  ARRAY: 'ARRAY'
-};
-
 exports.Prisma.ModelName = {
+  Config: 'Config',
+  Category: 'Category',
   Guild: 'Guild',
   GuildData: 'GuildData',
-  Category: 'Category',
   Channel: 'Channel',
   ChannelData: 'ChannelData',
   User: 'User',
   UserData: 'UserData',
+  UserChannelData: 'UserChannelData',
   ElementButtonLanguage: 'ElementButtonLanguage',
   ElementTextInputLanguage: 'ElementTextInputLanguage',
   ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',
   EmbedLanguage: 'EmbedLanguage',
   MarkdownLanguage: 'MarkdownLanguage',
-  ModalLanguage: 'ModalLanguage',
-  Config: 'Config'
+  ModalLanguage: 'ModalLanguage'
 };
 
 /**

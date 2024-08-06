@@ -29,16 +29,12 @@ export class PermissionsManager extends InitializeBase {
         return "VertixBot/Managers/Permissions";
     }
 
-    public static getInstance(): PermissionsManager {
+    public static get $() {
         if ( ! PermissionsManager.instance ) {
             PermissionsManager.instance = new PermissionsManager();
         }
 
         return PermissionsManager.instance;
-    }
-
-    public static get $() {
-        return PermissionsManager.getInstance();
     }
 
     public constructor() {
@@ -155,19 +151,6 @@ export class PermissionsManager extends InitializeBase {
         return this.getMissingChannelPermissions( permissions, context );
     }
 
-    public getChannelDefaultInheritedProperties( channel: VoiceBasedChannel ) {
-        const { rtcRegion, bitrate, userLimit } = channel,
-            result: any = { bitrate, userLimit };
-
-        if ( rtcRegion !== null ) {
-            result.rtcRegion = rtcRegion;
-        }
-
-        this.debugger.log( this.getChannelDefaultInheritedProperties, JSON.stringify( result ) );
-
-        return result;
-    }
-
     public getChannelDefaultInheritedPermissions( channel: VoiceBasedChannel ) {
         const { permissionOverwrites } = channel,
             result = [];
@@ -200,18 +183,16 @@ export class PermissionsManager extends InitializeBase {
         ];
     }
 
-    public getChannelDefaultProperties( userId: string, channel: VoiceBasedChannel, overrides = {} ) {
-        const inheritedProperties = this.getChannelDefaultInheritedProperties( channel ),
-            inheritedPermissions =
+    public getChannelDefaultPermissions( userId: string, channel: VoiceBasedChannel, overrides = {} ) {
+        const inheritedPermissions =
                 this.getChannelDefaultInheritedPermissionsWithUser( channel, userId, overrides );
 
         return {
-            ... inheritedProperties,
             permissionOverwrites: inheritedPermissions,
         };
     }
 
-    public async ensureChannelBoConnectivityPermissions( channel: VoiceChannel ): Promise<void> {
+    public async ensureChannelBotConnectivityPermissions( channel: VoiceChannel ): Promise<void> {
         if ( this.isSelfAdministratorRole( channel.guild ) ) {
             return;
         }
@@ -220,7 +201,7 @@ export class PermissionsManager extends InitializeBase {
             PermissionsBitField.Flags.ViewChannel,
             PermissionsBitField.Flags.Connect,
         ]) ).catch( ( error ) => {
-            this.logger.error( this.ensureChannelBoConnectivityPermissions,
+            this.logger.error( this.ensureChannelBotConnectivityPermissions,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - ${ error }`
             );
         } );
@@ -310,6 +291,8 @@ export class PermissionsManager extends InitializeBase {
     }
 
     public async editChannelRolesPermissions( channel: VoiceBasedChannel, roles: string[], permissions: PermissionOverwriteOptions ): Promise<void> {
+        this.debugger.dumpDown( this.editChannelRolesPermissions, permissions, "Permissions" );
+
         return new Promise( ( resolve, reject ) => {
             for ( const roleId of roles ) {
                 const role = channel.guild.roles.cache.get( roleId );
@@ -320,10 +303,10 @@ export class PermissionsManager extends InitializeBase {
                     continue;
                 }
 
-                channel.permissionOverwrites.edit( role, permissions ).catch( reject );
+                channel.permissionOverwrites.edit( role, permissions )
+                    .catch( reject )
+                    .then( () => resolve() );
             }
-
-            resolve();
         } );
     }
 }

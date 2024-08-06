@@ -380,6 +380,18 @@ export abstract class UIAdapterBase<
     }
 
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
+        const argsId = await this.setDynamicInitialArgs( message, newArgs );
+
+        const args = this.argsManager.getArgsById( this, argsId );
+
+        await this.build( args, "edit-message", message );
+
+        const newMessage = this.getMessage( "edit-message", message.channel as TChannel, newArgs );
+
+        return await message.edit( newMessage );
+    }
+
+    protected async setDynamicInitialArgs( message: Message<true>, newArgs?: UIArgs ) {
         const argsId = message.id;
 
         let args = this.argsManager.getArgsById( this, argsId );
@@ -391,13 +403,7 @@ export abstract class UIAdapterBase<
             this.argsManager.setInitialArgs( this, argsId, argsInternal );
         }
 
-        args = this.argsManager.getArgsById( this, argsId );
-
-        await this.build( args, "edit-message", message );
-
-        const newMessage = this.getMessage( "edit-message", message.channel as TChannel, newArgs );
-
-        return await message.edit( newMessage );
+        return argsId;
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
@@ -637,7 +643,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.customIdStrategy.getId( this.getName() + UI_CUSTOM_ID_SEPARATOR + modal.getName() ),
+            customId: this.customIdStrategy.generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + modal.getName() ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }

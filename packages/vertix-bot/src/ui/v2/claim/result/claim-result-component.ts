@@ -1,4 +1,3 @@
-// TODO: Sort out imports
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
@@ -38,7 +37,7 @@ export class ClaimResultComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

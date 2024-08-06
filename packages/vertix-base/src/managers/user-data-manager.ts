@@ -42,19 +42,31 @@ export class UserDataManager extends ManagerDataBase<UserModel> {
         }
     }
 
-    public async setMasterDataEnsheathed( initiator: Interaction, channel: VoiceChannel, data: any ) {
-        this.logger.log( this.setMasterDataEnsheathed,
+    /**
+     * Function `setUserMasterData()` - This method sets master data for a given user and voice channel.
+x
+     * The function logs the guild and user information.
+     * It also attempts to retrieve the master channel database
+     * based on the dynamic channel ID.
+     * If it is unable to find the master channel, it logs an error and returns.
+     *
+     * Next, the function ensures that the user exists in the database by creating or updating the user details.
+     * It then generates a key based on the master channel's ID. If the data exists for the user and key, it calls
+     * the `setMasterData` method to set the user's master data in the master channel.
+     **/
+    public async setUserMasterData( initiator: Interaction, channel: VoiceChannel, data: any ) {
+        this.logger.log( this.setUserMasterData,
             `Guild id: '${ channel.guildId }' - Initiator: '${ initiator.user.id }' - Channel: '${ channel.id }'`
         );
 
-        this.debugger.dumpDown( this.setMasterDataEnsheathed, data,
+        this.debugger.dumpDown( this.setUserMasterData, data,
             `Guild id: '${ channel.guildId }' - Initiator: '${ initiator.user.id }' - Channel: '${ channel.id }' - Data:`
         );
 
         const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
-            this.logger.error( this.setMasterDataEnsheathed,
+            this.logger.error( this.setUserMasterData,
                 `Guild id: '${ channel.guildId }' - Master channel not found for channel: '${ channel.id }'`
             );
             return;

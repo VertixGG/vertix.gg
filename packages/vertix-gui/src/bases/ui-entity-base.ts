@@ -10,7 +10,7 @@ import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-def
 export abstract class UIEntityBase extends UIInstanceTypeBase {
     declare protected schema: UIEntitySchemaBase;
 
-    protected uiArgs: UIArgs | undefined;
+    private uiArgsInternal: UIArgs | undefined;
 
     public static getName() {
         return "VertixGUI/UIEntityBase";
@@ -21,7 +21,7 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
     }
 
     public async build( uiArgs?: UIArgs ) {
-        this.uiArgs = uiArgs;
+        this.uiArgsInternal = uiArgs;
 
         this.schema = await this.getSchemaInternal();
 
@@ -39,5 +39,13 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
             attributes: await this.getAttributes(),
             isAvailable: this.isAvailable ? await this.isAvailable() : true,
         };
+    }
+
+    protected get uiArgs() {
+        return this.uiArgsInternal;
+    }
+
+    protected set uiArgs( value: UIArgs | undefined ) {
+        this.uiArgsInternal = value;
     }
 }

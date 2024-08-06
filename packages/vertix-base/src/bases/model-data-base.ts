@@ -1,6 +1,6 @@
 import "@vertix.gg/prisma/bot-client";
 
-import { ModelBaseCached } from "@vertix.gg/base/src/bases/model-base";
+import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
 import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
 
@@ -19,7 +19,7 @@ export abstract class ModelDataBase<
     TDataModel extends IDataInnerModel,
     TCacheResult = undefined,
 >
-    extends ModelBaseCached<PrismaBot.PrismaClient, TCacheResult> implements IDataModel
+    extends ModelBaseCachedWithClient<PrismaBot.PrismaClient, TCacheResult> implements IDataModel
 {
 
     protected ownerModel: TOwnerModel;
@@ -60,7 +60,9 @@ export abstract class ModelDataBase<
 
         const createArgs: IDataCreateArgs = {
             ownerId: args.ownerId,
+            version: CURRENT_VERSION,
             key: args.key,
+
             value: args.default,
         };
 
@@ -69,8 +71,9 @@ export abstract class ModelDataBase<
         try {
             result = await this.dataModel.update( {
                 where: {
-                    ownerId_key: {
+                    ownerId_key_version: {
                         ownerId: args.ownerId,
+                        version: args.version,
                         key: args.key,
                     },
                 },
@@ -87,18 +90,17 @@ export abstract class ModelDataBase<
         return result;
     }
 
-    public async deleteData( args: IDataSelectUniqueArgs ) {
+    public async deleteData( args: Omit<IDataSelectUniqueArgs, "version"> ) {
         return this.dataModel.delete( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
-                },
-            },
+            where: this.getWhereUnique( {
+                version: CURRENT_VERSION,
+                ...args
+            } )
         } );
     }
 
-    public async getData( args: IDataGetArgs ) {
+    // TODO: `version` should not be omitted.
+    public async getData( args: Omit<IDataGetArgs, "version"> ) {
         this.debugger.log( this.getData, "Getting content for:", args );
 
         return this.ownerModel.findUnique( {
@@ -151,12 +153,7 @@ export abstract class ModelDataBase<
 
     public async isDataExist( args: IDataSelectUniqueArgs ) {
         const result = await this.dataModel.findUnique( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
-                },
-            },
+            where: this.getWhereUnique( args )
         } );
 
         return !! result;
@@ -167,4 +164,14 @@ export abstract class ModelDataBase<
     protected abstract getOwnerModel(): TOwnerModel;
 
     protected abstract getDataModel(): TDataModel;
+
+    private getWhereUnique( args: IDataSelectUniqueArgs ) {
+        return {
+            ownerId_key_version: {
+                ownerId: args.ownerId,
+                version: args.version,
+                key: args.key,
+            },
+        };
+    }
 }

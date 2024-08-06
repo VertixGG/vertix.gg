@@ -86,20 +86,35 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         return [];
     }
 
+    /**
+     *
+     * @see {UIAdapterExecutionStepsBase}
+     *
+     * @note The `get-default-groups` methods working only in case the adapter is not execution steps type adapter,
+     * Normal adapters are blindly returning the current component with its entities.
+     *
+     * In order it to work in case of execution steps type adapters, it has to send execution
+     * without a step ( eg `this.ephemeral` vs `this.ephemeralWithStep` )  and the default( first in the list of steps )
+     * step should be without groups.
+     */
+    public static getDefaultElementsGroup(): string | null {
+        throw new ForceMethodImplementation( this, this.getDefaultElementsGroup.name );
+    }
+
+    public static getDefaultEmbedsGroup(): string | null {
+        throw new ForceMethodImplementation( this, this.getDefaultEmbedsGroup.name );
+    }
+
+    public static getDefaultMarkdownsGroup(): string | null {
+        throw new ForceMethodImplementation( this, this.getDefaultMarkdownsGroup.name );
+    }
+
     protected static getElements(): UIElementsTypes | UIElementsConstructor {
         return [];
     }
 
-    protected static getDefaultElementsGroup(): string | null {
-        throw new ForceMethodImplementation( this, this.getDefaultElementsGroup.name );
-    }
-
     protected static getEmbeds(): UIEmbedTypes {
         return [];
-    }
-
-    protected static getDefaultEmbedsGroup(): string | null {
-        throw new ForceMethodImplementation( this, this.getDefaultEmbedsGroup.name );
     }
 
     protected static getModals(): typeof UIModalBase[] | { new(): UIModalBase }[] {
@@ -108,10 +123,6 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
 
     protected static getMarkdowns(): UIMarkdownTypes {
         return [];
-    }
-
-    protected static getDefaultMarkdownsGroup(): string | null {
-        throw new ForceMethodImplementation( this, this.getDefaultMarkdownsGroup.name );
     }
 
     protected static getFlatElements( elements = this.getElements() ): typeof UIElementBase[] {

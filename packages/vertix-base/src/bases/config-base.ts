@@ -1,12 +1,14 @@
 import crypto from "node:crypto";
 
+import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
 
-import { ConfigModel } from "@vertix.gg/base/src/models/config-model";
+import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
-import type { VersionType } from "@vertix.gg/base/src/models/config-model";
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 interface ConfigBaseDefaultsInterface {
     [ key: string ]: any;
@@ -15,8 +17,9 @@ interface ConfigBaseDefaultsInterface {
 interface ConfigBaseMetaInterface {
     name: string;
     key: string;
-    version: VersionType;
+    version: TVersionType;
 }
+
 interface ConfigBaseInterface<
     TDefaults extends ConfigBaseDefaultsInterface = ConfigBaseDefaultsInterface,
     TData extends TDefaults = TDefaults,
@@ -30,20 +33,23 @@ interface ConfigBaseInterface<
 export abstract class ConfigBase<
     TConfig extends ConfigBaseInterface
 > extends InitializeBase {
+    protected static configModel = new ( DataVersioningModelFactory<
+        PrismaBot.Config,
+        PrismaBot.Prisma.ConfigDelegate
+    >( PrismaBotClient.getPrismaClient().config, {
+        modelNamespace: "VertixBase/Models/Config"
+    } ) );
+
     protected config: TConfig = {} as TConfig;
 
     public abstract getConfigName(): string;
 
-    public abstract getVersion(): VersionType;
+    public abstract getVersion(): TVersionType;
 
     protected abstract getDefaults(): TConfig["defaults"];
 
-    protected getConfigModel() {
-        return ConfigModel.$;
-    }
-
     protected get model() {
-        return this.getConfigModel();
+        return this.$$.configModel;
     }
 
     public constructor( shouldInitialize = true ) {
@@ -55,12 +61,12 @@ export abstract class ConfigBase<
             defaults = this.getDefaults(),
             version = this.getVersion();
 
-        let currentConfig = await this.model.get<TConfig>( key, version );
+        let currentConfig = await this.model.get<TConfig>( { key, version } );
 
         if ( ! currentConfig ) {
-            await this.model.create<TConfig["defaults"]>( key, defaults, version );
+            await this.model.create<TConfig["defaults"]>( { key, version }, defaults );
 
-            currentConfig = await this.model.get<TConfig>( key, version );
+            currentConfig = await this.model.get<TConfig>( { key, version } );
 
             if ( ! currentConfig ) {
                 throw new Error( `Failed to initialize: '${ this.$$.getName() }'` );
@@ -83,15 +89,15 @@ export abstract class ConfigBase<
     };
 
     public get defaults() {
-        return <TConfig["defaults"]>this.config.defaults;
+        return <TConfig["defaults"]> this.config.defaults;
     }
 
     public get meta() {
-        return <TConfig["meta"]>this.config.meta;
+        return <TConfig["meta"]> this.config.meta;
     }
 
     public get data() {
-        return <TConfig["data"]>this.config.data;
+        return <TConfig["data"]> this.config.data;
     }
 
     public getKeys<
@@ -109,13 +115,23 @@ export abstract class ConfigBase<
 
     private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
         // Validate checksum
-        const checksum = ( obj: Record<string, any> ) => {
-            const asArray = Object.entries( obj ),
-                data = Buffer.from( asArray.map( i => i.join( ":" ) ).join( ";" ) );
+        const extractEntries = ( obj: Record<string, any>, prefix = "" ): [ string, any ][] => {
+            return Object.entries( obj ).flatMap( ( [ key, value ] ) => {
+                const newKey = prefix ? `${ prefix }.${ key }` : key;
+                if ( typeof value === "object" && value !== null ) {
+                    return extractEntries( value, newKey );
+                }
+                return [ [ newKey, value ] ];
+            } );
+        };
 
-            return crypto.createHash("sha256")
-                .update(data)
-                .digest("hex");
+        const checksum = ( obj: Record<string, any> ) => {
+            const entries = extractEntries( obj );
+            const data = Buffer.from( entries.map( ( [ key, value ] ) => `${ key }:${ value }` ).join( ";" ) );
+
+            return crypto.createHash( "sha256" )
+                .update( data )
+                .digest( "hex" );
         };
 
         const checksumA = checksum( objA ),

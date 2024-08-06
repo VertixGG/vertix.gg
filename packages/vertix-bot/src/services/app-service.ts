@@ -1,11 +1,12 @@
-import process from "process";
-
 import * as fs from "fs";
+
 import * as path from "path";
 
-import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
+import process from "process";
 
 import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
+
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
@@ -92,6 +93,41 @@ export class AppService extends ServiceBase {
     }
 
     private async ensureBackwardCompatibility() {
+        // // If version less than "0.0.8" then update `type` of `GuildData`, `ChannelData`, `UserData` to uppercase.
+        // const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
+        // const client = PrismaBotClient.getPrismaClient();
+        //
+        // const checkVersion = ( veersion: string ) => {
+        //     const [ major, minor, patch ] = veersion.split( "." );
+        //     return Number( major ) === 0 && Number( minor ) === 0 && Number( patch ) < 8;
+        // };
+        //
+        // const updateData = async ( dataModel: any ) => {
+        //     const entities = await dataModel.findMany( {
+        //         where: {
+        //             version: {
+        //                 not: CURRENT_VERSION,
+        //             }
+        //         }
+        //     } );
+        //     for ( const entity of entities ) {
+        //         const { type } = entity;
+        //         if ( checkVersion( entity.version ) ) {
+        //             await dataModel.update( {
+        //                 where: {
+        //                     id: entity.id,
+        //                 },
+        //                 data: {
+        //                     type: type.toLowerCase() as any,
+        //                 },
+        //             } );
+        //         }
+        //     }
+        // };
+        //
+        // await updateData( client.guildData );
+        // await updateData( client.channelData );
+        // await updateData( client.userData );
     }
 
     private pingInterval() {

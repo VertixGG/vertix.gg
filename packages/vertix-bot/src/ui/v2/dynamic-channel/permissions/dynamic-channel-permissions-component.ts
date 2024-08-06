@@ -1,4 +1,3 @@
-
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
@@ -19,7 +18,7 @@ import {
     DynamicChannelPermissionsBlockedEmbed,
     DynamicChannelPermissionsUnblockedEmbed,
     DynamicChannelPermissionsKickEmbed,
-} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/embeds/";
+} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/embeds";
 
 export class DynamicChannelPermissionsComponent extends UIComponentBase {
     public static getName() {
@@ -57,11 +56,11 @@ export class DynamicChannelPermissionsComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup() {
         return null;
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

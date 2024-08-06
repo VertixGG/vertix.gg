@@ -8,10 +8,10 @@ export abstract class ObjectBase {
         this.name = this.getName();
 
         const timestamp = performance.now() * 1000000;
-        const random1 = BigInt(Math.floor(Math.random() * 1000000));
-        const random2 = BigInt(Math.floor(Math.random() * 1000000));
+        const random1 = BigInt( Math.floor( Math.random() * 1000000 ) );
+        const random2 = BigInt( Math.floor( Math.random() * 1000000 ) );
 
-        this.id = `${timestamp}${random1}${random2}`;
+        this.id = `${ timestamp }${ random1 }${ random2 }`;
     }
 
     public static getName(): string {
@@ -45,6 +45,12 @@ export abstract class ObjectBase {
         }
 
         return classNames;
+    }
+}
+
+export abstract class TObjectMixinBase extends ObjectBase {
+    protected constructor( ... _args: any[]) {
+        super();
     }
 }
 

@@ -3,7 +3,7 @@ import { SingletonBase } from "@vertix.gg/base/src/bases/singleton-base";
 import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
 
 import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
-import type { VersionType } from "@vertix.gg/base/src/models/config-model";
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 export class ConfigManager extends SingletonBase {
     private configs: Map<string, ConfigBase<ConfigBaseInterface>> = new Map();
@@ -20,7 +20,7 @@ export class ConfigManager extends SingletonBase {
         super();
     }
 
-    public async register<T extends ConfigBase<ConfigBaseInterface>>( Config: new( ... args: any[] ) => T ) {
+    public async register<T extends ConfigBase<ConfigBaseInterface>>( Config: new ( ...args: any []) => T ) {
         const config = new Config( false ),
             key = this.generateKey( config );
 
@@ -33,7 +33,7 @@ export class ConfigManager extends SingletonBase {
         this.configs.set( key, config );
     }
 
-    public get<T extends ConfigBaseInterface>( name: string, version: VersionType ) {
+    public get<T extends ConfigBaseInterface>( name: string, version: TVersionType ) {
         const key = this.generateKey( name, version );
 
         if ( !this.configs.has( key ) ) {

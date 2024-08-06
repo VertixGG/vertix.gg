@@ -2,6 +2,8 @@ import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
+import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
+
 import type {
     UIArgs,
     UICreateComponentArgs,
@@ -9,11 +11,10 @@ import type {
     UIExecutionSteps
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
-import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
-
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+
+import type { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
+import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 export type UIWizardComponentConstructor = { new( args?: UICreateComponentArgs ): UIWizardComponentBase };
 export type UIWizardComponentTypeConstructor = typeof UIWizardComponentBase & UIWizardComponentConstructor;
@@ -22,7 +23,6 @@ export class UIWizardAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterExecutionStepsBase<TChannel, TInteraction> {
-    protected staticWizardAdapter: typeof UIWizardAdapterBase;
 
     public static getName() {
         return "VertixGUI/UIWizardAdapterBase";
@@ -32,6 +32,19 @@ export class UIWizardAdapterBase<
         throw new ForceMethodImplementation( this.getName(), this.getComponent.name );
     }
 
+    /**
+     * This method, `getExecutionStepsInternal`, creates an object structure that represents the various execution steps
+     * for a UI wizard component.
+     *
+     * It iterates through each component gathered from `getComponents`, checking if they have any "embeds" or "elements".
+     *
+     * If present, add a new object to a main result object with paths to the respective group alongside the component's name.
+     *
+     * If there are additional execution steps defined in subclasses (in `getExecutionSteps`)
+     * these steps are merged into the main result object.
+     *
+     * Finally, it returns the assembled structure which will be used to guide users through the UI.
+     */
     protected static getExecutionStepsInternal() {
         const result: UIExecutionSteps = {
             default: {},
@@ -63,18 +76,20 @@ export class UIWizardAdapterBase<
         return result;
     }
 
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
-
-        this.staticWizardAdapter = this.constructor as typeof UIWizardAdapterBase;
+    public get $$() {
+        return this.constructor as typeof UIWizardAdapterBase;
     }
 
     public editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {
-        this.getArgsManager().setArgs( this, interaction, {
-            _step: stepName,
-        } );
+        this.setCurrentStepInArgs( interaction, stepName );
 
         return super.editReplyWithStep( interaction, stepName, sendArgs );
+    }
+
+    public async ephemeralWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs, shouldDeletePreviousInteraction: boolean = this.shouldDeletePreviousReply?.() || false ): Promise<void> {
+        this.setCurrentStepInArgs( interaction, stepName );
+
+        return super.ephemeralWithStep( interaction, stepName, sendArgs, shouldDeletePreviousInteraction );
     }
 
     protected async onBeforeBack?( interaction: TInteraction ): Promise<void>;
@@ -105,14 +120,18 @@ export class UIWizardAdapterBase<
         this.bindButton<TInteraction>( WizardFinishButton.getName(), this.onWizardFinishButtonClicked );
     }
 
+    protected getCurrentStepIndex( interaction?: TInteraction, components: typeof UIComponentBase[] = this.$$.getComponent().getComponents() ) {
+        return components.findIndex( ( i ) => i.getName() === this.getCurrentExecutionStep( interaction )?.name );
+    }
+
     private async onWizardBackButtonClicked( interaction: TInteraction ) {
         await this.onBeforeBack?.( interaction );
 
-        const components = this.staticWizardAdapter.getComponent().getComponents();
+        const components = this.$$.getComponent().getComponents();
 
-        const currentIndex = components.findIndex( ( i ) => i.getName() === this.getCurrentExecutionStep( interaction )?.name );
+        const currentIndex = this.getCurrentStepIndex( interaction, components );
 
-        if ( 0 === currentIndex ) {
+        if ( currentIndex === -1 || currentIndex === 0 ) {
             return;
         }
 
@@ -124,9 +143,9 @@ export class UIWizardAdapterBase<
     private async onWizardNextButtonClicked( interaction: TInteraction ) {
         await this.onBeforeNext?.( interaction );
 
-        const components = this.staticWizardAdapter.getComponent().getComponents();
+        const components = this.$$.getComponent().getComponents();
 
-        const currentIndex = components.findIndex( ( i ) => i.getName() === this.getCurrentExecutionStep( interaction )?.name );
+        const currentIndex = this.getCurrentStepIndex( interaction, components );
 
         if ( currentIndex === components.length - 1 ) {
             return;
@@ -143,5 +162,17 @@ export class UIWizardAdapterBase<
         // TODO: ???.
 
         await this.onAfterFinish?.( interaction );
+    }
+
+    private setCurrentStepInArgs( interaction: TInteraction, stepName: string ) {
+        // TODO: Dynamic should be handled manually?
+        if ( this.isDynamic() ) {
+            return;
+        }
+
+        // TODO: This is not good practice, it used internally inside the wizard control buttons.
+        this.getArgsManager().setArgs( this, interaction, {
+            _step: stepName,
+        } );
     }
 }

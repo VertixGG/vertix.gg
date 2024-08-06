@@ -34,7 +34,7 @@ export class UIArgsManager extends InitializeBase {
     public constructor( private readonly prefixName: string ) {
         super();
 
-        this.debugger = createDebugger( this, prefixName, "UI" );
+        this.debugger = createDebugger( this, "UI", prefixName );
     }
 
     // TODO: Remove this method, it should be handled by initiator
@@ -115,7 +115,7 @@ export class UIArgsManager extends InitializeBase {
         }
 
         this.data[ self.getName() ][ id ] = {
-            args,
+            args: args || {},
             createdAt: new Date( Date.now() ),
             updatedAt: new Date( Date.now() ),
             accessedAt: new Date( Date.now() ),

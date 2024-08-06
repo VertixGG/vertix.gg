@@ -35,7 +35,7 @@ export class DynamicChannelComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup() {
         return "Vertix/UI-V2/DynamicChannelElementsGroup";
     }
 

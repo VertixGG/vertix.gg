@@ -170,7 +170,7 @@ export class UIService extends ServiceWithDependenciesBase<{
 
         if ( ! UIClass ) {
             if ( ! silent ) {
-                throw new Error( `User interface: '${ uiName }' does not exist` );
+                throw new Error( `Adapter: '${ uiName }' does not exist` );
             }
 
             return;
@@ -183,7 +183,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
-    public async registerModule( Module: TModuleConstructor ) {
+    public async registerModule<T extends TModuleConstructor>( Module: T ) {
         Module.validate();
 
         const adapters = Module.getAdapters();

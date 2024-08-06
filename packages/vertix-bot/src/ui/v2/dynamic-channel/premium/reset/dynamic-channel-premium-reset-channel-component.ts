@@ -29,11 +29,11 @@ export class DynamicChannelPremiumResetChannelComponent extends UIComponentBase 
         ];
     }
 
-    protected static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup() {
         return null;
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

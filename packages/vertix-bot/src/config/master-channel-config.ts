@@ -21,19 +21,11 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
     }
 
     protected getDefaults(): MasterChannelConfigInterface["defaults"] {
-        const buttonsIdsEmojisMap: MasterChannelConfigInterface["defaults"]["buttonsIdsEmojisMap"] = {};
-
-        DynamicChannelElementsGroup.getAll().forEach( async i => {
-            buttonsIdsEmojisMap[ i.getId() ] = await i.getEmoji();
-        } );
-
         return {
-            buttonsIdsEmojisMap,
-
             masterChannelData: {
                 dynamicChannelAutoSave: false,
 
-                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId() ),
+                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId().toString() ),
 
                 dynamicChannelLogsChannelId: null,
 

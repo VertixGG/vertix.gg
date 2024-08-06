@@ -36,11 +36,11 @@ export class SetupComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup() {
         return "Vertix/UI-V2/SetupElementsGroup";
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return "Vertix/UI-V2/SetupEmbedGroup";
     }
 }

@@ -5,6 +5,7 @@ import { ModelLanguageBase } from "@vertix.gg/bot/src/bases/model-language-base"
 const model = PrismaBotClient.getPrismaClient().elementSelectMenuLanguage;
 
 // TODO: All `withContent` should be like that.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function withContent() {
     return model.findFirst( {
         select: {

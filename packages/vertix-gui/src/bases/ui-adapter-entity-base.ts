@@ -21,9 +21,10 @@ import { EntityCallbackNotFoundError } from "@vertix.gg/gui/src/bases/errors/ent
 
 import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown-element-type-error";
 
-import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { UIComponentConstructor, UIComponentTypeConstructor, UICreateComponentArgs, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIEntitySchemaBase , UIComponentConstructor, UIComponentTypeConstructor, UICreateComponentArgs, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import type { UIEntityBase } from "@vertix.gg/gui/src/bases/ui-entity-base";
 
@@ -47,7 +48,7 @@ interface UIEntityMap {
 // TODO: Some methods can be private.
 
 export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
-    private static adapterEntityDebugger = createDebugger( this.getName(), "", "UI" );
+    private static adapterEntityDebugger = createDebugger( this.getName(), "UI" );
 
     private readonly component: UIComponentBase;
 
@@ -84,17 +85,19 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
         this.component = new ( staticComponent as UIComponentConstructor )( createArgs );
 
-        this.component.waitUntilInitialized().then( () => {
-            this.buildEntitiesMap();
-
-            this.onEntityMap?.();
-        } );
+        this.component.waitUntilInitialized().then( () => this.entitiesMapInternal() );
 
         this.defineOptions();
     }
 
     protected getComponent(): UIComponentBase {
         return this.component;
+    }
+
+    protected entitiesMapInternal() {
+        this.buildEntitiesMap();
+
+        this.onEntityMap?.();
     }
 
     protected onEntityMap?(): void;
@@ -180,9 +183,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                         };
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
-                        data.customId = entity.attributes.custom_id || this.customIdStrategy.generateId(
-                            this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
-                        );
+                        data.customId = this.getCustomIdForEntity( entity );
                     }
 
                     switch ( entity.attributes.type ) {
@@ -223,6 +224,12 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                 }
             ).filter( ( i: unknown ) => i !== null )
         ) ).filter( ( i: any ) => i.components.length );
+    }
+
+    protected getCustomIdForEntity( entity: UIEntitySchemaBase ) {
+        return entity.attributes.custom_id || this.customIdStrategy.generateId(
+            this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
+        );
     }
 
     protected storeEntityCallback( entityMap: UIEntityMapped, callback: Function ) {

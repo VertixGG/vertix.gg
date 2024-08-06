@@ -1,4 +1,3 @@
-
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -64,11 +63,11 @@ export class SetupEditComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup() {
         return "Vertix/UI-V2/SetupEditElementsGroup";
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return "Vertix/UI-V2/SetupEditEmbedGroup";
     }
 }

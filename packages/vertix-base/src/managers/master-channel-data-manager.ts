@@ -152,25 +152,16 @@ export class MasterChannelDataManager extends ChannelDataManager {
         } );
     }
 
-    public async setChannelButtonsTemplate( ownerId: string, newButtons: number[], shouldAdminLog = true ) {
+    public async setChannelButtonsTemplate( ownerId: string, newButtons: string[], shouldAdminLog = true ) {
         this.logger.log( this.setChannelButtonsTemplate,
             `Master channel id: '${ ownerId }' - Setting channel name template: '${ newButtons }'`
         );
 
         if ( shouldAdminLog ) {
-            function getUsedEmojis( data: MasterChannelConfigInterface["data"], buttons: number[] ) {
-                return Object.entries( data.buttonsIdsEmojisMap )
-                    .filter( ( [ id ] ) => buttons.includes( parseInt( id ) ) )
-                    .map( ( [ , emoji ] ) => emoji )
-                    .join( ", " );
-            }
-
-            const previousButtons = await this.getChannelButtonsTemplate( ownerId, true ),
-                previousUsedEmojis = getUsedEmojis( this.config.data, previousButtons ),
-                newUsedEmojis = getUsedEmojis( this.config.data, newButtons );
+            const previousButtons = await this.getChannelButtonsTemplate( ownerId, true );
 
             this.logger.admin( this.setChannelButtonsTemplate,
-                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId }", "${ previousUsedEmojis }" => "${ newUsedEmojis }"`
+                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId }", "${ previousButtons.join( ", " ) }" => "${ newButtons.join( "," ) }"`
             );
         }
 

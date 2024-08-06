@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/node_modules/@zenflux" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vertix-bot/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vertix-bot/.0_local" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vertix-bot/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vertix-utils/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/vertix-prisma/src/prisma-bot-client/runtime" />
+    </content>
+    <content url="file://$MODULE_DIR$/node_modules/@zenflux" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

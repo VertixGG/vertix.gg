@@ -15,11 +15,9 @@
     "scripts": {
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
-
         "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:gui:jest )",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
-
         "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
         "vertix:bot:watch:dev": "bun run @z-cli @watch --workspace bot --dev",
@@ -28,19 +26,17 @@
         "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
         "vertix:bot:node:start:dev": "cd packages/vertix-bot && bun run vertix-bot:ts-node:start:dev",
         "vertix:bot:node:start:build": "cd packages/vertix-bot/dist && node vertix-bot.mjs",
-
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
         "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:jest",
-
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
         "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
-
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
     },
     "dependencies": {
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
-        "discord.js": "latest"
+        "discord.js": "latest",
+        "discord-api-types": "latest"
     },
     "devDependencies": {
         "@swc/jest": "latest",
@@ -56,7 +52,7 @@
         "jest": "latest",
         "jest-when": "latest",
         "ts-mockito": "latest",
-        "tsx": "^4.16.2",
+        "tsx": "^4.16.4",
         "typescript": "latest"
     },
     "packageManager": "bun@1.1.18"

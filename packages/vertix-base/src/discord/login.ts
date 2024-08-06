@@ -41,6 +41,7 @@ export default async function ( client: any, onLogin: Function ) {
         try {
             tokensCrypt = Buffer.concat( [ decipher.update( new Uint8Array( inputView.buffer, inputView.byteOffset, inputView.byteLength ) ), decipher.final() ] );
         } catch ( e ) {
+            console.error( e );
             exit();
         }
 

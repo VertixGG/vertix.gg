@@ -30,12 +30,14 @@ import { ChannelType, EmbedBuilder,  OverwriteType, PermissionsBitField } from "
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
+
     DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
     DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
     DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS,
     DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS,
     DYNAMIC_CHANNEL_SETTINGS_KEY_NAME,
     DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID,
+    DYNAMIC_CHANNEL_SETTINGS_KEY_REGION,
     DYNAMIC_CHANNEL_SETTINGS_KEY_STATE,
     DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT,
     DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE,
@@ -54,7 +56,23 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type UIVersioningAdapterService from "@vertix.gg/gui/src/ui-versioning-adapter-service";
+import type {
+    ChannelPrivacyState ,
+    ActStatus,
+    AddStatus,
+    ChannelState,
+    ChannelVisibilityState,
+    EditStatus,
+    IDynamicChannelCreateArgs,
+    IDynamicClearChatResult,
+    IDynamicEditChannelNameInternalResult,
+    IDynamicEditChannelNameResult,
+    IDynamicEditChannelStateResult,
+    IDynamicResetChannelResult,
+    RemoveStatus
+} from "@vertix.gg/bot/src/definitions/dynamic-channel";
+
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type { Guild ,
     APIPartialChannel,
@@ -73,21 +91,6 @@ import type { Guild ,
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-import type {
-    ActStatus,
-    AddStatus,
-    ChannelState,
-    ChannelVisibilityState,
-    EditStatus,
-    IDynamicChannelCreateArgs,
-    IDynamicClearChatResult,
-    IDynamicEditChannelNameInternalResult,
-    IDynamicEditChannelNameResult,
-    IDynamicEditChannelStateResult,
-    IDynamicResetChannelResult,
-    RemoveStatus
-} from "@vertix.gg/bot/src/definitions/dynamic-channel";
-
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
@@ -100,7 +103,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService,
     channelService: ChannelService,
     uiService: UIService,
-    uiVersioningAdapterService: UIVersioningAdapterService,
+    uiVersioningAdapterService: UIAdapterVersioningService,
 }> {
     private readonly debugger: Debugger;
 
@@ -347,12 +350,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 const result = await ChannelDataManager.$.getSettingsData(
                     channelDB.id,
                     DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
-                    true );
+                    true
+                );
 
                 if ( result?.object?.[ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ] ) {
                     message = channel.messages.cache.get( result.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ] );
 
-                    if ( ! this.isPrimaryMessage( message ) ) {
+                    if ( ! message || ! this.isPrimaryMessage( message ) ) {
                         source = "fetch";
                         message = await channel.messages.fetch( result.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ] );
                     }
@@ -391,6 +395,36 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
+    public async getChannelPrivacyState( channel: VoiceChannel ) {
+        let result: ChannelPrivacyState;
+
+        const state = await this.getChannelState( channel ),
+            visibilityState = await this.getChannelVisibilityState( channel );
+
+        if ( "hidden" === visibilityState ) {
+            result = "hidden";
+        } else if ( "private" === state ) {
+            result = "private";
+        } else {
+            result = "public";
+        }
+
+        return result;
+    }
+
+    public getChannelDefaultInheritedProperties( channel: VoiceBasedChannel ) {
+        const { rtcRegion, bitrate, userLimit } = channel,
+            result: any = { bitrate, userLimit };
+
+        if ( rtcRegion !== null ) {
+            result.rtcRegion = rtcRegion;
+        }
+
+        this.debugger.log( this.getChannelDefaultInheritedProperties, JSON.stringify( result ) );
+
+        return result;
+    }
+
     public async createDynamicChannel( args: IDynamicChannelCreateArgs ) {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
@@ -410,6 +444,22 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelName = "",
             dynamicChannelUserLimit = 0,
             permissionOverwrites: OverwriteResolvable[] = [];
+
+        // Default channel properties.
+        const defaultProperties = {
+            ... this.getChannelDefaultInheritedProperties( masterChannel ),
+            ... PermissionsManager.$.getChannelDefaultPermissions(
+                newState.id,
+                masterChannel,
+                DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+            ),
+        };
+
+        // Merge permissions overwrites.
+        defaultProperties.permissionOverwrites = [
+            ... defaultProperties.permissionOverwrites,
+            ... permissionOverwrites,
+        ];
 
         if ( autoSave ) {
             // Ensure user exist.
@@ -438,6 +488,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             const state = savedData.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ] as ChannelState,
                 visibilityState = savedData.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ] as ChannelVisibilityState;
 
+            const region = savedData.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_REGION ] as string | null;
+
             const allowedUsers = savedData.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS ] as string[],
                 blockedUsers = savedData.object[ DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS ] as string[];
 
@@ -447,6 +499,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( visibilityState === "hidden" ) {
                 verifiedFlagsSet.push( PermissionsBitField.Flags.ViewChannel );
+            }
+
+            if ( region ) {
+                defaultProperties.rtcRegion = region ?? null;
             }
 
             if ( verifiedFlagsSet.length ) {
@@ -505,19 +561,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         this.logger.info( this.createDynamicChannel,
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }'` );
-
-        // Default channel properties.
-        const defaultProperties = PermissionsManager.$.getChannelDefaultProperties(
-            newState.id,
-            masterChannel,
-            DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
-        );
-
-        // Merge permissions overwrites.
-        defaultProperties.permissionOverwrites = [
-            ... defaultProperties.permissionOverwrites,
-            ... permissionOverwrites,
-        ];
 
         // Create a channel for the user.
         const dynamic = await this.services.channelService.create( {
@@ -640,7 +683,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             case DynamicEditChannelNameInternalResultCode.Success:
                 result.code = DynamicEditChannelNameResultCode.Success;
 
-                await UserDataManager.$.setMasterDataEnsheathed( initiator, channel, {
+                await UserDataManager.$.setUserMasterData( initiator, channel, {
                     [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: newChannelName,
                 } );
 
@@ -684,7 +727,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.log( initiator, channel, this.editUserLimit, "", { result, oldLimit, newLimit } );
 
         if ( result ) {
-            await UserDataManager.$.setMasterDataEnsheathed( initiator, channel, {
+            await UserDataManager.$.setUserMasterData( initiator, channel, {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT ]: newLimit,
             } );
 
@@ -710,7 +753,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 break;
 
             case "private":
-                await PermissionsManager.$.ensureChannelBoConnectivityPermissions( channel );
+                await PermissionsManager.$.ensureChannelBotConnectivityPermissions( channel );
 
                 editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     Connect: false,
@@ -724,7 +767,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 );
         }
 
-        await editStatePromise?.catch( ( error ) => this.logger.error( this.editChannelState, "", error ) ).then( () => result.code = DynamicEditChannelStateResultCode.Success );
+        await editStatePromise
+            ?.catch( ( error ) => this.logger.error( this.editChannelState, "", error ) )
+            .then( () => result.code = DynamicEditChannelStateResultCode.Success );
 
         await this.log( initiator, channel, this.editChannelState, newState, { result } );
 
@@ -756,7 +801,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             //     }
             // }
 
-            await UserDataManager.$.setMasterDataEnsheathed( initiator as Interaction, channel, {
+            await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: newState,
             } );
 
@@ -783,7 +828,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 break;
 
             case "hidden":
-                await PermissionsManager.$.ensureChannelBoConnectivityPermissions( channel );
+                await PermissionsManager.$.ensureChannelBotConnectivityPermissions( channel );
                 await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
                     ViewChannel: false,
                 } ).catch( ( error ) => {
@@ -803,8 +848,94 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.log( initiator, channel, this.editChannelVisibilityState, newState, { result } );
 
         if ( result ) {
-            await UserDataManager.$.setMasterDataEnsheathed( initiator as Interaction, channel, {
+            await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, {
                 [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: newState,
+            } );
+
+            this.editPrimaryMessageDebounce( channel );
+        }
+
+        return result;
+    }
+
+    /**
+     * @since 0.0.8
+     */
+    public async editChannelPrivacyState( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, newState: ChannelPrivacyState ) {
+        let result = false;
+        let state: ChannelState = "unknown",
+            visibilityState: ChannelVisibilityState = "unknown";
+
+        const roles = await this.getVerifiedRoles( channel );
+
+        switch ( newState ) {
+            case "public":
+            case "private":
+                state = newState;
+                visibilityState = "shown";
+
+                break;
+            case "shown":
+            case "hidden":
+                state = "public";
+                visibilityState = newState;
+
+                break;
+            default:
+                this.logger.error( this.editChannelPrivacyState,
+                    `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
+                    `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
+                );
+        }
+
+        // Check if the state is already the same
+        const currentState = await this.getChannelState( channel ),
+            currentVisibilityState = await this.getChannelVisibilityState( channel );
+
+        if ( currentState !== state && currentVisibilityState !== visibilityState ) {
+            await PermissionsManager.$.ensureChannelBotConnectivityPermissions( channel );
+
+            const editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+                Connect: state === "public",
+                ViewChannel: visibilityState === "shown",
+            });
+
+            await editStatePromise
+                .catch( ( error ) => this.logger.error( this.editChannelPrivacyState, "", error ) )
+                .then( () => result = true );
+        }
+
+        await this.log( initiator, channel, this.editChannelPrivacyState, newState, { result } );
+
+        if ( result ) {
+            await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, {
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: state,
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE ]: visibilityState,
+            } );
+
+            this.editPrimaryMessageDebounce( channel );
+        }
+
+        return result;
+    }
+
+    /**
+     * @since 0.0.8
+     */
+    public async editChannelRegion( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel, newRegion: string ) {
+        let result = false;
+
+        if ( channel.rtcRegion !== newRegion ) {
+            await channel.setRTCRegion( newRegion === "auto" ? null : newRegion )
+                .catch( error => this.logger.error( this.editChannelRegion, "", error ) )
+                .then( () => result = true );
+        }
+
+        await this.log( initiator, channel, this.editChannelRegion, newRegion, { result } );
+
+        if ( result ) {
+            await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, {
+                [ DYNAMIC_CHANNEL_SETTINGS_KEY_REGION ]: newRegion,
             } );
 
             this.editPrimaryMessageDebounce( channel );
@@ -879,12 +1010,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( ! message ) {
             this.logger.warn( this.editPrimaryMessage,
-                `Guild id: '${ channel.guildId }' - Failed to find message in channel id: '${ channel.id }'` );
-            return;
-        }
-
-        if ( ! this.isPrimaryMessage( message ) ) {
-            this.logger.error( this.editPrimaryMessage,
                 `Guild id: '${ channel.guildId }' - Cannot find primary message in channel id: '${ channel.id }'` );
             return;
         }
@@ -1036,7 +1161,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Edit channel.
         await channel.edit(
             // Take defaults from master channel.
-            await PermissionsManager.$.getChannelDefaultProperties(
+            PermissionsManager.$.getChannelDefaultPermissions(
                 userOwnerId,
                 master.channel,
                 DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
@@ -1060,7 +1185,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             blockedUserIds: currentBlockedUsers,
         };
 
-        await UserDataManager.$.setMasterDataEnsheathed( initiator as Interaction, channel, {
+        await UserDataManager.$.setUserMasterData( initiator as Interaction, channel, {
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_NAME ]: currentChannelState.name,
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT ]: currentChannelState.userLimit,
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_STATE ]: currentChannelState.state,
@@ -1341,7 +1466,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             true,
         );
 
-        await UserDataManager.$.setMasterDataEnsheathed( initiator, channel, {
+        await UserDataManager.$.setUserMasterData( initiator, channel, {
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS ]: allowedUsers,
             [ DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS ]: blockedUsers,
         } );
@@ -1427,6 +1552,34 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                         message = `🙈 \`${ initiatorDisplayName }\` set channel to visibility **hidden**`;
                         break;
                 }
+                break;
+
+            case this.editChannelPrivacyState:
+                if ( ! meta.result ) {
+                    message = `🐵️/🙈/🌐/🚫 \`${ initiatorDisplayName }\` tried to set channel privacy state but failed due unknown error`;
+                    break;
+                }
+
+                switch ( action as ChannelPrivacyState ) {
+                    case "shown":
+                    case "hidden":
+                        await this.log( initiator, channel, this.editChannelVisibilityState, action );
+                        break;
+
+                    case "public":
+                    case "private":
+                        await this.log( initiator, channel, this.editChannelState, action );
+                        break;
+                }
+                break;
+
+            case this.editChannelRegion:
+                if ( ! meta.result ) {
+                    message = `🌍 \`${ initiatorDisplayName }\` tried to set channel region but failed due unknown error`;
+                    break;
+                }
+
+                message = `🌍 \`${ initiatorDisplayName }\` set channel region to **${ action }**`;
                 break;
 
             case this.editChannelOwner:

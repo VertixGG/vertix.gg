@@ -29,16 +29,12 @@ export class PermissionsManager extends InitializeBase {
         return "VertixBot/Managers/Permissions";
     }
 
-    public static getInstance(): PermissionsManager {
+    public static get $() {
         if ( ! PermissionsManager.instance ) {
             PermissionsManager.instance = new PermissionsManager();
         }
 
         return PermissionsManager.instance;
-    }
-
-    public static get $() {
-        return PermissionsManager.getInstance();
     }
 
     public constructor() {

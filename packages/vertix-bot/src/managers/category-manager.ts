@@ -20,16 +20,12 @@ export class CategoryManager extends InitializeBase {
         return "VertixBot/Managers/Category";
     }
 
-    public static getInstance(): CategoryManager {
+    public static get $() {
         if ( ! CategoryManager.instance ) {
             CategoryManager.instance = new CategoryManager();
         }
 
         return CategoryManager.instance;
-    }
-
-    public static get $() {
-        return CategoryManager.getInstance();
     }
 
     public constructor() {

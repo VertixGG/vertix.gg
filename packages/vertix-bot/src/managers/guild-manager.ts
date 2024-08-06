@@ -34,16 +34,12 @@ export class GuildManager extends InitializeBase {
         return "VertixBot/Managers/Guild";
     }
 
-    public static getInstance(): GuildManager {
+    public static get $() {
         if ( ! GuildManager.instance ) {
             GuildManager.instance = new GuildManager();
         }
 
         return GuildManager.instance;
-    }
-
-    public static get $() {
-        return GuildManager.getInstance();
     }
 
     public constructor() {

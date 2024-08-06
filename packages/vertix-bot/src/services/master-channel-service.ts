@@ -434,7 +434,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function createMasterChannel() :: Creates channel master of create.
+     * Function `createMasterChannelInternal()` - Creates channel master of create.
      */
     private async createMasterChannelInternal( args: IMasterChannelCreateInternalArgs ) {
         const { guild, parent } = args;
@@ -493,7 +493,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         // TODO: Duplicate code.
         const usedButtons = DynamicChannelElementsGroup.getAll().filter( ( item ) => {
-                return newButtons.includes( item.getId() );
+                return newButtons.includes( item.getId().toString() );
             } ),
             usedEmojis = ( DynamicChannelElementsGroup.getEmbedEmojis(
                 usedButtons.map( ( item ) => item.getId()

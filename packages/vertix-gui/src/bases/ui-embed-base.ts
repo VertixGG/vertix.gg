@@ -30,9 +30,9 @@ export abstract class UIEmbedBase extends UITemplateBase {
     }
 
     /**
-     * Function getTranslatableContent() :: Used to get the translatable content.
+     * Function `getTranslatableContent()` - Used to get the translatable content.
      *
-     * Note: The method called on start-up process, the args are not available during this time.
+     * Note: The method called on a start-up process, the args are not available during this time.
      */
     public async getTranslatableContent(): Promise<UIEmbedLanguageContent> {
         const assumed = {

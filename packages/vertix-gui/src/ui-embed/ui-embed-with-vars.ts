@@ -56,8 +56,8 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             };
 
             return {
-                ... baseResult,
                 ... extendedResult,
+                ... baseResult,
             };
         }
 

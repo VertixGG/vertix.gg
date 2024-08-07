@@ -50,7 +50,7 @@ import type {
     TAdapterConstructor,
     TAdapterRegisterOptions,
     TPossibleAdapters,
-} from "src/definitions/ui-adapter-declaration";
+} from "@vertix.gg/bot/src/definitions/ui-adapter-declaration";
 
 export type TAdapterMapping = {
     "base": UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>,

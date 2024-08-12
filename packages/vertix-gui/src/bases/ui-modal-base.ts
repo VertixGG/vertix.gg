@@ -13,10 +13,10 @@ import type {
 
 import type { UIModalLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-interface UIModalSchema extends UIPortableSchemaBase {
+export interface UIModalSchema extends UIPortableSchemaBase {
     attributes: {
         title: string,
-        // customId?: string,
+        custom_id?: string,
     }
 }
 

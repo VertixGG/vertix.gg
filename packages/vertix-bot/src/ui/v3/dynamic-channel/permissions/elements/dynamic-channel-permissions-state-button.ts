@@ -8,11 +8,11 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public getId() {
-        return 3    ;
+        return "state";
     }
 
-    public getSortId() {
-        return 3;
+    public static getSortId() {
+        return 4;
     }
 
     public getLabelForEmbed() {

@@ -1,3 +1,4 @@
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
@@ -6,10 +7,12 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui/v2/_general/admin/admin-adapter-exu-base";
+import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-button";
+
+import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui/general/admin/admin-adapter-exu-base";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-component";
-import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui/v2/setup/setup-master-edit-button";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
@@ -130,7 +133,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     protected onEntityMap() {
         // Comes from 'setup' adapter, selects the master channel to edit
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "Vertix/UI-V2/SetupMasterEditButton",
+            "VertixBot/UI-General/SetupMasterEditButton",
             this.onSetupMasterEditButtonClicked
         );
 
@@ -142,7 +145,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Channel name template.
         this.bindModal<UIDefaultModalChannelTextInteraction>(
-            "Vertix/UI-V2/ChannelNameTemplateModal",
+            "VertixBot/UI-General/ChannelNameTemplateModal",
             this.onTemplateEditModalSubmitted
         );
 
@@ -165,7 +168,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Configuration toggle.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/ConfigExtrasSelectMenu",
+            "VertixBot/UI-General/ConfigExtrasSelectMenu",
             this.onConfigExtrasSelected
         );
 
@@ -177,28 +180,28 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Verified roles buttons menu.
         this.bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
-            "Vertix/UI-V2/VerifiedRolesMenu",
+            "VertixBot/UI-General/VerifiedRolesMenu",
             this.onVerifiedRolesSelected
         );
 
         // Verified roles everyone.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/VerifiedRolesEveryoneSelectMenu",
+            "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
             this.onVerifiedRolesEveryoneSelected
         );
 
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "Vertix/UI-V2/DoneButton",
+            "VertixBot/UI-General/DoneButton",
             this.onDoneButtonClicked
         );
 
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "Vertix/UI-V2/WizardBackButton",
+            "VertixBot/UI-General/WizardBackButton",
             this.onBackButtonClicked
         );
 
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "Vertix/UI-V2/WizardFinishButton",
+            "VertixBot/UI-General/WizardFinishButton",
             this.onFinishButtonClicked
         );
     }
@@ -245,7 +248,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
             default: // Being called after the modal is canceled and the same option requested again.
             case "edit-dynamic-channel-name":
-                await this.showModal( "Vertix/UI-V2/ChannelNameTemplateModal", interaction );
+                await this.showModal( "VertixBot/UI-General/ChannelNameTemplateModal", interaction );
                 break;
 
             case "edit-dynamic-channel-buttons":
@@ -265,11 +268,11 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const value = interaction.fields.getTextInputValue( channelNameInputId ),
             args = this.getArgsManager().getArgs( this, interaction );
 
-        const { masterChannelData } = ConfigManager.$.
-            get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
+        const { masterChannelSettings } = ConfigManager.$.
+            get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 ).data;
 
         this.getArgsManager().setArgs( this, interaction, {
-            dynamicChannelNameTemplate: value || masterChannelData.dynamicChannelNameTemplate,
+            dynamicChannelNameTemplate: value || masterChannelSettings.dynamicChannelNameTemplate,
         } );
 
         await MasterChannelDataManager.$.setChannelNameTemplate( args?.ChannelDBId, value );
@@ -289,7 +292,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const args = this.getArgsManager().getArgs( this, interaction ),
             buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
-        await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons.map( b => b.toString() ) );
 
         const claimChannelButtonId = DynamicChannelElementsGroup
             .getByName( "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton" )?.getId();
@@ -322,7 +325,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         const args = this.getArgsManager().getArgs( this, interaction ),
             buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
-        await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons );
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( args.ChannelDBId, buttons.map( b => b.toString() ) );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
     }

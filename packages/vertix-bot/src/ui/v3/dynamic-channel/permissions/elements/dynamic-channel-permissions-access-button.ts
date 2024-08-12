@@ -1,3 +1,7 @@
+import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
+
+import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
+
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonBase {
@@ -5,16 +9,24 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
         return "Vertix/UI-V3/DynamicChannelPermissionsAccessButton";
     }
 
-    public getId() {
-        return 5;
+    public static getBaseName() {
+        return "ChannelPermissions";
     }
 
-    public getSortId() {
-        return 5;
+    public static getEmoji() {
+        return EmojiManager.$.getCachedMarkdown( DynamicChannelPermissionsAccessButton.getBaseName() );
+    }
+
+    public static getSortId() {
+        return this.getSortIdAfter( DynamicChannelRenameButton );
+    }
+
+    public getId() {
+        return "access";
     }
 
     public getLabelForEmbed() {
-        return "👥 ∙ **Access**";
+        return `${ DynamicChannelPermissionsAccessButton.getEmoji() } ∙ **Access**`;
     }
 
     public async getLabelForMenu() {
@@ -26,10 +38,10 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
     }
 
     public async getEmoji() {
-        return "👥";
+        return EmojiManager.$.getMarkdown( DynamicChannelPermissionsAccessButton.getBaseName() );
     }
 
     public getEmojiForEmbed() {
-        return "👥";
+        return DynamicChannelPermissionsAccessButton.getEmoji();
     }
 }

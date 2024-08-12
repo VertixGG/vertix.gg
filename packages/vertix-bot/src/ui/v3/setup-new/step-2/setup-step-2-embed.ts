@@ -2,9 +2,9 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { ChannelButtonsTemplateEmbed } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-embed";
-
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+
+import { ChannelButtonsTemplateEmbed } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-embed";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -31,7 +31,7 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/SetupStep2Embed";
+        return "VertixBot/UI-General/SetupStep2Embed";
     }
 
     public static getInstanceType() {

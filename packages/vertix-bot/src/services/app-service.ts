@@ -4,7 +4,7 @@ import * as path from "path";
 
 import process from "process";
 
-import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
+import { CURRENT_VERSION, VERSION_UI_V2, VERSION_WITH_GREEK_LANGUAGE } from "@vertix.gg/base/src/definitions/version";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
@@ -93,41 +93,48 @@ export class AppService extends ServiceBase {
     }
 
     private async ensureBackwardCompatibility() {
-        // // If version less than "0.0.8" then update `type` of `GuildData`, `ChannelData`, `UserData` to uppercase.
-        // const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
-        // const client = PrismaBotClient.getPrismaClient();
-        //
-        // const checkVersion = ( veersion: string ) => {
-        //     const [ major, minor, patch ] = veersion.split( "." );
-        //     return Number( major ) === 0 && Number( minor ) === 0 && Number( patch ) < 8;
-        // };
-        //
-        // const updateData = async ( dataModel: any ) => {
-        //     const entities = await dataModel.findMany( {
-        //         where: {
-        //             version: {
-        //                 not: CURRENT_VERSION,
-        //             }
-        //         }
-        //     } );
-        //     for ( const entity of entities ) {
-        //         const { type } = entity;
-        //         if ( checkVersion( entity.version ) ) {
-        //             await dataModel.update( {
-        //                 where: {
-        //                     id: entity.id,
-        //                 },
-        //                 data: {
-        //                     type: type.toLowerCase() as any,
-        //                 },
-        //             } );
-        //         }
-        //     }
-        // };
-        //
-        // await updateData( client.guildData );
-        // await updateData( client.channelData );
-        // await updateData( client.userData );
+        const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
+        const client = PrismaBotClient.getPrismaClient();
+
+        const checkVersion = (version: string) => {
+            const [major, minor, patch] = version.split(".");
+            return Number(major) === 0 && Number(minor) === 0 && Number(patch) <= 7;
+        };
+
+        async function ensueDataVersionMatchesNewUIMechanism( this: AppService ) {
+            const updateData = async ( dataModel: any ) => {
+                const entities = await dataModel.findMany( {
+                    where: {
+                        version: {
+                            lte: "0.0.7",
+                        }
+                    }
+                } );
+
+                let count = 0;
+                for ( const entity of entities ) {
+                    if ( entity.version.length === 5 && checkVersion( entity.version ) ) {
+                        count++;
+                        await dataModel.update( {
+                            where: {
+                                id: entity.id,
+                            },
+                            data: {
+                                version: VERSION_UI_V2,
+                            },
+                        } );
+                    }
+                }
+
+                this.logger.log( ensueDataVersionMatchesNewUIMechanism, `Updated ${ count } entities in ${ dataModel.name }` );
+            };
+
+            await updateData( client.guildData );
+            await updateData( client.channelData );
+            await updateData( client.userData );
+        }
+
+        await ensueDataVersionMatchesNewUIMechanism.call( this );
     }
 
     private pingInterval() {

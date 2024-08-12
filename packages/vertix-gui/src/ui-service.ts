@@ -183,23 +183,23 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
-    public async registerModule<T extends TModuleConstructor>( Module: T ) {
+    public registerModule<T extends TModuleConstructor>( Module: T ) {
         Module.validate();
 
         const adapters = Module.getAdapters();
 
-        await this.registerAdapters( adapters, { module: new Module() } );
+         this.registerAdapters( adapters, { module: new Module() } );
     }
 
     public async registerInternalAdapters() {
         const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
 
-        await this.registerAdapters( Object.values( internalAdapters ) );
+        this.registerAdapters( Object.values( internalAdapters ) );
 
         this.$$.emitter.emit( "internal-adapters-registered" );
     }
 
-    public async registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
+    public registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
         adapters.forEach( adapter => {
             this.registerAdapter( adapter, options );
         } );
@@ -217,7 +217,7 @@ export class UIService extends ServiceWithDependenciesBase<{
 
         const entities = UIClass.getComponent().getEntities();
 
-        // In order to have all hashes generated before the UI is created.
+        // To have all hashes generated before the UI is created.
         for ( const entity of entities ) {
             this.services.uiHashService.generateId(
                 UIClass.getName() + UI_CUSTOM_ID_SEPARATOR + entity.getName()

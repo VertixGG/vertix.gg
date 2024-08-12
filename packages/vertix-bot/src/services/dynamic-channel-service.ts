@@ -1,7 +1,8 @@
 import "@vertix.gg/prisma/bot-client";
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { UserChannelDataModel } from "@vertix.gg/base/src/models/user-channel-data-model";
+import { UserChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/user-channel-data-model-V3";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -114,10 +115,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     private readonly debugger: Debugger;
 
     private config = ConfigManager.$
-        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
+        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
     private configV3 = ConfigManager.$
-        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", "0.0.3" as const );
+        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
 
     private editMessageDebounceMap = new Map<string, NodeJS.Timeout>();
 
@@ -232,11 +233,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
         const { masterChannelDefaults } = this.config.data,
-            { masterChannelData } = this.config.data;
+            { masterChannelSettings } = this.config.data;
 
         if ( ! masterChannelDB ) {
             return returnDefault ?
-                masterChannelData.dynamicChannelNameTemplate
+                masterChannelSettings.dynamicChannelNameTemplate
                     .replace( masterChannelDefaults.dynamicChannelUserVar, userDisplayName )
                 : null;
         }
@@ -448,7 +449,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         if ( options.includePrimaryMessage ) {
-            const primaryMessage = await UserChannelDataModel.$.getPrimaryMessage( userId, masterChannelDBId );
+            const primaryMessage = await UserChannelDataModelV3.$.getPrimaryMessage( userId, masterChannelDBId );
 
             if ( primaryMessage?.title ) {
                 optional.primaryMessageTitle = primaryMessage.title;
@@ -705,7 +706,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable( masterChannelDB.id, true );
         }
 
-        return ( await this.services.uiVersioningAdapterService.get( "Vertix/DynamicChannelAdapter", channel.guild ) )
+        return ( await this.services.uiVersioningAdapterService.get( "Vertix/DynamicChannelAdapter", channel ) )
             ?.send( channel, sendArgs );
     }
 
@@ -1085,7 +1086,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const dynamicChannelAdapter = await this.services.uiVersioningAdapterService.get(
             "Vertix/DynamicChannelAdapter",
-            channel.guild,
+            channel,
         );
 
         await dynamicChannelAdapter?.editMessage( message, editMessageArgs )
@@ -1212,8 +1213,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 const { dynamicChannelPrimaryMessageTitle, dynamicChannelPrimaryMessageDescription }
                     = this.configV3.data.masterChannelDefaults;
 
-                // TODO: `UserChannelDataModel.$.setPrimaryMessageDefaults`
-                await UserChannelDataModel.$.setPrimaryMessage( userOwnerId, master.db.id, {
+                // TODO: `UserChannelDataModelV3.$.setPrimaryMessageDefaults`
+                await UserChannelDataModelV3.$.setPrimaryMessage( userOwnerId, master.db.id, {
                     title: dynamicChannelPrimaryMessageTitle,
                     description: dynamicChannelPrimaryMessageDescription,
                 } );

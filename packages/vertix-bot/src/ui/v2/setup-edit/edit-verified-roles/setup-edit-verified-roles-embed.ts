@@ -2,7 +2,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { VerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v2/verified-roles/verified-roles-embed";
+import { VerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-embed";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 

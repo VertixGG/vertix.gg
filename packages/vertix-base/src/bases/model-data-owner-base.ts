@@ -1,17 +1,18 @@
 import util from "node:util";
 
+import {
+    DataVersioningModelFactory
+} from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { TVersionType , TDataVersioningDefaultUniqueKeys } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+
+import type { TDataType, TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+
+import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
 import type { TWithOptionalProps } from "@vertix.gg/utils/src/common-types";
-
-import type {
-    TVersionType,
-    TDataVersioningDefaultUniqueKeys
-} from "@vertix.gg/base/src/factory/data-versioning-model-factory";
-import type { TDataType, TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
-import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
 interface TDataOwnerDefaultUniqueKeys extends TDataVersioningDefaultUniqueKeys {
     ownerId: string;
@@ -35,6 +36,7 @@ export abstract class DataOwnerModelBase<
         const dataModel = this.getDataModel(),
             dataModelOptions = {
                 modelNamespace: ( this.constructor as typeof DataOwnerModelBase ).getName(),
+                meta: this.getModel().name.toLowerCase(),
                 shouldDebugCache,
                 shouldDebugModel
             };
@@ -79,6 +81,10 @@ export abstract class DataOwnerModelBase<
         return await this.dataVersioningModel.get( this.normalizeKeys( keys ), { cache } ) as T;
     }
 
+    protected async dataGetWithMeta<T extends TDataType>( keys: TWithOptionalProps<TDataKeys, "version">, cache = true ) {
+        return await this.dataVersioningModel.getWithMeta<T, Awaited<ReturnType<TModel["findUnique"]>>>( this.normalizeKeys( keys ), { cache } );
+    }
+
     protected async create<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
@@ -115,7 +121,7 @@ export abstract class DataOwnerModelBase<
     protected async get<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
-        cache = true
+        cache = true,
     ) {
         const keysWithOwner = await this.getKeys( keys, args, this.get );
         if ( ! keysWithOwner ) return null;
@@ -123,10 +129,21 @@ export abstract class DataOwnerModelBase<
         return this.dataGet<T>( keysWithOwner, cache );
     }
 
+    protected async getWithMeta<T extends TDataType>(
+        args: Parameters<TModel["findUnique"]>[0],
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
+        cache = true,
+    ) {
+        const keysWithOwner = await this.getKeys( keys, args, this.getWithMeta );
+        if ( ! keysWithOwner ) return null;
+
+        return this.dataGetWithMeta<T>( keysWithOwner, cache );
+    }
+
     protected async getAll<T extends TDataType>(
         args: Parameters<TModel["findMany"]>[0],
         keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
-        cache = true
+        cache = true,
     ) {
         let result: T[] | undefined;
 
@@ -143,6 +160,37 @@ export abstract class DataOwnerModelBase<
             if ( ! keysWithOwner ) continue;
 
             const data = await this.dataGet<T>( keysWithOwner, cache );
+
+            if ( ! data ) continue;
+
+            if ( ! result ) result = [];
+
+            result.push( data );
+        }
+
+        return result;
+    }
+
+    protected async getAllWithMeta<T extends TDataType>(
+        args: Parameters<TModel["findMany"]>[0],
+        keys: TWithOptionalProps<TDataKeys, "version" | "ownerId">,
+        cache = true,
+    ) {
+        let result;
+
+        const owners = await this.getModel().findMany( args );
+
+        if ( ! owners ) {
+            this.logger.error( this.getAll, `Owners not found: ${ util.inspect( args ) }` );
+            return null;
+        }
+
+        for ( const owner of owners ) {
+            const keysWithOwner = { ... keys, ... this.getOwnerKeys( owner ) } as TWithOptionalProps<TDataKeys, "version">;
+
+            if ( ! keysWithOwner ) continue;
+
+            const data = await this.dataGetWithMeta<T>( keysWithOwner, cache );
 
             if ( ! data ) continue;
 

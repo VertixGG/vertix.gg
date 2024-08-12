@@ -7,6 +7,7 @@
       <node color="4" path="$PROJECT_DIR$/packages/vertix-bot" />
       <node color="4" path="$PROJECT_DIR$/packages/vertix-bot/src/ui" />
       <node color="16" path="$PROJECT_DIR$/packages/vertix-bot/src/ui-v2" />
+      <node color="11" path="$PROJECT_DIR$/packages/vertix-bot/src/ui/general" />
       <node color="16" path="$PROJECT_DIR$/packages/vertix-bot/src/ui/v2" />
       <node color="10" path="$PROJECT_DIR$/packages/vertix-bot/src/ui/v3" />
       <node color="9" path="$PROJECT_DIR$/packages/vertix-gui" />
@@ -25,6 +26,7 @@
       <color id="8" value="#464b50" name="Color 8" enabled="true" />
       <color id="9" value="#4780be4c" name="Color 9" enabled="true" />
       <color id="10" value="#50003c" name="Color 10" enabled="true" />
+      <color id="11" value="#626a36" name="Color 11" enabled="true" />
       <color id="16" value="#53be791d" name="Color 16" enabled="true" />
     </colors>
     <option name="marksForCollapsedHighlights" value="Dots" />

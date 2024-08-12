@@ -18,6 +18,8 @@ export abstract class UIBase extends ObjectBase {
         this.hierarchyNames = this.getHierarchyNames();
 
         this.ensureGetNameExtended();
+        // TODO:
+        // this.ensureNameUnique();
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService");
 
@@ -27,7 +29,7 @@ export abstract class UIBase extends ObjectBase {
     protected initialize?(): void;
 
     /**
-     * Function ensureGetNameExtended() :: Ensures parent extends `static getName()` correctly.
+     * Function `ensureGetNameExtended()` - Ensures parent extends `static getName()` correctly.
      */
     private ensureGetNameExtended(): void {
         // Remove last part of `this.getName()`.

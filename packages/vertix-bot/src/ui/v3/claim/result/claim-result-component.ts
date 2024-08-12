@@ -38,7 +38,7 @@ export class ClaimResultComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

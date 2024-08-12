@@ -8,11 +8,11 @@ import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
 
 import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory";
 
-import type { TDataType , TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+import type { TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
-export type TVersionType = `${ number }.${ number }.${ number }`;
+export type TVersionType = `${ number }.${ number }.${ number }.${ number }`;
 
 export interface TDataVersioningDefaultUniqueKeys {
     key: string;
@@ -20,7 +20,6 @@ export interface TDataVersioningDefaultUniqueKeys {
 }
 
 export interface TDataVersioningOptions {
-    include?: Record<string, any>;
     cache: boolean;
 }
 
@@ -31,11 +30,14 @@ export function DataVersioningModelFactory<
 >(
     model: TModel,
     options: {
+        meta?: TModel["name"],
         modelNamespace?: string,
         shouldDebugCache?: boolean,
         shouldDebugModel?: boolean
     } = {}
 ) {
+    const meta = options.meta;
+
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
         public static getName() {
             return options.modelNamespace ?? "VertixBase/Factory/VersioningModel";
@@ -88,10 +90,6 @@ export function DataVersioningModelFactory<
                     }
                 } as any;
 
-                if ( options.include ) {
-                    args.include = options.include;
-                }
-
                 result = await this.getModel().findUnique( args );
 
                 if ( result ) {
@@ -100,6 +98,49 @@ export function DataVersioningModelFactory<
             }
 
             return result ? this.getValueAsType<T>( result ) : null;
+        }
+
+        public async getWithMeta<T extends ReturnType<typeof this.getValueAsType>, const TMeta extends object>( keys: TUniqueKeys, options: TDataVersioningOptions = {
+            cache: true,
+        } ) {
+            if ( ! meta ) {
+                throw new Error( "Meta is required" );
+            }
+
+            const keysArray = Object.values( keys ) as string[];
+
+            keysArray.push( "withMeta" );
+
+            const cacheKey = this.generateCacheKey( ... keysArray );
+
+            let result = options.cache ? this.getCache( cacheKey ) : null;
+
+            if ( ! result ) {
+                const args = {
+                    where: {
+                        [ this.getUniqueKeyName() ]: keys
+                    }
+                } as any;
+
+                args.include = {
+                    [ meta ]: true,
+                };
+
+                result = await this.getModel().findUnique( args );
+
+                if ( result ) {
+                    this.setCache( cacheKey, result );
+                }
+            }
+
+            if ( result ) {
+                return {
+                    data: this.getValueAsType<T>( result ),
+                    meta: result[ meta as keyof TModelResult ] as TMeta
+                };
+            }
+
+            return null;
         }
 
         /**

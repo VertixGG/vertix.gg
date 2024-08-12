@@ -11,7 +11,7 @@ import { DynamicChannelMetaClearChatNothingToClearEmbed } from "@vertix.gg/bot/s
 
 import { DynamicChannelMetaClearChatButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/clear-chat/dynamic-channel-meta-clear-chat-button";
 
-import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/v2/_general/something-went-wrong-embed";
+import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelMetaClearChatComponent extends UIComponentBase {
     public static getName(): string {

@@ -1,6 +1,6 @@
 import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 
-export interface MasterChannelDataInterface {
+export interface MasterChannelSettingsInterface {
     dynamicChannelAutoSave: boolean;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelLogsChannelId: string | null;
@@ -27,13 +27,13 @@ export interface MasterChannelDefaultsInterfaceV3 extends MasterChannelDefaultsI
 }
 
 export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
-    masterChannelData: MasterChannelDataInterface,
     masterChannelDefaults: MasterChannelDefaultsInterface,
+    masterChannelSettings: MasterChannelSettingsInterface,
 }> {
 }
 
 export interface MasterChannelConfigInterfaceV3 extends ConfigBaseInterface<{
-    masterChannelData: MasterChannelDataInterface,
     masterChannelDefaults: MasterChannelDefaultsInterfaceV3,
+    masterChannelSettings: MasterChannelSettingsInterface,
 }> {
 }

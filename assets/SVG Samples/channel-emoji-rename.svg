@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg id="emoji" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <linearGradient id="gradient-1" bx:pinned="true">
+      <title>vertix</title>
+      <stop offset="0" style="stop-color: rgba(79, 231, 255, 0.98);"/>
+      <stop offset="0.295" style="stop-color: rgb(41, 189, 251);"/>
+      <stop offset="0.614" style="stop-color: rgb(2, 143, 247);"/>
+      <stop offset="1" style="stop-color: rgb(33, 76, 158);"/>
+    </linearGradient>
+    <linearGradient id="gradient-1-2" gradientUnits="userSpaceOnUse" x1="90.872" y1="37.711" x2="90.872" y2="96.822" gradientTransform="matrix(1, 0, 0, 0.913635, 0, 8.361995)" xlink:href="#gradient-1"/>
+    <radialGradient gradientUnits="userSpaceOnUse" cx="13.947" cy="59.074" r="21.194" id="gradient-1-3" gradientTransform="matrix(9.450373, -10.58197, 1.246667, 1.11004, -190.889427, 144.709779)" xlink:href="#gradient-1"/>
+  </defs>
+  <g style="" transform="matrix(1.560529, 0, 0, 1.562857, -19.976112, -28.833092)">
+    <title>Frame</title>
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M 57.393 48.556 L 57.414 62.41 C 57.414 62.96 56.964 63.41 56.414 63.41 L 16.026 63.41 C 15.476 63.41 15.026 62.96 15.026 62.41 L 15.026 22.022 C 15.026 21.469 15.474 21.022 16.026 21.022 L 31.538 21.022 L 36.104 20.915" style="fill-rule: nonzero; paint-order: stroke; fill-opacity: 0; pointer-events: none; stroke: rgba(0, 0, 0, 0.98); stroke-width: 3.20165px;">
+      <title>Frame black</title>
+    </path>
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M 56.393 47.556 L 56.414 61.41 C 56.414 61.96 55.964 62.41 55.414 62.41 L 15.026 62.41 C 14.476 62.41 14.026 61.96 14.026 61.41 L 14.026 21.022 C 14.026 20.469 14.474 20.022 15.026 20.022 L 30.538 20.022 L 35.104 19.915" style="fill-rule: nonzero; fill-opacity: 0; pointer-events: none; stroke-width: 3.20165px; paint-order: stroke; stroke: url('#gradient-1-3');">
+      <title>Frame</title>
+    </path>
+  </g>
+  <g style="transform-origin: 90.872px 59.067px;" transform="matrix(-0.993524, -0.987124, 0.77034, -0.799642, -49.948761, -29.098177)">
+    <title>Pencil New</title>
+    <path d="M 90.872 21.311 L 98.529 42.802 L 83.215 42.802 L 90.872 21.311 Z" style="stroke: rgb(0, 0, 0); stroke-linejoin: bevel; stroke-width: 3px; fill: rgb(215, 245, 255);" bx:shape="triangle 83.215 21.311 15.314 21.491 0.5 0 1@16df22d1"/>
+    <rect x="82.958" y="42.816" width="15.828" height="54.006" style="stroke: rgb(0, 0, 0); stroke-linejoin: bevel; stroke-width: 3px; fill: url('#gradient-1-2');"/>
+  </g>
+</svg>

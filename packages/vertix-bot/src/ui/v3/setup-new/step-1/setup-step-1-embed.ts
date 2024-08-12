@@ -1,6 +1,6 @@
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { ChannelNameTemplateEmbed } from "@vertix.gg/bot/src/ui/v3/channel-name-template/channel-name-template-embed";
+import { ChannelNameTemplateEmbed } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-embed";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -8,7 +8,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupStep1Embed extends ChannelNameTemplateEmbed {
     public static getName() {
-        return "Vertix/UI-V3/SetupStep1Embed";
+        return "VertixBot/UI-General/SetupStep1Embed";
     }
 
     public static getInstanceType() {

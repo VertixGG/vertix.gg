@@ -25,6 +25,8 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { config } from "dotenv";
 
+import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
+
 import { UILanguageManager } from "@vertix.gg/bot/src/ui/ui-language-manager";
 
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
@@ -84,15 +86,16 @@ async function registerUIAdapters() {
     const uiModules = await Promise.all( [
         import("@vertix.gg/bot/src/ui/general/ui-module" ),
         import("@vertix.gg/bot/src/ui/v2/ui-module"),
+        import("@vertix.gg/bot/src/ui/v3/ui-module"),
     ] );
 
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     // TODO: Current wizard buttons for V3, are unused, those should become module specific.
-    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/regenerate/ui-regenerate-button" ),
-        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-back-button" ),
-        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-next-button" ),
-        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/v2/_general/wizard/ui-wizard-finish-button" );
+    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/general/regenerate/ui-regenerate-button" ),
+        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-back-button" ),
+        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-next-button" ),
+        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-finish-button" );
 
     uiService.$$.registerSystemElements( {
         RegenerateButton: UIRegenerateButton,
@@ -101,8 +104,8 @@ async function registerUIAdapters() {
         WizardFinishButton: UIWizardFinishButton
     } );
 
-    const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui/v2/_general/invalid-channel-type/invalid-channel-type-component" ),
-        { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui/v2/_general/missing-permissions/missing-permissions-component" );
+    const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui/general/invalid-channel-type/invalid-channel-type-component" ),
+        { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui/general/missing-permissions/missing-permissions-component" );
 
     uiService.$$.registerSystemComponents( {
         InvalidChannelTypeComponent: InvalidChannelTypeComponent,
@@ -134,7 +137,8 @@ async function registerConfigs() {
     GlobalLogger.$.info( registerConfigs, "Registering configs ..." );
 
     const configs = await Promise.all( [
-        import("@vertix.gg/bot/src/config/master-channel-config")
+        import("@vertix.gg/bot/src/config/master-channel-config"),
+        import("@vertix.gg/bot/src/config/master-channel-config-v3")
     ] );
 
     await Promise.all( configs.map( async config => {
@@ -152,18 +156,18 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Registering version strategies ..." );
 
     const versionStrategies = await Promise.all( [
-            await import("@vertix.gg/base/src/version-strategies/ui-guild-version-strategy"),
+            await import("@vertix.gg/base/src/version-strategies/ui-master-channel-version-strategy"),
         ] ),
         uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>( "VertixGUI/UIVersioningAdapterService" );
 
     uiVersioningAdapterService.registerVersions( [ 2, 3 ] );
 
     versionStrategies.forEach( strategy => {
-        GlobalLogger.$.debug( registerUIVersionStrategies, `Registering version strategy: '${ strategy.default.getName() }'` );
+        GlobalLogger.$.debug( registerUIVersionStrategies, `Registering version strategy: '${ strategy.UIMasterChannelVersionStrategy.getName() }'` );
 
-        uiVersioningAdapterService.registerStrategy( strategy.default );
+        uiVersioningAdapterService.registerStrategy( strategy.UIMasterChannelVersionStrategy );
 
-        GlobalLogger.$.debug( registerUIVersionStrategies, `Version strategy registered: '${ strategy.default.getName() }'` );
+        GlobalLogger.$.debug( registerUIVersionStrategies, `Version strategy registered: '${ strategy.UIMasterChannelVersionStrategy.getName() }'` );
     } );
 
     GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
@@ -221,6 +225,10 @@ export async function entryPoint() {
     GlobalLogger.$.info( entryPoint, "Services are registered" );
 
     await registerUIAdapters();
+
+    // TODO: Find better solution for this.
+    await EmojiManager.$.awaitInitialization();
+
     await registerUILanguageManager();
 
     await registerUIVersionStrategies();

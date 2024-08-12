@@ -1,3 +1,5 @@
+import * as url from "node:url";
+
 import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
 
 import type {
@@ -9,7 +11,7 @@ import type {
 
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import type { APIEmbedField, APIEmbedThumbnail } from "discord.js";
+import type { APIEmbedField, APIEmbedImage, APIEmbedThumbnail } from "discord.js";
 
 export abstract class UIEmbedBase extends UITemplateBase {
     private content: UIEmbedLanguageContent | undefined;
@@ -99,6 +101,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
         if ( image.length ) {
             attributes.image = {
+                ... this.getImageData(),
                 url: image,
             };
         }
@@ -140,6 +143,10 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
     protected getImage(): string {
         return "";
+    }
+
+    protected getImageData(): Omit<APIEmbedImage, "url"> {
+        return {};
     }
 
     protected getOptions(): UIBaseTemplateOptions {

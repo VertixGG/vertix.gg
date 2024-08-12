@@ -1,10 +1,6 @@
-import {
-    ChannelButtonsTemplateSelectMenuBase
-} from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu-base";
+import { ChannelButtonsTemplateSelectMenuBase } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu-base";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 export class ChannelButtonsTemplateAddSelectMenu extends ChannelButtonsTemplateSelectMenuBase {
     public static getName() {
@@ -20,6 +16,7 @@ export class ChannelButtonsTemplateAddSelectMenu extends ChannelButtonsTemplateS
     }
 
     protected async isAvailable(): Promise<boolean> {
-        return Object.keys( this.uiArgs?.dynamicChannelButtonsTemplate || {} ).length !== DynamicChannelElementsGroup.getAll().length;
+        return Object.keys( this.uiArgs?.dynamicChannelButtonsTemplate || {} ).length
+            !== DynamicChannelPrimaryMessageElementsGroup.getAll().length;
     }
 }

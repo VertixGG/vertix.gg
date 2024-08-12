@@ -88,10 +88,10 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             },
 
             "Vertix/UI-V2/DynamicChannelPermissionsStateError": {
-                embedsGroup: "Vertix/UI-V2/SomethingWentWrongEmbedGroup"
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             },
             "Vertix/UI-V2/DynamicChannelPermissionsStateNothingChanged": {
-                embedsGroup: "Vertix/UI-V2/NothingChangedEmbedGroup"
+                embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
             },
         };
     }

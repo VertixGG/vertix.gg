@@ -7,12 +7,12 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
         return "Vertix/UI-V3/DynamicChannelPermissionsVisibilityButton";
     }
 
-    public getId() {
+    public static getSortId() {
         return 4;
     }
 
-    public getSortId() {
-        return 4;
+    public getId() {
+        return "visibility";
     }
 
     public getLabelForEmbed() {

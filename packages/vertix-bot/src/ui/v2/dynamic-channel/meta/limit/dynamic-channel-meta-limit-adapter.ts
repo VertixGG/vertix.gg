@@ -35,7 +35,7 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
                 embedsGroup: "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup",
             },
             "Vertix/UI-V2/DynamicChannelMetaLimitError": {
-                embedsGroup: "Vertix/UI-V2/SomethingWentWrongEmbedGroup",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
             }
         };
     }

@@ -51,7 +51,7 @@ export class ClaimVoteComponent extends UIComponentBase {
         ];
     }
 
-    protected static getDefaultMarkdownsGroup() {
+    public static getDefaultMarkdownsGroup() {
         return null;
     }
 }

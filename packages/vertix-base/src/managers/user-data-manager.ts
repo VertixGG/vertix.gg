@@ -53,7 +53,7 @@ export class UserDataManager extends ManagerDataBase<UserModel> {
      * It then generates a key based on the master channel's ID. If the data exists for the user and key, it calls
      * the `setMasterData` method to set the user's master data in the master channel.
      *
-     * TODO: Remove and use `UserChannelDataModel` instead.
+     * TODO: Remove and use `UserChannelDataModelV3` instead.
      **/
     public async setUserMasterData( initiator: Interaction, channel: VoiceChannel, data: any ) {
         this.logger.log( this.setUserMasterData,

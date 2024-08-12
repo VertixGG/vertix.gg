@@ -1,12 +1,12 @@
-
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
-import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/v3/channel-name-template/channel-name-template-modal";
-
 // TODO: Use index
+
+import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-modal";
+
 import { SetupEditElementsGroup } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-elements-group";
 import { SetupEditButtonsElementsGroup } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-elements-group";
 import {
@@ -58,17 +58,17 @@ export class SetupEditComponent extends UIComponentBase {
         ];
     }
 
+    public static getDefaultElementsGroup() {
+        return "Vertix/UI-V3/SetupEditElementsGroup";
+    }
+
+    public static getDefaultEmbedsGroup() {
+        return "Vertix/UI-V3/SetupEditEmbedGroup";
+    }
+
     protected static getModals() {
         return [
             ChannelNameTemplateModal,
         ];
-    }
-
-    protected static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/SetupEditElementsGroup";
-    }
-
-    protected static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V3/SetupEditEmbedGroup";
     }
 }

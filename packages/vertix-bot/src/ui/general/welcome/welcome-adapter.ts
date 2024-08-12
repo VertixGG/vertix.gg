@@ -6,7 +6,7 @@ import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
 
-import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 import type { BaseMessageOptions, VoiceChannel } from "discord.js";
 
@@ -55,8 +55,8 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
     protected onEntityMap() {
         this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async ( interaction ) => {
             const uiService =
-                    ServiceLocator.$.get<UIAdapterVersioningService>( "VertixGUI/UIVersioningAdapterService" ),
-                uiAdapter = await uiService.get( "Vertix/SetupAdapter", interaction.guild );
+                    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
+                uiAdapter = uiService.get( "VertixBot/UI-General/SetupAdapter" );
 
             await uiAdapter?.ephemeral( interaction );
 

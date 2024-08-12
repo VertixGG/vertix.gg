@@ -1,4 +1,7 @@
+import "@vertix.gg/prisma/bot-client";
+
 export interface TBaseModelStub {
+    name?: PrismaBot.Prisma.ModelName;
     create( ... args: any[] ): any;
     create<T>( ... args: any[] ): Promise<T>;
     update( ... args: any[] ): any;
@@ -6,4 +9,6 @@ export interface TBaseModelStub {
     upsert( ... args: any[] ): any;
     upsert<T>( ... args: any[] ): Promise<T>;
     findUnique( ... args: any[] ): any,
+    findMany( ... args: any[] ): any,
+    findMany<T>( ... args: any[] ): Promise<T[]>;
 }

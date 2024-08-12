@@ -39,4 +39,8 @@ export abstract class DynamicChannelAdapterExuBase<TInteraction extends UIAdapte
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
         return await dynamicChannelRequirements( interaction );
     }
+
+    protected readonly shouldDeletePreviousReply = () => {
+        return true;
+    };
 }

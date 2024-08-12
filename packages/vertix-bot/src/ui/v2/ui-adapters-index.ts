@@ -1,4 +1,3 @@
-export { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/v2/_general/not-your-channel/not-your-channel-adapter";
 export { ClaimResultAdapter } from "@vertix.gg/bot/src/ui/v2/claim/result/claim-result-adapter";
 export { ClaimStartAdapter } from "@vertix.gg/bot/src/ui/v2/claim/start/claim-start-adapter";
 export { ClaimVoteAdapter } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-adapter";
@@ -10,6 +9,4 @@ export { DynamicChannelMetaRenameAdapter } from "@vertix.gg/bot/src/ui/v2/dynami
 export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
 export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-adapter";
 export { DynamicChannelPremiumResetChannelAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-adapter";
-export { LanguageAdapter } from "@vertix.gg/bot/src/ui/v2/language/language-adapter";
-export { SetupAdapter } from "@vertix.gg/bot/src/ui/v2/setup/setup-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v2/setup-new/setup-new-wizard-adapter";

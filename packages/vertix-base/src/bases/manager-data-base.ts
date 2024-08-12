@@ -1,4 +1,4 @@
-import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
 
@@ -258,7 +258,7 @@ export abstract class ManagerDataBase<
         return await this.dataSourceModel.getAllData();
     }
 
-    public async isExist( ownerId: string, key: string, version = CURRENT_VERSION, cache = true ) {
+    public async isExist( ownerId: string, key: string, version = VERSION_UI_V2, cache = true ) {
         this.logger.debug( this.isExist,
             `Checking if data exist for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'`
         );

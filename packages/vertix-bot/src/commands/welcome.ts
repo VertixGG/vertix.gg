@@ -4,7 +4,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 import type { Client, CommandInteraction } from "discord.js";
 
@@ -22,8 +22,8 @@ export const Welcome: ICommand = {
 
     run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
         const uiService =
-                ServiceLocator.$.get<UIAdapterVersioningService>( "VertixGUI/UIVersioningAdapterService" ),
-            uiAdapter = await uiService.get( "VertixBot/WelcomeAdapter", interaction.guild );
+                ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
+            uiAdapter = uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 
         uiAdapter?.ephemeral( interaction );
     }

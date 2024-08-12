@@ -336,7 +336,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
 
             if (currentCount !== sourceCount) {
                 const message = `Language code: '${currentLanguage.code}' has a different ${elementType} ` +
-                    `count: '${sourceCount}' !== '${currentCount}' diff: \n${ diff( sourceArray, currentArray, {
+                    `source count: '${sourceCount}' !== '${currentCount}' diff: \n${ diff( sourceArray, currentArray, {
                         contextLines: 5,
                         expand: false,
                         includeChangeCounts: true,
@@ -366,6 +366,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             const AdapterType = adapter as typeof UIAdapterBase;
 
             // TEMP:
+            // Remove?
             if ( AdapterType.getName().includes( "UI-V3" ) ) {
                 return;
             }

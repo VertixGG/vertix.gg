@@ -8,11 +8,8 @@ import {
     UIInstancesTypes,
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-elements-group";
-
-import { DynamicChannelEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-embed";
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
+import { DynamicChannelPrimaryMessageEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-embed";
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {
@@ -25,18 +22,18 @@ export class DynamicChannelComponent extends UIComponentBase {
 
     public static getElementsGroups() {
         return [
-            DynamicChannelElementsGroup,
+            DynamicChannelPrimaryMessageElementsGroup,
         ];
+    }
+
+    public static getDefaultElementsGroup() {
+        return "Vertix/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
     }
 
     protected static getEmbeds() {
         return [
-            DynamicChannelEmbed,
+            DynamicChannelPrimaryMessageEmbed,
         ];
-    }
-
-    protected static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/DynamicChannelElementsGroup";
     }
 
     protected async getSchemaInternal() {

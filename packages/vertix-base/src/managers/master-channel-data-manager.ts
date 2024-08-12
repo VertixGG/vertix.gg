@@ -1,18 +1,20 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+
 import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-type MasterChannelDataKey = keyof MasterChannelConfigInterface["defaults"]["masterChannelData"];
+type MasterChannelDataKey = keyof MasterChannelConfigInterface["defaults"]["masterChannelSettings"];
 
 export class MasterChannelDataManager extends ChannelDataManager {
     public config =
-        ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
+        ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
-    public keys = this.config.getKeys( "masterChannelData" );
+    public keys = this.config.getKeys( "masterChannelSettings" );
 
     public static getName() {
         return "VertixBase/Managers/MasterChannelData";
@@ -41,7 +43,7 @@ export class MasterChannelDataManager extends ChannelDataManager {
 
         // Do we return `defaultSettings` if there are no data?
         const defaultSettings = ! isReturnDefaultCallback && returnDefault
-            ? this.config.data.masterChannelData : null;
+            ? this.config.data.masterChannelSettings : null;
 
         const result = await ChannelDataManager.$.getSettingsData(
             ownerId,
@@ -63,7 +65,7 @@ export class MasterChannelDataManager extends ChannelDataManager {
         return value;
     }
 
-    public async getAllSettings( ownerId: string, defaultSettings: Partial<MasterChannelConfigInterface["defaults"]["masterChannelData"]> = {} ) {
+    public async getAllSettings( ownerId: string, defaultSettings: Partial<MasterChannelConfigInterface["defaults"]["masterChannelSettings"]> = {} ) {
         const settings = await this.getSettingsData( ownerId, false ) || {
             object: {}
         };
@@ -138,7 +140,7 @@ export class MasterChannelDataManager extends ChannelDataManager {
         );
     }
 
-    public async setAllSettings( ownerId: string, settings: MasterChannelConfigInterface["defaults"]["masterChannelData"] ) {
+    public async setAllSettings( ownerId: string, settings: MasterChannelConfigInterface["defaults"]["masterChannelSettings"] ) {
         return ChannelDataManager.$.setSettingsData( ownerId, settings );
     }
 

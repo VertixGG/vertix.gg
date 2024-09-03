@@ -55,6 +55,9 @@ model Category {
   // ---
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([guildId])
 }
 
 model Guild {
@@ -110,6 +113,10 @@ model Channel {
   // ---
   createdAt        DateTime                 @default(now())
   updatedAt        DateTime                 @updatedAt
+
+  @@index([guildId])
+  @@index([categoryId])
+  @@index([userOwnerId])
 }
 
 model ChannelData {

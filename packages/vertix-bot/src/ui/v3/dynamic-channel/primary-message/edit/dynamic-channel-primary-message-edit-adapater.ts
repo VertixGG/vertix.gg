@@ -1,5 +1,5 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
-import { UserChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/user-channel-data-model-V3";
+import { UserChannelDataModel } from "@vertix.gg/base/src/models/user-channel-data-model";
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -50,7 +50,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
 
     protected static getInitiatorElement() {
         return DynamicChannelPrimaryMessageEditButton;
-    };
+    }
 
     protected async getStartArgs() {
         return {};
@@ -65,8 +65,10 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
             return;
         }
 
+        const userMasterData = await UserChannelDataModel.$.getMasterData( interaction.user.id, masterChannelDB.id );
+
         return {
-            ... await UserChannelDataModelV3.$.getPrimaryMessage( interaction.user.id, masterChannelDB.id ),
+            ... userMasterData?.dynamicChannelPrimaryMessage || {},
             ... argsFromManager,
 
             // TODO: Extract to UIWizardAdapterBase in order to implement dynamic components
@@ -174,7 +176,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
             return;
         }
 
-        await UserChannelDataModelV3.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { title } );
+        await UserChannelDataModel.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { title } );
 
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
     }
@@ -197,7 +199,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
             return;
         }
 
-        await UserChannelDataModelV3.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { description } );
+        await UserChannelDataModel.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { description } );
 
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
     }

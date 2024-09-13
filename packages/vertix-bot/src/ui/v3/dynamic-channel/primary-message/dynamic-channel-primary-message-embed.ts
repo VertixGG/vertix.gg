@@ -9,8 +9,6 @@ import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-
 
 import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
 
-import { DynamicChannelPrimaryMessageEditEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-embed";
-
 import { DynamicChannelPrivacyEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-embed";
 
 import { DynamicChannelRegionEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-embed";

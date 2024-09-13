@@ -17,6 +17,7 @@ export class SetupElementsGroup extends UIElementsGroupBase {
         return "VertixBot/UI-General/SetupElementsGroup";
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public static getItems( args?: ISetupArgs ) {
         return [
             [ SetupMasterEditSelectMenu ],

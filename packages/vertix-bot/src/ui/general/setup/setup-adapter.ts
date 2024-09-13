@@ -2,7 +2,6 @@ import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/ve
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/master-channel-data-model-v3";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base/src/utils/badwords-utils";
@@ -38,7 +37,7 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
-import type { BaseGuildTextChannel, CacheType, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
+import type { BaseGuildTextChannel } from "discord.js";
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 
 type DefaultInteraction =

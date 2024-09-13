@@ -19,8 +19,6 @@ import { SetupStep1Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-1/s
 import { SetupStep2Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-2/setup-step-2-component";
 import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/setup-step-3-component";
 
-import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
-
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";

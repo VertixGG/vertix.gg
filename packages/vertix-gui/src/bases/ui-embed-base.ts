@@ -1,5 +1,3 @@
-import * as url from "node:url";
-
 import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
 
 import type {

@@ -10,6 +10,6 @@ export interface MasterChannelUserDataInterface {
     dynamicChannelRegion: string,
     dynamicChannelPrimaryMessage: {
         title?: string,
-        content?: string,
+        description?: string,
     }
 }

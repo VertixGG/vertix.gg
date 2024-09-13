@@ -30,13 +30,13 @@ export function DataVersioningModelFactory<
 >(
     model: TModel,
     options: {
-        meta?: TModel["name"],
+        modelMetaName?: PrismaBot.Prisma.ModelName,
         modelNamespace?: string,
         shouldDebugCache?: boolean,
         shouldDebugModel?: boolean
     } = {}
 ) {
-    const meta = options.meta;
+    const { modelMetaName } = options;
 
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
         public static getName() {
@@ -103,8 +103,8 @@ export function DataVersioningModelFactory<
         public async getWithMeta<T extends ReturnType<typeof this.getValueAsType>, const TMeta extends object>( keys: TUniqueKeys, options: TDataVersioningOptions = {
             cache: true,
         } ) {
-            if ( ! meta ) {
-                throw new Error( "Meta is required" );
+            if ( ! modelMetaName ) {
+                throw new Error( "modelMetaName is required" );
             }
 
             const keysArray = Object.values( keys ) as string[];
@@ -123,7 +123,7 @@ export function DataVersioningModelFactory<
                 } as any;
 
                 args.include = {
-                    [ meta ]: true,
+                    [ modelMetaName ]: true,
                 };
 
                 result = await this.getModel().findUnique( args );
@@ -136,7 +136,7 @@ export function DataVersioningModelFactory<
             if ( result ) {
                 return {
                     data: this.getValueAsType<T>( result ),
-                    meta: result[ meta as keyof TModelResult ] as TMeta
+                    meta: result[ modelMetaName as keyof TModelResult ] as TMeta
                 };
             }
 

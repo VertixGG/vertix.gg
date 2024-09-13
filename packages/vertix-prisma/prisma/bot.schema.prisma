@@ -169,6 +169,9 @@ model UserData {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
+  @@index([key])
+  @@index([ownerId])
+
   @@unique([ownerId, key, version])
 }
 
@@ -190,6 +193,10 @@ model UserChannelData {
   // ----
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+
+  @@index([channelId])
+  @@index([key])
+  @@index([ownerId])
 
   @@unique([ownerId, channelId, key, version])
 }

@@ -9,7 +9,7 @@ import { DynamicChannelMetaLimitInvalidInputEmbed } from "@vertix.gg/bot/src/ui/
 
 import { DynamicChannelMetaLimitModal } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/limit/dynamic-channel-meta-limit-modal";
 
-import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/v2/_general/something-went-wrong-embed";
+import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelMetaLimitComponent extends UIComponentBase {
     public static getName() {

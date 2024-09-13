@@ -1,5 +1,8 @@
 import "@vertix.gg/prisma/bot-client";
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/master-channel-data-model-v3";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -36,6 +39,8 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
@@ -46,8 +51,8 @@ import type { IChannelEnterGenericArgs, } from "@vertix.gg/bot/src/interfaces/ch
 import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
 import type {
-    MasterChannelConfigInterface,
-    MasterChannelDataInterface
+    MasterChannelConfigInterface, MasterChannelConfigInterfaceV3,
+    MasterChannelSettingsInterface
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type {
@@ -60,7 +65,8 @@ import type {
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-interface IMasterChannelCreateCommonArgs extends Partial<MasterChannelDataInterface> {
+interface IMasterChannelCreateCommonArgs extends Partial<MasterChannelSettingsInterface> {
+    version: TVersionType,
     userOwnerId: string,
 }
 
@@ -99,9 +105,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     dynamicChannelService: DynamicChannelService,
 }> {
     private debugger: Debugger;
-
-    private config = ConfigManager.$
-        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const );
 
     private requestedChannelMap: Map<string, {
         timestamp: number,
@@ -366,10 +369,14 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ guild.id }' - User id: '${ args.userOwnerId }' is creating a default master channel`
         );
 
-        const masterCategory = await this.createDefaultMasterCategory( guild )
-            .catch( ( e ) => {
-                this.logger.error( this.createMasterChannel, "", e );
-            } );
+        const config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", args.version );
+
+        const masterCategory = await CategoryManager.$.create( {
+            guild,
+            name: config.data.masterChannelDefaults.dynamicChannelsCategoryName,
+        } ).catch( ( e ) => {
+            this.logger.error( this.createMasterChannel, "", e );
+        } );
 
         if ( ! masterCategory ) {
             result.code = MasterChannelCreateResultCode.CannotCreateCategory;
@@ -394,13 +401,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         result.db = await master.db;
 
         return result;
-    }
-
-    public async createDefaultMasterCategory( guild: Guild ) {
-        return CategoryManager.$.create( {
-            guild,
-            name: this.config.data.masterChannelDefaults.dynamicChannelsCategoryName,
-        } );
     }
 
     public async isReachedMasterLimit( guildId: string, definedLimit?: number ) {
@@ -434,26 +434,104 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function `createMasterChannelInternal()` - Creates channel master of create.
+     * Function `createMasterChannelInternal()` - Creates a master channel for the guild.
      */
     private async createMasterChannelInternal( args: IMasterChannelCreateInternalArgs ) {
-        const { guild, parent } = args;
+        let result;
+
+        const { parent, guild } = args;
 
         this.logger.info( this.createMasterChannelInternal,
             `Guild id: '${ guild.id }' - Creating master channel for guild: '${ guild.name }' ownerId: '${ args.guild.ownerId }'` );
 
-        const { masterChannelData } = this.config.data,
-            { masterChannelDefaults } = this.config.data;
+        switch ( args.version ) {
+            case VERSION_UI_V3:
+                result = this.createMasterChannelInternalV3( args );
+                break;
+            default:
+                result = await this.createMasterChannelInternalLegacy( args );
+        }
 
-        const newName = args.dynamicChannelNameTemplate || masterChannelData.dynamicChannelNameTemplate,
-            newButtons = args.dynamicChannelButtonsTemplate || masterChannelData.dynamicChannelButtonsTemplate,
+        if ( ! result ) {
+            await parent.delete( "Cannot create master channel" );
+        }
 
+        return result;
+    }
+
+    private async createMasterChannelInternalV3( args: IMasterChannelCreateInternalArgs ) {
+        const config = ConfigManager.$
+            .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+
+        const { parent, guild } = args;
+
+        const newVerifiedRoles = args.dynamicChannelVerifiedRoles || [
+            guild.roles.everyone.id
+        ];
+
+        const verifiedRolesWithPermissions = newVerifiedRoles.map( ( roleId ) => ( {
+            id: roleId,
+            ... DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+        } ) );
+
+        const result = await this.services.channelService.create( {
+            parent,
+            guild,
+            userOwnerId: args.userOwnerId,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            name: config.get( "masterChannelDefaults" ).masterChannelName,
+            type: ChannelType.GuildVoice,
+            permissionOverwrites: verifiedRolesWithPermissions,
+            // TODO: Should be configurable.
+            rtcRegion: "us-west",
+        } );
+
+        if ( ! result ) {
+            return null;
+        }
+
+        const usedRoles = newVerifiedRoles.map( ( roleId ) => {
+            if ( roleId === guild.roles.everyone.id ) {
+                return "@everyone";
+            }
+
+            return guild.roles.cache.get( roleId )?.name || roleId;
+        } ).join( "," );
+
+        const usedButtonsInterface =
+            ( args.dynamicChannelButtonsTemplate || config.get( "masterChannelSettings" ).dynamicChannelButtonsTemplate );
+
+        const usedNameTemplate = args.dynamicChannelNameTemplate || config.get( "masterChannelSettings" ).dynamicChannelNameTemplate;
+
+        this.logger.admin( this.createMasterChannelInternalV3,
+            `🛠️  Setup has performed - "${ usedNameTemplate }", "${ usedButtonsInterface.join( "," ) }", "${ usedRoles }" (${ guild.name }) (${ guild?.memberCount })`
+        );
+
+        const db = await result.db;
+
+        await MasterChannelDataModelV3.$.setSettings( db.id, args, true );
+
+        return result;
+    }
+
+    private async createMasterChannelInternalLegacy( args: IMasterChannelCreateInternalArgs ) {
+        const config = ConfigManager.$
+            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+
+        const { guild, parent } = args;
+
+        const { masterChannelSettings, masterChannelDefaults } = config.data;
+
+        /**
+         * The following block of code initializes various dynamic channel settings using
+         * either provided arguments or defaults
+         */
+        const newName = args.dynamicChannelNameTemplate || masterChannelSettings.dynamicChannelNameTemplate,
+            newButtons = args.dynamicChannelButtonsTemplate || masterChannelSettings.dynamicChannelButtonsTemplate,
             newMentionable = typeof args.dynamicChannelMentionable === "boolean" ?
-                args.dynamicChannelMentionable : masterChannelData.dynamicChannelMentionable,
-
+                args.dynamicChannelMentionable : masterChannelSettings.dynamicChannelMentionable,
             newAutoSave = typeof args.dynamicChannelAutoSave === "boolean" ?
-                args.dynamicChannelAutoSave : masterChannelData.dynamicChannelAutoSave,
-
+                args.dynamicChannelAutoSave : masterChannelSettings.dynamicChannelAutoSave,
             newVerifiedRoles = args.dynamicChannelVerifiedRoles || [
                 guild.roles.everyone.id
             ];
@@ -471,11 +549,11 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             name: masterChannelDefaults.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
+            // TODO: Should be configurable.
             rtcRegion: "us-west",
         } );
 
         if ( ! result ) {
-            await parent.delete( "Cannot create master channel" );
             return null;
         }
 
@@ -485,7 +563,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelAutoSave: newAutoSave,
             dynamicChannelButtonsTemplate: newButtons,
             // Since `LogsChannelId` not defined in the creation process, but later via configuration.
-            dynamicChannelLogsChannelId: masterChannelData.dynamicChannelLogsChannelId,
+            dynamicChannelLogsChannelId: masterChannelSettings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,
             dynamicChannelNameTemplate: newName,
             dynamicChannelVerifiedRoles: newVerifiedRoles,
@@ -497,7 +575,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             } ),
             usedEmojis = ( DynamicChannelElementsGroup.getEmbedEmojis(
                 usedButtons.map( ( item ) => item.getId()
-                )) ).join( "," ),
+                ) ) ).join( "," ),
             usedRoles = newVerifiedRoles.map( ( roleId ) => {
                 if ( roleId === guild.roles.everyone.id ) {
                     return "@everyone";
@@ -506,7 +584,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 return guild.roles.cache.get( roleId )?.name || roleId;
             } ).join( "," );
 
-        this.logger.admin( this.createMasterChannelInternal,
+        this.logger.admin( this.createMasterChannelInternalLegacy,
             `🛠️  Setup has performed - "${ newName }", "${ usedEmojis }", "${ usedRoles }" (${ guild.name }) (${ guild?.memberCount })`
         );
 

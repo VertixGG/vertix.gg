@@ -1,3 +1,4 @@
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { ConfigBase  } from "@vertix.gg/base/src/bases/config-base";
@@ -16,13 +17,12 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
     }
 
     public getVersion() {
-        // UI-V2
-        return "0.0.2" as const;
+        return VERSION_UI_V2;
     }
 
     protected getDefaults(): MasterChannelConfigInterface["defaults"] {
         return {
-            masterChannelData: {
+            masterChannelSettings: {
                 dynamicChannelAutoSave: false,
 
                 dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId().toString() ),

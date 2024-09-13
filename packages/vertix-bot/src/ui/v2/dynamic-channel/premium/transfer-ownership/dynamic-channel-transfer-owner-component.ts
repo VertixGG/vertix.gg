@@ -4,6 +4,10 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
+import { YesNoElementsGroup } from "@vertix.gg/bot/src/ui/general/decision/yes-no-elements-group";
+
+import { DisabledWhileClaimEmbed } from "@vertix.gg/bot/src/ui/general/misc/disabled-while-claim-embed";
+
 import {
     DynamicChannelTransferOwnerEmbed
 } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-embed";
@@ -19,9 +23,7 @@ import {
     DynamicChannelTransferOwnerTransferredEmbed
 } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-transferred-embed";
 
-import { DisabledWhileClaimEmbed } from "@vertix.gg/bot/src/ui/v2/_general/disabled-while-claim-embed";
-import { YesNoElementsGroup } from "@vertix.gg/bot/src/ui/v2/_general/yes-no-elements-group";
-import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/v2/_general/something-went-wrong-embed";
+import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
     public static getName() {

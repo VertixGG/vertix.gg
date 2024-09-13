@@ -2,7 +2,7 @@ import "@vertix.gg/prisma/bot-client";
 
 import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
-import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 
 import type {
     IDataCreateArgs,
@@ -37,7 +37,7 @@ export abstract class ModelDataBase<
             ... this.getInternalNormalizedData( args ),
 
             // # CRITICAL: This is the version of the content.
-            version: CURRENT_VERSION,
+            version: VERSION_UI_V2,
         };
 
         this.debugger.dumpDown( this.createData, { data, args } );
@@ -60,7 +60,7 @@ export abstract class ModelDataBase<
 
         const createArgs: IDataCreateArgs = {
             ownerId: args.ownerId,
-            version: CURRENT_VERSION,
+            version: VERSION_UI_V2,
             key: args.key,
 
             value: args.default,
@@ -93,7 +93,7 @@ export abstract class ModelDataBase<
     public async deleteData( args: Omit<IDataSelectUniqueArgs, "version"> ) {
         return this.dataModel.delete( {
             where: this.getWhereUnique( {
-                version: CURRENT_VERSION,
+                version: VERSION_UI_V2,
                 ...args
             } )
         } );

@@ -1,3 +1,4 @@
+import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/index";
 import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -17,9 +18,19 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
         return UIInstancesTypes.Dynamic;
     }
 
-    public abstract getId(): number;
+    public static getSortId(): number {
+        throw new ForceMethodImplementation( this, this.getSortId.name );
+    }
 
-    public abstract getSortId(): number;
+    protected static getSortIdAfter( ButtonType: typeof DynamicChannelButtonBase ) {
+        return ButtonType.getSortId() + 1;
+    }
+
+    public get $$() {
+        return this.constructor as typeof DynamicChannelButtonBase;
+    }
+
+    public abstract getId(): string;
 
     public abstract getLabel(): Promise<string>;
 
@@ -48,10 +59,14 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     protected async isAvailable(): Promise<boolean> {
         if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
             return this.uiArgs.dynamicChannelButtonsTemplate.some(
-                ( i: any ) => parseInt( i ) === this.getId()
+                ( i: string ) => i === this.getId()
             );
         }
 
         return false;
+    }
+
+    protected async isLabelOmitted(): Promise<boolean> {
+        return true;
     }
 }

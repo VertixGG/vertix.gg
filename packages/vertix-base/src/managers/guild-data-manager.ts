@@ -1,5 +1,7 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
@@ -9,7 +11,6 @@ import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
     DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
-    DEFAULT_GUILD_SETTINGS_KEY_VERSION
 } from "@vertix.gg/base/src/definitions/guild-data-keys";
 
 import {
@@ -53,7 +54,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         }
 
         const { masterChannelDefaults } = ConfigManager.$
-            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", "0.0.2" as const ).data;
+            .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 ).data;
 
         return {
             maxMasterChannels: masterChannelDefaults.masterChannelMaximumFreeChannels,
@@ -79,17 +80,6 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
     public async getBadwordsFormatted( guildId: string ): Promise<string> {
         return ( await this.getBadwords( guildId ) )
             .join( DEFAULT_BADWORDS_SEPARATOR ) || DEFAULT_BADWORDS_INITIAL_VALUE;
-    }
-
-    public async getUIVersion( guildId: string ): Promise<number> {
-        const version = await this.getData( {
-            ownerId: guildId,
-            key: DEFAULT_GUILD_SETTINGS_KEY_VERSION,
-            default: "0",
-            cache: true,
-        }, true ) || "0";
-
-        return parseInt( version.toString() );
     }
 
     public async setBadwords( guildId: string, badwords: string[] | undefined ) {
@@ -131,21 +121,6 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         if ( shouldAdminLog ) {
             this.logger.admin( this.setLanguage,
                 `🌍  Language has been modified - "${ language }" (${ guild.name }) (${ guild.memberCount })`
-            );
-        }
-    }
-
-    public async setUIVersion( guild: Guild, version: number, shouldAdminLog = true ) {
-        await this.setData( {
-            ownerId: guild.id,
-            key: DEFAULT_GUILD_SETTINGS_KEY_VERSION,
-            default: version.toString(),
-            cache: true,
-        }, true );
-
-        if ( shouldAdminLog ) {
-            this.logger.admin( this.setUIVersion,
-                `⏫  UI Version has been modified - "${ version }" (${ guild.name }) (${ guild.memberCount })`
             );
         }
     }

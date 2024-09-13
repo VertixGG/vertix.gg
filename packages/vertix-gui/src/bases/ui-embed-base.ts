@@ -9,7 +9,7 @@ import type {
 
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import type { APIEmbedField, APIEmbedThumbnail } from "discord.js";
+import type { APIEmbedField, APIEmbedImage, APIEmbedThumbnail } from "discord.js";
 
 export abstract class UIEmbedBase extends UITemplateBase {
     private content: UIEmbedLanguageContent | undefined;
@@ -30,9 +30,9 @@ export abstract class UIEmbedBase extends UITemplateBase {
     }
 
     /**
-     * Function getTranslatableContent() :: Used to get the translatable content.
+     * Function `getTranslatableContent()` - Used to get the translatable content.
      *
-     * Note: The method called on start-up process, the args are not available during this time.
+     * Note: The method called on a start-up process, the args are not available during this time.
      */
     public async getTranslatableContent(): Promise<UIEmbedLanguageContent> {
         const assumed = {
@@ -99,6 +99,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
         if ( image.length ) {
             attributes.image = {
+                ... this.getImageData(),
                 url: image,
             };
         }
@@ -140,6 +141,10 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
     protected getImage(): string {
         return "";
+    }
+
+    protected getImageData(): Omit<APIEmbedImage, "url"> {
+        return {};
     }
 
     protected getOptions(): UIBaseTemplateOptions {

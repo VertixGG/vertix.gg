@@ -1,6 +1,4 @@
-import {
-    ChannelButtonsTemplateSelectMenuBase
-} from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu-base";
+import { ChannelButtonsTemplateSelectMenuBase } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu-base";
 
 export class ChannelButtonsTemplateRemoveSelectMenu extends ChannelButtonsTemplateSelectMenuBase {
     public static getName() {

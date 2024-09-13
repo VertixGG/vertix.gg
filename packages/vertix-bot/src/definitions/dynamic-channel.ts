@@ -6,17 +6,7 @@ import type { Guild, VoiceState } from "discord.js";
 
 /* Default Data Key Settings */
 
-export const DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID = "primaryMessageId",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_NAME = "name",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT = "userLimit",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_STATE = "state",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE = "visibilityState",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS = "allowedUserIds",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS = "blockedUserIds",
-
-    // @since 0.0.8
-
-    DYNAMIC_CHANNEL_SETTINGS_KEY_REGION = "region";
+export const DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID = "primaryMessageId";
 
 /* Default Data Settings */
 export const DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS = {

@@ -1,10 +1,10 @@
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { SetupStep1Embed } from "@vertix.gg/bot/src/ui/v2/setup-new/step-1/setup-step-1-embed";
+import { ChannelNameTemplateEditButton } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-edit-button";
+import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-modal";
 
-import { ChannelNameTemplateEditButton } from "@vertix.gg/bot/src/ui/v2/channel-name-template/channel-name-template-edit-button";
-import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/v2/channel-name-template/channel-name-template-modal";
+import { SetupStep1Embed } from "@vertix.gg/bot/src/ui/v2/setup-new/step-1/setup-step-1-embed";
 
 export class SetupStep1Component extends UIComponentBase {
     public static getName() {

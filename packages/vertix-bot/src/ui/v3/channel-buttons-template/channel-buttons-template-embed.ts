@@ -2,9 +2,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -35,7 +33,7 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
             },
         };
 
-        DynamicChannelElementsGroup.getAll().forEach( ( item: DynamicChannelButtonBase ) => {
+        DynamicChannelPrimaryMessageElementsGroup.getAll().forEach( ( item: DynamicChannelButtonBase ) => {
             result.dynamicChannelButtonsTemplate.options[ item.getId() ] = item.getLabelForEmbed();
         } );
 
@@ -44,7 +42,7 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
 
     protected getLogic( args: UIArgs ) {
         return {
-            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate ),
+            dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( args.dynamicChannelButtonsTemplate ),
         };
     }
 }

@@ -58,6 +58,10 @@ export class EmojiManager extends InitializeBase {
         this.debugger.dumpDown( this.initialize, this.emojis, "emojis" );
     }
 
+    public async awaitInitialization() {
+        return this.initPromise;
+    }
+
     public async getMarkdown( baseName: string, fromCache = true ) {
         if ( ! fromCache ) {
             await this.initialize();

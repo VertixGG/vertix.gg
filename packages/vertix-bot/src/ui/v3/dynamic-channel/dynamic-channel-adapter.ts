@@ -1,6 +1,6 @@
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-
 import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
+import { UserChannelDataModel } from "@vertix.gg/base/src/models/user-channel-data-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/master-channel-data-model-v3";
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-base";
 
@@ -26,36 +26,35 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( ! this.getArgsManager().getArgsById( this, message.id ) ) {
-            await this.awakeInternal( message, {} );
+            await this.awakeInternal( message, newArgs );
         }
 
         return super.editMessage( message, newArgs );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
-        return this.getAllArgs( channel );
+    protected async getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs = {} ) {
+        return this.getAllArgs( channel, argsFromManager );
     }
 
-    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ): Promise<UIArgs> {
-        return this.getAllArgs( interaction.channel );
+    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs = {} ) {
+        return this.getAllArgs( interaction.channel, argsFromManager );
     }
 
-    protected async getEditMessageArgs( message: Message<true> ) {
-        return this.getAllArgs( message.channel as VoiceChannel );
+    protected async getEditMessageArgs( message: Message<true>, argsFromManager: UIArgs = {} ) {
+        return this.getAllArgs( message.channel as VoiceChannel, argsFromManager );
     }
 
     protected onEntityMap() {
-        this.bindButton( "Vertix/UI-V3/DynamicChannelMetaRenameButton", this.onRenameButtonClicked );
-        this.bindButton( "Vertix/UI-V3/DynamicChannelMetaClearChatButton", this.onClearChatButtonClicked );
-        this.bindButton( "Vertix/UI-V3/DynamicChannelMetaLimitButton", this.onLimitButtonClicked );
-
-        this.bindButton( "Vertix/UI-V3/DynamicChannelPermissionsStateButton", this.onToggleStateButtonClicked );
-        this.bindButton( "Vertix/UI-V3/DynamicChannelPermissionsVisibilityButton", this.onToggleVisibilityStateButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelRenameButton", this.onRenameButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelLimitMetaButton", this.onLimitButtonClicked );
         this.bindButton( "Vertix/UI-V3/DynamicChannelPermissionsAccessButton", this.onAccessButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelPrivacyButton", this.onPrivacyButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelRegionButton", this.onRegionButtonClicked );
 
-        this.bindButton( "Vertix/UI-V3/DynamicChannelPremiumResetChannelButton", this.onResetChannelButtonClicked );
-        this.bindButton( "Vertix/UI-V3/DynamicChannelPremiumClaimChannelButton", this.onClaimButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelPrimaryMessageEditButton", this.onPrimaryMessageEditButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelClearChatButton", this.onClearChatButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelResetChannelButton", this.onResetChannelButtonClicked );
+        this.bindButton( "Vertix/UI-V3/DynamicChannelClaimChannelButton", this.onClaimButtonClicked );
         this.bindButton( "Vertix/UI-V3/DynamicChannelTransferOwnerButton", this.onTransferOwnerButtonClicked );
     }
 
@@ -72,35 +71,42 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
     }
 
     private async onRenameButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.uiService.get( "Vertix/UI-V3/DynamicChannelMetaRenameAdapter" )?.showModal( "Vertix/UI-V3/DynamicChannelMetaRenameModal", interaction );
-    }
-
-    private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.uiService.get( "Vertix/UI-V3/DynamicChannelMetaClearChatAdapter" )?.runInitial( interaction );
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelRenameAdapter" )
+            ?.showModal( "Vertix/UI-V3/DynamicChannelRenameModal", interaction );
     }
 
     private async onLimitButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.uiService.get( "Vertix/UI-V3/DynamicChannelMetaLimitAdapter" )?.showModal( "Vertix/UI-V3/DynamicChannelMetaLimitModal", interaction );
-    }
-
-    private async onToggleStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.uiService.get( "Vertix/UI-V3/DynamicChannelPermissionsAdapter" )?.runInitial( interaction );
-    }
-
-    private async onToggleVisibilityStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.uiService.get( "Vertix/UI-V3/DynamicChannelPermissionsAdapter" )?.runInitial( interaction );
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelLimitAdapter" )
+            ?.showModal( "Vertix/UI-V3/DynamicChannelLimitModal", interaction );
     }
 
     private async onAccessButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         await this.uiService.get( "Vertix/UI-V3/DynamicChannelPermissionsAdapter" )?.runInitial( interaction );
     }
 
+    private async onPrivacyButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelPrivacyAdapter" )?.runInitial( interaction );
+    }
+
+    private async onRegionButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelRegionAdapter" )?.runInitial( interaction );
+    }
+
+    private async onPrimaryMessageEditButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter" )?.runInitial( interaction );
+    }
+
+    private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelClearChatAdapter" )?.runInitial( interaction );
+    }
+
     private async onResetChannelButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.uiService.get( "Vertix/UI-V3/DynamicChannelPremiumResetChannelAdapter" )?.runInitial( interaction );
+        await this.uiService.get( "Vertix/UI-V3/DynamicChannelResetChannelAdapter" )?.runInitial( interaction );
     }
 
     private async onClaimButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        const messages = this.uiService.get( "Vertix/UI-V3/ClaimStartAdapter" )?.getStartedMessages( interaction.channel ),
+        const messages = this.uiService.get( "Vertix/UI-V3/ClaimStartAdapter" )
+                ?.getStartedMessages( interaction.channel ),
             message = Object.values( messages || {} )[ 0 ];
 
         if ( ! message ) {
@@ -127,13 +133,12 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         await this.uiService.get( "Vertix/UI-V3/DynamicChannelTransferOwnerAdapter" )?.runInitial( interaction );
     }
 
-    private async getAllArgs( channel: VoiceChannel ) {
+    private async getAllArgs( channel: VoiceChannel, argsFromManager: UIArgs = {} ) {
         const args: UIArgs = {
                 channelName: channel.name,
                 userLimit: ( channel as VoiceChannel ).userLimit,
 
-                isPrivate: await this.dynamicChannelService.getChannelState( channel ) === "private",
-                isHidden: await this.dynamicChannelService.getChannelVisibilityState( channel ) === "hidden",
+                state: await this.dynamicChannelService.getChannelPrivacyState( channel ),
 
                 channelId: channel.id,
 
@@ -144,7 +149,15 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
         if ( masterChannelDB ) {
             args.dynamicChannelButtonsTemplate =
-                await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id );
+                ( await MasterChannelDataModelV3.$.getSettings( masterChannelDB.id ) )?.dynamicChannelButtonsTemplate;
+
+            if ( argsFromManager.ownerId ) {
+                const primaryMessage = await UserChannelDataModel.$.getPrimaryMessage(
+                    argsFromManager.ownerId, masterChannelDB.id
+                );
+
+                Object.assign( args, primaryMessage );
+            }
         }
 
         return args;

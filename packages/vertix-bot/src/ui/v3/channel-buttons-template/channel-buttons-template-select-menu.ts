@@ -2,11 +2,9 @@ import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-type
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-const allItems = DynamicChannelElementsGroup.getAll();
+const allItems = DynamicChannelPrimaryMessageElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu {
     public static getName() {
@@ -40,8 +38,9 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
         } );
 
         return ( await Promise.all( values ) ).sort( ( a, b ) =>
-            DynamicChannelElementsGroup.getById( parseInt( a.value ) )!.getSortId() -
-            DynamicChannelElementsGroup.getById( parseInt( b.value ) )!.getSortId()
+            DynamicChannelPrimaryMessageElementsGroup.getById( a.value )!.$$.getSortId() -
+            DynamicChannelPrimaryMessageElementsGroup.getById( b.value )!.$$.getSortId()
         );
     }
 }
+

@@ -1,6 +1,6 @@
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { ChannelNameTemplateEmbed } from "@vertix.gg/bot/src/ui/v2/channel-name-template/channel-name-template-embed";
+import { ChannelNameTemplateEmbed } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-embed";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 

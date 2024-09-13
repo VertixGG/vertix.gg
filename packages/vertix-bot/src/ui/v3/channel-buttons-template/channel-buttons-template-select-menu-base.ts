@@ -2,13 +2,11 @@ import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-type
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type { APISelectMenuOption } from "discord.js";
 
-const allItems = DynamicChannelElementsGroup.getAll();
+const allItems = DynamicChannelPrimaryMessageElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectMenu {
     public static getName() {

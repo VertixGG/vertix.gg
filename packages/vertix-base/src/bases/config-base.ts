@@ -1,5 +1,7 @@
 import crypto from "node:crypto";
 
+import { diff } from "jest-diff";
+
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
@@ -138,6 +140,11 @@ export abstract class ConfigBase<
             checksumB = checksum( objB );
 
         if ( checksumA !== checksumB ) {
+            console.log( diff( objA, objB, {
+                contextLines: 0,
+                expand: false,
+                includeChangeCounts: true,
+            } ) );
             throw new ErrorWithMetadata( `Checksum mismatch for: '${ this.$$.getName() }'`, {
                 checksumA,
                 checksumB

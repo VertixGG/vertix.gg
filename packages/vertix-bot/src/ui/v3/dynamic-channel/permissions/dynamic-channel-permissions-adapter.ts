@@ -2,7 +2,7 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
-import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DynamicChannelAdapterExuWithPermissionsBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-exu-with-permissions-base";
 
 import { DynamicChannelPermissionsComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-component";
 
@@ -12,9 +12,9 @@ import {
     DynamicChannelPermissionsVisibilityButton,
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
 
-import { DynamicChannelAdapterExuBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-exu-base";
-
 import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/definitions/dynamic-channel";
+
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type {
     UIDefaultButtonChannelVoiceInteraction,
@@ -26,7 +26,7 @@ type DefaultInteraction =
     | UIDefaultUserSelectMenuChannelVoiceInteraction
     | UIDefaultButtonChannelVoiceInteraction
 
-export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBase<DefaultInteraction> {
+export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
     public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsAdapter";
     }
@@ -35,9 +35,13 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
         return DynamicChannelPermissionsComponent;
     }
 
+    protected static getInitiatorElement() {
+        return DynamicChannelPermissionsAccessButton;
+    }
+
     protected static getExcludedElements() {
         return [
-            DynamicChannelPermissionsAccessButton,
+            // DynamicChannelPermissionsAccessButton,
             DynamicChannelPermissionsStateButton,
             DynamicChannelPermissionsVisibilityButton,
         ];
@@ -45,7 +49,12 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
 
     protected static getExecutionSteps() {
         return {
-            default: {},
+            ... super.getExecutionSteps(),
+
+            "Vertix/UI-V3/DynamicChannelPermissionsAccess": {
+                elementsGroup: "Vertix/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "Vertix/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
+            },
 
             "Vertix/UI-V3/DynamicChannelPermissionsStatePublic": {
                 embedsGroup: "Vertix/UI-V3/DynamicChannelPermissionsPublicEmbedGroup"
@@ -82,16 +91,11 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
                 embedsGroup: "Vertix/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
             },
 
-            "Vertix/UI-V3/DynamicChannelPermissionsAccess": {
-                elementsGroup: "Vertix/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "Vertix/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-            },
-
             "Vertix/UI-V3/DynamicChannelPermissionsStateError": {
-                embedsGroup: "Vertix/UI-V3/SomethingWentWrongEmbedGroup"
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             },
             "Vertix/UI-V3/DynamicChannelPermissionsStateNothingChanged": {
-                embedsGroup: "Vertix/UI-V3/NothingChangedEmbedGroup"
+                embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
             },
         };
     }
@@ -135,24 +139,15 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             // And determine if accessButtonId is enabled , since all other "permissions" buttons are depends on the access button
             // TODO: This mechanism is broken, and it should be reworked.
             // Keep in mind that is only for version V2, and consider the effort to rework it.
-            const accessButtonId = DynamicChannelElementsGroup
+            const accessButtonId = DynamicChannelPrimaryMessageElementsGroup
                 .getByName( "Vertix/UI-V3/DynamicChannelPermissionsAccessButton" )?.getId();
 
             args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
-                ( buttonId: number ) =>  buttonId === accessButtonId
+                ( buttonId: string ) =>  buttonId === accessButtonId
             );
         }
 
-        args.allowedUsers = await this.dynamicChannelService.getChannelUsersWithPermissionState(
-            interaction.channel,
-            DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-            true,
-        );
-        args.blockedUsers = await this.dynamicChannelService.getChannelUsersWithPermissionState(
-            interaction.channel,
-            DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-            false,
-        );
+        await this.assignUsersWithPermissions( interaction.channel, args );
 
         return args;
     }
@@ -169,12 +164,6 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "Vertix/UI-V3/DynamicChannelPermissionsVisibilityButton",
             this.onStateVisibilityClicked
-        );
-
-        // Access Button.
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "Vertix/UI-V3/DynamicChannelPermissionsAccessButton",
-            this.onAccessButtonClicked
         );
 
         // Grant user access.
@@ -208,21 +197,9 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
         );
     }
 
-    protected shouldDeletePreviousReply() {
-        return true;
-    }
-
     private async onStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         switch ( await this.dynamicChannelService.getChannelState( interaction.channel ) ) {
             case "public":
-                /*
-                 DynamicChannelManager.$.run( "edit/channel/state", {
-                        initiator: interaction,
-                        channel: interaction.channel,
-                        state: "private",
-                 } );
-                 */
-
                 if ( ! await this.dynamicChannelService.editChannelState( interaction, interaction.channel, "private" ) ) {
                     return await this.ephemeralWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsStateError", {} );
                 }
@@ -260,10 +237,6 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             default:
                 return await this.ephemeralWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsStateError", {} );
         }
-    }
-
-    private async onAccessButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        return await this.ephemeralWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsAccess", {} );
     }
 
     private async onGrantSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {

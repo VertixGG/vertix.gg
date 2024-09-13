@@ -2,14 +2,17 @@ import util from "node:util";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { deepMerge } from "@vertix.gg/utils/src/object";
+
 import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
 
 import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+
 import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
-export type TVersionType = `${ number }.${ number }.${ number }`;
+export type TVersionType = `${ number }.${ number }.${ number }.${ number }`;
 
 export interface TDataVersioningDefaultUniqueKeys {
     key: string;
@@ -17,7 +20,6 @@ export interface TDataVersioningDefaultUniqueKeys {
 }
 
 export interface TDataVersioningOptions {
-    include?: Record<string, any>;
     cache: boolean;
 }
 
@@ -28,11 +30,14 @@ export function DataVersioningModelFactory<
 >(
     model: TModel,
     options: {
+        modelMetaName?: PrismaBot.Prisma.ModelName,
         modelNamespace?: string,
         shouldDebugCache?: boolean,
         shouldDebugModel?: boolean
     } = {}
 ) {
+    const { modelMetaName } = options;
+
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
         public static getName() {
             return options.modelNamespace ?? "VertixBase/Factory/VersioningModel";
@@ -40,12 +45,12 @@ export function DataVersioningModelFactory<
 
         public constructor(
             shouldDebugCache = ( undefined === typeof options.shouldDebugCache
-                ? isDebugEnabled( "CACHE", VersioningModel.getName() ) :
-                options.shouldDebugCache
+                    ? isDebugEnabled( "CACHE", VersioningModel.getName() ) :
+                    options.shouldDebugCache
             ),
             shouldDebugModel = ( undefined === typeof options.shouldDebugModel
-                ? isDebugEnabled( "MODEL", VersioningModel.getName() ) :
-                options.shouldDebugModel
+                    ? isDebugEnabled( "MODEL", VersioningModel.getName() ) :
+                    options.shouldDebugModel
             )
         ) {
             super( shouldDebugCache, shouldDebugModel );
@@ -85,10 +90,6 @@ export function DataVersioningModelFactory<
                     }
                 } as any;
 
-                if ( options.include ) {
-                    args.include = options.include;
-                }
-
                 result = await this.getModel().findUnique( args );
 
                 if ( result ) {
@@ -97,6 +98,49 @@ export function DataVersioningModelFactory<
             }
 
             return result ? this.getValueAsType<T>( result ) : null;
+        }
+
+        public async getWithMeta<T extends ReturnType<typeof this.getValueAsType>, const TMeta extends object>( keys: TUniqueKeys, options: TDataVersioningOptions = {
+            cache: true,
+        } ) {
+            if ( ! modelMetaName ) {
+                throw new Error( "modelMetaName is required" );
+            }
+
+            const keysArray = Object.values( keys ) as string[];
+
+            keysArray.push( "withMeta" );
+
+            const cacheKey = this.generateCacheKey( ... keysArray );
+
+            let result = options.cache ? this.getCache( cacheKey ) : null;
+
+            if ( ! result ) {
+                const args = {
+                    where: {
+                        [ this.getUniqueKeyName() ]: keys
+                    }
+                } as any;
+
+                args.include = {
+                    [ modelMetaName ]: true,
+                };
+
+                result = await this.getModel().findUnique( args );
+
+                if ( result ) {
+                    this.setCache( cacheKey, result );
+                }
+            }
+
+            if ( result ) {
+                return {
+                    data: this.getValueAsType<T>( result ),
+                    meta: result[ modelMetaName as keyof TModelResult ] as TMeta
+                };
+            }
+
+            return null;
         }
 
         /**
@@ -136,13 +180,15 @@ export function DataVersioningModelFactory<
         public async update<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
             const dataType = this.getDataType( value );
 
+            const newValue = await this.mergeWithExisting( keys, value );
+
             const result = await this.getModel().update<TModelResult>( {
                 where: {
                     [ this.getUniqueKeyName() ]: keys
                 },
                 data: {
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                    [ this.getValueField( dataType ) ]: this.transformValue( newValue, dataType )
                 }
             } );
 
@@ -163,7 +209,7 @@ export function DataVersioningModelFactory<
                 },
                 update: {
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                    [ this.getValueField( dataType ) ]: this.transformValue( await this.mergeWithExisting( keys, value ), dataType )
                 },
                 create: {
                     ... keys,
@@ -177,6 +223,19 @@ export function DataVersioningModelFactory<
             this.deleteCacheIfAlreadyExists( keys );
 
             return result ? this.getValueAsType<T>( result ) : null;
+        }
+
+        private async mergeWithExisting( keys: TUniqueKeys, value: any ) {
+            let existing;
+
+            const dataType = this.getDataType( value );
+
+            if ( "object" === dataType ) {
+                existing = await this.get( keys );
+            }
+
+            // Deep merge existing object with the new value if it exists
+            return existing ? deepMerge( existing, value ) : value;
         }
 
         private setCacheResult( keys: TUniqueKeys, result: TModelResult ) {

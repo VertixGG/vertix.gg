@@ -22,6 +22,8 @@
 
         "strict": true,
 
+        "pretty": true,
+
         "esModuleInterop": true,
 
         "allowSyntheticDefaultImports": true,

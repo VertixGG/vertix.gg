@@ -1,7 +1,8 @@
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
-import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/v3/language/language-select-menu";
-import { DoneButton } from "@vertix.gg/bot/src/ui/v3/_general/done-button";
+import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
+
+import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/general/language/language-select-menu";
 
 export class WelcomeLanguageElementsGroup extends UIElementsGroupBase {
     public static getName() {

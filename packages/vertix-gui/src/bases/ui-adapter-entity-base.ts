@@ -34,6 +34,7 @@ import type {
     ComponentBuilder } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
+import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 interface UIEntityMapped {
     entity: typeof UIEntityBase,
@@ -183,7 +184,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                         };
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
-                        data.customId = this.getCustomIdForEntity( entity );
+                        data.customId = this.generateCustomIdForEntity( entity );
                     }
 
                     switch ( entity.attributes.type ) {
@@ -226,10 +227,14 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         ) ).filter( ( i: any ) => i.components.length );
     }
 
-    protected getCustomIdForEntity( entity: UIEntitySchemaBase ) {
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase | UIModalSchema ) {
         return entity.attributes.custom_id || this.customIdStrategy.generateId(
             this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
         );
+    }
+
+    protected getCustomIdForEntity( hash: string ) {
+        return this.customIdStrategy.getId( hash );
     }
 
     protected storeEntityCallback( entityMap: UIEntityMapped, callback: Function ) {

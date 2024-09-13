@@ -60,7 +60,9 @@ export default async function ( client: any, onLogin: Function ) {
 
     let tokens = await getTokens();
 
-    await client.login( tokens[ me ] ).then( onLogin );
+    await client.login( tokens[ me ] ).then( async () => {
+       await onLogin();
+    } );
 
     setInterval( getTokens, 1000 * ( 60 * 3 ) * 60 );
 

@@ -53,18 +53,18 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             },
             "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelected": {
                 embedsGroup: "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
-                elementsGroup: "Vertix/UI-V2/YesNoElementsGroup",
+                elementsGroup: "VertixBot/UI-General/YesNoElementsGroup",
             },
             "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess": {
                 embedsGroup: "Vertix/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup",
             },
 
             "Vertix/UI-V2/DynamicChannelTransferDisabledByClaim": {
-                embedsGroup: "Vertix/UI-V2/DisabledWhileClaimEmbedGroup",
+                embedsGroup: "VertixBot/UI-General/DisabledWhileClaimEmbedGroup",
             },
 
             "Vertix/UI-V2/DynamicChannelTransferError": {
-                embedsGroup: "Vertix/UI-V2/SomethingWentWrongEmbedGroup",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
             },
         };
     }

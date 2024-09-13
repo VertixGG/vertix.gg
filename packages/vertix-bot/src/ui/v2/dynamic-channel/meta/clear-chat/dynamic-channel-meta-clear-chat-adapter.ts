@@ -72,7 +72,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
                 break;
 
             default:
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/SomethingWentWrongEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-General/SomethingWentWrongEmbedGroup" );
         }
 
         await this.ephemeral( interaction );

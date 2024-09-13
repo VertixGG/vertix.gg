@@ -8,7 +8,7 @@ export class UICustomIdHashStrategy extends UICustomIdStrategyBase {
     private uiHashService: UIHashService;
 
     public static getName() {
-        return "VertixGUI/UICustomIdWysiwygStrategy";
+        return "VertixGUI/UICustomIdHashStrategy";
     }
 
     public constructor() {

@@ -56,7 +56,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
         this.versionStrategies.push( new strategy( this.versions ) );
     }
 
-    public async get<T extends keyof TAdapterMapping = "base">( adapterName: string, context: Base, options: {
+    public async get<T extends keyof TAdapterMapping = "base">( adapterName: string, context: Base | any, options: {
         prefix?: string;
         separator?: string;
     } = {} ){

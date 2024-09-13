@@ -407,7 +407,7 @@ export abstract class UIAdapterBase<
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
-        const customId = this.customIdStrategy.getId( interaction.customId ),
+        const customId = this.getCustomIdForEntity( interaction.customId ),
             entityName = customId.split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
 
         this.$$.staticDebugger.log( this.run, this.getName() + ` - Running: '${ customId }'` );
@@ -470,7 +470,7 @@ export abstract class UIAdapterBase<
             if ( shouldDeletePreviousInteraction ) {
                 this.$$.ephemeralInteractions[ interactionInternalId ] = {
                     interaction,
-                    rawCustomId: this.customIdStrategy.getId( interaction.customId ),
+                    rawCustomId: this.getCustomIdForEntity( interaction.customId ),
                 };
             }
         } ).catch( ( e ) => {
@@ -643,7 +643,7 @@ export abstract class UIAdapterBase<
 
         return {
             ... schema.attributes,
-            customId: this.customIdStrategy.generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + modal.getName() ),
+            customId: this.generateCustomIdForEntity( schema ),
             components: this.buildComponentsBySchema( schema.entities ),
         };
     }

@@ -85,7 +85,7 @@ export abstract class UIAdapterExecutionStepsBase<
             }
 
             if ( ! possibleSteps.find( ( step ) => step === group.getName() ) ) {
-                throw new Error( `Missing execution step for the group: '${ group.getName() }'` );
+                throw new Error( `Adapter: '${ this.getName() }' missing execution step for the group: '${ group.getName() }'` );
             }
         }
 

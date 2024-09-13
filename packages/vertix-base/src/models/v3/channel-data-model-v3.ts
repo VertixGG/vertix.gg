@@ -4,14 +4,17 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
-import { DataOwnerModelBase } from "@vertix.gg/base/src/bases/model-data-owner-base";
+import { ModelDataOwnerBase  } from "@vertix.gg/base/src/bases/model-data-owner-base";
+
+import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 const client = PrismaBotClient.$.getClient();
 
-export class ChannelDataModelV3 extends DataOwnerModelBase<
+export class ChannelDataModelV3 extends ModelDataOwnerBase<
     typeof client.channel,
     typeof client.channelData,
-    PrismaBot.UserData
+    PrismaBot.UserData,
+    TDataOwnerDefaultUniqueKeys
 > {
     public static getName() {
         return "VertixBase/Models/ChannelDataV3";

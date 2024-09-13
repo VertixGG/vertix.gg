@@ -1,8 +1,9 @@
+import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { ModelDataOwnerStrictDataBase } from "@vertix.gg/base/src/bases/model-data-owner-strict-data-base";
 
-import { ChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/channel-data-model-v3";
+import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
@@ -10,8 +11,17 @@ import type {
     MasterChannelConfigInterfaceV3,
     MasterChannelSettingsInterface
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
-export class MasterChannelDataModelV3 extends ChannelDataModelV3 {
+const client = PrismaBotClient.$.getClient();
+
+export class MasterChannelDataModelV3 extends ModelDataOwnerStrictDataBase<
+    typeof client.channel,
+    typeof client.channelData,
+    PrismaBot.UserData,
+    TDataOwnerDefaultUniqueKeys,
+    MasterChannelSettingsInterface
+> {
     private static instance: MasterChannelDataModelV3;
 
     private configV3 = ConfigManager.$
@@ -36,35 +46,45 @@ export class MasterChannelDataModelV3 extends ChannelDataModelV3 {
         );
     }
 
-    public async getSettings<T extends MasterChannelSettingsInterface>( id: string ) {
-        return await this.get( { where: { id } }, { key: "settings" } ) as Promise<T | undefined>;
+    protected getModel() {
+        return client.channel;
     }
 
-    public async getMaster<T extends MasterChannelSettingsInterface>( id: string ) {
-        return await this.getWithMeta<T>( { where: { id } }, { key: "settings" }  );
+    protected getDataModel() {
+        return client.channelData;
     }
 
-    public async setSettings<T extends MasterChannelSettingsInterface>( id: string, settings: Partial<T>, assignDefaults = false ) {
-        if ( assignDefaults ) {
-            // If one of the settings is `undefined`, assign the default value
-            const defaults = this.configV3.get( "masterChannelSettings" );
+    protected getDataVersion() {
+        return VERSION_UI_V3;
+    }
 
-            settings = Object.keys( defaults )
-                .reduce( ( obj, key ) => {
-                    obj[ key ] = settings[ key as keyof T ] ?? defaults[ key as keyof MasterChannelSettingsInterface ];
-                    return obj;
-                }, {} as any );
-        }
+    protected getDataUniqueKeyName() {
+        return "ownerId_key_version";
+    }
 
-        // Pick only the keys that are defined in the config
-        settings = Object.keys( settings )
-            .filter( key => this.configV3.get( "masterChannelSettings" ).hasOwnProperty( key ) )
-            .reduce( ( obj, key ) => {
-                obj[ key ] = settings[ key as keyof T ];
-                return obj;
-            }, {} as any );
+    protected getStrictDataFactor(): MasterChannelSettingsInterface {
+        return this.configV3.get( "masterChannelSettings" );
+    }
 
-        return this.upsert( { where: { id } }, { key: "settings" }, settings );
+    public async getMaster( id: string ) {
+        return await this.getWithMeta<MasterChannelSettingsInterface>( { where: { id } }, { key: "settings" }  );
+    }
+
+    public async getSettings( id: string ) {
+        return await this.get( { where: { id } }, { key: "settings" } ) as Promise<MasterChannelSettingsInterface | undefined>;
+    }
+
+    /**
+     * Function `setSettings()` - This method is used to set the settings of a MasterChannel.
+     * It allows updating the settings while optionally assigning default values to any undefined settings.
+     **/
+    public async setSettings( id: string, settings: Partial<MasterChannelSettingsInterface>, assignDefaults = false ) {
+        const queryArgs = { where: { id } },
+            keys =  { key: "settings" };
+
+        return assignDefaults ?
+            await this.setStrictDataWithDefaults( queryArgs, keys, settings ) :
+            await this.setStrictData( queryArgs, keys, settings );
     }
 
 }

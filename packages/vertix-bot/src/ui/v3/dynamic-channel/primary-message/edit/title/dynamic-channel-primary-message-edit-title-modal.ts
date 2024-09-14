@@ -30,7 +30,7 @@ class DynamicChannelPrimaryMessageEditModalTitle extends UIElementInputBase {
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.title || this.configV3.data.masterChannelDefaults.dynamicChannelPrimaryMessageTitle;
+        return this.uiArgs?.title || this.configV3.data.constants.dynamicChannelPrimaryMessageTitle;
     }
 
     protected async getMinLength(): Promise<number> {

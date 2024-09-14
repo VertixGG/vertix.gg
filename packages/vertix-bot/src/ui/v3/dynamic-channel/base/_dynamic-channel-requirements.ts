@@ -1,5 +1,5 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
@@ -29,7 +29,7 @@ export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyCon
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     if ( interaction.user.id !== dynamicChannelDB.userOwnerId ) {
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelDB.channelId );
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelDB.channelId );
 
         if ( ! masterChannelDB ) {
             return false;

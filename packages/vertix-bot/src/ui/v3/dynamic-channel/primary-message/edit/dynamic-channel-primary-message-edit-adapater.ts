@@ -1,5 +1,5 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
-import { UserChannelDataModel } from "@vertix.gg/base/src/models/user-channel-data-model";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -58,14 +58,14 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
 
     protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs = {} ) {
         const masterChannelDB =
-            await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channelId );
+            await ChannelModel.$.getMasterByDynamicChannelId( interaction.channelId );
 
         if ( ! masterChannelDB ) {
             // SomethingWentWrong
             return;
         }
 
-        const userMasterData = await UserChannelDataModel.$.getMasterData( interaction.user.id, masterChannelDB.id );
+        const userMasterData = await UserMasterChannelDataModel.$.getData( interaction.user.id, masterChannelDB.id );
 
         return {
             ... userMasterData?.dynamicChannelPrimaryMessage || {},
@@ -169,14 +169,14 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         } );
 
         const masterChannelDB =
-            await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channelId );
+            await ChannelModel.$.getMasterByDynamicChannelId( interaction.channelId );
 
         if ( ! masterChannelDB ) {
             // SomethingWentWrong
             return;
         }
 
-        await UserChannelDataModel.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { title } );
+        await UserMasterChannelDataModel.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { title } );
 
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
     }
@@ -192,14 +192,14 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         } );
 
         const masterChannelDB =
-            await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channelId );
+            await ChannelModel.$.getMasterByDynamicChannelId( interaction.channelId );
 
         if ( ! masterChannelDB ) {
             // SomethingWentWrong
             return;
         }
 
-        await UserChannelDataModel.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { description } );
+        await UserMasterChannelDataModel.$.setPrimaryMessage( interaction.user.id, masterChannelDB.id, { description } );
 
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
     }

@@ -2,9 +2,9 @@ import { VoiceChannel } from "discord.js";
 
 import { UIVersionStrategyBase } from "@vertix.gg/gui/src/bases/ui-version-strategy-base";
 
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/master-channel-data-model-v3";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/data/v3/master-channel-data-model-v3";
 
 import type { Base } from "discord.js";
 
@@ -17,7 +17,7 @@ export class UIMasterChannelVersionStrategy extends UIVersionStrategyBase {
         let masterChannelDBId;
 
         if ( ( context instanceof VoiceChannel ) ) {
-            const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( context.id, true );
+            const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( context.id, true );
 
             if ( ! masterChannelDB ) {
                 return 0;

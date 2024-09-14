@@ -24,7 +24,7 @@ export type TDataType = {
     [Key in TDataTypeKeys]: TDefaultTypesMapping[typeof dataTypes[Key]];
 }[TDataTypeKeys];
 
-export interface TDefaultResult {
+export interface TDataDefaultResult {
     object: PrismaBot.Prisma.JsonValue | null
     value: string | null
     values: string[]
@@ -77,7 +77,7 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
          * EG: `dataTypeEnum.object` will use `config.object`
          * EG: `dataTypeEnum.array` will use `config.array`
          */
-        protected getValueAsType<T extends TDataType>( result: TDefaultResult ) {
+        protected getValueAsType<T extends TDataType>( result: TDataDefaultResult ) {
             switch ( result.type ) {
                 case dataTypes.string:
                     return result.value!.toString() as T;

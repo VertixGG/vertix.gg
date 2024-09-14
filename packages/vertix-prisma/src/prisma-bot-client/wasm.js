@@ -164,6 +164,7 @@ exports.Prisma.ChannelScalarFieldEnum = {
   userOwnerId: 'userOwnerId',
   categoryId: 'categoryId',
   ownerChannelId: 'ownerChannelId',
+  version: 'version',
   internalType: 'internalType',
   createdAtDiscord: 'createdAtDiscord',
   createdAt: 'createdAt',

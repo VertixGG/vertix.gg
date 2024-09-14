@@ -1,4 +1,4 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { DynamicChannelMetaRenameComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-component";
 
@@ -85,7 +85,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
             .generateId( "Vertix/UI-V2/DynamicChannelMetaRenameAdapter:Vertix/UI-V2/DynamicChannelMetaRenameInput" );
 
         let newChannelName = interaction.fields.getTextInputValue(renameButtonId ),
-            masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( interaction.channel.id );
+            masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
 
         if ( ! newChannelName ) {
             newChannelName = await this.dynamicChannelService.getAssembledChannelNameTemplate(

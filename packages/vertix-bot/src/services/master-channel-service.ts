@@ -2,7 +2,8 @@ import "@vertix.gg/prisma/bot-client";
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/master-channel-data-model-v3";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/data/v3/master-channel-data-model-v3";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -19,10 +20,7 @@ import {
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import {
     DynamicChannelElementsGroup
@@ -341,13 +339,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
 
         const where = {
-            guildId: channel.guildId,
             channelId: channel.id,
         };
 
-        await ChannelModel.$.delete( where,
-            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
-        );
+        await ChannelModel.$.delete( where );
     }
 
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
@@ -373,7 +368,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const masterCategory = await CategoryManager.$.create( {
             guild,
-            name: config.data.masterChannelDefaults.dynamicChannelsCategoryName,
+            name: config.data.constants.dynamicChannelsCategoryName,
         } ).catch( ( e ) => {
             this.logger.error( this.createMasterChannel, "", e );
         } );
@@ -428,9 +423,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         await CategoryModel.$.delete( guild.id );
 
-        await ChannelModel.$.delete( { guildId: guild.id },
-            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
-        );
+        await ChannelModel.$.deleteMany( { guildId: guild.id } );
     }
 
     /**
@@ -478,8 +471,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             parent,
             guild,
             userOwnerId: args.userOwnerId,
+            version: args.version,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: config.get( "masterChannelDefaults" ).masterChannelName,
+            name: config.get( "constants" ).masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
             // TODO: Should be configurable.
@@ -499,9 +493,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         } ).join( "," );
 
         const usedButtonsInterface =
-            ( args.dynamicChannelButtonsTemplate || config.get( "masterChannelSettings" ).dynamicChannelButtonsTemplate );
+            ( args.dynamicChannelButtonsTemplate || config.get( "settings" ).dynamicChannelButtonsTemplate );
 
-        const usedNameTemplate = args.dynamicChannelNameTemplate || config.get( "masterChannelSettings" ).dynamicChannelNameTemplate;
+        const usedNameTemplate = args.dynamicChannelNameTemplate || config.get( "settings" ).dynamicChannelNameTemplate;
 
         this.logger.admin( this.createMasterChannelInternalV3,
             `🛠️  Setup has performed - "${ usedNameTemplate }", "${ usedButtonsInterface.join( "," ) }", "${ usedRoles }" (${ guild.name }) (${ guild?.memberCount })`
@@ -520,18 +514,18 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const { guild, parent } = args;
 
-        const { masterChannelSettings, masterChannelDefaults } = config.data;
+        const { settings, constants } = config.data;
 
         /**
          * The following block of code initializes various dynamic channel settings using
          * either provided arguments or defaults
          */
-        const newName = args.dynamicChannelNameTemplate || masterChannelSettings.dynamicChannelNameTemplate,
-            newButtons = args.dynamicChannelButtonsTemplate || masterChannelSettings.dynamicChannelButtonsTemplate,
+        const newName = args.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
+            newButtons = args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate,
             newMentionable = typeof args.dynamicChannelMentionable === "boolean" ?
-                args.dynamicChannelMentionable : masterChannelSettings.dynamicChannelMentionable,
+                args.dynamicChannelMentionable : settings.dynamicChannelMentionable,
             newAutoSave = typeof args.dynamicChannelAutoSave === "boolean" ?
-                args.dynamicChannelAutoSave : masterChannelSettings.dynamicChannelAutoSave,
+                args.dynamicChannelAutoSave : settings.dynamicChannelAutoSave,
             newVerifiedRoles = args.dynamicChannelVerifiedRoles || [
                 guild.roles.everyone.id
             ];
@@ -544,9 +538,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         const result = await this.services.channelService.create( {
             parent,
             guild,
+            version: args.version,
             userOwnerId: args.userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: masterChannelDefaults.masterChannelName,
+            name: constants.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
             // TODO: Should be configurable.
@@ -559,11 +554,11 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const masterChannelDB = await result.db;
 
-        await MasterChannelDataManager.$.setAllSettings( masterChannelDB.id, {
+        await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
             dynamicChannelAutoSave: newAutoSave,
             dynamicChannelButtonsTemplate: newButtons,
             // Since `LogsChannelId` not defined in the creation process, but later via configuration.
-            dynamicChannelLogsChannelId: masterChannelSettings.dynamicChannelLogsChannelId,
+            dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,
             dynamicChannelNameTemplate: newName,
             dynamicChannelVerifiedRoles: newVerifiedRoles,

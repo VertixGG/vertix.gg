@@ -34,7 +34,7 @@ export class ChannelNameTemplateEmbed extends UIEmbedBase {
     protected getLogic( args: UIArgs ) {
         return {
             dynamicChannelNameTemplate: args?.dynamicChannelNameTemplate ||
-                this.config.data.masterChannelSettings.dynamicChannelNameTemplate,
+                this.config.data.settings.dynamicChannelNameTemplate,
         };
     }
 }

@@ -1,8 +1,7 @@
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
-
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 

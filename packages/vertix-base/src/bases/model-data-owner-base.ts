@@ -8,7 +8,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import type { TVersionType , TDataVersioningDefaultUniqueKeys } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
-import type { TDataType, TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+import type { TDataType, TDataDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
@@ -21,7 +21,7 @@ export interface TDataOwnerDefaultUniqueKeys extends TDataVersioningDefaultUniqu
 export abstract class ModelDataOwnerBase<
     TModel extends TBaseModelStub,
     TDataModel extends TBaseModelStub,
-    TDataModelResult extends TDefaultResult,
+    TDataModelResult extends TDataDefaultResult,
     TDataModelUniqueKeys extends TDataOwnerDefaultUniqueKeys
 > extends InitializeBase {
     private dataVersioningModel;

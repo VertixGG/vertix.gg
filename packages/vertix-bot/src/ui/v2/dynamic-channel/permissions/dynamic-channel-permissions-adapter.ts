@@ -1,6 +1,6 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -126,10 +126,10 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
         }
 
         const masterChannelDB = await ChannelModel.$
-            .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
+            .getMasterByDynamicChannelId( interaction.channel.id );
 
         if ( masterChannelDB ) {
-            args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+            args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, false );
 
             // Runs over all dynamic-channel buttons that are configured by the user(Master Channel)
             // And determine if accessButtonId is enabled , since all other "permissions" buttons are depends on the access button

@@ -8,7 +8,7 @@ import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
 
 import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory";
 
-import type { TDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
+import type { TDataDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
@@ -24,7 +24,7 @@ export interface TDataVersioningOptions {
 }
 
 export function DataVersioningModelFactory<
-    TModelResult extends TDefaultResult,
+    TModelResult extends TDataDefaultResult,
     TModel extends TBaseModelStub,
     TUniqueKeys extends TDataVersioningDefaultUniqueKeys = TDataVersioningDefaultUniqueKeys
 >(
@@ -290,12 +290,12 @@ export function DataVersioningModelFactory<
         private generateCacheKey( key: string, version: string ): string
         private generateCacheKey( ... args: string[] ): string
         private generateCacheKey( ... args: string[] ) {
-            return args.join( "|" );
+            return args.sort().join( "|" );
         };
     }
 
     return VersioningModel;
 }
 
-export type TDataVersioningModel<TModelResult extends TDefaultResult, TModel extends TBaseModelStub>
+export type TDataVersioningModel<TModelResult extends TDataDefaultResult, TModel extends TBaseModelStub>
     = ReturnType<typeof DataVersioningModelFactory<TModelResult, TModel>>;

@@ -1,10 +1,10 @@
 import process from "process";
 
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
@@ -627,7 +627,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {
         // TODO: Add dedicated method for this.
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
         if ( ! masterChannelDB ) {
             this.logger.error( this.isClaimButtonEnabled,
@@ -636,7 +636,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             return false;
         }
 
-        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, false );
 
         if ( ! enabledButtons?.length ) {
             this.logger.error( this.isClaimButtonEnabled,

@@ -1,6 +1,5 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
-
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { DynamicChannelAdapterExuWithPermissionsBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-exu-with-permissions-base";
 
@@ -130,10 +129,10 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
 
         const masterChannelDB = await ChannelModel.$
-            .getMasterChannelDBByDynamicChannelId( interaction.channel.id );
+            .getMasterByDynamicChannelId( interaction.channel.id );
 
         if ( masterChannelDB ) {
-            args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB.id, false );
+            args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, false );
 
             // Runs over all dynamic-channel buttons that are configured by the user(Master Channel)
             // And determine if accessButtonId is enabled , since all other "permissions" buttons are depends on the access button
@@ -305,7 +304,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
 
         switch ( await this.dynamicChannelService.editUserAccess( interaction, interaction.channel, target, DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS, false ) ) {
             case "success":
-                // Check if target is in the channel.
+                // Check if the target is in the channel.
                 if ( interaction.channel.members.has( target.id ) ) {
                     // Kick it.
                     await target.voice.setChannel( null ).catch( () => {} );

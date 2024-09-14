@@ -1,212 +1,177 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/data/v3/master-channel-data-model-v3";
+
+import { MasterChannelDataModel } from "@vertix.gg/base/src/models/data/master-channel-data-model";
+
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
-type MasterChannelDataKey = keyof MasterChannelConfigInterface["defaults"]["masterChannelSettings"];
+export class MasterChannelDataManager extends InitializeBase {
+    private static instance: MasterChannelDataManager;
 
-export class MasterChannelDataManager extends ChannelDataManager {
     public config =
         ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
-    public keys = this.config.getKeys( "masterChannelSettings" );
+    public keys = this.config.getKeys( "settings" );
 
     public static getName() {
         return "VertixBase/Managers/MasterChannelData";
     }
 
     public static get $() {
-        return MasterChannelDataManager.getInstance();
+        if ( ! MasterChannelDataManager.instance ) {
+            MasterChannelDataManager.instance = new MasterChannelDataManager();
+        }
+
+        return MasterChannelDataManager.instance;
     }
 
     public constructor( shouldDebugCache = isDebugEnabled( "CACHE", MasterChannelDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 
+    protected getModel( masterChannelDB: ChannelResult ) {
+        switch ( masterChannelDB.version ) {
+            case VERSION_UI_V3:
+                return MasterChannelDataModelV3.$;
+        }
+
+        return MasterChannelDataModel.$;
+    }
+
+    // TODO: Remove
     public getKeys() {
         return this.keys;
     }
 
-    protected async getSettings(
-        caller: Function,
-        ownerId: string,
-        key: MasterChannelDataKey,
-        cache = true,
-        returnDefault?: ( ( result: any ) => any ) | boolean
-    ) {
-        const isReturnDefaultCallback = "function" === typeof returnDefault;
+    public async getAllSettings( masterChannelDB: ChannelResult, defaultSettings: Partial<MasterChannelConfigInterface["data"]["settings"]> = {} ) {
+        const settings = await this.getModel( masterChannelDB )
+            .getSettings( masterChannelDB.id, false, false );
 
-        // Do we return `defaultSettings` if there are no data?
-        const defaultSettings = ! isReturnDefaultCallback && returnDefault
-            ? this.config.data.masterChannelSettings : null;
-
-        const result = await ChannelDataManager.$.getSettingsData(
-            ownerId,
-            defaultSettings,
-            cache
-        );
-
-        let value = result?.object?.[ key ];
-
-        if ( isReturnDefaultCallback ) {
-            value = returnDefault( value );
+        if ( ! settings ) {
+            return defaultSettings;
         }
 
-        this.debugger.dumpDown( caller,
-            value,
-            `ownerId: '${ ownerId }' returnDefault: '${ !! returnDefault }' - ${ key }`
-        );
-
-        return value;
+        return Object.assign( defaultSettings, settings );
     }
 
-    public async getAllSettings( ownerId: string, defaultSettings: Partial<MasterChannelConfigInterface["defaults"]["masterChannelSettings"]> = {} ) {
-        const settings = await this.getSettingsData( ownerId, false ) || {
-            object: {}
-        };
-
-        // If default setting is provided and there are no setting, apply default setting.
-        Object.keys( defaultSettings ).forEach( ( key ) => {
-            if ( ! settings?.object?.[ key ] ) {
-                settings.object[ key ] = defaultSettings[ key as keyof typeof defaultSettings ];
-            }
-        } );
-
-        return settings;
+    public async setAllSettings( masterChannelDB: ChannelResult, settings: MasterChannelConfigInterface["defaults"]["settings"] ) {
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, settings );
     }
 
-    public async getChannelNameTemplate( ownerId: string, returnDefault?: boolean ) {
-        return this.getSettings(
-            this.getChannelNameTemplate,
-            ownerId,
-            this.keys.dynamicChannelNameTemplate,
-            true,
-            returnDefault
-        );
+    public async getChannelNameTemplate( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+        return ( await this.getModel( masterChannelDB )
+            .getSettings( masterChannelDB.id, true, returnDefault ) )
+            ?.dynamicChannelNameTemplate;
     }
 
-    public async getChannelButtonsTemplate( ownerId: string, returnDefault?: boolean ) {
-        return this.getSettings(
-            this.getChannelButtonsTemplate,
-            ownerId,
-            this.keys.dynamicChannelButtonsTemplate,
-            true,
-            returnDefault
-        );
+    public async getChannelButtonsTemplate( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+        return ( await this.getModel( masterChannelDB )
+            .getSettings( masterChannelDB.id, true, returnDefault ) )
+            ?.dynamicChannelButtonsTemplate;
     }
 
-    public async getChannelMentionable( ownerId: string, returnDefault?: boolean ) {
-        return this.getSettings(
-            this.getChannelMentionable,
-            ownerId,
-            this.keys.dynamicChannelMentionable,
-            true,
-            returnDefault,
-        );
+    public async getChannelMentionable( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+        return ( await this.getModel( masterChannelDB )
+            .getSettings( masterChannelDB.id, true, returnDefault ) )
+            ?.dynamicChannelMentionable;
     }
 
-    public async getChannelAutosave( ownerId: string, returnDefault?: boolean ) {
-        return this.getSettings(
-            this.getChannelAutosave,
-            ownerId,
-            this.keys.dynamicChannelAutoSave,
-            true,
-            returnDefault,
-        );
+    public async getChannelAutosave( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+        return ( await this.getModel( masterChannelDB )
+            .getSettings( masterChannelDB.id, true, returnDefault ) )
+            ?.dynamicChannelAutoSave;
     }
 
-    public async getChannelVerifiedRoles( ownerId: string, guildId: string, cache = true ) {
-        return this.getSettings(
-            this.getChannelVerifiedRoles,
-            ownerId,
-            this.keys.dynamicChannelVerifiedRoles,
-            cache,
-            ( result ) => result?.length ? result : [ guildId ]
-        );
+    public async getChannelVerifiedRoles( masterChannelDB: ChannelResult, guildId: string, cache = true ) {
+        return ( await this.getModel( masterChannelDB )
+                .getSettings(
+                    masterChannelDB.id,
+                    cache,
+                    ( result ) => result?.length ? result : [ guildId ] )
+        )?.dynamicChannelVerifiedRoles;
     }
 
-    public async getChannelLogsChannelId( ownerId: string ) {
-        return this.getSettings(
-            this.getChannelLogsChannelId,
-            ownerId,
-            this.keys.dynamicChannelLogsChannelId,
-            true,
-            ( result ) => result || null
-        );
+    public async getChannelLogsChannelId( masterChannelDB: ChannelResult ) {
+        return ( await this.getModel( masterChannelDB )
+                .getSettings(
+                    masterChannelDB.id,
+                    true,
+                    ( result ) => result || null
+                )
+        )?.dynamicChannelLogsChannelId;
     }
 
-    public async setAllSettings( ownerId: string, settings: MasterChannelConfigInterface["defaults"]["masterChannelSettings"] ) {
-        return ChannelDataManager.$.setSettingsData( ownerId, settings );
-    }
-
-    public async setChannelNameTemplate( ownerId: string, newName: string ) {
+    public async setChannelNameTemplate( masterChannelDB: ChannelResult, newName: string ) {
         this.logger.log( this.setChannelNameTemplate,
-            `Master channel id: '${ ownerId }' - Setting channel name template: '${ newName }'`
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel name template: '${ newName }'`
         );
 
-        await ChannelDataManager.$.setSettingsData( ownerId, {
-            [ this.keys.dynamicChannelNameTemplate ]: newName
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelNameTemplate: newName
         } );
     }
 
-    public async setChannelButtonsTemplate( ownerId: string, newButtons: string[], shouldAdminLog = true ) {
+    public async setChannelButtonsTemplate( masterChannelDB: ChannelResult, newButtons: string[], shouldAdminLog = true ) {
         this.logger.log( this.setChannelButtonsTemplate,
-            `Master channel id: '${ ownerId }' - Setting channel name template: '${ newButtons }'`
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel name template: '${ newButtons }'`
         );
 
         if ( shouldAdminLog ) {
-            const previousButtons = await this.getChannelButtonsTemplate( ownerId, true );
+            const previousButtons = await this.getChannelButtonsTemplate( masterChannelDB, true );
 
             this.logger.admin( this.setChannelButtonsTemplate,
-                `🎚  Dynamic Channel buttons modified  - ownerId: "${ ownerId }", "${ previousButtons.join( ", " ) }" => "${ newButtons.join( "," ) }"`
+                `🎚  Dynamic Channel buttons modified  - masterChannelId: "${ masterChannelDB.id }", "${ previousButtons.join( ", " ) }" => "${ newButtons.join( "," ) }"`
             );
         }
 
-        await ChannelDataManager.$.setSettingsData( ownerId, {
-            [ this.keys.dynamicChannelButtonsTemplate ]: newButtons
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelButtonsTemplate: newButtons
         } );
     }
 
-    public async setChannelMentionable( ownerId: string, mentionable: boolean, shouldAdminLog = true ) {
+    public async setChannelMentionable( masterChannelDB: ChannelResult, mentionable: boolean, shouldAdminLog = true ) {
         this.logger.log( this.setChannelMentionable,
-            `Master channel id: '${ ownerId }' - Setting channel mentionable: '${ mentionable }'`
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel mentionable: '${ mentionable }'`
         );
 
         if ( shouldAdminLog ) {
             this.logger.admin( this.setChannelMentionable,
-                `@  Dynamic Channel mentionable modified  - ownerId: "${ ownerId }", "${ mentionable }"`
+                `@  Dynamic Channel mentionable modified  - masterChannelId: "${ masterChannelDB.id }", "${ mentionable }"`
             );
         }
 
-        await ChannelDataManager.$.setSettingsData( ownerId, {
-            [ this.keys.dynamicChannelMentionable ]: mentionable
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelMentionable: mentionable
         } );
     }
 
-    public async setChannelAutoSave( ownerId: string, autoSave: boolean, shouldAdminLog = true ) {
+    public async setChannelAutoSave( masterChannelDB: ChannelResult, autoSave: boolean, shouldAdminLog = true ) {
         this.logger.log( this.setChannelAutoSave,
-            `Master channel id: '${ ownerId }' - Setting channel auto save: '${ autoSave }'`
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel auto save: '${ autoSave }'`
         );
 
         if ( shouldAdminLog ) {
             this.logger.admin( this.setChannelAutoSave,
-                `⫸  Dynamic Channel auto save modified  - ownerId: "${ ownerId }", "${ autoSave }"`
+                `⫸  Dynamic Channel auto save modified - masterChannelId: "${ masterChannelDB.id }", "${ autoSave }"`
             );
         }
 
-        await ChannelDataManager.$.setSettingsData( ownerId, {
-            [ this.keys.dynamicChannelAutoSave ]: autoSave
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelAutoSave: autoSave
         } );
     }
 
-    public async setChannelVerifiedRoles( guildId: string, ownerId: string, roles: string[], shouldAdminLog = true ) {
+    public async setChannelVerifiedRoles( masterChannelDB: ChannelResult, guildId: string, roles: string[], shouldAdminLog = true ) {
         this.logger.log( this.setChannelVerifiedRoles,
-            `Guild id:${ guildId }, master channel id: '${ ownerId }' - Setting channel verified roles: '${ roles }'`
+            `Guild id:${ guildId }, master channel id: '${ masterChannelDB.id }' - Setting channel verified roles: '${ roles }'`
         );
 
         if ( ! roles.length ) {
@@ -214,31 +179,31 @@ export class MasterChannelDataManager extends ChannelDataManager {
         }
 
         if ( shouldAdminLog ) {
-            const previousRoles = await this.getChannelVerifiedRoles( ownerId, guildId );
+            const previousRoles = await this.getChannelVerifiedRoles( masterChannelDB, guildId );
 
             this.logger.admin( this.setChannelVerifiedRoles,
-                `🛡️  Dynamic Channel verified roles modified  - guildId: "${ guildId }" ownerId: "${ ownerId }", "${ previousRoles }" => "${ roles }"`
+                `🛡️  Dynamic Channel verified roles modified - guildId: "${ guildId }" masterChannelId: "${ masterChannelDB.id }", "${ previousRoles }" => "${ roles }"`
             );
         }
 
-        await ChannelDataManager.$.setSettingsData( ownerId, {
-            [ this.keys.dynamicChannelVerifiedRoles ]: roles
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelVerifiedRoles: roles
         } );
     }
 
-    public async setChannelLogsChannel( ownerId: string, channelId: string | null, shouldAdminLog = true ) {
+    public async setChannelLogsChannel( masterChannelDB: ChannelResult, channelId: string | null, shouldAdminLog = true ) {
         this.logger.log( this.setChannelLogsChannel,
-            `Master channel id: '${ ownerId }' - Setting channel logs channel: '${ channelId }'`
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel logs channel: '${ channelId }'`
         );
 
         if ( shouldAdminLog ) {
             this.logger.admin( this.setChannelLogsChannel,
-                `❯❯ Set log channel  - ownerId: "${ ownerId }" channelId: "${ channelId }"`
+                `❯❯ Set log channel - masterChannelId: "${ masterChannelDB.id }" channelId: "${ channelId }"`
             );
         }
 
-        await ChannelDataManager.$.setSettingsData( ownerId, {
-            [ this.keys.dynamicChannelLogsChannelId ]: channelId
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelLogsChannelId: channelId
         } );
     }
 }

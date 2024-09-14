@@ -50,7 +50,7 @@ export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEm
         return {
             "title": {
                 [ vars.titleDisplayValue ]: vars.titleValue,
-                [ vars.titleDisplayDefault ]: this.configV3.data.masterChannelDefaults.dynamicChannelPrimaryMessageTitle,
+                [ vars.titleDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageTitle,
             },
         };
     }

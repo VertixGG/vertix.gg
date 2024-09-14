@@ -9,7 +9,7 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelVerifiedRoles: string[];
 }
 
-export interface MasterChannelDefaultsInterface {
+export interface MasterChannelConstantsInterface {
     dynamicChannelStateVar: string;
     dynamicChannelUserVar: string;
     dynamicChannelsCategoryName: string;
@@ -21,19 +21,19 @@ export interface MasterChannelDefaultsInterface {
     masterChannelName: string;
 }
 
-export interface MasterChannelDefaultsInterfaceV3 extends MasterChannelDefaultsInterface {
+export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
+    constants: MasterChannelConstantsInterface,
+    settings: MasterChannelSettingsInterface,
+}> {
+}
+
+export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstantsInterface {
     dynamicChannelPrimaryMessageTitle: string;
     dynamicChannelPrimaryMessageDescription: string;
 }
 
-export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
-    masterChannelDefaults: MasterChannelDefaultsInterface,
-    masterChannelSettings: MasterChannelSettingsInterface,
-}> {
-}
-
 export interface MasterChannelConfigInterfaceV3 extends ConfigBaseInterface<{
-    masterChannelDefaults: MasterChannelDefaultsInterfaceV3,
-    masterChannelSettings: MasterChannelSettingsInterface,
+    constants: MasterChannelConstantsInterfaceV3,
+    settings: MasterChannelSettingsInterface,
 }> {
 }

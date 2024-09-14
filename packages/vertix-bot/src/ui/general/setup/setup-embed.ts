@@ -132,7 +132,7 @@ export class SetupEmbed extends UIEmbedBase {
     }
 
     protected async getLogicAsync( args: ISetupArgs ) {
-        const { masterChannelSettings } = ConfigManager.$
+        const { settings } = ConfigManager.$
             .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 ).data;
 
         // TODO: Duplicate code, refactor.
@@ -143,7 +143,7 @@ export class SetupEmbed extends UIEmbedBase {
                 return {
                     index: index + 1,
                     id: channel.channelId,
-                    channelsTemplateName: data?.object?.dynamicChannelNameTemplate || masterChannelSettings.dynamicChannelNameTemplate,
+                    channelsTemplateName: data?.object?.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
                     channelsTemplateButtons: usedEmojis,
                     channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
                     channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId ? `<#${ data?.object?.dynamicChannelLogsChannelId }>` : SetupEmbed.vars.none,

@@ -6571,6 +6571,7 @@ export namespace Prisma {
     userOwnerId: string | null
     categoryId: string | null
     ownerChannelId: string | null
+    version: string | null
     internalType: $Enums.E_INTERNAL_CHANNEL_TYPES | null
     createdAtDiscord: number | null
     createdAt: Date | null
@@ -6584,6 +6585,7 @@ export namespace Prisma {
     userOwnerId: string | null
     categoryId: string | null
     ownerChannelId: string | null
+    version: string | null
     internalType: $Enums.E_INTERNAL_CHANNEL_TYPES | null
     createdAtDiscord: number | null
     createdAt: Date | null
@@ -6597,6 +6599,7 @@ export namespace Prisma {
     userOwnerId: number
     categoryId: number
     ownerChannelId: number
+    version: number
     internalType: number
     createdAtDiscord: number
     createdAt: number
@@ -6620,6 +6623,7 @@ export namespace Prisma {
     userOwnerId?: true
     categoryId?: true
     ownerChannelId?: true
+    version?: true
     internalType?: true
     createdAtDiscord?: true
     createdAt?: true
@@ -6633,6 +6637,7 @@ export namespace Prisma {
     userOwnerId?: true
     categoryId?: true
     ownerChannelId?: true
+    version?: true
     internalType?: true
     createdAtDiscord?: true
     createdAt?: true
@@ -6646,6 +6651,7 @@ export namespace Prisma {
     userOwnerId?: true
     categoryId?: true
     ownerChannelId?: true
+    version?: true
     internalType?: true
     createdAtDiscord?: true
     createdAt?: true
@@ -6746,6 +6752,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId: string | null
     ownerChannelId: string | null
+    version: string
     internalType: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt: Date
@@ -6778,6 +6785,7 @@ export namespace Prisma {
     userOwnerId?: boolean
     categoryId?: boolean
     ownerChannelId?: boolean
+    version?: boolean
     internalType?: boolean
     createdAtDiscord?: boolean
     createdAt?: boolean
@@ -6794,6 +6802,7 @@ export namespace Prisma {
     userOwnerId?: boolean
     categoryId?: boolean
     ownerChannelId?: boolean
+    version?: boolean
     internalType?: boolean
     createdAtDiscord?: boolean
     createdAt?: boolean
@@ -6817,6 +6826,7 @@ export namespace Prisma {
       userOwnerId: string
       categoryId: string | null
       ownerChannelId: string | null
+      version: string
       internalType: $Enums.E_INTERNAL_CHANNEL_TYPES
       createdAtDiscord: number
       createdAt: Date
@@ -7220,6 +7230,7 @@ export namespace Prisma {
     readonly userOwnerId: FieldRef<"Channel", 'String'>
     readonly categoryId: FieldRef<"Channel", 'String'>
     readonly ownerChannelId: FieldRef<"Channel", 'String'>
+    readonly version: FieldRef<"Channel", 'String'>
     readonly internalType: FieldRef<"Channel", 'E_INTERNAL_CHANNEL_TYPES'>
     readonly createdAtDiscord: FieldRef<"Channel", 'Int'>
     readonly createdAt: FieldRef<"Channel", 'DateTime'>
@@ -17068,6 +17079,7 @@ export namespace Prisma {
     userOwnerId: 'userOwnerId',
     categoryId: 'categoryId',
     ownerChannelId: 'ownerChannelId',
+    version: 'version',
     internalType: 'internalType',
     createdAtDiscord: 'createdAtDiscord',
     createdAt: 'createdAt',
@@ -17612,6 +17624,7 @@ export namespace Prisma {
     userOwnerId?: StringFilter<"Channel"> | string
     categoryId?: StringNullableFilter<"Channel"> | string | null
     ownerChannelId?: StringNullableFilter<"Channel"> | string | null
+    version?: StringFilter<"Channel"> | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFilter<"Channel"> | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFilter<"Channel"> | number
     createdAt?: DateTimeFilter<"Channel"> | Date | string
@@ -17626,6 +17639,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -17643,6 +17657,7 @@ export namespace Prisma {
     userOwnerId?: StringFilter<"Channel"> | string
     categoryId?: StringNullableFilter<"Channel"> | string | null
     ownerChannelId?: StringNullableFilter<"Channel"> | string | null
+    version?: StringFilter<"Channel"> | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFilter<"Channel"> | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFilter<"Channel"> | number
     createdAt?: DateTimeFilter<"Channel"> | Date | string
@@ -17657,6 +17672,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -17678,6 +17694,7 @@ export namespace Prisma {
     userOwnerId?: StringWithAggregatesFilter<"Channel"> | string
     categoryId?: StringNullableWithAggregatesFilter<"Channel"> | string | null
     ownerChannelId?: StringNullableWithAggregatesFilter<"Channel"> | string | null
+    version?: StringWithAggregatesFilter<"Channel"> | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESWithAggregatesFilter<"Channel"> | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntWithAggregatesFilter<"Channel"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Channel"> | Date | string
@@ -18617,6 +18634,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -18631,6 +18649,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -18644,6 +18663,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18657,6 +18677,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18671,6 +18692,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -18683,6 +18705,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18695,6 +18718,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19777,6 +19801,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -19794,6 +19819,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -19807,6 +19833,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -21143,6 +21170,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -21156,6 +21184,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -21184,6 +21213,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21196,6 +21226,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

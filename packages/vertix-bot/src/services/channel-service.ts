@@ -1,9 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
-
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
@@ -15,6 +13,8 @@ import { ChannelType } from "discord.js";
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
@@ -37,6 +37,7 @@ interface IChannelCreateArgs extends CategoryCreateChannelOptions {
     userOwnerId: string,
     ownerChannelId?: string,
     internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES,
+    version: TVersionType,
 }
 
 interface IChannelUpdateArgs {
@@ -204,7 +205,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             `Dynamic channel id: '${ dynamicChannelId }', cache: '${ cache }' - Trying to get master channel from database`
         );
 
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelId, cache );
 
         if ( ! masterChannelDB ) {
             return null;
@@ -220,7 +221,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async getMasterChannelAndDBbyDynamicChannelId( dynamicChannelId: string, cache: boolean = true ) {
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelId, cache );
         if ( ! masterChannelDB ) {
             return null;
         }
@@ -255,9 +256,10 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         }
 
         // Data to be inserted into the database.
-        const data: any = {
+        const data: PrismaBot.Prisma.ChannelCreateArgs["data"] = {
             internalType,
             userOwnerId,
+            version: args.version,
             channelId: channel.id,
             guildId: guild.id,
             createdAtDiscord: channel.createdTimestamp,
@@ -286,14 +288,10 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             `guild: '${ channel.guild.name }' with the following properties: ownerId: '${ userOwnerId }'`
         );
 
-        const where = {
+        await ChannelModel.$.update( {
             where: { channelId: channel.id },
             data: { userOwnerId }
-        };
-
-        await ChannelModel.$.update( where,
-            ( cache ) => ChannelDataManager.$.removeFromCache( cache.id )
-        );
+        } );
     }
 
     public async delete( args: IChannelDeleteArgs ) {
@@ -304,13 +302,12 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         );
 
         const where = {
-            guildId: guild.id,
             channelId: channel.id,
         };
 
-        await ChannelModel.$.delete( where,
-            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
-        ).catch( ( e ) => this.logger.error( this.delete, "", e ) );
+        await ChannelModel.$.delete( where ).catch(
+            ( e ) => this.logger.error( this.delete, "", e )
+        );
 
         // Some channels are not deletable, so we need to catch the error.
         await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) );

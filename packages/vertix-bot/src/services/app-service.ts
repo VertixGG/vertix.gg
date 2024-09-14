@@ -93,48 +93,48 @@ export class AppService extends ServiceBase {
     }
 
     private async ensureBackwardCompatibility() {
-        const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
-        const client = PrismaBotClient.getPrismaClient();
-
-        const checkVersion = (version: string) => {
-            const [major, minor, patch] = version.split(".");
-            return Number(major) === 0 && Number(minor) === 0 && Number(patch) <= 7;
-        };
-
-        async function ensueDataVersionMatchesNewUIMechanism( this: AppService ) {
-            const updateData = async ( dataModel: any ) => {
-                const entities = await dataModel.findMany( {
-                    where: {
-                        version: {
-                            lte: "0.0.7",
-                        }
-                    }
-                } );
-
-                let count = 0;
-                for ( const entity of entities ) {
-                    if ( entity.version.length === 5 && checkVersion( entity.version ) ) {
-                        count++;
-                        await dataModel.update( {
-                            where: {
-                                id: entity.id,
-                            },
-                            data: {
-                                version: VERSION_UI_V2,
-                            },
-                        } );
-                    }
-                }
-
-                this.logger.log( ensueDataVersionMatchesNewUIMechanism, `Updated ${ count } entities in ${ dataModel.name }` );
-            };
-
-            await updateData( client.guildData );
-            await updateData( client.channelData );
-            await updateData( client.userData );
-        }
-
-        await ensueDataVersionMatchesNewUIMechanism.call( this );
+        // const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
+        // const client = PrismaBotClient.getPrismaClient();
+        //
+        // const checkVersion = (version: string) => {
+        //     const [major, minor, patch] = version.split(".");
+        //     return Number(major) === 0 && Number(minor) === 0 && Number(patch) <= 7;
+        // };
+        //
+        // async function ensueDataVersionMatchesNewUIMechanism( this: AppService ) {
+        //     const updateData = async ( dataModel: any ) => {
+        //         const entities = await dataModel.findMany( {
+        //             where: {
+        //                 version: {
+        //                     lte: "0.0.7",
+        //                 }
+        //             }
+        //         } );
+        //
+        //         let count = 0;
+        //         for ( const entity of entities ) {
+        //             if ( entity.version.length === 5 && checkVersion( entity.version ) ) {
+        //                 count++;
+        //                 await dataModel.update( {
+        //                     where: {
+        //                         id: entity.id,
+        //                     },
+        //                     data: {
+        //                         version: VERSION_UI_V2,
+        //                     },
+        //                 } );
+        //             }
+        //         }
+        //
+        //         this.logger.log( ensueDataVersionMatchesNewUIMechanism, `Updated ${ count } entities in ${ dataModel.name }` );
+        //     };
+        //
+        //     await updateData( client.guildData );
+        //     await updateData( client.channelData );
+        //     await updateData( client.userData );
+        // }
+        //
+        // await ensueDataVersionMatchesNewUIMechanism.call( this );
     }
 
     private pingInterval() {

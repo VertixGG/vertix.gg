@@ -105,6 +105,7 @@ model Channel {
   categoryId       String?
   ownerChannelId   String?
   // ---
+  version          String                   @default("0.0.0.0")
   data             ChannelData[]            @relation("ChannelData")
   // ---
   internalType     E_INTERNAL_CHANNEL_TYPES @default(DEFAULT_CHANNEL)
@@ -169,10 +170,9 @@ model UserData {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
+  @@unique([ownerId, key, version])
   @@index([key])
   @@index([ownerId])
-
-  @@unique([ownerId, key, version])
 }
 
 model UserChannelData {
@@ -194,11 +194,10 @@ model UserChannelData {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 
+  @@unique([ownerId, channelId, key, version])
   @@index([channelId])
   @@index([key])
   @@index([ownerId])
-
-  @@unique([ownerId, channelId, key, version])
 }
 
 // Language.

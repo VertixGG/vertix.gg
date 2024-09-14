@@ -30,13 +30,13 @@ export function DataVersioningModelFactory<
 >(
     model: TModel,
     options: {
-        modelMetaName?: PrismaBot.Prisma.ModelName,
+        modelOwnerName?: PrismaBot.Prisma.ModelName,
         modelNamespace?: string,
         shouldDebugCache?: boolean,
         shouldDebugModel?: boolean
     } = {}
 ) {
-    const { modelMetaName } = options;
+    const { modelOwnerName } = options;
 
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
         public static getName() {
@@ -100,16 +100,30 @@ export function DataVersioningModelFactory<
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
-        public async getWithMeta<T extends ReturnType<typeof this.getValueAsType>, const TMeta extends object>( keys: TUniqueKeys, options: TDataVersioningOptions = {
-            cache: true,
+        /**
+         * Function `getWithOwner()<T, TOwner>` - Asynchronous method to fetch data with accompanying owner information.
+         * This method is used to retrieve a specific record from the database, along with associated owner data,
+         * and leverage caching to optimize performance.
+         *
+         * Example: Requesting a specific record from `ChannelData` will return the data along with the owner information `Channel`.
+         *
+         * This method works by generating a cache key based on the provided unique keys and a constant `"withOwner"`.
+         * It then checks if the result is already cached, and if so, returns the cached result. If not, it queries the database
+         * using the unique keys, includes the owner data defined by `modelOwnerName`, and caches the result before returning it.
+         *.
+         * @note __Caching__ is `off` by default for this method due to the inclusion of owner information.
+         * Ensure `modelOwnerName` is set before invoking this method
+         **/
+        public async getWithOwner<T extends ReturnType<typeof this.getValueAsType>, const TOwner extends object>( keys: TUniqueKeys, options: TDataVersioningOptions = {
+            cache: false,
         } ) {
-            if ( ! modelMetaName ) {
-                throw new Error( "modelMetaName is required" );
+            if ( ! modelOwnerName ) {
+                throw new Error( "modelOwnerName is required" );
             }
 
             const keysArray = Object.values( keys ) as string[];
 
-            keysArray.push( "withMeta" );
+            keysArray.push( "withOwner" );
 
             const cacheKey = this.generateCacheKey( ... keysArray );
 
@@ -123,7 +137,7 @@ export function DataVersioningModelFactory<
                 } as any;
 
                 args.include = {
-                    [ modelMetaName ]: true,
+                    [ modelOwnerName ]: true,
                 };
 
                 result = await this.getModel().findUnique( args );
@@ -136,7 +150,7 @@ export function DataVersioningModelFactory<
             if ( result ) {
                 return {
                     data: this.getValueAsType<T>( result ),
-                    meta: result[ modelMetaName as keyof TModelResult ] as TMeta
+                    owner: result[ modelOwnerName as keyof TModelResult ] as TOwner
                 };
             }
 

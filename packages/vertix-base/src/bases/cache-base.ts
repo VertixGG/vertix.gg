@@ -28,7 +28,7 @@ export abstract class CacheBase<CacheResult> extends InitializeBase {
         return result;
     }
 
-    protected getMap() {
+    protected getCacheMap() {
         return this.cache;
     }
 

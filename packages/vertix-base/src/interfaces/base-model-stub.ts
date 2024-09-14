@@ -8,6 +8,8 @@ export interface TBaseModelStub {
     update<T>( ... args: any[] ): Promise<T>;
     upsert( ... args: any[] ): any;
     upsert<T>( ... args: any[] ): Promise<T>;
+    delete( ... args: any[] ): any;
+    delete<T>( ... args: any[] ): Promise<T>;
     findUnique( ... args: any[] ): any,
     findMany( ... args: any[] ): any,
     findMany<T>( ... args: any[] ): Promise<T[]>;

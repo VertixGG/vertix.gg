@@ -35,8 +35,8 @@ export abstract class ModelDataOwnerBase<
 
         const dataModel = this.getDataModel(),
             dataModelOptions = {
+                modelOwnerName: this.getModel().name,
                 modelNamespace: ( this.constructor as typeof ModelDataOwnerBase ).getName(),
-                modelMetaName: this.getModel().name,
 
                 shouldDebugCache,
                 shouldDebugModel
@@ -78,12 +78,16 @@ export abstract class ModelDataOwnerBase<
         return this.dataVersioningModel.upsert<T>( this.normalizeUniqueKeys( keys ), value );
     }
 
+    protected async dataDelete( keys: TWithOptionalProps<TDataModelUniqueKeys, "version"> ) {
+        return this.dataVersioningModel.delete( this.normalizeUniqueKeys( keys ) );
+    }
+
     protected async dataGet<T extends TDataType>( keys: TWithOptionalProps<TDataModelUniqueKeys, "version">, cache = true ) {
         return await this.dataVersioningModel.get( this.normalizeUniqueKeys( keys ), { cache } ) as T;
     }
 
-    protected async dataGetWithMeta<T extends TDataType>( keys: TWithOptionalProps<TDataModelUniqueKeys, "version">, cache = true ) {
-        return await this.dataVersioningModel.getWithMeta<T, Awaited<ReturnType<TModel["findUnique"]>>>( this.normalizeUniqueKeys( keys ), { cache } );
+    protected async dataGetWithOwner<T extends TDataType>( keys: TWithOptionalProps<TDataModelUniqueKeys, "version">, cache = false ) {
+        return await this.dataVersioningModel.getWithOwner<T, Awaited<ReturnType<TModel["findUnique"]>>>( this.normalizeUniqueKeys( keys ), { cache } );
     }
 
     protected async create<T extends TDataType>(
@@ -91,7 +95,9 @@ export abstract class ModelDataOwnerBase<
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
     ) {
-        const keysWithOwner = await this.getUniqueKeys( keys, args, this.create );
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.create );
+
         if ( ! keysWithOwner ) return null;
 
         return this.dataCreate<T>( keysWithOwner, value );
@@ -102,7 +108,9 @@ export abstract class ModelDataOwnerBase<
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
     ) {
-        const keysWithOwner = await this.getUniqueKeys( keys, args, this.update );
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.update );
+
         if ( ! keysWithOwner ) return null;
 
         return this.dataUpdate<T>( keysWithOwner, value );
@@ -113,10 +121,24 @@ export abstract class ModelDataOwnerBase<
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
     ) {
-        const keysWithOwner = await this.getUniqueKeys( keys, args, this.upsert );
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.upsert );
+
         if ( ! keysWithOwner ) return null;
 
         return this.dataUpsert<T>( keysWithOwner, value );
+    }
+
+    protected async delete(
+        args: Parameters<TModel["findUnique"]>[0],
+        keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">
+    ) {
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.delete );
+
+        if ( ! keysWithOwner ) return null;
+
+        return this.dataDelete( keysWithOwner );
     }
 
     protected async get<T extends TDataType>(
@@ -124,80 +146,52 @@ export abstract class ModelDataOwnerBase<
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true,
     ) {
-        const keysWithOwner = await this.getUniqueKeys( keys, args, this.get );
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.get );
+
         if ( ! keysWithOwner ) return null;
 
         return this.dataGet<T>( keysWithOwner, cache );
     }
 
-    protected async getWithMeta<T extends TDataType>(
+    protected async getWithOwner<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
-        cache = true,
+        cache = false,
     ) {
-        const keysWithOwner = await this.getUniqueKeys( keys, args, this.getWithMeta );
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.getWithOwner );
+
         if ( ! keysWithOwner ) return null;
 
-        return this.dataGetWithMeta<T>( keysWithOwner, cache );
+        return this.dataGetWithOwner<T>( keysWithOwner, cache );
     }
 
     protected async getAll<T extends TDataType>(
         args: Parameters<TModel["findMany"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
-        cache = true,
+        cacheUnits = true,
     ) {
-        let result: T[] | undefined;
+        let result: T[] | null = null;
 
         const owners = await this.getModel().findMany( args );
 
-        if ( ! owners ) {
+        if ( owners?.length ) {
+            result = [];
+
+            for ( const owner of owners ) {
+                const keysWithOwner = { ... keys, ... this.getOwnerUniqueKeys( owner ) } as TWithOptionalProps<TDataModelUniqueKeys, "version">;
+
+                if ( ! keysWithOwner ) continue;
+
+                const data = await this.dataGet<T>( keysWithOwner, cacheUnits );
+
+                if ( ! data ) continue;
+
+                result.push( data );
+            }
+        } else {
             this.logger.error( this.getAll, `Owners not found: ${ util.inspect( args ) }` );
-            return null;
-        }
-
-        for ( const owner of owners ) {
-            const keysWithOwner = { ... keys, ... this.getOwnerUniqueKeys( owner ) } as TWithOptionalProps<TDataModelUniqueKeys, "version">;
-
-            if ( ! keysWithOwner ) continue;
-
-            const data = await this.dataGet<T>( keysWithOwner, cache );
-
-            if ( ! data ) continue;
-
-            if ( ! result ) result = [];
-
-            result.push( data );
-        }
-
-        return result;
-    }
-
-    protected async getAllWithMeta<T extends TDataType>(
-        args: Parameters<TModel["findMany"]>[0],
-        keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
-        cache = true,
-    ) {
-        let result;
-
-        const owners = await this.getModel().findMany( args );
-
-        if ( ! owners ) {
-            this.logger.error( this.getAll, `Owners not found: ${ util.inspect( args ) }` );
-            return null;
-        }
-
-        for ( const owner of owners ) {
-            const keysWithOwner = { ... keys, ... this.getOwnerUniqueKeys( owner ) } as TWithOptionalProps<TDataModelUniqueKeys, "version">;
-
-            if ( ! keysWithOwner ) continue;
-
-            const data = await this.dataGetWithMeta<T>( keysWithOwner, cache );
-
-            if ( ! data ) continue;
-
-            if ( ! result ) result = [];
-
-            result.push( data );
         }
 
         return result;

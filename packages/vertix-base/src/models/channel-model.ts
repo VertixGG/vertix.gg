@@ -343,7 +343,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
             return;
         }
 
-        for ( let [ key, value ] of this.getMap().entries() ) {
+        for ( let [ key, value ] of this.getCacheMap().entries() ) {
             if ( filter( value ) ) {
                 const result: ChannelResultWithCacheKey = {
                     cacheKey: key,
@@ -361,7 +361,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         this.debugger.log( this.getCachedEntitiesByObjectId, `Getting channel cache by object id: '${ id }'` );
 
         // Get all that have the same channel id.
-        for ( let [ key, value ] of this.getMap().entries() ) {
+        for ( let [ key, value ] of this.getCacheMap().entries() ) {
             if ( value.id === id ) {
                 result.push( { cacheKey: key, ...value } );
             }
@@ -376,7 +376,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         this.debugger.log( this.getCachedEntitiesByChannelId, `Getting channel cache by channelId: '${ channelId }'` );
 
         // Get all that have the same channel id.
-        for ( let [ key, value ] of this.getMap().entries() ) {
+        for ( let [ key, value ] of this.getCacheMap().entries() ) {
             if ( value.channelId === channelId ) {
                 result.push( { cacheKey: key, ...value } );
             }
@@ -391,7 +391,7 @@ export class ChannelModel extends ModelDataBase<typeof prisma.channel, typeof pr
         this.debugger.log( this.getCachedEntitiesByGuildId, `Getting channel cache by guildId: '${ guildId }'` );
 
         // Get all that have the same channel id.
-        for ( let [ key, value ] of this.getMap().entries() ) {
+        for ( let [ key, value ] of this.getCacheMap().entries() ) {
             if ( value.guildId === guildId ) {
                 result.push( { cacheKey: key, ...value } );
             }

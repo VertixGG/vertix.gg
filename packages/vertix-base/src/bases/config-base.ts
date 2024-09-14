@@ -27,11 +27,26 @@ interface ConfigBaseInterface<
     TData extends TDefaults = TDefaults,
     TMeta extends ConfigBaseMetaInterface = ConfigBaseMetaInterface
 > {
+    /**
+     * Initial hardcoded defaults for the configuration.
+     */
     defaults: TDefaults;
+
+    /**
+     * The actual configuration data.
+     */
     data: TData
+
+    /**
+     * Metadata about the configuration.
+     */
     meta: TMeta;
 }
 
+/**
+ * Class `ConfigBase` - An abstract class serving as a base for configuration management across different models.
+ * Handles initialization, checksum validation, and access to configuration data, defaults, and metadata.
+ */
 export abstract class ConfigBase<
     TConfig extends ConfigBaseInterface
 > extends InitializeBase {
@@ -90,14 +105,28 @@ export abstract class ConfigBase<
         return this.data[ key ];
     };
 
+    /**
+     * Function `defaults()` - Retrieves configuration defaults
+     *
+     * @note: The difference between `defaults()` and `data()` is that `defaults()` returns the initial hardcoded defaults
+     * while `data()` returns the current configuration from the database.
+     */
     public get defaults() {
         return <TConfig["defaults"]> this.config.defaults;
     }
 
+    /**
+     * Function `meta()` - Retrieves configuration metadata of current configuration
+     */
     public get meta() {
         return <TConfig["meta"]> this.config.meta;
     }
 
+    /**
+     * Function `data()` - Retrieves configuration data
+     * @note: The difference between `defaults()` and `data()` is that `defaults()` returns the initial hardcoded defaults
+     * both have the same interface.
+     */
     public get data() {
         return <TConfig["data"]> this.config.data;
     }

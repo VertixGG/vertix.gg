@@ -239,6 +239,19 @@ export function DataVersioningModelFactory<
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
+        public async delete( keys: TUniqueKeys ) {
+            const result = await this.getModel().delete( {
+                where: {
+                    [ this.getUniqueKeyName() ]: keys
+                }
+            } );
+
+            // Delete cache
+            this.deleteCacheForKeys(keys );
+
+            return result;
+        }
+
         private async mergeWithExisting( keys: TUniqueKeys, value: any ) {
             let existing;
 

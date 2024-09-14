@@ -78,6 +78,10 @@ export abstract class ModelDataOwnerBase<
         return this.dataVersioningModel.upsert<T>( this.normalizeUniqueKeys( keys ), value );
     }
 
+    protected async dataDelete( keys: TWithOptionalProps<TDataModelUniqueKeys, "version"> ) {
+        return this.dataVersioningModel.delete( this.normalizeUniqueKeys( keys ) );
+    }
+
     protected async dataGet<T extends TDataType>( keys: TWithOptionalProps<TDataModelUniqueKeys, "version">, cache = true ) {
         return await this.dataVersioningModel.get( this.normalizeUniqueKeys( keys ), { cache } ) as T;
     }
@@ -123,6 +127,18 @@ export abstract class ModelDataOwnerBase<
         if ( ! keysWithOwner ) return null;
 
         return this.dataUpsert<T>( keysWithOwner, value );
+    }
+
+    protected async delete(
+        args: Parameters<TModel["findUnique"]>[0],
+        keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">
+    ) {
+        const keysWithOwner =
+            await this.getUniqueKeys( keys, args, this.delete );
+
+        if ( ! keysWithOwner ) return null;
+
+        return this.dataDelete( keysWithOwner );
     }
 
     protected async get<T extends TDataType>(

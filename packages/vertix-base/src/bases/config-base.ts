@@ -4,6 +4,8 @@ import { diff } from "jest-diff";
 
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
+import { Logger } from "@vertix.gg/base/src/modules/logger";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
@@ -144,7 +146,16 @@ export abstract class ConfigBase<
         return this.constructor as typeof ConfigBase;
     }
 
+    /**
+     * Function `validateChecksum()` - Validates the checksum of defaults and current configuration
+     *
+     * The use case of this function is in the development phase.
+     */
     private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
+        if ( ! Logger.isDebugEnabled() ) {
+            return;
+        }
+
         // Validate checksum
         const extractEntries = ( obj: Record<string, any>, prefix = "" ): [ string, any ][] => {
             return Object.entries( obj ).flatMap( ( [ key, value ] ) => {

@@ -1,4 +1,4 @@
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
@@ -17,6 +17,11 @@ describe( "VertixBase/Modules/Service", () => {
     const { advanceTimersByTime } = setupMockTimers( { beforeEach, afterEach } );
 
     beforeEach( () => {
+        ServiceLocatorMock.mockOrigin();
+
+    } );
+
+    afterEach( () => {
         ServiceLocatorMock.reset();
     } );
 

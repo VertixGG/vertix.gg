@@ -15,7 +15,8 @@ export abstract class ServiceBase extends ObjectBase {
         return "VertixBase/Modules/ServiceBase";
     }
 
-    public constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public constructor( ...args: any[] ) {
         super();
 
         this.logger = new Logger( this );

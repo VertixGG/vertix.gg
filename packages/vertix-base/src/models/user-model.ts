@@ -10,7 +10,7 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     private static instance: UserModel;
 
     public static getName(): string {
-        return "VertixBase/Models/UserModel";
+        return "VertixBase/Models/User";
     }
 
     public static getInstance(): UserModel {
@@ -57,7 +57,7 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
         }
 
         const result = await this.ownerModel.upsert( {
-            // # CRITICAL: This is the field that is used to identify the user.
+            // # CRITICAL: This is the field used to identify the user.
             where: { userId },
 
             create: args.data,

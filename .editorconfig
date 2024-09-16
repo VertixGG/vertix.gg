@@ -223,7 +223,7 @@ ij_typescript_import_sort_members = true
 ij_typescript_import_sort_module_name = true
 ij_typescript_import_use_node_resolution = global
 ij_typescript_imports_wrap = on_every_item
-ij_typescript_blacklist_imports = src
+ij_typescript_blacklist_imports = src/**
 
 ij_typescript_indent_case_from_switch = true
 ij_typescript_indent_chained_calls = true
@@ -367,7 +367,7 @@ ij_javascript_array_initializer_wrap = off
 ij_javascript_assignment_wrap = off
 ij_javascript_binary_operation_sign_on_next_line = false
 ij_javascript_binary_operation_wrap = off
-ij_javascript_blacklist_imports = rxjs/Rx,node_modules/**,**/node_modules/**,@angular/material,@angular/material/typings/**
+ij_javascript_blacklist_imports = rxjs/Rx,node_modules/**,**/node_modules/**,@angular/material,@angular/material/typings/**,src/**
 ij_javascript_blank_lines_after_imports = 1
 ij_javascript_blank_lines_around_class = 1
 ij_javascript_blank_lines_around_field = 0

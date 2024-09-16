@@ -6,10 +6,10 @@ import { Commands } from "@vertix.gg/bot/src/commands";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
-import type { Client, CommandInteraction, Interaction } from "discord.js";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
-import type { UIService } from "@vertix.gg/bot/src/ui-v2/ui-service";
+import type { Client, CommandInteraction, Interaction } from "discord.js";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
@@ -17,16 +17,16 @@ export function interactionHandler( client: Client ) {
             ( interaction instanceof MessageComponentInteraction ) ||
             ( interaction instanceof ModalSubmitInteraction )
         ) {
-            const uiService = ServiceLocator.$.get<UIService>( "VertixBot/UI-V2/UIService" );
+            const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" )
+                .getIdSilent( interaction.customId );
 
-            const realCustomId = uiService.getCustomIdFromHash( interaction.customId );
+            const adapter = ServiceLocator.$
+                .get<UIService>( "VertixGUI/UIService" )
+                .get( customId, true );
 
             GlobalLogger.$.log( interactionHandler,
-                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ realCustomId }' was used by '${ interaction.user.username }'`
+                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ customId }' was used by '${ interaction.user.username }'`
             );
-
-            const adapter = ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" )
-                .get( realCustomId, true );
 
             if ( adapter ) {
                 await adapter.run( interaction );

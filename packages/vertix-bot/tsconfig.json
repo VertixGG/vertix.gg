@@ -5,12 +5,13 @@
     "compilerOptions": {
         "typeRoots": [
             "../../node_modules/@types",
-            "../vertix-prisma/types"
+            "../vertix-prisma/types",
         ],
 
         "types": [
             "node",
-            "prisma-bot-client.d.ts"
+            "prisma-bot-client.d.ts",
+            "discord.js/typings/index.d.ts"
         ],
 
         // Specifies the ECMAScript version to transpile to (e.g., ESNext)

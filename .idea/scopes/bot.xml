@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="bot" pattern="file[vertix-bot]:packages/vertix-bot//*" />
+</component>

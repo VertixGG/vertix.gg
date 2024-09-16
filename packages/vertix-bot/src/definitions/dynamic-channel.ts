@@ -4,21 +4,6 @@ import { PermissionFlagsBits } from "discord-api-types/v10";
 
 import type { Guild, VoiceState } from "discord.js";
 
-/* Default Data Key Settings */
-
-export const DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID = "primaryMessageId",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_NAME = "name",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_USER_LIMIT = "userLimit",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_STATE = "state",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_VISIBILITY_STATE = "visibilityState",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_ALLOWED_USER_IDS = "allowedUserIds",
-    DYNAMIC_CHANNEL_SETTINGS_KEY_BLOCKED_USER_IDS = "blockedUserIds";
-
-/* Default Data Settings */
-export const DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS = {
-    [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: null,
-};
-
 export enum DynamicEditChannelNameInternalResultCode {
     Error = 0,
     Success = "success",
@@ -80,20 +65,28 @@ export interface IDynamicClearChatResult {
     deletedCount?: number,
 }
 
-export interface IDynamicResetChannelState {
+/**
+ * Renamed from `IDynamicResetChannelState`
+ */
+export interface TDynamicChannelConfiguration {
     name: string,
     userLimit: number,
     state: ChannelState,
     visibilityState: ChannelVisibilityState,
     allowedUserIds: string[],
     blockedUserIds: string[],
+
+    // @since 0.0.8
+    region?: string,
+    primaryMessageTitle?: string,
+    primaryMessageDescription?: string,
 }
 
 export interface IDynamicResetChannelResult {
     code: DynamicResetChannelResultCode,
 
-    oldState?: IDynamicResetChannelState,
-    newState?: IDynamicResetChannelState,
+    oldState?: TDynamicChannelConfiguration,
+    newState?: TDynamicChannelConfiguration,
 
     rateLimitRetryAfter?: number,
 }
@@ -110,6 +103,11 @@ DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS.add(
 
 export type ChannelState = "unknown" | "public" | "private";
 export type ChannelVisibilityState = "unknown" | "shown" | "hidden";
+
+/**
+ * @since 0.0.8
+ */
+export type ChannelPrivacyState = ChannelState | ChannelVisibilityState;
 
 export type AddStatus = "error" | "action-on-bot-user" |  "self-grant" | "already-granted" | "success";
 export type EditStatus = "error" | "action-on-bot-user" | "self-edit" | "already-have" | "success";

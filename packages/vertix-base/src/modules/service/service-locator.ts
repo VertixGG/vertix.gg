@@ -21,26 +21,22 @@ export class ServiceLocator extends InitializeBase {
         return "Modules/ServiceLocator";
     }
 
-    public static getInstance(): ServiceLocator {
-        if ( ! ServiceLocator.instance ) {
-            ServiceLocator.instance = new ServiceLocator();
+    public static get $() {
+        if ( ! this.instance ) {
+            this.instance = new this();
         }
 
-        return ServiceLocator.instance;
+        return this.instance;
     }
 
-    public static get $() {
-        return ServiceLocator.getInstance();
-    }
-
-    public register<T extends ServiceBase>( service: new () => T ): void {
+    public register<T extends ServiceBase>( service: new ( ... args: any[] ) => T, ...args: any[] ){
         const serviceAsClass = service as unknown as ServiceBase;
 
         if ( this.services.has( serviceAsClass.getName() ) ) {
             throw new Error( `Service '${ serviceAsClass.getName() }' is already registered` );
         }
 
-        const serviceInstance = new service();
+        const serviceInstance = new service( ... args );
 
         this.services.set( serviceInstance.getName(), serviceInstance );
 
@@ -67,13 +63,17 @@ export class ServiceLocator extends InitializeBase {
         timeout?: number,
         metadata?: any,
         internal?: boolean
+        silent?: boolean
     } = {} ): Promise<T> {
         options = {
+            silent: false,
             timeout: 0,
             ... options,
         };
 
-        const service = this.get( serviceName );
+        const service = this.get( serviceName, {
+            silent: !! options.silent
+        } );
 
         if ( service && service.getInitialization().state === "resolved" ) {
             return service as T;

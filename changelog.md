@@ -1,4 +1,9 @@
 # Changelog
+**Version: 0.0.8 ~ 00/00/2024**
+- New
+    - Add display of region in **Dynamic Channel** Interface
+
+---
 
 **Version: 0.0.7 ~ 19/07/2023**
 - New Language:
@@ -44,7 +49,7 @@
 
 - Added a new button for the dynamic channel interface:
   - 🔀 Transfer ownership - This button allows you to transfer the channel ownership to another user.
-  
+
 ---
 
 **Version: 0.0.3 ~ 16/06/2023**
@@ -55,7 +60,7 @@
 - New Interface for 🛡️ Verified roles:
     - (∙🟢 On/∙🔴 Off) **Toggle** - Applies to `@everyone` role.
     - Option to select or edit **multiple roles**.
-  
+
    __Explanation__: Changing the state of dynamic channel will affect the verified roles.
    - 🌐 / 🚫 (`Public/Private`) - Toggle between the states.
         - 🌐 `Public` button - Set `Connect` permission to *`None`* for -> **🛡️ Verified Roles.**

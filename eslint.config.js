@@ -25,6 +25,17 @@ const config = [
     ...[ {
         rules: {
             "object-curly-spacing": [ "error", "always" ],
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['/src/*'],
+                            message: 'Imports from /src/* are restricted. monorepo imports e.g. @vertix/bot/src/index.ts should be used instead.'
+                        }
+                    ]
+                }
+            ]
         }
     } ],
     ...tests,

@@ -1,12 +1,19 @@
 import { jest } from "@jest/globals";
 
 import { Api } from "@top-gg/sdk";
+import { EventBusMock } from "@vertix.gg/test-utils/src/__mock__/event-bus-mock";
 
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
 jest.mock( "@top-gg/sdk" );
+
+// Mock original ServiceLocator.
+ServiceLocatorMock.mockOrigin();
+
+// Mock original EventBus.
+EventBusMock.mockOrigin();
 
 describe( "VertixBot/Managers/TopGG", () => {
     const userId = "userId";
@@ -14,15 +21,6 @@ describe( "VertixBot/Managers/TopGG", () => {
     let topGGManager: TopGGManager;
 
     beforeEach( async () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
-
-        // Mock ServiceLocator.
-        jest.mock( "@vertix.gg/base/src/modules/service/service-locator",
-            () => ServiceLocatorMock
-        );
-
-        // Register AppService
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/services/app-service" ) ).AppService );
 
         // Await for all services to be registered.
@@ -36,7 +34,11 @@ describe( "VertixBot/Managers/TopGG", () => {
     } );
 
     afterEach( () => {
-        jest.resetAllMocks();
+        // Reset ServiceLocator.
+        ServiceLocatorMock.reset();
+
+        // Reset EventBusMock.
+        EventBusMock.reset();
     } );
 
     describe( "isVoted()", () => {

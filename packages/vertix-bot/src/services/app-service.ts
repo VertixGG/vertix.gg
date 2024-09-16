@@ -1,13 +1,14 @@
-import process from "process";
-
 import * as fs from "fs";
+
 import * as path from "path";
+
+import process from "process";
 
 import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
 
-import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import type { Client } from "discord.js";
 
@@ -41,6 +42,10 @@ export class AppService extends ServiceBase {
     public constructor() {
         super();
 
+        EventBus.$.register( this, [
+            this.onReady,
+        ] );
+
         this.printVersion();
     }
 
@@ -71,8 +76,6 @@ export class AppService extends ServiceBase {
 
         await client.application.commands.set( Commands );
 
-        await DynamicChannelClaimManager.$.handleAbandonedChannels( client );
-
         this.logger.info( this.onReady, "Abandoned channels are handled." );
 
         await this.ensureBackwardCompatibility();
@@ -90,6 +93,48 @@ export class AppService extends ServiceBase {
     }
 
     private async ensureBackwardCompatibility() {
+        // const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
+        // const client = PrismaBotClient.getPrismaClient();
+        //
+        // const checkVersion = (version: string) => {
+        //     const [major, minor, patch] = version.split(".");
+        //     return Number(major) === 0 && Number(minor) === 0 && Number(patch) <= 7;
+        // };
+        //
+        // async function ensueDataVersionMatchesNewUIMechanism( this: AppService ) {
+        //     const updateData = async ( dataModel: any ) => {
+        //         const entities = await dataModel.findMany( {
+        //             where: {
+        //                 version: {
+        //                     lte: "0.0.7",
+        //                 }
+        //             }
+        //         } );
+        //
+        //         let count = 0;
+        //         for ( const entity of entities ) {
+        //             if ( entity.version.length === 5 && checkVersion( entity.version ) ) {
+        //                 count++;
+        //                 await dataModel.update( {
+        //                     where: {
+        //                         id: entity.id,
+        //                     },
+        //                     data: {
+        //                         version: VERSION_UI_V2,
+        //                     },
+        //                 } );
+        //             }
+        //         }
+        //
+        //         this.logger.log( ensueDataVersionMatchesNewUIMechanism, `Updated ${ count } entities in ${ dataModel.name }` );
+        //     };
+        //
+        //     await updateData( client.guildData );
+        //     await updateData( client.channelData );
+        //     await updateData( client.userData );
+        // }
+        //
+        // await ensueDataVersionMatchesNewUIMechanism.call( this );
     }
 
     private pingInterval() {

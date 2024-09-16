@@ -1,0 +1,15 @@
+export { ClaimResultAdapter } from "@vertix.gg/bot/src/ui/v3/claim/result/claim-result-adapter";
+export { ClaimStartAdapter } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-start-adapter";
+export { ClaimVoteAdapter } from "@vertix.gg/bot/src/ui/v3/claim/vote/claim-vote-adapter";
+export { SetupEditAdapter } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-adapter";
+export { DynamicChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-adapter";
+export { DynamicChannelLimitAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-adapter";
+export { DynamicChannelClearChatAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-adapter";
+export { DynamicChannelRenameAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-adapter";
+export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
+export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-adapter";
+export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-adapater";
+export { DynamicChannelResetChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-adapter";
+export { DynamicChannelPrivacyAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-adapter";
+export { DynamicChannelRegionAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-adapter";
+export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-adapter";

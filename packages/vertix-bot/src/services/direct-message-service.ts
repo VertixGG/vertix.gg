@@ -1,12 +1,12 @@
 import fetch from "cross-fetch";
 
-import {  ChannelType, EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { VERTIX_OWNERS_IDS } from "@vertix.gg/bot/src/definitions/app";
 
-import type { Channel , TextBasedChannels , TextBasedChannel , TextChannel , Guild, Message, MessageCreateOptions } from "discord.js";
+import type { Channel, Guild, Message, MessageCreateOptions } from "discord.js";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";

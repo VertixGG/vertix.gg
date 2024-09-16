@@ -1,5 +1,3 @@
-import { Colors } from "discord.js";
-
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";

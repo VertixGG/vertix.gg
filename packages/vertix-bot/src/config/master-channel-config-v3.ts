@@ -23,7 +23,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
     protected getDefaults(): MasterChannelConfigInterfaceV3["defaults"] {
         return {
-            masterChannelSettings: {
+            settings: {
                 dynamicChannelAutoSave: false,
 
                 dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getAll().map( i => i.getId().toString() ),
@@ -37,7 +37,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
                 dynamicChannelVerifiedRoles: [],
             },
 
-            masterChannelDefaults: {
+            constants: {
                 dynamicChannelStateVar: uiUtilsWrapAsTemplate( "state" ),
                 dynamicChannelUserVar: uiUtilsWrapAsTemplate( "user" ),
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",

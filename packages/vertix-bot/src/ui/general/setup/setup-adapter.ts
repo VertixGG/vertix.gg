@@ -2,11 +2,10 @@ import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/ve
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { badwordsNormalizeArray, badwordsSplitOrDefault, } from "@vertix.gg/base/src/utils/badwords-utils";
-
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { UI_CUSTOM_ID_SEPARATOR  } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -71,7 +70,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         const args: any = {},
             badwords = badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) );
 
-        args.masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, true );
+        args.masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, "settings" );
         args.badwords = badwords;
 
         if ( argsFromManager?.maxMasterChannels ) {
@@ -181,7 +180,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             return;
         }
 
-        const { masterChannelSettings } = ConfigManager.$
+        const { settings } = ConfigManager.$
             .get<MasterChannelConfigInterfaceV3 | MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", version ).data;
 
         const adapterName = version === VERSION_UI_V3
@@ -189,10 +188,10 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             : "Vertix/UI-V2/SetupNewWizardAdapter";
 
         this.uiService.get( adapterName )?.runInitial( interaction, {
-            dynamicChannelButtonsTemplate: masterChannelSettings.dynamicChannelButtonsTemplate,
+            dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
 
-            dynamicChannelMentionable: masterChannelSettings.dynamicChannelMentionable,
-            dynamicChannelAutoSave: masterChannelSettings.dynamicChannelAutoSave,
+            dynamicChannelMentionable: settings.dynamicChannelMentionable,
+            dynamicChannelAutoSave: settings.dynamicChannelAutoSave,
 
             dynamicChannelIncludeEveryoneRole: true,
             dynamicChannelVerifiedRoles: [

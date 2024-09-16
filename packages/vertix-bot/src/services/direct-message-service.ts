@@ -6,7 +6,7 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { VERTIX_OWNERS_IDS } from "@vertix.gg/bot/src/definitions/app";
 
-import type { Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
+import type { Channel, Guild, Message, MessageCreateOptions } from "discord.js";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
@@ -153,7 +153,12 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async sendEmbedCommand( channel: TextBasedChannel, response: any, message: Message ) {
+    private async sendEmbedCommand( channel: Channel, response: any, message: Message ) {
+        if ( ! channel.isSendable() ) {
+            await message.reply( "Message was not sent!" );
+            return;
+        }
+
         channel.send( { embeds: [ this.buildEmbed( response ) ] } )
             .catch( async () => {
                 await message.reply( "Message was not sent!" );

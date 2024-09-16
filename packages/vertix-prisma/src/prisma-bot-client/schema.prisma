@@ -55,6 +55,9 @@ model Category {
   // ---
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([guildId])
 }
 
 model Guild {
@@ -102,6 +105,7 @@ model Channel {
   categoryId       String?
   ownerChannelId   String?
   // ---
+  version          String                   @default("0.0.0.0")
   data             ChannelData[]            @relation("ChannelData")
   // ---
   internalType     E_INTERNAL_CHANNEL_TYPES @default(DEFAULT_CHANNEL)
@@ -110,6 +114,10 @@ model Channel {
   // ---
   createdAt        DateTime                 @default(now())
   updatedAt        DateTime                 @updatedAt
+
+  @@index([guildId])
+  @@index([categoryId])
+  @@index([userOwnerId])
 }
 
 model ChannelData {
@@ -163,6 +171,8 @@ model UserData {
   updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
+  @@index([key])
+  @@index([ownerId])
 }
 
 model UserChannelData {
@@ -185,6 +195,9 @@ model UserChannelData {
   updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, channelId, key, version])
+  @@index([channelId])
+  @@index([key])
+  @@index([ownerId])
 }
 
 // Language.

@@ -252,7 +252,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
     private async onTemplateNameModalSubmit( interaction: UIDefaultModalChannelTextInteraction ) {
         const channelNameInputId = this.customIdStrategy
-            .generateId( "Vertix/UI-V2/SetupNewWizardAdapter:Vertix/UI-V2/ChannelNameTemplateInput" );
+            .generateId( "Vertix/UI-V2/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput" );
 
         const value = interaction.fields.getTextInputValue( channelNameInputId );
 

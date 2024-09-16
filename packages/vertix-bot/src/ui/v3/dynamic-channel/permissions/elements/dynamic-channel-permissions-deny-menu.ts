@@ -6,7 +6,7 @@ export class DynamicChannelPermissionsDenyMenu extends DynamicChannelUserMenuBas
     }
 
     public getId() {
-        return 9;
+        return "remove-user-access";
     }
 
     protected async getPlaceholder() {

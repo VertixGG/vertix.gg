@@ -13,7 +13,7 @@ export abstract class DynamicChannelUserMenuBase extends UIElementUserSelectMenu
         return UIInstancesTypes.Dynamic;
     }
 
-    public abstract getId(): number;
+    public abstract getId(): string;
 
     protected async getMinValues() {
         return 0;

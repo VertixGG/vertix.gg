@@ -9,7 +9,7 @@ export class DynamicChannelRegionSelectMenu extends DynamicChannelStringMenuBase
         return "Vertix/UI-V3/DynamicChannelRegionSelectMenu";
     }
 
-    public getId(): number {
+    public getId(): string {
         throw new Error("Method not implemented.");
     }
 

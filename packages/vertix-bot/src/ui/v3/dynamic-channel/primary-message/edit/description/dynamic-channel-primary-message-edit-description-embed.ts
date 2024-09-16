@@ -50,7 +50,7 @@ export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicCha
         return {
             "description": {
                 [ vars.descriptionDisplayValue ]: vars.descriptionValue,
-                [ vars.descriptionDisplayDefault ]: this.configV3.data.masterChannelDefaults.dynamicChannelPrimaryMessageDescription,
+                [ vars.descriptionDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageDescription,
             },
         };
     }

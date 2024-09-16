@@ -50,7 +50,7 @@ export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend( DynamicCha
         const mapRegions: Record<string, string> = {};
 
         Object.entries( DEFAULT_RTC_REGIONS ).forEach( ( [ label, value ] ) => {
-            const key = ( "region-" + value ?? "auto" ) as RegionKeys,
+            const key = ( "region-" + (value ?? "auto") ) as RegionKeys,
                 utcRegionVar = this.vars.get( key );
 
             mapRegions[ utcRegionVar ] = label;

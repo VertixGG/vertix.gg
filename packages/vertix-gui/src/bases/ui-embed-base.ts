@@ -115,7 +115,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return template;
     }
 
-    protected getColor(): number {
+    protected getColor() {
         return -1;
     }
 

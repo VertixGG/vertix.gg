@@ -1,4 +1,4 @@
-import type { IZConfig } from "@zenflux/cli";
+import type { IZConfig } from "@zenflux/cli"
 
 const config: IZConfig = {
     format: [ "es" ],

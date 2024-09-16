@@ -44,13 +44,12 @@ import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/l
 
 import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import type { Client } from "discord.js";
-
 import type {
     TAdapterClassType,
     TAdapterConstructor,
     TAdapterRegisterOptions,
-    TPossibleAdapters,
-} from "@vertix.gg/bot/src/definitions/ui-adapter-declaration";
+    TPossibleAdapters
+} from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 export type TAdapterMapping = {
     "base": UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>,

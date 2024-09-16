@@ -1,6 +1,6 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
-import { UserChannelDataModel } from "@vertix.gg/base/src/models/user-channel-data-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/v3/master-channel-data-model-v3";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-base";
 
@@ -145,14 +145,15 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
                 region: channel.rtcRegion,
             },
             masterChannelDB =
-                await ChannelModel.$.getMasterChannelDBByDynamicChannelId( channel.id );
+                await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {
-            args.dynamicChannelButtonsTemplate =
-                ( await MasterChannelDataModelV3.$.getSettings( masterChannelDB.id ) )?.dynamicChannelButtonsTemplate;
+            const settings = await MasterChannelDataModelV3.$.getSettings( masterChannelDB.id );
+
+            args.dynamicChannelButtonsTemplate = settings?.dynamicChannelButtonsTemplate;
 
             if ( argsFromManager.ownerId ) {
-                const primaryMessage = await UserChannelDataModel.$.getPrimaryMessage(
+                const primaryMessage = await UserMasterChannelDataModel.$.getPrimaryMessage(
                     argsFromManager.ownerId, masterChannelDB.id
                 );
 

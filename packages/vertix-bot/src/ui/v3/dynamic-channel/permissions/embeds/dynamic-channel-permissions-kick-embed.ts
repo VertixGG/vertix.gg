@@ -1,5 +1,3 @@
-import { Colors } from "discord.js";
-
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -21,10 +19,6 @@ export class DynamicChannelPermissionsKickEmbed extends DynamicChannelPermission
 
     public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor() {
-        return Colors.Yellow;
     }
 
     protected getImage(): string {

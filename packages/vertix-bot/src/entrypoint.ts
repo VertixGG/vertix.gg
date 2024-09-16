@@ -15,8 +15,6 @@ import path from "path";
 
 import process from "process";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
@@ -26,8 +24,6 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { config } from "dotenv";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
-
-import { UILanguageManager } from "@vertix.gg/bot/src/ui/ui-language-manager";
 
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
@@ -125,6 +121,8 @@ async function registerUIAdapters() {
 }
 
 async function registerUILanguageManager() {
+    const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+
     // Register UI language manager
     await UILanguageManager.$.register();
 
@@ -135,6 +133,8 @@ async function registerUILanguageManager() {
 
 async function registerConfigs() {
     GlobalLogger.$.info( registerConfigs, "Registering configs ..." );
+
+    const { ConfigManager } = await import( "@vertix.gg/base/src/managers/config-manager" );
 
     const configs = await Promise.all( [
         import("@vertix.gg/bot/src/config/master-channel-config"),
@@ -238,4 +238,9 @@ export async function entryPoint() {
     await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
+
+    // await 5 seconds
+    await new Promise( ( resolve ) => {
+        setTimeout( resolve, 5000 );
+    } );
 }

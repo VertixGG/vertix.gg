@@ -6,7 +6,7 @@ export class DynamicChannelTransferOwnerUserMenu extends DynamicChannelUserMenuB
     }
 
     public getId() {
-        return 13;
+        return "transfer-ownership";
     }
 
     protected getPlaceholder(): Promise<string> {

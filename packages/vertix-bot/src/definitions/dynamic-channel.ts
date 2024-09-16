@@ -4,15 +4,6 @@ import { PermissionFlagsBits } from "discord-api-types/v10";
 
 import type { Guild, VoiceState } from "discord.js";
 
-/* Default Data Key Settings */
-
-export const DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID = "primaryMessageId";
-
-/* Default Data Settings */
-export const DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS = {
-    [ DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID ]: null,
-};
-
 export enum DynamicEditChannelNameInternalResultCode {
     Error = 0,
     Success = "success",

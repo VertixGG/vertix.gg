@@ -6,7 +6,7 @@ export class DynamicChannelPermissionsGrantMenu extends DynamicChannelUserMenuBa
     }
 
     public getId() {
-        return 8;
+        return "grant-user-access";
     }
 
     protected async getPlaceholder() {

@@ -12,8 +12,6 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class UIModuleV3 extends UIModuleBase {
-    public static dynamicChannelManager: DynamicChannelClaimManager;
-
     public static getName() {
         return "Vertix/UI-V3/Module";
     }
@@ -59,8 +57,6 @@ export class UIModuleV3 extends UIModuleBase {
                 claimVoteStepInButton: "Vertix/UI-V3/ClaimVoteStepInButton",
             }
         } );
-
-        this.$$.dynamicChannelManager = DynamicChannelClaimManager.get( "Vertix/UI-V3/DynamicChannelClaimManager" )!;
     }
 
 }

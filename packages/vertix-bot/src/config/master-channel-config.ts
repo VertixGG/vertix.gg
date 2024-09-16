@@ -22,7 +22,21 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
     protected getDefaults(): MasterChannelConfigInterface["defaults"] {
         return {
-            masterChannelSettings: {
+            // Constants will be used globally for the entire bot.
+            constants: {
+                dynamicChannelStateVar: uiUtilsWrapAsTemplate( "state" ),
+                dynamicChannelUserVar: uiUtilsWrapAsTemplate( "user" ),
+                dynamicChannelsCategoryName: "༄ Dynamic Channels",
+
+                dynamicChannelStatePrivate: "🔴",
+                dynamicChannelStatePublic: "🟢",
+
+                masterChannelMaximumFreeChannels: 6,
+                masterChannelName: "➕ New Channel",
+            },
+
+            // The default values/data structure for a newly created “master” channel will be per MasterChannel.
+            settings: {
                 dynamicChannelAutoSave: false,
 
                 dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( i => i.getId().toString() ),
@@ -34,18 +48,6 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
                 dynamicChannelVerifiedRoles: [],
-            },
-
-            masterChannelDefaults: {
-                dynamicChannelStateVar: uiUtilsWrapAsTemplate( "state" ),
-                dynamicChannelUserVar: uiUtilsWrapAsTemplate( "user" ),
-                dynamicChannelsCategoryName: "༄ Dynamic Channels",
-
-                dynamicChannelStatePrivate: "🔴",
-                dynamicChannelStatePublic: "🟢",
-
-                masterChannelMaximumFreeChannels: 6,
-                masterChannelName: "➕ New Channel",
             },
         };
     }

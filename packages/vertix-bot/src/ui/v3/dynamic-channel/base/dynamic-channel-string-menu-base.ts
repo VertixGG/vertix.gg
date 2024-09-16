@@ -13,5 +13,5 @@ export abstract class DynamicChannelStringMenuBase extends UIElementStringSelect
         return UIInstancesTypes.Dynamic;
     }
 
-    public abstract getId(): number;
+    public abstract getId(): string;
 }

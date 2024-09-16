@@ -6,7 +6,7 @@ export class DynamicChannelPermissionsBlockMenu extends DynamicChannelUserMenuBa
     }
 
     public getId() {
-        return 10;
+        return "block-user-access";
     }
 
     protected async getPlaceholder() {

@@ -85,10 +85,10 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     }
 
     protected getDataFor( option: APISelectMenuOption ) {
-        const result = {
-                state: ConfigExtrasSelectMenu.vars.stateOff,
-            },
-            optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );
+        const result: { state: typeof ConfigExtrasSelectMenu.vars.stateOn | typeof ConfigExtrasSelectMenu.vars.stateOff }
+                = { state: ConfigExtrasSelectMenu.vars.stateOff };
+
+        const optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );
 
         if ( "1" === optionValue[ 1 ] ) {
             result.state = ConfigExtrasSelectMenu.vars.stateOn;

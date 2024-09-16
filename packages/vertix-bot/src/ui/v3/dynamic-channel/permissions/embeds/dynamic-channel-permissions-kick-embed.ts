@@ -23,10 +23,6 @@ export class DynamicChannelPermissionsKickEmbed extends DynamicChannelPermission
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
-        return Colors.Yellow;
-    }
-
     protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }

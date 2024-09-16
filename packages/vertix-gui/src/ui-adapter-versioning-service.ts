@@ -14,7 +14,7 @@ class FallBackVersionStrategy extends UIVersionStrategyBase {
 
     public async determine() {
         // Return the first version
-        return this.versions.keys().next().value;
+        return this.versions.keys().next().value || 0;
     }
 }
 

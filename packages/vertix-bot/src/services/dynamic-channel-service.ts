@@ -30,9 +30,7 @@ import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "d
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
-    DEFAULT_DYNAMIC_CHANNEL_DATA_SETTINGS,
     DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-    DYNAMIC_CHANNEL_SETTINGS_KEY_PRIMARY_MESSAGE_ID,
     DynamicClearChatResultCode,
     DynamicEditChannelNameInternalResultCode,
     DynamicEditChannelNameResultCode,
@@ -47,6 +45,8 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 import type { MasterChannelUserDataInterface } from "@vertix.gg/base/src/interfaces/master-channel-user-config";
 
@@ -94,8 +94,6 @@ import type {
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
-import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
-
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
@@ -117,7 +115,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     private editMessageDebounceMap = new Map<string, NodeJS.Timeout>();
 
     private logInChannelDebounceMap = new Map<string, {
-        masterChannelDB: ChannelResult,
+        masterChannelDB: ChannelExtended,
         logsChannel: TextChannel,
         embeds: EmbedBuilder[]
         timer: NodeJS.Timeout,
@@ -203,7 +201,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async onLeaveDynamicChannelEmpty( channel: VoiceBasedChannel, channelDB: null | ChannelResult, guild: Guild, args: IChannelLeaveGenericArgs ) {
+    public async onLeaveDynamicChannelEmpty( channel: VoiceBasedChannel, channelDB: null | ChannelExtended, guild: Guild, args: IChannelLeaveGenericArgs ) {
         if ( ! channelDB ) {
             this.logger.error( this.onLeaveDynamicChannelEmpty,
                 `Guild id: '${ guild.id }', channel id: '${ channel.id }' - ` +
@@ -236,9 +234,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 : null;
         }
 
-        const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
+        const channelNameTemplate = await MasterChannelDataManager.$
+            .getChannelNameTemplate( masterChannelDB, true );
 
-        return this.assembleChannelNameTemplate( channelNameTemplate, {
+        return this.assembleChannelNameTemplate( channelNameTemplate!, {
                 userDisplayName,
                 state: await this.getChannelState( channel ),
             }
@@ -347,7 +346,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         message = channel.messages.cache.at( 0 );
 
         if ( ! this.isPrimaryMessage( message ) ) {
-            const channelDB = await ChannelModel.$.findUnique( { where: {
+            const channelDB = await ChannelModel.$.findUnique<string>( { where: {
                     channelId: channel.id
                 }, include: {
                     data: true,
@@ -529,7 +528,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelName = savedData.dynamicChannelName;
             dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
 
-            const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, masterChannel.guildId ),
+            const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, masterChannel.guildId ) || [],
                 verifiedFlagsSet: bigint[] = [];
 
             const {
@@ -694,7 +693,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return dynamic;
     }
 
-    public async createPrimaryMessage( channel: VoiceChannel, dynamicChannelDB: ChannelResult ) {
+    public async createPrimaryMessage( channel: VoiceChannel, dynamicChannelDB: ChannelExtended ) {
         this.logger.log( this.createPrimaryMessage,
             `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - ` +
             `Creating primary message for owner id: '${ dynamicChannelDB.userOwnerId }'`
@@ -1185,7 +1184,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const previousChannelState = await this.getChannelConfiguration( channel, userOwnerId, master.db.id, options ),
             defaultDynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( master.db, true ),
 
-            defaultDynamicChannelName = defaultDynamicChannelTemplateName.replace(
+            defaultDynamicChannelName = defaultDynamicChannelTemplateName!.replace(
                 this.config.defaults.constants.dynamicChannelUserVar,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
@@ -1477,10 +1476,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
     private async getVerifiedRoles( dynamicChannel: VoiceBasedChannel ) {
         const roles = [],
-            masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannel.id );
+            masterChannelDB =
+                await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannel.id );
 
         if ( masterChannelDB ) {
-            const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId );
+            const verifiedRoles =
+                await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId ) || [];
 
             roles.push( ... verifiedRoles );
         } else {
@@ -1837,7 +1838,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.logInChannelDebounce( masterChannelDB, channel, message );
     }
 
-    private async logInChannelDebounce( masterChannelDB: ChannelResult, channel: VoiceChannel, message: string, defaultDebounceDelay = 3000 ) {
+    private async logInChannelDebounce( masterChannelDB: ChannelExtended, channel: VoiceChannel, message: string, defaultDebounceDelay = 3000 ) {
         const logsChannelId = await MasterChannelDataManager.$.getChannelLogsChannelId( masterChannelDB );
 
         if ( ! logsChannelId ) {

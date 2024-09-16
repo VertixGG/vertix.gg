@@ -6,7 +6,7 @@ export class DynamicChannelPermissionsKickMenu extends DynamicChannelUserMenuBas
     }
 
     public getId() {
-        return 14;
+        return "kick-user";
     }
 
     protected async getPlaceholder() {

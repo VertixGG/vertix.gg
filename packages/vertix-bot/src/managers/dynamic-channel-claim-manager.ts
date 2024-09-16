@@ -18,6 +18,8 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
 import type { IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
 import type { IVoteDefaultComponentInteraction } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
@@ -27,7 +29,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 import type { TAdapterMapping, UIService } from "@vertix.gg/gui/src/ui-service";
 
-import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 import type { Client, Guild, GuildChannel, GuildMember, Message, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 const FALLBACK_OWNERSHIP_TIMER_INTERVAL = 30 * 1000, // Half minute.
@@ -248,7 +249,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
      * Function handleAbandonedChannels() :: Ensures that all abandoned added to abandon list,
      * so timer can handle them later, the function is called on bot start.
      */
-    public async handleAbandonedChannels( client: Client, specificChannels?: VoiceChannel[], specificChannelsDB?: ChannelResult[] ) {
+    public async handleAbandonedChannels( client: Client, specificChannels?: VoiceChannel[], specificChannelsDB?: ChannelExtended[] ) {
         await this.uiService.waitForAdapter( this.adapters.claimStartAdapter().getName() );
 
         this.debugger.dumpDown( this.handleAbandonedChannels, {
@@ -256,7 +257,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             specificChannelsDB
         } );
 
-        const handleChannels = async ( dynamicChannels: ChannelResult[] ) => {
+        const handleChannels = async ( dynamicChannels: ChannelExtended[] ) => {
             for ( const channelDB of dynamicChannels ) {
                 const guild = client.guilds.cache.get( channelDB.guildId );
 
@@ -338,7 +339,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             }
         } else {
             const dynamicChannels = ( await Promise.all( specificChannels.map( async ( channel ) =>
-                await ChannelModel.$.getByChannelId( channel.id ) as ChannelResult
+                await ChannelModel.$.getByChannelId( channel.id ) as ChannelExtended
             ) ) );
 
             await handleChannels( dynamicChannels );
@@ -680,7 +681,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    private async onLeaveDynamicChannelEmpty( channel: VoiceBasedChannel, channelDB: null | ChannelResult, guild: Guild, args: IChannelLeaveGenericArgs ) {
+    private async onLeaveDynamicChannelEmpty( channel: VoiceBasedChannel, channelDB: null | ChannelExtended, guild: Guild, args: IChannelLeaveGenericArgs ) {
         this.removeChannelOwnerTracking( channel.id );
     }
 

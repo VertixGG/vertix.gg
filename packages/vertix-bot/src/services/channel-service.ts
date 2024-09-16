@@ -277,7 +277,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             data.ownerChannelId = ownerChannelId;
         }
 
-        return { channel, db: ChannelModel.$.create( { data } ) };
+        return { channel, db: ChannelModel.$.create( data ) };
     }
 
     public async update( args: IChannelUpdateArgs ) {

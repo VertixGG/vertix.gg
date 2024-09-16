@@ -1,12 +1,12 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/data/base/master-channel-data-model-base";
+import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-base";
 
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import type { MasterChannelConfigInterfaceV3 } from "src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterChannelConfigInterfaceV3> {
     private static instance: MasterChannelDataModelV3;
@@ -38,5 +38,4 @@ export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterC
         return ConfigManager.$
             .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
     }
-
 }

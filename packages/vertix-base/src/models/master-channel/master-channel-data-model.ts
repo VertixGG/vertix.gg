@@ -1,12 +1,12 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/data/base/master-channel-data-model-base";
+import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-base";
 
 import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import type { MasterChannelConfigInterface } from "src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 export class MasterChannelDataModel extends MasterChannelDataModelBase<MasterChannelConfigInterface> {
     private static instance: MasterChannelDataModel;

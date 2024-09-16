@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports */
+
 export { DynamicChannelPermissionsAccessEmbed } from "./dynamic-channel-permissions-access-embed";
 export { DynamicChannelPermissionsBlockedEmbed } from "./dynamic-channel-permissions-blocked-embed";
 export { DynamicChannelPermissionsDeniedEmbed } from "./dynamic-channel-permissions-denied-embed";

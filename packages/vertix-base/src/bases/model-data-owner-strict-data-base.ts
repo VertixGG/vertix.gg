@@ -50,7 +50,7 @@ export abstract class ModelDataOwnerStrictDataBase<
         return this.setStrictData( args, keys, dataWithDefaults );
     }
 
-    protected async getStrictData(
+    public async getStrictData(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true,

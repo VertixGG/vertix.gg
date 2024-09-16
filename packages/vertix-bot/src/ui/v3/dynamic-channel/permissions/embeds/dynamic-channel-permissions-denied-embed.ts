@@ -23,10 +23,6 @@ export class DynamicChannelPermissionsDeniedEmbed extends DynamicChannelPermissi
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
-        return Colors.Red;
-    }
-
     protected getTitle() {
         return "👎  Access canceled";
     }

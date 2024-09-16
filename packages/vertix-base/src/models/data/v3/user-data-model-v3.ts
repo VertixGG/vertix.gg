@@ -6,7 +6,7 @@ import { ModelDataOwnerBase  } from "@vertix.gg/base/src/bases/model-data-owner-
 
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
-import type { TDataOwnerDefaultUniqueKeys } from "src/bases/model-data-owner-base";
+import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 const client = PrismaBotClient.$.getClient();
 

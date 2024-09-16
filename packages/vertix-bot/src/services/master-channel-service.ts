@@ -2,8 +2,9 @@ import "@vertix.gg/prisma/bot-client";
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/data/v3/master-channel-data-model-v3";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -37,6 +38,8 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
@@ -46,7 +49,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
 import type { IChannelEnterGenericArgs, } from "@vertix.gg/bot/src/interfaces/channel";
-import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
 
 import type {
     MasterChannelConfigInterface, MasterChannelConfigInterfaceV3,
@@ -91,7 +93,7 @@ interface IMasterChannelCreateResult {
 
     category?: CategoryChannel,
     channel?: VoiceBasedChannel,
-    db?: ChannelResult,
+    db?: ChannelExtended,
 }
 
 const MAX_TIMEOUT_PER_CREATE = 10 * 1000;
@@ -192,7 +194,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        // Set new timestamp.
+        // Set a new timestamp.
         this.requestedChannelMap.set( newState.member.id, {
             timestamp,
             shouldSentWarning: true,
@@ -247,7 +249,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 );
             }
 
-            // Find all roles that has bot member.
+            // Find all roles that have bot member.
             for ( const role of newState.guild.roles.cache.values() ) {
                 if ( role.members.has( this.services.appService.getClient().user?.id || "" ) ) {
                     const rolePermissions = role.permissions.toArray();
@@ -267,7 +269,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
                 const uniqueMissingPermissions = [ ... new Set( missingPermissions ) ];
 
-                // Send DM message to the user with missing permissions.
+                // Send a DM message to the user with missing permissions.
                 if ( newState.member?.id ) {
                     const missingPermissionsAdapter = this.services
                         .uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" );
@@ -557,7 +559,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
             dynamicChannelAutoSave: newAutoSave,
             dynamicChannelButtonsTemplate: newButtons,
-            // Since `LogsChannelId` not defined in the creation process, but later via configuration.
+            // Since `LogsChannelId` not defined in the creation process but later via configuration.
             dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,
             dynamicChannelNameTemplate: newName,

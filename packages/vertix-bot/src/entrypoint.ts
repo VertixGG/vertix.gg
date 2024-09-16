@@ -212,47 +212,32 @@ export async function entryPoint() {
 
     GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
 
-    const ChannelModel = ( await import("@vertix.gg/base/src/models/channel/channel-model")).ChannelModel;
-    debugger;
-    const a = await ChannelModel.$.findUnique( {
-        where: {
-            id: "66e6639d887293ffdfc93a4b",
-        },
-        include: {
-            data: true,
-            key: "settings",
-        }
-    } );
+    const { default: botInitialize } = await import("./vertix");
 
-    debugger;
+    const client = await botInitialize();
 
-    //
-    // const { default: botInitialize } = await import("./vertix");
-    //
-    // const client = await botInitialize();
-    //
-    // // TODO Check what happened if no services are registered, and adapter are requested,
-    // await registerUIServices( client );
-    // await registerConfigs();
-    //
-    // await registerServices();
-    //
-    // GlobalLogger.$.info( entryPoint, "Services are registered" );
-    //
-    // await registerUIAdapters();
-    //
-    // // TODO: Find better solution for this.
-    // await EmojiManager.$.awaitInitialization();
-    //
-    // await registerUILanguageManager();
-    //
-    // await registerUIVersionStrategies();
-    //
-    // process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
-    //
-    // await createCleanupWorker();
-    //
-    // GlobalLogger.$.info( entryPoint, "Bot is initialized" );
+    // TODO Check what happened if no services are registered, and adapter are requested,
+    await registerUIServices( client );
+    await registerConfigs();
+
+    await registerServices();
+
+    GlobalLogger.$.info( entryPoint, "Services are registered" );
+
+    await registerUIAdapters();
+
+    // TODO: Find better solution for this.
+    await EmojiManager.$.awaitInitialization();
+
+    await registerUILanguageManager();
+
+    await registerUIVersionStrategies();
+
+    process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
+
+    await createCleanupWorker();
+
+    GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 
     // await 5 seconds
     await new Promise( ( resolve ) => {

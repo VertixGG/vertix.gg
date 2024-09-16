@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports */
+
 export { DynamicChannelPermissionsBlockMenu } from "./dynamic-channel-permissions-block-menu";
 export { DynamicChannelPermissionsAccessButton } from "./dynamic-channel-permissions-access-button";
 export { DynamicChannelPermissionsDenyMenu } from "./dynamic-channel-permissions-deny-menu";

@@ -21,15 +21,15 @@ export interface MasterChannelConstantsInterface {
     masterChannelName: string;
 }
 
+export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstantsInterface {
+    dynamicChannelPrimaryMessageTitle: string;
+    dynamicChannelPrimaryMessageDescription: string;
+}
+
 export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
     constants: MasterChannelConstantsInterface,
     settings: MasterChannelSettingsInterface,
 }> {
-}
-
-export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstantsInterface {
-    dynamicChannelPrimaryMessageTitle: string;
-    dynamicChannelPrimaryMessageDescription: string;
 }
 
 export interface MasterChannelConfigInterfaceV3 extends ConfigBaseInterface<{

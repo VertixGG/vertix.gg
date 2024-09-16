@@ -1,5 +1,3 @@
-import { Colors } from "discord.js";
-
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -21,10 +19,6 @@ export class DynamicChannelPermissionsBlockedEmbed extends DynamicChannelPermiss
 
     public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor() {
-        return Colors.DarkRed;
     }
 
     protected getTitle() {

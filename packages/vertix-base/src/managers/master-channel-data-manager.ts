@@ -1,17 +1,17 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { InitializeBase } from "@vertix.gg/base/src/bases/index";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/data/v3/master-channel-data-model-v3";
+import { MasterChannelDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model";
 
-import { MasterChannelDataModel } from "@vertix.gg/base/src/models/data/master-channel-data-model";
+import { InitializeBase } from "@vertix.gg/base/src/bases";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
-import type { ChannelResult } from "@vertix.gg/base/src/models/channel-model";
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 export class MasterChannelDataManager extends InitializeBase {
     private static instance: MasterChannelDataManager;
@@ -37,7 +37,7 @@ export class MasterChannelDataManager extends InitializeBase {
         super( shouldDebugCache );
     }
 
-    protected getModel( masterChannelDB: ChannelResult ) {
+    protected getModel( masterChannelDB: ChannelExtended ) {
         switch ( masterChannelDB.version ) {
             case VERSION_UI_V3:
                 return MasterChannelDataModelV3.$;
@@ -51,7 +51,7 @@ export class MasterChannelDataManager extends InitializeBase {
         return this.keys;
     }
 
-    public async getAllSettings( masterChannelDB: ChannelResult, defaultSettings: Partial<MasterChannelConfigInterface["data"]["settings"]> = {} ) {
+    public async getAllSettings( masterChannelDB: ChannelExtended, defaultSettings: Partial<MasterChannelConfigInterface["data"]["settings"]> = {} ) {
         const settings = await this.getModel( masterChannelDB )
             .getSettings( masterChannelDB.id, false, false );
 
@@ -62,35 +62,35 @@ export class MasterChannelDataManager extends InitializeBase {
         return Object.assign( defaultSettings, settings );
     }
 
-    public async setAllSettings( masterChannelDB: ChannelResult, settings: MasterChannelConfigInterface["defaults"]["settings"] ) {
+    public async setAllSettings( masterChannelDB: ChannelExtended, settings: MasterChannelConfigInterface["defaults"]["settings"] ) {
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, settings );
     }
 
-    public async getChannelNameTemplate( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+    public async getChannelNameTemplate( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
         return ( await this.getModel( masterChannelDB )
             .getSettings( masterChannelDB.id, true, returnDefault ) )
             ?.dynamicChannelNameTemplate;
     }
 
-    public async getChannelButtonsTemplate( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+    public async getChannelButtonsTemplate( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
         return ( await this.getModel( masterChannelDB )
             .getSettings( masterChannelDB.id, true, returnDefault ) )
             ?.dynamicChannelButtonsTemplate;
     }
 
-    public async getChannelMentionable( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+    public async getChannelMentionable( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
         return ( await this.getModel( masterChannelDB )
             .getSettings( masterChannelDB.id, true, returnDefault ) )
             ?.dynamicChannelMentionable;
     }
 
-    public async getChannelAutosave( masterChannelDB: ChannelResult, returnDefault?: boolean ) {
+    public async getChannelAutosave( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
         return ( await this.getModel( masterChannelDB )
             .getSettings( masterChannelDB.id, true, returnDefault ) )
             ?.dynamicChannelAutoSave;
     }
 
-    public async getChannelVerifiedRoles( masterChannelDB: ChannelResult, guildId: string, cache = true ) {
+    public async getChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ) {
         return ( await this.getModel( masterChannelDB )
                 .getSettings(
                     masterChannelDB.id,
@@ -99,7 +99,7 @@ export class MasterChannelDataManager extends InitializeBase {
         )?.dynamicChannelVerifiedRoles;
     }
 
-    public async getChannelLogsChannelId( masterChannelDB: ChannelResult ) {
+    public async getChannelLogsChannelId( masterChannelDB: ChannelExtended ) {
         return ( await this.getModel( masterChannelDB )
                 .getSettings(
                     masterChannelDB.id,
@@ -109,7 +109,7 @@ export class MasterChannelDataManager extends InitializeBase {
         )?.dynamicChannelLogsChannelId;
     }
 
-    public async setChannelNameTemplate( masterChannelDB: ChannelResult, newName: string ) {
+    public async setChannelNameTemplate( masterChannelDB: ChannelExtended, newName: string ) {
         this.logger.log( this.setChannelNameTemplate,
             `Master channel id: '${ masterChannelDB.id }' - Setting channel name template: '${ newName }'`
         );
@@ -119,13 +119,13 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
-    public async setChannelButtonsTemplate( masterChannelDB: ChannelResult, newButtons: string[], shouldAdminLog = true ) {
+    public async setChannelButtonsTemplate( masterChannelDB: ChannelExtended, newButtons: string[], shouldAdminLog = true ) {
         this.logger.log( this.setChannelButtonsTemplate,
             `Master channel id: '${ masterChannelDB.id }' - Setting channel name template: '${ newButtons }'`
         );
 
         if ( shouldAdminLog ) {
-            const previousButtons = await this.getChannelButtonsTemplate( masterChannelDB, true );
+            const previousButtons = await this.getChannelButtonsTemplate( masterChannelDB, true ) || [];
 
             this.logger.admin( this.setChannelButtonsTemplate,
                 `🎚  Dynamic Channel buttons modified  - masterChannelId: "${ masterChannelDB.id }", "${ previousButtons.join( ", " ) }" => "${ newButtons.join( "," ) }"`
@@ -137,7 +137,7 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
-    public async setChannelMentionable( masterChannelDB: ChannelResult, mentionable: boolean, shouldAdminLog = true ) {
+    public async setChannelMentionable( masterChannelDB: ChannelExtended, mentionable: boolean, shouldAdminLog = true ) {
         this.logger.log( this.setChannelMentionable,
             `Master channel id: '${ masterChannelDB.id }' - Setting channel mentionable: '${ mentionable }'`
         );
@@ -153,7 +153,7 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
-    public async setChannelAutoSave( masterChannelDB: ChannelResult, autoSave: boolean, shouldAdminLog = true ) {
+    public async setChannelAutoSave( masterChannelDB: ChannelExtended, autoSave: boolean, shouldAdminLog = true ) {
         this.logger.log( this.setChannelAutoSave,
             `Master channel id: '${ masterChannelDB.id }' - Setting channel auto save: '${ autoSave }'`
         );
@@ -169,7 +169,7 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
-    public async setChannelVerifiedRoles( masterChannelDB: ChannelResult, guildId: string, roles: string[], shouldAdminLog = true ) {
+    public async setChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, roles: string[], shouldAdminLog = true ) {
         this.logger.log( this.setChannelVerifiedRoles,
             `Guild id:${ guildId }, master channel id: '${ masterChannelDB.id }' - Setting channel verified roles: '${ roles }'`
         );
@@ -191,7 +191,7 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
-    public async setChannelLogsChannel( masterChannelDB: ChannelResult, channelId: string | null, shouldAdminLog = true ) {
+    public async setChannelLogsChannel( masterChannelDB: ChannelExtended, channelId: string | null, shouldAdminLog = true ) {
         this.logger.log( this.setChannelLogsChannel,
             `Master channel id: '${ masterChannelDB.id }' - Setting channel logs channel: '${ channelId }'`
         );

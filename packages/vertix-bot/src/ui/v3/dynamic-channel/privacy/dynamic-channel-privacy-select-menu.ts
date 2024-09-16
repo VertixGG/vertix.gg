@@ -7,7 +7,7 @@ export class DynamicChannelPrivacySelectMenu extends DynamicChannelStringMenuBas
         return "Vertix/UI-V3/DynamicChannelPrivacyMenu";
     }
 
-    public getId(): number {
+    public getId(): string {
         throw new Error("Method not implemented.");
     }
 

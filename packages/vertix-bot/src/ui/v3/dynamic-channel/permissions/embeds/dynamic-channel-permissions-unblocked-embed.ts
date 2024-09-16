@@ -23,10 +23,6 @@ export class DynamicChannelPermissionsUnblockedEmbed extends DynamicChannelPermi
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
-        return Colors.Yellow;
-    }
-
     protected getTitle() {
         return "🤙  User unblocked";
     }

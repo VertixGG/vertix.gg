@@ -2,9 +2,9 @@ import { VoiceChannel } from "discord.js";
 
 import { UIVersionStrategyBase } from "@vertix.gg/gui/src/bases/ui-version-strategy-base";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/data/v3/master-channel-data-model-v3";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import type { Base } from "discord.js";
 

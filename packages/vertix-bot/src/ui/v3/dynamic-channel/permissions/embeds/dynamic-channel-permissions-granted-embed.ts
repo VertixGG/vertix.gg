@@ -24,10 +24,6 @@ export class DynamicChannelPermissionsGrantedEmbed extends DynamicChannelPermiss
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
-        return 0xF5CF4D; // As the emoji.
-    }
-
     protected getTitle() {
         return "👍  Access granted";
     }

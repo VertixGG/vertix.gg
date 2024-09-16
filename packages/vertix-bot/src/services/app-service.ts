@@ -4,7 +4,7 @@ import * as path from "path";
 
 import process from "process";
 
-import { CURRENT_VERSION, VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 

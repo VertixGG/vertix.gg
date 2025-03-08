@@ -186,21 +186,14 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         // Since we've already deferred the update, we should use editReply instead
         try {
             await this.editReplyWithStep(interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess");
-        } catch (error: unknown) {
-            const e = error as Error;
-            console.log(`[DEBUG] Error updating message after transfer - ID: ${interaction.id}, Error: ${e.message}`);
+        } catch {
             // If editing fails, try to send a follow-up message
             await interaction
                 .followUp({
                     content: "Channel ownership transferred successfully!",
                     ephemeral: true
                 })
-                .catch((followUpError: unknown) => {
-                    const fe = followUpError as Error;
-                    console.log(
-                        `[DEBUG] Error sending followUp after transfer - ID: ${interaction.id}, Error: ${fe.message}`
-                    );
-                });
+                .catch(() => {});
         }
     }
 

@@ -7,7 +7,7 @@ import type { Client } from "discord.js";
 export async function readyHandler(client: Client<true>) {
     await ServiceLocator.$.waitFor("VertixBot/Services/App", {
         silent: true,
-        timeout: 800
+        timeout: 30000
     });
 
     const appService = ServiceLocator.$.get<AppService>("VertixBot/Services/App");

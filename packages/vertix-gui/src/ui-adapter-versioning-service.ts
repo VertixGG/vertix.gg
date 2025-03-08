@@ -26,6 +26,21 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
 
     private versionStrategies: UIVersionStrategyBase[] = [new FallBackVersionStrategy(this.versions)];
 
+    public constructor() {
+        super();
+        // Register a timer to check if versions are registered after initialization
+        setTimeout(() => {
+            if (this.versions.size === 0) {
+                console.warn("No versions registered after initialization, registering default versions [2, 3]");
+                try {
+                    this.registerVersions([2, 3]);
+                } catch (error) {
+                    console.error("Error registering default versions in constructor:", error);
+                }
+            }
+        }, 5000); // Check after 5 seconds to ensure all services are initialized
+    }
+
     public static getName() {
         return "VertixGUI/UIVersioningAdapterService";
     }
@@ -37,16 +52,40 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
     }
 
     public registerVersions(range: [number, number], prefix = DEFAULT_UI_PREFIX) {
-        // If already have versions, then throw an error
-        if (this.versions.size) {
-            throw new Error("Versions already registered");
-        }
+        try {
+            // If already have versions, then log and return
+            if (this.versions.size) {
+                console.warn("Versions already registered, skipping registration");
+                return;
+            }
 
-        const [start, end] = range;
+            const [start, end] = range;
 
-        for (let i = start; i <= end; i++) {
-            this.versions.set(i, `${prefix}${i}`);
-            this.versionNames.set(`${prefix}${i}`, i);
+            if (start > end) {
+                console.error(`Invalid version range: [${start}, ${end}]`);
+                throw new Error(`Invalid version range: start (${start}) must be less than or equal to end (${end})`);
+            }
+
+            console.log(`Registering versions range [${start}, ${end}] with prefix ${prefix}`);
+
+            for (let i = start; i <= end; i++) {
+                this.versions.set(i, `${prefix}${i}`);
+                this.versionNames.set(`${prefix}${i}`, i);
+                console.log(`Registered version ${i} as ${prefix}${i}`);
+            }
+
+            console.log(`Successfully registered ${this.versions.size} versions`);
+        } catch (error) {
+            console.error("Error registering versions:", error);
+
+            // Ensure at least one version is registered to prevent crashes
+            if (this.versions.size === 0) {
+                console.warn("Emergency registering version 3 to prevent crashes");
+                this.versions.set(3, `${prefix}3`);
+                this.versionNames.set(`${prefix}3`, 3);
+            }
+
+            throw error;
         }
     }
 

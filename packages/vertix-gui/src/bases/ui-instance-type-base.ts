@@ -12,11 +12,11 @@ export class UIInstanceTypeBase extends UIBase {
     }
 
     public static getInstanceType(): UIInstancesTypes {
-        throw new ForceMethodImplementation( this, this.getInstanceType.name );
+        throw new ForceMethodImplementation(this, this.getInstanceType.name);
     }
 
     public static getType(): UIType {
-        throw new ForceMethodImplementation( this, this.getType.name );
+        throw new ForceMethodImplementation(this, this.getType.name);
     }
 
     public static isStatic(): boolean {
@@ -28,10 +28,10 @@ export class UIInstanceTypeBase extends UIBase {
     }
 
     public isStatic(): boolean {
-        return ( this.constructor as typeof UIInstanceTypeBase ).isStatic();
+        return (this.constructor as typeof UIInstanceTypeBase).isStatic();
     }
 
     public isDynamic(): boolean {
-        return ( this.constructor as typeof UIInstanceTypeBase ).isDynamic();
+        return (this.constructor as typeof UIInstanceTypeBase).isDynamic();
     }
 }

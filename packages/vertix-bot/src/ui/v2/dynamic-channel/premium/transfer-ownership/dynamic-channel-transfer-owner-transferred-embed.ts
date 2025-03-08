@@ -25,6 +25,6 @@ export class DynamicChannelTransferOwnerTransferredEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return"You are no longer the owner of this channel.";
+        return "You are no longer the owner of this channel.";
     }
 }

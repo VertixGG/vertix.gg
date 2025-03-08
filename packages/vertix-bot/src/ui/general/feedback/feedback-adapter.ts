@@ -50,64 +50,69 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         return true;
     }
 
-    private async onReportModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
-        await this.informCollector( interaction, "issue" );
+    private async onReportModalSubmitted(interaction: ModalSubmitInteraction<"cached">) {
+        await this.informCollector(interaction, "issue");
 
-        await interaction.reply( {
-            content: "Thank you for your report. We appreciate your feedback and are committed to resolving the issue as quickly as possible.\nFor updates and further information, please visit our community server.\n",
-            ephemeral: true,
-        } );
+        await interaction.reply({
+            content:
+                "Thank you for your report. We appreciate your feedback and are committed to resolving the issue as quickly as possible.\nFor updates and further information, please visit our community server.\n",
+            ephemeral: true
+        });
     }
 
-    private async onSuggestionModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
-        await this.informCollector( interaction, "suggestion" );
+    private async onSuggestionModalSubmitted(interaction: ModalSubmitInteraction<"cached">) {
+        await this.informCollector(interaction, "suggestion");
 
-        await interaction.reply( {
-            content: "Thank you for your suggestion! We greatly appreciate your input and value your ideas.\nYour feedback helps us improve and enhance our services.\nWe will carefully consider your suggestion and take it into account for future updates.\nThank you for being a valuable member of our community!",
-            ephemeral: true,
-        } );
+        await interaction.reply({
+            content:
+                "Thank you for your suggestion! We greatly appreciate your input and value your ideas.\nYour feedback helps us improve and enhance our services.\nWe will carefully consider your suggestion and take it into account for future updates.\nThank you for being a valuable member of our community!",
+            ephemeral: true
+        });
     }
 
-    private async onInviteDeveloperModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
-        const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
+    private async onInviteDeveloperModalSubmitted(interaction: ModalSubmitInteraction<"cached">) {
+        const dmService = ServiceLocator.$.get<DirectMessageService>("VertixBot/Services/DirectMessage");
 
         const inviteLink = interaction.fields.getTextInputValue(
-        this.customIdStrategy.generateId( "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputUrl" )
+            this.customIdStrategy.generateId(
+                "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputUrl"
+            )
         );
 
         const tagName = interaction.user.tag,
             guildName = interaction.guild?.name ?? "DM";
 
-        await dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
-            content: `Name: **${ tagName }**\n` +
-                `GuildOrDM: **${ guildName }**\n` +
-                `Invite link: ${ inviteLink }`
-        } );
+        await dmService.sendToUser(VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
+            content: `Name: **${tagName}**\n` + `GuildOrDM: **${guildName}**\n` + `Invite link: ${inviteLink}`
+        });
 
-        await interaction.reply( {
-            content: "Thank you for your invitation! We will contact you as soon as possible.",
-        } );
+        await interaction.reply({
+            content: "Thank you for your invitation! We will contact you as soon as possible."
+        });
     }
 
-    private async informCollector( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
-        const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
+    private async informCollector(interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion") {
+        const dmService = ServiceLocator.$.get<DirectMessageService>("VertixBot/Services/DirectMessage");
 
-        const feedbackInputTitleId = this.customIdStrategy
-                .generateId( "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputTitle" ),
-            feedbackInputDescriptionId = this.customIdStrategy
-                .generateId( "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputDescription" );
+        const feedbackInputTitleId = this.customIdStrategy.generateId(
+                "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputTitle"
+            ),
+            feedbackInputDescriptionId = this.customIdStrategy.generateId(
+                "VertixBot/UI-General/FeedbackAdapter:VertixBot/UI-General/FeedbackInputDescription"
+            );
 
         const tagName = interaction.user.tag,
-            title = interaction.fields.getTextInputValue( feedbackInputTitleId ),
-            description = interaction.fields.getTextInputValue( feedbackInputDescriptionId ),
+            title = interaction.fields.getTextInputValue(feedbackInputTitleId),
+            description = interaction.fields.getTextInputValue(feedbackInputDescriptionId),
             guildName = interaction.guild?.name ?? "DM";
 
-        await dmService.sendToUser( VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
-            content: `Type: **${ type }**\n` +
-                `Name: **${ tagName }**\n` +
-                `GuildOrDM: **${ guildName }**\n` +
-                `Title: **${ title }**\n` +
-                `Description: ${ description }`
-        } );
+        await dmService.sendToUser(VERTIX_DEFAULT_SURVEY_COLLECTOR_ID, {
+            content:
+                `Type: **${type}**\n` +
+                `Name: **${tagName}**\n` +
+                `GuildOrDM: **${guildName}**\n` +
+                `Title: **${title}**\n` +
+                `Description: ${description}`
+        });
     }
 }

@@ -2,9 +2,7 @@ import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-type
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    DynamicChannelElementsGroup
-} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import type { APISelectMenuOption } from "discord.js";
 
@@ -27,29 +25,25 @@ export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectM
         return 1;
     }
 
-    protected async getSelectOptions( showUsed?: boolean ) {
+    protected async getSelectOptions(showUsed?: boolean) {
         const values = showUsed ? await this.getUsedItems() : await this.getUnusedItems();
 
-        return values.sort( ( a, b ) =>
-            parseInt( a.value ) - parseInt( b.value )
-        );
+        return values.sort((a, b) => parseInt(a.value) - parseInt(b.value));
     }
 
     private async getUsedItems() {
         const values: APISelectMenuOption[] = [];
 
-        for ( const itemId of ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ) ) {
-            const hardItem = allItems.find( (
-                i ) => i.getId() === itemId
-            );
+        for (const itemId of this.uiArgs?.dynamicChannelButtonsTemplate || []) {
+            const hardItem = allItems.find((i) => i.getId() === itemId);
 
-            if ( hardItem ) {
-                values.push( {
+            if (hardItem) {
+                values.push({
                     label: await hardItem.getLabelForMenu(),
-                    emoji: await hardItem.getEmoji() as any,
+                    emoji: (await hardItem.getEmoji()) as any,
                     value: hardItem.getId().toString(),
-                    default: false,
-                } );
+                    default: false
+                });
             }
         }
 
@@ -59,18 +53,17 @@ export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectM
     private async getUnusedItems() {
         const values: APISelectMenuOption[] = [];
 
-        for ( const item of allItems ) {
-            if ( ! this.uiArgs?.dynamicChannelButtonsTemplate.includes( item.getId() ) ) {
-                values.push( {
+        for (const item of allItems) {
+            if (!this.uiArgs?.dynamicChannelButtonsTemplate.includes(item.getId())) {
+                values.push({
                     label: await item.getLabelForMenu(),
-                    emoji: await item.getEmoji() as any,
+                    emoji: (await item.getEmoji()) as any,
                     value: item.getId().toString(),
-                    default: false,
-                } );
+                    default: false
+                });
             }
         }
 
         return values;
     }
 }
-

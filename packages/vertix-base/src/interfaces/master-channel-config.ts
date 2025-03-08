@@ -26,14 +26,14 @@ export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstant
     dynamicChannelPrimaryMessageDescription: string;
 }
 
-export interface MasterChannelConfigInterface extends ConfigBaseInterface<{
-    constants: MasterChannelConstantsInterface,
-    settings: MasterChannelSettingsInterface,
-}> {
-}
+export interface MasterChannelConfigInterface
+    extends ConfigBaseInterface<{
+        constants: MasterChannelConstantsInterface;
+        settings: MasterChannelSettingsInterface;
+    }> {}
 
-export interface MasterChannelConfigInterfaceV3 extends ConfigBaseInterface<{
-    constants: MasterChannelConstantsInterfaceV3,
-    settings: MasterChannelSettingsInterface,
-}> {
-}
+export interface MasterChannelConfigInterfaceV3
+    extends ConfigBaseInterface<{
+        constants: MasterChannelConstantsInterfaceV3;
+        settings: MasterChannelSettingsInterface;
+    }> {}

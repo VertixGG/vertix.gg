@@ -1,15 +1,9 @@
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
-import {
-    SetupEditButtonsEffectImmediatelyButton
-} from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
-import {
-    SetupEditButtonsEffectNewlyButton
-} from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
+import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
+import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 
-import {
-    ChannelButtonsTemplateSelectMenu
-} from "@vertix.gg/bot/src/ui/v2/channel-buttons-template/channel-buttons-template-select-menu";
+import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v2/channel-buttons-template/channel-buttons-template-select-menu";
 
 export class SetupEditButtonsEffectElementsGroup extends UIElementsGroupBase {
     public static getName() {
@@ -18,8 +12,8 @@ export class SetupEditButtonsEffectElementsGroup extends UIElementsGroupBase {
 
     public static getItems() {
         return [
-            [ ChannelButtonsTemplateSelectMenu ],
-            [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ],
+            [ChannelButtonsTemplateSelectMenu],
+            [SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton]
         ];
     }
 }

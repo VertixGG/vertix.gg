@@ -26,13 +26,15 @@ export class SetupStep3Embed extends VerifiedRolesEmbed {
     }
 
     protected getDescription() {
-        return "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
+        return (
+            "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
             "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
             "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
-
             "**_🛡️ Verified Roles_**\n\n" +
-            "> " + super.getDescription() + "\n\n" +
-
-            "You can keep the default settings by pressing **( `✓ Finish` )** button.";
+            "> " +
+            super.getDescription() +
+            "\n\n" +
+            "You can keep the default settings by pressing **( `✓ Finish` )** button."
+        );
     }
 }

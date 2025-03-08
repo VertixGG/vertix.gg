@@ -16,15 +16,11 @@ export class DynamicChannelPrivacyComponent extends UIComponentBase {
     }
 
     public static getEmbedsGroups() {
-        return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPrivacyEmbed ),
-        ];
+        return [UIEmbedsGroupBase.createSingleGroup(DynamicChannelPrivacyEmbed)];
     }
 
     public static getElementsGroups() {
-        return [
-            UIElementsGroupBase.createSingleGroup( DynamicChannelPrivacySelectMenu )
-        ];
+        return [UIElementsGroupBase.createSingleGroup(DynamicChannelPrivacySelectMenu)];
     }
 
     public static getDefaultEmbedsGroup() {

@@ -17,7 +17,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class LanguageEmbed extends UIEmbedBase {
     private static vars = {
-        currentLanguage: uiUtilsWrapAsTemplate( "currentLanguage" )
+        currentLanguage: uiUtilsWrapAsTemplate("currentLanguage")
     };
 
     public static getName() {
@@ -41,31 +41,33 @@ export class LanguageEmbed extends UIEmbedBase {
     }
 
     protected getDescription(): string {
-        return `__Current Selected Language__: **${ LanguageEmbed.vars.currentLanguage }**\n\n` +
+        return (
+            `__Current Selected Language__: **${LanguageEmbed.vars.currentLanguage}**\n\n` +
             "Didn't find your language?\n\n" +
             "You can be the one to translate bot to your language!\n" +
             "contact us at our support server, and be the one!\n\n" +
-            "Found mistake in translation? Please let us know!";
+            "Found mistake in translation? Please let us know!"
+        );
     }
 
     protected getOptions() {
         const initialAttrs = UI_LANGUAGES_INITIAL_ATTRIBUTES,
-            result: { currentLanguage: { [ code: string ]: string } } = {
+            result: { currentLanguage: { [code: string]: string } } = {
                 currentLanguage: {
-                    [ initialAttrs.code ]: initialAttrs.name
+                    [initialAttrs.code]: initialAttrs.name
                 }
             };
 
-        UILanguageManager.$.getAvailableLanguages().forEach( ( { code, name } ) => {
-            result.currentLanguage[ code ] = name;
-        } );
+        UILanguageManager.$.getAvailableLanguages().forEach(({ code, name }) => {
+            result.currentLanguage[code] = name;
+        });
 
         return result;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
-            currentLanguage: args?._language || UI_LANGUAGES_INITIAL_CODE,
+            currentLanguage: args?._language || UI_LANGUAGES_INITIAL_CODE
         };
     }
 }

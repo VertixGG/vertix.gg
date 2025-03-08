@@ -11,8 +11,8 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
  */
 export class ClaimResultVoteUpdatedEmbed extends UIEmbedBase {
     private static vars = {
-        prevUserId: uiUtilsWrapAsTemplate( "prevUserId" ),
-        currentUserId: uiUtilsWrapAsTemplate( "currentUserId" ),
+        prevUserId: uiUtilsWrapAsTemplate("prevUserId"),
+        currentUserId: uiUtilsWrapAsTemplate("currentUserId")
     };
 
     public static getName() {
@@ -30,13 +30,13 @@ export class ClaimResultVoteUpdatedEmbed extends UIEmbedBase {
     protected getDescription() {
         const { prevUserId, currentUserId } = ClaimResultVoteUpdatedEmbed.vars;
 
-        return `You've just changed your vote from <@${ prevUserId }> to <@${ currentUserId }> for channel ownership.`;
+        return `You've just changed your vote from <@${prevUserId}> to <@${currentUserId}> for channel ownership.`;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
             prevUserId: args.prevUserId,
-            currentUserId: args.currentUserId,
+            currentUserId: args.currentUserId
         };
     }
 }

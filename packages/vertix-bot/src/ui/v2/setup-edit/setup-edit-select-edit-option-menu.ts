@@ -24,18 +24,22 @@ export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
     }
 
     protected async getSelectOptions() {
-        return [{
-            label: "∙ Edit Channel's Name",
-            value: "edit-dynamic-channel-name",
-            emoji: "#️⃣" as any,
-        }, {
-            label: "∙ Edit Channel's Buttons",
-            value: "edit-dynamic-channel-buttons",
-            emoji: "🎚" as any,
-        }, {
-            label: "∙ Edit Channel's Verified Roles",
-            value: "edit-dynamic-channel-verified-roles",
-            emoji: "🛡️" as any,
-        }];
+        return [
+            {
+                label: "∙ Edit Channel's Name",
+                value: "edit-dynamic-channel-name",
+                emoji: "#️⃣" as any
+            },
+            {
+                label: "∙ Edit Channel's Buttons",
+                value: "edit-dynamic-channel-buttons",
+                emoji: "🎚" as any
+            },
+            {
+                label: "∙ Edit Channel's Verified Roles",
+                value: "edit-dynamic-channel-verified-roles",
+                emoji: "🛡️" as any
+            }
+        ];
     }
 }

@@ -24,22 +24,16 @@ export class FeedbackComponent extends UIComponentBase {
 
     public static getElements() {
         return [
-            [ FeedbackReportButton, FeedbackSuggestionButton, WelcomeSupportButton ],
-            [ FeedbackInviteDeveloperButton ]
+            [FeedbackReportButton, FeedbackSuggestionButton, WelcomeSupportButton],
+            [FeedbackInviteDeveloperButton]
         ];
     }
 
     public static getEmbeds() {
-        return [
-            FeedbackEmbed,
-        ];
+        return [FeedbackEmbed];
     }
 
     public static getModals() {
-        return [
-            FeedbackModal,
-            FeedbackReportModal,
-            FeedbackInviteDeveloperModal,
-        ];
+        return [FeedbackModal, FeedbackReportModal, FeedbackInviteDeveloperModal];
     }
 }

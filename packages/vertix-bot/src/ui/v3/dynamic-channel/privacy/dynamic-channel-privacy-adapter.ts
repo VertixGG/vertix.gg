@@ -13,9 +13,7 @@ import type {
 
 import type { Message, VoiceChannel } from "discord.js";
 
-type DefaultInteraction =
-    | UIDefaultUserSelectMenuChannelVoiceInteraction
-    | UIDefaultButtonChannelVoiceInteraction
+type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
     public static getName() {
@@ -28,42 +26,42 @@ export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPe
 
     protected static getInitiatorElement() {
         return DynamicChannelPrivacyButton;
-    };
+    }
 
     protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        return this.getArgs( interaction.channel );
+    protected async getReplyArgs(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        return this.getArgs(interaction.channel);
     }
 
-    protected async getEditMessageArgs( message?: Message<true> ) {
-        return message ? this.getArgs( message.channel as VoiceChannel ) : {};
+    protected async getEditMessageArgs(message?: Message<true>) {
+        return message ? this.getArgs(message.channel as VoiceChannel) : {};
     }
 
     protected onEntityMap() {
-        this.bindSelectMenu( "Vertix/UI-V3/DynamicChannelPrivacyMenu", this.onPrivacyMenuSelected );
+        this.bindSelectMenu("Vertix/UI-V3/DynamicChannelPrivacyMenu", this.onPrivacyMenuSelected);
     }
 
-    protected async onPrivacyMenuSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        const state = interaction.values[ 0 ];
+    protected async onPrivacyMenuSelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
+        const state = interaction.values[0];
 
         await this.dynamicChannelService.editChannelPrivacyState(
             interaction,
             interaction.channel,
-            state as "public" | "private" | "hidden",
+            state as "public" | "private" | "hidden"
         );
 
-        await this.editReply( interaction );
+        await this.editReply(interaction);
     }
 
-    private async getArgs( channel: VoiceChannel ) {
+    private async getArgs(channel: VoiceChannel) {
         const args: UIArgs = {};
 
-        await this.assignUsersWithPermissions( channel, args );
+        await this.assignUsersWithPermissions(channel, args);
 
-        args.state = await this.dynamicChannelService.getChannelPrivacyState( channel );
+        args.state = await this.dynamicChannelService.getChannelPrivacyState(channel);
 
         return args;
     }

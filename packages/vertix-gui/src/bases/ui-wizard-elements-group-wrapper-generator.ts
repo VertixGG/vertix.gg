@@ -8,11 +8,11 @@ import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types
 
 interface TUIWizardElementsGroupWrapperGeneratorArgs {
     componentName: string;
-    componentElements: UIElementsTypes | UIElementsConstructor,
+    componentElements: UIElementsTypes | UIElementsConstructor;
 
-    components: typeof UIComponentBase[];
+    components: (typeof UIComponentBase)[];
 
-    controlButtons: (new() => UIElementButtonBase)[]
+    controlButtons: (new () => UIElementButtonBase)[];
 
     UIElementsGroupBaseClass: typeof UIElementsGroupBase;
     UIElementsGroupExtendClass?: typeof UIElementsGroupBase;
@@ -44,14 +44,14 @@ interface TUIWizardElementsGroupWrapperGeneratorArgs {
  *
  * The outer function wraps up by returning this mapped array of improved components, now made suitable for UI usage.
  */
-export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGroupWrapperGeneratorArgs ) {
+export function UIWizardElementsGroupWrapperGenerator(args: TUIWizardElementsGroupWrapperGeneratorArgs) {
     const {
         componentName,
         componentElements,
         components,
         controlButtons,
         UIElementsGroupBaseClass,
-        UIElementsGroupExtendClass,
+        UIElementsGroupExtendClass
     } = args;
 
     abstract class UIWizardElementsGroupWrapperBase extends UIElementsGroupBaseClass {
@@ -61,23 +61,24 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
         }
 
         protected static getComponent(): typeof UIComponentBase {
-            throw new ForceMethodImplementation( this, this.getComponent.name );
+            throw new ForceMethodImplementation(this, this.getComponent.name);
         }
 
-        public static getItems( args: UIArgs ) { // For one modal submit it called so many times.
+        public static getItems(args: UIArgs) {
+            // For one modal submit it called so many times.
             const currentElements: any[][] = [];
 
             // TODO: Fix this, this is code should not be here.
-            if ( Array.isArray( componentElements[ 0 ] ) ) {
-                componentElements.forEach( ( row ) => {
-                    currentElements.push( row as any );
-                } );
+            if (Array.isArray(componentElements[0])) {
+                componentElements.forEach((row) => {
+                    currentElements.push(row as any);
+                });
             } else {
-                currentElements.push( [ componentElements ] as any );
+                currentElements.push([componentElements] as any);
             }
 
-            if ( args ) {
-                const currentIndex = components.findIndex( ( i ) => i.getName() === args._step );
+            if (args) {
+                const currentIndex = components.findIndex((i) => i.getName() === args._step);
 
                 // TODO: It should not work like this, shallow copy should be enough.
                 args._wizardIsBackButtonDisabled = false;
@@ -86,34 +87,34 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
                 args._wizardIsNextButtonAvailable = false;
                 args._wizardIsFinishButtonAvailable = false;
 
-                if ( 0 === currentIndex || currentIndex === -1 ) {
+                if (0 === currentIndex || currentIndex === -1) {
                     args._wizardIsBackButtonDisabled = true;
-                } else if ( currentIndex === components.length - 1 ) {
+                } else if (currentIndex === components.length - 1) {
                     args._wizardIsNextButtonDisabled = true;
                 }
 
-                if ( currentIndex !== components.length - 1 ) {
+                if (currentIndex !== components.length - 1) {
                     args._wizardIsNextButtonAvailable = true;
                 } else {
                     args._wizardIsFinishButtonAvailable = true;
                 }
 
-                if ( args._wizardShouldDisableFinishButton ) {
+                if (args._wizardShouldDisableFinishButton) {
                     args._wizardIsFinishButtonDisabled = true;
                 }
             }
 
-            currentElements.push( [ ... controlButtons ] );
+            currentElements.push([...controlButtons]);
 
             return currentElements;
         }
     }
 
-    if ( UIElementsGroupExtendClass ) {
-        Object.setPrototypeOf(UIElementsGroupExtendClass, UIWizardElementsGroupWrapperBase );
+    if (UIElementsGroupExtendClass) {
+        Object.setPrototypeOf(UIElementsGroupExtendClass, UIWizardElementsGroupWrapperBase);
 
         return UIElementsGroupExtendClass;
     }
 
     return UIWizardElementsGroupWrapperBase;
-};
+}

@@ -15,11 +15,11 @@ export class DynamicChannelPermissionsAccessElementsGroup extends UIElementsGrou
 
     public static getItems() {
         return [
-            [ DynamicChannelPermissionsGrantMenu ],
-            [ DynamicChannelPermissionsDenyMenu ],
-            [ DynamicChannelPermissionsBlockMenu ],
-            [ DynamicChannelPermissionsUnblockMenu ],
-            [ DynamicChannelPermissionsKickMenu ],
+            [DynamicChannelPermissionsGrantMenu],
+            [DynamicChannelPermissionsDenyMenu],
+            [DynamicChannelPermissionsBlockMenu],
+            [DynamicChannelPermissionsUnblockMenu],
+            [DynamicChannelPermissionsKickMenu]
         ];
     }
 }

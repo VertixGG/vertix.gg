@@ -22,16 +22,14 @@ export class DynamicChannelMetaLimitComponent extends UIComponentBase {
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaLimitSuccessEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaLimitInvalidInputEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelMetaLimitSuccessEmbed),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelMetaLimitInvalidInputEmbed),
+            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
         ];
     }
 
     public static getModals() {
-        return [
-            DynamicChannelMetaLimitModal
-        ];
+        return [DynamicChannelMetaLimitModal];
     }
 
     public static getDefaultEmbedsGroup() {

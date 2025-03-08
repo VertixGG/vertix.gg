@@ -7,7 +7,10 @@ import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 
 import type { VoiceChannel } from "discord.js";
 
-import type { UIAdapterReplyContext, UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type {
+    UIAdapterReplyContext,
+    UIDefaultButtonChannelVoiceInteraction
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
@@ -21,24 +24,22 @@ export abstract class DynamicChannelAdapterWizardBase<
         return "Vertix/UI-V3/DynamicChannelAdapterWizardBase";
     }
 
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
+    public constructor(options: TAdapterRegisterOptions) {
+        super(options);
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get("VertixBot/Services/DynamicChannel");
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice,
-        ];
+        return [ChannelType.GuildVoice];
     }
 
     public getPermissions() {
-        return new PermissionsBitField( 0n );
+        return new PermissionsBitField(0n);
     }
 
-    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
-        return await dynamicChannelRequirements( interaction );
+    public async isPassingInteractionRequirementsInternal(interaction: TInteraction) {
+        return await dynamicChannelRequirements(interaction);
     }
 
     protected readonly shouldDeletePreviousReply = () => {

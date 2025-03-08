@@ -8,11 +8,11 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class MissingPermissionsEmbed extends UIEmbedBase {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+        separator: uiUtilsWrapAsTemplate("separator"),
+        value: uiUtilsWrapAsTemplate("value"),
 
-        omitterDisplayName: uiUtilsWrapAsTemplate( "omitterDisplayName" ),
-        missingPermissions: uiUtilsWrapAsTemplate( "missingPermissions" ),
+        omitterDisplayName: uiUtilsWrapAsTemplate("omitterDisplayName"),
+        missingPermissions: uiUtilsWrapAsTemplate("missingPermissions")
     };
 
     public static getName() {
@@ -28,17 +28,16 @@ export class MissingPermissionsEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        const {
-            omitterDisplayName,
-            missingPermissions,
-        }  = MissingPermissionsEmbed.vars;
+        const { omitterDisplayName, missingPermissions } = MissingPermissionsEmbed.vars;
 
-        return `Some permissions are required to proceed, **${ omitterDisplayName }** is missing the following permissions:\n\n` +
-            missingPermissions;
+        return (
+            `Some permissions are required to proceed, **${omitterDisplayName}** is missing the following permissions:\n\n` +
+            missingPermissions
+        );
     }
 
     protected getColor() {
-        return 0xE2AD2D; // As emoji.
+        return 0xe2ad2d; // As emoji.
     }
 
     protected getArrayOptions() {
@@ -46,16 +45,18 @@ export class MissingPermissionsEmbed extends UIEmbedBase {
 
         return {
             missingPermissions: {
-                format: `- ${ value }${ separator }`,
-                separator: "\n",
+                format: `- ${value}${separator}`,
+                separator: "\n"
             }
         };
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
             omitterDisplayName: args.omitterDisplayName,
-            missingPermissions: args.missingPermissions.map( ( permission: string ) => permission.split(/(?=[A-Z])/).join(" ") ),
+            missingPermissions: args.missingPermissions.map((permission: string) =>
+                permission.split(/(?=[A-Z])/).join(" ")
+            )
         };
     }
 }

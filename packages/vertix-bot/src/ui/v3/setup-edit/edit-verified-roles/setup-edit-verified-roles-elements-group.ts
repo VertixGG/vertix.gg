@@ -13,17 +13,10 @@ export class SetupEditVerifiedRolesElementsGroup extends UIElementsGroupBase {
     }
 
     public static getItems() {
-        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService");
 
-        const {
-            WizardBackButton,
-            WizardFinishButton,
-        } = uiService.$$.getSystemElements();
+        const { WizardBackButton, WizardFinishButton } = uiService.$$.getSystemElements();
 
-        return [
-            [ VerifiedRolesMenu ],
-            [ VerifiedRolesEveryoneSelectMenu ],
-            [ WizardBackButton!, WizardFinishButton! ],
-        ];
+        return [[VerifiedRolesMenu], [VerifiedRolesEveryoneSelectMenu], [WizardBackButton!, WizardFinishButton!]];
     }
 }

@@ -7,6 +7,6 @@ export abstract class DynamicChannelEmbedBase extends UIEmbedBase {
     };
 
     protected readonly getColor = () => {
-        return 0x4B6F91;
+        return 0x4b6f91;
     };
 }

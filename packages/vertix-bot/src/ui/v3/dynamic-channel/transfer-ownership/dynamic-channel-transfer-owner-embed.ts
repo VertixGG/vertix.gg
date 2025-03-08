@@ -25,7 +25,9 @@ export class DynamicChannelTransferOwnerEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return "Transfer channel ownership to another user.\n\n" +
-            "Select the user to whom you want to transfer the channel.";
+        return (
+            "Transfer channel ownership to another user.\n\n" +
+            "Select the user to whom you want to transfer the channel."
+        );
     }
 }

@@ -7,7 +7,7 @@ export class EventBusMock extends EventBus {
     }
 
     public static get $() {
-        if ( ! this.instance ) {
+        if (!this.instance) {
             this.instance = new this();
         }
 
@@ -15,6 +15,6 @@ export class EventBusMock extends EventBus {
     }
 
     public static mockOrigin() {
-        jest.spyOn( EventBusMock, "$", "get" ).mockImplementation( () => this.$ );
+        jest.spyOn(EventBusMock, "$", "get").mockImplementation(() => this.$);
     }
 }

@@ -14,7 +14,7 @@ export class FeedbackInviteDeveloperButton extends UIElementButtonBase {
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "primary" );
+        return Promise.resolve("primary");
     }
 
     protected async getLabel() {

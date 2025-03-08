@@ -17,20 +17,14 @@ export class DynamicChannelPrimaryMessageEditTitleComponent extends UIComponentB
     }
 
     public static getElements() {
-        return [
-            [ DynamicChannelPrimaryMessageEditTitleButton ],
-        ];
+        return [[DynamicChannelPrimaryMessageEditTitleButton]];
     }
 
     public static getEmbeds() {
-        return [
-            DynamicChannelPrimaryMessageEditTitleEmbed,
-        ];
+        return [DynamicChannelPrimaryMessageEditTitleEmbed];
     }
 
     public static getModals() {
-        return [
-            DynamicChannelPrimaryMessageEditTitleModal,
-        ];
+        return [DynamicChannelPrimaryMessageEditTitleModal];
     }
 }

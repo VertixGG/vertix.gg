@@ -12,11 +12,13 @@ export class ChannelButtonsTemplateAddSelectMenu extends ChannelButtonsTemplateS
     }
 
     protected async getSelectOptions() {
-        return super.getSelectOptions( false );
+        return super.getSelectOptions(false);
     }
 
     protected async isAvailable(): Promise<boolean> {
-        return Object.keys( this.uiArgs?.dynamicChannelButtonsTemplate || {} ).length
-            !== DynamicChannelPrimaryMessageElementsGroup.getAll().length;
+        return (
+            Object.keys(this.uiArgs?.dynamicChannelButtonsTemplate || {}).length !==
+            DynamicChannelPrimaryMessageElementsGroup.getAll().length
+        );
     }
 }

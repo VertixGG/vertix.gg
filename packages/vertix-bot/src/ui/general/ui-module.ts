@@ -14,19 +14,12 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getAdapters() {
-        return [
-            FeedbackAdapter,
-            LanguageAdapter,
-            SetupAdapter,
-            WelcomeAdapter,
-            NotYourChannelAdapter
-        ];
+        return [FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter];
     }
 
     protected getCustomIdStrategy() {
         return new UICustomIdPlainStrategy();
     }
-
 }
 
 export default UIModuleGeneral;

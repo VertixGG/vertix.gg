@@ -17,16 +17,10 @@ export class SetupStep3Component extends UIComponentBase {
     }
 
     public static getElements() {
-        return [
-            [ VerifiedRolesMenu ],
-            [ VerifiedRolesEveryoneSelectMenu ],
-        ];
+        return [[VerifiedRolesMenu], [VerifiedRolesEveryoneSelectMenu]];
     }
 
     public static getEmbeds() {
-        return [
-            SetupStep3Embed,
-        ];
+        return [SetupStep3Embed];
     }
-
 }

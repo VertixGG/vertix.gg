@@ -10,35 +10,35 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     private static vars: any = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+        separator: uiUtilsWrapAsTemplate("separator"),
+        value: uiUtilsWrapAsTemplate("value"),
 
-        on: uiUtilsWrapAsTemplate( "on" ),
-        off: uiUtilsWrapAsTemplate( "off" ),
+        on: uiUtilsWrapAsTemplate("on"),
+        off: uiUtilsWrapAsTemplate("off"),
 
-        index: uiUtilsWrapAsTemplate( "index" ),
-        masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
+        index: uiUtilsWrapAsTemplate("index"),
+        masterChannelId: uiUtilsWrapAsTemplate("masterChannelId"),
 
-        configUserMention: uiUtilsWrapAsTemplate( "configUserMention" ),
-        configUserMentionEnabled: uiUtilsWrapAsTemplate( "configUserMentionEnabled" ),
-        configUserMentionDisabled: uiUtilsWrapAsTemplate( "configUserMentionDisabled" ),
+        configUserMention: uiUtilsWrapAsTemplate("configUserMention"),
+        configUserMentionEnabled: uiUtilsWrapAsTemplate("configUserMentionEnabled"),
+        configUserMentionDisabled: uiUtilsWrapAsTemplate("configUserMentionDisabled"),
 
-        configAutoSave: uiUtilsWrapAsTemplate( "configAutoSave" ),
-        configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
-        configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
+        configAutoSave: uiUtilsWrapAsTemplate("configAutoSave"),
+        configAutoSaveEnabled: uiUtilsWrapAsTemplate("configAutoSaveEnabled"),
+        configAutoSaveDisabled: uiUtilsWrapAsTemplate("configAutoSaveDisabled"),
 
-        configLogs: uiUtilsWrapAsTemplate( "configLogs" ),
-        configLogsEnabled: uiUtilsWrapAsTemplate( "configLogsEnabled" ),
-        configLogsDisabled: uiUtilsWrapAsTemplate( "configLogsDisabled" ),
+        configLogs: uiUtilsWrapAsTemplate("configLogs"),
+        configLogsEnabled: uiUtilsWrapAsTemplate("configLogsEnabled"),
+        configLogsDisabled: uiUtilsWrapAsTemplate("configLogsDisabled"),
 
-        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
-        dynamicChannelLogsChannelId: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelId" ),
+        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate("dynamicChannelNameTemplate"),
+        dynamicChannelLogsChannelId: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelId"),
 
-        dynamicChannelLogsChannelDefault: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDefault" ),
-        dynamicChannelLogsChannelSelected: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelSelected" ),
-        dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
+        dynamicChannelLogsChannelDefault: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelDefault"),
+        dynamicChannelLogsChannelSelected: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelSelected"),
+        dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelDisplay"),
 
-        verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+        verifiedRoles: uiUtilsWrapAsTemplate("verifiedRoles")
     };
 
     public static getName() {
@@ -58,28 +58,35 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     }
 
     protected getTitle() {
-        return `🔧  Configure Master Channel #${ SetupEditEmbed.vars.index }`;
+        return `🔧  Configure Master Channel #${SetupEditEmbed.vars.index}`;
     }
 
     protected getDescription() {
-        return "Configure master channel according to your preferences.\n\n" +
-
+        return (
+            "Configure master channel according to your preferences.\n\n" +
             "**_🎛️ General_**\n\n" +
-            `➤ ∙ Name: <#${ SetupEditEmbed.vars.masterChannelId }>\n` +
-            `➤ ∙ Channel ID: \`${ SetupEditEmbed.vars.masterChannelId }\`\n` +
-            `➤ ∙ Dynamic Channels Name: \`${ SetupEditEmbed.vars.dynamicChannelNameTemplate }\`\n` +
-            `➤ ∙ Logs Channel: ${ SetupEditEmbed.vars.dynamicChannelLogsChannelDisplay }\n\n` +
-
+            `➤ ∙ Name: <#${SetupEditEmbed.vars.masterChannelId}>\n` +
+            `➤ ∙ Channel ID: \`${SetupEditEmbed.vars.masterChannelId}\`\n` +
+            `➤ ∙ Dynamic Channels Name: \`${SetupEditEmbed.vars.dynamicChannelNameTemplate}\`\n` +
+            `➤ ∙ Logs Channel: ${SetupEditEmbed.vars.dynamicChannelLogsChannelDisplay}\n\n` +
             "**_🎚 Buttons Interface_**\n\n" +
-            super.getDescription() + "\n\n" +
-
+            super.getDescription() +
+            "\n\n" +
             "**_🛡️ Verified Roles_**\n\n" +
-            "▹ " + SetupEditEmbed.vars.verifiedRoles + "\n\n" +
-
+            "▹ " +
+            SetupEditEmbed.vars.verifiedRoles +
+            "\n\n" +
             "**_⚙️ Configuration_**\n\n" +
-            "@ ∙ Mention user in primary message: " + SetupEditEmbed.vars.configUserMention + "\n" +
-            "⫸ ∙ Auto save dynamic channels: " + SetupEditEmbed.vars.configAutoSave + "\n" +
-            "❯❯ ∙ Send logs to custom channel: " + SetupEditEmbed.vars.configLogs + "\n\n";
+            "@ ∙ Mention user in primary message: " +
+            SetupEditEmbed.vars.configUserMention +
+            "\n" +
+            "⫸ ∙ Auto save dynamic channels: " +
+            SetupEditEmbed.vars.configAutoSave +
+            "\n" +
+            "❯❯ ∙ Send logs to custom channel: " +
+            SetupEditEmbed.vars.configLogs +
+            "\n\n"
+        );
     }
 
     protected getFooter() {
@@ -103,47 +110,47 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             configAutoSaveDisabled,
 
             configLogsEnabled,
-            configLogsDisabled,
+            configLogsDisabled
         } = SetupEditEmbed.vars;
 
         return {
-            "on": "\`🟢∙On`",
-            "off": "\`🔴∙Off`",
+            on: "\`🟢∙On`",
+            off: "\`🔴∙Off`",
 
             dynamicChannelLogsChannelDisplay: {
-                [ dynamicChannelLogsChannelDefault ]: "**None**",
-                [ dynamicChannelLogsChannelSelected ]: `<#${ dynamicChannelLogsChannelId }>`
+                [dynamicChannelLogsChannelDefault]: "**None**",
+                [dynamicChannelLogsChannelSelected]: `<#${dynamicChannelLogsChannelId}>`
             },
 
             configUserMention: {
-                [ configUserMentionEnabled ]: on,
-                [ configUserMentionDisabled ]: off,
+                [configUserMentionEnabled]: on,
+                [configUserMentionDisabled]: off
             },
 
             configAutoSave: {
-                [ configAutoSaveEnabled ]: on,
-                [ configAutoSaveDisabled ]: off,
+                [configAutoSaveEnabled]: on,
+                [configAutoSaveDisabled]: off
             },
 
             configLogs: {
-                [ configLogsEnabled ]: on,
-                [ configLogsDisabled ]: off,
+                [configLogsEnabled]: on,
+                [configLogsDisabled]: off
             }
         };
     }
 
     protected getArrayOptions() {
         return {
-            ... super.getArrayOptions(),
+            ...super.getArrayOptions(),
 
             verifiedRoles: {
-                format: `<@&${ SetupEditEmbed.vars.value }>${ SetupEditEmbed.vars.separator }`,
+                format: `<@&${SetupEditEmbed.vars.value}>${SetupEditEmbed.vars.separator}`,
                 separator: ", "
             }
         };
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,
@@ -153,14 +160,22 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
 
             verifiedRoles: args.dynamicChannelVerifiedRoles,
 
-            configUserMention: args.dynamicChannelMentionable ? SetupEditEmbed.vars.configUserMentionEnabled : SetupEditEmbed.vars.configUserMentionDisabled,
-            configAutoSave: args.dynamicChannelAutoSave ? SetupEditEmbed.vars.configAutoSaveEnabled : SetupEditEmbed.vars.configAutoSaveDisabled,
+            configUserMention: args.dynamicChannelMentionable
+                ? SetupEditEmbed.vars.configUserMentionEnabled
+                : SetupEditEmbed.vars.configUserMentionDisabled,
+            configAutoSave: args.dynamicChannelAutoSave
+                ? SetupEditEmbed.vars.configAutoSaveEnabled
+                : SetupEditEmbed.vars.configAutoSaveDisabled,
 
-            configLogs: args.dynamicChannelLogsChannelId ? SetupEditEmbed.vars.configLogsEnabled : SetupEditEmbed.vars.configLogsDisabled,
+            configLogs: args.dynamicChannelLogsChannelId
+                ? SetupEditEmbed.vars.configLogsEnabled
+                : SetupEditEmbed.vars.configLogsDisabled,
 
-            dynamicChannelLogsChannelDisplay: args.dynamicChannelLogsChannelId ? SetupEditEmbed.vars.dynamicChannelLogsChannelSelected : SetupEditEmbed.vars.dynamicChannelLogsChannelDefault,
+            dynamicChannelLogsChannelDisplay: args.dynamicChannelLogsChannelId
+                ? SetupEditEmbed.vars.dynamicChannelLogsChannelSelected
+                : SetupEditEmbed.vars.dynamicChannelLogsChannelDefault,
 
-            ... super.getLogic( args ),
+            ...super.getLogic(args)
         };
     }
 }

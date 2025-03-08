@@ -13,7 +13,7 @@ export class DynamicChannelPrimaryMessageEditTitleButton extends UIElementButton
     }
 
     protected async getLabel() {
-            return "Edit ✏️";
+        return "Edit ✏️";
     }
 
     protected async getStyle(): Promise<UIButtonStyleTypes> {

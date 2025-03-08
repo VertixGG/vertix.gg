@@ -13,19 +13,24 @@ import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfa
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmbedBase, new UIEmbedVars(
-    "title",
+const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
+    DynamicChannelEmbedBase,
+    new UIEmbedVars(
+        "title",
 
-    "titleDisplayDefault",
-    "titleDisplayValue",
-    "titleValue",
+        "titleDisplayDefault",
+        "titleDisplayValue",
+        "titleValue",
 
-    "editPrimaryMessageEmoji",
-) );
+        "editPrimaryMessageEmoji"
+    )
+);
 
 export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEmbedBaseWithVars {
-    private configV3 = ConfigManager.$
-        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+        "Vertix/Config/MasterChannel",
+        VERSION_UI_V3
+    );
 
     public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed";
@@ -36,41 +41,39 @@ export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEm
     }
 
     protected getTitle(): string {
-        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit title of your channel`;
+        return `${this.vars.get("editPrimaryMessageEmoji")}  •  Edit title of your channel`;
     }
 
     protected getDescription(): string {
-        return "\n _Title_:\n `" + this.vars.get( "title" ) + "`\n"
-            + "\n### Do you want to change it?";
+        return "\n _Title_:\n `" + this.vars.get("title") + "`\n" + "\n### Do you want to change it?";
     }
 
     protected getOptions() {
         const vars = this.vars.get();
 
         return {
-            "title": {
-                [ vars.titleDisplayValue ]: vars.titleValue,
-                [ vars.titleDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageTitle,
-            },
+            title: {
+                [vars.titleDisplayValue]: vars.titleValue,
+                [vars.titleDisplayDefault]: this.configV3.data.constants.dynamicChannelPrimaryMessageTitle
+            }
         };
     }
 
-    protected async getLogicAsync( args: UIArgs ) {
-        const result = super.getLogic( args );
+    protected async getLogicAsync(args: UIArgs) {
+        const result = super.getLogic(args);
 
-        const {
-            titleDisplayValue,
-            titleDisplayDefault,
-        } = this.vars.get();
+        const { titleDisplayValue, titleDisplayDefault } = this.vars.get();
 
-        if ( args.title ) {
+        if (args.title) {
             result.titleValue = args.title;
             result.title = titleDisplayValue;
         } else {
             result.title = titleDisplayDefault;
         }
 
-        result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
+        result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(
+            DynamicChannelPrimaryMessageEditButton.getBaseName()
+        );
 
         return result;
     }

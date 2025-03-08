@@ -22,11 +22,10 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return "embed";
     }
 
-    public async build( uiArgs?: UIArgs ) {
-        this.content = await this.uiService.getUILanguageManager()
-            .getEmbedTranslatedContent( this, uiArgs?._language );
+    public async build(uiArgs?: UIArgs) {
+        this.content = await this.uiService.getUILanguageManager().getEmbedTranslatedContent(this, uiArgs?._language);
 
-        return super.build( uiArgs );
+        return super.build(uiArgs);
     }
 
     /**
@@ -40,30 +39,30 @@ export abstract class UIEmbedBase extends UITemplateBase {
                 description: this.getDescription(),
                 footer: this.getFooter(),
                 options: {
-                    ... this.getInternalOptions(),
-                    ... this.getOptions()
+                    ...this.getInternalOptions(),
+                    ...this.getOptions()
                 },
-                arrayOptions: this.getArrayOptions(),
+                arrayOptions: this.getArrayOptions()
             },
             result: UIEmbedLanguageContent = {};
 
-        if ( assumed.title.length ) {
+        if (assumed.title.length) {
             result.title = assumed.title;
         }
 
-        if ( assumed.description.length ) {
+        if (assumed.description.length) {
             result.description = assumed.description;
         }
 
-        if ( assumed.footer.length ) {
+        if (assumed.footer.length) {
             result.footer = assumed.footer;
         }
 
-        if ( Object.keys( assumed.options ).length ) {
+        if (Object.keys(assumed.options).length) {
             result.options = assumed.options;
         }
 
-        if ( Object.keys( assumed.arrayOptions ).length ) {
+        if (Object.keys(assumed.arrayOptions).length) {
             result.arrayOptions = assumed.arrayOptions;
         }
 
@@ -77,38 +76,38 @@ export abstract class UIEmbedBase extends UITemplateBase {
             thumbnail = this.getThumbnail(),
             content = this.content;
 
-        if ( color !== -1 ) {
+        if (color !== -1) {
             attributes.color = color;
         }
 
-        if ( content?.title?.length ) {
+        if (content?.title?.length) {
             attributes.title = content?.title;
         }
 
-        if ( content?.description?.length ) {
+        if (content?.description?.length) {
             attributes.description = content.description;
         }
 
-        if ( content?.footer?.length ) {
+        if (content?.footer?.length) {
             attributes.footer = content.footer;
         }
 
-        if ( thumbnail ) {
+        if (thumbnail) {
             attributes.thumbnail = thumbnail;
         }
 
-        if ( image.length ) {
+        if (image.length) {
             attributes.image = {
-                ... this.getImageData(),
-                url: image,
+                ...this.getImageData(),
+                url: image
             };
         }
 
-        const template = await this.generateTemplate( content, attributes );
+        const template = await this.generateTemplate(content, attributes);
 
-        if ( template.footer?.length ) {
+        if (template.footer?.length) {
             template.footer = {
-                text: template.footer,
+                text: template.footer
             };
         }
 
@@ -135,7 +134,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return "";
     }
 
-    protected getThumbnail(): APIEmbedThumbnail|null {
+    protected getThumbnail(): APIEmbedThumbnail | null {
         return null;
     }
 
@@ -156,13 +155,13 @@ export abstract class UIEmbedBase extends UITemplateBase {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getLogic( args?: UIArgs ): { [ key: string ]: any } {
+    protected getLogic(args?: UIArgs): { [key: string]: any } {
         return {};
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getLogicAsync( args?: UIArgs ): Promise<{ [ key: string ]: any }> {
-        return Promise.resolve( {} );
+    protected async getLogicAsync(args?: UIArgs): Promise<{ [key: string]: any }> {
+        return Promise.resolve({});
     }
 
     /**
@@ -175,28 +174,25 @@ export abstract class UIEmbedBase extends UITemplateBase {
      * Function getInternalLogic() :: Used to extend the logic object.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getInternalLogic( args?: UIArgs ) {
+    protected getInternalLogic(args?: UIArgs) {
         return {};
     }
 
-    protected async parseInternalData( content: undefined | UIEmbedLanguageContent ) {
-        return this.parseLogicInternal( {
-                ... this.getInternalLogic( this.uiArgs ),
-                ... this.getLogic( this.uiArgs ),
-                ... await this.getLogicAsync( this.uiArgs ),
+    protected async parseInternalData(content: undefined | UIEmbedLanguageContent) {
+        return this.parseLogicInternal(
+            {
+                ...this.getInternalLogic(this.uiArgs),
+                ...this.getLogic(this.uiArgs),
+                ...(await this.getLogicAsync(this.uiArgs))
             },
             content?.options || {},
-            content?.arrayOptions || {},
+            content?.arrayOptions || {}
         );
     }
 
-    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
-        const data = await this.parseInternalData( content );
+    private async generateTemplate(content: undefined | UIEmbedLanguageContent, attributes: Record<string, any>) {
+        const data = await this.parseInternalData(content);
 
-        return this.composeTemplate(
-            attributes,
-            data,
-            content?.options || {},
-        );
+        return this.composeTemplate(attributes, data, content?.options || {});
     }
 }

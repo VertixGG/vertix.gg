@@ -8,11 +8,11 @@ import type { APISelectMenuOption } from "discord.js";
 
 export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
     private static vars = {
-        dynamicChannelIncludeEveryoneRoleLabel: uiUtilsWrapAsTemplate( "dynamicChannelIncludeEveryoneRoleLabel" ),
+        dynamicChannelIncludeEveryoneRoleLabel: uiUtilsWrapAsTemplate("dynamicChannelIncludeEveryoneRoleLabel"),
 
-        state: uiUtilsWrapAsTemplate( "state" ),
-        stateOn: uiUtilsWrapAsTemplate( "stateOn" ),
-        stateOff: uiUtilsWrapAsTemplate( "stateOff" ),
+        state: uiUtilsWrapAsTemplate("state"),
+        stateOn: uiUtilsWrapAsTemplate("stateOn"),
+        stateOff: uiUtilsWrapAsTemplate("stateOff")
     };
 
     public static getName() {
@@ -35,39 +35,41 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
         const {
             dynamicChannelIncludeEveryoneRoleLabel,
 
-            state,
+            state
         } = VerifiedRolesEveryoneSelectMenu.vars;
 
-        return [ {
-            label: dynamicChannelIncludeEveryoneRoleLabel + " " + state,
-            value: "dynamicChannelIncludeEveryoneRole" + UI_CUSTOM_ID_SEPARATOR + ( this.uiArgs?.dynamicChannelIncludeEveryoneRole ? "0" : "1" ),
-            emoji: "🛡️" as any,
-        } ];
+        return [
+            {
+                label: dynamicChannelIncludeEveryoneRoleLabel + " " + state,
+                value:
+                    "dynamicChannelIncludeEveryoneRole" +
+                    UI_CUSTOM_ID_SEPARATOR +
+                    (this.uiArgs?.dynamicChannelIncludeEveryoneRole ? "0" : "1"),
+                emoji: "🛡️" as any
+            }
+        ];
     }
 
     protected getOptions() {
-        const {
-            stateOn,
-            stateOff,
-        } = VerifiedRolesEveryoneSelectMenu.vars;
+        const { stateOn, stateOff } = VerifiedRolesEveryoneSelectMenu.vars;
 
         return {
             state: {
-                [ stateOn ]: "∙🟢 On",
-                [ stateOff ]: "∙🔴 Off",
+                [stateOn]: "∙🟢 On",
+                [stateOff]: "∙🔴 Off"
             },
 
-            dynamicChannelIncludeEveryoneRoleLabel: "Include everyone role",
+            dynamicChannelIncludeEveryoneRoleLabel: "Include everyone role"
         };
     }
 
-    protected getDataFor( option: APISelectMenuOption ) {
+    protected getDataFor(option: APISelectMenuOption) {
         const result = {
-                state: VerifiedRolesEveryoneSelectMenu.vars.stateOff,
+                state: VerifiedRolesEveryoneSelectMenu.vars.stateOff
             },
-            optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );
+            optionValue = option.value.split(UI_CUSTOM_ID_SEPARATOR, 2);
 
-        if ( "1" === optionValue[ 1 ] ) {
+        if ("1" === optionValue[1]) {
             result.state = VerifiedRolesEveryoneSelectMenu.vars.stateOn;
         }
 

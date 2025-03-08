@@ -8,16 +8,16 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
     private static _vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+        separator: uiUtilsWrapAsTemplate("separator"),
+        value: uiUtilsWrapAsTemplate("value"),
 
-        allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
-        allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
-        allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" ),
+        allowedUsers: uiUtilsWrapAsTemplate("allowedUsers"),
+        allowedUsersDisplay: uiUtilsWrapAsTemplate("allowedUsersDisplay"),
+        allowedUsersDefault: uiUtilsWrapAsTemplate("allowedUsersDefault"),
 
-        blockedUsers: uiUtilsWrapAsTemplate( "blockedUsers" ),
-        blockedUsersDisplay: uiUtilsWrapAsTemplate( "blockedUsersDisplay" ),
-        blockedUsersDefault: uiUtilsWrapAsTemplate( "blockedUsersDefault" ),
+        blockedUsers: uiUtilsWrapAsTemplate("blockedUsers"),
+        blockedUsersDisplay: uiUtilsWrapAsTemplate("blockedUsersDisplay"),
+        blockedUsersDefault: uiUtilsWrapAsTemplate("blockedUsersDefault")
     };
 
     public static getName() {
@@ -29,7 +29,7 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
     }
 
     protected getColor() {
-        return 0x4B6F91; // Same as the "members" emoji.
+        return 0x4b6f91; // Same as the "members" emoji.
     }
 
     protected getImage(): string {
@@ -43,10 +43,7 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
     protected getDescription() {
         const { allowedUsersDisplay, blockedUsersDisplay } = DynamicChannelPermissionsAccessEmbed._vars;
 
-        return "\n**_Allowed Users_**:\n" +
-            allowedUsersDisplay +
-            "\n**_Blocked Users_**:\n" +
-            blockedUsersDisplay;
+        return "\n**_Allowed Users_**:\n" + allowedUsersDisplay + "\n**_Blocked Users_**:\n" + blockedUsersDisplay;
     }
 
     protected getFooter(): string {
@@ -58,12 +55,12 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
 
         return {
             allowedUsers: {
-                format: `- <@${ value }>${ separator }`,
-                separator: "\n",
+                format: `- <@${value}>${separator}`,
+                separator: "\n"
             },
             blockedUsers: {
-                format: `- <@${ value }>${ separator }`,
-                separator: "\n",
+                format: `- <@${value}>${separator}`,
+                separator: "\n"
             }
         };
     }
@@ -74,39 +71,40 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
             allowedUsersDefault,
 
             blockedUsers,
-            blockedUsersDefault,
+            blockedUsersDefault
         } = DynamicChannelPermissionsAccessEmbed._vars;
 
         return {
             allowedUsersDisplay: {
-                [ allowedUsersDefault ]: "Currently there are no granted users." + "\n",
-                [ allowedUsers ]: allowedUsers + "\n"
+                [allowedUsersDefault]: "Currently there are no granted users." + "\n",
+                [allowedUsers]: allowedUsers + "\n"
             },
             blockedUsersDisplay: {
-                [ blockedUsersDefault ]: "Currently there are no blocked users." + "\n",
-                [ blockedUsers ]: blockedUsers + "\n"
+                [blockedUsersDefault]: "Currently there are no blocked users." + "\n",
+                [blockedUsers]: blockedUsers + "\n"
             }
         };
     }
 
-    protected getLogic( args: UIArgs ) {
-        const result: any = {}, {
-            allowedUsers,
-            allowedUsersDefault,
+    protected getLogic(args: UIArgs) {
+        const result: any = {},
+            {
+                allowedUsers,
+                allowedUsersDefault,
 
-            blockedUsers,
-            blockedUsersDefault,
-        } = DynamicChannelPermissionsAccessEmbed._vars;
+                blockedUsers,
+                blockedUsersDefault
+            } = DynamicChannelPermissionsAccessEmbed._vars;
 
-        if ( args.allowedUsers?.length ) {
-            result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
+        if (args.allowedUsers?.length) {
+            result.allowedUsers = args.allowedUsers?.map((user: any) => user.id);
             result.allowedUsersDisplay = allowedUsers;
         } else {
             result.allowedUsersDisplay = allowedUsersDefault;
         }
 
-        if ( args.blockedUsers?.length ) {
-            result.blockedUsers = args.blockedUsers?.map( ( user: any ) => user.id );
+        if (args.blockedUsers?.length) {
+            result.blockedUsers = args.blockedUsers?.map((user: any) => user.id);
             result.blockedUsersDisplay = blockedUsers;
         } else {
             result.blockedUsersDisplay = blockedUsersDefault;

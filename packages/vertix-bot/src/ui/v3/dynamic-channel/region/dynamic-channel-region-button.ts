@@ -14,11 +14,11 @@ export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelRegionButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelRegionButton.getBaseName());
     }
 
     public static getSortId() {
-        return this.getSortIdAfter( DynamicChannelPrivacyButton );
+        return this.getSortIdAfter(DynamicChannelPrivacyButton);
     }
 
     public getId() {
@@ -26,7 +26,7 @@ export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelRegionButton.getEmoji() } ∙ **Region**`;
+        return `${DynamicChannelRegionButton.getEmoji()} ∙ **Region**`;
     }
 
     public async getLabelForMenu() {
@@ -38,7 +38,7 @@ export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelRegionButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelRegionButton.getBaseName());
     }
 
     public getEmojiForEmbed(): string {

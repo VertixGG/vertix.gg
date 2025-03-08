@@ -14,24 +14,23 @@ import type { VoiceChannel } from "discord.js";
 export abstract class DynamicChannelAdapterExuWithPermissionsBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
 > extends DynamicChannelAdapterExuWithInitiatorElementBase<TInteraction> {
-
-    protected async getUsersWithPermissions( channel: VoiceChannel ) {
+    protected async getUsersWithPermissions(channel: VoiceChannel) {
         return {
             allowedUsers: await this.dynamicChannelService.getChannelUsersWithPermissionState(
                 channel,
                 DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-                true,
+                true
             ),
 
             blockedUsers: await this.dynamicChannelService.getChannelUsersWithPermissionState(
                 channel,
                 DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-                false,
+                false
             )
         };
     }
 
-    protected async assignUsersWithPermissions( channel: VoiceChannel, args: UIArgs ) {
-        Object.assign( args, await this.getUsersWithPermissions( channel ) );
+    protected async assignUsersWithPermissions(channel: VoiceChannel, args: UIArgs) {
+        Object.assign(args, await this.getUsersWithPermissions(channel));
     }
 }

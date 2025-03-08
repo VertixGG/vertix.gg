@@ -20,18 +20,20 @@ export class SetupStep1Embed extends ChannelNameTemplateEmbed {
     }
 
     protected getTitle(): string {
-        return `Step 1 - ${ super.getTitle() }`;
+        return `Step 1 - ${super.getTitle()}`;
     }
 
     protected getDescription(): string {
-        return `${ super.getDescription() }\n\n` +
+        return (
+            `${super.getDescription()}\n\n` +
             "You can keep the default settings by pressing **( `Next ▶` )** button.\n\n" +
-            "Not sure how it works? Check out the [explanation](https://vertix.gg/setup/1).";
+            "Not sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
+        );
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
-            ... super.getLogic( args ),
+            ...super.getLogic(args)
         };
     }
 }

@@ -15,14 +15,10 @@ export class ClaimStartComponent extends UIComponentBase {
     }
 
     protected static getElements() {
-        return [
-            [ ClaimStartButton ]
-        ];
+        return [[ClaimStartButton]];
     }
 
     protected static getEmbeds() {
-        return [
-            ClaimStartEmbed,
-        ];
+        return [ClaimStartEmbed];
     }
 }

@@ -11,19 +11,22 @@ import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-ch
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmbedBase, new UIEmbedVars(
-    "state",
-    "stateMessage",
-    "statePublic",
-    "statePrivate",
-    "stateShown",
-    "stateHidden",
-    "stateMessagePublic",
-    "stateMessagePrivate",
-    "stateMessageShown",
-    "stateMessageHidden",
-    "privacyEmoji",
-) );
+const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
+    DynamicChannelEmbedBase,
+    new UIEmbedVars(
+        "state",
+        "stateMessage",
+        "statePublic",
+        "statePrivate",
+        "stateShown",
+        "stateHidden",
+        "stateMessagePublic",
+        "stateMessagePrivate",
+        "stateMessageShown",
+        "stateMessageHidden",
+        "privacyEmoji"
+    )
+);
 
 export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars {
     private readonly accessVars;
@@ -35,7 +38,7 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
     public constructor() {
         super();
 
-        this.accessVars = this.useExternal( DynamicChannelPermissionsAccessEmbed ).get();
+        this.accessVars = this.useExternal(DynamicChannelPermissionsAccessEmbed).get();
     }
 
     protected getImage(): string {
@@ -43,7 +46,7 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
     }
 
     protected getTitle() {
-        return `${ this.vars.get( "privacyEmoji" ) }  Manage privacy of your channel`;
+        return `${this.vars.get("privacyEmoji")}  Manage privacy of your channel`;
     }
 
     protected getDescription() {
@@ -51,14 +54,17 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
 
         const { state, stateMessage } = this.vars.get();
 
-        return `**_State_**: \`${ state  }\`` +
-            "\n**_Intends_**: \`" + stateMessage + "\`\n" +
+        return (
+            `**_State_**: \`${state}\`` +
+            "\n**_Intends_**: \`" +
+            stateMessage +
+            "\`\n" +
             "\n**_Trusted Users_**:\n" +
             allowedUsersDisplay +
             "\n**_Blocked Users_**:\n" +
             blockedUsersDisplay +
-            "\n-# Blocked Users cannot join your channel in any state.";
-
+            "\n-# Blocked Users cannot join your channel in any state."
+        );
     }
 
     protected getFooter(): string {
@@ -75,39 +81,40 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
             stateMessagePublic,
             stateMessagePrivate,
             stateMessageShown,
-            stateMessageHidden,
+            stateMessageHidden
         } = this.vars.get();
 
         return {
             state: {
-                [ statePublic ]: "🌐 Public",
-                [ statePrivate ]: "🚫 Private",
-                [ stateShown ]: "🐵 Shown",
-                [ stateHidden ]: "🙈 Hidden",
+                [statePublic]: "🌐 Public",
+                [statePrivate]: "🚫 Private",
+                [stateShown]: "🐵 Shown",
+                [stateHidden]: "🙈 Hidden"
             },
             stateMessage: {
-                [ stateMessagePublic ]: "Everyone can join your channel.",
-                [ stateMessagePrivate ]: "Only trusted users can join your channel.",
-                [ stateMessageShown ]: "Everyone can see and join your channel.",
-                [ stateMessageHidden ]: "Only trusted users can see and join your channel.",
-            },
+                [stateMessagePublic]: "Everyone can join your channel.",
+                [stateMessagePrivate]: "Only trusted users can join your channel.",
+                [stateMessageShown]: "Everyone can see and join your channel.",
+                [stateMessageHidden]: "Only trusted users can see and join your channel."
+            }
         };
     }
 
-    protected getLogic( args: UIArgs ) {
-        const result: any = {}, {
-            statePublic,
-            statePrivate,
-            stateShown,
-            stateHidden,
+    protected getLogic(args: UIArgs) {
+        const result: any = {},
+            {
+                statePublic,
+                statePrivate,
+                stateShown,
+                stateHidden,
 
-            stateMessagePublic,
-            stateMessagePrivate,
-            stateMessageShown,
-            stateMessageHidden,
-        } = this.vars.get();
+                stateMessagePublic,
+                stateMessagePrivate,
+                stateMessageShown,
+                stateMessageHidden
+            } = this.vars.get();
 
-        switch ( args.state ) {
+        switch (args.state) {
             default:
             case "public":
                 result.state = statePublic;

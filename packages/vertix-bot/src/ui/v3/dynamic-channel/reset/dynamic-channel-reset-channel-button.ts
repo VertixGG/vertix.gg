@@ -16,7 +16,7 @@ export class DynamicChannelResetChannelButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelResetChannelButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelResetChannelButton.getBaseName());
     }
 
     public getId() {
@@ -24,7 +24,7 @@ export class DynamicChannelResetChannelButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelResetChannelButton.getEmoji() }  ∙ **Reset**`;
+        return `${DynamicChannelResetChannelButton.getEmoji()}  ∙ **Reset**`;
     }
 
     public async getLabelForMenu() {
@@ -36,7 +36,7 @@ export class DynamicChannelResetChannelButton extends DynamicChannelButtonBase {
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelResetChannelButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelResetChannelButton.getBaseName());
     }
 
     public getEmojiForEmbed() {

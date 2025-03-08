@@ -17,8 +17,6 @@ export class FeedbackInviteDeveloperModal extends UIModalBase {
     }
 
     public static getInputElements() {
-        return [
-            [ FeedbackInputUrl ],
-        ];
+        return [[FeedbackInputUrl]];
     }
 }

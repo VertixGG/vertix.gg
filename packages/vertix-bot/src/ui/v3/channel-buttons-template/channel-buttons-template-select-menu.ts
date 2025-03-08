@@ -28,19 +28,19 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
     }
 
     protected async getSelectOptions() {
-        const values = allItems.map( async ( item ) => {
+        const values = allItems.map(async (item) => {
             return {
                 label: await item.getLabelForMenu(),
                 value: item.getId().toString(),
-                emoji: await item.getEmoji() as any,
-                default: ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ).includes( item.getId() ),
+                emoji: (await item.getEmoji()) as any,
+                default: (this.uiArgs?.dynamicChannelButtonsTemplate || []).includes(item.getId())
             };
-        } );
+        });
 
-        return ( await Promise.all( values ) ).sort( ( a, b ) =>
-            DynamicChannelPrimaryMessageElementsGroup.getById( a.value )!.$$.getSortId() -
-            DynamicChannelPrimaryMessageElementsGroup.getById( b.value )!.$$.getSortId()
+        return (await Promise.all(values)).sort(
+            (a, b) =>
+                DynamicChannelPrimaryMessageElementsGroup.getById(a.value)!.$$.getSortId() -
+                DynamicChannelPrimaryMessageElementsGroup.getById(b.value)!.$$.getSortId()
         );
     }
 }
-

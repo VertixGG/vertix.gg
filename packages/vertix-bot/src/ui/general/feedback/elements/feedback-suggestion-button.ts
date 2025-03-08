@@ -14,7 +14,7 @@ export class FeedbackSuggestionButton extends UIElementButtonBase {
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "secondary" );
+        return Promise.resolve("secondary");
     }
 
     protected async getLabel() {

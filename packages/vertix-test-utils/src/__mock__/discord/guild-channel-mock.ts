@@ -5,7 +5,7 @@ import type { RawGuildChannelData } from "discord.js/typings/rawDataTypes";
 import type { GuildMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-mock";
 
 export class GuildChannelMock extends GuildChannel {
-    public constructor( guild: GuildMock, data: RawGuildChannelData ) {
-        super( guild.getFakeInstance(), data );
+    public constructor(guild: GuildMock, data: RawGuildChannelData) {
+        super(guild.getFakeInstance(), data);
     }
 }

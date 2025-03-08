@@ -8,25 +8,28 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 import type { BaseGuildTextChannel } from "discord.js";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
-export class InvalidChannelTypeAdapter extends UIAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelVoiceInteraction> {
+export class InvalidChannelTypeAdapter extends UIAdapterBase<
+    BaseGuildTextChannel,
+    UIDefaultButtonChannelVoiceInteraction
+> {
     public static getName() {
         return "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter";
     }
 
     public static getComponent() {
-        const Component = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).$$
-            .getSystemComponents().InvalidChannelTypeComponent;
+        const Component =
+            ServiceLocator.$.get<UIService>("VertixGUI/UIService").$$.getSystemComponents().InvalidChannelTypeComponent;
 
-        if ( ! Component ) {
-            throw new Error( "InvalidChannelTypeComponent not found" );
+        if (!Component) {
+            throw new Error("InvalidChannelTypeComponent not found");
         }
 
         return Component;
     }
 
-    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs ) {
+    protected getReplyArgs(interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs) {
         return {
-            channelTypes: argsFromManager.channelTypes,
+            channelTypes: argsFromManager.channelTypes
         };
     }
 

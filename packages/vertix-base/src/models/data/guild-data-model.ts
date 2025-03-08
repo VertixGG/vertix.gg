@@ -1,7 +1,7 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { ModelDataOwnerBase  } from "@vertix.gg/base/src/bases/model-data-owner-base";
+import { ModelDataOwnerBase } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
@@ -18,10 +18,7 @@ export class GuildDataModel extends ModelDataOwnerBase<
     }
 
     public constructor() {
-        super(
-            isDebugEnabled( "CACHE", GuildDataModel.getName() ),
-            isDebugEnabled( "MODEL", GuildDataModel.getName() )
-        );
+        super(isDebugEnabled("CACHE", GuildDataModel.getName()), isDebugEnabled("MODEL", GuildDataModel.getName()));
     }
 
     protected getModel() {

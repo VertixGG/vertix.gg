@@ -21,11 +21,13 @@ export class FeedbackEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return "We want to thank you for your time and patience.\n\n" +
+        return (
+            "We want to thank you for your time and patience.\n\n" +
             "**Your experience with Vertix is important to us, and we would love to hear your feedback.**\n\n" +
             "We strive to provide the best possible service, and your input can help us achieve that.\n\n" +
             "If you have any suggestions, concerns, or ideas on how we can improve Vertix, please don't hesitate to share them with us.\n\n" +
             "Your feedback is highly appreciated and will contribute to making Vertix even better.\n\n" +
-            "Thank you for using Vertix, and we look forward to hearing your thoughts!";
+            "Thank you for using Vertix, and we look forward to hearing your thoughts!"
+        );
     }
 }

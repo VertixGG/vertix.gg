@@ -1,8 +1,8 @@
 import { Client } from "discord.js";
 
 export class ClientMock extends Client<true> {
-    public constructor( options: any = {} ) {
-        super( {
+    public constructor(options: any = {}) {
+        super({
             allowedMentions: undefined,
             closeTimeout: 0,
             failIfNotExists: false,
@@ -15,7 +15,7 @@ export class ClientMock extends Client<true> {
             sweepers: undefined,
             waitGuildTimeout: 0,
             ws: undefined,
-            ... options,
-        } );
+            ...options
+        });
     }
 }

@@ -2,11 +2,7 @@ import { GuildManagerMock } from "@vertix.gg/test-utils/src/__mock__/discord/gui
 
 import { GuildChannelManagerMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-channel-manager-mock";
 
-import type {
-    Guild,
-    GuildChannelManager,
-    GuildMemberManager,
-} from "discord.js";
+import type { Guild, GuildChannelManager, GuildMemberManager } from "discord.js";
 
 import type { RawGuildData } from "discord.js/typings/rawDataTypes";
 
@@ -22,14 +18,14 @@ export class GuildMock {
 
     public channels: GuildChannelManager;
 
-    public constructor( client: ClientMock, data: RawGuildData | any = {} ) {
+    public constructor(client: ClientMock, data: RawGuildData | any = {}) {
         this.client = client;
         this.data = data;
 
         this.id = data.id;
 
-        this.members = new GuildManagerMock( this.getFakeInstance() ).getFakeInstance();
-        this.channels = new GuildChannelManagerMock( this.getFakeInstance() ).getFakeInstance();
+        this.members = new GuildManagerMock(this.getFakeInstance()).getFakeInstance();
+        this.channels = new GuildChannelManagerMock(this.getFakeInstance()).getFakeInstance();
     }
 
     public getFakeInstance(): Guild {

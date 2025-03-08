@@ -5,15 +5,12 @@ import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-el
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type {
-    MasterChannelConfigInterfaceV3
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ChannelNameTemplateInput extends UIElementInputBase {
-    private config = ConfigManager.$
-        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+    private config = ConfigManager.$.get<MasterChannelConfigInterfaceV3>("Vertix/Config/MasterChannel", VERSION_UI_V3);
 
     public static getName() {
         return "VertixBot/UI-General/ChannelNameTemplateInput";
@@ -36,9 +33,11 @@ export class ChannelNameTemplateInput extends UIElementInputBase {
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.dynamicChannelNameTemplate ||
+        return (
+            this.uiArgs?.dynamicChannelNameTemplate ||
             this.content?.placeholder ||
-            this.config.data.settings.dynamicChannelNameTemplate;
+            this.config.data.settings.dynamicChannelNameTemplate
+        );
     }
 
     protected async getMinLength(): Promise<number> {

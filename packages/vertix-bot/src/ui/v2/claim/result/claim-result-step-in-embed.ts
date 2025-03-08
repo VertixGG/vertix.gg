@@ -18,7 +18,6 @@ export class ClaimResultStepInEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return "You've put yourself forward as a potential owner of this channel.\n" +
-            "Good luck!\n";
+        return "You've put yourself forward as a potential owner of this channel.\n" + "Good luck!\n";
     }
 }

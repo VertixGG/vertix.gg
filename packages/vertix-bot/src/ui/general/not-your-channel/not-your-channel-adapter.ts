@@ -16,9 +16,9 @@ export class NotYourChannelAdapter extends UIAdapterBase<VoiceChannel, UIDefault
         return NotYourChannelComponent;
     }
 
-    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
+    protected getReplyArgs(interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs) {
         return {
-            masterChannelId: argsFromManager?.masterChannelId,
+            masterChannelId: argsFromManager?.masterChannelId
         };
     }
 

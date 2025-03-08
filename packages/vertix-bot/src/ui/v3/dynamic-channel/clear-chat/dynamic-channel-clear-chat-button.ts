@@ -12,7 +12,7 @@ export class DynamicChannelClearChatButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelClearChatButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelClearChatButton.getBaseName());
     }
 
     public static getSortId() {
@@ -24,7 +24,7 @@ export class DynamicChannelClearChatButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelClearChatButton.getEmoji() } ∙ **Clear Chat**`;
+        return `${DynamicChannelClearChatButton.getEmoji()} ∙ **Clear Chat**`;
     }
 
     public async getLabelForMenu() {
@@ -36,7 +36,7 @@ export class DynamicChannelClearChatButton extends DynamicChannelButtonBase {
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelClearChatButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelClearChatButton.getBaseName());
     }
 
     public getEmojiForEmbed() {

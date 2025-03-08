@@ -6,12 +6,12 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class VerifiedRolesEmbed extends UIEmbedBase {
     private static _vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+        separator: uiUtilsWrapAsTemplate("separator"),
+        value: uiUtilsWrapAsTemplate("value"),
 
-        verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
-        verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
-        verifiedRolesEmpty: uiUtilsWrapAsTemplate( "verifiedRolesDefault" ),
+        verifiedRoles: uiUtilsWrapAsTemplate("verifiedRoles"),
+        verifiedRolesDisplay: uiUtilsWrapAsTemplate("verifiedRolesDisplay"),
+        verifiedRolesEmpty: uiUtilsWrapAsTemplate("verifiedRolesDefault")
     };
 
     public static getName() {
@@ -23,15 +23,12 @@ export class VerifiedRolesEmbed extends UIEmbedBase {
     }
 
     protected getOptions() {
-        const {
-            verifiedRoles,
-            verifiedRolesEmpty,
-        } = VerifiedRolesEmbed._vars;
+        const { verifiedRoles, verifiedRolesEmpty } = VerifiedRolesEmbed._vars;
 
         return {
             verifiedRolesDisplay: {
-                [ verifiedRoles ]: verifiedRoles,
-                [ verifiedRolesEmpty ]: "**None**",
+                [verifiedRoles]: verifiedRoles,
+                [verifiedRolesEmpty]: "**None**"
             }
         };
     }
@@ -39,16 +36,16 @@ export class VerifiedRolesEmbed extends UIEmbedBase {
     protected getArrayOptions() {
         return {
             verifiedRoles: {
-                format: `<@&${ VerifiedRolesEmbed._vars.value}>${ VerifiedRolesEmbed._vars.separator }`,
+                format: `<@&${VerifiedRolesEmbed._vars.value}>${VerifiedRolesEmbed._vars.separator}`,
                 separator: ", "
             }
         };
     }
 
-    protected getLogic( args?: UIArgs ) {
+    protected getLogic(args?: UIArgs) {
         const result: any = {};
 
-        if ( args?.dynamicChannelVerifiedRoles?.length ) {
+        if (args?.dynamicChannelVerifiedRoles?.length) {
             result.verifiedRoles = args.dynamicChannelVerifiedRoles;
             result.verifiedRolesDisplay = VerifiedRolesEmbed._vars.verifiedRoles;
         } else {

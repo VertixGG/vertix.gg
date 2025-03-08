@@ -22,10 +22,10 @@ export class UIWizardFinishButton extends UIElementButtonBase {
     }
 
     protected async isDisabled() {
-        return !! this.uiArgs?._wizardIsFinishButtonDisabled;
+        return !!this.uiArgs?._wizardIsFinishButtonDisabled;
     }
 
     protected async isAvailable() {
-        return !! this.uiArgs?._wizardIsFinishButtonAvailable;
+        return !!this.uiArgs?._wizardIsFinishButtonAvailable;
     }
 }

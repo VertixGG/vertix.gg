@@ -24,7 +24,7 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
     }
 
     public async getLabel(): Promise<string> {
-        return uiUtilsWrapAsTemplate( "displayText" );
+        return uiUtilsWrapAsTemplate("displayText");
     }
 
     public async getEmoji() {
@@ -38,17 +38,17 @@ export class DynamicChannelPermissionsVisibilityButton extends DynamicChannelBut
     protected getOptions() {
         return {
             shownText: "Shown",
-            hiddenText: "Hidden",
+            hiddenText: "Hidden"
         };
     }
 
     protected async getLogic() {
         const result: any = {};
 
-        if ( this.uiArgs?.isHidden ) {
-            result.displayText = uiUtilsWrapAsTemplate( "shownText" );
+        if (this.uiArgs?.isHidden) {
+            result.displayText = uiUtilsWrapAsTemplate("shownText");
         } else {
-            result.displayText = uiUtilsWrapAsTemplate( "hiddenText" );
+            result.displayText = uiUtilsWrapAsTemplate("hiddenText");
         }
 
         return result;

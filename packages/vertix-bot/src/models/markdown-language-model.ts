@@ -6,14 +6,17 @@ const model = PrismaBotClient.getPrismaClient().markdownLanguage;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function withContent() {
-    return model.findFirst( {
+    return model.findFirst({
         include: {
-            content: true,
+            content: true
         }
-    } );
+    });
 }
 
-export class MarkdownLanguageModel extends ModelLanguageBase<typeof model, PrismaBot.Prisma.PromiseReturnType<typeof withContent>> {
+export class MarkdownLanguageModel extends ModelLanguageBase<
+    typeof model,
+    PrismaBot.Prisma.PromiseReturnType<typeof withContent>
+> {
     private static instance: MarkdownLanguageModel;
 
     public static getName(): string {
@@ -21,8 +24,8 @@ export class MarkdownLanguageModel extends ModelLanguageBase<typeof model, Prism
     }
 
     public static getInstance(): MarkdownLanguageModel {
-        if ( ! MarkdownLanguageModel.instance ) {
-            MarkdownLanguageModel.instance = new MarkdownLanguageModel( false );
+        if (!MarkdownLanguageModel.instance) {
+            MarkdownLanguageModel.instance = new MarkdownLanguageModel(false);
         }
 
         return MarkdownLanguageModel.instance;
@@ -36,4 +39,3 @@ export class MarkdownLanguageModel extends ModelLanguageBase<typeof model, Prism
         return model;
     }
 }
-

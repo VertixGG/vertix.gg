@@ -10,6 +10,6 @@ export class DynamicChannelTransferOwnerUserMenu extends DynamicChannelUserMenuB
     }
 
     protected getPlaceholder(): Promise<string> {
-        return Promise.resolve( "🔀 Select User" );
+        return Promise.resolve("🔀 Select User");
     }
 }

@@ -14,11 +14,11 @@ export class BadwordsEditButton extends UIElementButtonBase {
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Edit Bad Words" );
+        return Promise.resolve("Edit Bad Words");
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "primary" );
+        return Promise.resolve("primary");
     }
 
     protected async getEmoji(): Promise<string> {

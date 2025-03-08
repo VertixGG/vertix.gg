@@ -1,8 +1,4 @@
-import {
-    ButtonStyle,
-    ComponentType,
-    parseEmoji,
-} from "discord.js";
+import { ButtonStyle, ComponentType, parseEmoji } from "discord.js";
 
 import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
@@ -22,19 +18,19 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
         return ComponentType.Button;
     }
 
-    public async build( uiArgs?: UIArgs ) {
-        this.content = await this.uiLanguageManager.getButtonTranslatedContent( this, uiArgs?._language );
+    public async build(uiArgs?: UIArgs) {
+        this.content = await this.uiLanguageManager.getButtonTranslatedContent(this, uiArgs?._language);
 
-        return super.build( uiArgs );
+        return super.build(uiArgs);
     }
 
     public async getTranslatableContent(): Promise<UIElementButtonLanguageContent> {
         const result: UIElementButtonLanguageContent = {
-                label: await this.getLabel(),
+                label: await this.getLabel()
             },
             options = this.getOptions();
 
-        if ( Object.keys( options ).length ) {
+        if (Object.keys(options).length) {
             result.options = options;
         }
 
@@ -43,7 +39,7 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
 
     protected abstract getLabel(): Promise<string>;
 
-    protected abstract getStyle(): Promise<UIButtonStyleTypes>
+    protected abstract getStyle(): Promise<UIButtonStyleTypes>;
 
     protected async getEmoji?(): Promise<string>;
 
@@ -61,7 +57,7 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
     protected async getAttributes() {
         let style: ButtonStyle;
 
-        switch ( await this.getStyle() ) {
+        switch (await this.getStyle()) {
             case "primary":
                 style = ButtonStyle.Primary;
                 break;
@@ -76,30 +72,30 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
                 break;
 
             default:
-                throw new Error( "Invalid style" );
+                throw new Error("Invalid style");
         }
 
-        const type = Number( UIElementButtonBase.getComponentType() ),
+        const type = Number(UIElementButtonBase.getComponentType()),
             label = await this.getLabelInternal(),
             emoji = await this.getEmoji?.(),
             disabled = await this.isDisabled?.(),
-            custom_id = await this.getCustomId?.() || "";
+            custom_id = (await this.getCustomId?.()) || "";
 
         const result = {
             type,
             style,
-            custom_id,
+            custom_id
         } as APIButtonComponentWithCustomId;
 
-        if ( label ) {
+        if (label) {
             result.label = label;
         }
 
-        if ( emoji ) {
-            result.emoji = parseEmoji( emoji ) as APIMessageComponentEmoji;
+        if (emoji) {
+            result.emoji = parseEmoji(emoji) as APIMessageComponentEmoji;
         }
 
-        if ( disabled ) {
+        if (disabled) {
             result.disabled = disabled;
         }
 
@@ -110,28 +106,24 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
         return {};
     }
 
-    protected async getLogic(): Promise<{ [ key: string ]: any }> {
+    protected async getLogic(): Promise<{ [key: string]: any }> {
         return {};
     }
 
     private async getLabelInternal() {
-        if ( await this.isLabelOmitted() ) {
+        if (await this.isLabelOmitted()) {
             return null;
         }
 
         const options = this.content?.options || this.getOptions(),
             logic = await this.getLogic(),
-            label = await this.content?.label || await this.getLabel();
+            label = (await this.content?.label) || (await this.getLabel());
 
-        if ( Object.keys( options ).length === 0 && Object.keys( logic ).length === 0 ) {
+        if (Object.keys(options).length === 0 && Object.keys(logic).length === 0) {
             return label;
         }
 
-        const result = this.composeTemplate(
-            { label },
-            await this.getLogic(),
-            options,
-        );
+        const result = this.composeTemplate({ label }, await this.getLogic(), options);
 
         return result.label;
     }

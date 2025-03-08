@@ -18,11 +18,11 @@ export class DynamicChannelRegionSelectMenu extends DynamicChannelStringMenuBase
     }
 
     protected async getSelectOptions() {
-        return Object.entries( DEFAULT_RTC_REGIONS ).map( ( [ label, value ] ) => {
+        return Object.entries(DEFAULT_RTC_REGIONS).map(([label, value]) => {
             return {
                 label,
-                value: value ?? "auto",
+                value: value ?? "auto"
             };
-        } ) as APISelectMenuOption[];
+        }) as APISelectMenuOption[];
     }
 }

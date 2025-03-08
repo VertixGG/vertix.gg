@@ -13,24 +13,25 @@ export class UIMasterChannelVersionStrategy extends UIVersionStrategyBase {
         return "VertixBase/VersionStrategies/UiMasterChannelVersionStrategy";
     }
 
-    public async determine( context?: Base | string ) {
+    public async determine(context?: Base | string) {
         let masterChannelDBId;
 
-        if ( ( context instanceof VoiceChannel ) ) {
-            const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( context.id, true );
+        if (context instanceof VoiceChannel) {
+            const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId(context.id, true);
 
-            if ( ! masterChannelDB ) {
+            if (!masterChannelDB) {
                 return 0;
             }
 
             masterChannelDBId = masterChannelDB.id;
-        } else if ( "string" === typeof context ) { // TODO: Find better solution
+        } else if ("string" === typeof context) {
+            // TODO: Find better solution
             masterChannelDBId = context;
         }
 
-        const data = masterChannelDBId ? await MasterChannelDataModelV3.$.getSettings( masterChannelDBId ) : null;
+        const data = masterChannelDBId ? await MasterChannelDataModelV3.$.getSettings(masterChannelDBId) : null;
 
-        if ( ! data ) {
+        if (!data) {
             return 0;
         }
 

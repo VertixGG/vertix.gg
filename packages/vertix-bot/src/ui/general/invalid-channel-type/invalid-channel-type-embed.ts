@@ -10,10 +10,10 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class InvalidChannelTypeEmbed extends UIEmbedBase {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+        separator: uiUtilsWrapAsTemplate("separator"),
+        value: uiUtilsWrapAsTemplate("value"),
 
-        allowedTypes: uiUtilsWrapAsTemplate( "allowedTypes" ),
+        allowedTypes: uiUtilsWrapAsTemplate("allowedTypes")
     };
 
     public static getName() {
@@ -33,13 +33,14 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        const {
-            allowedTypes,
-        } = InvalidChannelTypeEmbed.vars;
+        const { allowedTypes } = InvalidChannelTypeEmbed.vars;
 
-        return "The action is restricted in channel type, but available channel types:\n\n" +
-            allowedTypes + "\n\n" +
-            "Please retry the action in a different channel.";
+        return (
+            "The action is restricted in channel type, but available channel types:\n\n" +
+            allowedTypes +
+            "\n\n" +
+            "Please retry the action in a different channel."
+        );
     }
 
     protected getArrayOptions() {
@@ -47,19 +48,22 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
 
         return {
             allowedTypes: {
-                format: `- ${ value }${ separator }`,
-                separator: "\n",
+                format: `- ${value}${separator}`,
+                separator: "\n"
             }
         };
     }
 
-    protected getLogic( args: UIArgs ) {
-        const channelTypes = args.channelTypes.map( ( type: ChannelType ) =>
-            ChannelType[ type ].toString().split( /(?=[A-Z])/ ).join( " " )
+    protected getLogic(args: UIArgs) {
+        const channelTypes = args.channelTypes.map((type: ChannelType) =>
+            ChannelType[type]
+                .toString()
+                .split(/(?=[A-Z])/)
+                .join(" ")
         );
 
         return {
-            allowedTypes: channelTypes,
+            allowedTypes: channelTypes
         };
     }
 }

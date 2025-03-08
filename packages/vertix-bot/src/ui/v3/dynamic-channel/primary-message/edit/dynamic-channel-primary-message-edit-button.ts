@@ -14,11 +14,11 @@ export class DynamicChannelPrimaryMessageEditButton extends DynamicChannelButton
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());
     }
 
     public static getSortId() {
-        return this.getSortIdAfter( DynamicChannelRegionButton );
+        return this.getSortIdAfter(DynamicChannelRegionButton);
     }
 
     public getId() {
@@ -26,7 +26,7 @@ export class DynamicChannelPrimaryMessageEditButton extends DynamicChannelButton
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelPrimaryMessageEditButton.getEmoji() } ∙ **Edit Primary Message**`;
+        return `${DynamicChannelPrimaryMessageEditButton.getEmoji()} ∙ **Edit Primary Message**`;
     }
 
     public async getLabelForMenu() {
@@ -38,7 +38,7 @@ export class DynamicChannelPrimaryMessageEditButton extends DynamicChannelButton
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());
     }
 
     public getEmojiForEmbed(): string {

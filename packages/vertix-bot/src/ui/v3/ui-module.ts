@@ -17,7 +17,7 @@ export class UIModuleV3 extends UIModuleBase {
     }
 
     public static getAdapters() {
-        return Object.values( adapters );
+        return Object.values(adapters);
     }
 
     public get $$() {
@@ -29,18 +29,18 @@ export class UIModuleV3 extends UIModuleBase {
     }
 
     protected async initialize() {
-        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService");
 
-        DynamicChannelClaimManager.register( "Vertix/UI-V3/DynamicChannelClaimManager", {
+        DynamicChannelClaimManager.register("Vertix/UI-V3/DynamicChannelClaimManager", {
             adapters: {
-                claimStartAdapter: () => uiService.get( adapters.ClaimStartAdapter.getName() ) !,
-                claimVoteAdapter: () => uiService.get<"execution">( adapters.ClaimVoteAdapter.getName() ) !,
-                claimResultAdapter: () => uiService.get<"execution">( adapters.ClaimResultAdapter.getName() ) !,
+                claimStartAdapter: () => uiService.get(adapters.ClaimStartAdapter.getName())!,
+                claimVoteAdapter: () => uiService.get<"execution">(adapters.ClaimVoteAdapter.getName())!,
+                claimResultAdapter: () => uiService.get<"execution">(adapters.ClaimResultAdapter.getName())!
             },
 
-            dynamicChannelClaimButtonId:
-                DynamicChannelPrimaryMessageElementsGroup.getByName( "Vertix/UI-V3/DynamicChannelClaimChannelButton" )!
-                    .getId(),
+            dynamicChannelClaimButtonId: DynamicChannelPrimaryMessageElementsGroup.getByName(
+                "Vertix/UI-V3/DynamicChannelClaimChannelButton"
+            )!.getId(),
 
             steps: {
                 claimResultAddedSuccessfully: "Vertix/UI-V3/ClaimResultAddedSuccessfully",
@@ -49,16 +49,15 @@ export class UIModuleV3 extends UIModuleBase {
                 claimResultVoteAlreadySelfVoted: "Vertix/UI-V3/ClaimResultVoteAlreadySelfVoted",
                 claimResultVoteAlreadyVotedSame: "Vertix/UI-V3/ClaimResultVoteAlreadyVotedSame",
                 claimResultVoteUpdatedSuccessfully: "Vertix/UI-V3/ClaimResultVoteUpdatedSuccessfully",
-                claimResultVotedSuccessfully: "Vertix/UI-V3/ClaimResultVotedSuccessfully",
+                claimResultVotedSuccessfully: "Vertix/UI-V3/ClaimResultVotedSuccessfully"
             },
 
             entities: {
                 claimVoteAddButton: "Vertix/UI-V3/ClaimVoteAddButton",
-                claimVoteStepInButton: "Vertix/UI-V3/ClaimVoteStepInButton",
+                claimVoteStepInButton: "Vertix/UI-V3/ClaimVoteStepInButton"
             }
-        } );
+        });
     }
-
 }
 
 export default UIModuleV3;

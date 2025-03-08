@@ -16,7 +16,7 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelClaimChannelButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelClaimChannelButton.getBaseName());
     }
 
     public static getSortId() {
@@ -28,7 +28,7 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelClaimChannelButton.getEmoji()  } ∙ **Claim**`;
+        return `${DynamicChannelClaimChannelButton.getEmoji()} ∙ **Claim**`;
     }
 
     public async getLabelForMenu() {
@@ -48,11 +48,12 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     protected async isDisabled(): Promise<boolean> {
-        if ( [ "starting", "active" ].includes( DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) ) {
+        if (["starting", "active"].includes(DynamicChannelVoteManager.$.getState(this.uiArgs?.channelId))) {
             return true;
         }
 
-        return ! DynamicChannelClaimManager.get( "Vertix/UI-V3/DynamicChannelClaimManager" )
-            .isChannelClaimable( this.uiArgs?.channelId );
+        return !DynamicChannelClaimManager.get("Vertix/UI-V3/DynamicChannelClaimManager").isChannelClaimable(
+            this.uiArgs?.channelId
+        );
     }
 }

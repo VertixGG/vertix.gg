@@ -24,20 +24,22 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 /**
  * Show for each dynamic channel, as a primary message.
  */
-export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars( new UIEmbedVars(
-    "name",
-    "limit",
-    "limitDisplayValue",
-    "limitDisplayUnlimited",
-    "limitValue",
-    "statePublic",
-    "statePrivate",
-    "stateShown",
-    "stateHidden",
-    "renameEmoji",
-    "limitEmoji",
-    "privacyEmoji",
-) ) {
+export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
+    new UIEmbedVars(
+        "name",
+        "limit",
+        "limitDisplayValue",
+        "limitDisplayUnlimited",
+        "limitValue",
+        "statePublic",
+        "statePrivate",
+        "stateShown",
+        "stateHidden",
+        "renameEmoji",
+        "limitEmoji",
+        "privacyEmoji"
+    )
+) {
     private readonly editTitleVars;
     private readonly editDescriptionVars;
     private readonly regionVars;
@@ -54,11 +56,11 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars( new UIEm
     public constructor() {
         super();
 
-        this.editTitleVars = this.useExternal( DynamicChannelPrimaryMessageEditTitleEmbed ).get();
-        this.editDescriptionVars = this.useExternal( DynamicChannelPrimaryMessageEditDescriptionEmbed ).get();
+        this.editTitleVars = this.useExternal(DynamicChannelPrimaryMessageEditTitleEmbed).get();
+        this.editDescriptionVars = this.useExternal(DynamicChannelPrimaryMessageEditDescriptionEmbed).get();
 
-        this.regionVars = this.useExternal( DynamicChannelRegionEmbed ).get();
-        this.privacyVars = this.useExternal( DynamicChannelPrivacyEmbed ).get();
+        this.regionVars = this.useExternal(DynamicChannelRegionEmbed).get();
+        this.privacyVars = this.useExternal(DynamicChannelPrivacyEmbed).get();
     }
 
     protected getColor(): number {
@@ -74,12 +76,7 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars( new UIEm
     }
 
     protected getDescription(): string {
-        const {
-            name,
-            limit,
-            limitEmoji,
-            renameEmoji,
-        } = this.vars.get();
+        const { name, limit, limitEmoji, renameEmoji } = this.vars.get();
 
         const { region, regionEmoji } = this.regionVars;
 
@@ -87,11 +84,13 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars( new UIEm
 
         const { description } = this.editDescriptionVars;
 
-        return `${ description }\n\n` +
-            `${ renameEmoji } ・ Name: **${ name }**\n\n` +
-            `${ limitEmoji } ・ User Limit: **${ limit }**\n\n` +
-            `${ privacyEmoji } ・ Privacy State: **${ state }**\n\n` +
-            `${ regionEmoji } ・ Region:  **${ region }**\n`;
+        return (
+            `${description}\n\n` +
+            `${renameEmoji} ・ Name: **${name}**\n\n` +
+            `${limitEmoji} ・ User Limit: **${limit}**\n\n` +
+            `${privacyEmoji} ・ Privacy State: **${state}**\n\n` +
+            `${regionEmoji} ・ Region:  **${region}**\n`
+        );
     }
 
     protected getOptions() {
@@ -99,23 +98,20 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars( new UIEm
 
         return {
             limit: {
-                [ vars.limitDisplayValue ]: vars.limitValue,
-                [ vars.limitDisplayUnlimited ]: "Unlimited",
+                [vars.limitDisplayValue]: vars.limitValue,
+                [vars.limitDisplayUnlimited]: "Unlimited"
             },
             state: {
-                [ vars.statePublic ]: "🌐 Public",
-                [ vars.statePrivate ]: "🚫 Private",
-                [ vars.stateShown ]: "🐵 Shown",
-                [ vars.stateHidden ]: "🙈 Hidden",
-            },
+                [vars.statePublic]: "🌐 Public",
+                [vars.statePrivate]: "🚫 Private",
+                [vars.stateShown]: "🐵 Shown",
+                [vars.stateHidden]: "🙈 Hidden"
+            }
         };
     }
 
-    protected getLogic( args: UIArgs ) {
-        const {
-            limitDisplayValue,
-            limitDisplayUnlimited,
-        } = this.vars.get();
+    protected getLogic(args: UIArgs) {
+        const { limitDisplayValue, limitDisplayUnlimited } = this.vars.get();
 
         return {
             name: args.channelName,
@@ -125,7 +121,7 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars( new UIEm
 
             renameEmoji: DynamicChannelRenameButton.getEmoji(),
             limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
-            privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
+            privacyEmoji: DynamicChannelPrivacyButton.getEmoji()
         };
     }
 }

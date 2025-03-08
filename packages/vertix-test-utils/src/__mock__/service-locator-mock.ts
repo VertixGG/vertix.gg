@@ -11,7 +11,7 @@ export class ServiceLocatorMock extends ServiceLocator {
     }
 
     public static get $() {
-        if ( ! this.instance ) {
+        if (!this.instance) {
             this.instance = new this();
         }
 
@@ -19,7 +19,6 @@ export class ServiceLocatorMock extends ServiceLocator {
     }
 
     public static mockOrigin() {
-        jest.spyOn( ServiceLocator, "$", "get" ).mockImplementation( () => this.$ );
+        jest.spyOn(ServiceLocator, "$", "get").mockImplementation(() => this.$);
     }
 }
-

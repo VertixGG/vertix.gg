@@ -22,11 +22,7 @@ export class ClaimVoteComponent extends UIComponentBase {
     }
 
     public static getElementsGroups() {
-        return [
-            ClaimVoteElementsGroup,
-
-            UIElementsGroupBase.createSingleGroup( ClaimVoteStepInButton ),
-        ];
+        return [ClaimVoteElementsGroup, UIElementsGroupBase.createSingleGroup(ClaimVoteStepInButton)];
     }
 
     public static getDefaultElementsGroup() {
@@ -35,9 +31,9 @@ export class ClaimVoteComponent extends UIComponentBase {
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( ClaimVoteStepInEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( ClaimVoteEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( ClaimVoteWonEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(ClaimVoteStepInEmbed),
+            UIEmbedsGroupBase.createSingleGroup(ClaimVoteEmbed),
+            UIEmbedsGroupBase.createSingleGroup(ClaimVoteWonEmbed)
         ];
     }
 
@@ -46,9 +42,7 @@ export class ClaimVoteComponent extends UIComponentBase {
     }
 
     public static getMarkdownsGroups() {
-        return [
-            UIMarkdownsGroupBase.createSingleGroup( ClaimVoteResultsMarkdown ),
-        ];
+        return [UIMarkdownsGroupBase.createSingleGroup(ClaimVoteResultsMarkdown)];
     }
 
     public static getDefaultMarkdownsGroup() {

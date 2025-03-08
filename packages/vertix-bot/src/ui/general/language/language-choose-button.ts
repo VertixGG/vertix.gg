@@ -14,11 +14,11 @@ export class LanguageChooseButton extends UIElementButtonBase {
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Choose Your Language" );
+        return Promise.resolve("Choose Your Language");
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "primary" );
+        return Promise.resolve("primary");
     }
 
     protected async getEmoji(): Promise<string> {

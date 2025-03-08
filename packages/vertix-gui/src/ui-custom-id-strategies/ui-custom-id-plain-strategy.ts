@@ -5,11 +5,11 @@ export class UICustomIdPlainStrategy extends UICustomIdStrategyBase {
         return "VertixGUI/UICustomIdWysiwygStrategy";
     }
 
-    public generateId( id: string ): string {
+    public generateId(id: string): string {
         return id;
     }
 
-    public getId( id: string ): string {
+    public getId(id: string): string {
         return id;
     }
 }

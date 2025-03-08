@@ -25,7 +25,7 @@ export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> e
     }
 
     public static getComponentType(): ComponentType {
-        throw new ForceMethodImplementation( this, this.getComponentType.name );
+        throw new ForceMethodImplementation(this, this.getComponentType.name);
     }
 
     public abstract getTranslatableContent(): Promise<any>;

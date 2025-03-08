@@ -10,9 +10,6 @@ export class SetupEditButtonsElementsGroup extends UIElementsGroupBase {
     }
 
     public static getItems() {
-        return [
-            [ ChannelButtonsTemplateSelectMenu ],
-            [ DoneButton ],
-        ];
+        return [[ChannelButtonsTemplateSelectMenu], [DoneButton]];
     }
 }

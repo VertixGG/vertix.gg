@@ -22,8 +22,6 @@ export class LogChannelSelectMenu extends UIElementChannelSelectMenu {
     }
 
     protected async getChannelTypes(): Promise<ChannelType[]> {
-        return [
-            ChannelType.GuildText
-        ];
+        return [ChannelType.GuildText];
     }
 }

@@ -9,9 +9,9 @@ export class GlobalLogger extends ObjectBase {
     }
 
     public static getInstance() {
-        if ( ! GlobalLogger.instance ) {
+        if (!GlobalLogger.instance) {
             const self = new GlobalLogger();
-            GlobalLogger.instance = new Logger( self );
+            GlobalLogger.instance = new Logger(self);
         }
 
         return GlobalLogger.instance;

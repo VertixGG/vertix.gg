@@ -52,18 +52,17 @@ import type {
 } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 export type TAdapterMapping = {
-    "base": UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>,
-    "execution": UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>,
-    "wizard": UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
-}
+    base: UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
+    execution: UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>;
+    wizard: UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
+};
 
 interface WaitForAdapterOptions {
     timeout?: number;
     silent?: boolean;
 }
 
-const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER_INTERVAL ) ||
-    300000; // 5 minutes.
+const ADAPTER_CLEANUP_TIMER_INTERVAL = Number(process.env.ADAPTER_CLEANUP_TIMER_INTERVAL) || 300000; // 5 minutes.
 
 const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
     timeout: 0,
@@ -71,12 +70,12 @@ const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
 };
 
 export class UIService extends ServiceWithDependenciesBase<{
-    uiHashService: UIHashService,
+    uiHashService: UIHashService;
 }> {
     private static cleanupTimerInterval: NodeJS.Timeout;
 
     private static uiSystemElements: {
-        RegenerateButton?: new () => UIElementButtonBase
+        RegenerateButton?: new () => UIElementButtonBase;
         WizardBackButton?: new () => UIElementButtonBase;
         WizardNextButton?: new () => UIElementButtonBase;
         WizardFinishButton?: new () => UIElementButtonBase;
@@ -87,8 +86,8 @@ export class UIService extends ServiceWithDependenciesBase<{
         MissingPermissionsComponent?: UIComponentTypeConstructor;
     } = {};
 
-    private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>;
-    private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>;
+    private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>();
+    private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>();
     private uiAdaptersRegisterOptions = new Map<string, TAdapterRegisterOptions>();
 
     private uiLanguageManager: UILanguageManagerInterface | null = null;
@@ -99,24 +98,24 @@ export class UIService extends ServiceWithDependenciesBase<{
         return "VertixGUI/UIService";
     }
 
-    public static registerSystemElements( systemElements: typeof UIService.uiSystemElements ) {
-        if ( ! Object.keys( systemElements ).length ) {
-            throw new Error( "System elements already registered" );
+    public static registerSystemElements(systemElements: typeof UIService.uiSystemElements) {
+        if (!Object.keys(systemElements).length) {
+            throw new Error("System elements already registered");
         }
 
-        Object.assign( UIService.uiSystemElements, systemElements );
+        Object.assign(UIService.uiSystemElements, systemElements);
 
-        this.emitter.emit( "system-elements-registered", systemElements );
+        this.emitter.emit("system-elements-registered", systemElements);
     }
 
-    public static registerSystemComponents( systemComponents: typeof UIService.uiSystemComponents ) {
-        if ( ! Object.keys( systemComponents ).length ) {
-            throw new Error( "System components already registered" );
+    public static registerSystemComponents(systemComponents: typeof UIService.uiSystemComponents) {
+        if (!Object.keys(systemComponents).length) {
+            throw new Error("System components already registered");
         }
 
-        Object.assign( UIService.uiSystemComponents, systemComponents );
+        Object.assign(UIService.uiSystemComponents, systemComponents);
 
-        this.emitter.emit( "system-components-registered", systemComponents );
+        this.emitter.emit("system-components-registered", systemComponents);
     }
 
     public static getSystemElements() {
@@ -128,16 +127,16 @@ export class UIService extends ServiceWithDependenciesBase<{
     }
 
     protected static setupCleanupTimerInterval() {
-        if ( ! UIService.cleanupTimerInterval ) {
-            UIService.cleanupTimerInterval = setInterval( UIAdapterBase.cleanupTimer, ADAPTER_CLEANUP_TIMER_INTERVAL );
+        if (!UIService.cleanupTimerInterval) {
+            UIService.cleanupTimerInterval = setInterval(UIAdapterBase.cleanupTimer, ADAPTER_CLEANUP_TIMER_INTERVAL);
         }
     }
 
-    public constructor( protected client: Client<true> ) {
-        super( arguments );
+    public constructor(protected client: Client<true>) {
+        super(arguments);
 
-        if ( ! client ) {
-            throw new Error( "Client is required" );
+        if (!client) {
+            throw new Error("Client is required");
         }
 
         this.$$.setupCleanupTimerInterval();
@@ -162,53 +161,56 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.client;
     }
 
-    public get<T extends keyof TAdapterMapping = "base">( uiName: string, silent = false ): TAdapterMapping[T] | undefined {
-        uiName = uiName.split( UI_CUSTOM_ID_SEPARATOR )[ 0 ];
+    public get<T extends keyof TAdapterMapping = "base">(
+        uiName: string,
+        silent = false
+    ): TAdapterMapping[T] | undefined {
+        uiName = uiName.split(UI_CUSTOM_ID_SEPARATOR)[0];
 
-        const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterClassType;
+        const UIClass = this.uiAdaptersTypes.get(uiName) as TAdapterClassType;
 
-        if ( ! UIClass ) {
-            if ( ! silent ) {
-                throw new Error( `Adapter: '${ uiName }' does not exist` );
+        if (!UIClass) {
+            if (!silent) {
+                throw new Error(`Adapter: '${uiName}' does not exist`);
             }
 
             return;
         }
 
-        if ( UIClass.isDynamic() ) {
-            return this.createInstance( uiName ) as TAdapterMapping[T];
+        if (UIClass.isDynamic()) {
+            return this.createInstance(uiName) as TAdapterMapping[T];
         }
 
-        return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
+        return this.uiAdaptersStaticInstances.get(uiName) as TAdapterMapping[T];
     }
 
-    public registerModule<T extends TModuleConstructor>( Module: T ) {
+    public registerModule<T extends TModuleConstructor>(Module: T) {
         Module.validate();
 
         const adapters = Module.getAdapters();
 
-         this.registerAdapters( adapters, { module: new Module() } );
+        this.registerAdapters(adapters, { module: new Module() });
     }
 
     public async registerInternalAdapters() {
-        const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
+        const internalAdapters = await import("@vertix.gg/gui/src/internal-adapters/index");
 
-        this.registerAdapters( Object.values( internalAdapters ) );
+        this.registerAdapters(Object.values(internalAdapters));
 
-        this.$$.emitter.emit( "internal-adapters-registered" );
+        this.$$.emitter.emit("internal-adapters-registered");
     }
 
-    public registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
-        adapters.forEach( adapter => {
-            this.registerAdapter( adapter, options );
-        } );
+    public registerAdapters(adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {}) {
+        adapters.forEach((adapter) => {
+            this.registerAdapter(adapter, options);
+        });
     }
 
-    public registerAdapter( UIClass: TAdapterClassType, options: TAdapterRegisterOptions = {} ) {
+    public registerAdapter(UIClass: TAdapterClassType, options: TAdapterRegisterOptions = {}) {
         const uiName = UIClass.getName();
 
-        if ( this.uiAdaptersTypes.has( uiName ) ) {
-            throw new Error( `User interface '${ uiName }' already exists` );
+        if (this.uiAdaptersTypes.has(uiName)) {
+            throw new Error(`User interface '${uiName}' already exists`);
         }
 
         // Each entity must be validated before it is registered.
@@ -217,151 +219,181 @@ export class UIService extends ServiceWithDependenciesBase<{
         const entities = UIClass.getComponent().getEntities();
 
         // To have all hashes generated before the UI is created.
-        for ( const entity of entities ) {
-            this.services.uiHashService.generateId(
-                UIClass.getName() + UI_CUSTOM_ID_SEPARATOR + entity.getName()
-            );
+        for (const entity of entities) {
+            this.services.uiHashService.generateId(UIClass.getName() + UI_CUSTOM_ID_SEPARATOR + entity.getName());
         }
 
-        this.storeClass( UIClass, options );
+        this.storeClass(UIClass, options);
 
         // Store only instances that are static.
-        if ( UIClass.isStatic() ) {
-            this.storeInstance( UIClass );
+        if (UIClass.isStatic()) {
+            this.storeInstance(UIClass);
         }
 
-        this.$$.emitter.emit( "adapter-registered", uiName );
+        this.$$.emitter.emit("adapter-registered", uiName);
 
-        this.logger.log( this.registerAdapter,
-            `Register entity: '${ uiName }' instanceType: '${ UIClass.getInstanceType() }'`
+        this.logger.log(
+            this.registerAdapter,
+            `Register entity: '${uiName}' instanceType: '${UIClass.getInstanceType()}'`
         );
     }
 
-    public async waitForAdapter<T extends keyof TAdapterMapping = "base">( uiName: string, options = ADAPTER_WAITFOR_DEFAULT_OPTIONS ): Promise<TAdapterMapping[T] | undefined> {
-        return new Promise( ( resolve, reject ) => {
-            const adapter = this.get<T>( uiName, true );
+    public async waitForAdapter<T extends keyof TAdapterMapping = "base">(
+        uiName: string,
+        options = ADAPTER_WAITFOR_DEFAULT_OPTIONS
+    ): Promise<TAdapterMapping[T] | undefined> {
+        return new Promise((resolve, reject) => {
+            const adapter = this.get<T>(uiName, true);
 
-            if ( adapter ) {
-                return resolve( adapter );
+            if (adapter) {
+                return resolve(adapter);
             }
 
-            const handleAdapterRegisteredEvent = ( name: string ) => {
-                if ( name === uiName ) {
-                    this.$$.emitter.off( "adapter-registered", handleAdapterRegisteredEvent );
-                    return resolve( this.get<T>( uiName, true )! );
+            const handleAdapterRegisteredEvent = (name: string) => {
+                if (name === uiName) {
+                    this.$$.emitter.off("adapter-registered", handleAdapterRegisteredEvent);
+                    return resolve(this.get<T>(uiName, true)!);
                 }
             };
 
-            this.$$.emitter.on( "adapter-registered", handleAdapterRegisteredEvent );
+            this.$$.emitter.on("adapter-registered", handleAdapterRegisteredEvent);
 
             const handleTimeout = () => {
-                this.$$.emitter.off( "adapter-registered", handleAdapterRegisteredEvent );
-                if ( options.silent ) {
-                    return resolve( undefined );
+                this.$$.emitter.off("adapter-registered", handleAdapterRegisteredEvent);
+                if (options.silent) {
+                    return resolve(undefined);
                 }
-                reject( new Error( `User interface '${ uiName }' not found in timeout of ${ options.timeout }ms` ) );
+                reject(new Error(`User interface '${uiName}' not found in timeout of ${options.timeout}ms`));
             };
 
-            setTimeout( handleTimeout, options.timeout );
-        } );
+            setTimeout(handleTimeout, options.timeout);
+        });
     }
 
-    public async waitForAdapters<T extends keyof TAdapterMapping = "base">( uiNames: string[], options = ADAPTER_WAITFOR_DEFAULT_OPTIONS ) {
-        if ( ! uiNames.length ) {
-            throw new Error( "Requested adapters array is empty" );
+    public async waitForAdapters<T extends keyof TAdapterMapping = "base">(
+        uiNames: string[],
+        options = ADAPTER_WAITFOR_DEFAULT_OPTIONS
+    ) {
+        if (!uiNames.length) {
+            throw new Error("Requested adapters array is empty");
         }
 
-        const result = ( await Promise.all(
-            uiNames.map( uiName => this.waitForAdapter( uiName, options ) )
-        ) ).filter( Boolean );
+        const result = (await Promise.all(uiNames.map((uiName) => this.waitForAdapter(uiName, options)))).filter(
+            Boolean
+        );
 
         return result as TAdapterMapping[T][];
     }
 
-    public registerUILanguageManager( uiLanguageManager: UILanguageManagerInterface ) {
-        if ( this.uiLanguageManager ) {
-            throw new Error( "UI Language Manager is already registered" );
+    public registerUILanguageManager(uiLanguageManager: UILanguageManagerInterface) {
+        if (this.uiLanguageManager) {
+            throw new Error("UI Language Manager is already registered");
         }
 
         this.uiLanguageManager = uiLanguageManager;
     }
 
     public getUILanguageManager() {
-        return this.uiLanguageManager || new class NullLanguageManager extends InitializeBase implements UILanguageManagerInterface {
-            public constructor() {
-                super();
-            }
+        return (
+            this.uiLanguageManager ||
+            new (class NullLanguageManager extends InitializeBase implements UILanguageManagerInterface {
+                public constructor() {
+                    super();
+                }
 
-            public static getName() {
-                return "VertixGUI/NullLanguageManager";
-            }
+                public static getName() {
+                    return "VertixGUI/NullLanguageManager";
+                }
 
-            public getButtonTranslatedContent( button: UIElementButtonBase, _languageCode: string | undefined ): Promise<UIElementButtonLanguageContent> {
-                return Promise.resolve( button.getTranslatableContent() );
-            }
+                public getButtonTranslatedContent(
+                    button: UIElementButtonBase,
+                    _languageCode: string | undefined
+                ): Promise<UIElementButtonLanguageContent> {
+                    return Promise.resolve(button.getTranslatableContent());
+                }
 
-            public getEmbedTranslatedContent( embed: UIEmbedBase, _languageCode: string | undefined ): Promise<UIEmbedLanguageContent> {
-                return Promise.resolve( embed.getTranslatableContent() );
-            }
+                public getEmbedTranslatedContent(
+                    embed: UIEmbedBase,
+                    _languageCode: string | undefined
+                ): Promise<UIEmbedLanguageContent> {
+                    return Promise.resolve(embed.getTranslatableContent());
+                }
 
-            public getMarkdownTranslatedContent( markdown: UIMarkdownBase, _languageCode: string | undefined ): Promise<UIMarkdownLanguageContent> {
-                return Promise.resolve( markdown.getTranslatableContent() );
-            }
+                public getMarkdownTranslatedContent(
+                    markdown: UIMarkdownBase,
+                    _languageCode: string | undefined
+                ): Promise<UIMarkdownLanguageContent> {
+                    return Promise.resolve(markdown.getTranslatableContent());
+                }
 
-            public getModalTranslatedContent( modal: UIModalBase, _languageCode: string | undefined ): Promise<UIModalLanguageContent> {
-                return Promise.resolve( modal.getTranslatableContent() );
-            }
+                public getModalTranslatedContent(
+                    modal: UIModalBase,
+                    _languageCode: string | undefined
+                ): Promise<UIModalLanguageContent> {
+                    return Promise.resolve(modal.getTranslatableContent());
+                }
 
-            public getSelectMenuTranslatedContent( selectMenu: UIElementStringSelectMenu | UIElementUserSelectMenu | UIElementRoleSelectMenu | UIElementChannelSelectMenu, _languageCode: string | undefined ): Promise<UIElementSelectMenuLanguageContent> {
-                return Promise.resolve( selectMenu.getTranslatableContent() );
-            }
+                public getSelectMenuTranslatedContent(
+                    selectMenu:
+                        | UIElementStringSelectMenu
+                        | UIElementUserSelectMenu
+                        | UIElementRoleSelectMenu
+                        | UIElementChannelSelectMenu,
+                    _languageCode: string | undefined
+                ): Promise<UIElementSelectMenuLanguageContent> {
+                    return Promise.resolve(selectMenu.getTranslatableContent());
+                }
 
-            public getTextInputTranslatedContent( textInput: UIElementInputBase, _languageCode: string | undefined ): Promise<UIElementTextInputLanguageContent> {
-                return Promise.resolve( textInput.getTranslatableContent() );
-            }
+                public getTextInputTranslatedContent(
+                    textInput: UIElementInputBase,
+                    _languageCode: string | undefined
+                ): Promise<UIElementTextInputLanguageContent> {
+                    return Promise.resolve(textInput.getTranslatableContent());
+                }
 
-            public register(): Promise<void> {
-                return Promise.resolve( undefined );
-            }
-        }();
+                public register(): Promise<void> {
+                    return Promise.resolve(undefined);
+                }
+            })()
+        );
     }
 
     /**
      * Function storeClass() :: Stores the class of the entity, the actual registration.
      */
-    private storeClass( UIClass: TAdapterClassType, options: TAdapterRegisterOptions ) {
+    private storeClass(UIClass: TAdapterClassType, options: TAdapterRegisterOptions) {
         const uiName = UIClass.getName();
 
-        this.uiAdaptersTypes.set( uiName, UIClass );
-        this.uiAdaptersRegisterOptions.set( uiName, options );
+        this.uiAdaptersTypes.set(uiName, UIClass);
+        this.uiAdaptersRegisterOptions.set(uiName, options);
     }
 
     /**
      * Function storeInstance() :: Stores only static entity instances.
      */
-    private storeInstance( UIClass: TAdapterClassType ) {
-        const instance = this.createInstance( UIClass.getName() );
+    private storeInstance(UIClass: TAdapterClassType) {
+        const instance = this.createInstance(UIClass.getName());
 
-        this.uiAdaptersStaticInstances.set( UIClass.getName(), instance );
+        this.uiAdaptersStaticInstances.set(UIClass.getName(), instance);
     }
 
     /**
      * Function createInstance() :: Creates a new instance of the entity for `get()` and `register()`.
      */
-    private createInstance( uiName: string ) {
-        const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterConstructor;
+    private createInstance(uiName: string) {
+        const UIClass = this.uiAdaptersTypes.get(uiName) as TAdapterConstructor;
 
-        if ( ! UIClass ) {
-            throw new Error( `Adapter: '${ uiName }' does not exist` );
+        if (!UIClass) {
+            throw new Error(`Adapter: '${uiName}' does not exist`);
         }
 
-        const options = this.uiAdaptersRegisterOptions.get( uiName );
+        const options = this.uiAdaptersRegisterOptions.get(uiName);
 
-        if ( ! options ) {
-            throw new Error( `Adapter: '${ uiName }' options do not exist` );
+        if (!options) {
+            throw new Error(`Adapter: '${uiName}' options do not exist`);
         }
 
-        return new UIClass( options );
+        return new UIClass(options);
     }
 }
 

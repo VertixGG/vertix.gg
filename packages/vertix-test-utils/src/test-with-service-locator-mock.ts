@@ -18,11 +18,11 @@ export class TestWithServiceLocatorMock {
         this.beforeEach();
 
         ServiceLocatorMock.$.register(
-            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-hash-service-mock" ) ).UIHashServiceMock
+            (await import("@vertix.gg/test-utils/src/__mock__/ui-hash-service-mock")).UIHashServiceMock
         );
 
         ServiceLocatorMock.$.register(
-            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock
+            (await import("@vertix.gg/test-utils/src/__mock__/ui-service-mock")).UIServiceMock
         );
 
         await this.afterEach();

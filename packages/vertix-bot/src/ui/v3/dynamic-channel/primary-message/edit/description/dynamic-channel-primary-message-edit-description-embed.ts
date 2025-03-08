@@ -13,19 +13,24 @@ import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfa
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmbedBase, new UIEmbedVars(
-    "description",
+const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
+    DynamicChannelEmbedBase,
+    new UIEmbedVars(
+        "description",
 
-    "descriptionDisplayDefault",
-    "descriptionDisplayValue",
-    "descriptionValue",
+        "descriptionDisplayDefault",
+        "descriptionDisplayValue",
+        "descriptionValue",
 
-    "editPrimaryMessageEmoji",
-) );
+        "editPrimaryMessageEmoji"
+    )
+);
 
 export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicChannelEmbedBaseWithVars {
-    private configV3 = ConfigManager.$
-        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+        "Vertix/Config/MasterChannel",
+        VERSION_UI_V3
+    );
 
     public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed";
@@ -36,41 +41,39 @@ export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicCha
     }
 
     protected getTitle(): string {
-        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit description of your channel`;
+        return `${this.vars.get("editPrimaryMessageEmoji")}  •  Edit description of your channel`;
     }
 
     protected getDescription(): string {
-        return "\n _Description_:\n `" + this.vars.get( "description" ) + "`\n"
-            + "\n### Do you want to change it?";
+        return "\n _Description_:\n `" + this.vars.get("description") + "`\n" + "\n### Do you want to change it?";
     }
 
     protected getOptions() {
         const vars = this.vars.get();
 
         return {
-            "description": {
-                [ vars.descriptionDisplayValue ]: vars.descriptionValue,
-                [ vars.descriptionDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageDescription,
-            },
+            description: {
+                [vars.descriptionDisplayValue]: vars.descriptionValue,
+                [vars.descriptionDisplayDefault]: this.configV3.data.constants.dynamicChannelPrimaryMessageDescription
+            }
         };
     }
 
-    protected async getLogicAsync( args: UIArgs ) {
-        const result = super.getLogic( args );
+    protected async getLogicAsync(args: UIArgs) {
+        const result = super.getLogic(args);
 
-        const {
-            descriptionDisplayValue,
-            descriptionDisplayDefault,
-        } = this.vars.get();
+        const { descriptionDisplayValue, descriptionDisplayDefault } = this.vars.get();
 
-        if ( args.description ) {
+        if (args.description) {
             result.descriptionValue = args.description;
             result.description = descriptionDisplayValue;
         } else {
             result.description = descriptionDisplayDefault;
         }
 
-        result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
+        result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(
+            DynamicChannelPrimaryMessageEditButton.getBaseName()
+        );
 
         return result;
     }

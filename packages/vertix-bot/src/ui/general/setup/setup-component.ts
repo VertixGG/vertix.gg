@@ -20,22 +20,18 @@ export class SetupComponent extends UIComponentBase {
     }
 
     public static getElementsGroups() {
-        return [
-            SetupElementsGroup,
-        ];
+        return [SetupElementsGroup];
     }
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( SetupEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(SetupEmbed),
+            UIEmbedsGroupBase.createSingleGroup(SetupMaxMasterChannelsEmbed)
         ];
     }
 
     public static getModals() {
-        return [
-            BadwordsModal,
-        ];
+        return [BadwordsModal];
     }
 
     public static getDefaultElementsGroup() {

@@ -1,8 +1,6 @@
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    DynamicChannelClaimChannelButton
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/claim/dynamic-channel-claim-channel-button";
+import { DynamicChannelClaimChannelButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/claim/dynamic-channel-claim-channel-button";
 
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 

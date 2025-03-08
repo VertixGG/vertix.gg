@@ -28,7 +28,7 @@ export class BadwordsInput extends UIElementInputBase {
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.badwords.join( ", " )  || "";
+        return this.uiArgs?.badwords.join(", ") || "";
     }
 
     protected async getMinLength(): Promise<number> {

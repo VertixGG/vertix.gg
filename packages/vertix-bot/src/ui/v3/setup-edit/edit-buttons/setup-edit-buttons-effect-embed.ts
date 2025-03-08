@@ -10,7 +10,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditButtonsEffectEmbed extends UIEmbedBase {
     private static vars = {
-        index: uiUtilsWrapAsTemplate( "index" )
+        index: uiUtilsWrapAsTemplate("index")
     };
 
     public static getName() {
@@ -30,25 +30,27 @@ export class SetupEditButtonsEffectEmbed extends UIEmbedBase {
     }
 
     protected getTitle() {
-        return `🎚  Edit Buttons Of Master Channel #${ SetupEditButtonsEffectEmbed.vars.index }`;
+        return `🎚  Edit Buttons Of Master Channel #${SetupEditButtonsEffectEmbed.vars.index}`;
     }
 
     protected getDescription(): string {
         const index = SetupEditButtonsEffectEmbed.vars.index;
 
-        return `Editing buttons will impact the dynamic channels created by __Master Channel #${ index }__.\n\n` +
+        return (
+            `Editing buttons will impact the dynamic channels created by __Master Channel #${index}__.\n\n` +
             "There are have two options:\n\n" +
             "- Affect changes immediately to all channels\n" +
-            "- Apply changes only to newly created _Dynamic Channels_.";
+            "- Apply changes only to newly created _Dynamic Channels_."
+        );
     }
 
     protected getFooter() {
         return "Current enabled buttons at the menu below";
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
-            index: args.index + 1,
+            index: args.index + 1
         };
     }
 }

@@ -13,7 +13,7 @@ export class DynamicChannelPermissionsPublicEmbed extends UIEmbedBase {
     }
 
     protected getColor() {
-        return 0x75C8E1; // Same as globe emoji.
+        return 0x75c8e1; // Same as globe emoji.
     }
 
     protected getImage(): string {
@@ -25,7 +25,9 @@ export class DynamicChannelPermissionsPublicEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return "Please be aware that your room is currently accessible to anyone.\n\n" +
-            "Members **without** access will be able to enter the room unless it is hidden or set to private.";
+        return (
+            "Please be aware that your room is currently accessible to anyone.\n\n" +
+            "Members **without** access will be able to enter the room unless it is hidden or set to private."
+        );
     }
 }

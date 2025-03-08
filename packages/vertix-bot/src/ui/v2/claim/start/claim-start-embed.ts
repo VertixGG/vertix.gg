@@ -11,10 +11,10 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
  */
 export class ClaimStartEmbed extends UIEmbedBase {
     private static vars: any = {
-        ownerId: uiUtilsWrapAsTemplate( "ownerId" ),
-        ownerDisplayName: uiUtilsWrapAsTemplate( "ownerDisplayName" ),
+        ownerId: uiUtilsWrapAsTemplate("ownerId"),
+        ownerDisplayName: uiUtilsWrapAsTemplate("ownerDisplayName"),
 
-        absentMinutes: uiUtilsWrapAsTemplate( "absentMinutes" ),
+        absentMinutes: uiUtilsWrapAsTemplate("absentMinutes")
     };
 
     public static getName() {
@@ -26,21 +26,23 @@ export class ClaimStartEmbed extends UIEmbedBase {
     }
 
     protected getTitle() {
-        return `👋  ${ ClaimStartEmbed.vars.ownerDisplayName } abandoned his channel!`;
+        return `👋  ${ClaimStartEmbed.vars.ownerDisplayName} abandoned his channel!`;
     }
 
     protected getDescription(): string {
-        return `<@${ ClaimStartEmbed.vars.ownerId }> has been absent for more than ${ ClaimStartEmbed.vars.absentMinutes } minutes.\n` +
-            "Will you be the one to take charge? Step up and claim it for yourself!";
+        return (
+            `<@${ClaimStartEmbed.vars.ownerId}> has been absent for more than ${ClaimStartEmbed.vars.absentMinutes} minutes.\n` +
+            "Will you be the one to take charge? Step up and claim it for yourself!"
+        );
     }
 
-    protected getLogic( args: UIArgs ){
+    protected getLogic(args: UIArgs) {
         const { ownerDisplayName, ownerId, absentInterval } = args;
 
         return {
             ownerId,
             ownerDisplayName,
-            absentMinutes: ( absentInterval / 60000 ).toFixed( 1 )
+            absentMinutes: (absentInterval / 60000).toFixed(1)
         };
     }
 }

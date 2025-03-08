@@ -17,15 +17,11 @@ export class DynamicChannelRegionComponent extends UIComponentBase {
     }
 
     public static getEmbedsGroups() {
-        return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelRegionEmbed ),
-        ];
+        return [UIEmbedsGroupBase.createSingleGroup(DynamicChannelRegionEmbed)];
     }
 
     public static getElementsGroups() {
-        return [
-            UIElementsGroupBase.createSingleGroup( DynamicChannelRegionSelectMenu )
-        ];
+        return [UIElementsGroupBase.createSingleGroup(DynamicChannelRegionSelectMenu)];
     }
 
     public static getDefaultEmbedsGroup() {

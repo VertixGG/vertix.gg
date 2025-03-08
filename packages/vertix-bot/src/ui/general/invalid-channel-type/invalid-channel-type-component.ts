@@ -13,8 +13,6 @@ export class InvalidChannelTypeComponent extends UIComponentBase {
     }
 
     public static getEmbeds() {
-        return [
-            InvalidChannelTypeEmbed,
-        ];
+        return [InvalidChannelTypeEmbed];
     }
 }

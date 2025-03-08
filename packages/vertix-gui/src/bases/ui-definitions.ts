@@ -24,35 +24,43 @@ export const UI_CUSTOM_ID_SEPARATOR = ":";
 
 export const UI_IMAGE_EMPTY_LINE_URL = "https://i.imgur.com/NthLO3W.png";
 
-export type UIArgs = { [ key: string ]: any; }
+export type UIArgs = { [key: string]: any };
 
 export type UIType = "component" | "element" | "embed" | "modal" | "markdown";
 export type UIGroupsType = "element" | "embed" | "markdown";
-export type UIAdapterBuildSource = "unknown" | "send" | "send-to-user" | "reply" | "edit" | "edit-message" | "run" | "show-modal";
+export type UIAdapterBuildSource =
+    | "unknown"
+    | "send"
+    | "send-to-user"
+    | "reply"
+    | "edit"
+    | "edit-message"
+    | "run"
+    | "show-modal";
 
 // TODO: constructor types should not be arrays, but a single type.
 
-export type UIElementsTypes = typeof UIElementBase[] | typeof UIElementBase[][];
-export type UIElementsConstructor = { new(): UIElementBase<any> }[] | { new(): UIElementBase<any> }[][]; // TODO: Maybe passthroughs the type of the element as a generic.
+export type UIElementsTypes = (typeof UIElementBase)[] | (typeof UIElementBase)[][];
+export type UIElementsConstructor = { new (): UIElementBase<any> }[] | { new (): UIElementBase<any> }[][]; // TODO: Maybe passthroughs the type of the element as a generic.
 export type UIElementsTypesConstructor = UIElementsTypes | UIElementsConstructor;
 
-export type UIEmbedTypes = typeof UIEmbedBase[];
-export type UIEmbedConstructor = { new(): UIEmbedBase }[];
+export type UIEmbedTypes = (typeof UIEmbedBase)[];
+export type UIEmbedConstructor = { new (): UIEmbedBase }[];
 export type UIEmbedTypesConstructor = UIEmbedTypes | UIEmbedConstructor;
 
-export type UIModalTypes = typeof UIModalBase[];
-export type UIModalConstructor = { new(): UIModalBase }[];
+export type UIModalTypes = (typeof UIModalBase)[];
+export type UIModalConstructor = { new (): UIModalBase }[];
 export type UIModalTypesConstructor = UIModalTypes | UIModalConstructor;
 
-export type UIMarkdownTypes = typeof UIMarkdownBase[];
-export type UIMarkdownConstructor = { new(): UIMarkdownBase }[];
+export type UIMarkdownTypes = (typeof UIMarkdownBase)[];
+export type UIMarkdownConstructor = { new (): UIMarkdownBase }[];
 export type UIMarkdownLinkConstructor = UIMarkdownTypes | UIMarkdownConstructor;
 
-export type UIEntityTypes = typeof UIEntityBase[];
-export type UIEntityConstructor = { new(): UIEntityBase }[];
-export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | ( UIEntityTypes | UIEntityConstructor )[];
+export type UIEntityTypes = (typeof UIEntityBase)[];
+export type UIEntityConstructor = { new (): UIEntityBase }[];
+export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | (UIEntityTypes | UIEntityConstructor)[];
 
-export type UIComponentConstructor = { new( args?: UICreateComponentArgs ): UIComponentBase };
+export type UIComponentConstructor = { new (args?: UICreateComponentArgs): UIComponentBase };
 export type UIComponentTypeConstructor = typeof UIComponentBase & UIComponentConstructor;
 
 // export type UIEntityUnionTypes = UIEmbedTypes | UIElementsTypes;
@@ -68,13 +76,13 @@ export interface UISchemaBase {
 }
 
 export interface UIPortableSchemaBase extends UISchemaBase {
-    entities: { [ key: string ]: any; };
+    entities: { [key: string]: any };
 }
 
 export interface UIEntitySchemaBase extends UISchemaBase {
     attributes: {
         custom_id?: string;
-        [ key: string ]: any;
+        [key: string]: any;
     };
     isAvailable: boolean;
 }
@@ -82,15 +90,15 @@ export interface UIEntitySchemaBase extends UISchemaBase {
 /* Execution */
 
 export type UIExecutionConditionArgs<TInteraction extends UIAdapterReplyContext = UIAdapterReplyContext> = {
-    context: TInteraction | Message<true>,
-    args?: UIArgs
+    context: TInteraction | Message<true>;
+    args?: UIArgs;
 };
 
 export interface UIExecutionStep {
     embedsGroup?: string | null;
     elementsGroup?: string | null;
     markdownGroup?: string | null;
-    getConditions?: ( args: UIExecutionConditionArgs ) => boolean;
+    getConditions?: (args: UIExecutionConditionArgs) => boolean;
 }
 
 export interface UIExecutionStepItem extends UIExecutionStep {
@@ -102,23 +110,25 @@ export interface UIExecutionStepData extends UIExecutionStep {
 }
 
 export interface UIExecutionSteps {
-    [ key: string ]: UIExecutionStep;
+    [key: string]: UIExecutionStep;
 }
 
 /* Embed */
 
 export interface UIBaseTemplateOptions {
-    [ key: string ]: string | {
-        [ key: string ]: string
-    }
+    [key: string]:
+        | string
+        | {
+              [key: string]: string;
+          };
 }
 
 export interface UIEmbedArrayOptions {
-    [ key: string ]: {
-        format: string,
-        separator: string,
-        multiSeparator?: string,
-        options?: { [ key: string ]: any, }
+    [key: string]: {
+        format: string;
+        separator: string;
+        multiSeparator?: string;
+        options?: { [key: string]: any };
     };
 }
 
@@ -129,4 +139,3 @@ export interface UICreateComponentArgs {
     embedsGroupType?: typeof UIEmbedsGroupBase;
     markdownsGroupType?: typeof UIMarkdownsGroupBase;
 }
-

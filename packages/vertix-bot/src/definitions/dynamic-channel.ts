@@ -7,88 +7,88 @@ import type { Guild, VoiceState } from "discord.js";
 export enum DynamicEditChannelNameInternalResultCode {
     Error = 0,
     Success = "success",
-    RateLimit = "rate-limit",
+    RateLimit = "rate-limit"
 }
 
 export enum DynamicEditChannelNameResultCode {
     Error = 0,
     Success = "success",
     Badword = "badword",
-    RateLimit = "rate-limit",
+    RateLimit = "rate-limit"
 }
 
 export enum DynamicEditChannelStateResultCode {
     Error = 0,
     Success = "success",
-    RenameChannelStateRateLimit = "rename-channel-state-rate-limit",
+    RenameChannelStateRateLimit = "rename-channel-state-rate-limit"
 }
 
 export enum DynamicClearChatResultCode {
     Error = 0,
     Success = "success",
-    NothingToDelete = "nothing-to-delete",
+    NothingToDelete = "nothing-to-delete"
 }
 
 export enum DynamicResetChannelResultCode {
     Error = 0,
     VoteRequired = "vote-required",
     Success = "success",
-    SuccessRenameRateLimit = "success-rename-rate-limit",
+    SuccessRenameRateLimit = "success-rename-rate-limit"
 }
 
 export interface IDynamicChannelCreateArgs {
-    username: string,
-    oldState: VoiceState,
-    newState: VoiceState,
-    guild: Guild
-    displayName: string,
+    username: string;
+    oldState: VoiceState;
+    newState: VoiceState;
+    guild: Guild;
+    displayName: string;
 }
 
 export interface IDynamicEditChannelNameInternalResult {
-    code: DynamicEditChannelNameInternalResultCode,
-    retryAfter?: number,
+    code: DynamicEditChannelNameInternalResultCode;
+    retryAfter?: number;
 }
 
 export interface IDynamicEditChannelNameResult {
-    code: DynamicEditChannelNameResultCode,
-    retryAfter?: number,
-    badword?: string,
+    code: DynamicEditChannelNameResultCode;
+    retryAfter?: number;
+    badword?: string;
 }
 
 export interface IDynamicEditChannelStateResult {
-    code: DynamicEditChannelStateResultCode,
-    retryAfter?: number,
+    code: DynamicEditChannelStateResultCode;
+    retryAfter?: number;
 }
 
 export interface IDynamicClearChatResult {
-    code: DynamicClearChatResultCode,
-    deletedCount?: number,
+    code: DynamicClearChatResultCode;
+    deletedCount?: number;
 }
 
 /**
  * Renamed from `IDynamicResetChannelState`
  */
 export interface TDynamicChannelConfiguration {
-    name: string,
-    userLimit: number,
-    state: ChannelState,
-    visibilityState: ChannelVisibilityState,
-    allowedUserIds: string[],
-    blockedUserIds: string[],
+    name: string;
+    userLimit: number;
+    state: ChannelState;
+    visibilityState: ChannelVisibilityState;
+    allowedUserIds: string[];
+    blockedUserIds: string[];
 
     // @since 0.0.8
-    region?: string,
-    primaryMessageTitle?: string,
-    primaryMessageDescription?: string,
+    region?: string;
+    primaryMessageTitle?: string;
+    primaryMessageDescription?: string;
 }
 
 export interface IDynamicResetChannelResult {
-    code: DynamicResetChannelResultCode,
+    code: DynamicResetChannelResultCode;
 
-    oldState?: TDynamicChannelConfiguration,
-    newState?: TDynamicChannelConfiguration,
+    oldState?: TDynamicChannelConfiguration;
+    newState?: TDynamicChannelConfiguration;
 
-    rateLimitRetryAfter?: number,
+    rateLimitRetryAfter?: number;
 }
 
 /* Default Permissions */
@@ -109,7 +109,13 @@ export type ChannelVisibilityState = "unknown" | "shown" | "hidden";
  */
 export type ChannelPrivacyState = ChannelState | ChannelVisibilityState;
 
-export type AddStatus = "error" | "action-on-bot-user" |  "self-grant" | "already-granted" | "success";
+export type AddStatus = "error" | "action-on-bot-user" | "self-grant" | "already-granted" | "success";
 export type EditStatus = "error" | "action-on-bot-user" | "self-edit" | "already-have" | "success";
-export type RemoveStatus = "error" | "action-on-bot-user" | "self-deny" | "user-blocked" | "not-in-the-list" | "success"
+export type RemoveStatus =
+    | "error"
+    | "action-on-bot-user"
+    | "self-deny"
+    | "user-blocked"
+    | "not-in-the-list"
+    | "success";
 export type ActStatus = "error" | "action-on-bot-user" | "self-action" | "not-in-the-list" | "success";

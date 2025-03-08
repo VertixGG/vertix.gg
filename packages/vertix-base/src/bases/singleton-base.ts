@@ -7,11 +7,11 @@ export abstract class SingletonBase extends InitializeBase {
         super();
     }
 
-    protected static getInstance<T extends SingletonBase>( this: new () => T ): T {
-        if ( ! SingletonBase.instances.has( this ) ) {
-            SingletonBase.instances.set( this, new this() );
+    protected static getInstance<T extends SingletonBase>(this: new () => T): T {
+        if (!SingletonBase.instances.has(this)) {
+            SingletonBase.instances.set(this, new this());
         }
 
-        return SingletonBase.instances.get( this );
+        return SingletonBase.instances.get(this);
     }
 }

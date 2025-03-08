@@ -15,12 +15,12 @@ import type { Client } from "discord.js";
 interface PackageJson {
     version: string;
 
-    [ key: string ]: any;
+    [key: string]: any;
 }
 
-const packageJsonPath = path.resolve( "./package.json" );
-const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
-const packageJson: PackageJson = JSON.parse( packageJsonString );
+const packageJsonPath = path.resolve("./package.json");
+const packageJsonString = fs.readFileSync(packageJsonPath, { encoding: "utf8" });
+const packageJson: PackageJson = JSON.parse(packageJsonString);
 
 export class AppService extends ServiceBase {
     private client: Client<true>;
@@ -42,9 +42,7 @@ export class AppService extends ServiceBase {
     public constructor() {
         super();
 
-        EventBus.$.register( this, [
-            this.onReady,
-        ] );
+        EventBus.$.register(this, [this.onReady]);
 
         this.printVersion();
     }
@@ -53,40 +51,42 @@ export class AppService extends ServiceBase {
         return this.client;
     }
 
-    public onceReady( onceReady: () => void ) {
+    public onceReady(onceReady: () => void) {
         this.onceReadyCallback = onceReady;
     }
 
-    public async onReady( client: Client<true> ) {
-        if ( this.client ) {
-            this.logger.error( this.onReady, "Client is already set" );
+    public async onReady(client: Client<true>) {
+        if (this.client) {
+            this.logger.error(this.onReady, "Client is already set");
 
-            process.exit( 1 );
+            process.exit(1);
         }
 
         this.client = client;
 
-        if ( ! client.user || ! client.application ) {
-            this.logger.error( this.onReady, "Client is not ready" );
+        if (!client.user || !client.application) {
+            this.logger.error(this.onReady, "Client is not ready");
 
-            process.exit( 1 );
+            process.exit(1);
         }
 
-        const { Commands } = ( await import( "@vertix.gg/bot/src/commands" ) );
+        const { Commands } = await import("@vertix.gg/bot/src/commands");
 
-        await client.application.commands.set( Commands );
+        await client.application.commands.set(Commands);
 
-        this.logger.info( this.onReady, "Abandoned channels are handled." );
+        this.logger.info(this.onReady, "Abandoned channels are handled.");
 
         await this.ensureBackwardCompatibility();
 
         const username = client.user.username,
             id = client.user.id;
 
-        this.logger.log( this.onReady,
-            `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.` );
+        this.logger.log(
+            this.onReady,
+            `Ready handle is set, bot: '${username}', id: '${id}' is online, commands is set.`
+        );
 
-        if ( this.onceReadyCallback ) {
+        if (this.onceReadyCallback) {
             this.pingInterval();
             this.onceReadyCallback();
         }
@@ -138,14 +138,15 @@ export class AppService extends ServiceBase {
     }
 
     private pingInterval() {
-        setInterval( () => {
-            this.logger.log( this.pingInterval, `Ping: ${ this.client.ws.ping }ms` );
-        }, 30000 );
+        setInterval(() => {
+            this.logger.log(this.pingInterval, `Ping: ${this.client.ws.ping}ms`);
+        }, 30000);
     }
 
     private printVersion() {
-        this.logger.info( this.printVersion,
-            `Version: '${ AppService.getVersion() }' Build version: ${ AppService.getBuildVersion() }'`
+        this.logger.info(
+            this.printVersion,
+            `Version: '${AppService.getVersion()}' Build version: ${AppService.getBuildVersion()}'`
         );
     }
 }

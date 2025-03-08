@@ -20,12 +20,12 @@ export class SetupMaxMasterChannelsEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return `You can create up to **${ uiUtilsWrapAsTemplate( "maxMasterChannels" ) }** Master Channels in total.`;
+        return `You can create up to **${uiUtilsWrapAsTemplate("maxMasterChannels")}** Master Channels in total.`;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
-            maxMasterChannels: args.maxMasterChannels,
+            maxMasterChannels: args.maxMasterChannels
         };
     }
 }

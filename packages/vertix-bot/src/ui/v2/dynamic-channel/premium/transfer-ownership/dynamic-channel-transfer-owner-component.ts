@@ -8,20 +8,12 @@ import { YesNoElementsGroup } from "@vertix.gg/bot/src/ui/general/decision/yes-n
 
 import { DisabledWhileClaimEmbed } from "@vertix.gg/bot/src/ui/general/misc/disabled-while-claim-embed";
 
-import {
-    DynamicChannelTransferOwnerEmbed
-} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-embed";
-import {
-    DynamicChannelTransferOwnerUserMenu
-} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-user-menu";
+import { DynamicChannelTransferOwnerEmbed } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-embed";
+import { DynamicChannelTransferOwnerUserMenu } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-user-menu";
 
-import {
-    DynamicChannelTransferOwnerUserSelectedEmbed
-} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-user-selected-embed";
+import { DynamicChannelTransferOwnerUserSelectedEmbed } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-user-selected-embed";
 
-import {
-    DynamicChannelTransferOwnerTransferredEmbed
-} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-transferred-embed";
+import { DynamicChannelTransferOwnerTransferredEmbed } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-transferred-embed";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
@@ -35,21 +27,17 @@ export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
     }
 
     public static getElementsGroups() {
-        return [
-            UIElementsGroupBase.createSingleGroup( DynamicChannelTransferOwnerUserMenu ),
-
-            YesNoElementsGroup,
-        ];
+        return [UIElementsGroupBase.createSingleGroup(DynamicChannelTransferOwnerUserMenu), YesNoElementsGroup];
     }
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerUserSelectedEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerTransferredEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelTransferOwnerEmbed),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelTransferOwnerUserSelectedEmbed),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelTransferOwnerTransferredEmbed),
 
-            UIEmbedsGroupBase.createSingleGroup( DisabledWhileClaimEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DisabledWhileClaimEmbed),
+            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
         ];
     }
 

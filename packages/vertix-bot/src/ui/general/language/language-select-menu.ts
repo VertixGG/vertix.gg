@@ -1,5 +1,4 @@
-import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu"
-    ;
+import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -22,21 +21,23 @@ export class LanguageSelectMenu extends UIElementStringSelectMenu {
 
     protected async getSelectOptions() {
         const initialLanguage = UI_LANGUAGES_INITIAL_ATTRIBUTES,
-            result = [ {
-                label: `${ initialLanguage.flag } ${ initialLanguage.name }`,
-                value: initialLanguage.code,
-                default: ( this.uiArgs?._language ? this.uiArgs?._language === initialLanguage.code : true ),
-            } ];
+            result = [
+                {
+                    label: `${initialLanguage.flag} ${initialLanguage.name}`,
+                    value: initialLanguage.code,
+                    default: this.uiArgs?._language ? this.uiArgs?._language === initialLanguage.code : true
+                }
+            ];
 
         const languages = UILanguageManager.$.getAvailableLanguages();
 
-        languages.forEach( ( language ) => {
-            result.push( {
-                label: `${ language.flag } ${ language.name }`,
+        languages.forEach((language) => {
+            result.push({
+                label: `${language.flag} ${language.name}`,
                 value: language.code,
                 default: this.uiArgs?._language === language.code
-            } );
-        } );
+            });
+        });
 
         return result;
     }

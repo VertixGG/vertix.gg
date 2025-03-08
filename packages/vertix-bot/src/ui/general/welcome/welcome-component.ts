@@ -15,14 +15,14 @@ export class WelcomeComponent extends UIComponentBase {
 
     public static getElementsGroups() {
         return [
-            WelcomeElementsGroup,
+            WelcomeElementsGroup
             // WelcomeLanguageElementsGroup
         ];
     }
 
     public static getEmbeds() {
         return [
-            WelcomeEmbed,
+            WelcomeEmbed
             // LanguageEmbed,
         ];
     }

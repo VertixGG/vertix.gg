@@ -17,13 +17,13 @@ import { DynamicChannelPrimaryMessageEditButton } from "@vertix.gg/bot/src/ui/v3
 import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
 
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
-import { DynamicChannelPermissionsAccessButton, } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
+import { DynamicChannelPermissionsAccessButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
 
 import type { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-type ButtonsMap = { [ key: string ]: DynamicChannelButtonBase };
+type ButtonsMap = { [key: string]: DynamicChannelButtonBase };
 
 /**
  * Represents a group of dynamic channel elements.
@@ -38,19 +38,19 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
     }
 
-    private static getItemFromMap( map: ButtonsMap, key: string ): DynamicChannelButtonBase | undefined {
-        return map[ key ];
+    private static getItemFromMap(map: ButtonsMap, key: string): DynamicChannelButtonBase | undefined {
+        return map[key];
     }
 
-    private static mapButtons( allItems: DynamicChannelButtonBase[] ) {
-        allItems.forEach( ( item ) => {
-            this.allButtonsById[ item.getId() ] = item;
-            this.allButtonsByName[ item.getName() ] = item;
-        } );
+    private static mapButtons(allItems: DynamicChannelButtonBase[]) {
+        allItems.forEach((item) => {
+            this.allButtonsById[item.getId()] = item;
+            this.allButtonsByName[item.getName()] = item;
+        });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static getItems( args?: UIArgs ) {
+    public static getItems(args?: UIArgs) {
         // TODO: Called 3 times on startup, fix this.
         // @note: This has no visual effect, it used to define the items that will be used in the UI.
         // Then another function sort it before printing it, TODO Handle it.
@@ -65,9 +65,9 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelClearChatButton,
             DynamicChannelResetChannelButton,
             DynamicChannelTransferOwnerButton,
-            DynamicChannelClaimChannelButton,
-        ].sort( ( a, b ) => a.getSortId() - b.getSortId() );
-    };
+            DynamicChannelClaimChannelButton
+        ].sort((a, b) => a.getSortId() - b.getSortId());
+    }
 
     /**
      * Function `populate()`: Populates the DynamicChannelPrimaryMessageElementsGroup with items.
@@ -79,79 +79,82 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
      */
     public static populate() {
         // If already populated, throw an error.
-        if ( this.allButtons.length ) {
-            throw new Error( `${ this.getName() } already populated` );
+        if (this.allButtons.length) {
+            throw new Error(`${this.getName()} already populated`);
         }
 
         const dynamicChannelButtons = DynamicChannelPrimaryMessageElementsGroup.getItems().flat();
 
-        dynamicChannelButtons.forEach( ( DynamicChannelButton ) => {
+        dynamicChannelButtons.forEach((DynamicChannelButton) => {
             const button = new DynamicChannelButton();
 
-            if ( this.allButtons.find( ( item ) =>
-                item.getId() === button.getId() || item.getName() === button.getName() )
+            if (
+                this.allButtons.find((item) => item.getId() === button.getId() || item.getName() === button.getName())
             ) {
-                throw new Error( `Duplicate item id: '${ button.getId() }' name: '${ button.getName() }'` );
+                throw new Error(`Duplicate item id: '${button.getId()}' name: '${button.getName()}'`);
             }
 
-            this.allButtons.push( button );
-        } );
+            this.allButtons.push(button);
+        });
 
-        this.allButtons = this.sort( this.allButtons );
+        this.allButtons = this.sort(this.allButtons);
 
-        this.mapButtons( this.allButtons );
+        this.mapButtons(this.allButtons);
     }
 
     public static getAll() {
         return DynamicChannelPrimaryMessageElementsGroup.allButtons;
     }
 
-    public static getById( id: string ) {
-        return this.getItemFromMap( this.allButtonsById, id );
+    public static getById(id: string) {
+        return this.getItemFromMap(this.allButtonsById, id);
     }
 
-    public static getByName( name: string ) {
-        return this.getItemFromMap( this.allButtonsByName, name );
+    public static getByName(name: string) {
+        return this.getItemFromMap(this.allButtonsByName, name);
     }
 
-    public static async getEmojis( ids: string[] ) {
+    public static async getEmojis(ids: string[]) {
         const emojis: string[] = [];
 
-        await Promise.all( ids.map( async ( id ) => {
-            const item = DynamicChannelPrimaryMessageElementsGroup.getById( id );
+        await Promise.all(
+            ids.map(async (id) => {
+                const item = DynamicChannelPrimaryMessageElementsGroup.getById(id);
 
-            if ( item ) {
-                emojis.push( ( await item.getEmoji() ) );
-            }
-        } ) );
-
-        return emojis;
-    }
-
-    public static getEmbedEmojis( ids: string[] ) {
-        const emojis: string[] = [];
-
-        ids.forEach( id => {
-            const item = DynamicChannelPrimaryMessageElementsGroup.getById( id );
-
-            if ( item ) {
-                emojis.push( item.getEmojiForEmbed() );
-            }
-        } );
-
-        return emojis;
-    }
-
-    public static sort( buttons: DynamicChannelButtonBase[] ) {
-        return buttons.sort( ( a: DynamicChannelButtonBase, b: DynamicChannelButtonBase ) =>
-            a.$$.getSortId() - b.$$.getSortId()
+                if (item) {
+                    emojis.push(await item.getEmoji());
+                }
+            })
         );
-    };
 
-    public static sortIds( ids: string[] ) {
-        return ids.sort( ( aId: string, bId: string ) =>
-            DynamicChannelPrimaryMessageElementsGroup.getById( aId )!.$$.getSortId() -
-            DynamicChannelPrimaryMessageElementsGroup.getById( bId )!.$$.getSortId()
+        return emojis;
+    }
+
+    public static getEmbedEmojis(ids: string[]) {
+        const emojis: string[] = [];
+
+        ids.forEach((id) => {
+            const item = DynamicChannelPrimaryMessageElementsGroup.getById(id);
+
+            if (item) {
+                emojis.push(item.getEmojiForEmbed());
+            }
+        });
+
+        return emojis;
+    }
+
+    public static sort(buttons: DynamicChannelButtonBase[]) {
+        return buttons.sort(
+            (a: DynamicChannelButtonBase, b: DynamicChannelButtonBase) => a.$$.getSortId() - b.$$.getSortId()
+        );
+    }
+
+    public static sortIds(ids: string[]) {
+        return ids.sort(
+            (aId: string, bId: string) =>
+                DynamicChannelPrimaryMessageElementsGroup.getById(aId)!.$$.getSortId() -
+                DynamicChannelPrimaryMessageElementsGroup.getById(bId)!.$$.getSortId()
         );
     }
 }

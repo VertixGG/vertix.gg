@@ -5,14 +5,13 @@ import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-ada
 import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 
 export type TPossibleAdapters =
-    UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
+    | UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
     | UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>
     | UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
 
-export type TAdapterClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
-export type TAdapterConstructor = { new( options: TAdapterRegisterOptions ): TPossibleAdapters };
+export type TAdapterClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
+export type TAdapterConstructor = { new (options: TAdapterRegisterOptions): TPossibleAdapters };
 
 export type TAdapterRegisterOptions = {
     module?: UIModuleBase;
-}
-
+};

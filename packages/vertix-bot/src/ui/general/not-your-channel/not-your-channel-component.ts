@@ -13,8 +13,6 @@ export class NotYourChannelComponent extends UIComponentBase {
     }
 
     public static getEmbeds() {
-        return [
-            NotYourChannelEmbed,
-        ];
+        return [NotYourChannelEmbed];
     }
 }

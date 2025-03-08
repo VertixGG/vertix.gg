@@ -15,7 +15,7 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
 
     public async getTranslatableContent(): Promise<any> {
         return {
-            label: await this.getLabel(),
+            label: await this.getLabel()
         };
     }
 
@@ -26,9 +26,9 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
     protected async isDisabled?(): Promise<boolean>;
 
     protected async getAttributes() {
-        const type = Number( UIElementButtonUrlBase.getComponentType() ),
+        const type = Number(UIElementButtonUrlBase.getComponentType()),
             label = await this.getLabel(),
-            style = Number( ButtonStyle.Link ),
+            style = Number(ButtonStyle.Link),
             disabled = await this.isDisabled?.(),
             url = await this.getURL();
 
@@ -36,10 +36,10 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
             type,
             label,
             style,
-            url,
+            url
         } as APIButtonComponentWithURL;
 
-        if ( disabled ) {
+        if (disabled) {
             result.disabled = disabled;
         }
 

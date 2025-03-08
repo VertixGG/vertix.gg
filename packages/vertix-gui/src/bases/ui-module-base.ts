@@ -16,22 +16,22 @@ export abstract class UIModuleBase extends UIBase {
     }
 
     public static getAdapters(): TAdapterClassType[] {
-        throw new ForceMethodImplementation( this, this.getAdapters.name );
+        throw new ForceMethodImplementation(this, this.getAdapters.name);
     }
 
     public static validate() {
         const adapters = this.getAdapters();
 
         // Ensure all adapters start with the same 2 parts of the name
-        const prefix = this.getName().split( DEFAULT_UI_NAMESPACE_SEPARATOR )
-            .slice( 0, 2 )
-            .join( DEFAULT_UI_NAMESPACE_SEPARATOR );
+        const prefix = this.getName()
+            .split(DEFAULT_UI_NAMESPACE_SEPARATOR)
+            .slice(0, 2)
+            .join(DEFAULT_UI_NAMESPACE_SEPARATOR);
 
-        for ( const adapter of adapters ) {
-            if ( ! adapter.getName().startsWith( prefix ) ) {
-                throw new Error( `Adapter: '${ adapter.getName() }' does not start with require prefix: '${ prefix }'` );
+        for (const adapter of adapters) {
+            if (!adapter.getName().startsWith(prefix)) {
+                throw new Error(`Adapter: '${adapter.getName()}' does not start with require prefix: '${prefix}'`);
             }
-
         }
     }
 

@@ -8,35 +8,38 @@ import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v2/dynamic-cha
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
-import type { UIAdapterReplyContext, UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type {
+    UIAdapterReplyContext,
+    UIDefaultButtonChannelVoiceInteraction
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-export abstract class DynamicChannelAdapterExuBase<TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction> extends UIAdapterExecutionStepsBase<VoiceChannel, TInteraction> {
+export abstract class DynamicChannelAdapterExuBase<
+    TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
+> extends UIAdapterExecutionStepsBase<VoiceChannel, TInteraction> {
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
         return "Vertix/UI-V2/DynamicChannelAdapterExuBase";
     }
 
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
+    public constructor(options: TAdapterRegisterOptions) {
+        super(options);
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get("VertixBot/Services/DynamicChannel");
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice,
-        ];
+        return [ChannelType.GuildVoice];
     }
 
     public getPermissions() {
-        return new PermissionsBitField( 0n );
+        return new PermissionsBitField(0n);
     }
 
-    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
-        return await dynamicChannelRequirements( interaction );
+    public async isPassingInteractionRequirementsInternal(interaction: TInteraction) {
+        return await dynamicChannelRequirements(interaction);
     }
 }

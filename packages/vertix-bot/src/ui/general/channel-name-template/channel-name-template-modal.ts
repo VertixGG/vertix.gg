@@ -14,9 +14,7 @@ export class ChannelNameTemplateModal extends UIModalBase {
     }
 
     public static getInputElements() {
-        return [
-            [ ChannelNameTemplateInput ]
-        ];
+        return [[ChannelNameTemplateInput]];
     }
 
     protected getTitle(): string {

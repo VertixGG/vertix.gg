@@ -13,8 +13,6 @@ export class MissingPermissionsComponent extends UIComponentBase {
     }
 
     public static getEmbeds() {
-        return [
-            MissingPermissionsEmbed,
-        ];
+        return [MissingPermissionsEmbed];
     }
 }

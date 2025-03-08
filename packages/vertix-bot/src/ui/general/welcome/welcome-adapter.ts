@@ -23,21 +23,22 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
     }
 
     public getPermissions() {
-        return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
+        return new PermissionsBitField(PermissionFlagsBits.ViewChannel);
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice,
-            ChannelType.GuildText,
-        ];
+        return [ChannelType.GuildVoice, ChannelType.GuildText];
     }
 
-    protected getMessage( from: UIAdapterBuildSource, context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ): BaseMessageOptions {
+    protected getMessage(
+        from: UIAdapterBuildSource,
+        context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction,
+        argsFromManager?: UIArgs
+    ): BaseMessageOptions {
         const result = super.getMessage();
 
         // Mention the owner of the channel - TODO Find cleaner way to do this.
-        if ( argsFromManager?.userId && "send" === from ) {
+        if (argsFromManager?.userId && "send" === from) {
             result.content = "<@" + argsFromManager.userId + ">";
         }
 
@@ -53,16 +54,15 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
     }
 
     protected onEntityMap() {
-        this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async ( interaction ) => {
-            const uiService =
-                    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
-                uiAdapter = uiService.get( "VertixBot/UI-General/SetupAdapter" );
+        this.bindButton("VertixBot/UI-General/WelcomeSetupButton", async (interaction) => {
+            const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService"),
+                uiAdapter = uiService.get("VertixBot/UI-General/SetupAdapter");
 
-            await uiAdapter?.ephemeral( interaction );
+            await uiAdapter?.ephemeral(interaction);
 
-            const argsId = this.getArgsManager().getArgsId( interaction );
+            const argsId = this.getArgsManager().getArgsId(interaction);
 
-            this.getArgsManager().deleteArgs( this, argsId );
-        } );
+            this.getArgsManager().deleteArgs(this, argsId);
+        });
     }
 }

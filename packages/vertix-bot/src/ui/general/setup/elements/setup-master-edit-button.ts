@@ -16,15 +16,15 @@ export class SetupMasterEditButton extends UIElementButtonBase {
     }
 
     protected async isAvailable(): Promise<boolean> {
-        return !! this.uiArgs?.index;
+        return !!this.uiArgs?.index;
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( uiUtilsWrapAsTemplate( "masterChannel" ) + uiUtilsWrapAsTemplate( "index" ) );
+        return Promise.resolve(uiUtilsWrapAsTemplate("masterChannel") + uiUtilsWrapAsTemplate("index"));
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "secondary" );
+        return Promise.resolve("secondary");
     }
 
     protected async getEmoji(): Promise<string> {

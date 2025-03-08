@@ -9,7 +9,7 @@ import { YesNoElementsGroup } from "@vertix.gg/bot/src/ui/general/decision/yes-n
 
 import { DynamicChannelPrimaryMessageEditEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-embed";
 
-import type { UIEntityTypesConstructor , UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIEntityTypesConstructor, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
@@ -25,10 +25,10 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
     protected static getElementsGroupExtendClass() {
         // TODO: Find better solution.
         return class extends UIElementsGroupBase {
-            public static getItems( args: UIArgs ) {
-                let result = super.getItems( args );
+            public static getItems(args: UIArgs) {
+                let result = super.getItems(args);
 
-                switch ( this.getName() ) {
+                switch (this.getName()) {
                     case "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/ElementsGroup": {
                         result = this.findAndReorderYesButton(
                             result,
@@ -50,24 +50,28 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
                 return result;
             }
 
-            private static findAndReorderYesButton( elements: UIEntityTypesConstructor, targetButtonName: string, position: "start" | "center" | "end" ) {
-                const flatElements = elements.flat( UI_ELEMENTS_DEPTH ) as typeof UIElementButtonBase[];
-                const buttonIndex = flatElements.findIndex( item => item.getName() === targetButtonName );
+            private static findAndReorderYesButton(
+                elements: UIEntityTypesConstructor,
+                targetButtonName: string,
+                position: "start" | "center" | "end"
+            ) {
+                const flatElements = elements.flat(UI_ELEMENTS_DEPTH) as (typeof UIElementButtonBase)[];
+                const buttonIndex = flatElements.findIndex((item) => item.getName() === targetButtonName);
 
-                if ( buttonIndex === -1 ) {
-                    throw new Error( `Could not find "${ targetButtonName }" Button.` );
+                if (buttonIndex === -1) {
+                    throw new Error(`Could not find "${targetButtonName}" Button.`);
                 }
 
-                const target = flatElements.splice( buttonIndex, buttonIndex + 1 ).pop() as typeof UIElementButtonBase;
+                const target = flatElements.splice(buttonIndex, buttonIndex + 1).pop() as typeof UIElementButtonBase;
 
-                switch ( position ) {
+                switch (position) {
                     case "start":
-                        return [ target, ... flatElements ];
+                        return [target, ...flatElements];
                     case "center":
-                        const middleIndex = Math.floor( flatElements.length / 2 );
-                        return [ ... flatElements.slice( 0, middleIndex ), target, ... flatElements.slice( middleIndex ) ];
+                        const middleIndex = Math.floor(flatElements.length / 2);
+                        return [...flatElements.slice(0, middleIndex), target, ...flatElements.slice(middleIndex)];
                     case "end":
-                        return [ ... flatElements, target ];
+                        return [...flatElements, target];
                     default:
                         return flatElements;
                 }
@@ -78,18 +82,18 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
     public static getEmbedsGroups() {
         return [
             // TODO: Find better way to do this.
-            ... super.getEmbedsGroups(),
+            ...super.getEmbedsGroups(),
 
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPrimaryMessageEditEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPrimaryMessageEditEmbed)
         ];
     }
 
     public static getElementsGroups() {
         return [
             // TODO: Find better way to do this.
-            ... super.getElementsGroups(),
+            ...super.getElementsGroups(),
 
-            YesNoElementsGroup,
+            YesNoElementsGroup
         ];
     }
 

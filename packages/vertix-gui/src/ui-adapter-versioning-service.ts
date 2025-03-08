@@ -24,9 +24,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
     private versions = new Map<number, string>();
     private versionNames = new Map<string, number>();
 
-    private versionStrategies: ( UIVersionStrategyBase )[] = [
-        new FallBackVersionStrategy( this.versions ),
-    ];
+    private versionStrategies: UIVersionStrategyBase[] = [new FallBackVersionStrategy(this.versions)];
 
     public static getName() {
         return "VertixGUI/UIVersioningAdapterService";
@@ -34,43 +32,43 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
 
     public getDependencies() {
         return {
-            uiService: "VertixGUI/UIService",
+            uiService: "VertixGUI/UIService"
         };
     }
 
-    public registerVersions( range: [ number, number ], prefix = DEFAULT_UI_PREFIX ) {
+    public registerVersions(range: [number, number], prefix = DEFAULT_UI_PREFIX) {
         // If already have versions, then throw an error
-        if ( this.versions.size ) {
-            throw new Error( "Versions already registered" );
+        if (this.versions.size) {
+            throw new Error("Versions already registered");
         }
 
-        const [ start, end ] = range;
+        const [start, end] = range;
 
-        for ( let i = start ; i <= end ; i++ ) {
-            this.versions.set( i, `${ prefix }${ i }` );
-            this.versionNames.set( `${ prefix }${ i }`, i );
+        for (let i = start; i <= end; i++) {
+            this.versions.set(i, `${prefix}${i}`);
+            this.versionNames.set(`${prefix}${i}`, i);
         }
     }
 
-    public registerStrategy( strategy: new( versions: Map<number, string> ) => UIVersionStrategyBase ) {
-        this.versionStrategies.push( new strategy( this.versions ) );
+    public registerStrategy(strategy: new (versions: Map<number, string>) => UIVersionStrategyBase) {
+        this.versionStrategies.push(new strategy(this.versions));
     }
 
-    public async get<T extends keyof TAdapterMapping = "base">( adapterName: string, context: Base | any, options: {
-        prefix?: string;
-        separator?: string;
-    } = {} ){
-        const {
-            prefix = DEFAULT_UI_PREFIX,
-            separator = DEFAULT_UI_NAMESPACE_SEPARATOR,
-        } = options;
+    public async get<T extends keyof TAdapterMapping = "base">(
+        adapterName: string,
+        context: Base | any,
+        options: {
+            prefix?: string;
+            separator?: string;
+        } = {}
+    ) {
+        const { prefix = DEFAULT_UI_PREFIX, separator = DEFAULT_UI_NAMESPACE_SEPARATOR } = options;
 
-        const version = await this.determineVersion( context );
+        const version = await this.determineVersion(context);
 
-        const adapterNameWithVersion =
-            this.formAdapterNameWithVersion( adapterName, version, prefix, separator );
+        const adapterNameWithVersion = this.formAdapterNameWithVersion(adapterName, version, prefix, separator);
 
-        return this.services.uiService.get<T>( adapterNameWithVersion );
+        return this.services.uiService.get<T>(adapterNameWithVersion);
     }
 
     public getAllVersions() {
@@ -86,22 +84,22 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
      * `Vertix/RenameAdapter` -> `Vertix/UI-V1/RenameAdapter`
      * `Vertix/CoolEntities/RenameAdapter` -> `Vertix/UI-V1/CoolEntities/RenameAdapter`
      */
-    private formAdapterNameWithVersion( adapterName: string, version: number, prefix: string, separator: string ) {
-        const [ firstPart, ... restParts ] = adapterName.split( separator );
-        return `${ firstPart }${ separator }${ prefix }${ version }${ separator }${ restParts.join( "/" ) }`;
+    private formAdapterNameWithVersion(adapterName: string, version: number, prefix: string, separator: string) {
+        const [firstPart, ...restParts] = adapterName.split(separator);
+        return `${firstPart}${separator}${prefix}${version}${separator}${restParts.join("/")}`;
     }
 
-    public async determineVersion( context: Base ) {
+    public async determineVersion(context: Base) {
         // `Slice` used to get copy of an array
-        for ( const versionStrategy of this.versionStrategies.slice().reverse() ) {
-            const tryVersion = await versionStrategy.determine( context );
+        for (const versionStrategy of this.versionStrategies.slice().reverse()) {
+            const tryVersion = await versionStrategy.determine(context);
 
-            if ( tryVersion ) {
+            if (tryVersion) {
                 return tryVersion;
             }
         }
 
-        throw new Error( "Unable to determine version" );
+        throw new Error("Unable to determine version");
     }
 }
 

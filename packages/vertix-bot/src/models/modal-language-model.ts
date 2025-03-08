@@ -6,13 +6,16 @@ const model = PrismaBotClient.getPrismaClient().modalLanguage;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function withContent() {
-    return model.findFirst( {
+    return model.findFirst({
         include: {
-            content: true,
+            content: true
         }
-    } );
+    });
 }
-export class ModalLanguageModel extends ModelLanguageBase<typeof model, PrismaBot.Prisma.PromiseReturnType<typeof withContent>> {
+export class ModalLanguageModel extends ModelLanguageBase<
+    typeof model,
+    PrismaBot.Prisma.PromiseReturnType<typeof withContent>
+> {
     private static instance: ModalLanguageModel;
 
     public static getName(): string {
@@ -20,8 +23,8 @@ export class ModalLanguageModel extends ModelLanguageBase<typeof model, PrismaBo
     }
 
     public static getInstance(): ModalLanguageModel {
-        if ( ! ModalLanguageModel.instance ) {
-            ModalLanguageModel.instance = new ModalLanguageModel( false );
+        if (!ModalLanguageModel.instance) {
+            ModalLanguageModel.instance = new ModalLanguageModel(false);
         }
 
         return ModalLanguageModel.instance;
@@ -35,4 +38,3 @@ export class ModalLanguageModel extends ModelLanguageBase<typeof model, PrismaBo
         return model;
     }
 }
-

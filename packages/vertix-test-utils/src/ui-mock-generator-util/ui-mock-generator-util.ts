@@ -35,10 +35,10 @@ export class UIMockGeneratorUtil {
     }
 
     public static createAdapter() {
-        return new UIMockGeneratorUtilAdapterBuilder( UIAdapterBase );
+        return new UIMockGeneratorUtilAdapterBuilder(UIAdapterBase);
     }
 
     public static createExecutionStepsAdapter() {
-        return new UIMockGeneratorUtilAdapterBuilder( UIAdapterExecutionStepsBase );
+        return new UIMockGeneratorUtilAdapterBuilder(UIAdapterExecutionStepsBase);
     }
 }

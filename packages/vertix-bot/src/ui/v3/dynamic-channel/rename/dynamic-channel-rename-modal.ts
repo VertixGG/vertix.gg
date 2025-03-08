@@ -13,9 +13,7 @@ export class DynamicChannelRenameModal extends UIModalBase {
     }
 
     public static getInputElements() {
-        return [
-            [ DynamicChannelRenameInput ]
-        ];
+        return [[DynamicChannelRenameInput]];
     }
 
     protected getTitle(): string {

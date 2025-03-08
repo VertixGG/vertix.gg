@@ -9,7 +9,7 @@ export class UIMockGeneratorUtilEmbedsGroupBuilder {
         return this;
     }
 
-    public withItems( ...items: any[]) {
+    public withItems(...items: any[]) {
         this.items = items;
         return this;
     }

@@ -1,9 +1,7 @@
 import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    DynamicChannelLimitInput
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-input";
+import { DynamicChannelLimitInput } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-input";
 
 export class DynamicChannelLimitModal extends UIModalBase {
     public static getName() {
@@ -15,9 +13,7 @@ export class DynamicChannelLimitModal extends UIModalBase {
     }
 
     public static getInputElements() {
-        return [
-            [ DynamicChannelLimitInput ]
-        ];
+        return [[DynamicChannelLimitInput]];
     }
 
     protected getTitle() {

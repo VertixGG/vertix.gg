@@ -2,9 +2,7 @@ import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
-import {
-    DynamicChannelRenameModal
-} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-modal";
+import { DynamicChannelRenameModal } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-modal";
 
 import {
     DynamicChannelRenameBadwordEmbed,
@@ -24,16 +22,14 @@ export class DynamicChannelRenameComponent extends UIComponentBase {
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelRenameBadwordEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelRenameLimitedEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelRenameSuccessEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelRenameBadwordEmbed),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelRenameLimitedEmbed),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelRenameSuccessEmbed)
         ];
     }
 
     public static getModals() {
-        return [
-            DynamicChannelRenameModal,
-        ];
+        return [DynamicChannelRenameModal];
     }
 
     public static getDefaultEmbedsGroup() {

@@ -9,20 +9,14 @@ import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/general/channel-
 
 import { SetupEditElementsGroup } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-elements-group";
 import { SetupEditButtonsElementsGroup } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-elements-group";
-import {
-    SetupEditButtonsEffectElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-elements-group";
+import { SetupEditButtonsEffectElementsGroup } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-elements-group";
 
 import { SetupEditEmbed } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-embed";
 import { SetupEditButtonsEmbed } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-embed";
 import { SetupEditButtonsEffectEmbed } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-embed";
 
-import {
-    SetupEditVerifiedRolesElementsGroup
-} from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-verified-roles/setup-edit-verified-roles-elements-group";
-import {
-    SetupEditVerifiedRolesEmbed
-} from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-verified-roles/setup-edit-verified-roles-embed";
+import { SetupEditVerifiedRolesElementsGroup } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-verified-roles/setup-edit-verified-roles-elements-group";
+import { SetupEditVerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-verified-roles/setup-edit-verified-roles-embed";
 
 /**
  * Used to configure "Master Channel(s)".
@@ -43,18 +37,18 @@ export class SetupEditComponent extends UIComponentBase {
             SetupEditButtonsElementsGroup,
             SetupEditButtonsEffectElementsGroup,
 
-            SetupEditVerifiedRolesElementsGroup,
+            SetupEditVerifiedRolesElementsGroup
         ];
     }
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(SetupEditEmbed),
 
-            UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(SetupEditButtonsEmbed),
+            UIEmbedsGroupBase.createSingleGroup(SetupEditButtonsEffectEmbed),
 
-            UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(SetupEditVerifiedRolesEmbed)
         ];
     }
 
@@ -67,8 +61,6 @@ export class SetupEditComponent extends UIComponentBase {
     }
 
     protected static getModals() {
-        return [
-            ChannelNameTemplateModal,
-        ];
+        return [ChannelNameTemplateModal];
     }
 }

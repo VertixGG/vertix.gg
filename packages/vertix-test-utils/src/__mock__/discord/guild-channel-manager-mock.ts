@@ -7,7 +7,7 @@ export class GuildChannelManagerMock extends CachedManager<Snowflake, GuildChann
     private guild: Guild;
 
     public constructor(guild: Guild, _iterable?: Iterable<RawGuildChannelData>) {
-        super( guild.client, GuildChannel );
+        super(guild.client, GuildChannel);
         this.guild = guild;
     }
 

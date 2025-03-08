@@ -5,6 +5,6 @@ export abstract class UICustomIdStrategyBase extends ObjectBase {
         return "VertixGUI/UICustomIdStrategyBase";
     }
 
-    public abstract generateId( id: string ): string;
-    public abstract getId( id: string ): string;
+    public abstract generateId(id: string): string;
+    public abstract getId(id: string): string;
 }

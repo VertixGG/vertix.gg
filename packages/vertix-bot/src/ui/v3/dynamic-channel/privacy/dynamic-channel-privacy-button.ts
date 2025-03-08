@@ -14,11 +14,11 @@ export class DynamicChannelPrivacyButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelPrivacyButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelPrivacyButton.getBaseName());
     }
 
     public static getSortId() {
-        return this.getSortIdAfter( DynamicChannelPermissionsAccessButton );
+        return this.getSortIdAfter(DynamicChannelPermissionsAccessButton);
     }
 
     public getId() {
@@ -26,7 +26,7 @@ export class DynamicChannelPrivacyButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelPrivacyButton.getEmoji() } ∙ **Privacy**`;
+        return `${DynamicChannelPrivacyButton.getEmoji()} ∙ **Privacy**`;
     }
 
     public async getLabelForMenu() {
@@ -38,7 +38,7 @@ export class DynamicChannelPrivacyButton extends DynamicChannelButtonBase {
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelPrivacyButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelPrivacyButton.getBaseName());
     }
 
     public getEmojiForEmbed(): string {

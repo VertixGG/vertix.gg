@@ -10,7 +10,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelRenameBadwordEmbed extends UIEmbedBase {
     private static vars = {
-        badword: uiUtilsWrapAsTemplate( "badword" ),
+        badword: uiUtilsWrapAsTemplate("badword")
     };
 
     public static getName() {
@@ -30,12 +30,12 @@ export class DynamicChannelRenameBadwordEmbed extends UIEmbedBase {
     }
 
     protected getDescription(): string {
-        return `The word \`${ DynamicChannelRenameBadwordEmbed.vars.badword }\` has been classified as inappropriate by the server administrator.`;
+        return `The word \`${DynamicChannelRenameBadwordEmbed.vars.badword}\` has been classified as inappropriate by the server administrator.`;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
-            badword: args.badword,
+            badword: args.badword
         };
     }
 }

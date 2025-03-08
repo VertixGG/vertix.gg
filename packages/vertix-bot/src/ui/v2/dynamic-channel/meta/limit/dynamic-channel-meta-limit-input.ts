@@ -25,7 +25,7 @@ export class DynamicChannelMetaLimitInput extends UIElementInputBase {
     }
 
     protected async getPlaceholder() {
-        return `${ DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH } - ${ DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH }`;
+        return `${DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH} - ${DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH}`;
     }
 
     protected async getValue() {

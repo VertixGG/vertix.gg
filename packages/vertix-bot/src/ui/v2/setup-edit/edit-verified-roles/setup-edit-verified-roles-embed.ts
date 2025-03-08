@@ -10,7 +10,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
     private static vars = {
-        index: uiUtilsWrapAsTemplate( "index" )
+        index: uiUtilsWrapAsTemplate("index")
     };
 
     public static getName() {
@@ -30,27 +30,29 @@ export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
     }
 
     protected getTitle() {
-        return `🛡️  Edit Verified Roles Of Master Channel #${ SetupEditVerifiedRolesEmbed.vars.index }`;
+        return `🛡️  Edit Verified Roles Of Master Channel #${SetupEditVerifiedRolesEmbed.vars.index}`;
     }
 
     protected getDescription() {
         const index = SetupEditVerifiedRolesEmbed.vars.index;
 
-        return `Editing verified roles will impact the dynamic channels created by Master Channel #${ index }.\n\n` +
-
+        return (
+            `Editing verified roles will impact the dynamic channels created by Master Channel #${index}.\n\n` +
             "**_Current Verified Roles_**\n\n" +
-            "> " + super.getDescription();
+            "> " +
+            super.getDescription()
+        );
     }
 
     protected getFooter() {
         return "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.";
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
-            ... super.getLogic( args ),
+            ...super.getLogic(args),
 
-            index: args.index + 1,
+            index: args.index + 1
         };
     }
 }

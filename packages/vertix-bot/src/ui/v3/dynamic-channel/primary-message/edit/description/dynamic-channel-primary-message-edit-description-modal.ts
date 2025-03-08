@@ -10,8 +10,10 @@ import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfa
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBase {
-    private configV3 = ConfigManager.$
-        .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+        "Vertix/Config/MasterChannel",
+        VERSION_UI_V3
+    );
 
     public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditModalDescription";
@@ -56,6 +58,6 @@ export class DynamicChannelPrimaryMessageEditDescriptionModal extends UIModalBas
     }
 
     public static getInputElements() {
-        return [ DynamicChannelPrimaryMessageEditModalDescription ];
+        return [DynamicChannelPrimaryMessageEditModalDescription];
     }
 }

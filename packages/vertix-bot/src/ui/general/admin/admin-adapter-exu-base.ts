@@ -22,7 +22,7 @@ export class AdminAdapterExuBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterExecutionStepsBase<TChannel, TInteraction> {
-    private static dedicatedLogger = new Logger( this.getName() );
+    private static dedicatedLogger = new Logger(this.getName());
 
     protected dynamicChannelService: DynamicChannelService;
 
@@ -30,37 +30,37 @@ export class AdminAdapterExuBase<
         return "VertixBot/UI-General/AdminAdapterExuBase";
     }
 
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
+    public constructor(options: TAdapterRegisterOptions) {
+        super(options);
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get("VertixBot/Services/DynamicChannel");
     }
 
     public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
+        return new PermissionsBitField(DEFAULT_SETUP_PERMISSIONS);
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice,
-            ChannelType.GuildText,
-        ];
+        return [ChannelType.GuildVoice, ChannelType.GuildText];
     }
 
-    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
-        if ( ! PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
-            const botRolePermissions = PermissionsManager.$.getRolesPermissions( interaction.guild );
-            const missingPermissions = botRolePermissions.missing( DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS );
+    public async isPassingInteractionRequirementsInternal(interaction: TInteraction) {
+        if (!PermissionsManager.$.isSelfAdministratorRole(interaction.guild)) {
+            const botRolePermissions = PermissionsManager.$.getRolesPermissions(interaction.guild);
+            const missingPermissions = botRolePermissions.missing(DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS);
 
-            if ( missingPermissions.length ) {
-                AdminAdapterExuBase.dedicatedLogger.admin( this.run,
-                    `🔐 Bot missing permissions" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
+            if (missingPermissions.length) {
+                AdminAdapterExuBase.dedicatedLogger.admin(
+                    this.run,
+                    `🔐 Bot missing permissions" - "${missingPermissions.join(", ")}" (${interaction.guild.name}) (${interaction.guild?.memberCount})`
                 );
 
-                await this.uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
-                    missingPermissions,
-                    omitterDisplayName: interaction.guild.client.user.username,
-                } );
+                await this.uiService
+                    .get("VertixGUI/InternalAdapters/MissingPermissionsAdapter")
+                    ?.ephemeral(interaction, {
+                        missingPermissions,
+                        omitterDisplayName: interaction.guild.client.user.username
+                    });
 
                 return false;
             }

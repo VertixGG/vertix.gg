@@ -19,13 +19,13 @@ export class SetupMasterEditSelectMenu extends UIElementStringSelectMenu {
     }
 
     protected async getSelectOptions() {
-        return ( this.uiArgs?.masterChannels || [] ).map( ( channel: { channelId: any; }, index: number ) => {
+        return (this.uiArgs?.masterChannels || []).map((channel: { channelId: any }, index: number) => {
             return {
-                label: `Master Channel #${ index + 1 }`,
-                value: `${ channel.channelId }:${ index }`,
-                emoji: "🔧",
+                label: `Master Channel #${index + 1}`,
+                value: `${channel.channelId}:${index}`,
+                emoji: "🔧"
             };
-        } );
+        });
     }
 
     protected async isAvailable(): Promise<boolean> {

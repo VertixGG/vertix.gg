@@ -23,7 +23,7 @@ export class LanguageUtils extends InitializeBase {
     }
 
     public static getInstance(): LanguageUtils {
-        if ( ! LanguageUtils.instance ) {
+        if (!LanguageUtils.instance) {
             LanguageUtils.instance = new LanguageUtils();
         }
 
@@ -34,22 +34,22 @@ export class LanguageUtils extends InitializeBase {
         return LanguageUtils.getInstance();
     }
 
-    public export( object: UILanguageJSON, filePath: string ) {
-        this.logger.info( this.export, `Exporting language to path: '${ filePath }'` );
+    public export(object: UILanguageJSON, filePath: string) {
+        this.logger.info(this.export, `Exporting language to path: '${filePath}'`);
 
         // Ensure path exists.
-        fs.mkdirSync( path.resolve( UI_LANGUAGES_PATH ), { recursive: true } );
+        fs.mkdirSync(path.resolve(UI_LANGUAGES_PATH), { recursive: true });
 
-        fs.writeFileSync( filePath, JSON.stringify( object, null, 4 ) );
+        fs.writeFileSync(filePath, JSON.stringify(object, null, 4));
 
         // Check path exists.
-        if ( ! fs.existsSync( filePath ) ) {
-            throw new Error( `Path: '${ filePath }' does not exist` );
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`Path: '${filePath}' does not exist`);
         }
     }
 
-    public async import( object: UILanguageJSON ) {
-        this.logger.info( this.import, `Trying importing language with code: '${ object.code }'` );
+    public async import(object: UILanguageJSON) {
+        this.logger.info(this.import, `Trying importing language with code: '${object.code}'`);
 
         const Models = [
                 ElementButtonLanguageModel,
@@ -57,7 +57,7 @@ export class LanguageUtils extends InitializeBase {
                 ElementSelectMenuLanguageModel,
                 EmbedLanguageModel,
                 MarkdownLanguageModel,
-                ModalLanguageModel,
+                ModalLanguageModel
             ],
             objects = [
                 object.elements.buttons,
@@ -65,50 +65,44 @@ export class LanguageUtils extends InitializeBase {
                 object.elements.selectMenus,
                 object.embeds,
                 object.markdowns,
-                object.modals,
+                object.modals
             ];
 
-        await Promise.all( Models.map( async ( Model, index ) => {
-            const currentObject = objects[ index ],
-                count = await Model.$.getCount( object.code );
+        await Promise.all(
+            Models.map(async (Model, index) => {
+                const currentObject = objects[index],
+                    count = await Model.$.getCount(object.code);
 
-            if ( currentObject.length !== count ) {
-                if ( 0 === count ) {
-                    this.logger.info( this.import, `Importing from scratch language with code: '${ object.code }' model: '${ Model.getName() }'` );
-
-                    // TODO: Remove redundant code.
-                    for ( const entity of currentObject ) {
-                        await Model.$.create(
-                            entity.name,
-                            object.code,
-                            object.name,
-                            entity.content
+                if (currentObject.length !== count) {
+                    if (0 === count) {
+                        this.logger.info(
+                            this.import,
+                            `Importing from scratch language with code: '${object.code}' model: '${Model.getName()}'`
                         );
+
+                        // TODO: Remove redundant code.
+                        for (const entity of currentObject) {
+                            await Model.$.create(entity.name, object.code, object.name, entity.content);
+                        }
+
+                        return;
                     }
 
-                    return;
-                }
-
-                this.logger.info( this.import, `Updating language with code: '${ object.code }' model: '${ Model.getName() }'` );
-
-                for ( const entity of currentObject ) {
-                    // Check if entity exists.
-                    const record = await Model.$.get(
-                        entity.name,
-                        object.code,
-                        false
+                    this.logger.info(
+                        this.import,
+                        `Updating language with code: '${object.code}' model: '${Model.getName()}'`
                     );
 
-                    if ( ! record ) {
-                        await Model.$.create(
-                            entity.name,
-                            object.code,
-                            object.name,
-                            entity.content
-                        );
+                    for (const entity of currentObject) {
+                        // Check if entity exists.
+                        const record = await Model.$.get(entity.name, object.code, false);
+
+                        if (!record) {
+                            await Model.$.create(entity.name, object.code, object.name, entity.content);
+                        }
                     }
                 }
-            }
-        } ) );
+            })
+        );
     }
 }

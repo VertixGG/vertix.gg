@@ -10,10 +10,10 @@ export class ChannelDataModel extends ChannelDataModelBase {
     }
 
     public constructor(
-        showCacheDebug = isDebugEnabled( "CACHE", ChannelDataModel.getName() ),
-        showModelDebug = isDebugEnabled( "MODEL", ChannelDataModel.getName() )
-    )  {
-        super( showCacheDebug, showModelDebug );
+        showCacheDebug = isDebugEnabled("CACHE", ChannelDataModel.getName()),
+        showModelDebug = isDebugEnabled("MODEL", ChannelDataModel.getName())
+    ) {
+        super(showCacheDebug, showModelDebug);
     }
 
     protected getDataVersion() {

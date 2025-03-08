@@ -24,16 +24,16 @@ export class ClaimResultComponent extends UIComponentBase {
         return [
             // TODO: All the control from vote in order select the right embeds was too hard to implement.
             // TODO: Check `handleVoteStepIn` and `handleVoteStepOut`.
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultOwnerStopEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultOwnerStopEmbed),
 
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultVotedEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultVotedSameEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultVoteUpdatedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultVotedEmbed),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultVotedSameEmbed),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultVoteUpdatedEmbed),
 
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultStepInEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultStepAlreadyInEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultStepInEmbed),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultStepAlreadyInEmbed),
 
-            UIEmbedsGroupBase.createSingleGroup( ClaimResultVoteSelfEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(ClaimResultVoteSelfEmbed)
         ];
     }
 

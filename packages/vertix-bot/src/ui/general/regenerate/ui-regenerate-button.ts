@@ -8,11 +8,11 @@ export class UIRegenerateButton extends UIElementButtonBase {
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "primary" );
+        return Promise.resolve("primary");
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Regenerate" );
+        return Promise.resolve("Regenerate");
     }
 
     protected async getEmoji(): Promise<string> {

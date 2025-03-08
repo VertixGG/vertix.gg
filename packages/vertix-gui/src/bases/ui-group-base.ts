@@ -12,27 +12,27 @@ export abstract class UIGroupBase extends UIBase {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static getItems( args?: UIArgs ): UIEntityTypesConstructor {
-        throw new ForceMethodImplementation( this, this.getItems.name );
+    public static getItems(args?: UIArgs): UIEntityTypesConstructor {
+        throw new ForceMethodImplementation(this, this.getItems.name);
     }
 
     public static getGroupTypeName(): string {
-        throw new ForceMethodImplementation( this, this.getGroupTypeName.name );
+        throw new ForceMethodImplementation(this, this.getGroupTypeName.name);
     }
 
-    public static createSingleGroup( EntityClass: typeof UIEntityBase ) {
+    public static createSingleGroup(EntityClass: typeof UIEntityBase) {
         return class extends UIGroupBase {
             public static getName() {
                 return EntityClass.getName() + "Group";
             }
 
             public static getItems() {
-                return [ EntityClass ];
+                return [EntityClass];
             }
         };
     }
 
-    public static createEmptyGroup( baseName: string ) {
+    public static createEmptyGroup(baseName: string) {
         return class extends UIGroupBase {
             public static getName() {
                 return baseName + "/EmptyGroup" + this.getGroupTypeName();

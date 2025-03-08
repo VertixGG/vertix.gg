@@ -17,15 +17,10 @@ export class SetupStep2Component extends UIComponentBase {
     }
 
     public static getElements() {
-        return [
-            [ ChannelButtonsTemplateSelectMenu ],
-            [ ConfigExtrasSelectMenu ],
-        ];
+        return [[ChannelButtonsTemplateSelectMenu], [ConfigExtrasSelectMenu]];
     }
 
     public static getEmbeds() {
-        return [
-            SetupStep2Embed,
-        ];
+        return [SetupStep2Embed];
     }
 }

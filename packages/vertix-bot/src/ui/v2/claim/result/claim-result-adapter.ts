@@ -23,58 +23,56 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
     protected static getExecutionSteps() {
         return {
             "Vertix/UI-V2/ClaimResultOwnerStop": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultOwnerStopEmbedGroup",
+                embedsGroup: "Vertix/UI-V2/ClaimResultOwnerStopEmbedGroup"
             },
 
             "Vertix/UI-V2/ClaimResultAddedSuccessfully": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultStepInEmbedGroup",
+                embedsGroup: "Vertix/UI-V2/ClaimResultStepInEmbedGroup"
             },
             "Vertix/UI-V2/ClaimResultAlreadyAdded": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultStepAlreadyInEmbedGroup",
+                embedsGroup: "Vertix/UI-V2/ClaimResultStepAlreadyInEmbedGroup"
             },
 
             "Vertix/UI-V2/ClaimResultVoteAlreadySelfVoted": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultVoteSelfEmbedGroup",
+                embedsGroup: "Vertix/UI-V2/ClaimResultVoteSelfEmbedGroup"
             },
             "Vertix/UI-V2/ClaimResultVotedSuccessfully": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultVotedEmbedGroup",
+                embedsGroup: "Vertix/UI-V2/ClaimResultVotedEmbedGroup"
             },
             "Vertix/UI-V2/ClaimResultVoteAlreadyVotedSame": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultVotedSameEmbedGroup",
+                embedsGroup: "Vertix/UI-V2/ClaimResultVotedSameEmbedGroup"
             },
             "Vertix/UI-V2/ClaimResultVoteUpdatedSuccessfully": {
-                embedsGroup: "Vertix/UI-V2/ClaimResultVoteUpdatedEmbedGroup",
-            },
+                embedsGroup: "Vertix/UI-V2/ClaimResultVoteUpdatedEmbedGroup"
+            }
         };
     }
 
     public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( 0n );
+        return new PermissionsBitField(0n);
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice
-        ];
+        return [ChannelType.GuildVoice];
     }
 
     protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs( interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs ) {
+    protected async getReplyArgs(interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs) {
         const args: UIArgs = {};
 
-        switch ( this.getCurrentExecutionStep().name ) {
+        switch (this.getCurrentExecutionStep().name) {
             case "Vertix/UI-V2/ClaimResultOwnerStop":
-                args.absentInterval =
-                    DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
-                        .getChannelOwnershipTimeout();
+                args.absentInterval = DynamicChannelClaimManager.get(
+                    "Vertix/UI-V2/DynamicChannelClaimManager"
+                ).getChannelOwnershipTimeout();
                 break;
 
             case "Vertix/UI-V2/ClaimResultVotedSuccessfully":
             case "Vertix/UI-V2/ClaimResultVoteAlreadyVotedSame":
-                args.userDisplayName = await guildGetMemberDisplayName( interaction.guild, argsFromManager.targetId );
+                args.userDisplayName = await guildGetMemberDisplayName(interaction.guild, argsFromManager.targetId);
                 args.userId = argsFromManager.targetId;
                 break;
 

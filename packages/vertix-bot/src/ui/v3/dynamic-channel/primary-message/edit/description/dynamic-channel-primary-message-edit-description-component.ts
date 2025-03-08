@@ -1,4 +1,4 @@
-    import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelPrimaryMessageEditDescriptionModal } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/description/dynamic-channel-primary-message-edit-description-modal";
@@ -16,20 +16,14 @@ export class DynamicChannelPrimaryMessageEditDescriptionComponent extends UIComp
     }
 
     public static getElements() {
-        return [
-            [ DynamicChannelPrimaryMessageEditDescriptionEditButton ],
-        ];
+        return [[DynamicChannelPrimaryMessageEditDescriptionEditButton]];
     }
 
     public static getEmbeds() {
-        return [
-            DynamicChannelPrimaryMessageEditDescriptionEmbed,
-        ];
+        return [DynamicChannelPrimaryMessageEditDescriptionEmbed];
     }
 
     public static getModals() {
-        return [
-            DynamicChannelPrimaryMessageEditDescriptionModal,
-        ];
+        return [DynamicChannelPrimaryMessageEditDescriptionModal];
     }
 }

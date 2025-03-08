@@ -18,11 +18,11 @@ export class SetupElementsGroup extends UIElementsGroupBase {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static getItems( args?: ISetupArgs ) {
+    public static getItems(args?: ISetupArgs) {
         return [
-            [ SetupMasterEditSelectMenu ],
-            [ SetupMasterCreateButton, SetupMasterCreateV3Button ],
-            [ LanguageChooseButton, BadwordsEditButton ]
+            [SetupMasterEditSelectMenu],
+            [SetupMasterCreateButton, SetupMasterCreateV3Button],
+            [LanguageChooseButton, BadwordsEditButton]
         ];
     }
 }

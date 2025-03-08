@@ -14,28 +14,29 @@ export class UIMockGeneratorUtilAdapterBuilder {
     private component!: UIComponentTypeConstructor;
     private executionSteps!: UIExecutionSteps;
 
-    public constructor( private AdapterConstructor: typeof UIAdapterBase<any, any> | typeof UIAdapterExecutionStepsBase<any, any> ) {
-    }
+    public constructor(
+        private AdapterConstructor: typeof UIAdapterBase<any, any> | typeof UIAdapterExecutionStepsBase<any, any>
+    ) {}
 
-    public withName( name: string ) {
+    public withName(name: string) {
         this.name = name;
         return this;
     }
 
-    public withInstanceType( instanceType: UIInstancesTypes ) {
+    public withInstanceType(instanceType: UIInstancesTypes) {
         this.instanceType = instanceType;
         return this;
     }
 
-    public withComponent( component: UIComponentTypeConstructor ) {
+    public withComponent(component: UIComponentTypeConstructor) {
         this.component = component;
         return this;
     }
 
-    public withExecutionSteps( executionSteps: UIExecutionSteps ) {
+    public withExecutionSteps(executionSteps: UIExecutionSteps) {
         // Ensure valid adapter type
-        if ( this.AdapterConstructor !== UIAdapterExecutionStepsBase<any, any> ) {
-            throw new Error( "Only Execution Steps adapters can have execution steps" );
+        if (this.AdapterConstructor !== UIAdapterExecutionStepsBase<any, any>) {
+            throw new Error("Only Execution Steps adapters can have execution steps");
         }
 
         this.executionSteps = executionSteps;
@@ -48,7 +49,7 @@ export class UIMockGeneratorUtilAdapterBuilder {
         const component = this.component;
         const executionSteps = this.executionSteps;
 
-        if ( this.AdapterConstructor === UIAdapterBase ) {
+        if (this.AdapterConstructor === UIAdapterBase) {
             return class extends UIAdapterBase<any, any> {
                 public static getName() {
                     return name;
@@ -62,7 +63,7 @@ export class UIMockGeneratorUtilAdapterBuilder {
                     return component;
                 }
             };
-        } else if ( this.AdapterConstructor === UIAdapterExecutionStepsBase ) {
+        } else if (this.AdapterConstructor === UIAdapterExecutionStepsBase) {
             return class extends UIAdapterExecutionStepsBase<any, any> {
                 public static getName() {
                     return name;
@@ -81,7 +82,7 @@ export class UIMockGeneratorUtilAdapterBuilder {
                 }
             };
         } else {
-            throw new Error( "Invalid adapter constructor or not implemented" );
+            throw new Error("Invalid adapter constructor or not implemented");
         }
     }
 }

@@ -10,9 +10,6 @@ export class WelcomeLanguageElementsGroup extends UIElementsGroupBase {
     }
 
     public static getItems() {
-        return [
-            [ LanguageSelectMenu ],
-            [ DoneButton ],
-        ];
+        return [[LanguageSelectMenu], [DoneButton]];
     }
 }

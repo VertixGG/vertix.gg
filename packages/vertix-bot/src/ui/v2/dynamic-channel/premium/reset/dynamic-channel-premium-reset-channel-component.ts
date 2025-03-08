@@ -1,4 +1,3 @@
-
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
@@ -19,13 +18,13 @@ export class DynamicChannelPremiumResetChannelComponent extends UIComponentBase 
     }
 
     public static getElementsGroups() {
-        return [ UIElementsGroupBase.createSingleGroup( DynamicChannelPremiumResetChannelButton ) ];
+        return [UIElementsGroupBase.createSingleGroup(DynamicChannelPremiumResetChannelButton)];
     }
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPremiumResetChannelEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPremiumResetChannelEmbed),
+            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
         ];
     }
 

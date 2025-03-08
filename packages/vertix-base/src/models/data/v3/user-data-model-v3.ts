@@ -2,7 +2,7 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { ModelDataOwnerBase  } from "@vertix.gg/base/src/bases/model-data-owner-base";
+import { ModelDataOwnerBase } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
@@ -21,10 +21,7 @@ export class UserDataModelV3 extends ModelDataOwnerBase<
     }
 
     public constructor() {
-        super(
-            isDebugEnabled( "CACHE", UserDataModelV3.getName() ),
-            isDebugEnabled( "MODEL", UserDataModelV3.getName() )
-        );
+        super(isDebugEnabled("CACHE", UserDataModelV3.getName()), isDebugEnabled("MODEL", UserDataModelV3.getName()));
     }
 
     protected getModel() {

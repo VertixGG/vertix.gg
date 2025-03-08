@@ -14,11 +14,11 @@ export class SetupMasterCreateV3Button extends UIElementButtonBase {
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Create Master Channel (V3)" );
+        return Promise.resolve("Create Master Channel (V3)");
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "secondary" );
+        return Promise.resolve("secondary");
     }
 
     protected async getEmoji(): Promise<string> {

@@ -12,7 +12,7 @@ export class DynamicChannelRenameButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelRenameButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelRenameButton.getBaseName());
     }
 
     public static getSortId() {
@@ -24,7 +24,7 @@ export class DynamicChannelRenameButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelRenameButton.getEmoji() }  ∙ **Rename**`;
+        return `${DynamicChannelRenameButton.getEmoji()}  ∙ **Rename**`;
     }
 
     public async getLabelForMenu() {
@@ -36,7 +36,7 @@ export class DynamicChannelRenameButton extends DynamicChannelButtonBase {
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelRenameButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelRenameButton.getBaseName());
     }
 
     public getEmojiForEmbed() {

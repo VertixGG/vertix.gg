@@ -21,12 +21,12 @@ export class UIWizardComponentBase extends UIComponentBase {
         return UIInstancesTypes.Static;
     }
 
-    public static getComponents(): typeof UIComponentBase[] {
+    public static getComponents(): (typeof UIComponentBase)[] {
         return [];
-    };
+    }
 
     public static getEmbedsGroups() {
-        const results: typeof UIEmbedsGroupBase[] = this.getComponents().map( ( component ) => {
+        const results: (typeof UIEmbedsGroupBase)[] = this.getComponents().map((component) => {
             return class extends UIEmbedsGroupBase {
                 public static getName() {
                     return component.getName() + "/EmbedsGroup";
@@ -36,7 +36,7 @@ export class UIWizardComponentBase extends UIComponentBase {
                     return component.getEmbeds();
                 }
             };
-        } );
+        });
 
         return results;
     }
@@ -44,22 +44,22 @@ export class UIWizardComponentBase extends UIComponentBase {
     public static getElementsGroups() {
         const wizardControlButtons = this.getControlButtons();
 
-        return this.getComponents().map( component =>
-            UIWizardElementsGroupWrapperGenerator( {
+        return this.getComponents().map((component) =>
+            UIWizardElementsGroupWrapperGenerator({
                 componentName: component.getName(),
                 componentElements: component.getElements(),
                 components: this.getComponents(),
                 controlButtons: wizardControlButtons,
                 UIElementsGroupBaseClass: this.getElementsGroupBaseClass(),
-                UIElementsGroupExtendClass: this.getElementsGroupExtendClass(),
-            } )
+                UIElementsGroupExtendClass: this.getElementsGroupExtendClass()
+            })
         );
     }
 
     public static validate() {
         // Wizard should have at least two components.
-        if ( this.getComponents().length < 2 ) {
-            throw new Error( "Wizard should have at least two components." );
+        if (this.getComponents().length < 2) {
+            throw new Error("Wizard should have at least two components.");
         }
 
         return super.validate();
@@ -84,11 +84,13 @@ export class UIWizardComponentBase extends UIComponentBase {
     }
 
     protected static getModals() {
-        const modals = this.getComponents().map( ( component ) => {
-            return component.getModals();
-        } ).flat();
+        const modals = this.getComponents()
+            .map((component) => {
+                return component.getModals();
+            })
+            .flat();
 
-        return modals as typeof UIModalBase[];
+        return modals as (typeof UIModalBase)[];
     }
 
     protected static getControlButtons() {
@@ -97,11 +99,11 @@ export class UIWizardComponentBase extends UIComponentBase {
         const wizardControlButtons = [
             systemElements.WizardBackButton!,
             systemElements.WizardNextButton!,
-            systemElements.WizardFinishButton!,
+            systemElements.WizardFinishButton!
         ];
 
-        if ( ! wizardControlButtons.every( Boolean ) ) {
-            throw new Error( "Wizard control buttons are not registered." );
+        if (!wizardControlButtons.every(Boolean)) {
+            throw new Error("Wizard control buttons are not registered.");
         }
 
         return wizardControlButtons;

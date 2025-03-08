@@ -11,8 +11,8 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
  */
 export class ClaimResultVotedSameEmbed extends UIEmbedBase {
     private static vars = {
-        userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" ),
-        userId: uiUtilsWrapAsTemplate( "userId" ),
+        userDisplayName: uiUtilsWrapAsTemplate("userDisplayName"),
+        userId: uiUtilsWrapAsTemplate("userId")
     };
 
     public static getName() {
@@ -24,17 +24,17 @@ export class ClaimResultVotedSameEmbed extends UIEmbedBase {
     }
 
     protected getTitle() {
-        return `🗳️  You already voted for ${ ClaimResultVotedSameEmbed.vars.userDisplayName }`;
+        return `🗳️  You already voted for ${ClaimResultVotedSameEmbed.vars.userDisplayName}`;
     }
 
     protected getDescription() {
-        return `Your vote has been already cast in favor of <@${ ClaimResultVotedSameEmbed.vars.userId }>, you can vote for someone else if you changed your mind.`;
+        return `Your vote has been already cast in favor of <@${ClaimResultVotedSameEmbed.vars.userId}>, you can vote for someone else if you changed your mind.`;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
             userDisplayName: args.userDisplayName,
-            userId: args.userId,
+            userId: args.userId
         };
     }
 }

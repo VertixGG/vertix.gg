@@ -1,6 +1,6 @@
 import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
-import { ModelDataOwnerBase  } from "@vertix.gg/base/src/bases/model-data-owner-base";
+import { ModelDataOwnerBase } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 

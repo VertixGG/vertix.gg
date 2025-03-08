@@ -28,22 +28,22 @@ export class WelcomeEmbed extends UIEmbedBase {
 
     protected getThumbnail() {
         return {
-            url: "https://s11.gifyu.com/images/SuW5n.gif",
+            url: "https://s11.gifyu.com/images/SuW5n.gif"
         };
     }
 
     protected getDescription() {
-        return "Welcome to Vertix, an incredible addition to your server!\n" +
+        return (
+            "Welcome to Vertix, an incredible addition to your server!\n" +
             "Let's collaborate and make your server even better.\n\n" +
-
             "**Bot Setup**\n" +
             "- Type `/setup` or press `(🛠 Setup)` button.\n" +
             "- Click on `(➕ Create Master Channel)`\n" +
             "- Follow the steps.\n\n" +
             "Still not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\n" +
             "You can always edit the configurations by using the `/setup` command.\n\n" +
-
             "If you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\n" +
-            "Join us at: https://discord.gg/dEwKeQefUU";
+            "Join us at: https://discord.gg/dEwKeQefUU"
+        );
     }
 }

@@ -22,6 +22,6 @@ export class UIWizardBackButton extends UIElementButtonBase {
     }
 
     protected async isDisabled() {
-        return !! this.uiArgs?._wizardIsBackButtonDisabled;
+        return !!this.uiArgs?._wizardIsBackButtonDisabled;
     }
 }

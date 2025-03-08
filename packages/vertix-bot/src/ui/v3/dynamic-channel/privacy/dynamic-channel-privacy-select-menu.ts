@@ -20,18 +20,18 @@ export class DynamicChannelPrivacySelectMenu extends DynamicChannelStringMenuBas
             {
                 label: "Public",
                 value: "public",
-                emoji: "🌐",
+                emoji: "🌐"
             },
             {
                 label: "Private",
                 value: "private",
-                emoji: "🚫",
+                emoji: "🚫"
             },
             {
                 label: "Hidden",
                 value: "hidden",
-                emoji: "🙈",
-            },
+                emoji: "🙈"
+            }
             // TODO:
             // {
             //     label: "Limit speak to trusted users only",

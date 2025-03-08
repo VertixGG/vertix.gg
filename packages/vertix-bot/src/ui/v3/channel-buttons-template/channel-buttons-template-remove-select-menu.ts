@@ -10,10 +10,10 @@ export class ChannelButtonsTemplateRemoveSelectMenu extends ChannelButtonsTempla
     }
 
     protected async getSelectOptions() {
-        return super.getSelectOptions( true );
+        return super.getSelectOptions(true);
     }
 
     protected async isAvailable(): Promise<boolean> {
-        return Object.keys( this.uiArgs?.dynamicChannelButtonsTemplate || {} ).length > 0;
+        return Object.keys(this.uiArgs?.dynamicChannelButtonsTemplate || {}).length > 0;
     }
 }

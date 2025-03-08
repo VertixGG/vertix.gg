@@ -12,7 +12,7 @@ export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterC
     private static instance: MasterChannelDataModelV3;
 
     public static get $() {
-        if ( ! this.instance ) {
+        if (!this.instance) {
             this.instance = new MasterChannelDataModelV3();
         }
 
@@ -25,8 +25,8 @@ export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterC
 
     public constructor() {
         super(
-            isDebugEnabled( "CACHE", MasterChannelDataModelV3.getName() ),
-            isDebugEnabled( "MODEL", MasterChannelDataModelV3.getName() )
+            isDebugEnabled("CACHE", MasterChannelDataModelV3.getName()),
+            isDebugEnabled("MODEL", MasterChannelDataModelV3.getName())
         );
     }
 
@@ -35,7 +35,6 @@ export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterC
     }
 
     protected getConfig() {
-        return ConfigManager.$
-            .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+        return ConfigManager.$.get<MasterChannelConfigInterfaceV3>("Vertix/Config/MasterChannel", VERSION_UI_V3);
     }
 }

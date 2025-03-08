@@ -8,96 +8,96 @@ export const UI_LANGUAGES_PATH = process.cwd() + "/assets/languages/",
     UI_LANGUAGES_INITIAL_ATTRIBUTES = {
         code: UI_LANGUAGES_INITIAL_CODE,
         name: "English",
-        flag: "🇺🇸",
+        flag: "🇺🇸"
     };
 
 export interface UIModalLanguageContent {
-    title: string,
+    title: string;
 }
 
 export interface UIModalLanguage {
-    name: string,
-    content: UIModalLanguageContent,
+    name: string;
+    content: UIModalLanguageContent;
 }
 
 export interface UIMarkdownLanguageContent {
-    content: string,
-    options?: UIBaseTemplateOptions,
+    content: string;
+    options?: UIBaseTemplateOptions;
 }
 
 export interface UIMarkdownLanguage {
-    name: string,
-    content: UIMarkdownLanguageContent,
+    name: string;
+    content: UIMarkdownLanguageContent;
 }
 
 export interface UIEmbedLanguageContent {
-    title?: string,
-    description?: string,
-    footer?: string,
-    options?: UIBaseTemplateOptions,
-    arrayOptions?: UIEmbedArrayOptions,
+    title?: string;
+    description?: string;
+    footer?: string;
+    options?: UIBaseTemplateOptions;
+    arrayOptions?: UIEmbedArrayOptions;
 }
 
 export interface UIEmbedLanguage {
-    name: string,
-    content: UIEmbedLanguageContent,
+    name: string;
+    content: UIEmbedLanguageContent;
 }
 
 // TODO: Currently used by `ElementSelectMenuLanguageModel` and `ElementSelectUserMenuLanguageModel`.
 export interface UIElementSelectMenuLanguageContent {
-    placeholder?: string,
+    placeholder?: string;
     options?: {
-        [ key: string ]: any,
-    }
+        [key: string]: any;
+    };
 
     selectOptions?: {
-        label: string,
-    }[],
+        label: string;
+    }[];
 }
 
 export interface UIElementSelectUserMenuLanguage {
-    name: string,
-    content: UIElementSelectMenuLanguageContent,
+    name: string;
+    content: UIElementSelectMenuLanguageContent;
 }
 
 export interface UIElementSelectMenuLanguage {
-    name: string,
-    content: UIElementSelectMenuLanguageContent,
+    name: string;
+    content: UIElementSelectMenuLanguageContent;
 }
 
 export interface UIElementTextInputLanguageContent {
-    label: string,
-    placeholder?: string,
+    label: string;
+    placeholder?: string;
 }
 
 export interface UIElementTextInputLanguage {
-    name: string,
-    content: UIElementTextInputLanguageContent,
+    name: string;
+    content: UIElementTextInputLanguageContent;
 }
 
 export interface UIElementButtonLanguageContent {
-    label: string,
-    options?: UIBaseTemplateOptions,
+    label: string;
+    options?: UIBaseTemplateOptions;
 }
 
 export interface UIElementButtonLanguage {
-    name: string,
-    content: UIElementButtonLanguageContent,
+    name: string;
+    content: UIElementButtonLanguageContent;
 }
 
 export interface UIElementsLanguage {
-    buttons: UIElementButtonLanguage[],
-    textInputs: UIElementTextInputLanguage[],
-    selectMenus: UIElementSelectMenuLanguage[] | UIElementSelectUserMenuLanguage[],
+    buttons: UIElementButtonLanguage[];
+    textInputs: UIElementTextInputLanguage[];
+    selectMenus: UIElementSelectMenuLanguage[] | UIElementSelectUserMenuLanguage[];
 }
 
 export interface UILanguageJSON {
-    code: string,
-    name: string,
-    flag: string,
+    code: string;
+    name: string;
+    flag: string;
 
-    elements: UIElementsLanguage,
-    embeds: UIEmbedLanguage[],
-    markdowns: UIMarkdownLanguage[],
-    modals: UIModalLanguage[],
+    elements: UIElementsLanguage;
+    embeds: UIEmbedLanguage[];
+    markdowns: UIMarkdownLanguage[];
+    modals: UIModalLanguage[];
 }

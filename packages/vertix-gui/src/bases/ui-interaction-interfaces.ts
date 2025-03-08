@@ -11,15 +11,15 @@ import type {
     StringSelectMenuInteraction,
     TextChannel,
     UserSelectMenuInteraction,
-    VoiceChannel,
+    VoiceChannel
 } from "discord.js";
 
 export type UIAdapterStartContext = BaseGuildTextChannel | BaseGuildVoiceChannel;
 
 export type UIAdapterReplyContext =
-    MessageComponentInteraction<"cached"> |
-    CommandInteraction<"cached"> |
-    ModalSubmitInteraction<"cached">;
+    | MessageComponentInteraction<"cached">
+    | CommandInteraction<"cached">
+    | ModalSubmitInteraction<"cached">;
 
 /* Channel voice */
 

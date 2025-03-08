@@ -17,8 +17,9 @@ export class DisabledWhileClaimEmbed extends UIEmbedBase {
     }
 
     protected getDescription(): string {
-        return "The action is disabled while the claim is in progress.\n\n" +
-            "Please wait until the claim is completed.";
+        return (
+            "The action is disabled while the claim is in progress.\n\n" + "Please wait until the claim is completed."
+        );
     }
 
     protected getColor(): number {

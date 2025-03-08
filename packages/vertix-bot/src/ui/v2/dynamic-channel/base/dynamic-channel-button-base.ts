@@ -32,11 +32,11 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     public abstract getEmojiForEmbed(): string;
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "secondary" );
+        return Promise.resolve("secondary");
     }
 
     protected async isDisabled(): Promise<boolean> {
-        switch ( await DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) {
+        switch (await DynamicChannelVoteManager.$.getState(this.uiArgs?.channelId)) {
             case "active":
             case "starting":
                 return true;
@@ -46,10 +46,8 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     }
 
     protected async isAvailable(): Promise<boolean> {
-        if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
-            return this.uiArgs.dynamicChannelButtonsTemplate.some(
-                ( i: any ) => parseInt( i ) === this.getId()
-            );
+        if (this.uiArgs?.dynamicChannelButtonsTemplate?.length) {
+            return this.uiArgs.dynamicChannelButtonsTemplate.some((i: any) => parseInt(i) === this.getId());
         }
 
         return false;

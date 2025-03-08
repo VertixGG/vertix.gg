@@ -4,19 +4,19 @@ import { readFile } from "fs/promises";
 import { encryptionKey } from "@vertix.gg/base/src/encryption/key";
 
 const algorithm = "aes-256-cbc";
-const iv = Buffer.alloc( 16, 0 ); // Initialization vector
+const iv = Buffer.alloc(16, 0); // Initialization vector
 
-export async function decryptData( inputFile: string ) {
+export async function decryptData(inputFile: string) {
     // Read the encrypted content from the input file
-    const encryptedData = await readFile( inputFile );
+    const encryptedData = await readFile(inputFile);
 
     // Create a decipher object with the encryption key and IV
-    const decipher = createDecipheriv( algorithm, encryptionKey, iv );
+    const decipher = createDecipheriv(algorithm, encryptionKey, iv);
 
     // Decrypt the encrypted content
-    const decryptedData = Buffer.concat( [ decipher.update( encryptedData ), decipher.final() ] );
+    const decryptedData = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
 
-    console.log( `Decrypted data: ${ decryptedData.toString() }` );
+    console.log(`Decrypted data: ${decryptedData.toString()}`);
 }
 
-decryptData( process.argv[ 2 ] );
+decryptData(process.argv[2]);

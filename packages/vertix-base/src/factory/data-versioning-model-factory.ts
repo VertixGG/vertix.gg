@@ -6,13 +6,13 @@ import { deepMerge } from "@vertix.gg/utils/src/object";
 
 import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
 
-import { DataTypeFactory  } from "@vertix.gg/base/src/factory/data-type-factory";
+import { DataTypeFactory } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TDataDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 
 import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 
-export type TVersionType = `${ number }.${ number }.${ number }.${ number }`;
+export type TVersionType = `${number}.${number}.${number}.${number}`;
 
 export interface TDataVersioningDefaultUniqueKeys {
     key: string;
@@ -30,30 +30,28 @@ export function DataVersioningModelFactory<
 >(
     model: TModel,
     options: {
-        modelOwnerName?: PrismaBot.Prisma.ModelName,
-        modelNamespace?: string,
-        shouldDebugCache?: boolean,
-        shouldDebugModel?: boolean
+        modelOwnerName?: PrismaBot.Prisma.ModelName;
+        modelNamespace?: string;
+        shouldDebugCache?: boolean;
+        shouldDebugModel?: boolean;
     } = {}
 ) {
     const { modelOwnerName } = options;
 
-    class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
+    class VersioningModel extends DataTypeFactory(ModelBaseCachedWithModel<TModel, TModelResult>) {
         public static getName() {
             return options.modelNamespace ?? "VertixBase/Factory/VersioningModel";
         }
 
         public constructor(
-            shouldDebugCache = ( undefined === typeof options.shouldDebugCache
-                    ? isDebugEnabled( "CACHE", VersioningModel.getName() ) :
-                    options.shouldDebugCache
-            ),
-            shouldDebugModel = ( undefined === typeof options.shouldDebugModel
-                    ? isDebugEnabled( "MODEL", VersioningModel.getName() ) :
-                    options.shouldDebugModel
-            )
+            shouldDebugCache = undefined === typeof options.shouldDebugCache
+                ? isDebugEnabled("CACHE", VersioningModel.getName())
+                : options.shouldDebugCache,
+            shouldDebugModel = undefined === typeof options.shouldDebugModel
+                ? isDebugEnabled("MODEL", VersioningModel.getName())
+                : options.shouldDebugModel
         ) {
-            super( shouldDebugCache, shouldDebugModel );
+            super(shouldDebugCache, shouldDebugModel);
         }
 
         protected getModel() {
@@ -74,30 +72,33 @@ export function DataVersioningModelFactory<
          *
          * @returns The value associated with the key and version, converted to the appropriate type, or null if not found.
          **/
-        public async get<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, options: TDataVersioningOptions = {
-            cache: true,
-        } ) {
-            const keysArray = Object.values( keys ) as string[];
+        public async get<T extends ReturnType<typeof this.getValueAsType>>(
+            keys: TUniqueKeys,
+            options: TDataVersioningOptions = {
+                cache: true
+            }
+        ) {
+            const keysArray = Object.values(keys) as string[];
 
-            const cacheKey = this.generateCacheKey( ... keysArray );
+            const cacheKey = this.generateCacheKey(...keysArray);
 
-            let result = options.cache ? this.getCache( cacheKey ) : null;
+            let result = options.cache ? this.getCache(cacheKey) : null;
 
-            if ( ! result ) {
+            if (!result) {
                 const args = {
                     where: {
-                        [ this.getUniqueKeyName() ]: keys
+                        [this.getUniqueKeyName()]: keys
                     }
                 } as any;
 
-                result = await this.getModel().findUnique( args );
+                result = await this.getModel().findUnique(args);
 
-                if ( result ) {
-                    this.setCache( cacheKey, result );
+                if (result) {
+                    this.setCache(cacheKey, result);
                 }
             }
 
-            return result ? this.getValueAsType<T>( result ) : null;
+            return result ? this.getValueAsType<T>(result) : null;
         }
 
         /**
@@ -114,43 +115,46 @@ export function DataVersioningModelFactory<
          * @note __Caching__ is `off` by default for this method due to the inclusion of owner information.
          * Ensure `modelOwnerName` is set before invoking this method
          **/
-        public async getWithOwner<T extends ReturnType<typeof this.getValueAsType>, const TOwner extends object>( keys: TUniqueKeys, options: TDataVersioningOptions = {
-            cache: false,
-        } ) {
-            if ( ! modelOwnerName ) {
-                throw new Error( "modelOwnerName is required" );
+        public async getWithOwner<T extends ReturnType<typeof this.getValueAsType>, const TOwner extends object>(
+            keys: TUniqueKeys,
+            options: TDataVersioningOptions = {
+                cache: false
+            }
+        ) {
+            if (!modelOwnerName) {
+                throw new Error("modelOwnerName is required");
             }
 
-            const keysArray = Object.values( keys ) as string[];
+            const keysArray = Object.values(keys) as string[];
 
-            keysArray.push( "withOwner" );
+            keysArray.push("withOwner");
 
-            const cacheKey = this.generateCacheKey( ... keysArray );
+            const cacheKey = this.generateCacheKey(...keysArray);
 
-            let result = options.cache ? this.getCache( cacheKey ) : null;
+            let result = options.cache ? this.getCache(cacheKey) : null;
 
-            if ( ! result ) {
+            if (!result) {
                 const args = {
                     where: {
-                        [ this.getUniqueKeyName() ]: keys
+                        [this.getUniqueKeyName()]: keys
                     }
                 } as any;
 
                 args.include = {
-                    [ modelOwnerName ]: true,
+                    [modelOwnerName]: true
                 };
 
-                result = await this.getModel().findUnique( args );
+                result = await this.getModel().findUnique(args);
 
-                if ( result ) {
-                    this.setCache( cacheKey, result );
+                if (result) {
+                    this.setCache(cacheKey, result);
                 }
             }
 
-            if ( result ) {
+            if (result) {
                 return {
-                    data: this.getValueAsType<T>( result ),
-                    owner: result[ modelOwnerName as keyof TModelResult ] as TOwner
+                    data: this.getValueAsType<T>(result),
+                    owner: result[modelOwnerName as keyof TModelResult] as TOwner
                 };
             }
 
@@ -169,133 +173,137 @@ export function DataVersioningModelFactory<
          *
          * @returns The newly created entry, converted to the appropriate type, or null if creation failed.
          **/
-        public async create<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
+        public async create<T extends ReturnType<typeof this.getValueAsType>>(keys: TUniqueKeys, value: T) {
             // Check if exists
-            if ( await this.get( keys ) ) {
-                this.logger.error( this.create, `Keys: ${ util.inspect( keys ) } already exists` );
+            if (await this.get(keys)) {
+                this.logger.error(this.create, `Keys: ${util.inspect(keys)} already exists`);
             }
 
-            const dataType = this.getDataType( value );
+            const dataType = this.getDataType(value);
 
-            const result = await this.getModel().create<TModelResult>( {
+            const result = await this.getModel().create<TModelResult>({
                 data: {
-                    ... keys,
+                    ...keys,
 
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                    [this.getValueField(dataType)]: this.transformValue(value, dataType)
                 }
-            } );
+            });
 
-            this.setCacheResult( keys, result );
+            this.setCacheResult(keys, result);
 
-            return result ? this.getValueAsType<T>( result ) : null;
+            return result ? this.getValueAsType<T>(result) : null;
         }
 
-        public async update<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
-            const dataType = this.getDataType( value );
+        public async update<T extends ReturnType<typeof this.getValueAsType>>(keys: TUniqueKeys, value: T) {
+            const dataType = this.getDataType(value);
 
-            const newValue = await this.mergeWithExisting( keys, value );
+            const newValue = await this.mergeWithExisting(keys, value);
 
-            const result = await this.getModel().update<TModelResult>( {
+            const result = await this.getModel().update<TModelResult>({
                 where: {
-                    [ this.getUniqueKeyName() ]: keys
+                    [this.getUniqueKeyName()]: keys
                 },
                 data: {
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: this.transformValue( newValue, dataType )
+                    [this.getValueField(dataType)]: this.transformValue(newValue, dataType)
                 }
-            } );
+            });
 
             // Delete cache
-            if ( result ) {
-                this.deleteCacheForKeys( keys );
+            if (result) {
+                this.deleteCacheForKeys(keys);
             }
 
-            return result ? this.getValueAsType<T>( result ) : null;
+            return result ? this.getValueAsType<T>(result) : null;
         }
 
-        public async upsert<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
-            const dataType = this.getDataType( value );
+        public async upsert<T extends ReturnType<typeof this.getValueAsType>>(keys: TUniqueKeys, value: T) {
+            const dataType = this.getDataType(value);
 
-            const result = await this.getModel().upsert<TModelResult>( {
+            const result = await this.getModel().upsert<TModelResult>({
                 where: {
-                    [ this.getUniqueKeyName() ]: keys
+                    [this.getUniqueKeyName()]: keys
                 },
                 update: {
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: this.transformValue( await this.mergeWithExisting( keys, value ), dataType )
+                    [this.getValueField(dataType)]: this.transformValue(
+                        await this.mergeWithExisting(keys, value),
+                        dataType
+                    )
                 },
                 create: {
-                    ... keys,
+                    ...keys,
 
                     type: dataType,
-                    [ this.getValueField( dataType ) ]: this.transformValue( value, dataType )
+                    [this.getValueField(dataType)]: this.transformValue(value, dataType)
                 }
-            } );
+            });
 
             // Delete cache only if already exists
-            this.deleteCacheIfAlreadyExists( keys );
+            this.deleteCacheIfAlreadyExists(keys);
 
-            return result ? this.getValueAsType<T>( result ) : null;
+            return result ? this.getValueAsType<T>(result) : null;
         }
 
-        public async delete( keys: TUniqueKeys ) {
-            const result = await this.getModel().delete( {
+        public async delete(keys: TUniqueKeys) {
+            const result = await this.getModel().delete({
                 where: {
-                    [ this.getUniqueKeyName() ]: keys
+                    [this.getUniqueKeyName()]: keys
                 }
-            } );
+            });
 
             // Delete cache
-            this.deleteCacheForKeys(keys );
+            this.deleteCacheForKeys(keys);
 
             return result;
         }
 
-        private async mergeWithExisting( keys: TUniqueKeys, value: any ) {
+        private async mergeWithExisting(keys: TUniqueKeys, value: any) {
             let existing;
 
-            const dataType = this.getDataType( value );
+            const dataType = this.getDataType(value);
 
-            if ( "object" === dataType ) {
-                existing = await this.get( keys );
+            if ("object" === dataType) {
+                existing = await this.get(keys);
             }
 
             // Deep merge existing object with the new value if it exists
-            return existing ? deepMerge( existing, value ) : value;
+            return existing ? deepMerge(existing, value) : value;
         }
 
-        private setCacheResult( keys: TUniqueKeys, result: TModelResult ) {
-            const keysArray = Object.values( keys ) as string[];
+        private setCacheResult(keys: TUniqueKeys, result: TModelResult) {
+            const keysArray = Object.values(keys) as string[];
 
-            this.setCache( this.generateCacheKey( ... keysArray ), result );
+            this.setCache(this.generateCacheKey(...keysArray), result);
         }
 
-        private deleteCacheForKeys( keys: TUniqueKeys ) {
-            const keysArray = Object.values( keys ) as string[];
+        private deleteCacheForKeys(keys: TUniqueKeys) {
+            const keysArray = Object.values(keys) as string[];
 
-            this.deleteCache( this.generateCacheKey( ... keysArray ) );
+            this.deleteCache(this.generateCacheKey(...keysArray));
         }
 
-        private deleteCacheIfAlreadyExists( keys: TUniqueKeys ) {
-            const keysArray = Object.values( keys ) as string[];
+        private deleteCacheIfAlreadyExists(keys: TUniqueKeys) {
+            const keysArray = Object.values(keys) as string[];
 
-            const cacheKey = this.generateCacheKey( ... keysArray );
+            const cacheKey = this.generateCacheKey(...keysArray);
 
-            if ( this.getCache( cacheKey ) ) {
-                this.deleteCache( cacheKey );
+            if (this.getCache(cacheKey)) {
+                this.deleteCache(cacheKey);
             }
-        };
+        }
 
-        private generateCacheKey( key: string, version: string ): string
-        private generateCacheKey( ... args: string[] ): string
-        private generateCacheKey( ... args: string[] ) {
-            return args.sort().join( "|" );
-        };
+        private generateCacheKey(key: string, version: string): string;
+        private generateCacheKey(...args: string[]): string;
+        private generateCacheKey(...args: string[]) {
+            return args.sort().join("|");
+        }
     }
 
     return VersioningModel;
 }
 
-export type TDataVersioningModel<TModelResult extends TDataDefaultResult, TModel extends TBaseModelStub>
-    = ReturnType<typeof DataVersioningModelFactory<TModelResult, TModel>>;
+export type TDataVersioningModel<TModelResult extends TDataDefaultResult, TModel extends TBaseModelStub> = ReturnType<
+    typeof DataVersioningModelFactory<TModelResult, TModel>
+>;

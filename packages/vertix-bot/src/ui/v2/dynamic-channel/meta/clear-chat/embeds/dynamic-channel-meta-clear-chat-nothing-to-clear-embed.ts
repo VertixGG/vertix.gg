@@ -11,7 +11,7 @@ export class DynamicChannelMetaClearChatNothingToClearEmbed extends UIEmbedBase 
     }
 
     protected getColor(): number {
-        return 0xC5AC63; // Broom like.
+        return 0xc5ac63; // Broom like.
     }
 
     protected getTitle(): string {

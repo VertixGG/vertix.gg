@@ -17,20 +17,14 @@ export class SetupStep1Component extends UIComponentBase {
     }
 
     public static getElements() {
-        return [
-            [ ChannelNameTemplateEditButton ],
-        ];
+        return [[ChannelNameTemplateEditButton]];
     }
 
     public static getEmbeds() {
-        return [
-            SetupStep1Embed,
-        ];
+        return [SetupStep1Embed];
     }
 
     public static getModals() {
-        return [
-            ChannelNameTemplateModal,
-        ];
+        return [ChannelNameTemplateModal];
     }
 }

@@ -16,13 +16,10 @@ export class LanguageComponent extends UIComponentBase {
     }
 
     public static getElements() {
-        return [
-            [ LanguageSelectMenu ],
-            [ DoneButton ],
-        ];
+        return [[LanguageSelectMenu], [DoneButton]];
     }
 
     public static getEmbeds() {
-        return [ LanguageEmbed ];
+        return [LanguageEmbed];
     }
 }

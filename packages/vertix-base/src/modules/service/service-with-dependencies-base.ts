@@ -7,9 +7,9 @@ type TServiceName = string;
 
 type TServiceNameDependencies<T> = {
     [K in keyof T]: TServiceName;
-}
+};
 
-export abstract class ServiceWithDependenciesBase<D extends { [ key: string ]: ServiceBase }> extends ServiceBase {
+export abstract class ServiceWithDependenciesBase<D extends { [key: string]: ServiceBase }> extends ServiceBase {
     protected services = {} as Required<D>;
 
     public static getName(): string {
@@ -22,22 +22,21 @@ export abstract class ServiceWithDependenciesBase<D extends { [ key: string ]: S
         await super.initialize?.();
 
         // Wait for all dependencies to be initialized
-        const dependencies = Object.entries( this.getDependencies() )
-            .map( async ( [ alias, serviceName ] ) => {
-                return ServiceLocator.$.waitFor( serviceName, {
-                    internal: true,
-                    metadata: {
-                        source: this,
-                        fulfilled: this.services,
-                    },
-                } ).then( service => {
-                    ( this.services as any )[ alias ] = service;
+        const dependencies = Object.entries(this.getDependencies()).map(async ([alias, serviceName]) => {
+            return ServiceLocator.$.waitFor(serviceName, {
+                internal: true,
+                metadata: {
+                    source: this,
+                    fulfilled: this.services
+                }
+            }).then((service) => {
+                (this.services as any)[alias] = service;
 
-                    return service;
-                } );
-            } );
+                return service;
+            });
+        });
 
-        await Promise.all( dependencies );
+        await Promise.all(dependencies);
     }
 
     public isWithDependencies() {

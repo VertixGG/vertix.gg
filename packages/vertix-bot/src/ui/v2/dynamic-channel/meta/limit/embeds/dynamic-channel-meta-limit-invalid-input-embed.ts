@@ -10,8 +10,8 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelMetaLimitInvalidInputEmbed extends UIEmbedBase {
     private static vars = {
-        minValue: uiUtilsWrapAsTemplate( "minValue" ),
-        maxValue: uiUtilsWrapAsTemplate( "maxValue" )
+        minValue: uiUtilsWrapAsTemplate("minValue"),
+        maxValue: uiUtilsWrapAsTemplate("maxValue")
     };
 
     public static getName() {
@@ -27,10 +27,10 @@ export class DynamicChannelMetaLimitInvalidInputEmbed extends UIEmbedBase {
     }
 
     protected getTitle(): string {
-        return `🙅  User limit must be between ${ DynamicChannelMetaLimitInvalidInputEmbed.vars.minValue } and ${ DynamicChannelMetaLimitInvalidInputEmbed.vars.maxValue }`;
+        return `🙅  User limit must be between ${DynamicChannelMetaLimitInvalidInputEmbed.vars.minValue} and ${DynamicChannelMetaLimitInvalidInputEmbed.vars.maxValue}`;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
             minValue: args.minValue,
             maxValue: args.maxValue

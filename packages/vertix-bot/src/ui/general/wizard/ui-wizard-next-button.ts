@@ -22,10 +22,10 @@ export class UIWizardNextButton extends UIElementButtonBase {
     }
 
     protected async isDisabled() {
-        return !! this.uiArgs?._wizardIsNextButtonDisabled;
+        return !!this.uiArgs?._wizardIsNextButtonDisabled;
     }
 
     protected async isAvailable() {
-        return !! this.uiArgs?._wizardIsNextButtonAvailable;
+        return !!this.uiArgs?._wizardIsNextButtonAvailable;
     }
 }

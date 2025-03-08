@@ -1,4 +1,3 @@
-
 import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -15,9 +14,7 @@ export class BadwordsModal extends UIModalBase {
     }
 
     public static getInputElements() {
-        return [
-            [ BadwordsInput ]
-        ];
+        return [[BadwordsInput]];
     }
 
     protected getTitle(): string {

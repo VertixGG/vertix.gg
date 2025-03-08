@@ -1,3 +1,3 @@
 export interface IRequireId {
-    getId(): number,
+    getId(): number;
 }

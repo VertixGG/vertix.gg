@@ -18,9 +18,12 @@ import type {
     ChannelFindUniqueArgsWithDataIncludeKey
 } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
-type ChannelExtendedResult<T extends TDataType> = ChannelExtended & {
-    data?: T
-} | undefined | null;
+type ChannelExtendedResult<T extends TDataType> =
+    | (ChannelExtended & {
+          data?: T;
+      })
+    | undefined
+    | null;
 
 // TODO: Cache mechanism is not fully working, in order to fix it, its require to handle all possible keys.
 export class ChannelModel extends ModelWithDataBase<
@@ -33,7 +36,7 @@ export class ChannelModel extends ModelWithDataBase<
     private static instance: ChannelModel;
 
     public static get $() {
-        if ( ! this.instance ) {
+        if (!this.instance) {
             this.instance = new ChannelModel();
         }
 
@@ -49,97 +52,90 @@ export class ChannelModel extends ModelWithDataBase<
     }
 
     protected getDataModels() {
-        return [
-            ChannelDataModel,
-            ChannelDataModelV3,
-        ];
+        return [ChannelDataModel, ChannelDataModelV3];
     }
 
-    public async findUnique<T extends TDataType>( findUniqueArgs: ChannelFindUniqueArgsWithDataIncludeKey, cache = true ) {
-        this.logger.log( this.findUnique,
-            `Fetching entry for channel id: '${ util.inspect( findUniqueArgs.where ) }''`
-        );
+    public async findUnique<T extends TDataType>(
+        findUniqueArgs: ChannelFindUniqueArgsWithDataIncludeKey,
+        cache = true
+    ) {
+        this.logger.log(this.findUnique, `Fetching entry for channel id: '${util.inspect(findUniqueArgs.where)}''`);
 
         let result: ChannelExtendedResult<T>;
 
-        let cacheKey = this.generateCacheKey( findUniqueArgs.where );
+        let cacheKey = this.generateCacheKey(findUniqueArgs.where);
 
-        if ( cache ) {
-            result = this.getCache( cacheKey );
+        if (cache) {
+            result = this.getCache(cacheKey);
         }
 
-        const findUniqueArgsWithoutInclude = { ... findUniqueArgs, include: null /* manually */ };
+        const findUniqueArgsWithoutInclude = { ...findUniqueArgs, include: null /* manually */ };
 
-        if ( ! result ) {
-            result = await this.model.findUnique( findUniqueArgsWithoutInclude );
+        if (!result) {
+            result = await this.model.findUnique(findUniqueArgsWithoutInclude);
         }
 
-        if ( result ) {
-            cache && this.setCache( cacheKey, result );
+        if (result) {
+            cache && this.setCache(cacheKey, result);
 
-            if ( findUniqueArgs.include ) {
-                result = await this.getChannelData<T>( result, findUniqueArgs.include.key, cache );
+            if (findUniqueArgs.include) {
+                result = await this.getChannelData<T>(result, findUniqueArgs.include.key, cache);
             }
         }
 
-        this.debugger.dumpDown( this.findUnique, {
+        this.debugger.dumpDown(this.findUnique, {
             findUniqueArgs,
-            result,
-        } );
+            result
+        });
 
         return result;
     }
 
-    public async findMany<T extends TDataType>( findManyArgs: ChannelFindManyArgsWithDataIncludeKey, cache = true ) {
+    public async findMany<T extends TDataType>(findManyArgs: ChannelFindManyArgsWithDataIncludeKey, cache = true) {
         const type = findManyArgs.where?.internalType ?? PrismaBot.E_INTERNAL_CHANNEL_TYPES.DEFAULT_CHANNEL;
 
-        this.logger.log( this.findMany,
-            `Guild id: '${ findManyArgs.where!.guildId }' - Finding all channels with type: '${ type }'`
+        this.logger.log(
+            this.findMany,
+            `Guild id: '${findManyArgs.where!.guildId}' - Finding all channels with type: '${type}'`
         );
 
-        const findManyWithoutInclude = { ... findManyArgs, include: null /* manually */ };
+        const findManyWithoutInclude = { ...findManyArgs, include: null /* manually */ };
 
-        const results = await this.model.findMany( findManyWithoutInclude );
+        const results = await this.model.findMany(findManyWithoutInclude);
 
-        this.debugger.dumpDown( this.findMany, {
+        this.debugger.dumpDown(this.findMany, {
             findManyArgs,
-            results,
-        } );
+            results
+        });
 
         const self = this;
 
         async function handleResultWithCacheInclude() {
-            return Promise.all( results.map( async ( result ) => {
-                self.setCache( self.generateCacheKey( { channelId: result.channelId } ), result );
+            return Promise.all(
+                results.map(async (result) => {
+                    self.setCache(self.generateCacheKey({ channelId: result.channelId }), result);
 
-                return await self.getChannelData<T>(
-                    result,
-                    findManyArgs.include!.key,
-                    cache
-                );
-            } ) );
+                    return await self.getChannelData<T>(result, findManyArgs.include!.key, cache);
+                })
+            );
         }
 
         function handleResultWithCache() {
-            results.forEach( result =>
-                self.setCache( self.generateCacheKey( { channelId: result.channelId } ), result )
-            );
+            results.forEach((result) => self.setCache(self.generateCacheKey({ channelId: result.channelId }), result));
 
-            return Promise.resolve( results );
+            return Promise.resolve(results);
         }
 
         function handleResultWithInclude() {
-            return Promise.all( results.map( async ( result ) => {
-                return await self.getChannelData<T>(
-                    result,
-                    findManyArgs.include!.key,
-                    cache
-                );
-            } ) );
+            return Promise.all(
+                results.map(async (result) => {
+                    return await self.getChannelData<T>(result, findManyArgs.include!.key, cache);
+                })
+            );
         }
 
         function handleResult() {
-            return Promise.resolve( results );
+            return Promise.resolve(results);
         }
 
         type Handler = () => Promise<typeof results>;
@@ -148,205 +144,214 @@ export class ChannelModel extends ModelWithDataBase<
         const includeKey = findManyArgs.include ? "true" : "false";
 
         const handlers: Record<string, Record<string, Handler>> = {
-            "true": {
-                "true": handleResultWithCacheInclude,
-                "false": handleResultWithCache
+            true: {
+                true: handleResultWithCacheInclude,
+                false: handleResultWithCache
             },
-            "false": {
-                "true": handleResultWithInclude,
-                "false": handleResult
+            false: {
+                true: handleResultWithInclude,
+                false: handleResult
             }
         };
 
         // Favor speed over memory.
-        return handlers[ cacheKey ][ includeKey ]();
+        return handlers[cacheKey][includeKey]();
     }
 
-    public async create( createArgs: PrismaBot.Prisma.ChannelCreateArgs["data"], cache = true ) {
-        this.logger.log( this.create,
-            `Guild id: '${ createArgs.guildId }' - Creating entry for channel id: '${ createArgs.channelId }''`
+    public async create(createArgs: PrismaBot.Prisma.ChannelCreateArgs["data"], cache = true) {
+        this.logger.log(
+            this.create,
+            `Guild id: '${createArgs.guildId}' - Creating entry for channel id: '${createArgs.channelId}''`
         );
 
-        const result = await this.model.create( { data: createArgs } );
+        const result = await this.model.create({ data: createArgs });
 
-        this.debugger.dumpDown( this.create, {
+        this.debugger.dumpDown(this.create, {
             createArgs,
-            result,
-        } );
+            result
+        });
 
-        if ( cache ) {
-            this.setCache( this.generateCacheKey( { channelId: result.channelId } ), result );
+        if (cache) {
+            this.setCache(this.generateCacheKey({ channelId: result.channelId }), result);
         }
 
         return result;
     }
 
-    public async update( updateArgs: Pick<PrismaBot.Prisma.ChannelUpdateArgs, "where" | "data">, cache = true ) {
-        this.logger.log( this.update,
-            `Guild id: '${ updateArgs.data.guildId }' - Updating entry for channel id: '${ updateArgs.where.channelId }''` );
+    public async update(updateArgs: Pick<PrismaBot.Prisma.ChannelUpdateArgs, "where" | "data">, cache = true) {
+        this.logger.log(
+            this.update,
+            `Guild id: '${updateArgs.data.guildId}' - Updating entry for channel id: '${updateArgs.where.channelId}''`
+        );
 
         // Delete cache
-        if ( cache ) {
-            this.deleteCache( this.generateCacheKey( updateArgs.where ) );
+        if (cache) {
+            this.deleteCache(this.generateCacheKey(updateArgs.where));
         }
 
-        const result = await this.model.update( updateArgs );
+        const result = await this.model.update(updateArgs);
 
-        this.debugger.dumpDown( this.update, {
+        this.debugger.dumpDown(this.update, {
             updateArgs,
-            result,
-        } );
+            result
+        });
 
         return result;
     }
 
-    public async delete( deleteArgs: PrismaBot.Prisma.ChannelDeleteArgs["where"], cache = true ) {
-        this.logger.log( this.delete, `Deleting entry for channel id: '${ deleteArgs.channelId }''` );
+    public async delete(deleteArgs: PrismaBot.Prisma.ChannelDeleteArgs["where"], cache = true) {
+        this.logger.log(this.delete, `Deleting entry for channel id: '${deleteArgs.channelId}''`);
 
         // Delete cache
-        if ( cache ) {
-            this.deleteCache( this.generateCacheKey( deleteArgs ) );
+        if (cache) {
+            this.deleteCache(this.generateCacheKey(deleteArgs));
         }
 
-        const result = await this.model.delete( { where: deleteArgs } );
+        const result = await this.model.delete({ where: deleteArgs });
 
-        this.debugger.dumpDown( this.create, {
+        this.debugger.dumpDown(this.create, {
             deleteArgs,
-            result,
-        } );
+            result
+        });
     }
 
-    public async deleteMany( where: PrismaBot.Prisma.ChannelDeleteManyArgs["where"], cache = true ) {
-        this.logger.log( this.deleteMany, `Deleting entries for guild id: '${ where!.guildId }''` );
+    public async deleteMany(where: PrismaBot.Prisma.ChannelDeleteManyArgs["where"], cache = true) {
+        this.logger.log(this.deleteMany, `Deleting entries for guild id: '${where!.guildId}''`);
 
-        if ( ! cache ) {
-            return ( await this.model.deleteMany( { where } ) ).count || 0;
+        if (!cache) {
+            return (await this.model.deleteMany({ where })).count || 0;
         }
 
         let count = 0;
-        const results = await this.findMany( { where } );
+        const results = await this.findMany({ where });
 
-        for ( const result of results ) {
-            await this.delete( { channelId: result.channelId }, false );
+        for (const result of results) {
+            await this.delete({ channelId: result.channelId }, false);
             count++;
         }
 
         return count;
     }
 
-    public async getMasters( guildId: string, dataKey?: string ) {
+    public async getMasters(guildId: string, dataKey?: string) {
         const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
             guildId,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
         };
 
-        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey ? {
-            data: true,
-            key: dataKey
-        } : undefined;
+        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+            ? {
+                  data: true,
+                  key: dataKey
+              }
+            : undefined;
 
-        return this.findMany( { where, include } );
+        return this.findMany({ where, include });
     }
 
-    public async getDynamics( guildId: string, dataKey?: string ) {
+    public async getDynamics(guildId: string, dataKey?: string) {
         const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
             guildId,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL
         };
 
-        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey ? {
-            data: true,
-            key: dataKey
-        } : undefined;
+        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+            ? {
+                  data: true,
+                  key: dataKey
+              }
+            : undefined;
 
-        return this.findMany( { where, include } );
+        return this.findMany({ where, include });
     }
 
-    public async getDynamicsByMasterId( guildId: string, masterChannelId: string ) {
-        return this.findMany( {
+    public async getDynamicsByMasterId(guildId: string, masterChannelId: string) {
+        return this.findMany({
             where: {
                 guildId,
                 ownerChannelId: masterChannelId,
                 internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL
             }
-        } );
+        });
     }
 
-    public async getByChannelId( channelId: string | null, cache = true ) {
+    public async getByChannelId(channelId: string | null, cache = true) {
         // TODO: Remove backwards compatibility.
-        if ( ! channelId ) {
+        if (!channelId) {
             return null;
         }
 
-        return this.findUnique( { where: { channelId } }, cache );
+        return this.findUnique({ where: { channelId } }, cache);
     }
 
-    public async getMasterByDynamicChannelId( dynamicChannelId: string, cache = true ) {
-        this.logger.log( this.getMasterByDynamicChannelId,
-            `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from ${ cache ? "cache" : "database" }`
+    public async getMasterByDynamicChannelId(dynamicChannelId: string, cache = true) {
+        this.logger.log(
+            this.getMasterByDynamicChannelId,
+            `Dynamic channel id: '${dynamicChannelId}' - Trying to get master channel from ${cache ? "cache" : "database"}`
         );
 
-        const dynamicChannelDB = await this.getByChannelId( dynamicChannelId, cache );
+        const dynamicChannelDB = await this.getByChannelId(dynamicChannelId, cache);
 
-        if ( ! dynamicChannelDB || ! dynamicChannelDB.ownerChannelId ) {
+        if (!dynamicChannelDB || !dynamicChannelDB.ownerChannelId) {
             return null;
         }
 
-        return await this.getByChannelId( dynamicChannelDB.ownerChannelId, cache );
+        return await this.getByChannelId(dynamicChannelDB.ownerChannelId, cache);
     }
 
-    public async getTypeCount( guildId: string, internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
-        const total = await this.model.count( {
+    public async getTypeCount(guildId: string, internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES) {
+        const total = await this.model.count({
             where: {
                 guildId,
-                internalType,
+                internalType
             }
-        } );
+        });
 
-        this.debugger.log( this.getTypeCount,
-            `Guild id: '${ guildId }' - Total master channels for is '${ total }'`
-        );
+        this.debugger.log(this.getTypeCount, `Guild id: '${guildId}' - Total master channels for is '${total}'`);
 
         return total;
     }
 
-    public async isMaster( channelId: string, cache = true ) {
-        return !! ( await this.getByChannelId( channelId, cache ) )?.isMaster;
+    public async isMaster(channelId: string, cache = true) {
+        return !!(await this.getByChannelId(channelId, cache))?.isMaster;
     }
 
-    public async isDynamic( channelId: string, cache = true ) {
-        return !! ( await this.getByChannelId( channelId, cache ) )?.isDynamic;
-
+    public async isDynamic(channelId: string, cache = true) {
+        return !!(await this.getByChannelId(channelId, cache))?.isDynamic;
     }
 
-    public getModelByVersion( version: string ) {
-        return this.dataModels.find(
-            m => m.getVersion() === version
-        ) || this.dataModels.at( 0 );
+    public getModelByVersion(version: string) {
+        return this.dataModels.find((m) => m.getVersion() === version) || this.dataModels.at(0);
     }
 
-    private async getChannelData<T extends TDataType>( result: NonNullable<ChannelExtendedResult<T>>, key: string, cache = true ) {
-        const dataModel = this.getModelByVersion( result.version );
+    private async getChannelData<T extends TDataType>(
+        result: NonNullable<ChannelExtendedResult<T>>,
+        key: string,
+        cache = true
+    ) {
+        const dataModel = this.getModelByVersion(result.version);
 
         // We need to run a second query to get the data for this channel.
         // No worries, since our data model is a one-to-many relation, Prisma with MongoDB will run two queries anyway.
-        const dataResult = await dataModel!.getData<T>( {
-            key,
-            ownerId: result.id
-        }, { cache } );
+        const dataResult = await dataModel!.getData<T>(
+            {
+                key,
+                ownerId: result.id
+            },
+            { cache }
+        );
 
         return {
-            ... result,
-            data: dataResult,
+            ...result,
+            data: dataResult
         };
     }
 
-    private generateCacheKey( obj: Record<string, any> ) {
-        if ( ! obj.channelId ) {
-            throw new Error( "Missing channelId" );
+    private generateCacheKey(obj: Record<string, any>) {
+        if (!obj.channelId) {
+            throw new Error("Missing channelId");
         }
 
         return obj.channelId as string;
-    };
+    }
 }
-

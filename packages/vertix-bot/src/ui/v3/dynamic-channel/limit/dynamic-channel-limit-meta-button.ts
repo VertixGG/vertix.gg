@@ -14,11 +14,11 @@ export class DynamicChannelLimitMetaButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelLimitMetaButton.getBaseName() );
+        return EmojiManager.$.getCachedMarkdown(DynamicChannelLimitMetaButton.getBaseName());
     }
 
     public static getSortId() {
-        return this.getSortIdAfter( DynamicChannelRenameButton );
+        return this.getSortIdAfter(DynamicChannelRenameButton);
     }
 
     public getId() {
@@ -26,7 +26,7 @@ export class DynamicChannelLimitMetaButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelLimitMetaButton.getEmoji() } ∙ **User Limit**`;
+        return `${DynamicChannelLimitMetaButton.getEmoji()} ∙ **User Limit**`;
     }
 
     public async getLabelForMenu() {
@@ -38,7 +38,7 @@ export class DynamicChannelLimitMetaButton extends DynamicChannelButtonBase {
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( DynamicChannelLimitMetaButton.getBaseName() );
+        return EmojiManager.$.getMarkdown(DynamicChannelLimitMetaButton.getBaseName());
     }
 
     public getEmojiForEmbed() {

@@ -20,7 +20,7 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
         return this.schema;
     }
 
-    public async build( uiArgs?: UIArgs ) {
+    public async build(uiArgs?: UIArgs) {
         this.uiArgsInternal = uiArgs;
 
         this.schema = await this.getSchemaInternal();
@@ -28,16 +28,16 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
         return this.schema;
     }
 
-    protected abstract getAttributes(): Promise<{ [ name: string ]: any }>;
+    protected abstract getAttributes(): Promise<{ [name: string]: any }>;
 
     protected async isAvailable?(): Promise<boolean>;
 
     protected async getSchemaInternal(): Promise<UIEntitySchemaBase> {
         return {
             name: this.getName(),
-            type: ( this.constructor as typeof UIEntityBase ).getType(),
+            type: (this.constructor as typeof UIEntityBase).getType(),
             attributes: await this.getAttributes(),
-            isAvailable: this.isAvailable ? await this.isAvailable() : true,
+            isAvailable: this.isAvailable ? await this.isAvailable() : true
         };
     }
 
@@ -45,7 +45,7 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
         return this.uiArgsInternal;
     }
 
-    protected set uiArgs( value: UIArgs | undefined ) {
+    protected set uiArgs(value: UIArgs | undefined) {
         this.uiArgsInternal = value;
     }
 }

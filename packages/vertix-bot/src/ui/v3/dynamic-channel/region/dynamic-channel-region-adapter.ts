@@ -13,9 +13,7 @@ import type {
     UIDefaultUserSelectMenuChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-type DefaultInteraction =
-    | UIDefaultUserSelectMenuChannelVoiceInteraction
-    | UIDefaultButtonChannelVoiceInteraction
+type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 export class DynamicChannelRegionAdapter extends DynamicChannelAdapterExuWithInitiatorElementBase<DefaultInteraction> {
     public static getName() {
@@ -28,36 +26,35 @@ export class DynamicChannelRegionAdapter extends DynamicChannelAdapterExuWithIni
 
     protected static getInitiatorElement() {
         return DynamicChannelRegionButton;
-    };
+    }
 
     protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        return await this.getArgs( interaction.channel );
+    protected async getReplyArgs(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        return await this.getArgs(interaction.channel);
     }
 
-    protected async getEditMessageArgs( message?: Message<true> ) {
-        return message?.channel && message.channel instanceof VoiceChannel ?
-            await this.getArgs( message.channel  ) : {};
+    protected async getEditMessageArgs(message?: Message<true>) {
+        return message?.channel && message.channel instanceof VoiceChannel ? await this.getArgs(message.channel) : {};
     }
 
     protected onEntityMap() {
-        this.bindSelectMenu( "Vertix/UI-V3/DynamicChannelRegionSelectMenu", this.onRegionSelected );
+        this.bindSelectMenu("Vertix/UI-V3/DynamicChannelRegionSelectMenu", this.onRegionSelected);
     }
 
-    private async onRegionSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onRegionSelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
         const newRegion = interaction.values[0];
 
-        await this.dynamicChannelService.editChannelRegion( interaction, interaction.channel, newRegion );
+        await this.dynamicChannelService.editChannelRegion(interaction, interaction.channel, newRegion);
 
-        await this.editReply( interaction );
+        await this.editReply(interaction);
     }
 
-    private async getArgs( channel: VoiceChannel ) {
+    private async getArgs(channel: VoiceChannel) {
         return {
-            region: channel.rtcRegion,
+            region: channel.rtcRegion
         };
     }
 }

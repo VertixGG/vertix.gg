@@ -8,7 +8,7 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public getId() {
-        return 3    ;
+        return 3;
     }
 
     public getSortId() {
@@ -24,11 +24,11 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     }
 
     public async getLabel() {
-        return uiUtilsWrapAsTemplate( "displayText" );
+        return uiUtilsWrapAsTemplate("displayText");
     }
 
     public async getEmoji() {
-        return this.uiArgs?.isPrivate ?  "🌐" : "🚫";
+        return this.uiArgs?.isPrivate ? "🌐" : "🚫";
     }
 
     public getEmojiForEmbed(): string {
@@ -38,17 +38,17 @@ export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBa
     protected getOptions() {
         return {
             publicText: "Public",
-            privateText: "Private",
+            privateText: "Private"
         };
     }
 
     protected async getLogic() {
         const result: any = {};
 
-        if ( this.uiArgs?.isPrivate ) {
-            result.displayText = uiUtilsWrapAsTemplate( "publicText" );
+        if (this.uiArgs?.isPrivate) {
+            result.displayText = uiUtilsWrapAsTemplate("publicText");
         } else {
-            result.displayText = uiUtilsWrapAsTemplate( "privateText" );
+            result.displayText = uiUtilsWrapAsTemplate("privateText");
         }
 
         return result;

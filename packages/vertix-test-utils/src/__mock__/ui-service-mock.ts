@@ -6,7 +6,7 @@ import type { Client } from "discord.js";
 
 export class UIServiceMock extends UIService {
     public constructor() {
-        super( Mocker.mock<Client<true>>() );
+        super(Mocker.mock<Client<true>>());
     }
 
     protected static setupCleanupTimerInterval(): void {

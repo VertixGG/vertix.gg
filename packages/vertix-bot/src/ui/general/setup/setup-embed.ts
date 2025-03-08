@@ -13,39 +13,36 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-import type {
-    MasterChannelConfigInterfaceV3
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
 export class SetupEmbed extends UIEmbedBase {
-
     private static vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+        separator: uiUtilsWrapAsTemplate("separator"),
+        value: uiUtilsWrapAsTemplate("value"),
 
-        masterChannels: uiUtilsWrapAsTemplate( "masterChannels" ),
-        masterChannelMessage: uiUtilsWrapAsTemplate( "masterChannelMessage" ),
-        masterChannelMessageDefault: uiUtilsWrapAsTemplate( "masterChannelMessageDefault" ),
+        masterChannels: uiUtilsWrapAsTemplate("masterChannels"),
+        masterChannelMessage: uiUtilsWrapAsTemplate("masterChannelMessage"),
+        masterChannelMessageDefault: uiUtilsWrapAsTemplate("masterChannelMessageDefault"),
 
         masterChannelsOptions: {
-            index: uiUtilsWrapAsTemplate( "index" ),
-            name: uiUtilsWrapAsTemplate( "name" ),
-            id: uiUtilsWrapAsTemplate( "id" ),
-            channelsTemplateName: uiUtilsWrapAsTemplate( "channelsTemplateName" ),
-            channelsTemplateButtons: uiUtilsWrapAsTemplate( "channelsTemplateButtons" ),
-            channelsVerifiedRoles: uiUtilsWrapAsTemplate( "channelsVerifiedRoles" ),
-            channelsLogsChannelId: uiUtilsWrapAsTemplate( "channelsLogsChannelId" ),
+            index: uiUtilsWrapAsTemplate("index"),
+            name: uiUtilsWrapAsTemplate("name"),
+            id: uiUtilsWrapAsTemplate("id"),
+            channelsTemplateName: uiUtilsWrapAsTemplate("channelsTemplateName"),
+            channelsTemplateButtons: uiUtilsWrapAsTemplate("channelsTemplateButtons"),
+            channelsVerifiedRoles: uiUtilsWrapAsTemplate("channelsVerifiedRoles"),
+            channelsLogsChannelId: uiUtilsWrapAsTemplate("channelsLogsChannelId"),
 
-            version: uiUtilsWrapAsTemplate( "version" ),
+            version: uiUtilsWrapAsTemplate("version")
         },
 
-        badwords: uiUtilsWrapAsTemplate( "badwords" ),
-        badwordsMessage: uiUtilsWrapAsTemplate( "badwordsMessage" ),
-        badwordsMessageDefault: uiUtilsWrapAsTemplate( "badwordsMessageDefault" ),
+        badwords: uiUtilsWrapAsTemplate("badwords"),
+        badwordsMessage: uiUtilsWrapAsTemplate("badwordsMessage"),
+        badwordsMessageDefault: uiUtilsWrapAsTemplate("badwordsMessageDefault"),
 
-        none: uiUtilsWrapAsTemplate( "none" ),
+        none: uiUtilsWrapAsTemplate("none")
     };
 
     public static getName() {
@@ -69,17 +66,21 @@ export class SetupEmbed extends UIEmbedBase {
     }
 
     protected getDescription() {
-        return "Discover the limitless possibilities of **Vertix**!\n" +
+        return (
+            "Discover the limitless possibilities of **Vertix**!\n" +
             "Customize and optimize your server to perfection.\n\n" +
             "To create a new master channel just click:\n" +
             "`(➕ Create Master Channel)` button.\n\n" +
             "Master Channels are dynamic voice channel generators, each with its own unique configuration.\n\n" +
             "Our badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n" +
             "_**Current master channels**_:\n" +
-            SetupEmbed.vars.masterChannelMessage + "\n\n" +
+            SetupEmbed.vars.masterChannelMessage +
+            "\n\n" +
             "_Current badwords_:\n" +
-            SetupEmbed.vars.badwordsMessage + "\n\n" +
-            "-# 💡 You can set logs channel by editing the master channel.\n";
+            SetupEmbed.vars.badwordsMessage +
+            "\n\n" +
+            "-# 💡 You can set logs channel by editing the master channel.\n"
+        );
     }
 
     protected getArrayOptions() {
@@ -91,24 +92,24 @@ export class SetupEmbed extends UIEmbedBase {
                 separator: "\n",
                 multiSeparator: "\n\n",
                 options: {
-                    index: `**#${ masterChannelsOptions.index }**`,
-                    name: `▹ Name: <#${ masterChannelsOptions.id }>`,
-                    id: `▹ Channel ID: \`${ masterChannelsOptions.id }\``,
-                    channelsTemplateName: `▹ Dynamic Channels Name: \`${ masterChannelsOptions.channelsTemplateName }\``,
-                    channelsTemplateButtons: `▹ Buttons: **${ masterChannelsOptions.channelsTemplateButtons }**`,
-                    channelsVerifiedRoles: `▹ Verified Roles: ${ masterChannelsOptions.channelsVerifiedRoles }`,
-                    channelsLogsChannelId: `▹ Logs Channel: ${ masterChannelsOptions.channelsLogsChannelId }`,
-                    version: `▹ UI Version: \`${ masterChannelsOptions.version }\``,
+                    index: `**#${masterChannelsOptions.index}**`,
+                    name: `▹ Name: <#${masterChannelsOptions.id}>`,
+                    id: `▹ Channel ID: \`${masterChannelsOptions.id}\``,
+                    channelsTemplateName: `▹ Dynamic Channels Name: \`${masterChannelsOptions.channelsTemplateName}\``,
+                    channelsTemplateButtons: `▹ Buttons: **${masterChannelsOptions.channelsTemplateButtons}**`,
+                    channelsVerifiedRoles: `▹ Verified Roles: ${masterChannelsOptions.channelsVerifiedRoles}`,
+                    channelsLogsChannelId: `▹ Logs Channel: ${masterChannelsOptions.channelsLogsChannelId}`,
+                    version: `▹ UI Version: \`${masterChannelsOptions.version}\``
                 }
             },
             badwords: {
-                format: `${ value }${ separator }`,
-                separator: ", ",
+                format: `${value}${separator}`,
+                separator: ", "
             }
         };
     }
 
-    protected getOptions(): { [ p: string ]: any } {
+    protected getOptions(): { [p: string]: any } {
         const {
             masterChannels,
             masterChannelMessageDefault,
@@ -119,47 +120,52 @@ export class SetupEmbed extends UIEmbedBase {
 
         return {
             masterChannelMessage: {
-                [ masterChannels ]: "\n" + masterChannels,
-                [ masterChannelMessageDefault ]: "**None**",
+                [masterChannels]: "\n" + masterChannels,
+                [masterChannelMessageDefault]: "**None**"
             },
             badwordsMessage: {
-                [ badwords ]: "`" + badwords + "`",
-                [ badwordsMessageDefault ]: "**None**",
+                [badwords]: "`" + badwords + "`",
+                [badwordsMessageDefault]: "**None**"
             },
 
-            none: "**None**",
+            none: "**None**"
         };
     }
 
-    protected async getLogicAsync( args: ISetupArgs ) {
-        const { settings } = ConfigManager.$
-            .get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 ).data;
+    protected async getLogicAsync(args: ISetupArgs) {
+        const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+            "Vertix/Config/MasterChannel",
+            VERSION_UI_V3
+        ).data;
 
         // TODO: Duplicate code, refactor.
         const result: any = {},
-            masterChannelsPromise = ( args?.masterChannels || [] ).map( async ( channel, index ) => {
-                const { data, usedEmojis, usedRoles } = this.handleChannelData( channel );
+            masterChannelsPromise = (args?.masterChannels || []).map(async (channel, index) => {
+                const { data, usedEmojis, usedRoles } = this.handleChannelData(channel);
 
                 return {
                     index: index + 1,
                     id: channel.channelId,
-                    channelsTemplateName: data?.object?.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
+                    channelsTemplateName:
+                        data?.object?.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
                     channelsTemplateButtons: usedEmojis,
                     channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
-                    channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId ? `<#${ data?.object?.dynamicChannelLogsChannelId }>` : SetupEmbed.vars.none,
-                    version: data?.version,
+                    channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId
+                        ? `<#${data?.object?.dynamicChannelLogsChannelId}>`
+                        : SetupEmbed.vars.none,
+                    version: data?.version
                 };
-            } ),
-            masterChannels = await Promise.all( masterChannelsPromise ) || [];
+            }),
+            masterChannels = (await Promise.all(masterChannelsPromise)) || [];
 
-        if ( masterChannels?.length ) {
+        if (masterChannels?.length) {
             result.masterChannels = masterChannels;
             result.masterChannelMessage = SetupEmbed.vars.masterChannels;
         } else {
             result.masterChannelMessage = SetupEmbed.vars.masterChannelMessageDefault;
         }
 
-        if ( args?.badwords?.length ) {
+        if (args?.badwords?.length) {
             result.badwords = args.badwords;
             result.badwordsMessage = SetupEmbed.vars.badwords;
         } else {
@@ -169,9 +175,9 @@ export class SetupEmbed extends UIEmbedBase {
         return result;
     }
 
-    private handleChannelData( channel: any ) {
+    private handleChannelData(channel: any) {
         const getUsedButtons = () => {
-            switch ( channel?.data?.[ 0 ]?.version ) {
+            switch (channel?.data?.[0]?.version) {
                 default:
                     return DynamicChannelElementsGroup.getAll();
 
@@ -180,22 +186,24 @@ export class SetupEmbed extends UIEmbedBase {
             }
         };
 
-        const getEmojis = ( buttons: string[] ) => {
-            switch ( channel?.data?.[ 0 ]?.version ) {
+        const getEmojis = (buttons: string[]) => {
+            switch (channel?.data?.[0]?.version) {
                 default:
-                    return DynamicChannelElementsGroup.getEmbedEmojis( buttons.map( b => Number( b ) ) );
+                    return DynamicChannelElementsGroup.getEmbedEmojis(buttons.map((b) => Number(b)));
 
                 case VERSION_UI_V3:
-                    return DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis( buttons );
+                    return DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis(buttons);
             }
         };
 
-        const data = channel?.data?.[ 0 ],
+        const data = channel?.data?.[0],
             usedButtons = data?.object?.dynamicChannelButtonsTemplate || getUsedButtons(),
-            usedEmojis = ( getEmojis( usedButtons ) ).join( ", " ),
-            usedRoles = ( data?.object.dynamicChannelVerifiedRoles || [] ).map( ( roleId: string ) => {
-                return "<@&" + roleId + ">";
-            } ).join( ", " );
+            usedEmojis = getEmojis(usedButtons).join(", "),
+            usedRoles = (data?.object.dynamicChannelVerifiedRoles || [])
+                .map((roleId: string) => {
+                    return "<@&" + roleId + ">";
+                })
+                .join(", ");
         return { data, usedEmojis, usedRoles };
     }
 }

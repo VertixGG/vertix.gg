@@ -25,15 +25,15 @@ export class DynamicChannelMetaClearChatComponent extends UIComponentBase {
     public static getElementsGroups() {
         return [
             // TODO: If i put `UIEmbedsGroupBase.createSingleGroup` here it does not throw error.
-            UIElementsGroupBase.createSingleGroup( DynamicChannelMetaClearChatButton ),
+            UIElementsGroupBase.createSingleGroup(DynamicChannelMetaClearChatButton)
         ];
     }
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaClearChatSuccessEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaClearChatNothingToClearEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelMetaClearChatSuccessEmbed),
+            UIEmbedsGroupBase.createSingleGroup(DynamicChannelMetaClearChatNothingToClearEmbed),
+            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
         ];
     }
 

@@ -18,9 +18,6 @@ export class FeedbackModal extends UIModalBase {
     }
 
     public static getInputElements() {
-        return [
-            [ FeedbackInputTitle ],
-            [ FeedbackInputDescription ],
-        ];
+        return [[FeedbackInputTitle], [FeedbackInputDescription]];
     }
 }

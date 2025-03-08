@@ -9,8 +9,6 @@ export class YesNoElementsGroup extends UIElementsGroupBase {
     }
 
     public static getItems() {
-        return [
-            [ YesButton, NoButton ],
-        ];
+        return [[YesButton, NoButton]];
     }
 }

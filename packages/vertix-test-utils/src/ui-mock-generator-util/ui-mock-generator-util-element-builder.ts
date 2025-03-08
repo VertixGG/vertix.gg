@@ -17,7 +17,6 @@ export class UIMockGeneratorUtilElementBuilder {
     }
 
     public build() {
-
         let name = this.name;
         const instanceType = this.instanceType;
 
@@ -38,7 +37,7 @@ export class UIMockGeneratorUtilElementBuilder {
                 return {};
             }
 
-            public static set __name( newName: string) {
+            public static set __name(newName: string) {
                 name = newName;
             }
         };

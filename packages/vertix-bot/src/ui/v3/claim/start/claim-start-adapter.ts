@@ -26,38 +26,36 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
     }
 
     public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( 0n );
+        return new PermissionsBitField(0n);
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice
-        ];
+        return [ChannelType.GuildVoice];
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
-        const channelDB = await ChannelModel.$.getByChannelId( channel.id );
+    protected async getStartArgs(channel: VoiceChannel, argsFromManager: UIArgs) {
+        const channelDB = await ChannelModel.$.getByChannelId(channel.id);
 
-        if ( ! channelDB || ! channelDB.userOwnerId ) {
+        if (!channelDB || !channelDB.userOwnerId) {
             return {};
         }
 
         return {
             ownerId: channelDB.userOwnerId,
             channelId: channel.id,
-            ownerDisplayName: await guildGetMemberDisplayName( channel.guild, channelDB.userOwnerId ),
-            absentInterval: DynamicChannelClaimManager.get( "Vertix/UI-V3/DynamicChannelClaimManager" )
-                .getChannelOwnershipTimeout(),
+            ownerDisplayName: await guildGetMemberDisplayName(channel.guild, channelDB.userOwnerId),
+            absentInterval: DynamicChannelClaimManager.get(
+                "Vertix/UI-V3/DynamicChannelClaimManager"
+            ).getChannelOwnershipTimeout()
         };
     }
 
     protected onEntityMap() {
-        this.bindButton<DefaultInteraction>( "Vertix/UI-V3/ClaimStartButton", this.onClaimStartButtonClicked );
+        this.bindButton<DefaultInteraction>("Vertix/UI-V3/ClaimStartButton", this.onClaimStartButtonClicked);
     }
 
-    private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
-        await DynamicChannelClaimManager.get( "Vertix/UI-V3/DynamicChannelClaimManager" )
-            .handleVoteRequest( interaction );
+    private async onClaimStartButtonClicked(interaction: DefaultInteraction) {
+        await DynamicChannelClaimManager.get("Vertix/UI-V3/DynamicChannelClaimManager").handleVoteRequest(interaction);
     }
 }

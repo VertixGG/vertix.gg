@@ -14,14 +14,14 @@ export class UICustomIdHashStrategy extends UICustomIdStrategyBase {
     public constructor() {
         super();
 
-        this.uiHashService = ServiceLocator.$.get( "VertixGUI/UIHashService" );
+        this.uiHashService = ServiceLocator.$.get("VertixGUI/UIHashService");
     }
 
-    public generateId( id: string ): string {
-        return this.uiHashService.generateId( id );
+    public generateId(id: string): string {
+        return this.uiHashService.generateId(id);
     }
 
-    public getId( id: string ): string {
-        return this.uiHashService.getId( id );
+    public getId(id: string): string {
+        return this.uiHashService.getId(id);
     }
 }

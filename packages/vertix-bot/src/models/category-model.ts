@@ -10,7 +10,7 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
     }
 
     public static getInstance(): CategoryModel {
-        if ( ! CategoryModel.instance ) {
+        if (!CategoryModel.instance) {
             CategoryModel.instance = new CategoryModel();
         }
 
@@ -21,22 +21,21 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
         return CategoryModel.getInstance();
     }
 
-    public async create( args: PrismaBot.Prisma.CategoryCreateArgs ) {
-        return this.prisma.category.create( args );
+    public async create(args: PrismaBot.Prisma.CategoryCreateArgs) {
+        return this.prisma.category.create(args);
     }
 
-    public async delete( guildId: string, guildCategoryId?: string | null ) {
+    public async delete(guildId: string, guildCategoryId?: string | null) {
         const where: any = { guildId };
 
-        if ( guildCategoryId ) {
+        if (guildCategoryId) {
             where.categoryId = guildCategoryId;
         }
 
-        return this.prisma.category.deleteMany( { where } );
+        return this.prisma.category.deleteMany({ where });
     }
 
     protected getClient() {
         return PrismaBotClient.getPrismaClient();
     }
 }
-

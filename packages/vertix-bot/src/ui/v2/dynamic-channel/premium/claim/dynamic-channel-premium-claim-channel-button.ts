@@ -38,11 +38,12 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     protected async isDisabled(): Promise<boolean> {
-        if ( [ "starting", "active" ].includes( DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) ) {
+        if (["starting", "active"].includes(DynamicChannelVoteManager.$.getState(this.uiArgs?.channelId))) {
             return true;
         }
 
-        return ! DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
-            .isChannelClaimable( this.uiArgs?.channelId );
+        return !DynamicChannelClaimManager.get("Vertix/UI-V2/DynamicChannelClaimManager").isChannelClaimable(
+            this.uiArgs?.channelId
+        );
     }
 }

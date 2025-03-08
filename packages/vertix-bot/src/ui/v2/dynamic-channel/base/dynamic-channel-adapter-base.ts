@@ -1,7 +1,7 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import  { Logger } from "@vertix.gg/base/src/modules/logger";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
@@ -14,8 +14,11 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 import type { VoiceChannel } from "discord.js";
 import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-export abstract class DynamicChannelAdapterBase extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
-    protected static logger = new Logger( this.getName() );
+export abstract class DynamicChannelAdapterBase extends UIAdapterBase<
+    VoiceChannel,
+    UIDefaultButtonChannelVoiceInteraction
+> {
+    protected static logger = new Logger(this.getName());
 
     protected dynamicChannelService: DynamicChannelService;
 
@@ -23,23 +26,21 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<VoiceChann
         return "Vertix/UI-V2/DynamicChannelAdapterBase";
     }
 
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
+    public constructor(options: TAdapterRegisterOptions) {
+        super(options);
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get("VertixBot/Services/DynamicChannel");
     }
 
     public getChannelTypes() {
-        return [
-            ChannelType.GuildVoice,
-        ];
+        return [ChannelType.GuildVoice];
     }
 
     public getPermissions() {
-        return new PermissionsBitField( 0n );
+        return new PermissionsBitField(0n);
     }
 
-    public async isPassingInteractionRequirementsInternal( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        return await dynamicChannelRequirements( interaction );
+    public async isPassingInteractionRequirementsInternal(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        return await dynamicChannelRequirements(interaction);
     }
 }

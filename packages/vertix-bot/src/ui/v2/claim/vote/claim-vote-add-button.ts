@@ -20,7 +20,7 @@ export class ClaimVoteAddButton extends UIElementButtonBase {
     }
 
     protected async getLabel(): Promise<string> {
-        return `Vote ${ uiUtilsWrapAsTemplate( "displayName" ) }`;
+        return `Vote ${uiUtilsWrapAsTemplate("displayName")}`;
     }
 
     protected async getEmoji(): Promise<string> {

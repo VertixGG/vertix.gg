@@ -18,7 +18,13 @@ export abstract class ModelDataOwnerConfigBase<
     TDataConfig extends ConfigBaseInterface,
     TDataConfigSlice extends keyof TDataConfig["data"],
     TDataSlice extends TDataConfig["data"][TDataConfigSlice] = TDataConfig["data"][TDataConfigSlice]
-> extends ModelDataOwnerStrictDataBase<TModel, TDataModel, TDataModelResult, TDataModelUniqueKeys, TDataConfig["data"][TDataConfigSlice]> {
+> extends ModelDataOwnerStrictDataBase<
+    TModel,
+    TDataModel,
+    TDataModelResult,
+    TDataModelUniqueKeys,
+    TDataConfig["data"][TDataConfigSlice]
+> {
     public static getName() {
         return "VertixBase/Bases/ModelDataOwnerConfigBase";
     }
@@ -28,33 +34,31 @@ export abstract class ModelDataOwnerConfigBase<
     protected abstract getConfigSlice(): TDataConfigSlice;
 
     protected getStrictDataFactor(): TDataSlice {
-        return this.getConfig().data[ this.getConfigSlice() ];
+        return this.getConfig().data[this.getConfigSlice()];
     }
 
     protected async getSliceData(
         args: Parameters<TModel["findUnique"]>[0],
         key: string,
         cache = true,
-        returnDefaults = false,
+        returnDefaults = false
     ) {
-        const keys =  { key } as TDataModelUniqueKeys;
+        const keys = { key } as TDataModelUniqueKeys;
 
-        return returnDefaults ?
-            this.getStrictDataWithDefaults( args, keys, cache ) :
-            this.getStrictData( args, keys, cache );
+        return returnDefaults
+            ? this.getStrictDataWithDefaults(args, keys, cache)
+            : this.getStrictData(args, keys, cache);
     }
 
     protected async setSliceData(
         args: Parameters<TModel["findUnique"]>[0],
         key: string,
         data: Partial<TDataConfig["data"][TDataConfigSlice]>,
-        assignDefaults = true,
+        assignDefaults = true
     ) {
         const keys = { key } as TDataModelUniqueKeys;
 
-        return assignDefaults ?
-            this.setStrictDataWithDefaults( args, keys, data ) :
-            this.setStrictData( args, keys, data );
+        return assignDefaults ? this.setStrictDataWithDefaults(args, keys, data) : this.setStrictData(args, keys, data);
     }
 
     /**
@@ -73,22 +77,20 @@ export abstract class ModelDataOwnerConfigBase<
     public async getSettings(
         id: string,
         cache = true,
-        returnDefaults: ( ( result: any ) => TDataSlice ) | boolean = false
+        returnDefaults: ((result: any) => TDataSlice) | boolean = false
     ): Promise<TDataSlice | null> {
         const isReturnDefaultCallback = "function" === typeof returnDefaults;
 
-        const defaultSettings = ! isReturnDefaultCallback && returnDefaults
-            ? this.getConfig().data.settings : null;
+        const defaultSettings = !isReturnDefaultCallback && returnDefaults ? this.getConfig().data.settings : null;
 
         const queryArgs = { where: { id } };
 
-        let result =
-            await this.getSliceData( queryArgs, "settings", cache, false );
+        let result = await this.getSliceData(queryArgs, "settings", cache, false);
 
-        if ( defaultSettings ) {
-            result = Object.assign( defaultSettings, result );
-        } else if ( isReturnDefaultCallback ) {
-            result = returnDefaults( result || {} );
+        if (defaultSettings) {
+            result = Object.assign(defaultSettings, result);
+        } else if (isReturnDefaultCallback) {
+            result = returnDefaults(result || {});
         }
 
         // this.debugger.dumpDown( this.getSettings,
@@ -99,10 +101,9 @@ export abstract class ModelDataOwnerConfigBase<
         return result;
     }
 
-    public async setSettings( id: string, settings: Partial<TDataSlice>, assignDefaults = false ) {
+    public async setSettings(id: string, settings: Partial<TDataSlice>, assignDefaults = false) {
         const queryArgs = { where: { id } };
 
-        return this.setSliceData(  queryArgs, "settings", settings, assignDefaults  );
+        return this.setSliceData(queryArgs, "settings", settings, assignDefaults);
     }
 }
-

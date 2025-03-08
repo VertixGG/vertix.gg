@@ -14,11 +14,6 @@ export class SetupEditElementsGroup extends UIElementsGroupBase {
     }
 
     public static getItems() {
-        return [
-            [ SetupEditSelectEditOptionMenu ],
-            [ ConfigExtrasSelectMenu ],
-            [ LogChannelSelectMenu ],
-            [ DoneButton ],
-        ];
+        return [[SetupEditSelectEditOptionMenu], [ConfigExtrasSelectMenu], [LogChannelSelectMenu], [DoneButton]];
     }
 }

@@ -5,25 +5,25 @@ import type { GuildChannel, User as DiscordUser } from "discord.js";
 import type { RESTAPIPartialCurrentUserGuild } from "discord-api-types/v10";
 
 export interface APIDataTypeGenericError {
-    error: true,
-    code?: number,
-    message: string
+    error: true;
+    code?: number;
+    message: string;
 }
 
 export interface APIDataTypeMasterChannel {
-    dataDB: PrismaBot.ChannelData[],
-    channelDB: PrismaBot.Channel,
+    dataDB: PrismaBot.ChannelData[];
+    channelDB: PrismaBot.Channel;
 
-    dynamicChannelsDB: PrismaBot.Channel[],
+    dynamicChannelsDB: PrismaBot.Channel[];
 
-    channelDS: GuildChannel,
-    userOwnerDS: DiscordUser,
+    channelDS: GuildChannel;
+    userOwnerDS: DiscordUser;
 }
 
 export interface APIDataTypeGuild {
-    guildRS: RESTAPIPartialCurrentUserGuild,
-    masterChannelsAP: APIDataTypeMasterChannel[],
-    dataDB: PrismaBot.GuildData[],
+    guildRS: RESTAPIPartialCurrentUserGuild;
+    masterChannelsAP: APIDataTypeMasterChannel[];
+    dataDB: PrismaBot.GuildData[];
 }
 
 export type APIDataTypeGetGuilds = APIDataTypeGenericError | APIDataTypeGuild[];

@@ -17,22 +17,22 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         return ComponentType.StringSelect;
     }
 
-    public async build( uiArgs?: UIArgs ) {
+    public async build(uiArgs?: UIArgs) {
         // TODO: Find better way to do this.
         this.uiArgs = uiArgs;
 
-        this.content = await this.uiLanguageManager.getSelectMenuTranslatedContent( this, uiArgs?._language );
+        this.content = await this.uiLanguageManager.getSelectMenuTranslatedContent(this, uiArgs?._language);
 
-        return super.build( uiArgs );
+        return super.build(uiArgs);
     }
 
     public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
-        const translateAbleSelectEntries = await Promise.all( (
-            await this.getSelectOptions() ).map( async ( option ) => {
+        const translateAbleSelectEntries = await Promise.all(
+            (await this.getSelectOptions()).map(async (option) => {
                 return {
-                    label:option.label,
+                    label: option.label
                 };
-            } )
+            })
         );
 
         const result: UIElementSelectMenuLanguageContent = {},
@@ -40,15 +40,15 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
             selectOptions = await this.getSelectOptions(),
             options = this.getOptions();
 
-        if ( placeholder ) {
+        if (placeholder) {
             result.placeholder = placeholder;
         }
 
-        if ( selectOptions.length ) {
+        if (selectOptions.length) {
             result.selectOptions = translateAbleSelectEntries;
         }
 
-        if ( Object.keys( options ).length ) {
+        if (Object.keys(options).length) {
             result.options = options;
         }
 
@@ -77,31 +77,31 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
     protected async getCustomId?(): Promise<string>;
 
     protected async getAttributes() {
-        const custom_id = await this.getCustomId?.() || "",
-            placeholder = this.content?.placeholder || await this.getPlaceholder?.(),
+        const custom_id = (await this.getCustomId?.()) || "",
+            placeholder = this.content?.placeholder || (await this.getPlaceholder?.()),
             min_values = await this.getMinValues?.(),
             max_values = await this.getMaxValues?.(),
             disabled = await this.isDisabled?.(),
-            options = await this.getOptionsInternal() || [],
+            options = (await this.getOptionsInternal()) || [],
             result = {
                 type: UIElementStringSelectMenu.getComponentType(),
                 custom_id,
-                options,
+                options
             } as APIStringSelectComponent;
 
-        if ( placeholder ) {
+        if (placeholder) {
             result.placeholder = placeholder;
         }
 
-        if ( min_values || 0 === min_values ) {
+        if (min_values || 0 === min_values) {
             result.min_values = min_values;
         }
 
-        if ( max_values ) {
+        if (max_values) {
             result.max_values = max_values;
         }
 
-        if ( disabled ) {
+        if (disabled) {
             result.disabled = disabled;
         }
 
@@ -115,46 +115,42 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getDataFor( option: APISelectMenuOption ): { [ key: string ]: any } {
+    protected getDataFor(option: APISelectMenuOption): { [key: string]: any } {
         return {};
     }
 
     private async getOptionsInternal() {
         const options = this.content?.options || this.getOptions(),
             hardCodedSelectOptions = await this.getSelectOptions(),
-            translatedSelectOptions = ( this.content?.selectOptions || [] ) as APISelectMenuOption[];
+            translatedSelectOptions = (this.content?.selectOptions || []) as APISelectMenuOption[];
 
         let mergedOptions: APISelectMenuOption[] = [];
 
         // If using translation then, merge the hard coded options with the translated options.
-        if ( hardCodedSelectOptions.length && translatedSelectOptions.length ) {
-            mergedOptions = hardCodedSelectOptions.map( ( option, index ) => {
-                const translatedOption = translatedSelectOptions[ index ];
+        if (hardCodedSelectOptions.length && translatedSelectOptions.length) {
+            mergedOptions = hardCodedSelectOptions.map((option, index) => {
+                const translatedOption = translatedSelectOptions[index];
 
-                if ( translatedOption ) {
+                if (translatedOption) {
                     option.label = translatedOption.label;
                 }
 
                 return option;
-            } );
+            });
         }
 
         const selectOptions = mergedOptions.length ? mergedOptions : hardCodedSelectOptions;
 
-        if ( Object.keys( options ).length === 0 ) {
+        if (Object.keys(options).length === 0) {
             return selectOptions;
         }
 
-        return selectOptions.map( ( option ) => {
-            const result = this.composeTemplate(
-                { label: option.label },
-                this.getDataFor( option ),
-                options,
-            );
+        return selectOptions.map((option) => {
+            const result = this.composeTemplate({ label: option.label }, this.getDataFor(option), options);
 
             option.label = result.label;
 
             return option;
-        } );
+        });
     }
 }

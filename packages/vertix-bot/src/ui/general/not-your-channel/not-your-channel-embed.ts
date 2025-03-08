@@ -8,7 +8,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class NotYourChannelEmbed extends UIEmbedBase {
     private static vars = {
-        masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
+        masterChannelId: uiUtilsWrapAsTemplate("masterChannelId")
     };
 
     public static getName() {
@@ -24,17 +24,19 @@ export class NotYourChannelEmbed extends UIEmbedBase {
     }
 
     protected getDescription(): string {
-        return "But you can open your own channel :)\n" +
-            `\n Just click here: <#${ NotYourChannelEmbed.vars.masterChannelId }>`;
+        return (
+            "But you can open your own channel :)\n" +
+            `\n Just click here: <#${NotYourChannelEmbed.vars.masterChannelId}>`
+        );
     }
 
     protected getColor(): number {
-        return 0xFF5202;
+        return 0xff5202;
     }
 
-    protected getLogic( args?: UIArgs ) {
+    protected getLogic(args?: UIArgs) {
         return {
-            masterChannelId: args?.masterChannelId,
+            masterChannelId: args?.masterChannelId
         };
     }
 }

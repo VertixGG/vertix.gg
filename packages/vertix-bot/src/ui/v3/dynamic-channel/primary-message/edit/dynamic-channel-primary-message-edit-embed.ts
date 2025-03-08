@@ -13,9 +13,10 @@ import { DynamicChannelEmbedBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channe
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmbedBase, new UIEmbedVars(
-    "editPrimaryMessageEmoji"
-) );
+const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
+    DynamicChannelEmbedBase,
+    new UIEmbedVars("editPrimaryMessageEmoji")
+);
 
 export class DynamicChannelPrimaryMessageEditEmbed extends DynamicChannelEmbedBaseWithVars {
     private editTitleVars;
@@ -24,8 +25,8 @@ export class DynamicChannelPrimaryMessageEditEmbed extends DynamicChannelEmbedBa
     public constructor() {
         super();
 
-        this.editTitleVars = this.useExternal( DynamicChannelPrimaryMessageEditTitleEmbed ).get();
-        this.editDescriptionVars = this.useExternal( DynamicChannelPrimaryMessageEditDescriptionEmbed ).get();
+        this.editTitleVars = this.useExternal(DynamicChannelPrimaryMessageEditTitleEmbed).get();
+        this.editDescriptionVars = this.useExternal(DynamicChannelPrimaryMessageEditDescriptionEmbed).get();
     }
 
     public static getName() {
@@ -37,20 +38,28 @@ export class DynamicChannelPrimaryMessageEditEmbed extends DynamicChannelEmbedBa
     }
 
     protected getTitle(): string {
-        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit primary message of your channel`;
+        return `${this.vars.get("editPrimaryMessageEmoji")}  •  Edit primary message of your channel`;
     }
 
     protected getDescription(): string {
-        return "\n _Current_:\n" +
-            "\n• Title: `" + this.editTitleVars.title + "`\n" +
-            "\n• Description: `" + this.editDescriptionVars.description + "`\n" +
-            "\n### Do you want to change it?";
+        return (
+            "\n _Current_:\n" +
+            "\n• Title: `" +
+            this.editTitleVars.title +
+            "`\n" +
+            "\n• Description: `" +
+            this.editDescriptionVars.description +
+            "`\n" +
+            "\n### Do you want to change it?"
+        );
     }
 
-    protected async getLogicAsync( args: UIArgs ) {
-        const result = super.getLogic( args );
+    protected async getLogicAsync(args: UIArgs) {
+        const result = super.getLogic(args);
 
-        result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
+        result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(
+            DynamicChannelPrimaryMessageEditButton.getBaseName()
+        );
 
         return result;
     }

@@ -13,7 +13,7 @@ export class DynamicChannelPermissionsShownEmbed extends UIEmbedBase {
     }
 
     protected getColor() {
-        return 0xC79D5F; // Same as globe emoji.
+        return 0xc79d5f; // Same as globe emoji.
     }
 
     protected getTitle() {

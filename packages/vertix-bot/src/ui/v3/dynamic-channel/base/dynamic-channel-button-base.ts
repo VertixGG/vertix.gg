@@ -19,10 +19,10 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     }
 
     public static getSortId(): number {
-        throw new ForceMethodImplementation( this, this.getSortId.name );
+        throw new ForceMethodImplementation(this, this.getSortId.name);
     }
 
-    protected static getSortIdAfter( ButtonType: typeof DynamicChannelButtonBase ) {
+    protected static getSortIdAfter(ButtonType: typeof DynamicChannelButtonBase) {
         return ButtonType.getSortId() + 1;
     }
 
@@ -43,11 +43,11 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     public abstract getEmojiForEmbed(): string;
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "secondary" );
+        return Promise.resolve("secondary");
     }
 
     protected async isDisabled(): Promise<boolean> {
-        switch ( await DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) {
+        switch (await DynamicChannelVoteManager.$.getState(this.uiArgs?.channelId)) {
             case "active":
             case "starting":
                 return true;
@@ -57,10 +57,8 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     }
 
     protected async isAvailable(): Promise<boolean> {
-        if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
-            return this.uiArgs.dynamicChannelButtonsTemplate.some(
-                ( i: string ) => i === this.getId()
-            );
+        if (this.uiArgs?.dynamicChannelButtonsTemplate?.length) {
+            return this.uiArgs.dynamicChannelButtonsTemplate.some((i: string) => i === this.getId());
         }
 
         return false;

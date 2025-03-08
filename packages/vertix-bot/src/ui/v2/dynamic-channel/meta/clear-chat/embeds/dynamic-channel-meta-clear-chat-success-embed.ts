@@ -8,8 +8,8 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelMetaClearChatSuccessEmbed extends UIEmbedBase {
     private static vars = {
-        ownerDisplayName: uiUtilsWrapAsTemplate( "ownerDisplayName" ),
-        totalMessages: uiUtilsWrapAsTemplate( "totalMessages" ),
+        ownerDisplayName: uiUtilsWrapAsTemplate("ownerDisplayName"),
+        totalMessages: uiUtilsWrapAsTemplate("totalMessages")
     };
 
     public static getName(): string {
@@ -21,21 +21,21 @@ export class DynamicChannelMetaClearChatSuccessEmbed extends UIEmbedBase {
     }
 
     protected getColor(): number {
-        return 0xC5AC63; // Broom like.
+        return 0xc5ac63; // Broom like.
     }
 
     protected getTitle(): string {
-        return `🧹  Chat was cleared the by ${ DynamicChannelMetaClearChatSuccessEmbed.vars.ownerDisplayName }!`;
+        return `🧹  Chat was cleared the by ${DynamicChannelMetaClearChatSuccessEmbed.vars.ownerDisplayName}!`;
     }
 
     protected getDescription(): string {
-        return `Total of ${ DynamicChannelMetaClearChatSuccessEmbed.vars.totalMessages } messages.`;
+        return `Total of ${DynamicChannelMetaClearChatSuccessEmbed.vars.totalMessages} messages.`;
     }
 
-    protected getLogic( args: UIArgs ) {
+    protected getLogic(args: UIArgs) {
         return {
             ownerDisplayName: args.ownerDisplayName,
-            totalMessages: args.totalMessages,
+            totalMessages: args.totalMessages
         };
     }
 }

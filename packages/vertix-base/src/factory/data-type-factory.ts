@@ -11,41 +11,41 @@ const dataTypes = {
 } as const;
 
 type TDefaultTypesMapping = {
-    [ dataTypes.string ]: string;
-    [ dataTypes.number ]: number;
-    [ dataTypes.boolean ]: boolean;
-    [ dataTypes.object ]: object;
-    [ dataTypes.array ]: any[];
+    [dataTypes.string]: string;
+    [dataTypes.number]: number;
+    [dataTypes.boolean]: boolean;
+    [dataTypes.object]: object;
+    [dataTypes.array]: any[];
 };
 
 export type TDataTypeKeys = keyof typeof dataTypes;
 
 export type TDataType = {
-    [Key in TDataTypeKeys]: TDefaultTypesMapping[typeof dataTypes[Key]];
+    [Key in TDataTypeKeys]: TDefaultTypesMapping[(typeof dataTypes)[Key]];
 }[TDataTypeKeys];
 
 export interface TDataDefaultResult {
-    object: PrismaBot.Prisma.JsonValue | null
-    value: string | null
-    values: string[]
-    type: TDataType,
-    version: string
-    key: string
-};
+    object: PrismaBot.Prisma.JsonValue | null;
+    value: string | null;
+    values: string[];
+    type: TDataType;
+    version: string;
+    key: string;
+}
 
 // TODO: Make this extendable/configurable.
-export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( ExtendClass: TExtendClass ) {
+export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>(ExtendClass: TExtendClass) {
     abstract class DataTypeAbstract extends ExtendClass {
         public static getName() {
             return "VertixBase/Models/DataType";
         }
 
-        protected constructor( ... args: any[]) {
-            super( ... args );
+        protected constructor(...args: any[]) {
+            super(...args);
         }
 
-        protected getValueField( type: TDataType ) {
-            switch ( type ) {
+        protected getValueField(type: TDataType) {
+            switch (type) {
                 default:
                     return "value";
 
@@ -57,8 +57,8 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
             }
         }
 
-        protected getDataType( value: TDataType ) {
-            switch ( typeof value ) {
+        protected getDataType(value: TDataType) {
+            switch (typeof value) {
                 case "string":
                     return dataTypes.string;
                 case "number":
@@ -66,9 +66,9 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
                 case "boolean":
                     return dataTypes.boolean;
                 case "object":
-                    return Array.isArray( value ) ? dataTypes.array : dataTypes.object;
+                    return Array.isArray(value) ? dataTypes.array : dataTypes.object;
             }
-        };
+        }
 
         /**
          * Function `getValuesAsType()` - Returns the value as the specified type.
@@ -77,26 +77,26 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( E
          * EG: `dataTypeEnum.object` will use `config.object`
          * EG: `dataTypeEnum.array` will use `config.array`
          */
-        protected getValueAsType<T extends TDataType>( result: TDataDefaultResult ) {
-            switch ( result.type ) {
+        protected getValueAsType<T extends TDataType>(result: TDataDefaultResult) {
+            switch (result.type) {
                 case dataTypes.string:
                     return result.value!.toString() as T;
                 case dataTypes.number:
-                    return Number( result.value ) as T;
+                    return Number(result.value) as T;
                 case dataTypes.boolean:
-                    return ( result.value === "true" ) as T;
+                    return (result.value === "true") as T;
                 case dataTypes.object:
                     return result.object as T;
                 case dataTypes.array:
                     return result.values as T;
             }
 
-            throw new Error( `Unknown type: ${ result.type }` );
+            throw new Error(`Unknown type: ${result.type}`);
         }
 
-        protected transformValue<TValue extends TDataType, TType extends TDataTypeKeys>( value: TValue, type: TType ) {
+        protected transformValue<TValue extends TDataType, TType extends TDataTypeKeys>(value: TValue, type: TType) {
             let newValue;
-            switch ( type ) {
+            switch (type) {
                 case dataTypes.boolean:
                 case dataTypes.string:
                 case dataTypes.number:

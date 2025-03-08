@@ -48,7 +48,7 @@ export class EmojiManager extends InitializeBase {
     protected async initialize() {
         this.appService = await ServiceLocator.$.waitFor("VertixBot/Services/App", {
             silent: true,
-            timeout: 10000
+            timeout: 30000
         });
 
         // Wait for client to be ready using AppService's onceReady

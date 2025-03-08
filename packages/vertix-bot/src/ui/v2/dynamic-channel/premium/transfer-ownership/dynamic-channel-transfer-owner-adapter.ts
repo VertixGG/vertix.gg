@@ -86,9 +86,9 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             this.onTransferOwnerUserSelected
         );
 
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>("Vertix/UI-V2/YesButton", this.onYesButtonClicked);
+        this.bindButton<UIDefaultButtonChannelVoiceInteraction>("VertixBot/UI-General/YesButton", this.onYesButtonClicked);
 
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>("Vertix/UI-V2/NoButton", this.onNoButtonClicked);
+        this.bindButton<UIDefaultButtonChannelVoiceInteraction>("VertixBot/UI-General/NoButton", this.onNoButtonClicked);
     }
 
     private async onTransferOwnerButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {

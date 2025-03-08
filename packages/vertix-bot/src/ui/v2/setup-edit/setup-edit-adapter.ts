@@ -146,7 +146,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Select edit option.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterEditButton",
+            "Vertix/UI-V2/SetupEditSelectEditOptionMenu",
             this.onSelectEditOptionSelected
         );
 
@@ -326,7 +326,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         )?.getId();
 
         if (claimChannelButtonId && buttons.includes(claimChannelButtonId)) {
-            // Get all channels that are using this “master” channel.
+            // Get all channels that are using this "master" channel.
             setTimeout(async () => {
                 const channels = await ChannelModel.$.getDynamicsByMasterId(interaction.guildId, args.masterChannelId);
 

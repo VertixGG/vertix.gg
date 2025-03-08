@@ -8,6 +8,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-button";
+import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
 import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui/general/admin/admin-adapter-exu-base";
 
@@ -51,7 +52,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     protected static getExcludedElements() {
-        return [SetupMasterEditButton];
+        return [SetupMasterEditButton, SetupMasterEditSelectMenu];
     }
 
     protected static getExecutionSteps() {
@@ -127,7 +128,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             ];
 
             selectedKeys.forEach((key) => {
-                args[key] = masterChannelSettings.object[key];
+                args[key] = masterChannelSettings[key];
             });
         } else {
             args.masterChannels = await ChannelModel.$.getMasters(interaction.guild?.id || "", "settings");
@@ -139,13 +140,13 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     protected onEntityMap() {
         // Comes from 'setup' adapter, selects the master channel to edit
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterEditButton",
+            "VertixBot/UI-General/SetupMasterEditSelectMenu",
             this.onSetupMasterEditButtonClicked
         );
 
         // Select edit option.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterEditSelectMenu",
+            "VertixBot/UI-General/SetupMasterEditButton",
             this.onSelectEditOptionSelected
         );
 

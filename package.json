@@ -23,9 +23,7 @@
         "vertix:format": "bun run vertix:prettier:fix && bun run vertix:eslint:fix",
         "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
-        "vertix:bot:watch:dev": "bun run @z-cli @watch --workspace bot --dev",
-        "vertix:bot:build": "cd packages/vertix-bot && bun run vertix-bot:build",
-        "vertix:bot:build:dev": "bun run @z-cli @build --workspace bot --dev",
+
         "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
         "vertix:bot:node:start:dev": "cd packages/vertix-bot && bun run vertix-bot:ts-node:start:dev",
         "vertix:bot:node:start:build": "cd packages/vertix-bot/dist && node vertix-bot.mjs",

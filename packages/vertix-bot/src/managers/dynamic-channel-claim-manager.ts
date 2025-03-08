@@ -729,7 +729,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     private async onBotReady(client: Client<true>) {
-        await this.handleAbandonedChannels(client);
+        // await this.handleAbandonedChannels(client);
     }
 
     private async onOwnerJoinDynamicChannel(owner: GuildMember, channel: VoiceBasedChannel) {

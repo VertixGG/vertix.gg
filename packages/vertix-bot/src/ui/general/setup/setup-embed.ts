@@ -153,7 +153,7 @@ export class SetupEmbed extends UIEmbedBase {
                     channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId
                         ? `<#${data?.object?.dynamicChannelLogsChannelId}>`
                         : SetupEmbed.vars.none,
-                    version: data?.version
+                    version: channel?.version || "V2"
                 };
             }),
             masterChannels = (await Promise.all(masterChannelsPromise)) || [];

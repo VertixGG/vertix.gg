@@ -188,12 +188,17 @@ export async function entryPoint() {
         arg => arg.startsWith( "--env=" )
     ) || `--env=${ process.env.DOTENV_CONFIG_PATH || ".env" }`;
 
-    const envPath = path.join( process.cwd(), envArg.split( "=" )[ 1 ] );
+    const envPath = path.join(process.cwd(), "../../", envArg.split("=")[1]);
     const envOutput = config( { path: envPath } );
+    const envOutput = config({
+        path: envPath,
+        override: true,
+    });
 
-    if ( envOutput.error ) {
-        GlobalLogger.$.error( entryPoint, "fail to load environment file:\n" + util.inspect( envOutput.error ) );
-        process.exit( 1 );
+    if (envOutput.parsed) {
+        Object.entries(envOutput.parsed).forEach(([key, value]) => {
+            process.env[key] = value;
+        });
     }
 
     GlobalLogger.$.info( entryPoint, `Loading environment variables from: 'file://${ envPath }'` );

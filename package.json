@@ -51,6 +51,8 @@
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",
+        "prettier": "^3.5.3",
+        "prettier-plugin-prisma": "^5.0.0",
         "ts-mockito": "latest",
         "tsx": "^4.19.1",
         "typescript": "latest"

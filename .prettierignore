@@ -1,0 +1,6 @@
+*.js
+node_modules
+dist
+build
+.git
+packages/vertix-prisma/src/prisma-bot-client/**/*

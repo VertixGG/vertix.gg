@@ -1,0 +1,23 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "printWidth": 120,
+    "endOfLine": "lf",
+    "singleQuote": false,
+    "trailingComma": "none",
+    "semi": true,
+    "overrides": [
+        {
+            "files": ["*.js"],
+            "options": {
+                "requirePragma": true
+            }
+        },
+        {
+            "files": ["*.vue", "*.prisma", "*.less", "*.sass", "*.scss"],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

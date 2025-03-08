@@ -138,7 +138,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Select edit option.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/SetupEditSelectEditOptionMenu",
+            "VertixBot/UI-General/SetupMasterEditSelectMenu",
             this.onSelectEditOptionSelected
         );
 

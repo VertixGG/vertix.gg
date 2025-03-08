@@ -516,7 +516,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             interaction.guild.id
         );
 
-        if (verifiedRoles.length && verifiedRoles.includes(interaction.guild.roles.everyone.id)) {
+        if (verifiedRoles?.length && verifiedRoles.includes(interaction.guild.roles.everyone.id)) {
             args.dynamicChannelIncludeEveryoneRole = true;
         }
 

@@ -139,7 +139,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             )?.getId();
 
             args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
-                (buttonId: number) => buttonId === accessButtonId
+                (buttonId: number) => buttonId.toString() === accessButtonId?.toString()
             );
         }
 
@@ -333,15 +333,6 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onAccessButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
-        // Defer the interaction immediately unless it's already deferred
-        if (!interaction.deferred && !interaction.replied) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-                return;
-            }
-        }
-
         return await this.ephemeralWithStep(interaction, "Vertix/UI-V2/DynamicChannelPermissionsAccess", {});
     }
 

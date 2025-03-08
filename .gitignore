@@ -1,3 +1,7 @@
 node_modules
 
 packages/vertix-base/src/encryption/key.ts
+
+.idea/
+
+.env

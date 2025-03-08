@@ -85,6 +85,13 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         this.appService = ServiceLocator.$.get("VertixBot/Services/App");
     }
 
+    protected getCustomIdForEntity(hash: string): string {
+        if (hash === "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/SetupMasterEditSelectMenu") {
+            return hash;
+        }
+        return super.getCustomIdForEntity(hash);
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected async getStartArgs(channel: VoiceChannel) {
         return {};

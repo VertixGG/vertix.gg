@@ -31,12 +31,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 5.17.0
- * Query Engine version: 393aa359c9ad4a4bb28630fb5613f9c281cde053
+ * Prisma Client JS version: 5.19.1
+ * Query Engine version: 69d742ee20b815d88e17e54db4a2a7a3b30324e3
  */
 Prisma.prismaVersion = {
-  client: "5.17.0",
-  engine: "393aa359c9ad4a4bb28630fb5613f9c281cde053"
+  client: "5.19.1",
+  engine: "69d742ee20b815d88e17e54db4a2a7a3b30324e3"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -280,7 +280,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/inewlegend/Desktop/vertix/vertix-bot/packages/vertix-prisma/src/prisma-bot-client",
+      "value": "/Users/lvinikov-matia/Desktop/dev/vertix.gg/packages/vertix-prisma/src/prisma-bot-client",
       "fromEnvVar": null
     },
     "config": {
@@ -312,19 +312,20 @@ const config = {
     "previewFeatures": [
       "clientExtensions"
     ],
-    "sourceFilePath": "/Users/inewlegend/Desktop/vertix/vertix-bot/packages/vertix-prisma/prisma/bot.schema.prisma",
+    "sourceFilePath": "/Users/lvinikov-matia/Desktop/dev/vertix.gg/packages/vertix-prisma/prisma/bot.schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
     "rootEnvPath": null
   },
   "relativePath": "../../prisma",
-  "clientVersion": "5.17.0",
-  "engineVersion": "393aa359c9ad4a4bb28630fb5613f9c281cde053",
+  "clientVersion": "5.19.1",
+  "engineVersion": "69d742ee20b815d88e17e54db4a2a7a3b30324e3",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

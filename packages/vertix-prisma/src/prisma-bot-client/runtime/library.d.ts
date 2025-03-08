@@ -57,6 +57,13 @@ export declare type Args<T, F extends Operation> = T extends {
 export declare type Args_3<T, F extends Operation> = Args<T, F>;
 
 /**
+ * Original `quaint::ValueType` enum tag from Prisma's `quaint`.
+ * Query arguments marked with this type are sanitized before being sent to the database.
+ * Notice while a query argument may be `null`, `ArgType` is guaranteed to be defined.
+ */
+declare type ArgType = 'Int32' | 'Int64' | 'Float' | 'Double' | 'Text' | 'Enum' | 'EnumArray' | 'Bytes' | 'Boolean' | 'Char' | 'Array' | 'Numeric' | 'Json' | 'Xml' | 'Uuid' | 'DateTime' | 'Date' | 'Time';
+
+/**
  * Attributes is a map from string to attribute values.
  *
  * Note: only the own enumerable keys are counted as valid attribute keys.
@@ -138,6 +145,15 @@ export declare type ClientBuiltInProp = keyof DynamicClientExtensionThisBuiltin<
 
 export declare type ClientOptionDef = undefined | {
     [K in string]: any;
+};
+
+export declare type ClientOtherOps = {
+    $queryRaw<T = unknown>(query: TemplateStringsArray | Sql, ...values: any[]): PrismaPromise<T>;
+    $queryRawTyped<T>(query: TypedSql<unknown[], T>): PrismaPromise<T[]>;
+    $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): PrismaPromise<T>;
+    $executeRaw(query: TemplateStringsArray | Sql, ...values: any[]): PrismaPromise<number>;
+    $executeRawUnsafe(query: string, ...values: any[]): PrismaPromise<number>;
+    $runCommandRaw(command: InputJsonObject): PrismaPromise<JsonObject>;
 };
 
 declare type ColumnType = (typeof ColumnTypeEnum)[keyof typeof ColumnTypeEnum];
@@ -879,7 +895,7 @@ export declare type DynamicClientExtensionThis<TypeMap extends TypeMapDef, TypeM
 } & {
     [P in Exclude<TypeMap['meta']['modelProps'], keyof ExtArgs['client']>]: DynamicModelExtensionThis<TypeMap, ModelKey<TypeMap, P>, ExtArgs, ClientOptions>;
 } & {
-    [P in Exclude<keyof TypeMap['other']['operations'], keyof ExtArgs['client']>]: <R = GetResult<TypeMap['other']['payload'], any, P & Operation, ClientOptions>>(...args: ToTuple<TypeMap['other']['operations'][P]['args']>) => PrismaPromise<R>;
+    [P in Exclude<keyof TypeMap['other']['operations'], keyof ExtArgs['client']>]: P extends keyof ClientOtherOps ? ClientOtherOps[P] : never;
 } & {
     [P in Exclude<ClientBuiltInProp, keyof ExtArgs['client']>]: DynamicClientExtensionThisBuiltin<TypeMap, TypeMapCb, ExtArgs, ClientOptions>[P];
 } & {
@@ -1310,6 +1326,7 @@ declare namespace Extensions_2 {
         DevTypeMapDef,
         DevTypeMapFnDef,
         ClientOptionDef,
+        ClientOtherOps,
         TypeMapCbDef,
         ModelKey,
         RequiredExtensionArgs as UserArgs
@@ -1495,6 +1512,11 @@ export declare function getPrismaClient(config: GetPrismaClientConfig): {
          */
         $queryRaw(query: TemplateStringsArray | Sql, ...values: any[]): PrismaPromise_2<unknown>;
         /**
+         * Counterpart to $queryRaw, that returns strongly typed results
+         * @param typedSql
+         */
+        $queryRawTyped(typedSql: UnknownTypedSql): PrismaPromise_2<unknown>;
+        /**
          * Unsafe counterpart of `$queryRaw` that is susceptible to SQL injections
          * @see https://github.com/prisma/prisma/issues/7142
          *
@@ -1646,6 +1668,7 @@ export declare type GetResult<Payload extends OperationPayload, Args, OperationN
     count: GetCountResult<Args>;
     groupBy: GetGroupByResult<Payload, Args>;
     $queryRaw: unknown;
+    $queryRawTyped: unknown;
     $executeRaw: number;
     $queryRawUnsafe: unknown;
     $executeRawUnsafe: number;
@@ -1695,6 +1718,38 @@ declare type HandleErrorParams = {
  * This is represented in HrTime format as [1609504210, 150000000].
  */
 declare type HrTime = [number, number];
+
+/**
+ * Matches a JSON array.
+ * Unlike \`JsonArray\`, readonly arrays are assignable to this type.
+ */
+export declare interface InputJsonArray extends ReadonlyArray<InputJsonValue | null> {
+}
+
+/**
+ * Matches a JSON object.
+ * Unlike \`JsonObject\`, this type allows undefined and read-only properties.
+ */
+export declare type InputJsonObject = {
+    readonly [Key in string]?: InputJsonValue | null;
+};
+
+/**
+ * Matches any valid value that can be used as an input for operations like
+ * create and update as the value of a JSON field. Unlike \`JsonValue\`, this
+ * type allows read-only arrays and read-only object properties and disallows
+ * \`null\` at the top level.
+ *
+ * \`null\` cannot be used as the value of a JSON field because its meaning
+ * would be ambiguous. Use \`Prisma.JsonNull\` to store the JSON null value or
+ * \`Prisma.DbNull\` to clear the JSON value and set the field to the database
+ * NULL value instead.
+ *
+ * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
+ */
+export declare type InputJsonValue = string | number | boolean | InputJsonObject | InputJsonArray | {
+    toJSON(): unknown;
+};
 
 declare type InteractiveTransactionInfo<Payload = unknown> = {
     /**
@@ -1809,6 +1864,10 @@ declare type JsonArgumentValue = number | string | boolean | null | RawTaggedVal
     [key: string]: JsonArgumentValue;
 };
 
+/**
+ * From https://github.com/sindresorhus/type-fest/
+ * Matches a JSON array.
+ */
 export declare interface JsonArray extends Array<JsonValue> {
 }
 
@@ -1831,6 +1890,11 @@ declare type JsonFieldSelection = {
 declare class JsonNull extends NullTypesEnumValue {
 }
 
+/**
+ * From https://github.com/sindresorhus/type-fest/
+ * Matches a JSON object.
+ * This type can be useful to enforce some input to be JSON-compatible or as a super-type to be extended from.
+ */
 export declare type JsonObject = {
     [Key in string]?: JsonValue;
 };
@@ -1850,6 +1914,10 @@ declare type JsonSelectionSet = {
     [fieldName: string]: boolean | JsonFieldSelection;
 };
 
+/**
+ * From https://github.com/sindresorhus/type-fest/
+ * Matches any valid JSON value.
+ */
 export declare type JsonValue = string | number | boolean | JsonObject | JsonArray | null;
 
 export declare type JsOutputValue = null | string | number | boolean | bigint | Uint8Array | Date | Decimal | JsOutputValue[] | {
@@ -1946,6 +2014,8 @@ declare type LogLevel = 'info' | 'query' | 'warn' | 'error';
  * @returns
  */
 export declare function makeStrictEnum<T extends Record<PropertyKey, string | number>>(definition: T): T;
+
+export declare function makeTypedQueryFactory(sql: string): (...values: any[]) => TypedSql<any[], unknown>;
 
 /**
  * Class that holds the list of all extensions, applied to particular instance,
@@ -2385,6 +2455,8 @@ declare type PrismaPromiseInteractiveTransaction<PayloadType = unknown> = {
 
 declare type PrismaPromiseTransaction<PayloadType = unknown> = PrismaPromiseBatchTransaction | PrismaPromiseInteractiveTransaction<PayloadType>;
 
+export declare const PrivateResultType: unique symbol;
+
 declare namespace Public {
     export {
         validator
@@ -2406,6 +2478,7 @@ declare namespace Public_2 {
 declare type Query = {
     sql: string;
     args: Array<unknown>;
+    argTypes: Array<ArgType>;
 };
 
 declare interface Queryable {
@@ -2537,7 +2610,7 @@ export declare type RawParameters = {
     values: string;
 };
 
-export declare type RawQueryArgs = Sql | [query: string, ...values: RawValue[]];
+export declare type RawQueryArgs = Sql | UnknownTypedSql | [query: string, ...values: RawValue[]];
 
 declare type RawTaggedValue = {
     $type: 'Raw';
@@ -3152,6 +3225,13 @@ declare type TransactionOptions_2<InteractiveTransactionPayload> = {
     options: BatchTransactionOptions;
 };
 
+export declare class TypedSql<Values extends readonly unknown[], Result> {
+    [PrivateResultType]: Result;
+    constructor(sql: string, values: Values);
+    get sql(): string;
+    get values(): Values;
+}
+
 export declare type TypeMapCbDef = Fn<{
     extArgs: InternalArgs;
     clientOptions: ClientOptionDef;
@@ -3166,6 +3246,7 @@ declare namespace Types {
         Extensions_2 as Extensions,
         Utils,
         Public_2 as Public,
+        UnknownTypedSql,
         OperationPayload as Payload
     }
 }
@@ -3175,6 +3256,8 @@ declare type UnknownErrorParams = {
     clientVersion: string;
     batchRequestIdx?: number;
 };
+
+export declare type UnknownTypedSql = TypedSql<unknown[], unknown>;
 
 declare type Unpacker = (data: any) => any;
 
@@ -3214,9 +3297,6 @@ declare namespace Utils {
         Narrow,
         Exact,
         Cast,
-        JsonObject,
-        JsonArray,
-        JsonValue,
         Record_2 as Record,
         UnwrapPromise,
         UnwrapTuple,

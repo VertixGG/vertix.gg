@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "prisma-generate-bot": "bunx prisma generate --schema prisma/bot.schema.prisma",
-        "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma"
+        "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma",
+        "prisma-migrate-bot-deploy": "bunx prisma migrate deploy --schema prisma/bot.schema.prisma",
+        "prisma-migrate-api-deploy": "bunx prisma migrate deploy --schema prisma/api.schema.prisma"
     },
     "dependencies": {
         "@prisma/client": "latest",

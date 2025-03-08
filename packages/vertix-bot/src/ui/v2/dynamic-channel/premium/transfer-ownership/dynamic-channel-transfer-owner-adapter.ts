@@ -86,9 +86,15 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             this.onTransferOwnerUserSelected
         );
 
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>("VertixBot/UI-General/YesButton", this.onYesButtonClicked);
+        this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
+            "VertixBot/UI-General/YesButton",
+            this.onYesButtonClicked
+        );
 
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>("VertixBot/UI-General/NoButton", this.onNoButtonClicked);
+        this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
+            "VertixBot/UI-General/NoButton",
+            this.onNoButtonClicked
+        );
     }
 
     private async onTransferOwnerButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
@@ -136,6 +142,15 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
     }
 
     private async onYesButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         const state = DynamicChannelVoteManager.$.getState(interaction.channelId);
 
         if ("active" === state) {
@@ -168,10 +183,37 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             "transfer"
         );
 
-        await this.editReplyWithStep(interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess");
+        // Since we've already deferred the update, we should use editReply instead
+        try {
+            await this.editReplyWithStep(interaction, "Vertix/UI-V2/DynamicChannelTransferOwnerSuccess");
+        } catch (error: unknown) {
+            const e = error as Error;
+            console.log(`[DEBUG] Error updating message after transfer - ID: ${interaction.id}, Error: ${e.message}`);
+            // If editing fails, try to send a follow-up message
+            await interaction
+                .followUp({
+                    content: "Channel ownership transferred successfully!",
+                    ephemeral: true
+                })
+                .catch((followUpError: unknown) => {
+                    const fe = followUpError as Error;
+                    console.log(
+                        `[DEBUG] Error sending followUp after transfer - ID: ${interaction.id}, Error: ${fe.message}`
+                    );
+                });
+        }
     }
 
     private async onNoButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         this.clearAcceptedInteraction(interaction);
 
         await this.deleteRelatedEphemeralInteractionsInternal(

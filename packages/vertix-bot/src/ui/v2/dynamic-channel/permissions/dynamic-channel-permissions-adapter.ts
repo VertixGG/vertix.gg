@@ -213,6 +213,15 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onStateButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         switch (await this.dynamicChannelService.getChannelState(interaction.channel)) {
             case "public":
                 /*
@@ -262,6 +271,15 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onStateVisibilityClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         switch (await this.dynamicChannelService.getChannelVisibilityState(interaction.channel)) {
             case "shown":
                 if (
@@ -315,6 +333,15 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onAccessButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         return await this.ephemeralWithStep(interaction, "Vertix/UI-V2/DynamicChannelPermissionsAccess", {});
     }
 

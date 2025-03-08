@@ -30,7 +30,7 @@ export class EmojiManager extends InitializeBase {
     }
 
     public static get $() {
-        if ( ! EmojiManager.instance ) {
+        if (!EmojiManager.instance) {
             EmojiManager.instance = new EmojiManager();
         }
 
@@ -38,47 +38,55 @@ export class EmojiManager extends InitializeBase {
     }
 
     public constructor() {
-        super( false );
+        super(false);
 
-        this.debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", EmojiManager.getName() ) );
+        this.debugger = new Debugger(this, "", isDebugEnabled("MANAGER", EmojiManager.getName()));
 
         this.initPromise = this.initialize();
     }
 
     protected async initialize() {
-        this.appService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
+        this.appService = await ServiceLocator.$.waitFor("VertixBot/Services/App", {
             silent: true,
-            timeout: 10000
-        } );
+            timeout: 10000,
+        });
 
+        // Wait for client to be ready using AppService's onceReady
+        await new Promise<void>((resolve) => {
+            this.appService.onceReady(resolve);
+        });
+
+        const client = this.appService.getClient() as Client<true>;
         const rest = new REST({ version: GatewayVersion }).setToken(gToken);
 
-        this.emojis = await rest.get( Routes.applicationEmojis( this.appService.getClient().user.id ) ) as RESTGetAPIApplicationEmojisResult;
+        this.emojis = (await rest.get(
+            Routes.applicationEmojis(this.appService.getClient().user.id)
+        )) as RESTGetAPIApplicationEmojisResult;
 
-        this.debugger.dumpDown( this.initialize, this.emojis, "emojis" );
+        this.debugger.dumpDown(this.initialize, this.emojis, "emojis");
     }
 
     public async awaitInitialization() {
         return this.initPromise;
     }
 
-    public async getMarkdown( baseName: string, fromCache = true ) {
-        if ( ! fromCache ) {
+    public async getMarkdown(baseName: string, fromCache = true) {
+        if (!fromCache) {
             await this.initialize();
         }
 
         await this.initPromise;
 
-        return this.getCachedMarkdown( baseName );
+        return this.getCachedMarkdown(baseName);
     }
 
-    public getCachedMarkdown( baseName: string ) {
-        const emoji = this.emojis.items.find( emoji => emoji.name!.includes( baseName ) );
+    public getCachedMarkdown(baseName: string) {
+        const emoji = this.emojis.items.find((emoji) => emoji.name!.includes(baseName));
 
-        if ( emoji ) {
-            return `<:${ emoji.name }:${ emoji.id }>`;
+        if (emoji) {
+            return `<:${emoji.name}:${emoji.id}>`;
         }
 
-        throw new Error( `Emoji: '${ baseName }' not found` );
+        throw new Error(`Emoji: '${baseName}' not found`);
     }
 }

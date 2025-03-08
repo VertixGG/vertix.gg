@@ -1643,7 +1643,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 (await MasterChannelDataManager.$.getChannelVerifiedRoles(masterChannelDB, dynamicChannel.guildId)) ||
                 [];
 
-            roles.push(...verifiedRoles);
+            // If we found verified roles, use them
+            if (verifiedRoles.length > 0) {
+                roles.push(...verifiedRoles);
+            } else {
+                // Otherwise, fallback to the guild's everyone role
+                roles.push(dynamicChannel.guild.roles.everyone.id);
+            }
         } else {
             roles.push(dynamicChannel.guild.roles.everyone.id);
         }
@@ -1666,10 +1672,25 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async isVerifiedRolesDeniedFlag(channel: VoiceBasedChannel, flag: bigint) {
-        const roles = await this.getVerifiedRoles(channel),
-            count = this.getDeniedFlagCount(channel, roles, flag);
+        const roles = await this.getVerifiedRoles(channel);
 
-        return count === roles.length;
+        // If no roles with permission overrides exist, then the flag is not denied
+        if (roles.length === 0) {
+            return false;
+        }
+
+        // Only count roles that have explicit permission overrides
+        const rolesWithOverrides = roles.filter((roleId) => channel.permissionOverwrites.cache.has(roleId));
+
+        // If no roles have overrides, the channel should be public by default
+        if (rolesWithOverrides.length === 0) {
+            return false;
+        }
+
+        const count = this.getDeniedFlagCount(channel, rolesWithOverrides, flag);
+        const result = count === rolesWithOverrides.length && rolesWithOverrides.length > 0;
+
+        return result;
     }
 
     private async updateUserDataPermissionLists(initiator: Interaction, channel: VoiceChannel) {

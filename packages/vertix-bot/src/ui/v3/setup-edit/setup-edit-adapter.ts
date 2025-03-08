@@ -324,7 +324,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         )?.getId();
 
         if (claimChannelButtonId && buttons.includes(claimChannelButtonId)) {
-            // Get all channels that are using this “master” channel.
+            // Get all channels that are using this "master" channel.
             setTimeout(async () => {
                 const channels = await ChannelModel.$.getDynamicsByMasterId(interaction.guildId, args.masterChannelId);
 
@@ -364,6 +364,15 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onDoneButtonClicked(interaction: UIDefaultButtonChannelTextInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         switch (this.getCurrentExecutionStep(interaction)?.name) {
             case "Vertix/UI-V3/SetupEditButtons":
                 await this.editReplyWithStep(interaction, "Vertix/UI-V3/SetupEditMaster");
@@ -496,6 +505,15 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onBackButtonClicked(interaction: UIDefaultButtonChannelTextInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         const args = this.getArgsManager().getArgs(this, interaction);
 
         const keys = MasterChannelDataManager.$.getKeys();
@@ -523,6 +541,15 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onFinishButtonClicked(interaction: UIDefaultButtonChannelTextInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         const args: UIArgs = this.getArgsManager().getArgs(this, interaction);
 
         // TODO: Find better way to handle this.

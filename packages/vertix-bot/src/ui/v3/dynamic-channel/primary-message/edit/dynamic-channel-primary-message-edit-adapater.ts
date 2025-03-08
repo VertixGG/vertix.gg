@@ -146,10 +146,28 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
     }
 
     private async onNoButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         await this.deleteRelatedEphemeralInteractionsInternal(interaction, "Vertix/UI-V3/DynamicChannelAdapter", 1);
     }
 
     private async onYesButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+        // Defer the interaction immediately unless it's already deferred
+        if (!interaction.deferred && !interaction.replied) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+                return;
+            }
+        }
+
         await this.editReplyWithStep(interaction, "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent");
     }
 

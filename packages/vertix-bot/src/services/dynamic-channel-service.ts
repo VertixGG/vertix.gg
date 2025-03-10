@@ -134,14 +134,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         this.debugger = new Debugger(this, "", isDebugEnabled("SERVICE", DynamicChannelService.getName()));
 
+        // Register event handlers with proper binding to maintain caller context
         EventBus.$.on("VertixBot/Services/Channel", "onJoin", this.onJoin.bind(this));
         EventBus.$.on("VertixBot/Services/Channel", "onLeave", this.onLeave.bind(this));
 
+        // Register methods that can be called directly through EventBus with proper binding
         EventBus.$.register(this, [
-            this.onOwnerJoinDynamicChannel,
-            this.onOwnerLeaveDynamicChannel,
-            this.onLeaveDynamicChannelEmpty,
-            this.updateChannelOwnership
+            this.onOwnerJoinDynamicChannel.bind(this),
+            this.onOwnerLeaveDynamicChannel.bind(this),
+            this.onLeaveDynamicChannelEmpty.bind(this),
+            this.updateChannelOwnership.bind(this)
         ]);
     }
 
@@ -184,7 +186,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 channelDB = await ChannelModel.$.getByChannelId(channel.id);
 
             if (channel.members.size === 0) {
-                await this.onLeaveDynamicChannelEmpty(channel, channelDB, guild, args);
+                try {
+                    await this.onLeaveDynamicChannelEmpty(channel, channelDB, guild, args);
+                } catch (error) {
+                    this.logger.error(
+                        this.onLeaveDynamicChannelEmpty,
+                        `Guild id: '${guild.id}', channel id: '${channel.id}' - Failed to handle empty channel`,
+                        error
+                    );
+                }
             } else if (channelDB?.userOwnerId === oldState.member?.id) {
                 await this.onOwnerLeaveDynamicChannel(oldState.member as GuildMember, channel);
             }

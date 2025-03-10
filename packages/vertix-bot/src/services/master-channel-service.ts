@@ -464,12 +464,12 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         this.logger.info(
             this.createMasterChannelInternal,
-            `Guild id: '${guild.id}' - Creating master channel for guild: '${guild.name}' ownerId: '${args.guild.ownerId}'`
+            `Guild id: '${guild.id}' - Creating master channel for guild: '${guild.name}' ownerId: '${args.guild.ownerId}' version: '${args.version}'`
         );
 
         switch (args.version) {
             case VERSION_UI_V3:
-                result = this.createMasterChannelInternalV3(args);
+                result = await this.createMasterChannelInternalV3(args);
                 break;
             default:
                 result = await this.createMasterChannelInternalLegacy(args);

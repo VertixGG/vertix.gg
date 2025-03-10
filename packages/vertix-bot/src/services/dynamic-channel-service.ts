@@ -1042,11 +1042,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.logger.info(
             this.editChannelPrivacyState,
             `Guild id: '${channel.guild.id}', channel id: ${channel.id} - ` +
-                `Current state: '${currentState}', current visibility state: '${currentVisibilityState}' ` +
+                `Current state: '${currentState}', current visibility state: '${currentVisibilityState}', ` +
                 `New state: '${state}', new visibility state: '${visibilityState}'`
         );
 
-        if (currentState !== state && currentVisibilityState !== visibilityState) {
+        if (currentState !== state || currentVisibilityState !== visibilityState) {
             await PermissionsManager.$.ensureChannelBotConnectivityPermissions(channel);
 
             const editStatePromise = PermissionsManager.$.editChannelRolesPermissions(channel, roles, {

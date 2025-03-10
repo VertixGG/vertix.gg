@@ -18,38 +18,38 @@ import type { UILanguageJSON } from "@vertix.gg/gui/src/bases/ui-language-defini
 export class LanguageUtils extends InitializeBase {
     private static instance: LanguageUtils;
 
-    public static getName(): string {
+    public static getName (): string {
         return "VertixBot/Utils/LanguageUtils";
     }
 
-    public static getInstance(): LanguageUtils {
-        if (!LanguageUtils.instance) {
+    public static getInstance (): LanguageUtils {
+        if ( !LanguageUtils.instance ) {
             LanguageUtils.instance = new LanguageUtils();
         }
 
         return LanguageUtils.instance;
     }
 
-    public static get $() {
+    public static get $ () {
         return LanguageUtils.getInstance();
     }
 
-    public export(object: UILanguageJSON, filePath: string) {
-        this.logger.info(this.export, `Exporting language to path: '${filePath}'`);
+    public export ( object: UILanguageJSON, filePath: string ) {
+        this.logger.info( this.export, `Exporting language to path: '${ filePath }'` );
 
         // Ensure path exists.
-        fs.mkdirSync(path.resolve(UI_LANGUAGES_PATH), { recursive: true });
+        fs.mkdirSync( path.resolve( UI_LANGUAGES_PATH ), { recursive: true } );
 
-        fs.writeFileSync(filePath, JSON.stringify(object, null, 4));
+        fs.writeFileSync( filePath, JSON.stringify( object, null, 4 ) );
 
         // Check path exists.
-        if (!fs.existsSync(filePath)) {
-            throw new Error(`Path: '${filePath}' does not exist`);
+        if ( !fs.existsSync( filePath ) ) {
+            throw new Error( `Path: '${ filePath }' does not exist` );
         }
     }
 
-    public async import(object: UILanguageJSON) {
-        this.logger.info(this.import, `Trying importing language with code: '${object.code}'`);
+    public async import ( object: UILanguageJSON ) {
+        this.logger.info( this.import, `Trying importing language with code: '${ object.code }'` );
 
         const Models = [
                 ElementButtonLanguageModel,
@@ -69,20 +69,20 @@ export class LanguageUtils extends InitializeBase {
             ];
 
         await Promise.all(
-            Models.map(async (Model, index) => {
-                const currentObject = objects[index],
-                    count = await Model.$.getCount(object.code);
+            Models.map( async ( Model, index ) => {
+                const currentObject = objects[ index ],
+                    count = await Model.$.getCount( object.code );
 
-                if (currentObject.length !== count) {
-                    if (0 === count) {
+                if ( currentObject.length !== count ) {
+                    if ( 0 === count ) {
                         this.logger.info(
                             this.import,
-                            `Importing from scratch language with code: '${object.code}' model: '${Model.getName()}'`
+                            `Importing from scratch language with code: '${ object.code }' model: '${ Model.getName() }'`
                         );
 
                         // TODO: Remove redundant code.
-                        for (const entity of currentObject) {
-                            await Model.$.create(entity.name, object.code, object.name, entity.content);
+                        for ( const entity of currentObject ) {
+                            await Model.$.create( entity.name, object.code, object.name, entity.content );
                         }
 
                         return;
@@ -90,19 +90,19 @@ export class LanguageUtils extends InitializeBase {
 
                     this.logger.info(
                         this.import,
-                        `Updating language with code: '${object.code}' model: '${Model.getName()}'`
+                        `Updating language with code: '${ object.code }' model: '${ Model.getName() }'`
                     );
 
-                    for (const entity of currentObject) {
+                    for ( const entity of currentObject ) {
                         // Check if entity exists.
-                        const record = await Model.$.get(entity.name, object.code, false);
+                        const record = await Model.$.get( entity.name, object.code, false );
 
-                        if (!record) {
-                            await Model.$.create(entity.name, object.code, object.name, entity.content);
+                        if ( !record ) {
+                            await Model.$.create( entity.name, object.code, object.name, entity.content );
                         }
                     }
                 }
-            })
+            } )
         );
     }
 }

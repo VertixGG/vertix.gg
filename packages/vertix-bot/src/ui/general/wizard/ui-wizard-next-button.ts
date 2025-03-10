@@ -5,27 +5,27 @@ import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-e
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class UIWizardNextButton extends UIElementButtonBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/WizardNextButton";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getLabel() {
+    protected async getLabel () {
         return "Next ▶";
     }
 
-    protected async getStyle(): Promise<UIButtonStyleTypes> {
+    protected async getStyle (): Promise<UIButtonStyleTypes> {
         return "primary";
     }
 
-    protected async isDisabled() {
+    protected async isDisabled () {
         return !!this.uiArgs?._wizardIsNextButtonDisabled;
     }
 
-    protected async isAvailable() {
+    protected async isAvailable () {
         return !!this.uiArgs?._wizardIsNextButtonAvailable;
     }
 }

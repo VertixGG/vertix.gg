@@ -9,40 +9,40 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelTransferOwnerUserSelectedEmbed extends UIEmbedBase {
     private static vars = {
-        userDisplayName: uiUtilsWrapAsTemplate("userDisplayName")
+        userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🔀  Transfer channel ownership";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const { userDisplayName } = DynamicChannelTransferOwnerUserSelectedEmbed.vars;
 
         return (
-            `Transfer channel ownership to ${userDisplayName}.\n\n` +
+            `Transfer channel ownership to ${ userDisplayName }.\n\n` +
             "⚠️ By transferring the channel ownership to another user, you will lose your ownership privileges.\n\n" +
-            `Are you sure you want to transfer the channel ownership to **${userDisplayName}?**`
+            `Are you sure you want to transfer the channel ownership to **${ userDisplayName }?**`
         );
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             userDisplayName: args.userDisplayName
         };

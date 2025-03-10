@@ -10,35 +10,35 @@ import { UIMockGeneratorUtilComponentBuilder } from "@vertix.gg/test-utils/src/u
 import { UIMockGeneratorUtilModalBuilder } from "@vertix.gg/test-utils/src/ui-mock-generator-util/ui-mock-generator-util-modal-builder";
 
 export class UIMockGeneratorUtil {
-    public static createComponent() {
+    public static createComponent () {
         return new UIMockGeneratorUtilComponentBuilder();
     }
 
-    public static createElement() {
+    public static createElement () {
         return new UIMockGeneratorUtilElementBuilder();
     }
 
-    public static createEmbed() {
+    public static createEmbed () {
         return new UIMockGeneratorUtilEmbedBuilder();
     }
 
-    public static createModal() {
+    public static createModal () {
         return new UIMockGeneratorUtilModalBuilder();
     }
 
-    public static createElementsGroup() {
+    public static createElementsGroup () {
         return new UIMockGeneratorUtilElementsGroupBuilder();
     }
 
-    public static createEmbedsGroup() {
+    public static createEmbedsGroup () {
         return new UIMockGeneratorUtilEmbedsGroupBuilder();
     }
 
-    public static createAdapter() {
-        return new UIMockGeneratorUtilAdapterBuilder(UIAdapterBase);
+    public static createAdapter () {
+        return new UIMockGeneratorUtilAdapterBuilder( UIAdapterBase );
     }
 
-    public static createExecutionStepsAdapter() {
-        return new UIMockGeneratorUtilAdapterBuilder(UIAdapterExecutionStepsBase);
+    public static createExecutionStepsAdapter () {
+        return new UIMockGeneratorUtilAdapterBuilder( UIAdapterExecutionStepsBase );
     }
 }

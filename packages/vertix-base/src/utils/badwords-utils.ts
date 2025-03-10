@@ -1,8 +1,8 @@
 import { DEFAULT_BADWORDS, DEFAULT_BADWORDS_SEPARATOR } from "@vertix.gg/base/src/definitions/badwords-defaults";
 
-const isMatch = (word: string, badword: string): boolean => {
-    const regex = new RegExp(`^${badword.replace(/\*/g, ".*")}$`, "i");
-    return regex.test(word);
+const isMatch = ( word: string, badword: string ): boolean => {
+    const regex = new RegExp( `^${ badword.replace( /\*/g, ".*" ) }$`, "i" );
+    return regex.test( word );
 };
 
 /**
@@ -11,16 +11,16 @@ const isMatch = (word: string, badword: string): boolean => {
  *
  * the method support '*' for each badword to implement non-exact matches
  */
-export const badwordsSomeUsed = (content: string, badwords: string[]): string | null => {
-    for (const badword of badwords) {
-        let words = content.split(" ");
+export const badwordsSomeUsed = ( content: string, badwords: string[] ): string | null => {
+    for ( const badword of badwords ) {
+        let words = content.split( " " );
 
-        if (!words.length) {
-            words = [content];
+        if ( !words.length ) {
+            words = [ content ];
         }
 
-        for (const word of words) {
-            if (isMatch(word, badword)) {
+        for ( const word of words ) {
+            if ( isMatch( word, badword ) ) {
                 return badword;
             }
         }
@@ -31,23 +31,23 @@ export const badwordsSomeUsed = (content: string, badwords: string[]): string | 
 /**
  * Function badwordsNormalizeArray() :: Normalize the badwords array, removing the empty and extra spaces.
  */
-export const badwordsNormalizeArray = (badwords: string[] | undefined): string[] => {
+export const badwordsNormalizeArray = ( badwords: string[] | undefined ): string[] => {
     let result: string[] = [];
 
-    if (badwords?.length) {
+    if ( badwords?.length ) {
         // Remove all empty spaces between words.
-        result = badwords.map((word) => word.trim());
+        result = badwords.map( ( word ) => word.trim() );
 
         // Remove empty words.
-        result = result.filter((word) => word.length);
+        result = result.filter( ( word ) => word.length );
     }
 
     return result;
 };
 
-export const badwordsSplitOrDefault = (badwords: string | undefined) => {
-    if ("string" === typeof badwords) {
-        return badwords.split(DEFAULT_BADWORDS_SEPARATOR.trim());
+export const badwordsSplitOrDefault = ( badwords: string | undefined ) => {
+    if ( "string" === typeof badwords ) {
+        return badwords.split( DEFAULT_BADWORDS_SEPARATOR.trim() );
     }
 
     return DEFAULT_BADWORDS;

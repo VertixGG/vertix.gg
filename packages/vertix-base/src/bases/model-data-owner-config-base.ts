@@ -25,7 +25,7 @@ export abstract class ModelDataOwnerConfigBase<
     TDataModelUniqueKeys,
     TDataConfig["data"][TDataConfigSlice]
 > {
-    public static getName() {
+    public static getName () {
         return "VertixBase/Bases/ModelDataOwnerConfigBase";
     }
 
@@ -33,11 +33,11 @@ export abstract class ModelDataOwnerConfigBase<
 
     protected abstract getConfigSlice(): TDataConfigSlice;
 
-    protected getStrictDataFactor(): TDataSlice {
-        return this.getConfig().data[this.getConfigSlice()];
+    protected getStrictDataFactor (): TDataSlice {
+        return this.getConfig().data[ this.getConfigSlice() ];
     }
 
-    protected async getSliceData(
+    protected async getSliceData (
         args: Parameters<TModel["findUnique"]>[0],
         key: string,
         cache = true,
@@ -46,11 +46,11 @@ export abstract class ModelDataOwnerConfigBase<
         const keys = { key } as TDataModelUniqueKeys;
 
         return returnDefaults
-            ? this.getStrictDataWithDefaults(args, keys, cache)
-            : this.getStrictData(args, keys, cache);
+            ? this.getStrictDataWithDefaults( args, keys, cache )
+            : this.getStrictData( args, keys, cache );
     }
 
-    protected async setSliceData(
+    protected async setSliceData (
         args: Parameters<TModel["findUnique"]>[0],
         key: string,
         data: Partial<TDataConfig["data"][TDataConfigSlice]>,
@@ -58,7 +58,7 @@ export abstract class ModelDataOwnerConfigBase<
     ) {
         const keys = { key } as TDataModelUniqueKeys;
 
-        return assignDefaults ? this.setStrictDataWithDefaults(args, keys, data) : this.setStrictData(args, keys, data);
+        return assignDefaults ? this.setStrictDataWithDefaults( args, keys, data ) : this.setStrictData( args, keys, data );
     }
 
     /**
@@ -74,10 +74,10 @@ export abstract class ModelDataOwnerConfigBase<
      * If no result is found and caching is disabled, the method returns the default settings
      * from the configuration.
      **/
-    public async getSettings(
+    public async getSettings (
         id: string,
         cache = true,
-        returnDefaults: ((result: any) => TDataSlice) | boolean = false
+        returnDefaults: ( ( result: any ) => TDataSlice ) | boolean = false
     ): Promise<TDataSlice | null> {
         const isReturnDefaultCallback = "function" === typeof returnDefaults;
 
@@ -85,12 +85,12 @@ export abstract class ModelDataOwnerConfigBase<
 
         const queryArgs = { where: { id } };
 
-        let result = await this.getSliceData(queryArgs, "settings", cache, false);
+        let result = await this.getSliceData( queryArgs, "settings", cache, false );
 
-        if (defaultSettings) {
-            result = Object.assign(defaultSettings, result);
-        } else if (isReturnDefaultCallback) {
-            result = returnDefaults(result || {});
+        if ( defaultSettings ) {
+            result = Object.assign( defaultSettings, result );
+        } else if ( isReturnDefaultCallback ) {
+            result = returnDefaults( result || {} );
         }
 
         // this.debugger.dumpDown( this.getSettings,
@@ -101,9 +101,9 @@ export abstract class ModelDataOwnerConfigBase<
         return result;
     }
 
-    public async setSettings(id: string, settings: Partial<TDataSlice>, assignDefaults = false) {
+    public async setSettings ( id: string, settings: Partial<TDataSlice>, assignDefaults = false ) {
         const queryArgs = { where: { id } };
 
-        return this.setSliceData(queryArgs, "settings", settings, assignDefaults);
+        return this.setSliceData( queryArgs, "settings", settings, assignDefaults );
     }
 }

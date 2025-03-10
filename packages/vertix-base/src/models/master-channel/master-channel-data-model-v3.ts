@@ -11,30 +11,30 @@ import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfa
 export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterChannelConfigInterfaceV3> {
     private static instance: MasterChannelDataModelV3;
 
-    public static get $() {
-        if (!this.instance) {
+    public static get $ () {
+        if ( !this.instance ) {
             this.instance = new MasterChannelDataModelV3();
         }
 
         return this.instance;
     }
 
-    public static getName() {
+    public static getName () {
         return "VertixBase/Models/MasterChannelDataV3";
     }
 
-    public constructor() {
+    public constructor () {
         super(
-            isDebugEnabled("CACHE", MasterChannelDataModelV3.getName()),
-            isDebugEnabled("MODEL", MasterChannelDataModelV3.getName())
+            isDebugEnabled( "CACHE", MasterChannelDataModelV3.getName() ),
+            isDebugEnabled( "MODEL", MasterChannelDataModelV3.getName() )
         );
     }
 
-    protected getDataVersion() {
+    protected getDataVersion () {
         return VERSION_UI_V3;
     }
 
-    protected getConfig() {
-        return ConfigManager.$.get<MasterChannelConfigInterfaceV3>("Vertix/Config/MasterChannel", VERSION_UI_V3);
+    protected getConfig () {
+        return ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
     }
 }

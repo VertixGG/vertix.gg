@@ -10,65 +10,65 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     private static vars: any = {
-        separator: uiUtilsWrapAsTemplate("separator"),
-        value: uiUtilsWrapAsTemplate("value"),
+        separator: uiUtilsWrapAsTemplate( "separator" ),
+        value: uiUtilsWrapAsTemplate( "value" ),
 
-        on: uiUtilsWrapAsTemplate("on"),
-        off: uiUtilsWrapAsTemplate("off"),
+        on: uiUtilsWrapAsTemplate( "on" ),
+        off: uiUtilsWrapAsTemplate( "off" ),
 
-        index: uiUtilsWrapAsTemplate("index"),
-        masterChannelId: uiUtilsWrapAsTemplate("masterChannelId"),
+        index: uiUtilsWrapAsTemplate( "index" ),
+        masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
 
-        configUserMention: uiUtilsWrapAsTemplate("configUserMention"),
-        configUserMentionEnabled: uiUtilsWrapAsTemplate("configUserMentionEnabled"),
-        configUserMentionDisabled: uiUtilsWrapAsTemplate("configUserMentionDisabled"),
+        configUserMention: uiUtilsWrapAsTemplate( "configUserMention" ),
+        configUserMentionEnabled: uiUtilsWrapAsTemplate( "configUserMentionEnabled" ),
+        configUserMentionDisabled: uiUtilsWrapAsTemplate( "configUserMentionDisabled" ),
 
-        configAutoSave: uiUtilsWrapAsTemplate("configAutoSave"),
-        configAutoSaveEnabled: uiUtilsWrapAsTemplate("configAutoSaveEnabled"),
-        configAutoSaveDisabled: uiUtilsWrapAsTemplate("configAutoSaveDisabled"),
+        configAutoSave: uiUtilsWrapAsTemplate( "configAutoSave" ),
+        configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
+        configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
 
-        configLogs: uiUtilsWrapAsTemplate("configLogs"),
-        configLogsEnabled: uiUtilsWrapAsTemplate("configLogsEnabled"),
-        configLogsDisabled: uiUtilsWrapAsTemplate("configLogsDisabled"),
+        configLogs: uiUtilsWrapAsTemplate( "configLogs" ),
+        configLogsEnabled: uiUtilsWrapAsTemplate( "configLogsEnabled" ),
+        configLogsDisabled: uiUtilsWrapAsTemplate( "configLogsDisabled" ),
 
-        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate("dynamicChannelNameTemplate"),
-        dynamicChannelLogsChannelId: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelId"),
+        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
+        dynamicChannelLogsChannelId: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelId" ),
 
-        dynamicChannelLogsChannelDefault: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelDefault"),
-        dynamicChannelLogsChannelSelected: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelSelected"),
-        dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelDisplay"),
+        dynamicChannelLogsChannelDefault: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDefault" ),
+        dynamicChannelLogsChannelSelected: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelSelected" ),
+        dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
 
-        verifiedRoles: uiUtilsWrapAsTemplate("verifiedRoles")
+        verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/SetupEditEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle() {
-        return `🔧  Configure Master Channel #${SetupEditEmbed.vars.index}`;
+    protected getTitle () {
+        return `🔧  Configure Master Channel #${ SetupEditEmbed.vars.index }`;
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return (
             "Configure master channel according to your preferences.\n\n" +
             "**_🎛️ General_**\n\n" +
-            `➤ ∙ Name: <#${SetupEditEmbed.vars.masterChannelId}>\n` +
-            `➤ ∙ Channel ID: \`${SetupEditEmbed.vars.masterChannelId}\`\n` +
-            `➤ ∙ Dynamic Channels Name: \`${SetupEditEmbed.vars.dynamicChannelNameTemplate}\`\n` +
-            `➤ ∙ Logs Channel: ${SetupEditEmbed.vars.dynamicChannelLogsChannelDisplay}\n\n` +
+            `➤ ∙ Name: <#${ SetupEditEmbed.vars.masterChannelId }>\n` +
+            `➤ ∙ Channel ID: \`${ SetupEditEmbed.vars.masterChannelId }\`\n` +
+            `➤ ∙ Dynamic Channels Name: \`${ SetupEditEmbed.vars.dynamicChannelNameTemplate }\`\n` +
+            `➤ ∙ Logs Channel: ${ SetupEditEmbed.vars.dynamicChannelLogsChannelDisplay }\n\n` +
             "**_🎚 Buttons Interface_**\n\n" +
             super.getDescription() +
             "\n\n" +
@@ -89,11 +89,11 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         );
     }
 
-    protected getFooter() {
+    protected getFooter () {
         return "Note: Changing user mention will not affect already created dynamic channels.";
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const {
             on,
             off,
@@ -118,39 +118,39 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             off: "\`🔴∙Off`",
 
             dynamicChannelLogsChannelDisplay: {
-                [dynamicChannelLogsChannelDefault]: "**None**",
-                [dynamicChannelLogsChannelSelected]: `<#${dynamicChannelLogsChannelId}>`
+                [ dynamicChannelLogsChannelDefault ]: "**None**",
+                [ dynamicChannelLogsChannelSelected ]: `<#${ dynamicChannelLogsChannelId }>`
             },
 
             configUserMention: {
-                [configUserMentionEnabled]: on,
-                [configUserMentionDisabled]: off
+                [ configUserMentionEnabled ]: on,
+                [ configUserMentionDisabled ]: off
             },
 
             configAutoSave: {
-                [configAutoSaveEnabled]: on,
-                [configAutoSaveDisabled]: off
+                [ configAutoSaveEnabled ]: on,
+                [ configAutoSaveDisabled ]: off
             },
 
             configLogs: {
-                [configLogsEnabled]: on,
-                [configLogsDisabled]: off
+                [ configLogsEnabled ]: on,
+                [ configLogsDisabled ]: off
             }
         };
     }
 
-    protected getArrayOptions() {
+    protected getArrayOptions () {
         return {
             ...super.getArrayOptions(),
 
             verifiedRoles: {
-                format: `<@&${SetupEditEmbed.vars.value}>${SetupEditEmbed.vars.separator}`,
+                format: `<@&${ SetupEditEmbed.vars.value }>${ SetupEditEmbed.vars.separator }`,
                 separator: ", "
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,
@@ -175,7 +175,7 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
                 ? SetupEditEmbed.vars.dynamicChannelLogsChannelSelected
                 : SetupEditEmbed.vars.dynamicChannelLogsChannelDefault,
 
-            ...super.getLogic(args)
+            ...super.getLogic( args )
         };
     }
 }

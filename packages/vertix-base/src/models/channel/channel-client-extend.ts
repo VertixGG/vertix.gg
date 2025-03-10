@@ -26,8 +26,8 @@ export interface ChannelFindManyArgsWithDataIncludeKey extends PrismaBot.Prisma.
 
 const E_INTERNAL_CHANNEL_TYPES = PrismaBot.E_INTERNAL_CHANNEL_TYPES;
 
-const extendedModel = PrismaBot.Prisma.defineExtension((client) => {
-    return client.$extends({
+const extendedModel = PrismaBot.Prisma.defineExtension( ( client ) => {
+    return client.$extends( {
         result: {
             channel: {
                 isMaster: {
@@ -36,7 +36,7 @@ const extendedModel = PrismaBot.Prisma.defineExtension((client) => {
                         channelId: true,
                         guildId: true
                     },
-                    compute(model) {
+                    compute ( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL;
                     }
                 },
@@ -44,13 +44,13 @@ const extendedModel = PrismaBot.Prisma.defineExtension((client) => {
                     needs: {
                         internalType: true
                     },
-                    compute(model) {
+                    compute ( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
                     }
                 }
             }
         }
-    });
-});
+    } );
+} );
 
-export const clientChannelExtend = PrismaBotClient.getPrismaClient().$extends(extendedModel);
+export const clientChannelExtend = PrismaBotClient.getPrismaClient().$extends( extendedModel );

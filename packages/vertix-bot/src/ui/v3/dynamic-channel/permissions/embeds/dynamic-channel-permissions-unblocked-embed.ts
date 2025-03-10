@@ -8,30 +8,30 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelPermissionsUnblockedEmbed extends DynamicChannelPermissionsAccessEmbed {
     private static vars = {
-        userUnBlockedDisplayName: uiUtilsWrapAsTemplate("userUnBlockedDisplayName")
+        userUnBlockedDisplayName: uiUtilsWrapAsTemplate( "userUnBlockedDisplayName" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPermissionsUnblockedEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🤙  User unblocked";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
-            `**${DynamicChannelPermissionsUnblockedEmbed.vars.userUnBlockedDisplayName}** successfully un-blocked!\n` +
+            `**${ DynamicChannelPermissionsUnblockedEmbed.vars.userUnBlockedDisplayName }** successfully un-blocked!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected getLogic ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
         result.userUnBlockedDisplayName = args.userUnBlockedDisplayName;
 

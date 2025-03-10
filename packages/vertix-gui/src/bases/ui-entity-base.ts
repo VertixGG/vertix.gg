@@ -12,15 +12,15 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
 
     private uiArgsInternal: UIArgs | undefined;
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIEntityBase";
     }
 
-    public getSchema() {
+    public getSchema () {
         return this.schema;
     }
 
-    public async build(uiArgs?: UIArgs) {
+    public async build ( uiArgs?: UIArgs ) {
         this.uiArgsInternal = uiArgs;
 
         this.schema = await this.getSchemaInternal();
@@ -32,20 +32,20 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
 
     protected async isAvailable?(): Promise<boolean>;
 
-    protected async getSchemaInternal(): Promise<UIEntitySchemaBase> {
+    protected async getSchemaInternal (): Promise<UIEntitySchemaBase> {
         return {
             name: this.getName(),
-            type: (this.constructor as typeof UIEntityBase).getType(),
+            type: ( this.constructor as typeof UIEntityBase ).getType(),
             attributes: await this.getAttributes(),
             isAvailable: this.isAvailable ? await this.isAvailable() : true
         };
     }
 
-    protected get uiArgs() {
+    protected get uiArgs () {
         return this.uiArgsInternal;
     }
 
-    protected set uiArgs(value: UIArgs | undefined) {
+    protected set uiArgs ( value: UIArgs | undefined ) {
         this.uiArgsInternal = value;
     }
 }

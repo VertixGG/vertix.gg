@@ -9,18 +9,18 @@ export class GuildMemberMock {
 
     public displayName: string;
 
-    public constructor(client: ClientMock, data: RawGuildMemberData | any) {
+    public constructor ( client: ClientMock, data: RawGuildMemberData | any ) {
         this.client = client;
         this.data = data;
 
         this.displayName = data.nick;
     }
 
-    public getFakeInstance(): GuildMember {
+    public getFakeInstance (): GuildMember {
         return this as unknown as GuildMember;
     }
 
-    public displayAvatarURL({ size = 512 }: { format?: string; size?: number } = {}): string {
-        return `https://picsum.photos/${size}`;
+    public displayAvatarURL ( { size = 512 }: { format?: string; size?: number } = {} ): string {
+        return `https://picsum.photos/${ size }`;
     }
 }

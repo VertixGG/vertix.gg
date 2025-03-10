@@ -20,23 +20,23 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
 );
 
 export class DynamicChannelClearChatSuccessEmbed extends DynamicChannelEmbedBaseWithVars {
-    public static getName(): string {
+    public static getName (): string {
         return "Vertix/UI-V3/DynamicChannelClearChatSuccessEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic; // TODO: change to static.
     }
 
-    protected getTitle(): string {
-        return `${this.vars.get("clearEmoji")}  Chat was cleared the by ${this.vars.get("ownerDisplayName")}!`;
+    protected getTitle (): string {
+        return `${ this.vars.get( "clearEmoji" ) }  Chat was cleared the by ${ this.vars.get( "ownerDisplayName" ) }!`;
     }
 
-    protected getDescription(): string {
-        return `Total of ${this.vars.get("totalMessages")} messages.`;
+    protected getDescription (): string {
+        return `Total of ${ this.vars.get( "totalMessages" ) } messages.`;
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             clearEmoji: DynamicChannelClearChatButton.getEmoji(),
             ownerDisplayName: args.ownerDisplayName,

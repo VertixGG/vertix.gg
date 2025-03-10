@@ -3,7 +3,7 @@ export type TWithRequiredProp<Type, Key extends keyof Type> = Omit<Type, Key> & 
 // Utility purpose to handle conditionally optional properties
 export type TWithOptionalProps<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
-export type TUnionToIntersection<U> = (U extends unknown ? (arg: U) => void : never) extends (arg: infer I) => void
+export type TUnionToIntersection<U> = ( U extends unknown ? ( arg: U ) => void : never ) extends ( arg: infer I ) => void
     ? I
     : never;
 

@@ -13,13 +13,13 @@ import type { RawAnonymousGuildData, RawMessageComponentInteractionData } from "
 import type { Client } from "discord.js";
 
 class MockDynamicChannelVoteManager extends DynamicChannelVoteManager {
-    public getLogger() {
+    public getLogger () {
         return this.logger;
     }
 }
 
 class MessageComponentInteractionForVote extends MessageComponentInteraction<"cached"> implements IVoteDefaultComponentInteraction {
-    private static mockRest( data: any ) {
+    private static mockRest ( data: any ) {
         if ( ! data.entitlements ) {
             data.entitlements = [];
         }
@@ -50,11 +50,11 @@ class MessageComponentInteractionForVote extends MessageComponentInteraction<"ca
         return { ... data };
     }
 
-    public constructor( client: Client<true>, dataMocker: any, data: RawMessageComponentInteractionData = MessageComponentInteractionForVote.mockRest( dataMocker ) ) {
+    public constructor ( client: Client<true>, dataMocker: any, data: RawMessageComponentInteractionData = MessageComponentInteractionForVote.mockRest( dataMocker ) ) {
         super( client, data );
     }
 
-    public get channel(): VoiceChannel {
+    public get channel (): VoiceChannel {
         return super.channel as VoiceChannel;
     }
 }

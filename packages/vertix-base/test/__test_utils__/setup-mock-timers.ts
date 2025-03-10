@@ -1,4 +1,4 @@
-export function setupMockTimers( { beforeEach, afterEach } ) {
+export function setupMockTimers ( { beforeEach, afterEach } ) {
     let originalSetTimeout: typeof global.setTimeout;
     let originalClearTimeout: typeof global.clearTimeout;
     let timeoutCallbacks: Array<{ callback: () => void, time: number }> = [];

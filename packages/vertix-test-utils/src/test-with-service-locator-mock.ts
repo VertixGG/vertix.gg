@@ -1,7 +1,7 @@
 import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 export class TestWithServiceLocatorMock {
-    private static beforeEach() {
+    private static beforeEach () {
         // Mock ServiceLocator.
         ServiceLocatorMock.mockOrigin();
 
@@ -9,20 +9,20 @@ export class TestWithServiceLocatorMock {
         ServiceLocatorMock.reset();
     }
 
-    private static async afterEach() {
+    private static async afterEach () {
         // Await for all services to be registered.
         await ServiceLocatorMock.$.waitForAll();
     }
 
-    public static async withUIServiceMock() {
+    public static async withUIServiceMock () {
         this.beforeEach();
 
         ServiceLocatorMock.$.register(
-            (await import("@vertix.gg/test-utils/src/__mock__/ui-hash-service-mock")).UIHashServiceMock
+            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-hash-service-mock" ) ).UIHashServiceMock
         );
 
         ServiceLocatorMock.$.register(
-            (await import("@vertix.gg/test-utils/src/__mock__/ui-service-mock")).UIServiceMock
+            ( await import( "@vertix.gg/test-utils/src/__mock__/ui-service-mock" ) ).UIServiceMock
         );
 
         await this.afterEach();

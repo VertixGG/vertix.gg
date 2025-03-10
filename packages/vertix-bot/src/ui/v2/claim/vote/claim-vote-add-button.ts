@@ -7,27 +7,27 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ClaimVoteAddButton extends UIElementButtonBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ClaimVoteAddButton";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getStyle(): Promise<UIButtonStyleTypes> {
+    protected async getStyle (): Promise<UIButtonStyleTypes> {
         return "secondary";
     }
 
-    protected async getLabel(): Promise<string> {
-        return `Vote ${uiUtilsWrapAsTemplate("displayName")}`;
+    protected async getLabel (): Promise<string> {
+        return `Vote ${ uiUtilsWrapAsTemplate( "displayName" ) }`;
     }
 
-    protected async getEmoji(): Promise<string> {
+    protected async getEmoji (): Promise<string> {
         return "🗳️";
     }
 
-    protected async getLogic() {
+    protected async getLogic () {
         return {
             displayName: this.uiArgs?.displayName
         };

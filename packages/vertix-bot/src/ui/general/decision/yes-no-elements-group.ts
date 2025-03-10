@@ -4,11 +4,11 @@ import { NoButton } from "@vertix.gg/bot/src/ui/general/decision/no-button";
 import { YesButton } from "@vertix.gg/bot/src/ui/general/decision/yes-button";
 
 export class YesNoElementsGroup extends UIElementsGroupBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/YesNoElementsGroup";
     }
 
-    public static getItems() {
-        return [[YesButton, NoButton]];
+    public static getItems () {
+        return [ [ YesButton, NoButton ] ];
     }
 }

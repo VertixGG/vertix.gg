@@ -5,23 +5,23 @@ import { DynamicChannelPremiumClaimChannelButton } from "@vertix.gg/bot/src/ui/v
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ClaimStartButton extends DynamicChannelPremiumClaimChannelButton {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ClaimStartButton";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getStyle(): Promise<UIButtonStyleTypes> {
+    protected async getStyle (): Promise<UIButtonStyleTypes> {
         return "secondary";
     }
 
-    protected async isDisabled(): Promise<boolean> {
+    protected async isDisabled (): Promise<boolean> {
         return false; // Since it static.
     }
 
-    protected async isAvailable(): Promise<boolean> {
+    protected async isAvailable (): Promise<boolean> {
         return true;
     }
 }

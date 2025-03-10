@@ -3,19 +3,19 @@ import { DynamicChannelStringMenuBase } from "@vertix.gg/bot/src/ui/v3/dynamic-c
 import type { APISelectMenuOption } from "discord.js";
 
 export class DynamicChannelPrivacySelectMenu extends DynamicChannelStringMenuBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrivacyMenu";
     }
 
-    public getId(): string {
-        throw new Error("Method not implemented.");
+    public getId (): string {
+        throw new Error( "Method not implemented." );
     }
 
-    protected async getPlaceholder() {
+    protected async getPlaceholder () {
         return "⛉ ∙ Select Privacy State";
     }
 
-    protected async getSelectOptions() {
+    protected async getSelectOptions () {
         return [
             {
                 label: "Public",

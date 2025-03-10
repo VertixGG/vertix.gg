@@ -4,4 +4,4 @@ import { Welcome } from "@vertix.gg/bot/src/commands/welcome";
 
 import type { ICommand } from "@vertix.gg/bot/src/interfaces/command";
 
-export const Commands: ICommand[] = [Setup, Help, Welcome];
+export const Commands: ICommand[] = [ Setup, Help, Welcome ];

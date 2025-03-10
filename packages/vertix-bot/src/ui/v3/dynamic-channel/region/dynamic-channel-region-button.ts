@@ -5,43 +5,43 @@ import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-ch
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelRegionButton";
     }
 
-    public static getBaseName() {
+    public static getBaseName () {
         return "ChannelRegion";
     }
 
-    public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown(DynamicChannelRegionButton.getBaseName());
+    public static getEmoji () {
+        return EmojiManager.$.getCachedMarkdown( DynamicChannelRegionButton.getBaseName() );
     }
 
-    public static getSortId() {
-        return this.getSortIdAfter(DynamicChannelPrivacyButton);
+    public static getSortId () {
+        return this.getSortIdAfter( DynamicChannelPrivacyButton );
     }
 
-    public getId() {
+    public getId () {
         return "region";
     }
 
-    public getLabelForEmbed() {
-        return `${DynamicChannelRegionButton.getEmoji()} ∙ **Region**`;
+    public getLabelForEmbed () {
+        return `${ DynamicChannelRegionButton.getEmoji() } ∙ **Region**`;
     }
 
-    public async getLabelForMenu() {
+    public async getLabelForMenu () {
         return "Region";
     }
 
-    public async getLabel() {
+    public async getLabel () {
         return "Region";
     }
 
-    public async getEmoji() {
-        return EmojiManager.$.getMarkdown(DynamicChannelRegionButton.getBaseName());
+    public async getEmoji () {
+        return EmojiManager.$.getMarkdown( DynamicChannelRegionButton.getBaseName() );
     }
 
-    public getEmojiForEmbed(): string {
+    public getEmojiForEmbed (): string {
         return DynamicChannelRegionButton.getEmoji();
     }
 }

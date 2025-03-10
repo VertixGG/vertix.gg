@@ -5,7 +5,7 @@ const { Flags } = PermissionsBitField;
 
 /* Default Permissions */
 
-export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField([
+export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField( [
     Flags.Connect,
     Flags.ManageChannels,
     Flags.ManageRoles,
@@ -14,7 +14,7 @@ export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField(
     Flags.SendMessages,
     Flags.ViewChannel,
     Flags.EmbedLinks
-]);
+] );
 
 export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
     allow: [
@@ -42,7 +42,7 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
 };
 
 export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
-    deny: [Flags.SendMessages]
+    deny: [ Flags.SendMessages ]
 };
 
 export const DEFAULT_SETUP_PERMISSIONS = [

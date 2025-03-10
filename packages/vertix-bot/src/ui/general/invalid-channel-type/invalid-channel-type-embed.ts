@@ -10,29 +10,29 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class InvalidChannelTypeEmbed extends UIEmbedBase {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate("separator"),
-        value: uiUtilsWrapAsTemplate("value"),
+        separator: uiUtilsWrapAsTemplate( "separator" ),
+        value: uiUtilsWrapAsTemplate( "value" ),
 
-        allowedTypes: uiUtilsWrapAsTemplate("allowedTypes")
+        allowedTypes: uiUtilsWrapAsTemplate( "allowedTypes" )
     };
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/InvalidChannelTypeEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return Colors.Yellow;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "# Oops! This component is restricted in this channel type.";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const { allowedTypes } = InvalidChannelTypeEmbed.vars;
 
         return (
@@ -43,23 +43,23 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
         );
     }
 
-    protected getArrayOptions() {
+    protected getArrayOptions () {
         const { separator, value } = InvalidChannelTypeEmbed.vars;
 
         return {
             allowedTypes: {
-                format: `- ${value}${separator}`,
+                format: `- ${ value }${ separator }`,
                 separator: "\n"
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
-        const channelTypes = args.channelTypes.map((type: ChannelType) =>
-            ChannelType[type]
+    protected getLogic ( args: UIArgs ) {
+        const channelTypes = args.channelTypes.map( ( type: ChannelType ) =>
+            ChannelType[ type ]
                 .toString()
-                .split(/(?=[A-Z])/)
-                .join(" ")
+                .split( /(?=[A-Z])/ )
+                .join( " " )
         );
 
         return {

@@ -8,19 +8,19 @@ import { SetupStep2Embed } from "@vertix.gg/bot/src/ui/v3/setup-new/step-2/setup
 import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu";
 
 export class SetupStep2Component extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/SetupStep2Component";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElements() {
-        return [[ChannelButtonsTemplateSelectMenu], [ConfigExtrasSelectMenu]];
+    public static getElements () {
+        return [ [ ChannelButtonsTemplateSelectMenu ], [ ConfigExtrasSelectMenu ] ];
     }
 
-    public static getEmbeds() {
-        return [SetupStep2Embed];
+    public static getEmbeds () {
+        return [ SetupStep2Embed ];
     }
 }

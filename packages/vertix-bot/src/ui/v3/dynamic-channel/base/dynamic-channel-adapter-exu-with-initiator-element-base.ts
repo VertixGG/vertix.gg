@@ -16,15 +16,15 @@ import type {
 export abstract class DynamicChannelAdapterExuWithInitiatorElementBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
 > extends DynamicChannelAdapterExuBase<TInteraction> {
-    public static validate(skipDefaultGroups = false) {
-        super.validate(skipDefaultGroups);
+    public static validate ( skipDefaultGroups = false ) {
+        super.validate( skipDefaultGroups );
     }
 
-    protected static getInitiatorElement(): typeof UIElementBase<any> {
-        throw new ForceMethodImplementation(this.getName(), this.getInitiatorElement.name);
+    protected static getInitiatorElement (): typeof UIElementBase<any> {
+        throw new ForceMethodImplementation( this.getName(), this.getInitiatorElement.name );
     }
 
-    protected static getExecutionSteps(): UIExecutionSteps {
+    protected static getExecutionSteps (): UIExecutionSteps {
         const component = this.getComponent();
 
         const defaultGroups: UIExecutionStep = {};
@@ -33,9 +33,9 @@ export abstract class DynamicChannelAdapterExuWithInitiatorElementBase<
         defaultGroups.embedsGroup = component.getDefaultEmbedsGroup();
         defaultGroups.markdownGroup = component.getDefaultMarkdownsGroup();
 
-        if (!Object.values(defaultGroups).filter(Boolean).length) {
+        if ( !Object.values( defaultGroups ).filter( Boolean ).length ) {
             throw new Error(
-                "Error in: '" + this.getName() + `' Component: '${component.getName()}' has default groups set`
+                "Error in: '" + this.getName() + `' Component: '${ component.getName() }' has default groups set`
             );
         }
 
@@ -44,42 +44,42 @@ export abstract class DynamicChannelAdapterExuWithInitiatorElementBase<
         };
     }
 
-    protected static getExcludedElementsInternal() {
+    protected static getExcludedElementsInternal () {
         const initiatorElement = this.getInitiatorElement();
 
         const excludedElements = super.getExcludedElementsInternal();
 
-        if (!initiatorElement) {
+        if ( !initiatorElement ) {
             return excludedElements;
         }
 
-        return [...excludedElements, initiatorElement];
+        return [ ...excludedElements, initiatorElement ];
     }
 
-    protected entitiesMapInternal() {
+    protected entitiesMapInternal () {
         super.entitiesMapInternal();
 
         // Check if element initiator is not bind.
         const initiatorElement = (
                 this.constructor as typeof DynamicChannelAdapterExuWithInitiatorElementBase
             ).getInitiatorElement(),
-            initiatorInstance = this.getEntityMap(initiatorElement.getName());
+            initiatorInstance = this.getEntityMap( initiatorElement.getName() );
 
-        if (initiatorInstance.callback) {
+        if ( initiatorInstance.callback ) {
             return;
         }
 
-        switch (initiatorElement.getComponentType()) {
+        switch ( initiatorElement.getComponentType() ) {
             case ComponentType.Button:
-                this.bindButton(initiatorElement.getName(), this.onInitiatorButtonClicked);
+                this.bindButton( initiatorElement.getName(), this.onInitiatorButtonClicked );
                 break;
 
             default:
-                throw new Error(`Not implemented initiator element type: ${initiatorElement.getComponentType()}`);
+                throw new Error( `Not implemented initiator element type: ${ initiatorElement.getComponentType() }` );
         }
     }
 
-    protected async onInitiatorButtonClicked(interaction: TInteraction) {
-        await this.ephemeral(interaction);
+    protected async onInitiatorButtonClicked ( interaction: TInteraction ) {
+        await this.ephemeral( interaction );
     }
 }

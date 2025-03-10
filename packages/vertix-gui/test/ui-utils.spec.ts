@@ -5,15 +5,15 @@ import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
 import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
 class ElementMockClass extends UIElementBase<any> {
-    public static getName() {
+    public static getName () {
         return "VertixGUI/TestElementMockClass";
     }
 
-    protected getAttributes(): Promise<any> {
+    protected getAttributes (): Promise<any> {
         return Promise.resolve( undefined );
     }
 
-    public getTranslatableContent(): Promise<any> {
+    public getTranslatableContent (): Promise<any> {
         return Promise.resolve( undefined );
     }
 }

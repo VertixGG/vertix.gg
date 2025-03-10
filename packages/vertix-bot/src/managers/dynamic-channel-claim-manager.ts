@@ -67,7 +67,7 @@ interface TDynamicChannelClaimManagerRegisterArgs {
 }
 
 export class DynamicChannelClaimManager extends InitializeBase {
-    private readonly debugger: Debugger = new Debugger(this, "", isDebugEnabled("MANAGER", this.getName()));
+    private readonly debugger: Debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", this.getName() ) );
 
     private static instances: Map<string, DynamicChannelClaimManager> = new Map();
 
@@ -91,22 +91,22 @@ export class DynamicChannelClaimManager extends InitializeBase {
         [channelId: string]: VoiceBasedChannel;
     } = {};
 
-    public static getName() {
-        return "VertixBot/Managers/DynamicChannelClaim";
+    public static getName () {
+        return "VertixBot/Managers/DynamicChannelClaimManager";
     }
 
-    public static register(instanceName: string, args: TDynamicChannelClaimManagerRegisterArgs) {
+    public static register ( instanceName: string, args: TDynamicChannelClaimManagerRegisterArgs ) {
         args.ownershipTimeout =
             args.ownershipTimeout ||
-            Number(process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMEOUT || FALLBACK_OWNERSHIP_TIMEOUT);
+            Number( process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMEOUT || FALLBACK_OWNERSHIP_TIMEOUT );
         args.ownershipTimerInterval =
             args.ownershipTimerInterval ||
-            Number(process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMER_INTERVAL || FALLBACK_OWNERSHIP_TIMER_INTERVAL);
+            Number( process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMER_INTERVAL || FALLBACK_OWNERSHIP_TIMER_INTERVAL );
 
         // Check if instance already exists.
-        if (DynamicChannelClaimManager.instances.has(instanceName)) {
+        if ( DynamicChannelClaimManager.instances.has( instanceName ) ) {
             throw new Error(
-                `Error in '${DynamicChannelClaimManager.getName()}', Instance '${instanceName}' already exists.`
+                `Error in '${ DynamicChannelClaimManager.getName() }', Instance '${ instanceName }' already exists.`
             );
         }
 
@@ -119,22 +119,22 @@ export class DynamicChannelClaimManager extends InitializeBase {
             args.ownershipTimerInterval
         );
 
-        DynamicChannelClaimManager.instances.set(instanceName, instance);
+        DynamicChannelClaimManager.instances.set( instanceName, instance );
 
         return instance;
     }
 
-    public static get(instanceName: string) {
-        if (!DynamicChannelClaimManager.instances.has(instanceName)) {
+    public static get ( instanceName: string ) {
+        if ( !DynamicChannelClaimManager.instances.has( instanceName ) ) {
             throw new Error(
-                `Error in '${DynamicChannelClaimManager.getName()}', Instance '${instanceName}' does not exist.`
+                `Error in '${ DynamicChannelClaimManager.getName() }', Instance '${ instanceName }' does not exist.`
             );
         }
 
-        return DynamicChannelClaimManager.instances.get(instanceName)!;
+        return DynamicChannelClaimManager.instances.get( instanceName )!;
     }
 
-    protected constructor(
+    protected constructor (
         private adapters: TDynamicChannelClaimAdapters,
         private steps: TDynamicChannelClaimAdapterSteps,
         private entities: TDynamicChannelClaimAdapterEntities,
@@ -144,46 +144,46 @@ export class DynamicChannelClaimManager extends InitializeBase {
     ) {
         super();
 
-        EventBus.$.on("VertixBot/Services/App", "onReady", this.onBotReady.bind(this));
+        EventBus.$.on( "VertixBot/Services/App", "onReady", this.onBotReady.bind( this ) );
 
         EventBus.$.on(
             "VertixBot/Services/DynamicChannel",
             "onOwnerJoinDynamicChannel",
-            this.onOwnerJoinDynamicChannel.bind(this)
+            this.onOwnerJoinDynamicChannel.bind( this )
         );
 
         EventBus.$.on(
             "VertixBot/Services/DynamicChannel",
             "onOwnerLeaveDynamicChannel",
-            this.onOwnerLeaveDynamicChannel.bind(this)
+            this.onOwnerLeaveDynamicChannel.bind( this )
         );
 
         EventBus.$.on(
             "VertixBot/Services/DynamicChannel",
             "onLeaveDynamicChannelEmpty",
-            this.onLeaveDynamicChannelEmpty.bind(this)
+            this.onLeaveDynamicChannelEmpty.bind( this )
         );
 
         EventBus.$.on(
             "VertixBot/Services/DynamicChannel",
             "updateChannelOwnership",
-            this.onUpdateChannelOwnership.bind(this)
+            this.onUpdateChannelOwnership.bind( this )
         );
 
-        this.uiService = ServiceLocator.$.get("VertixGUI/UIService");
-        this.dynamicChannelService = ServiceLocator.$.get("VertixBot/Services/DynamicChannel");
+        this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
     // TODO: Base timer.
-    public destroy() {
-        this.timerIntervals.forEach((interval) => clearInterval(interval));
+    public destroy () {
+        this.timerIntervals.forEach( ( interval ) => clearInterval( interval ) );
     }
 
-    public getChannelOwnershipTimeout() {
+    public getChannelOwnershipTimeout () {
         return this.ownershipTimeout;
     }
 
-    public addChannelTracking(owner: GuildMember, channel: VoiceBasedChannel) {
+    public addChannelTracking ( owner: GuildMember, channel: VoiceBasedChannel ) {
         // Check if channel supports "Claim Channel".
         const trackingData = {
             owner,
@@ -193,211 +193,211 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         this.logger.info(
             this.addChannelTracking,
-            `Channel id: '${channel.id}' - Adding owner id: '${owner.id}' to tracking list`
+            `Channel id: '${ channel.id }' - Adding owner id: '${ owner.id }' to tracking list`
         );
 
-        this.trackedChannels[channel.id] = trackingData;
+        this.trackedChannels[ channel.id ] = trackingData;
     }
 
-    public removeChannelOwnerTracking(ownerId: string, channelId?: string) {
-        if (!channelId?.length) {
+    public removeChannelOwnerTracking ( ownerId: string, channelId?: string ) {
+        if ( !channelId?.length ) {
             this.logger.log(
                 this.removeChannelOwnerTracking,
-                `Channel id is not provided! - Removing all owners with id: '${ownerId}' from tracking.`
+                `Channel id is not provided! - Removing all owners with id: '${ ownerId }' from tracking.`
             );
 
-            Object.keys(this.trackedChannels).forEach((_channelId) => {
-                const channelData = this.trackedChannels[_channelId];
+            Object.keys( this.trackedChannels ).forEach( ( _channelId ) => {
+                const channelData = this.trackedChannels[ _channelId ];
 
-                if (channelData.owner.id === ownerId) {
+                if ( channelData.owner.id === ownerId ) {
                     this.debugger.log(
                         this.removeChannelOwnerTracking,
-                        `Channel id: '${_channelId}' owner id: '${ownerId}' - Removing channel from tracking according to ownerId.`
+                        `Channel id: '${ _channelId }' owner id: '${ ownerId }' - Removing channel from tracking according to ownerId.`
                     );
 
-                    delete this.trackedChannels[_channelId];
+                    delete this.trackedChannels[ _channelId ];
                 }
-            });
+            } );
 
             return;
         }
 
-        this.removeChannelTracking(channelId);
+        this.removeChannelTracking( channelId );
     }
 
-    public removeChannelTracking(channelId: string) {
-        const channel = this.trackedChannels[channelId]?.channel;
+    public removeChannelTracking ( channelId: string ) {
+        const channel = this.trackedChannels[ channelId ]?.channel;
 
-        if (!channel) {
-            this.logger.log(this.removeChannelTracking, `Channel: '${channelId}' is not tracked!`);
+        if ( !channel ) {
+            this.logger.log( this.removeChannelTracking, `Channel: '${ channelId }' is not tracked!` );
             return;
         }
 
-        this.logger.info(this.removeChannelTracking, `Channel id: '${channel.id}' - Removing channel from tracking.`);
+        this.logger.info( this.removeChannelTracking, `Channel id: '${ channel.id }' - Removing channel from tracking.` );
 
-        delete this.trackedChannels[channelId];
+        delete this.trackedChannels[ channelId ];
     }
 
-    public markChannelAsClaimable(channel: VoiceBasedChannel) {
+    public markChannelAsClaimable ( channel: VoiceBasedChannel ) {
         this.debugger.log(
             this.markChannelAsClaimable,
-            `Guild Id: '${channel.guildId}', channel id: '${channel.id}' - Marking channel as claimable.`
+            `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Marking channel as claimable.`
         );
 
-        this.claimableChannels[channel.id] = channel;
+        this.claimableChannels[ channel.id ] = channel;
     }
 
-    public unmarkChannelAsClaimable(channel: VoiceBasedChannel) {
+    public unmarkChannelAsClaimable ( channel: VoiceBasedChannel ) {
         this.debugger.log(
             this.unmarkChannelAsClaimable,
-            `Guild Id: '${channel.guildId}', channel id: '${channel.id}' - Unmarking channel as claimable.`
+            `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Unmarking channel as claimable.`
         );
 
-        delete this.claimableChannels[channel.id];
+        delete this.claimableChannels[ channel.id ];
     }
 
-    public isOwnerTracked(ownerId: string) {
-        return !!this.trackedChannels[ownerId];
+    public isOwnerTracked ( ownerId: string ) {
+        return !!this.trackedChannels[ ownerId ];
     }
 
-    public isChannelClaimable(channelId: string) {
-        return !!this.claimableChannels[channelId];
+    public isChannelClaimable ( channelId: string ) {
+        return !!this.claimableChannels[ channelId ];
     }
 
     /**
      * Function handleAbandonedChannels() :: Ensures that all abandoned added to abandon list,
      * so timer can handle them later, the function is called on bot start.
      */
-    public async handleAbandonedChannels(
+    public async handleAbandonedChannels (
         client: Client,
         specificChannels?: VoiceChannel[],
         specificChannelsDB?: ChannelExtended[]
     ) {
-        await this.uiService.waitForAdapter(this.adapters.claimStartAdapter().getName());
+        await this.uiService.waitForAdapter( this.adapters.claimStartAdapter().getName() );
 
-        this.debugger.dumpDown(this.handleAbandonedChannels, {
+        this.debugger.dumpDown( this.handleAbandonedChannels, {
             specificChannels,
             specificChannelsDB
-        });
+        } );
 
-        const handleChannels = async (dynamicChannels: ChannelExtended[]) => {
-            for (const channelDB of dynamicChannels) {
-                const guild = client.guilds.cache.get(channelDB.guildId);
+        const handleChannels = async ( dynamicChannels: ChannelExtended[] ) => {
+            for ( const channelDB of dynamicChannels ) {
+                const guild = client.guilds.cache.get( channelDB.guildId );
 
-                if (!guild) {
+                if ( !guild ) {
                     this.logger.error(
                         this.handleAbandonedChannels,
-                        `Guild id: '${channelDB.guildId}' - Guild is not found!`
+                        `Guild id: '${ channelDB.guildId }' - Guild is not found!`
                     );
                     continue;
                 }
 
-                if (!channelDB.userOwnerId) {
+                if ( !channelDB.userOwnerId ) {
                     this.logger.error(
                         this.handleAbandonedChannels,
-                        `Guild id: '${guild.id}', channel id: '${channelDB.channelId}' - Channel has no owner!`
+                        `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Channel has no owner!`
                     );
                     continue;
                 }
 
-                const channel = guild.channels.cache.get(channelDB.channelId);
+                const channel = guild.channels.cache.get( channelDB.channelId );
 
-                if (!channel || !channel.isVoiceBased()) {
+                if ( !channel || !channel.isVoiceBased() ) {
                     this.logger.error(
                         this.handleAbandonedChannels,
-                        `Guild id: '${guild.id}', channel id: '${channelDB.channelId}' - Channel is not found!`
+                        `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Channel is not found!`
                     );
                     continue;
                 }
 
                 // If it startup process, remove old "Claim Channel" button.
                 // TODO: Not good place for this.
-                if (!this.ownerShipTimerInterval) {
+                if ( !this.ownerShipTimerInterval ) {
                     // Remove old "Claim Channel" button.
-                    await this.adapters.claimStartAdapter().deleteRelatedComponentMessagesInternal(channel);
+                    await this.adapters.claimStartAdapter().deleteRelatedComponentMessagesInternal( channel );
                 }
 
-                if (!(await this.isClaimButtonEnabled(channel))) {
+                if ( !( await this.isClaimButtonEnabled( channel ) ) ) {
                     continue;
                 }
 
                 // Check if channel vote is idle.
-                const state = DynamicChannelVoteManager.$.getState(channel.id);
+                const state = DynamicChannelVoteManager.$.getState( channel.id );
 
-                if (state !== "idle") {
+                if ( state !== "idle" ) {
                     this.logger.log(
                         this.handleAbandonedChannels,
-                        `Guild id: '${guild.id}', channel id: '${channelDB.channelId}' - Vote is not idle: '${state}'`
+                        `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Vote is not idle: '${ state }'`
                     );
                     continue;
                 }
 
                 // Check if member is in channel.
-                const member = (channel as GuildChannel).members.get(channelDB.userOwnerId);
+                const member = ( channel as GuildChannel ).members.get( channelDB.userOwnerId );
 
-                if (member) {
+                if ( member ) {
                     this.logger.log(
                         this.handleAbandonedChannels,
-                        `Guild id: '${guild.id}', channel id: '${channelDB.channelId}' - Owner id: '${channelDB.userOwnerId}' is not abandoned!`
+                        `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Owner id: '${ channelDB.userOwnerId }' is not abandoned!`
                     );
                     continue;
                 }
 
                 // Get member from guild.
-                const owner = await guild.members.fetch(channelDB.userOwnerId);
+                const owner = await guild.members.fetch( channelDB.userOwnerId );
 
-                if (!owner) {
+                if ( !owner ) {
                     this.logger.error(
                         this.handleAbandonedChannels,
-                        `Guild id: '${guild.id}', channel id: '${channelDB.channelId}' - Owner id: '${channelDB.userOwnerId}' is not found!`
+                        `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Owner id: '${ channelDB.userOwnerId }' is not found!`
                     );
                     continue;
                 }
 
-                this.addChannelTracking(owner, channel as VoiceBasedChannel);
+                this.addChannelTracking( owner, channel as VoiceBasedChannel );
             }
         };
 
-        if (specificChannelsDB?.length) {
-            await handleChannels(specificChannelsDB);
-        } else if (!specificChannels?.length) {
-            for (const guild of client.guilds.cache.values()) {
-                const dynamicChannels = await ChannelModel.$.getDynamics(guild.id);
+        if ( specificChannelsDB?.length ) {
+            await handleChannels( specificChannelsDB );
+        } else if ( !specificChannels?.length ) {
+            for ( const guild of client.guilds.cache.values() ) {
+                const dynamicChannels = await ChannelModel.$.getDynamics( guild.id );
 
-                await handleChannels(dynamicChannels);
+                await handleChannels( dynamicChannels );
             }
         } else {
             const dynamicChannels = await Promise.all(
                 specificChannels.map(
-                    async (channel) => (await ChannelModel.$.getByChannelId(channel.id)) as ChannelExtended
+                    async ( channel ) => ( await ChannelModel.$.getByChannelId( channel.id ) ) as ChannelExtended
                 )
             );
 
-            await handleChannels(dynamicChannels);
+            await handleChannels( dynamicChannels );
         }
 
-        if (!this.ownerShipTimerInterval) {
+        if ( !this.ownerShipTimerInterval ) {
             const timerInterval = this.ownershipTimerInterval;
 
             this.logger.info(
                 this.handleAbandonedChannels,
-                `Setting up timer with interval: '${(timerInterval / 60000).toFixed(1)} minute(s)'`
+                `Setting up timer with interval: '${ ( timerInterval / 60000 ).toFixed( 1 ) } minute(s)'`
             );
 
-            this.ownerShipTimerInterval = setInterval(this.trackedChannelsTimer.bind(this), timerInterval);
+            this.ownerShipTimerInterval = setInterval( this.trackedChannelsTimer.bind( this ), timerInterval );
 
-            this.timerIntervals.push(this.ownerShipTimerInterval);
+            this.timerIntervals.push( this.ownerShipTimerInterval );
         }
     }
 
-    public async handleVoteRequest(interaction: IVoteDefaultComponentInteraction, forceMessage?: Message<true>) {
+    public async handleVoteRequest ( interaction: IVoteDefaultComponentInteraction, forceMessage?: Message<true> ) {
         // if ( ! await TopGGManager.$.isVoted( interaction.user.id ) ) {
         //     return await TopGGManager.$.sendVoteEmbed( interaction );
         // }
 
-        const state = DynamicChannelVoteManager.$.getState(interaction.channelId);
+        const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
 
-        switch (state) {
+        switch ( state ) {
             default:
             case "idle":
                 const { dynamicChannelService } = this;
@@ -406,48 +406,48 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
                 this.logger.admin(
                     this.handleVoteRequest,
-                    `😈  Claim start button clicked by: "${interaction.member.displayName}" - "${interaction.channel.name}" (${interaction.channel.guild.name}) (${interaction.guild.memberCount})`
+                    `😈  Claim start button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
                 );
 
                 // On owner, stop vote session.
-                if (await dynamicChannelService.isChannelOwner(interaction.user.id, interaction.channelId)) {
+                if ( await dynamicChannelService.isChannelOwner( interaction.user.id, interaction.channelId ) ) {
                     this.logger.admin(
                         this.handleVoteRequest,
-                        `😈  Owner: "${interaction.member.displayName}" reclaim his channel - "${interaction.channel.name}" (${interaction.channel.guild.name}) (${interaction.guild.memberCount})`
+                        `😈  Owner: "${ interaction.member.displayName }" reclaim his channel - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
                     );
 
-                    await claimStartAdapter().deletedStartedMessagesInternal(interaction.channel);
+                    await claimStartAdapter().deletedStartedMessagesInternal( interaction.channel );
 
-                    this.unmarkChannelAsClaimable(interaction.channel);
+                    this.unmarkChannelAsClaimable( interaction.channel );
 
-                    dynamicChannelService.editPrimaryMessageDebounce(interaction.channel as VoiceChannel);
+                    dynamicChannelService.editPrimaryMessageDebounce( interaction.channel as VoiceChannel );
 
-                    await claimResultAdapter().ephemeralWithStep(interaction, this.steps.claimResultOwnerStop);
+                    await claimResultAdapter().ephemeralWithStep( interaction, this.steps.claimResultOwnerStop );
 
-                    return this.addChannelTracking(interaction.member, interaction.channel);
+                    return this.addChannelTracking( interaction.member, interaction.channel );
                 }
 
-                return this.handleVoteRequestIdleState(interaction, forceMessage);
+                return this.handleVoteRequestIdleState( interaction, forceMessage );
 
             case "active":
-                return this.handleVoteRequestActiveState(interaction);
+                return this.handleVoteRequestActiveState( interaction );
         }
     }
 
     /**
      * Function handleVoteIdleState() :: Handles vote request/start the vote session.
      */
-    private async handleVoteRequestIdleState(
+    private async handleVoteRequestIdleState (
         interaction: IVoteDefaultComponentInteraction,
         forceMessage?: Message<true>
     ) {
-        this.debugger.log(this.handleVoteRequestIdleState, "customId:", interaction.customId);
+        this.debugger.log( this.handleVoteRequestIdleState, "customId:", interaction.customId );
 
-        const channelDB = await ChannelModel.$.getByChannelId(interaction.channelId);
-        if (!channelDB) {
+        const channelDB = await ChannelModel.$.getByChannelId( interaction.channelId );
+        if ( !channelDB ) {
             this.logger.error(
                 this.handleVoteRequestIdleState,
-                `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - Channel is not found in database`
+                `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Channel is not found in database`
             );
             return;
         }
@@ -455,76 +455,76 @@ export class DynamicChannelClaimManager extends InitializeBase {
         // TODO: Maybe it can cause some issues.
         await interaction.deferUpdate();
 
-        this.removeChannelOwnerTracking(channelDB.userOwnerId, interaction.channelId);
+        this.removeChannelOwnerTracking( channelDB.userOwnerId, interaction.channelId );
 
         DynamicChannelVoteManager.$.start(
             interaction.channel,
-            (channel, state) =>
-                this.voteTimer(channel, state, {
+            ( channel, state ) =>
+                this.voteTimer( channel, state, {
                     interaction,
                     message: forceMessage || interaction.message
-                }), // TODO Remove object.
+                } ), // TODO Remove object.
             interaction
         );
 
-        this.dynamicChannelService.editPrimaryMessageDebounce(interaction.channel, 100);
+        this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel, 100 );
 
-        DynamicChannelVoteManager.$.addCandidate(interaction);
+        DynamicChannelVoteManager.$.addCandidate( interaction );
     }
 
-    private async handleVoteRequestActiveState(interaction: IVoteDefaultComponentInteraction) {
-        this.debugger.log(this.handleVoteRequestActiveState, "customId:", interaction.customId);
+    private async handleVoteRequestActiveState ( interaction: IVoteDefaultComponentInteraction ) {
+        this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
-        const customIdParts = interaction.customId.split(UI_CUSTOM_ID_SEPARATOR, 3);
+        const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
 
-        switch (customIdParts[1]) {
+        switch ( customIdParts[ 1 ] ) {
             case this.entities.claimVoteStepInButton:
                 this.logger.admin(
                     this.handleVoteRequest,
-                    `😈  Claim step-In button clicked by: "${interaction.member.displayName}" - "${interaction.channel.name}" (${interaction.channel.guild.name}) (${interaction.guild.memberCount})`
+                    `😈  Claim step-In button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
                 );
-                return this.handleVoteStepIn(interaction);
+                return this.handleVoteStepIn( interaction );
 
             case this.entities.claimVoteAddButton:
                 this.logger.admin(
                     this.handleVoteRequest,
-                    `😈  Claim vote button clicked by: "${interaction.member.displayName}" - "${interaction.channel.name}" (${interaction.channel.guild.name}) (${interaction.guild.memberCount})`
+                    `😈  Claim vote button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
                 );
-                return this.handleVoteAdd(interaction, customIdParts[2]);
+                return this.handleVoteAdd( interaction, customIdParts[ 2 ] );
         }
 
         this.logger.error(
             this.handleVoteRequestActiveState,
-            `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - Unhandled case`,
+            `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Unhandled case`,
             interaction.customId
         );
     }
 
-    private async handleVoteStepIn(interaction: IVoteDefaultComponentInteraction) {
-        this.debugger.log(this.handleVoteStepIn, "customId:", interaction.customId);
+    private async handleVoteStepIn ( interaction: IVoteDefaultComponentInteraction ) {
+        this.debugger.log( this.handleVoteStepIn, "customId:", interaction.customId );
 
         const { claimResultAdapter } = this.adapters;
 
-        switch (DynamicChannelVoteManager.$.addCandidate(interaction)) {
+        switch ( DynamicChannelVoteManager.$.addCandidate( interaction ) ) {
             case "success":
-                return claimResultAdapter().ephemeralWithStep(interaction, this.steps.claimResultAddedSuccessfully);
+                return claimResultAdapter().ephemeralWithStep( interaction, this.steps.claimResultAddedSuccessfully );
 
             case "already":
-                return claimResultAdapter().ephemeralWithStep(interaction, this.steps.claimResultAlreadyAdded);
+                return claimResultAdapter().ephemeralWithStep( interaction, this.steps.claimResultAlreadyAdded );
         }
 
         this.logger.error(
             this.handleVoteStepIn,
-            `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - Unhandled case`
+            `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Unhandled case`
         );
     }
 
-    private async handleVoteAdd(interaction: IVoteDefaultComponentInteraction, targetId: string) {
-        const state = DynamicChannelVoteManager.$.addVote(interaction, targetId);
+    private async handleVoteAdd ( interaction: IVoteDefaultComponentInteraction, targetId: string ) {
+        const state = DynamicChannelVoteManager.$.addVote( interaction, targetId );
 
         this.debugger.log(
             this.handleVoteAdd,
-            `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - State: '${state}'`
+            `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - State: '${ state }'`
         );
 
         const { claimResultAdapter } = this.adapters;
@@ -536,35 +536,35 @@ export class DynamicChannelClaimManager extends InitializeBase {
             claimResultVoteUpdatedSuccessfully
         } = this.steps;
 
-        switch (state) {
+        switch ( state ) {
             case "self-manage":
-                return claimResultAdapter().ephemeralWithStep(interaction, claimResultVoteAlreadySelfVoted);
+                return claimResultAdapter().ephemeralWithStep( interaction, claimResultVoteAlreadySelfVoted );
 
             case "success":
-                return claimResultAdapter().ephemeralWithStep(interaction, claimResultVotedSuccessfully, { targetId });
+                return claimResultAdapter().ephemeralWithStep( interaction, claimResultVotedSuccessfully, { targetId } );
 
             case "already":
-                const previousVoteTargetId = DynamicChannelVoteManager.$.getVotedFor(interaction);
+                const previousVoteTargetId = DynamicChannelVoteManager.$.getVotedFor( interaction );
 
-                if (previousVoteTargetId === targetId) {
-                    return claimResultAdapter().ephemeralWithStep(interaction, claimResultVoteAlreadyVotedSame, {
+                if ( previousVoteTargetId === targetId ) {
+                    return claimResultAdapter().ephemeralWithStep( interaction, claimResultVoteAlreadyVotedSame, {
                         targetId
-                    });
+                    } );
                 }
 
-                const removed = DynamicChannelVoteManager.$.removeVote(interaction).toString(),
-                    added = DynamicChannelVoteManager.$.addVote(interaction, targetId).toString();
+                const removed = DynamicChannelVoteManager.$.removeVote( interaction ).toString(),
+                    added = DynamicChannelVoteManager.$.addVote( interaction, targetId ).toString();
 
-                if (previousVoteTargetId && [removed, added].every((i) => "success" === i)) {
-                    return claimResultAdapter().ephemeralWithStep(interaction, claimResultVoteUpdatedSuccessfully, {
+                if ( previousVoteTargetId && [ removed, added ].every( ( i ) => "success" === i ) ) {
+                    return claimResultAdapter().ephemeralWithStep( interaction, claimResultVoteUpdatedSuccessfully, {
                         prevUserId: previousVoteTargetId,
                         currentUserId: targetId
-                    });
+                    } );
                 }
 
                 this.logger.error(
                     this.handleVoteAdd,
-                    `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - Already voted issue with with`,
+                    `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Already voted issue with with`,
                     {
                         previousVoteTargetId,
                         removed,
@@ -577,11 +577,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         this.logger.error(
             this.handleVoteAdd,
-            `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - Unhandled case`
+            `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Unhandled case`
         );
     }
 
-    private async voteTimer(
+    private async voteTimer (
         channel: VoiceChannel,
         state: string,
         {
@@ -594,19 +594,19 @@ export class DynamicChannelClaimManager extends InitializeBase {
     ) {
         this.debugger.log(
             this.voteTimer,
-            `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - State: '${state}'`
+            `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - State: '${ state }'`
         );
 
-        if (!message.channel) {
+        if ( !message.channel ) {
             this.logger.error(
                 this.voteTimer,
-                `Guild id: '${interaction.guildId}', channel id: '${interaction.channelId}', user id: '${interaction.user.id}' - Channel not found`
+                `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Channel not found`
             );
             return;
         }
 
         // noinspection FallThroughInSwitchStatementJS
-        switch (state) {
+        switch ( state ) {
             case "done":
 
             case "starting":
@@ -616,99 +616,99 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 // TODO: It will not works without empty args.... remove '{}' from `editReply` method.
 
                 // TODO: Remove catch.
-                await this.adapters.claimVoteAdapter().editMessage(message, {});
+                await this.adapters.claimVoteAdapter().editMessage( message, {} );
         }
     }
 
-    private async trackedChannelsTimer() {
-        if (this.trackedChannels.length) {
+    private async trackedChannelsTimer () {
+        if ( this.trackedChannels.length ) {
             this.logger.log(
                 this.trackedChannelsTimer,
                 "Timer activated",
-                Object.entries(this.trackedChannels)
-                    .map(([ownerId, data]) => {
+                Object.entries( this.trackedChannels )
+                    .map( ( [ ownerId, data ] ) => {
                         const { channel } = data,
                             { guildId } = channel;
 
-                        return `Guild id: '${guildId}', channel: '${channel.name}', channelId: '${channel.id}' - Owner id: '${ownerId}', timestamp: '${data.timestamp}'`;
-                    })
-                    .join("\n")
+                        return `Guild id: '${ guildId }', channel: '${ channel.name }', channelId: '${ channel.id }' - Owner id: '${ ownerId }', timestamp: '${ data.timestamp }'`;
+                    } )
+                    .join( "\n" )
             );
         }
 
-        for (const [ownerId, data] of Object.entries(this.trackedChannels)) {
+        for ( const [ ownerId, data ] of Object.entries( this.trackedChannels ) ) {
             const { channel, timestamp } = data;
 
-            if (Date.now() - timestamp < this.getChannelOwnershipTimeout()) {
+            if ( Date.now() - timestamp < this.getChannelOwnershipTimeout() ) {
                 continue;
             }
 
             this.logger.info(
                 this.trackedChannelsTimer,
-                `Guild id: '${channel.guild.id}', owner id: '${ownerId}' - Abandon the channel: '${channel.name}'`
+                `Guild id: '${ channel.guild.id }', owner id: '${ ownerId }' - Abandon the channel: '${ channel.name }'`
             );
 
-            if (!channel.guild.channels.cache.has(channel.id)) {
+            if ( !channel.guild.channels.cache.has( channel.id ) ) {
                 this.logger.warn(
                     this.trackedChannelsTimer,
-                    `Guild id: '${channel.guild.id}' Channel id: '${channel.id}', owner id: '${ownerId}' ` +
-                        `- Channel: '${channel.name}' deleted while, skip abandon`
+                    `Guild id: '${ channel.guild.id }' Channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
+                        `- Channel: '${ channel.name }' deleted while, skip abandon`
                 );
 
-                this.removeChannelOwnerTracking(ownerId);
+                this.removeChannelOwnerTracking( ownerId );
 
                 continue;
             }
 
-            const state = DynamicChannelVoteManager.$.getState(channel.id);
+            const state = DynamicChannelVoteManager.$.getState( channel.id );
 
             this.debugger.log(
                 this.trackedChannelsTimer,
-                `Guild id: '${channel.guild.id}', channel id: '${channel.id}', owner id: '${ownerId}' ` +
-                    `- Channel: '${channel.name}' vote state: '${state}'`
+                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
+                    `- Channel: '${ channel.name }' vote state: '${ state }'`
             );
 
             // Skip if vote is not idle.
-            if (state !== "idle") {
+            if ( state !== "idle" ) {
                 this.logger.warn(
                     this.trackedChannelsTimer,
-                    `Guild id: '${channel.guild.id}', channel id: '${channel.id}', owner id: '${ownerId}' ` +
-                        `- Channel: '${channel.name}' has active vote, skip abandon`
+                    `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
+                        `- Channel: '${ channel.name }' has active vote, skip abandon`
                 );
 
                 continue;
             }
 
             // Send claim message.
-            this.markChannelAsClaimable(channel);
+            this.markChannelAsClaimable( channel );
 
-            this.dynamicChannelService.editPrimaryMessageDebounce(channel as VoiceChannel);
+            this.dynamicChannelService.editPrimaryMessageDebounce( channel as VoiceChannel );
 
-            await this.adapters.claimStartAdapter().send(channel, {});
+            await this.adapters.claimStartAdapter().send( channel, {} );
 
             // Remove from abandon list.
-            this.removeChannelOwnerTracking(ownerId, channel.id);
+            this.removeChannelOwnerTracking( ownerId, channel.id );
         }
     }
 
-    public async isClaimButtonEnabled(channel: VoiceBasedChannel) {
+    public async isClaimButtonEnabled ( channel: VoiceBasedChannel ) {
         // TODO: Add dedicated method for this.
-        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId(channel.id);
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
-        if (!masterChannelDB) {
+        if ( !masterChannelDB ) {
             this.logger.error(
                 this.isClaimButtonEnabled,
-                `Guild id: '${channel.guild.id}', channel id: '${channel.id}' - Master channel not found.`
+                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - Master channel not found.`
             );
             return false;
         }
 
-        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate(masterChannelDB, false);
+        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, false );
 
-        if (!enabledButtons?.length) {
+        if ( !enabledButtons?.length ) {
             this.logger.error(
                 this.isClaimButtonEnabled,
-                `Guild id: '${channel.guild.id}', channel id: '${channel.id}' - Enabled buttons not found.`
+                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - Enabled buttons not found.`
             );
             return false;
         }
@@ -716,59 +716,56 @@ export class DynamicChannelClaimManager extends InitializeBase {
         const claimChannelButtonId = this.dynamicChannelClaimButtonId;
 
         // Check if claim button is enabled.
-        if (!claimChannelButtonId || claimChannelButtonId in enabledButtons) {
+        if ( !claimChannelButtonId || claimChannelButtonId in enabledButtons ) {
             return true;
         }
 
         this.logger.log(
             this.isClaimButtonEnabled,
-            `Guild id: '${channel.guild.id}', channel id: '${channel.id}' - Claim button is disabled.`
+            `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - Claim button is disabled.`
         );
 
         return false;
     }
 
-    private async onBotReady(client: Client<true>) {
+    private async onBotReady ( _client: Client ) {
         // await this.handleAbandonedChannels(client);
     }
 
-    private async onOwnerJoinDynamicChannel(owner: GuildMember, channel: VoiceBasedChannel) {
-        const state = DynamicChannelVoteManager.$.getState(channel.id);
+    private async onOwnerJoinDynamicChannel ( owner: GuildMember, channel: VoiceBasedChannel ) {
+        const state = DynamicChannelVoteManager.$.getState( channel.id );
 
-        if ("idle" === state) {
-            this.removeChannelOwnerTracking(owner.id, channel.id);
+        if ( "idle" === state ) {
+            this.removeChannelOwnerTracking( owner.id, channel.id );
 
-            await this.adapters.claimStartAdapter().deletedStartedMessagesInternal(channel);
+            await this.adapters.claimStartAdapter().deletedStartedMessagesInternal( channel );
         }
     }
 
-    private async onOwnerLeaveDynamicChannel(owner: GuildMember, channel: VoiceBasedChannel) {
-        if (await this.isClaimButtonEnabled(channel)) {
-            this.addChannelTracking(owner, channel);
+    private async onOwnerLeaveDynamicChannel ( owner: GuildMember, channel: VoiceBasedChannel ) {
+        if ( await this.isClaimButtonEnabled( channel ) ) {
+            this.addChannelTracking( owner, channel );
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    private async onLeaveDynamicChannelEmpty(
+    private async onLeaveDynamicChannelEmpty (
         channel: VoiceBasedChannel,
-        channelDB: null | ChannelExtended,
-        guild: Guild,
-        args: IChannelLeaveGenericArgs
+        _channelDB: null | ChannelExtended,
+        _guild: Guild,
+        _args: IChannelLeaveGenericArgs
     ) {
-        this.removeChannelOwnerTracking(channel.id);
+        this.removeChannelOwnerTracking( channel.id );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    private async onUpdateChannelOwnership(
+    private async onUpdateChannelOwnership (
         channel: VoiceChannel,
-        previousOwnerId: string,
-        newOwnerId: string,
-        from: "claim" | "transfer",
-        masterChannel: VoiceChannel
+        _previousOwnerId: string,
+        _newOwnerId: string,
+        _from: "claim" | "transfer",
+        _masterChannel: VoiceChannel
     ) {
-        // Request to rescan, since new channel owner, to determine if he abandoned.
-        if (await this.isClaimButtonEnabled(channel)) {
-            setTimeout(() => this.handleAbandonedChannels(channel.client, [channel]));
+        if ( await this.isClaimButtonEnabled( channel ) ) {
+            await this.handleAbandonedChannels( channel.client, [ channel ] );
         }
     }
 }

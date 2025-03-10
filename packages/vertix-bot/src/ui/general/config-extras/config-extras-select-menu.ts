@@ -8,32 +8,32 @@ import type { APISelectMenuOption } from "discord.js";
 
 export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
     private static vars = {
-        dynamicChannelMentionableLabel: uiUtilsWrapAsTemplate("dynamicChannelMentionableLabel"),
-        dynamicChannelLogsChannelLabel: uiUtilsWrapAsTemplate("dynamicChannelLogsChannelLabel"),
-        dynamicChannelAutoSaveLabel: uiUtilsWrapAsTemplate("dynamicChannelAutoSaveLabel"),
+        dynamicChannelMentionableLabel: uiUtilsWrapAsTemplate( "dynamicChannelMentionableLabel" ),
+        dynamicChannelLogsChannelLabel: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelLabel" ),
+        dynamicChannelAutoSaveLabel: uiUtilsWrapAsTemplate( "dynamicChannelAutoSaveLabel" ),
 
-        state: uiUtilsWrapAsTemplate("state"),
-        stateOn: uiUtilsWrapAsTemplate("stateOn"),
-        stateOff: uiUtilsWrapAsTemplate("stateOff")
+        state: uiUtilsWrapAsTemplate( "state" ),
+        stateOn: uiUtilsWrapAsTemplate( "stateOn" ),
+        stateOff: uiUtilsWrapAsTemplate( "stateOff" )
     };
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/ConfigExtrasSelectMenu";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder(): Promise<string> {
+    protected async getPlaceholder (): Promise<string> {
         return "⌘ ∙ Configuration";
     }
 
-    protected async getMinValues() {
+    protected async getMinValues () {
         return 0;
     }
 
-    protected async getSelectOptions() {
+    protected async getSelectOptions () {
         const {
             dynamicChannelMentionableLabel,
             dynamicChannelLogsChannelLabel,
@@ -49,34 +49,34 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
                 value:
                     "dynamicChannelMentionable" +
                     UI_CUSTOM_ID_SEPARATOR +
-                    (this.uiArgs?.dynamicChannelMentionable ? "0" : "1")
+                    ( this.uiArgs?.dynamicChannelMentionable ? "0" : "1" )
             },
             {
                 label: dynamicChannelAutoSaveLabel + " " + state,
                 value:
                     "dynamicChannelAutoSave" +
                     UI_CUSTOM_ID_SEPARATOR +
-                    (this.uiArgs?.dynamicChannelAutoSave ? "0" : "1")
+                    ( this.uiArgs?.dynamicChannelAutoSave ? "0" : "1" )
             }
         ];
 
-        if (!this.uiArgs?._configExtraMenuDisableLogsChannelOption) {
-            result.push({
+        if ( !this.uiArgs?._configExtraMenuDisableLogsChannelOption ) {
+            result.push( {
                 label: dynamicChannelLogsChannelLabel + " " + state,
                 value: "dynamicChannelLogsChannel" + UI_CUSTOM_ID_SEPARATOR + "0" // Always off, since it only turn off button.
-            });
+            } );
         }
 
         return result;
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const { stateOn, stateOff } = ConfigExtrasSelectMenu.vars;
 
         return {
             state: {
-                [stateOn]: "∙🟢 On",
-                [stateOff]: "∙🔴 Off"
+                [ stateOn ]: "∙🟢 On",
+                [ stateOff ]: "∙🔴 Off"
             },
 
             dynamicChannelMentionableLabel: "@ ∙ Mention user in primary message",
@@ -85,14 +85,14 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         };
     }
 
-    protected getDataFor(option: APISelectMenuOption) {
+    protected getDataFor ( option: APISelectMenuOption ) {
         const result: {
             state: typeof ConfigExtrasSelectMenu.vars.stateOn | typeof ConfigExtrasSelectMenu.vars.stateOff;
         } = { state: ConfigExtrasSelectMenu.vars.stateOff };
 
-        const optionValue = option.value.split(UI_CUSTOM_ID_SEPARATOR, 2);
+        const optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );
 
-        if ("1" === optionValue[1]) {
+        if ( "1" === optionValue[ 1 ] ) {
             result.state = ConfigExtrasSelectMenu.vars.stateOn;
         }
 

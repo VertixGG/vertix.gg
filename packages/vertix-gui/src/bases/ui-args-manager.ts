@@ -27,75 +27,75 @@ export class UIArgsManager extends InitializeBase {
         };
     } = {};
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIArgsManager";
     }
 
-    public constructor(private readonly prefixName: string) {
+    public constructor ( private readonly prefixName: string ) {
         super();
 
-        this.debugger = createDebugger(this, "UI", prefixName);
+        this.debugger = createDebugger( this, "UI", prefixName );
     }
 
     // TODO: Remove this method, it should be handled by initiator
-    public getArgsId(context: UIAdapterStartContext | UIAdapterReplyContext | Message<true>): string {
+    public getArgsId ( context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): string {
         let id;
 
-        if (context instanceof GuildChannel) {
+        if ( context instanceof GuildChannel ) {
             id = context.id;
-        } else if (context instanceof Message) {
+        } else if ( context instanceof Message ) {
             id = context.id;
-        } else if (context.isCommand()) {
+        } else if ( context.isCommand() ) {
             id = context.id;
-        } else if (context.message?.interaction) {
+        } else if ( context.message?.interaction ) {
             id = context.message.interaction.id;
         } else {
             id = context.message?.id;
         }
 
-        this.debugger.log(this.getArgsId, "", id);
+        this.debugger.log( this.getArgsId, "", id );
 
-        if (!id) {
-            throw new Error("Invalid interaction id");
+        if ( !id ) {
+            throw new Error( "Invalid interaction id" );
         }
 
         return id;
     }
 
-    public getArgsById(self: UIBase, id: string): UIArgs {
-        return this.data[self.getName()]?.[id]?.args;
+    public getArgsById ( self: UIBase, id: string ): UIArgs {
+        return this.data[ self.getName() ]?.[ id ]?.args;
     }
 
-    public getArgs(self: UIBase, context: UIAdapterStartContext | UIAdapterReplyContext | Message<true>): UIArgs {
-        const argsId = this.getArgsId(context),
-            args = this.getArgsById(self, argsId);
+    public getArgs ( self: UIBase, context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): UIArgs {
+        const argsId = this.getArgsId( context ),
+            args = this.getArgsById( self, argsId );
 
         // Update accessedAt.
-        if (args) {
-            this.data[self.getName()][argsId].accessedAt = new Date(Date.now());
+        if ( args ) {
+            this.data[ self.getName() ][ argsId ].accessedAt = new Date( Date.now() );
 
             // Create proxy to update accessedAt.
-            return new Proxy(Object.assign({}, args), {
-                get: (target, property: string) => {
+            return new Proxy( Object.assign( {}, args ), {
+                get: ( target, property: string ) => {
                     // If not exist return undefined
                     if (
-                        "undefined" === typeof this.data[self.getName()] ||
-                        "undefined" === typeof this.data[self.getName()][argsId]
+                        "undefined" === typeof this.data[ self.getName() ] ||
+                        "undefined" === typeof this.data[ self.getName() ][ argsId ]
                     ) {
                         return undefined;
                     }
 
-                    this.data[self.getName()][argsId].accessedAt = new Date(Date.now());
+                    this.data[ self.getName() ][ argsId ].accessedAt = new Date( Date.now() );
 
-                    return target[property];
+                    return target[ property ];
                 }
-            });
+            } );
         }
 
         return args;
     }
 
-    public setInitialArgs(
+    public setInitialArgs (
         self: UIBase,
         id: string,
         args: UIArgs,
@@ -104,86 +104,86 @@ export class UIArgsManager extends InitializeBase {
             overwrite?: boolean;
         } = {}
     ) {
-        this.debugger.log(this.setInitialArgs, self.getName() + "~" + id, args);
+        this.debugger.log( this.setInitialArgs, self.getName() + "~" + id, args );
 
-        if (typeof this.data[self.getName()] !== "object") {
-            this.data[self.getName()] = {};
+        if ( typeof this.data[ self.getName() ] !== "object" ) {
+            this.data[ self.getName() ] = {};
         }
 
-        if (!internalArgs.overwrite && typeof this.data[self.getName()][id] === "object") {
-            this.debugger.dumpDown(this.setInitialArgs, this.data[self.getName()][id]);
+        if ( !internalArgs.overwrite && typeof this.data[ self.getName() ][ id ] === "object" ) {
+            this.debugger.dumpDown( this.setInitialArgs, this.data[ self.getName() ][ id ] );
 
-            if (!internalArgs.silent) {
-                throw new Error(`${this.prefixName}: Args with name: '${self.getName()}' id: '${id}' already exists`);
+            if ( !internalArgs.silent ) {
+                throw new Error( `${ this.prefixName }: Args with name: '${ self.getName() }' id: '${ id }' already exists` );
             }
 
-            this.logger.error(this.setInitialArgs, `${this.prefixName}: Args with id: '${id}' already exists`);
-            this.deleteArgs(self, id);
+            this.logger.error( this.setInitialArgs, `${ this.prefixName }: Args with id: '${ id }' already exists` );
+            this.deleteArgs( self, id );
             return;
         }
 
-        this.data[self.getName()][id] = {
+        this.data[ self.getName() ][ id ] = {
             args: args || {},
-            createdAt: new Date(Date.now()),
-            updatedAt: new Date(Date.now()),
-            accessedAt: new Date(Date.now())
+            createdAt: new Date( Date.now() ),
+            updatedAt: new Date( Date.now() ),
+            accessedAt: new Date( Date.now() )
         };
     }
 
-    public setArgs(
+    public setArgs (
         self: UIBase,
         interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext,
         args: UIArgs
     ) {
-        const argsId = this.getArgsId(interaction),
-            appliedArgs = this.getArgsById(self, argsId);
+        const argsId = this.getArgsId( interaction ),
+            appliedArgs = this.getArgsById( self, argsId );
 
-        if (!appliedArgs) {
+        if ( !appliedArgs ) {
             // TODO: Good error example.
-            const error = new ArgsNotFoundError(argsId);
+            const error = new ArgsNotFoundError( argsId );
 
-            this.logger.error(this.setArgs, error.message, error);
+            this.logger.error( this.setArgs, error.message, error );
 
             return;
         }
 
         const newArgs: any = {};
 
-        Object.entries(args).forEach(([key, value]) => {
-            newArgs[key] = value;
+        Object.entries( args ).forEach( ( [ key, value ] ) => {
+            newArgs[ key ] = value;
 
-            appliedArgs[key] = value;
-        });
+            appliedArgs[ key ] = value;
+        } );
 
-        this.data[self.getName()][argsId].updatedAt = new Date(Date.now());
-        this.data[self.getName()][argsId].accessedAt = new Date(Date.now());
+        this.data[ self.getName() ][ argsId ].updatedAt = new Date( Date.now() );
+        this.data[ self.getName() ][ argsId ].accessedAt = new Date( Date.now() );
 
-        this.debugger.log(this.setArgs, "", newArgs);
+        this.debugger.log( this.setArgs, "", newArgs );
     }
 
-    public deleteArgs(self: UIBase | string, id: string) {
-        if (typeof self !== "string") {
+    public deleteArgs ( self: UIBase | string, id: string ) {
+        if ( typeof self !== "string" ) {
             self = self.getName();
         }
 
-        this.debugger.log(this.deleteArgs, `Try delete args with id: '${self + "~" + id}'`);
+        this.debugger.log( this.deleteArgs, `Try delete args with id: '${ self + "~" + id }'` );
 
-        const object = this.data[self];
+        const object = this.data[ self ];
 
-        if (typeof object === "object") {
-            this.debugger.dumpDown(this.deleteArgs, object[id], `Deleted args with id: '${self + "~" + id}'`);
+        if ( typeof object === "object" ) {
+            this.debugger.dumpDown( this.deleteArgs, object[ id ], `Deleted args with id: '${ self + "~" + id }'` );
 
-            delete object[id];
+            delete object[ id ];
 
-            if (Object.keys(object).length === 0) {
-                delete this.data[self];
+            if ( Object.keys( object ).length === 0 ) {
+                delete this.data[ self ];
             }
         } else {
-            this.logger.warn(this.deleteArgs, `Args with id: '${self + "~" + id}' not found`);
+            this.logger.warn( this.deleteArgs, `Args with id: '${ self + "~" + id }' not found` );
         }
     }
 
-    public getData() {
+    public getData () {
         return this.data;
     }
 }

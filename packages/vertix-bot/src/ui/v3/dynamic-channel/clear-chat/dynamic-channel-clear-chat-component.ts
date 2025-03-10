@@ -15,34 +15,34 @@ import { DynamicChannelClearChatSuccessEmbed } from "@vertix.gg/bot/src/ui/v3/dy
 import { DynamicChannelClearChatButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-button";
 
 export class DynamicChannelClearChatComponent extends UIComponentBase {
-    public static getName(): string {
+    public static getName (): string {
         return "Vertix/UI-V3/DynamicChannelClearChatComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups() {
+    public static getElementsGroups () {
         return [
             // TODO: If i put `UIEmbedsGroupBase.createSingleGroup` here it does not throw error.
-            UIElementsGroupBase.createSingleGroup(DynamicChannelClearChatButton)
+            UIElementsGroupBase.createSingleGroup( DynamicChannelClearChatButton )
         ];
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelClearChatSuccessEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelClearChatNothingToClearEmbed),
-            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelClearChatSuccessEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelClearChatNothingToClearEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
         ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return null;
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return null;
     }
 }

@@ -10,19 +10,19 @@ export abstract class ChannelDataModelBase extends ModelDataOwnerBase<
     PrismaBot.ChannelData,
     TDataOwnerDefaultUniqueKeys
 > {
-    public static getName() {
+    public static getName () {
         return "VertixBase/Models/ChannelDataModelBase";
     }
 
-    protected getModel() {
+    protected getModel () {
         return clientChannelExtend.channel;
     }
 
-    protected getDataModel() {
+    protected getDataModel () {
         return clientChannelExtend.channelData;
     }
 
-    protected getDataUniqueKeyName() {
+    protected getDataUniqueKeyName () {
         return "ownerId_key_version";
     }
 }

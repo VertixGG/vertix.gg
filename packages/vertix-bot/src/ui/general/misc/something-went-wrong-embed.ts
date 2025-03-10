@@ -4,23 +4,23 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SomethingWentWrongEmbed extends UIEmbedBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/SomethingWentWrongEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic; // TODO: Should be static.
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return "🤷 Oops, an issue has occurred";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return "Something went wrong";
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return Colors.Red;
     }
 }

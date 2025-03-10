@@ -13,33 +13,33 @@ import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-ch
 import { DynamicChannelEmbed } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-embed";
 
 export class DynamicChannelComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannel";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic; // TODO: You should try make it static.
     }
 
-    public static getElementsGroups() {
-        return [DynamicChannelElementsGroup];
+    public static getElementsGroups () {
+        return [ DynamicChannelElementsGroup ];
     }
 
-    protected static getEmbeds() {
-        return [DynamicChannelEmbed];
+    protected static getEmbeds () {
+        return [ DynamicChannelEmbed ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return "Vertix/UI-V2/DynamicChannelElementsGroup";
     }
 
-    protected async getSchemaInternal() {
+    protected async getSchemaInternal () {
         const schema = await super.getSchemaInternal();
 
         schema.entities.elements = uiUtilsDynamicElementsRearrange(
             [
-                schema.entities.elements.flat(UI_ELEMENTS_DEPTH).filter(
-                    (element) =>
+                schema.entities.elements.flat( UI_ELEMENTS_DEPTH ).filter(
+                    ( element ) =>
                         // TODO: There is already mechanism to reduce non-available elements. in `buildComponentsBySchema`.
                         // check if required.
                         element.isAvailable

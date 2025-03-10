@@ -10,7 +10,7 @@ export type TPossibleAdapters =
     | UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
 
 export type TAdapterClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
-export type TAdapterConstructor = { new (options: TAdapterRegisterOptions): TPossibleAdapters };
+export type TAdapterConstructor = { new ( options: TAdapterRegisterOptions ): TPossibleAdapters };
 
 export type TAdapterRegisterOptions = {
     module?: UIModuleBase;

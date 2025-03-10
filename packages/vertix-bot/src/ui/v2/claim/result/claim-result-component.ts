@@ -12,32 +12,32 @@ import { ClaimResultVoteSelfEmbed } from "@vertix.gg/bot/src/ui/v2/claim/result/
 import { ClaimResultVotedSameEmbed } from "@vertix.gg/bot/src/ui/v2/claim/result/claim-result-voted-same-embed";
 
 export class ClaimResultComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ClaimResultComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
             // TODO: All the control from vote in order select the right embeds was too hard to implement.
             // TODO: Check `handleVoteStepIn` and `handleVoteStepOut`.
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultOwnerStopEmbed),
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultOwnerStopEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultVotedEmbed),
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultVotedSameEmbed),
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultVoteUpdatedEmbed),
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultVotedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultVotedSameEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultVoteUpdatedEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultStepInEmbed),
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultStepAlreadyInEmbed),
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultStepInEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultStepAlreadyInEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(ClaimResultVoteSelfEmbed)
+            UIEmbedsGroupBase.createSingleGroup( ClaimResultVoteSelfEmbed )
         ];
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return null;
     }
 }

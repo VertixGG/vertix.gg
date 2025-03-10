@@ -8,51 +8,51 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class DynamicChannelPremiumResetChannelAdapter extends DynamicChannelAdapterBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelPremiumResetChannelAdapter";
     }
 
-    public static getComponent() {
+    public static getComponent () {
         return DynamicChannelPremiumResetChannelComponent;
     }
 
-    protected getStartArgs() {
+    protected getStartArgs () {
         return {};
     }
 
-    protected getReplyArgs(interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs) {
-        if (argsFromManager?.result) {
+    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
+        if ( argsFromManager?.result ) {
             return argsFromManager.result;
         }
 
         return {};
     }
 
-    protected onEntityMap() {
+    protected onEntityMap () {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton",
             this.onResetChannelButtonClicked
         );
     }
 
-    private async onResetChannelButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
-        const result = await this.dynamicChannelService.resetChannel(interaction, interaction.channel);
+    private async onResetChannelButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+        const result = await this.dynamicChannelService.resetChannel( interaction, interaction.channel );
 
-        switch (result?.code) {
+        switch ( result?.code ) {
             case "success-rename-rate-limit":
             case "success":
-                this.getComponent().switchEmbedsGroup("Vertix/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup");
+                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup" );
 
-                await this.ephemeral(interaction, { result });
+                await this.ephemeral( interaction, { result } );
                 break;
 
             case "vote-required":
-                await TopGGManager.$.sendVoteEmbed(interaction);
+                await TopGGManager.$.sendVoteEmbed( interaction );
                 break;
 
             default:
-                this.getComponent().switchEmbedsGroup("VertixBot/UI-General/SomethingWentWrongEmbedGroup");
-                await this.ephemeral(interaction, {});
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-General/SomethingWentWrongEmbedGroup" );
+                await this.ephemeral( interaction, {} );
         }
     }
 }

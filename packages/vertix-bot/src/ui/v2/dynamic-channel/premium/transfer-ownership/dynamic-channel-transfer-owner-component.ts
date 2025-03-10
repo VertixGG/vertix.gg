@@ -18,34 +18,34 @@ import { DynamicChannelTransferOwnerTransferredEmbed } from "@vertix.gg/bot/src/
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelTransferOwnerComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups() {
-        return [UIElementsGroupBase.createSingleGroup(DynamicChannelTransferOwnerUserMenu), YesNoElementsGroup];
+    public static getElementsGroups () {
+        return [ UIElementsGroupBase.createSingleGroup( DynamicChannelTransferOwnerUserMenu ), YesNoElementsGroup ];
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelTransferOwnerEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelTransferOwnerUserSelectedEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelTransferOwnerTransferredEmbed),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerUserSelectedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerTransferredEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(DisabledWhileClaimEmbed),
-            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
+            UIEmbedsGroupBase.createSingleGroup( DisabledWhileClaimEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
         ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return null;
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return null;
     }
 }

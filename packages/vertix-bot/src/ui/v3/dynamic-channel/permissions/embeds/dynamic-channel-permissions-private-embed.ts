@@ -8,39 +8,39 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate("separator"),
-        value: uiUtilsWrapAsTemplate("value"),
+        separator: uiUtilsWrapAsTemplate( "separator" ),
+        value: uiUtilsWrapAsTemplate( "value" ),
 
-        message: uiUtilsWrapAsTemplate("message"),
-        messageDefault: uiUtilsWrapAsTemplate("messageDefault"),
-        messageAccessNotAvailable: uiUtilsWrapAsTemplate("messageAccessNotAvailable"),
+        message: uiUtilsWrapAsTemplate( "message" ),
+        messageDefault: uiUtilsWrapAsTemplate( "messageDefault" ),
+        messageAccessNotAvailable: uiUtilsWrapAsTemplate( "messageAccessNotAvailable" ),
 
-        allowedUsers: uiUtilsWrapAsTemplate("allowedUsers"),
-        allowedUsersDisplay: uiUtilsWrapAsTemplate("allowedUsersDisplay"),
-        allowedUsersDefault: uiUtilsWrapAsTemplate("allowedUsersDefault")
+        allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
+        allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
+        allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPermissionsPrivateEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return 0xf18b75; // Same as the "danger" color in Discord.
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return "https://i.imgur.com/NthLO3W.png";
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🚫  The channel is private now";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return (
             "Please be aware that only granted users can enter your channel.\n\n" +
             DynamicChannelPermissionsPrivateEmbed.vars.allowedUsersDisplay +
@@ -49,18 +49,18 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
         );
     }
 
-    protected getArrayOptions() {
+    protected getArrayOptions () {
         const { separator, value } = DynamicChannelPermissionsPrivateEmbed.vars;
 
         return {
             allowedUsers: {
-                format: `- <@${value}>${separator}`,
+                format: `- <@${ value }>${ separator }`,
                 separator: "\n"
             }
         };
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const {
             messageDefault,
             messageAccessNotAvailable,
@@ -71,20 +71,20 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
 
         return {
             message: {
-                [messageDefault]: "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
-                [messageAccessNotAvailable]:
+                [ messageDefault ]: "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                [ messageAccessNotAvailable ]:
                     "There is no way to grant access to your channel for new members.\n\n" +
                     "This is because the **(👥 Access)** Button has been disabled by the administrator"
             },
 
             allowedUsersDisplay: {
-                [allowedUsersDefault]: "Currently no other user has access except you.\n",
-                [allowedUsers]: "**_Allowed users_**: \n" + `${allowedUsers}\n`
+                [ allowedUsersDefault ]: "Currently no other user has access except you.\n",
+                [ allowedUsers ]: "**_Allowed users_**: \n" + `${ allowedUsers }\n`
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const result: any = {},
             {
                 messageDefault,
@@ -94,14 +94,14 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
                 allowedUsersDefault
             } = DynamicChannelPermissionsPrivateEmbed.vars;
 
-        if (args.allowedUsers?.length) {
-            result.allowedUsers = args.allowedUsers?.map((user: any) => user.id);
+        if ( args.allowedUsers?.length ) {
+            result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
             result.allowedUsersDisplay = allowedUsers;
         } else {
             result.allowedUsersDisplay = allowedUsersDefault;
         }
 
-        if (args.dynamicChannelButtonsIsAccessButtonAvailable) {
+        if ( args.dynamicChannelButtonsIsAccessButtonAvailable ) {
             result.message = messageDefault;
         } else {
             result.message = messageAccessNotAvailable;

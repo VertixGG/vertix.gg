@@ -20,62 +20,62 @@ export class GuildManagerMock {
         [key: string]: GuildMemberMock;
     } = {};
 
-    public constructor(guild: Guild, _iterable?: Iterable<RawGuildMemberData>) {
+    public constructor ( guild: Guild, _iterable?: Iterable<RawGuildMemberData> ) {
         this.guild = guild;
     }
 
-    public async add(
+    public async add (
         user: UserResolvable,
         options: AddGuildMemberOptions & { fetchWhenExisting: false }
     ): Promise<GuildMember | null> {
-        return new Promise((resolve, reject) => {
-            if (user instanceof UserMock) {
+        return new Promise( ( resolve, reject ) => {
+            if ( user instanceof UserMock ) {
                 // If the user already exists, throw an error.
-                if (this.members[user.id]) {
-                    return reject(new Error("User already exists."));
+                if ( this.members[ user.id ] ) {
+                    return reject( new Error( "User already exists." ) );
                 }
 
-                this.members[user.id] = new GuildMemberMock(this.guild.client, {
+                this.members[ user.id ] = new GuildMemberMock( this.guild.client, {
                     user,
                     nick: options.nick
-                } as RawGuildMemberData);
+                } as RawGuildMemberData );
 
-                return resolve(this.members[user.id].getFakeInstance());
+                return resolve( this.members[ user.id ].getFakeInstance() );
             }
 
-            reject(new Error("Method not implemented."));
-        });
+            reject( new Error( "Method not implemented." ) );
+        } );
     }
 
-    public async fetch(
-        options: UserResolvable | FetchMemberOptions | (FetchMembersOptions & { user: UserResolvable })
+    public async fetch (
+        options: UserResolvable | FetchMemberOptions | ( FetchMembersOptions & { user: UserResolvable } )
     ): Promise<GuildMember> {
-        if ("string" === typeof options) {
-            return new Promise((resolve, reject) => {
-                const member = this.members[options];
+        if ( "string" === typeof options ) {
+            return new Promise( ( resolve, reject ) => {
+                const member = this.members[ options ];
 
-                if (!member) {
-                    return reject(new Error("Member not found."));
+                if ( !member ) {
+                    return reject( new Error( "Member not found." ) );
                 }
 
-                return resolve(member.getFakeInstance());
-            });
+                return resolve( member.getFakeInstance() );
+            } );
         }
 
-        return new Promise((resolve, reject) => {
-            reject(new Error("Method not implemented."));
-        });
+        return new Promise( ( resolve, reject ) => {
+            reject( new Error( "Method not implemented." ) );
+        } );
     }
 
-    public get cache() {
+    public get cache () {
         return {
-            get: (id: string) => {
-                return this.members[id]?.getFakeInstance();
+            get: ( id: string ) => {
+                return this.members[ id ]?.getFakeInstance();
             }
         };
     }
 
-    public getFakeInstance(): GuildMemberManager {
+    public getFakeInstance (): GuildMemberManager {
         return this as unknown as GuildMemberManager;
     }
 }

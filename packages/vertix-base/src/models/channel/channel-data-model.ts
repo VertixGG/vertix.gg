@@ -5,18 +5,18 @@ import { ChannelDataModelBase } from "@vertix.gg/base/src/models/channel/channel
 import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 
 export class ChannelDataModel extends ChannelDataModelBase {
-    public static getName() {
+    public static getName () {
         return "VertixBase/Models/ChannelData";
     }
 
-    public constructor(
-        showCacheDebug = isDebugEnabled("CACHE", ChannelDataModel.getName()),
-        showModelDebug = isDebugEnabled("MODEL", ChannelDataModel.getName())
+    public constructor (
+        showCacheDebug = isDebugEnabled( "CACHE", ChannelDataModel.getName() ),
+        showModelDebug = isDebugEnabled( "MODEL", ChannelDataModel.getName() )
     ) {
-        super(showCacheDebug, showModelDebug);
+        super( showCacheDebug, showModelDebug );
     }
 
-    protected getDataVersion() {
+    protected getDataVersion () {
         return VERSION_UI_V2;
     }
 }

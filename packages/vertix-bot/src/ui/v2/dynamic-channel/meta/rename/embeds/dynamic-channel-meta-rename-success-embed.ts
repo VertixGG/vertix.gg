@@ -8,26 +8,26 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelMetaRenameSuccessEmbed extends UIEmbedBase {
     private static vars = {
-        channelName: uiUtilsWrapAsTemplate("channelName")
+        channelName: uiUtilsWrapAsTemplate( "channelName" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelMetaRenameSuccessEmbed";
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return 0xe8ae08; // Pencil like.
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle(): string {
-        return `✏️  Your channel's name has changed to '${DynamicChannelMetaRenameSuccessEmbed.vars.channelName}'`;
+    protected getTitle (): string {
+        return `✏️  Your channel's name has changed to '${ DynamicChannelMetaRenameSuccessEmbed.vars.channelName }'`;
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             channelName: args.channelName
         };

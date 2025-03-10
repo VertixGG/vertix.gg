@@ -5,7 +5,7 @@ import type { TDataDefaultResult, TDataType } from "@vertix.gg/base/src/factory/
 import type { TBaseModelStub } from "@vertix.gg/base/src/interfaces/base-model-stub";
 import type { TWithOptionalProps } from "@vertix.gg/utils/src/common-types";
 
-type AbstractConstructor<T> = abstract new (...args: any[]) => T;
+type AbstractConstructor<T> = abstract new ( ...args: any[] ) => T;
 
 type TPossibleOwnerModels = PrismaBot.Channel | PrismaBot.Guild | PrismaBot.User;
 
@@ -21,38 +21,38 @@ export abstract class ModelWithDataBase<
 > extends ModelBaseCachedWithModel<TOwnerModel, TOwnerModelResult> {
     protected dataModels;
 
-    public static getName() {
+    public static getName () {
         return "VertixBase/Bases/ModelWithDataBase";
     }
 
-    protected constructor() {
+    protected constructor () {
         super();
 
         function WrapperMixin<
             T extends AbstractConstructor<
                 ModelDataOwnerBase<TOwnerModel, TDataModel, TDataModelResult, TDataModelUniqueKeys>
             >
-        >(Ctor: T) {
+        > ( Ctor: T ) {
             abstract class ModelDataOwnerWrapper extends Ctor {
-                public async create<T extends TDataType>(
+                public async create<T extends TDataType> (
                     args: Parameters<TOwnerModel["findUnique"]>[0],
                     keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
                     value: T
                 ) {
-                    return super.create(args, keys, value);
+                    return super.create( args, keys, value );
                 }
 
                 // TODO: Rename or find more consistent names
-                public async getData<T extends TDataType>(
+                public async getData<T extends TDataType> (
                     keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
                     options: {
                         cache: boolean;
                     }
                 ) {
-                    return await this.dataGet<T>(keys, options.cache);
+                    return await this.dataGet<T>( keys, options.cache );
                 }
 
-                public getVersion() {
+                public getVersion () {
                     return this.getDataVersion();
                 }
             }
@@ -60,17 +60,17 @@ export abstract class ModelWithDataBase<
             return ModelDataOwnerWrapper;
         }
 
-        this.dataModels = this.getDataModels().map((ModelClass) => {
-            const WrappedModelClass = WrapperMixin(ModelClass);
+        this.dataModels = this.getDataModels().map( ( ModelClass ) => {
+            const WrappedModelClass = WrapperMixin( ModelClass );
 
             return new WrappedModelClass();
-        });
+        } );
     }
 
-    protected abstract getDataModels(): (new () => ModelDataOwnerBase<
+    protected abstract getDataModels(): ( new () => ModelDataOwnerBase<
         TOwnerModel,
         TDataModel,
         TDataModelResult,
         TDataModelUniqueKeys
-    >)[];
+    > )[];
 }

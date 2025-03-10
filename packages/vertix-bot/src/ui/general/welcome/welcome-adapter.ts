@@ -14,23 +14,23 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/WelcomeAdapter";
     }
 
-    public static getComponent() {
+    public static getComponent () {
         return WelcomeComponent;
     }
 
-    public getPermissions() {
-        return new PermissionsBitField(PermissionFlagsBits.ViewChannel);
+    public getPermissions () {
+        return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
     }
 
-    public getChannelTypes() {
-        return [ChannelType.GuildVoice, ChannelType.GuildText];
+    public getChannelTypes () {
+        return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    protected getMessage(
+    protected getMessage (
         from: UIAdapterBuildSource,
         context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction,
         argsFromManager?: UIArgs
@@ -38,31 +38,31 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
         const result = super.getMessage();
 
         // Mention the owner of the channel - TODO Find cleaner way to do this.
-        if (argsFromManager?.userId && "send" === from) {
+        if ( argsFromManager?.userId && "send" === from ) {
             result.content = "<@" + argsFromManager.userId + ">";
         }
 
         return result;
     }
 
-    protected getStartArgs() {
+    protected getStartArgs () {
         return {};
     }
 
-    protected getReplyArgs() {
+    protected getReplyArgs () {
         return {};
     }
 
-    protected onEntityMap() {
-        this.bindButton("VertixBot/UI-General/WelcomeSetupButton", async (interaction) => {
-            const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService"),
-                uiAdapter = uiService.get("VertixBot/UI-General/SetupAdapter");
+    protected onEntityMap () {
+        this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async ( interaction ) => {
+            const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
+                uiAdapter = uiService.get( "VertixBot/UI-General/SetupAdapter" );
 
-            await uiAdapter?.ephemeral(interaction);
+            await uiAdapter?.ephemeral( interaction );
 
-            const argsId = this.getArgsManager().getArgsId(interaction);
+            const argsId = this.getArgsManager().getArgsId( interaction );
 
-            this.getArgsManager().deleteArgs(this, argsId);
-        });
+            this.getArgsManager().deleteArgs( this, argsId );
+        } );
     }
 }

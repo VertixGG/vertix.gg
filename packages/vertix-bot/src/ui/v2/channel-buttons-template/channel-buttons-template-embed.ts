@@ -10,39 +10,39 @@ import type { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v2/dynamic-
 
 export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
     private static _vars = {
-        separator: uiUtilsWrapAsTemplate("separator"),
-        value: uiUtilsWrapAsTemplate("value"),
+        separator: uiUtilsWrapAsTemplate( "separator" ),
+        value: uiUtilsWrapAsTemplate( "value" ),
 
-        dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate("dynamicChannelButtonsTemplate")
+        dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ChannelButtonsTemplateEmbed";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return ChannelButtonsTemplateEmbed._vars.dynamicChannelButtonsTemplate;
     }
 
-    protected getArrayOptions() {
+    protected getArrayOptions () {
         const result = {
             dynamicChannelButtonsTemplate: {
-                format: `- ( ${ChannelButtonsTemplateEmbed._vars.value} )${ChannelButtonsTemplateEmbed._vars.separator}`,
+                format: `- ( ${ ChannelButtonsTemplateEmbed._vars.value } )${ ChannelButtonsTemplateEmbed._vars.separator }`,
                 separator: "\n",
                 options: {} as any
             }
         };
 
-        DynamicChannelElementsGroup.getAll().forEach((item: DynamicChannelButtonBase) => {
-            result.dynamicChannelButtonsTemplate.options[item.getId()] = item.getLabelForEmbed();
-        });
+        DynamicChannelElementsGroup.getAll().forEach( ( item: DynamicChannelButtonBase ) => {
+            result.dynamicChannelButtonsTemplate.options[ item.getId() ] = item.getLabelForEmbed();
+        } );
 
         return result;
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
-            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds(args.dynamicChannelButtonsTemplate)
+            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate )
         };
     }
 }

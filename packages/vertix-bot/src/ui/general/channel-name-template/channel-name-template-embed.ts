@@ -11,28 +11,28 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ChannelNameTemplateEmbed extends UIEmbedBase {
     private static vars = {
-        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate("dynamicChannelNameTemplate")
+        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" )
     };
 
-    private config = ConfigManager.$.get<MasterChannelConfigInterface>("Vertix/Config/MasterChannel", VERSION_UI_V3);
+    private config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/ChannelNameTemplateEmbed";
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return "Set Dynamic Channels Template Name";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
             "You can specify a default name for dynamic channels that will be used when they are opened.\n\n" +
             "_Current template name_:\n" +
-            `\`${ChannelNameTemplateEmbed.vars.dynamicChannelNameTemplate}\``
+            `\`${ ChannelNameTemplateEmbed.vars.dynamicChannelNameTemplate }\``
         );
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             dynamicChannelNameTemplate:
                 args?.dynamicChannelNameTemplate || this.config.data.settings.dynamicChannelNameTemplate

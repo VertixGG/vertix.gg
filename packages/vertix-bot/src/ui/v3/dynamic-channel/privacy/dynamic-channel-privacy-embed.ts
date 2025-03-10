@@ -31,31 +31,31 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
 export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars {
     private readonly accessVars;
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrivacyEmbed";
     }
 
-    public constructor() {
+    public constructor () {
         super();
 
-        this.accessVars = this.useExternal(DynamicChannelPermissionsAccessEmbed).get();
+        this.accessVars = this.useExternal( DynamicChannelPermissionsAccessEmbed ).get();
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle() {
-        return `${this.vars.get("privacyEmoji")}  Manage privacy of your channel`;
+    protected getTitle () {
+        return `${ this.vars.get( "privacyEmoji" ) }  Manage privacy of your channel`;
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const { allowedUsersDisplay, blockedUsersDisplay } = this.accessVars;
 
         const { state, stateMessage } = this.vars.get();
 
         return (
-            `**_State_**: \`${state}\`` +
+            `**_State_**: \`${ state }\`` +
             "\n**_Intends_**: \`" +
             stateMessage +
             "\`\n" +
@@ -67,11 +67,11 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
         );
     }
 
-    protected getFooter(): string {
+    protected getFooter (): string {
         return "Use the menu below to manage privacy state of your channel.";
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const {
             statePublic,
             statePrivate,
@@ -86,21 +86,21 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
 
         return {
             state: {
-                [statePublic]: "🌐 Public",
-                [statePrivate]: "🚫 Private",
-                [stateShown]: "🐵 Shown",
-                [stateHidden]: "🙈 Hidden"
+                [ statePublic ]: "🌐 Public",
+                [ statePrivate ]: "🚫 Private",
+                [ stateShown ]: "🐵 Shown",
+                [ stateHidden ]: "🙈 Hidden"
             },
             stateMessage: {
-                [stateMessagePublic]: "Everyone can join your channel.",
-                [stateMessagePrivate]: "Only trusted users can join your channel.",
-                [stateMessageShown]: "Everyone can see and join your channel.",
-                [stateMessageHidden]: "Only trusted users can see and join your channel."
+                [ stateMessagePublic ]: "Everyone can join your channel.",
+                [ stateMessagePrivate ]: "Only trusted users can join your channel.",
+                [ stateMessageShown ]: "Everyone can see and join your channel.",
+                [ stateMessageHidden ]: "Only trusted users can see and join your channel."
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const result: any = {},
             {
                 statePublic,
@@ -114,7 +114,7 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
                 stateMessageHidden
             } = this.vars.get();
 
-        switch (args.state) {
+        switch ( args.state ) {
             default:
             case "public":
                 result.state = statePublic;

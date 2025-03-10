@@ -7,20 +7,20 @@ import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-e
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 class UIEmbedElapsedTimeBaseMock extends UIEmbedElapsedTimeBase {
-    public static getName() {
+    public static getName () {
         return "UIEmbedElapsedTimeBaseMock";
     }
 
-    protected getEndTime( args: UIArgs ): Date {
+    protected getEndTime ( args: UIArgs ): Date {
         // Implement the method for testing purposes
         return this.accessEndTime( args );
     }
 
-    public accessEndTime( args: UIArgs ): Date {
+    public accessEndTime ( args: UIArgs ): Date {
         return new Date( 0 );
     }
 
-    public accessGetElapsedTimeLogic( args: UIArgs ): any {
+    public accessGetElapsedTimeLogic ( args: UIArgs ): any {
         return this.getElapsedTimeLogic( args );
     }
 }

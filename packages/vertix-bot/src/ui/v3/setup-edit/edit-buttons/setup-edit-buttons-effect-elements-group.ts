@@ -6,14 +6,14 @@ import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v
 import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 
 export class SetupEditButtonsEffectElementsGroup extends UIElementsGroupBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/SetupEditButtonsEffectElementsGroup";
     }
 
-    public static getItems() {
+    public static getItems () {
         return [
-            [ChannelButtonsTemplateSelectMenu],
-            [SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton]
+            [ ChannelButtonsTemplateSelectMenu ],
+            [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ]
         ];
     }
 }

@@ -106,11 +106,11 @@ describe( "VertixBase/Modules/Service", () => {
     it( "handles service initialization timeout", async () => {
         // Arrange.
         class SlowService extends ServiceBase {
-            public static getName() {
+            public static getName () {
                 return "Services/Slow";
             }
 
-            protected async initialize(): Promise<void> {
+            protected async initialize (): Promise<void> {
                 await new Promise( resolve => setTimeout( resolve, 2000 ) ); // Simulate slow initialization
             }
         }

@@ -9,34 +9,34 @@ const RENTRY_BASE_URL = "https://rentry.co",
 export class RentryManager extends InitializeBase {
     private static instance: RentryManager;
 
-    public static getName() {
+    public static getName () {
         return "Managers/Rentry";
     }
 
-    public static getInstance() {
-        if (!this.instance) {
+    public static getInstance () {
+        if ( !this.instance ) {
             this.instance = new RentryManager();
         }
 
         return this.instance;
     }
 
-    public static get $() {
+    public static get $ () {
         return this.getInstance();
     }
 
-    public async raw(url: string): Promise<{
+    public async raw ( url: string ): Promise<{
         url: string;
         edit_code: string;
         text: string;
     }> {
-        const client = new SimpleHttpCookieClient(`${RENTRY_BASE_URL}/api/raw/${url}`),
+        const client = new SimpleHttpCookieClient( `${ RENTRY_BASE_URL }/api/raw/${ url }` ),
             response = await client.get();
 
         return response.json();
     }
 
-    public async new(
+    public async new (
         url: string,
         editCode: string,
         text: string
@@ -44,15 +44,15 @@ export class RentryManager extends InitializeBase {
         url: string;
         edit_code: string;
     }> {
-        const client = new SimpleHttpCookieClient(RENTRY_BASE_URL),
+        const client = new SimpleHttpCookieClient( RENTRY_BASE_URL ),
             response = await client.get(),
-            setCookieHeader = response.headers.get("set-cookie");
+            setCookieHeader = response.headers.get( "set-cookie" );
 
-        if (!setCookieHeader) {
-            throw new Error("Failed to fetch CSRF token");
+        if ( !setCookieHeader ) {
+            throw new Error( "Failed to fetch CSRF token" );
         }
 
-        const csrftoken = new CookieJar().setCookieSync(setCookieHeader, RENTRY_BASE_URL),
+        const csrftoken = new CookieJar().setCookieSync( setCookieHeader, RENTRY_BASE_URL ),
             payload = {
                 csrfmiddlewaretoken: csrftoken.value,
                 url: url,
@@ -60,20 +60,20 @@ export class RentryManager extends InitializeBase {
                 text: text
             },
             headers = { ...RENTRY_BASE_HEADER, "Content-Type": "application/x-www-form-urlencoded" },
-            postResponse = await client.post(`${RENTRY_BASE_URL}/api/new`, payload, headers);
+            postResponse = await client.post( `${ RENTRY_BASE_URL }/api/new`, payload, headers );
 
-        return postResponse.json().then((json) => {
+        return postResponse.json().then( ( json ) => {
             this.logger.debug(
                 this.new,
-                `URL: '${url}', Edit Code: '${editCode}', CSRFToken: '${csrftoken.value} - response:`,
+                `URL: '${ url }', Edit Code: '${ editCode }', CSRFToken: '${ csrftoken.value } - response:`,
                 json
             );
 
             return json;
-        });
+        } );
     }
 
-    public async edit(
+    public async edit (
         url: string,
         editCode: string,
         text: string
@@ -81,15 +81,15 @@ export class RentryManager extends InitializeBase {
         url: string;
         edit_code: string;
     }> {
-        const client = new SimpleHttpCookieClient(RENTRY_BASE_URL),
+        const client = new SimpleHttpCookieClient( RENTRY_BASE_URL ),
             response = await client.get(),
-            setCookieHeader = response.headers.get("set-cookie");
+            setCookieHeader = response.headers.get( "set-cookie" );
 
-        if (!setCookieHeader) {
-            throw new Error("Failed to fetch CSRF token");
+        if ( !setCookieHeader ) {
+            throw new Error( "Failed to fetch CSRF token" );
         }
 
-        const csrftoken = new CookieJar().setCookieSync(setCookieHeader, RENTRY_BASE_URL),
+        const csrftoken = new CookieJar().setCookieSync( setCookieHeader, RENTRY_BASE_URL ),
             payload = {
                 csrfmiddlewaretoken: csrftoken.value,
                 edit_code: editCode,
@@ -97,16 +97,16 @@ export class RentryManager extends InitializeBase {
             },
             headers = { ...RENTRY_BASE_HEADER, "Content-Type": "application/x-www-form-urlencoded" };
 
-        const postResponse = await client.post(`${RENTRY_BASE_URL}/api/edit/${url}`, payload, headers);
+        const postResponse = await client.post( `${ RENTRY_BASE_URL }/api/edit/${ url }`, payload, headers );
 
-        return postResponse.json().then((json) => {
+        return postResponse.json().then( ( json ) => {
             this.logger.debug(
                 this.edit,
-                `URL: '${url}', Edit Code: '${editCode}', CSRFToken: '${csrftoken.value} - response:`,
+                `URL: '${ url }', Edit Code: '${ editCode }', CSRFToken: '${ csrftoken.value } - response:`,
                 json
             );
 
             return json;
-        });
+        } );
     }
 }

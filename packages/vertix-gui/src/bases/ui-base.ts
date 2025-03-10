@@ -8,11 +8,11 @@ export abstract class UIBase extends ObjectBase {
 
     protected readonly uiService: UIService;
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIBase";
     }
 
-    public constructor() {
+    public constructor () {
         super();
 
         this.hierarchyNames = this.getHierarchyNames();
@@ -21,7 +21,7 @@ export abstract class UIBase extends ObjectBase {
         // TODO:
         // this.ensureNameUnique();
 
-        this.uiService = ServiceLocator.$.get("VertixGUI/UIService");
+        this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
 
         this.initialize?.();
     }
@@ -31,23 +31,23 @@ export abstract class UIBase extends ObjectBase {
     /**
      * Function `ensureGetNameExtended()` - Ensures parent extends `static getName()` correctly.
      */
-    private ensureGetNameExtended(): void {
+    private ensureGetNameExtended (): void {
         // Remove last part of `this.getName()`.
-        const namespace = (this.constructor as typeof UIBase)
+        const namespace = ( this.constructor as typeof UIBase )
             .getName()
-            .split("/")
-            .filter((i) => i)
+            .split( "/" )
+            .filter( ( i ) => i )
             .pop();
 
-        const parentName = this.hierarchyNames[0];
+        const parentName = this.hierarchyNames[ 0 ];
 
         // Remove namespace from parent name.
-        const name = parentName.replace(`${namespace}/`, "");
+        const name = parentName.replace( `${ namespace }/`, "" );
 
         // Check if name includes 'Base' at the end.
-        if (name.endsWith("Base")) {
+        if ( name.endsWith( "Base" ) ) {
             throw new Error(
-                `Error with name of '${name}', UI subclasses should extend 'static getName()' method and not have 'Base' suffix at their name`
+                `Error with name of '${ name }', UI subclasses should extend 'static getName()' method and not have 'Base' suffix at their name`
             );
         }
     }

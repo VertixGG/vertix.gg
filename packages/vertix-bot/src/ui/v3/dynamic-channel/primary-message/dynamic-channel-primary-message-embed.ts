@@ -45,37 +45,37 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
     private readonly regionVars;
     private readonly privacyVars;
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public constructor() {
+    public constructor () {
         super();
 
-        this.editTitleVars = this.useExternal(DynamicChannelPrimaryMessageEditTitleEmbed).get();
-        this.editDescriptionVars = this.useExternal(DynamicChannelPrimaryMessageEditDescriptionEmbed).get();
+        this.editTitleVars = this.useExternal( DynamicChannelPrimaryMessageEditTitleEmbed ).get();
+        this.editDescriptionVars = this.useExternal( DynamicChannelPrimaryMessageEditDescriptionEmbed ).get();
 
-        this.regionVars = this.useExternal(DynamicChannelRegionEmbed).get();
-        this.privacyVars = this.useExternal(DynamicChannelPrivacyEmbed).get();
+        this.regionVars = this.useExternal( DynamicChannelRegionEmbed ).get();
+        this.privacyVars = this.useExternal( DynamicChannelPrivacyEmbed ).get();
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return "https://i.imgur.com/sGjDVJ4.png";
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return this.editTitleVars.title;
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         const { name, limit, limitEmoji, renameEmoji } = this.vars.get();
 
         const { region, regionEmoji } = this.regionVars;
@@ -85,32 +85,32 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
         const { description } = this.editDescriptionVars;
 
         return (
-            `${description}\n\n` +
-            `${renameEmoji} ・ Name: **${name}**\n\n` +
-            `${limitEmoji} ・ User Limit: **${limit}**\n\n` +
-            `${privacyEmoji} ・ Privacy State: **${state}**\n\n` +
-            `${regionEmoji} ・ Region:  **${region}**\n`
+            `${ description }\n\n` +
+            `${ renameEmoji } ・ Name: **${ name }**\n\n` +
+            `${ limitEmoji } ・ User Limit: **${ limit }**\n\n` +
+            `${ privacyEmoji } ・ Privacy State: **${ state }**\n\n` +
+            `${ regionEmoji } ・ Region:  **${ region }**\n`
         );
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const vars = this.vars.get();
 
         return {
             limit: {
-                [vars.limitDisplayValue]: vars.limitValue,
-                [vars.limitDisplayUnlimited]: "Unlimited"
+                [ vars.limitDisplayValue ]: vars.limitValue,
+                [ vars.limitDisplayUnlimited ]: "Unlimited"
             },
             state: {
-                [vars.statePublic]: "🌐 Public",
-                [vars.statePrivate]: "🚫 Private",
-                [vars.stateShown]: "🐵 Shown",
-                [vars.stateHidden]: "🙈 Hidden"
+                [ vars.statePublic ]: "🌐 Public",
+                [ vars.statePrivate ]: "🚫 Private",
+                [ vars.stateShown ]: "🐵 Shown",
+                [ vars.stateHidden ]: "🙈 Hidden"
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const { limitDisplayValue, limitDisplayUnlimited } = this.vars.get();
 
         return {

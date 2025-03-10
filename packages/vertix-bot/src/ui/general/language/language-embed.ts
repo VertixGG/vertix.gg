@@ -17,32 +17,32 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class LanguageEmbed extends UIEmbedBase {
     private static vars = {
-        currentLanguage: uiUtilsWrapAsTemplate("currentLanguage")
+        currentLanguage: uiUtilsWrapAsTemplate( "currentLanguage" )
     };
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/LanguageEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🌍  Select language";
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
-            `__Current Selected Language__: **${LanguageEmbed.vars.currentLanguage}**\n\n` +
+            `__Current Selected Language__: **${ LanguageEmbed.vars.currentLanguage }**\n\n` +
             "Didn't find your language?\n\n" +
             "You can be the one to translate bot to your language!\n" +
             "contact us at our support server, and be the one!\n\n" +
@@ -50,22 +50,22 @@ export class LanguageEmbed extends UIEmbedBase {
         );
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const initialAttrs = UI_LANGUAGES_INITIAL_ATTRIBUTES,
             result: { currentLanguage: { [code: string]: string } } = {
                 currentLanguage: {
-                    [initialAttrs.code]: initialAttrs.name
+                    [ initialAttrs.code ]: initialAttrs.name
                 }
             };
 
-        UILanguageManager.$.getAvailableLanguages().forEach(({ code, name }) => {
-            result.currentLanguage[code] = name;
-        });
+        UILanguageManager.$.getAvailableLanguages().forEach( ( { code, name } ) => {
+            result.currentLanguage[ code ] = name;
+        } );
 
         return result;
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             currentLanguage: args?._language || UI_LANGUAGES_INITIAL_CODE
         };

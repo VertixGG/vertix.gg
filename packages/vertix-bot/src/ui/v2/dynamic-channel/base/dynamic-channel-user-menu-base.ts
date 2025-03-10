@@ -5,17 +5,17 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IRequireId } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/require-id";
 
 export abstract class DynamicChannelUserMenuBase extends UIElementUserSelectMenu implements IRequireId {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelUserMenuBase";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
     public abstract getId(): number;
 
-    protected async getMinValues() {
+    protected async getMinValues () {
         return 0;
     }
 }

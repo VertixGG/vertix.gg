@@ -4,13 +4,13 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-type Constructor<T = {}> = abstract new (...args: any[]) => T;
+type Constructor<T = {}> = abstract new ( ...args: any[] ) => T;
 
 type TUIEmbedWithVarsBase<A extends UIEmbedVars, B extends Constructor<UIEmbedBase>> = ReturnType<
     typeof UIEmbedWithVarsBase<A, B>
 >;
 
-function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Constructor<UIEmbedBase>>(
+function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Constructor<UIEmbedBase>> (
     vars: TVars,
     UIEmbedBase: TClass
 ) {
@@ -19,20 +19,20 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
 
         private useExternalEmbedVars: Record<string, typeof UIEmbedWithVarsBase.prototype> = {};
 
-        public static getName() {
+        public static getName () {
             return "VertixGUI/UIEmbedWithVarsBase";
         }
 
-        protected constructor(...args: any[]) {
-            super(...args);
+        protected constructor ( ...args: any[] ) {
+            super( ...args );
 
             this.vars = vars;
         }
 
-        protected getInternalOptions() {
+        protected getInternalOptions () {
             const baseResult = super.getOptions();
 
-            const extendedResult = this.getConcatenatedProperties((embed) => embed.getOptions());
+            const extendedResult = this.getConcatenatedProperties( ( embed ) => embed.getOptions() );
 
             return {
                 ...extendedResult,
@@ -40,15 +40,15 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             };
         }
 
-        protected async parseInternalData(content: UIEmbedLanguageContent | undefined) {
-            const baseResult = await super.parseInternalData(content);
+        protected async parseInternalData ( content: UIEmbedLanguageContent | undefined ) {
+            const baseResult = await super.parseInternalData( content );
 
             const extendedResult = {
-                ...this.getConcatenatedProperties((embed, args) => embed.getLogic(args), this.uiArgs),
-                ...(await this.getConcatenatedPropertiesAsync(
-                    async (embed, args) => await embed.getLogicAsync(args),
+                ...this.getConcatenatedProperties( ( embed, args ) => embed.getLogic( args ), this.uiArgs ),
+                ...( await this.getConcatenatedPropertiesAsync(
+                    async ( embed, args ) => await embed.getLogicAsync( args ),
                     this.uiArgs
-                ))
+                ) )
             };
 
             return {
@@ -63,40 +63,40 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             TInnerVars extends UIEmbedVars,
             TInnerClass extends Constructor<UIEmbedBase>,
             TEmbedClass extends InstanceType<TUIEmbedWithVarsBase<TInnerVars, TInnerClass>>
-        >(EmbedClass: { new (): TEmbedClass }): ReturnType<TEmbedClass["getVars"]> {
+        > ( EmbedClass: { new (): TEmbedClass } ): ReturnType<TEmbedClass["getVars"]> {
             const instance = new EmbedClass();
 
-            this.useExternalEmbedVars[instance.getName()] = instance;
+            this.useExternalEmbedVars[ instance.getName() ] = instance;
 
             return instance.getVars();
         }
 
-        public getVars() {
+        public getVars () {
             return this.vars;
         }
 
-        private getConcatenatedProperties(
-            getPropertyFunction: (embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs) => any,
+        private getConcatenatedProperties (
+            getPropertyFunction: ( embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs ) => any,
             uiArgs?: UIArgs
         ): any {
-            return Object.keys(this.useExternalEmbedVars).reduce(
-                (accumulator: object, key: string) => ({
+            return Object.keys( this.useExternalEmbedVars ).reduce(
+                ( accumulator: object, key: string ) => ( {
                     ...accumulator,
-                    ...getPropertyFunction(this.useExternalEmbedVars[key], uiArgs)
-                }),
+                    ...getPropertyFunction( this.useExternalEmbedVars[ key ], uiArgs )
+                } ),
                 {}
             );
         }
 
-        private async getConcatenatedPropertiesAsync(
-            getPropertyFunction: (embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs) => Promise<any>,
+        private async getConcatenatedPropertiesAsync (
+            getPropertyFunction: ( embed: typeof UIEmbedWithVarsBase.prototype, uiArgs?: UIArgs ) => Promise<any>,
             uiArgs?: UIArgs
         ): Promise<any> {
-            const keys = Object.keys(this.useExternalEmbedVars);
+            const keys = Object.keys( this.useExternalEmbedVars );
             let accumulator = {};
 
-            for (const key of keys) {
-                const result = await getPropertyFunction(this.useExternalEmbedVars[key], uiArgs);
+            for ( const key of keys ) {
+                const result = await getPropertyFunction( this.useExternalEmbedVars[ key ], uiArgs );
                 accumulator = {
                     ...accumulator,
                     ...result
@@ -110,13 +110,13 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
     return UIEmbedWithVarsBase;
 }
 
-export function UIEmbedWithVars<TVars extends UIEmbedVars>(vars: TVars) {
-    return UIEmbedWithVarsBase(vars, UIEmbedBase);
+export function UIEmbedWithVars<TVars extends UIEmbedVars> ( vars: TVars ) {
+    return UIEmbedWithVarsBase( vars, UIEmbedBase );
 }
 
-export function UIEmbedWithVarsExtend<TVars extends UIEmbedVars, TBase extends typeof UIEmbedBase>(
+export function UIEmbedWithVarsExtend<TVars extends UIEmbedVars, TBase extends typeof UIEmbedBase> (
     ExtendEmbedBaseWith: TBase,
     vars: TVars
 ) {
-    return UIEmbedWithVarsBase(vars, ExtendEmbedBaseWith);
+    return UIEmbedWithVarsBase( vars, ExtendEmbedBaseWith );
 }

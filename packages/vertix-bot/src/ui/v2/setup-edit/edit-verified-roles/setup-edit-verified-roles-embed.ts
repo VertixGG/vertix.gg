@@ -10,47 +10,47 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
     private static vars = {
-        index: uiUtilsWrapAsTemplate("index")
+        index: uiUtilsWrapAsTemplate( "index" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/SetupEditVerifiedRolesEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle() {
-        return `🛡️  Edit Verified Roles Of Master Channel #${SetupEditVerifiedRolesEmbed.vars.index}`;
+    protected getTitle () {
+        return `🛡️  Edit Verified Roles Of Master Channel #${ SetupEditVerifiedRolesEmbed.vars.index }`;
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const index = SetupEditVerifiedRolesEmbed.vars.index;
 
         return (
-            `Editing verified roles will impact the dynamic channels created by Master Channel #${index}.\n\n` +
+            `Editing verified roles will impact the dynamic channels created by Master Channel #${ index }.\n\n` +
             "**_Current Verified Roles_**\n\n" +
             "> " +
             super.getDescription()
         );
     }
 
-    protected getFooter() {
+    protected getFooter () {
         return "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.";
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
-            ...super.getLogic(args),
+            ...super.getLogic( args ),
 
             index: args.index + 1
         };

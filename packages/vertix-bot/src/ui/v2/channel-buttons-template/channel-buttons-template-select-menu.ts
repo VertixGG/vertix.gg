@@ -7,40 +7,40 @@ import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-ch
 const allItems = DynamicChannelElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ChannelButtonsTemplateSelectMenu";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder(): Promise<string> {
+    protected async getPlaceholder (): Promise<string> {
         return "🎚 Select Buttons";
     }
 
-    protected async getMinValues() {
+    protected async getMinValues () {
         return 1;
     }
 
-    protected async getMaxValues() {
+    protected async getMaxValues () {
         return allItems.length;
     }
 
-    protected async getSelectOptions() {
-        const values = allItems.map(async (item) => {
+    protected async getSelectOptions () {
+        const values = allItems.map( async ( item ) => {
             return {
                 label: await item.getLabelForMenu(),
                 value: item.getId().toString(),
-                emoji: (await item.getEmoji()) as any,
-                default: (this.uiArgs?.dynamicChannelButtonsTemplate || []).includes(item.getId())
+                emoji: ( await item.getEmoji() ) as any,
+                default: ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ).includes( item.getId() )
             };
-        });
+        } );
 
-        return (await Promise.all(values)).sort(
-            (a, b) =>
-                DynamicChannelElementsGroup.getById(parseInt(a.value))!.getSortId() -
-                DynamicChannelElementsGroup.getById(parseInt(b.value))!.getSortId()
+        return ( await Promise.all( values ) ).sort(
+            ( a, b ) =>
+                DynamicChannelElementsGroup.getById( parseInt( a.value ) )!.getSortId() -
+                DynamicChannelElementsGroup.getById( parseInt( b.value ) )!.getSortId()
         );
     }
 }

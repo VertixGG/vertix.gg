@@ -22,15 +22,15 @@ import { SetupEditVerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v3/setup-edit
  * Used to configure "Master Channel(s)".
  */
 export class SetupEditComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/ConfigComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Static;
     }
 
-    public static getElementsGroups() {
+    public static getElementsGroups () {
         return [
             SetupEditElementsGroup,
 
@@ -41,26 +41,26 @@ export class SetupEditComponent extends UIComponentBase {
         ];
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
-            UIEmbedsGroupBase.createSingleGroup(SetupEditEmbed),
+            UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(SetupEditButtonsEmbed),
-            UIEmbedsGroupBase.createSingleGroup(SetupEditButtonsEffectEmbed),
+            UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(SetupEditVerifiedRolesEmbed)
+            UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed )
         ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return "Vertix/UI-V3/SetupEditElementsGroup";
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return "Vertix/UI-V3/SetupEditEmbedGroup";
     }
 
-    protected static getModals() {
-        return [ChannelNameTemplateModal];
+    protected static getModals () {
+        return [ ChannelNameTemplateModal ];
     }
 }

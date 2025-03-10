@@ -14,75 +14,75 @@ export class UIMockGeneratorUtilAdapterBuilder {
     private component!: UIComponentTypeConstructor;
     private executionSteps!: UIExecutionSteps;
 
-    public constructor(
+    public constructor (
         private AdapterConstructor: typeof UIAdapterBase<any, any> | typeof UIAdapterExecutionStepsBase<any, any>
     ) {}
 
-    public withName(name: string) {
+    public withName ( name: string ) {
         this.name = name;
         return this;
     }
 
-    public withInstanceType(instanceType: UIInstancesTypes) {
+    public withInstanceType ( instanceType: UIInstancesTypes ) {
         this.instanceType = instanceType;
         return this;
     }
 
-    public withComponent(component: UIComponentTypeConstructor) {
+    public withComponent ( component: UIComponentTypeConstructor ) {
         this.component = component;
         return this;
     }
 
-    public withExecutionSteps(executionSteps: UIExecutionSteps) {
+    public withExecutionSteps ( executionSteps: UIExecutionSteps ) {
         // Ensure valid adapter type
-        if (this.AdapterConstructor !== UIAdapterExecutionStepsBase<any, any>) {
-            throw new Error("Only Execution Steps adapters can have execution steps");
+        if ( this.AdapterConstructor !== UIAdapterExecutionStepsBase<any, any> ) {
+            throw new Error( "Only Execution Steps adapters can have execution steps" );
         }
 
         this.executionSteps = executionSteps;
         return this;
     }
 
-    public build() {
+    public build () {
         const name = this.name;
         const instanceType = this.instanceType;
         const component = this.component;
         const executionSteps = this.executionSteps;
 
-        if (this.AdapterConstructor === UIAdapterBase) {
+        if ( this.AdapterConstructor === UIAdapterBase ) {
             return class extends UIAdapterBase<any, any> {
-                public static getName() {
+                public static getName () {
                     return name;
                 }
 
-                public static getInstanceType() {
+                public static getInstanceType () {
                     return instanceType;
                 }
 
-                public static getComponent() {
+                public static getComponent () {
                     return component;
                 }
             };
-        } else if (this.AdapterConstructor === UIAdapterExecutionStepsBase) {
+        } else if ( this.AdapterConstructor === UIAdapterExecutionStepsBase ) {
             return class extends UIAdapterExecutionStepsBase<any, any> {
-                public static getName() {
+                public static getName () {
                     return name;
                 }
 
-                public static getInstanceType() {
+                public static getInstanceType () {
                     return instanceType;
                 }
 
-                public static getComponent() {
+                public static getComponent () {
                     return component;
                 }
 
-                protected static getExecutionSteps() {
+                protected static getExecutionSteps () {
                     return executionSteps;
                 }
             };
         } else {
-            throw new Error("Invalid adapter constructor or not implemented");
+            throw new Error( "Invalid adapter constructor or not implemented" );
         }
     }
 }

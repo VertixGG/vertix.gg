@@ -11,28 +11,28 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
  */
 export class ClaimResultOwnerStopEmbed extends UIEmbedBase {
     private static vars: any = {
-        absentMinutes: uiUtilsWrapAsTemplate("absentMinutes")
+        absentMinutes: uiUtilsWrapAsTemplate( "absentMinutes" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ClaimResultOwnerStopEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "👑  You're back in charge!";
     }
 
-    protected getDescription(): string {
-        return `Please be aware that if you don't return within **${ClaimResultOwnerStopEmbed.vars.absentMinutes}** minutes, the channel will once again become available for other members to claim.\n`;
+    protected getDescription (): string {
+        return `Please be aware that if you don't return within **${ ClaimResultOwnerStopEmbed.vars.absentMinutes }** minutes, the channel will once again become available for other members to claim.\n`;
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
-            absentMinutes: (args.absentInterval / 60000).toFixed(1)
+            absentMinutes: ( args.absentInterval / 60000 ).toFixed( 1 )
         };
     }
 }

@@ -17,37 +17,37 @@ export class AdminAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterBase<TChannel, TInteraction> {
-    protected static dedicatedLogger = new Logger(this.getName());
+    protected static dedicatedLogger = new Logger( this.getName() );
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/AdminAdapterBase";
     }
 
-    public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField(DEFAULT_SETUP_PERMISSIONS);
+    public getPermissions (): PermissionsBitField {
+        return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
     }
 
-    public getChannelTypes() {
-        return [ChannelType.GuildVoice, ChannelType.GuildText];
+    public getChannelTypes () {
+        return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    public async isPassingInteractionRequirementsInternal(interaction: TInteraction) {
-        if (!PermissionsManager.$.isSelfAdministratorRole(interaction.guild)) {
-            const botRolePermissions = PermissionsManager.$.getRolesPermissions(interaction.guild);
-            const missingPermissions = botRolePermissions.missing(DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS);
+    public async isPassingInteractionRequirementsInternal ( interaction: TInteraction ) {
+        if ( !PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
+            const botRolePermissions = PermissionsManager.$.getRolesPermissions( interaction.guild );
+            const missingPermissions = botRolePermissions.missing( DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS );
 
-            if (missingPermissions.length) {
+            if ( missingPermissions.length ) {
                 AdminAdapterBase.dedicatedLogger.admin(
                     this.run,
-                    `🔐 Bot missing permissions" - "${missingPermissions.join(", ")}" (${interaction.guild.name}) (${interaction.guild?.memberCount})`
+                    `🔐 Bot missing permissions" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
                 );
 
                 await this.uiService
-                    .get("VertixGUI/InternalAdapters/MissingPermissionsAdapter")
-                    ?.ephemeral(interaction, {
+                    .get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )
+                    ?.ephemeral( interaction, {
                         missingPermissions,
                         omitterDisplayName: interaction.guild.client.user.username
-                    });
+                    } );
 
                 return false;
             }

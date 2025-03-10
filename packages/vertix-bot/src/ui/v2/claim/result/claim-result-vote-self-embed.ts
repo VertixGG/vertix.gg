@@ -8,23 +8,23 @@ import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/
  * Shown when the user trying vote for himself
  */
 export class ClaimResultVoteSelfEmbed extends UIEmbedBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/ClaimResultVoteSelfEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return VERTIX_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🤷  You cannot vote for yourself";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return "It's great that you believe in yourself, but voting for yourself is not allowed in this election.";
     }
 }

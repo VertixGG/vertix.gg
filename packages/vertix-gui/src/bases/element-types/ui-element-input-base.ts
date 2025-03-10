@@ -9,29 +9,29 @@ import type { UIElementTextInputLanguageContent } from "@vertix.gg/gui/src/bases
 export abstract class UIElementInputBase extends UIElementBase<APITextInputComponent> {
     protected content: UIElementTextInputLanguageContent | undefined;
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIElementInputBase";
     }
 
-    public static getComponentType(): ComponentType {
+    public static getComponentType (): ComponentType {
         return ComponentType.TextInput;
     }
 
-    public async build(uiArgs?: UIArgs) {
+    public async build ( uiArgs?: UIArgs ) {
         this.content = await this.uiService
             .getUILanguageManager()
-            .getTextInputTranslatedContent(this, uiArgs?._language);
+            .getTextInputTranslatedContent( this, uiArgs?._language );
 
-        return super.build(uiArgs);
+        return super.build( uiArgs );
     }
 
-    public async getTranslatableContent(): Promise<UIElementTextInputLanguageContent> {
+    public async getTranslatableContent (): Promise<UIElementTextInputLanguageContent> {
         const result: UIElementTextInputLanguageContent = {
                 label: await this.getLabel()
             },
             placeholder = await this.getPlaceholder?.();
 
-        if (placeholder) {
+        if ( placeholder ) {
             result.placeholder = placeholder;
         }
 
@@ -54,19 +54,19 @@ export abstract class UIElementInputBase extends UIElementBase<APITextInputCompo
 
     protected async getCustomId?(): Promise<string>;
 
-    protected async getAttributes() {
-        const type = Number(UIElementInputBase.getComponentType()),
-            custom_id = (await this.getCustomId?.()) || "",
-            label = this.content?.label || (await this.getLabel()),
-            placeholder = this.content?.placeholder || (await this.getPlaceholder?.()),
+    protected async getAttributes () {
+        const type = Number( UIElementInputBase.getComponentType() ),
+            custom_id = ( await this.getCustomId?.() ) || "",
+            label = this.content?.label || ( await this.getLabel() ),
+            placeholder = this.content?.placeholder || ( await this.getPlaceholder?.() ),
             value = await this.getValue?.(),
-            min_length = (await this.getMinLength?.()) || 0,
+            min_length = ( await this.getMinLength?.() ) || 0,
             max_length = await this.getMaxLength?.(),
-            required = (await this.isRequired?.()) || false;
+            required = ( await this.isRequired?.() ) || false;
 
         let style: TextInputStyle;
 
-        switch (await this.getStyle()) {
+        switch ( await this.getStyle() ) {
             case "short":
                 style = TextInputStyle.Short;
                 break;
@@ -83,11 +83,11 @@ export abstract class UIElementInputBase extends UIElementBase<APITextInputCompo
             label
         } as APITextInputComponent;
 
-        if (placeholder) {
+        if ( placeholder ) {
             result.placeholder = placeholder;
         }
 
-        if (value) {
+        if ( value ) {
             result.value = value;
         }
 

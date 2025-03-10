@@ -25,71 +25,71 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
 );
 
 export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBaseWithVars {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPermissionsAccessEmbed";
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const vars = this.vars.get();
 
         return {
             allowedUsersDisplay: {
-                [vars.allowedUsersDefault]: "Currently there are no trusted users." + "\n",
-                [vars.allowedUsers]: vars.allowedUsers + "\n"
+                [ vars.allowedUsersDefault ]: "Currently there are no trusted users." + "\n",
+                [ vars.allowedUsers ]: vars.allowedUsers + "\n"
             },
             blockedUsersDisplay: {
-                [vars.blockedUsersDefault]: "Currently there are no blocked users." + "\n",
-                [vars.blockedUsers]: vars.blockedUsers + "\n"
+                [ vars.blockedUsersDefault ]: "Currently there are no blocked users." + "\n",
+                [ vars.blockedUsers ]: vars.blockedUsers + "\n"
             }
         };
     }
 
-    protected getArrayOptions() {
+    protected getArrayOptions () {
         const { separator, value } = this.vars.get();
 
         return {
             allowedUsers: {
-                format: `- <@${value}>${separator}`,
+                format: `- <@${ value }>${ separator }`,
                 separator: "\n"
             },
             blockedUsers: {
-                format: `- <@${value}>${separator}`,
+                format: `- <@${ value }>${ separator }`,
                 separator: "\n"
             }
         };
     }
 
-    protected getTitle() {
-        return `${this.vars.get("permissionsEmoji")}  Manage permissions of your channel`;
+    protected getTitle () {
+        return `${ this.vars.get( "permissionsEmoji" ) }  Manage permissions of your channel`;
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const { allowedUsersDisplay, blockedUsersDisplay } = this.vars.get();
 
         return "\n**_Trusted Users_**:\n" + allowedUsersDisplay + "\n**_Blocked Users_**:\n" + blockedUsersDisplay;
     }
 
-    protected getFooter(): string {
+    protected getFooter (): string {
         return "Use the menu below to manage permissions of your channel.";
     }
 
-    protected getLogic(args: UIArgs) {
-        const result = super.getLogic(args),
+    protected getLogic ( args: UIArgs ) {
+        const result = super.getLogic( args ),
             vars = this.vars.get();
 
-        if (args?.allowedUsers?.length) {
-            result.allowedUsers = args.allowedUsers?.map((user: any) => user.id);
+        if ( args?.allowedUsers?.length ) {
+            result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
             result.allowedUsersDisplay = vars.allowedUsers;
         } else {
             result.allowedUsersDisplay = vars.allowedUsersDefault;
         }
 
-        if (args?.blockedUsers?.length) {
-            result.blockedUsers = args.blockedUsers?.map((user: any) => user.id);
+        if ( args?.blockedUsers?.length ) {
+            result.blockedUsers = args.blockedUsers?.map( ( user: any ) => user.id );
             result.blockedUsersDisplay = vars.blockedUsers;
         } else {
             result.blockedUsersDisplay = vars.blockedUsersDefault;

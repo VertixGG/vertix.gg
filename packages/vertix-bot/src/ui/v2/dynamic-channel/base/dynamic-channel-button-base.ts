@@ -9,11 +9,11 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 import type { IRequireId } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/require-id";
 
 export abstract class DynamicChannelButtonBase extends UIElementButtonBase implements IRequireId {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelButtonBase";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
@@ -31,12 +31,12 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
 
     public abstract getEmojiForEmbed(): string;
 
-    protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve("secondary");
+    protected getStyle (): Promise<UIButtonStyleTypes> {
+        return Promise.resolve( "secondary" );
     }
 
-    protected async isDisabled(): Promise<boolean> {
-        switch (await DynamicChannelVoteManager.$.getState(this.uiArgs?.channelId)) {
+    protected async isDisabled (): Promise<boolean> {
+        switch ( await DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) {
             case "active":
             case "starting":
                 return true;
@@ -45,9 +45,9 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
         return false;
     }
 
-    protected async isAvailable(): Promise<boolean> {
-        if (this.uiArgs?.dynamicChannelButtonsTemplate?.length) {
-            return this.uiArgs.dynamicChannelButtonsTemplate.some((i: any) => parseInt(i) === this.getId());
+    protected async isAvailable (): Promise<boolean> {
+        if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
+            return this.uiArgs.dynamicChannelButtonsTemplate.some( ( i: any ) => parseInt( i ) === this.getId() );
         }
 
         return false;

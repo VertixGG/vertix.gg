@@ -3,27 +3,27 @@ import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-type
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/SetupEditSelectEditOptionMenu";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder(): Promise<string> {
+    protected async getPlaceholder (): Promise<string> {
         return "◎ ∙ Select Edit Option";
     }
 
-    protected async getMinValues() {
+    protected async getMinValues () {
         return 0;
     }
 
-    protected async getMaxValues() {
+    protected async getMaxValues () {
         return 1;
     }
 
-    protected async getSelectOptions() {
+    protected async getSelectOptions () {
         return [
             {
                 label: "∙ Edit Channel's Name",

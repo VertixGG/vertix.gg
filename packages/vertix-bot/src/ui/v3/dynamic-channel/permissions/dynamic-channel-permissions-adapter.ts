@@ -24,19 +24,19 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPermissionsAdapter";
     }
 
-    public static getComponent() {
+    public static getComponent () {
         return DynamicChannelPermissionsComponent;
     }
 
-    protected static getInitiatorElement() {
+    protected static getInitiatorElement () {
         return DynamicChannelPermissionsAccessButton;
     }
 
-    protected static getExcludedElements() {
+    protected static getExcludedElements () {
         return [
             // DynamicChannelPermissionsAccessButton,
             DynamicChannelPermissionsStateButton,
@@ -44,7 +44,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         ];
     }
 
-    protected static getExecutionSteps() {
+    protected static getExecutionSteps () {
         return {
             ...super.getExecutionSteps(),
 
@@ -97,14 +97,14 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         };
     }
 
-    protected getStartArgs() {
+    protected getStartArgs () {
         return {};
     }
 
-    protected async getReplyArgs(interaction: DefaultInteraction, argsFromManager: UIArgs) {
+    protected async getReplyArgs ( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
         const args: UIArgs = {};
 
-        switch (this.getCurrentExecutionStep()?.name) {
+        switch ( this.getCurrentExecutionStep()?.name ) {
             case "Vertix/UI-V3/DynamicChannelPermissionsGranted":
                 args.userGrantedDisplayName = argsFromManager.userGrantedDisplayName;
                 break;
@@ -126,9 +126,9 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
                 break;
         }
 
-        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId(interaction.channel.id);
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
 
-        if (masterChannelDB) {
+        if ( masterChannelDB ) {
             args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate(
                 masterChannelDB,
                 false
@@ -143,16 +143,16 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
             )?.getId();
 
             args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
-                (buttonId: string) => buttonId === accessButtonId
+                ( buttonId: string ) => buttonId === accessButtonId
             );
         }
 
-        await this.assignUsersWithPermissions(interaction.channel, args);
+        await this.assignUsersWithPermissions( interaction.channel, args );
 
         return args;
     }
 
-    protected onEntityMap() {
+    protected onEntityMap () {
         // TODO: Check if state buttons needed to move out from component, since they are non-visible.
         // Private/Public.
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
@@ -197,9 +197,9 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         );
     }
 
-    private async onStateButtonClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+    private async onStateButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
-        if (!interaction.deferred && !interaction.replied) {
+        if ( !interaction.deferred && !interaction.replied ) {
             try {
                 await interaction.deferUpdate();
             } catch {
@@ -207,9 +207,9 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
             }
         }
 
-        switch (await this.dynamicChannelService.getChannelState(interaction.channel)) {
+        switch ( await this.dynamicChannelService.getChannelState( interaction.channel ) ) {
             case "public":
-                if (!(await this.dynamicChannelService.editChannelState(interaction, interaction.channel, "private"))) {
+                if ( !( await this.dynamicChannelService.editChannelState( interaction, interaction.channel, "private" ) ) ) {
                     return await this.ephemeralWithStep(
                         interaction,
                         "Vertix/UI-V3/DynamicChannelPermissionsStateError",
@@ -224,7 +224,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
                 );
 
             case "private":
-                if (!(await this.dynamicChannelService.editChannelState(interaction, interaction.channel, "public"))) {
+                if ( !( await this.dynamicChannelService.editChannelState( interaction, interaction.channel, "public" ) ) ) {
                     return await this.ephemeralWithStep(
                         interaction,
                         "Vertix/UI-V3/DynamicChannelPermissionsStateError",
@@ -247,9 +247,9 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onStateVisibilityClicked(interaction: UIDefaultButtonChannelVoiceInteraction) {
+    private async onStateVisibilityClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
-        if (!interaction.deferred && !interaction.replied) {
+        if ( !interaction.deferred && !interaction.replied ) {
             try {
                 await interaction.deferUpdate();
             } catch {
@@ -257,14 +257,14 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
             }
         }
 
-        switch (await this.dynamicChannelService.getChannelVisibilityState(interaction.channel)) {
+        switch ( await this.dynamicChannelService.getChannelVisibilityState( interaction.channel ) ) {
             case "shown":
                 if (
-                    !(await this.dynamicChannelService.editChannelVisibilityState(
+                    !( await this.dynamicChannelService.editChannelVisibilityState(
                         interaction,
                         interaction.channel,
                         "hidden"
-                    ))
+                    ) )
                 ) {
                     return await this.ephemeralWithStep(
                         interaction,
@@ -281,11 +281,11 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
 
             case "hidden":
                 if (
-                    !(await this.dynamicChannelService.editChannelVisibilityState(
+                    !( await this.dynamicChannelService.editChannelVisibilityState(
                         interaction,
                         interaction.channel,
                         "shown"
-                    ))
+                    ) )
                 ) {
                     return await this.ephemeralWithStep(
                         interaction,
@@ -309,12 +309,12 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onGrantSelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
-        const targetId = interaction.values.at(0) as string,
-            target = interaction.guild.members.cache.get(targetId);
+    private async onGrantSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+        const targetId = interaction.values.at( 0 ) as string,
+            target = interaction.guild.members.cache.get( targetId );
 
-        if (!target) {
-            await interaction.deferUpdate().catch(() => {});
+        if ( !target ) {
+            await interaction.deferUpdate().catch( () => {} );
             return;
         }
 
@@ -327,9 +327,9 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
             )
         ) {
             case "success":
-                await this.editReplyWithStep(interaction, "Vertix/UI-V3/DynamicChannelPermissionsGranted", {
+                await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsGranted", {
                     userGrantedDisplayName: target.displayName
-                });
+                } );
                 break;
 
             case "action-on-bot-user":
@@ -350,20 +350,20 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onDenySelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
-        const targetId = interaction.values.at(0) as string,
-            target = interaction.guild.members.cache.get(targetId);
+    private async onDenySelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+        const targetId = interaction.values.at( 0 ) as string,
+            target = interaction.guild.members.cache.get( targetId );
 
-        if (!target) {
-            await interaction.deferUpdate().catch(() => {});
+        if ( !target ) {
+            await interaction.deferUpdate().catch( () => {} );
             return;
         }
 
-        switch (await this.dynamicChannelService.removeUserAccess(interaction, interaction.channel, target)) {
+        switch ( await this.dynamicChannelService.removeUserAccess( interaction, interaction.channel, target ) ) {
             case "success":
-                await this.editReplyWithStep(interaction, "Vertix/UI-V3/DynamicChannelPermissionsDenied", {
+                await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsDenied", {
                     userDeniedDisplayName: target.displayName
-                });
+                } );
                 break;
 
             case "action-on-bot-user":
@@ -385,12 +385,12 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onBlockSelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
-        const targetId = interaction.values.at(0) as string,
-            target = interaction.guild.members.cache.get(targetId);
+    private async onBlockSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+        const targetId = interaction.values.at( 0 ) as string,
+            target = interaction.guild.members.cache.get( targetId );
 
-        if (!target) {
-            await interaction.deferUpdate().catch(() => {});
+        if ( !target ) {
+            await interaction.deferUpdate().catch( () => {} );
             return;
         }
 
@@ -405,14 +405,14 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         ) {
             case "success":
                 // Check if the target is in the channel.
-                if (interaction.channel.members.has(target.id)) {
+                if ( interaction.channel.members.has( target.id ) ) {
                     // Kick it.
-                    await target.voice.setChannel(null).catch(() => {});
+                    await target.voice.setChannel( null ).catch( () => {} );
                 }
 
-                await this.editReplyWithStep(interaction, "Vertix/UI-V3/DynamicChannelPermissionsBlocked", {
+                await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsBlocked", {
                     userBlockedDisplayName: target.displayName
-                });
+                } );
                 break;
 
             case "action-on-bot-user":
@@ -433,20 +433,20 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onUnBlockSelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
-        const targetId = interaction.values.at(0) as string,
-            target = interaction.guild.members.cache.get(targetId);
+    private async onUnBlockSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+        const targetId = interaction.values.at( 0 ) as string,
+            target = interaction.guild.members.cache.get( targetId );
 
-        if (!target) {
-            await interaction.deferUpdate().catch(() => {});
+        if ( !target ) {
+            await interaction.deferUpdate().catch( () => {} );
             return;
         }
 
-        switch (await this.dynamicChannelService.removeUserAccess(interaction, interaction.channel, target, true)) {
+        switch ( await this.dynamicChannelService.removeUserAccess( interaction, interaction.channel, target, true ) ) {
             case "success":
-                await this.editReplyWithStep(interaction, "Vertix/UI-V3/DynamicChannelPermissionsUnBlocked", {
+                await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsUnBlocked", {
                     userUnBlockedDisplayName: target.displayName
-                });
+                } );
                 break;
 
             case "action-on-bot-user":
@@ -467,20 +467,20 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onKickSelected(interaction: UIDefaultUserSelectMenuChannelVoiceInteraction) {
-        const targetId = interaction.values.at(0) as string,
-            target = interaction.guild.members.cache.get(targetId);
+    private async onKickSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+        const targetId = interaction.values.at( 0 ) as string,
+            target = interaction.guild.members.cache.get( targetId );
 
-        if (!target) {
-            await interaction.deferUpdate().catch(() => {});
+        if ( !target ) {
+            await interaction.deferUpdate().catch( () => {} );
             return;
         }
 
-        switch (await this.dynamicChannelService.kickUser(interaction, interaction.channel, target)) {
+        switch ( await this.dynamicChannelService.kickUser( interaction, interaction.channel, target ) ) {
             case "success":
-                await this.editReplyWithStep(interaction, "Vertix/UI-V3/DynamicChannelPermissionsKick", {
+                await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPermissionsKick", {
                     userKickedDisplayName: target.displayName
-                });
+                } );
                 break;
 
             case "not-in-the-list":

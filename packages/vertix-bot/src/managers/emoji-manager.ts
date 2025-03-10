@@ -10,6 +10,8 @@ import { Routes } from "discord-api-types/v10";
 
 import { REST } from "discord.js";
 
+import type { Client } from "discord.js";
+
 import type { RESTGetAPIApplicationEmojisResult } from "discord-api-types/v9";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
@@ -25,68 +27,66 @@ export class EmojiManager extends InitializeBase {
 
     private emojis: RESTGetAPIApplicationEmojisResult;
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/Managers/Emoji";
     }
 
-    public static get $() {
-        if (!EmojiManager.instance) {
+    public static get $ () {
+        if ( !EmojiManager.instance ) {
             EmojiManager.instance = new EmojiManager();
         }
 
         return EmojiManager.instance;
     }
 
-    public constructor() {
-        super(false);
+    public constructor () {
+        super();
 
-        this.debugger = new Debugger(this, "", isDebugEnabled("MANAGER", EmojiManager.getName()));
-
-        this.initPromise = this.initialize();
+        this.debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", EmojiManager.getName() ) );
     }
 
-    protected async initialize() {
-        this.appService = await ServiceLocator.$.waitFor("VertixBot/Services/App", {
+    protected async initialize () {
+        this.appService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
             silent: true,
             timeout: 30000
-        });
+        } );
 
         // Wait for client to be ready using AppService's onceReady
-        await new Promise<void>((resolve) => {
-            this.appService.onceReady(resolve);
-        });
+        await new Promise<void>( ( resolve ) => {
+            this.appService.onceReady( resolve );
+        } );
 
-        const client = this.appService.getClient() as Client<true>;
-        const rest = new REST({ version: GatewayVersion }).setToken(gToken);
+        const _client = this.appService.getClient() as Client<true>;
+        const rest = new REST( { version: GatewayVersion } ).setToken( gToken );
 
-        this.emojis = (await rest.get(
-            Routes.applicationEmojis(this.appService.getClient().user.id)
-        )) as RESTGetAPIApplicationEmojisResult;
+        this.emojis = ( await rest.get(
+            Routes.applicationEmojis( this.appService.getClient().user.id )
+        ) ) as RESTGetAPIApplicationEmojisResult;
 
-        this.debugger.dumpDown(this.initialize, this.emojis, "emojis");
+        this.debugger.dumpDown( this.initialize, this.emojis, "emojis" );
     }
 
-    public async awaitInitialization() {
+    public async awaitInitialization () {
         return this.initPromise;
     }
 
-    public async getMarkdown(baseName: string, fromCache = true) {
-        if (!fromCache) {
+    public async getMarkdown ( baseName: string, fromCache = true ) {
+        if ( !fromCache ) {
             await this.initialize();
         }
 
         await this.initPromise;
 
-        return this.getCachedMarkdown(baseName);
+        return this.getCachedMarkdown( baseName );
     }
 
-    public getCachedMarkdown(baseName: string) {
-        const emoji = this.emojis.items.find((emoji) => emoji.name!.includes(baseName));
+    public getCachedMarkdown ( baseName: string ) {
+        const emoji = this.emojis.items.find( ( emoji ) => emoji.name!.includes( baseName ) );
 
-        if (emoji) {
-            return `<:${emoji.name}:${emoji.id}>`;
+        if ( emoji ) {
+            return `<:${ emoji.name }:${ emoji.id }>`;
         }
 
-        throw new Error(`Emoji: '${baseName}' not found`);
+        throw new Error( `Emoji: '${ baseName }' not found` );
     }
 }

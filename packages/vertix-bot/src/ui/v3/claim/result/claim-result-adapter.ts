@@ -12,15 +12,15 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, ButtonInteraction<"cached">> {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/ClaimResultAdapter";
     }
 
-    public static getComponent() {
+    public static getComponent () {
         return ClaimResultComponent;
     }
 
-    protected static getExecutionSteps() {
+    protected static getExecutionSteps () {
         return {
             "Vertix/UI-V3/ClaimResultOwnerStop": {
                 embedsGroup: "Vertix/UI-V3/ClaimResultOwnerStopEmbedGroup"
@@ -48,22 +48,22 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
         };
     }
 
-    public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField(0n);
+    public getPermissions (): PermissionsBitField {
+        return new PermissionsBitField( 0n );
     }
 
-    public getChannelTypes() {
-        return [ChannelType.GuildVoice];
+    public getChannelTypes () {
+        return [ ChannelType.GuildVoice ];
     }
 
-    protected async getStartArgs() {
+    protected async getStartArgs () {
         return {};
     }
 
-    protected async getReplyArgs(interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs) {
+    protected async getReplyArgs ( interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs ) {
         const args: UIArgs = {};
 
-        switch (this.getCurrentExecutionStep().name) {
+        switch ( this.getCurrentExecutionStep().name ) {
             case "Vertix/UI-V3/ClaimResultOwnerStop":
                 args.absentInterval = DynamicChannelClaimManager.get(
                     "Vertix/UI-V3/DynamicChannelClaimManager"
@@ -72,7 +72,7 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
 
             case "Vertix/UI-V3/ClaimResultVotedSuccessfully":
             case "Vertix/UI-V3/ClaimResultVoteAlreadyVotedSame":
-                args.userDisplayName = await guildGetMemberDisplayName(interaction.guild, argsFromManager.targetId);
+                args.userDisplayName = await guildGetMemberDisplayName( interaction.guild, argsFromManager.targetId );
                 args.userId = argsFromManager.targetId;
                 break;
 
@@ -86,7 +86,7 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
         return args;
     }
 
-    protected shouldDeletePreviousReply() {
+    protected shouldDeletePreviousReply () {
         return true;
     }
 }

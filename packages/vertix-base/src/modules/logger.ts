@@ -4,12 +4,12 @@ import pc from "picocolors";
 
 import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
-const DEFAULT_LOG_PREFIX = pc.white("⚪  - [LOG]"),
-    DEFAULT_INFO_PREFIX = pc.blue("🔵 - [INFO]"),
-    DEFAULT_DEBUG_PREFIX = pc.gray("🟤 - [DEBUG]"),
-    DEFAULT_WARN_PREFIX = pc.yellow("🟡 - [WARN]"),
-    DEFAULT_ERROR_PREFIX = pc.red("🔴 - [ERROR]"),
-    DEFAULT_ADMIN_PREFIX = pc.bold("🟣 - [ADMIN]");
+const DEFAULT_LOG_PREFIX = pc.white( "⚪  - [LOG]" ),
+    DEFAULT_INFO_PREFIX = pc.blue( "🔵 - [INFO]" ),
+    DEFAULT_DEBUG_PREFIX = pc.gray( "🟤 - [DEBUG]" ),
+    DEFAULT_WARN_PREFIX = pc.yellow( "🟡 - [WARN]" ),
+    DEFAULT_ERROR_PREFIX = pc.red( "🔴 - [ERROR]" ),
+    DEFAULT_ADMIN_PREFIX = pc.bold( "🟣 - [ADMIN]" );
 
 const DEFAULT_LOG_LEVEL = "5";
 
@@ -24,12 +24,12 @@ export class Logger extends ObjectBase {
 
     private messagePrefixes: string[] = [];
 
-    public static getName(): string {
+    public static getName (): string {
         return "VertixBase/Modules/Logger";
     }
 
-    public static getLogLevelString(): string {
-        switch (parseInt(process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL)) {
+    public static getLogLevelString (): string {
+        switch ( parseInt( process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL ) ) {
             case 0:
                 return "NONE";
             case 1:
@@ -49,28 +49,28 @@ export class Logger extends ObjectBase {
         }
     }
 
-    public static getLogLevel(): number {
-        return parseInt(process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL);
+    public static getLogLevel (): number {
+        return parseInt( process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL );
     }
 
-    public static isDebugEnabled() {
+    public static isDebugEnabled () {
         return this.getLogLevel() >= 6;
     }
 
-    public constructor(owner: ObjectBase | typeof ObjectBase | string) {
+    public constructor ( owner: ObjectBase | typeof ObjectBase | string ) {
         super();
 
-        if ("string" === typeof owner) {
+        if ( "string" === typeof owner ) {
             this.ownerName = owner;
         } else {
             this.ownerName = owner.getName();
         }
 
-        if (registeredNames[this.ownerName]) {
-            throw new Error(`Logger for '${this.ownerName}' already exists`);
+        if ( registeredNames[ this.ownerName ] ) {
+            throw new Error( `Logger for '${ this.ownerName }' already exists` );
         }
 
-        if (process.env.LOGGER_DISABLED && "true" === process.env.LOGGER_DISABLED) {
+        if ( process.env.LOGGER_DISABLED && "true" === process.env.LOGGER_DISABLED ) {
             this.error = () => {};
             this.warn = () => {};
             this.admin = () => {};
@@ -89,7 +89,7 @@ export class Logger extends ObjectBase {
         }
 
         // noinspection FallThroughInSwitchStatementJS
-        switch (Logger.getLogLevel()) {
+        switch ( Logger.getLogLevel() ) {
             case 0:
                 this.error = () => {};
             case 1:
@@ -105,133 +105,133 @@ export class Logger extends ObjectBase {
         }
     }
 
-    public addMessagePrefix(prefix: string) {
-        this.messagePrefixes.push(prefix);
+    public addMessagePrefix ( prefix: string ) {
+        this.messagePrefixes.push( prefix );
     }
 
-    public log(caller: ICaller, message: string, ...params: any[]): void {
-        this.output(DEFAULT_LOG_PREFIX, caller, message, ...params);
+    public log ( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_LOG_PREFIX, caller, message, ...params );
     }
 
-    public info(caller: ICaller, message: string, ...params: any[]): void {
-        this.output(DEFAULT_INFO_PREFIX, caller, message, ...params);
+    public info ( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_INFO_PREFIX, caller, message, ...params );
     }
 
-    public debug(caller: ICaller, message: string, ...params: any[]): void {
-        this.output(DEFAULT_DEBUG_PREFIX, caller, message, ...params);
+    public debug ( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_DEBUG_PREFIX, caller, message, ...params );
     }
 
-    public warn(caller: ICaller, message: string, ...params: any[]): void {
-        this.output(DEFAULT_WARN_PREFIX, caller, message, ...params);
+    public warn ( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_WARN_PREFIX, caller, message, ...params );
     }
 
-    public error(caller: ICaller, message: string, ...params: any[]): void {
-        this.output(DEFAULT_ERROR_PREFIX, caller, message, ...params);
+    public error ( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_ERROR_PREFIX, caller, message, ...params );
     }
 
-    public admin(caller: ICaller, message: string, ...params: any[]): void {
-        this.output(DEFAULT_ADMIN_PREFIX, caller, message, ...params);
+    public admin ( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_ADMIN_PREFIX, caller, message, ...params );
     }
 
-    public beep() {
-        console.log("\x07");
+    public beep () {
+        console.log( "\x07" );
     }
 
-    private getTime(): string {
-        const iso = new Date().toISOString().match(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/);
+    private getTime (): string {
+        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
 
-        if (!iso) {
+        if ( !iso ) {
             return "Invalid Time";
         }
 
-        return iso[1] + " " + iso[2];
+        return iso[ 1 ] + " " + iso[ 2 ];
     }
 
-    private getCallerName(caller: ICaller) {
+    private getCallerName ( caller: ICaller ) {
         let result: string = "";
 
-        if (typeof caller === "string") {
+        if ( typeof caller === "string" ) {
             result = caller;
-        } else if (typeof caller === "function") {
+        } else if ( typeof caller === "function" ) {
             result = caller.name;
         }
 
-        if (!result || !result.length) {
-            console.error("Invalid Caller", new Error().stack);
+        if ( !result || !result.length ) {
+            console.error( "Invalid Caller", new Error().stack );
             result = "_CALLER_UNKNOWN_";
         }
 
         return result;
     }
 
-    private getStackTrace(): any[] {
-        const stackTrace = (new Error().stack || "").split("\n");
-        const stackLines = stackTrace.slice(1); // Skip the first line containing "Error"
+    private getStackTrace (): any[] {
+        const stackTrace = ( new Error().stack || "" ).split( "\n" );
+        const stackLines = stackTrace.slice( 1 ); // Skip the first line containing "Error"
 
         const stackRegex = / at (.+?) \((.+?)\)/;
         const result = [];
 
-        for (let i = 0; i < stackLines.length; i++) {
-            const line = stackLines[i];
-            const match = line.match(stackRegex);
+        for ( let i = 0; i < stackLines.length; i++ ) {
+            const line = stackLines[ i ];
+            const match = line.match( stackRegex );
 
-            if (match) {
-                const [, context, file] = match;
+            if ( match ) {
+                const [ , context, file ] = match;
                 const parsedLine: any = { context, file };
 
-                if (line.startsWith("new")) {
+                if ( line.startsWith( "new" ) ) {
                     parsedLine.isNew = true;
-                    parsedLine.object = context.split(" ")[1];
-                } else if (context !== "Object.<anonymous>") {
+                    parsedLine.object = context.split( " " )[ 1 ];
+                } else if ( context !== "Object.<anonymous>" ) {
                     parsedLine.object = context;
                 }
 
-                result.push(parsedLine);
+                result.push( parsedLine );
             }
         }
 
         return result;
     }
 
-    public getPreviousSource(): string {
+    public getPreviousSource (): string {
         // TODO: Take those from env.
         const stack = this.getStackTrace()
-            .filter((line: any) => line.file.includes("/src/"))
-            .filter((line: any) => !line.file.includes("logger.ts"))
-            .filter((line: any) => !line.file.includes("debugger.ts"))
-            .filter((line: any) => !line.file.includes("/node_modules/"));
+            .filter( ( line: any ) => line.file.includes( "/src/" ) )
+            .filter( ( line: any ) => !line.file.includes( "logger.ts" ) )
+            .filter( ( line: any ) => !line.file.includes( "debugger.ts" ) )
+            .filter( ( line: any ) => !line.file.includes( "/node_modules/" ) );
 
         let previousSource = "";
 
-        const previousCaller = stack[1]?.object?.split(".");
+        const previousCaller = stack[ 1 ]?.object?.split( "." );
 
-        if (previousCaller?.length > 1) {
-            const previousCallerName = previousCaller[0],
-                previousCallerMethod = previousCaller[1];
+        if ( previousCaller?.length > 1 ) {
+            const previousCallerName = previousCaller[ 0 ],
+                previousCallerMethod = previousCaller[ 1 ];
 
             // Extract file name from file path.
             // const previousCallerFileName = stack[ 1 ].file.split( "/" ).pop();
 
-            previousSource = `${previousCallerName}::${previousCallerMethod}]` + "[";
+            previousSource = `${ previousCallerName }::${ previousCallerMethod }]` + "[";
         }
 
         return previousSource;
     }
 
-    private output(prefix: string, caller: ICaller, message: string, ...params: any[]): void {
-        const source = this.getPreviousSource() + pc.white(this.ownerName + "::" + this.getCallerName(caller));
+    private output ( prefix: string, caller: ICaller, message: string, ...params: any[] ): void {
+        const source = this.getPreviousSource() + pc.white( this.ownerName + "::" + this.getCallerName( caller ) );
 
         let messagePrefix = "";
 
-        if (this.messagePrefixes.length) {
-            messagePrefix = `[${this.messagePrefixes.join("][")}]`;
+        if ( this.messagePrefixes.length ) {
+            messagePrefix = `[${ this.messagePrefixes.join( "][" ) }]`;
         }
 
-        const timeDiff = (new Date().getTime() - Logger.lastLogTime).toString().padStart(4, "0");
+        const timeDiff = ( new Date().getTime() - Logger.lastLogTime ).toString().padStart( 4, "0" );
 
-        const output = `${prefix}[${this.getTime()}+${timeDiff}ms][${source}]${messagePrefix + ": " + message}`;
+        const output = `${ prefix }[${ this.getTime() }+${ timeDiff }ms][${ source }]${ messagePrefix + ": " + message }`;
 
-        console.log(output, params?.length ? params : "");
+        console.log( output, params?.length ? params : "" );
 
         Logger.lastLogTime = new Date().getTime();
     }

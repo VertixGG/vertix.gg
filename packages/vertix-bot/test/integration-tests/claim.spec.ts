@@ -1,7 +1,7 @@
-it("should bypass", function () {
+it( "should bypass", function () {
     // Assert true.
-    expect(true).toBeTruthy();
-});
+    expect( true ).toBeTruthy();
+} );
 // import assert from "assert";
 //
 // import {

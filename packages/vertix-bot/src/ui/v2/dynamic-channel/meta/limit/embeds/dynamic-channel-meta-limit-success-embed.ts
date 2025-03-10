@@ -8,39 +8,39 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelMetaLimitSuccessEmbed extends UIEmbedBase {
     private static vars = {
-        userLimit: uiUtilsWrapAsTemplate("userLimit"),
-        userLimitValue: uiUtilsWrapAsTemplate("userLimitValue"),
-        userLimitUnlimited: uiUtilsWrapAsTemplate("userLimitUnlimited")
+        userLimit: uiUtilsWrapAsTemplate( "userLimit" ),
+        userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
+        userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return 0xf5cf4d; // Hand like.
     }
 
-    protected getTitle(): string {
-        return `✋  Your channel's user limit has changed to ${DynamicChannelMetaLimitSuccessEmbed.vars.userLimit}`;
+    protected getTitle (): string {
+        return `✋  Your channel's user limit has changed to ${ DynamicChannelMetaLimitSuccessEmbed.vars.userLimit }`;
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const { userLimitValue, userLimitUnlimited } = DynamicChannelMetaLimitSuccessEmbed.vars;
 
         return {
             userLimit: {
-                [userLimitValue]: userLimitValue,
-                [userLimitUnlimited]: "Unlimited"
+                [ userLimitValue ]: userLimitValue,
+                [ userLimitUnlimited ]: "Unlimited"
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const { userLimitValue, userLimitUnlimited } = DynamicChannelMetaLimitSuccessEmbed.vars;
 
         return {

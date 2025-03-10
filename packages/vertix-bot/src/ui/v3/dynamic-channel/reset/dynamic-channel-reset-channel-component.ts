@@ -10,30 +10,30 @@ import { DynamicChannelResetChannelButton } from "@vertix.gg/bot/src/ui/v3/dynam
 import { DynamicChannelResetChannelEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-embed";
 
 export class DynamicChannelResetChannelComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelResetChannelComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups() {
-        return [UIElementsGroupBase.createSingleGroup(DynamicChannelResetChannelButton)];
+    public static getElementsGroups () {
+        return [ UIElementsGroupBase.createSingleGroup( DynamicChannelResetChannelButton ) ];
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelResetChannelEmbed),
-            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed)
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelResetChannelEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
         ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return null;
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return null;
     }
 }

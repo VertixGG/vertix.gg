@@ -13,7 +13,7 @@ describe( "VertixGUI/UIBase", () => {
     test( "getName() :: Name should not include suffix of 'Base'", function () {
         // Arrange.
         const Class = class extends UIBase {
-            public static getName() {
+            public static getName () {
                 return "VertixGUI/ComponentWhateverBase";
             }
         };

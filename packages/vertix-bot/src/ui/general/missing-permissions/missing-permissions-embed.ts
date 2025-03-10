@@ -8,54 +8,54 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class MissingPermissionsEmbed extends UIEmbedBase {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate("separator"),
-        value: uiUtilsWrapAsTemplate("value"),
+        separator: uiUtilsWrapAsTemplate( "separator" ),
+        value: uiUtilsWrapAsTemplate( "value" ),
 
-        omitterDisplayName: uiUtilsWrapAsTemplate("omitterDisplayName"),
-        missingPermissions: uiUtilsWrapAsTemplate("missingPermissions")
+        omitterDisplayName: uiUtilsWrapAsTemplate( "omitterDisplayName" ),
+        missingPermissions: uiUtilsWrapAsTemplate( "missingPermissions" )
     };
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/MissingPermissionsEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🔐  Oops! Certain permissions are required";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const { omitterDisplayName, missingPermissions } = MissingPermissionsEmbed.vars;
 
         return (
-            `Some permissions are required to proceed, **${omitterDisplayName}** is missing the following permissions:\n\n` +
+            `Some permissions are required to proceed, **${ omitterDisplayName }** is missing the following permissions:\n\n` +
             missingPermissions
         );
     }
 
-    protected getColor() {
+    protected getColor () {
         return 0xe2ad2d; // As emoji.
     }
 
-    protected getArrayOptions() {
+    protected getArrayOptions () {
         const { separator, value } = MissingPermissionsEmbed.vars;
 
         return {
             missingPermissions: {
-                format: `- ${value}${separator}`,
+                format: `- ${ value }${ separator }`,
                 separator: "\n"
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             omitterDisplayName: args.omitterDisplayName,
-            missingPermissions: args.missingPermissions.map((permission: string) =>
-                permission.split(/(?=[A-Z])/).join(" ")
+            missingPermissions: args.missingPermissions.map( ( permission: string ) =>
+                permission.split( /(?=[A-Z])/ ).join( " " )
             )
         };
     }

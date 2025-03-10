@@ -5,10 +5,10 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 export abstract class InitializeBase extends ObjectBase {
     protected logger: Logger;
 
-    protected constructor(shouldInitialize = true) {
+    protected constructor ( shouldInitialize = true ) {
         super();
 
-        this.logger = new Logger(this);
+        this.logger = new Logger( this );
 
         this.initialize && shouldInitialize && this.initialize();
     }
@@ -16,15 +16,15 @@ export abstract class InitializeBase extends ObjectBase {
     protected initialize?(): void;
 
     // TODO: Find better place for this
-    protected debounce(func: Function, delay: number) {
+    protected debounce ( func: Function, delay: number ) {
         let timeoutId: NodeJS.Timeout;
 
-        return (...args: any) => {
-            clearTimeout(timeoutId);
+        return ( ...args: any ) => {
+            clearTimeout( timeoutId );
 
-            timeoutId = setTimeout(() => {
-                func.apply(this, args);
-            }, delay);
+            timeoutId = setTimeout( () => {
+                func.apply( this, args );
+            }, delay );
         };
     }
 }

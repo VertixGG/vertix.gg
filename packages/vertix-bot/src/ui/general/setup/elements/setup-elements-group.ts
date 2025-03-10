@@ -13,16 +13,16 @@ import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/lan
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
 export class SetupElementsGroup extends UIElementsGroupBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/SetupElementsGroup";
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static getItems(args?: ISetupArgs) {
+    public static getItems ( args?: ISetupArgs ) {
         return [
-            [SetupMasterEditSelectMenu],
-            [SetupMasterCreateButton, SetupMasterCreateV3Button],
-            [LanguageChooseButton, BadwordsEditButton]
+            [ SetupMasterEditSelectMenu ],
+            [ SetupMasterCreateButton, SetupMasterCreateV3Button ],
+            [ LanguageChooseButton, BadwordsEditButton ]
         ];
     }
 }

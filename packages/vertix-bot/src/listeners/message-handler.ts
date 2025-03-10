@@ -6,16 +6,16 @@ import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-me
 
 import type { Client } from "discord.js";
 
-export function messageHandler(client: Client) {
-    client.on(Events.MessageCreate, async (message) => {
-        if (message.author.bot) {
+export function messageHandler ( client: Client ) {
+    client.on( Events.MessageCreate, async ( message ) => {
+        if ( message.author.bot ) {
             return;
         }
 
-        if (message.channel.type !== ChannelType.DM) {
+        if ( message.channel.type !== ChannelType.DM ) {
             return;
         }
 
-        await ServiceLocator.$.get<DirectMessageService>("VertixBot/Services/DirectMessage").onMessage(message);
-    });
+        await ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" ).onMessage( message );
+    } );
 }

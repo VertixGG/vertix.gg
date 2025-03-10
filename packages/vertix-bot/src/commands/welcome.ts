@@ -18,12 +18,12 @@ export const Welcome: ICommand = {
     description: "Displaying Vertix welcome message in ephemeral mode.",
     type: ApplicationCommandType.ChatInput,
 
-    defaultMemberPermissions: [DEFAULT_SETUP_PERMISSIONS],
+    defaultMemberPermissions: [ DEFAULT_SETUP_PERMISSIONS ],
 
-    run: async (client: Client, interaction: CommandInteraction<"cached">) => {
-        const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService"),
-            uiAdapter = uiService.get("VertixBot/UI-General/WelcomeAdapter");
+    run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
+            uiAdapter = uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 
-        uiAdapter?.ephemeral(interaction);
+        uiAdapter?.ephemeral( interaction );
     }
 };

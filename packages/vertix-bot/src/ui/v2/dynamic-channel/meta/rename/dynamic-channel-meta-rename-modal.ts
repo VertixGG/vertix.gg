@@ -4,19 +4,19 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { DynamicChannelMetaRenameInput } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-input";
 
 export class DynamicChannelMetaRenameModal extends UIModalBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelMetaRenameModal";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getInputElements() {
-        return [[DynamicChannelMetaRenameInput]];
+    public static getInputElements () {
+        return [ [ DynamicChannelMetaRenameInput ] ];
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return "Rename dynamic channel";
     }
 }

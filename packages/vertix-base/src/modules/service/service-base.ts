@@ -11,28 +11,28 @@ export abstract class ServiceBase extends ObjectBase {
         reason?: Error;
     };
 
-    public static getName(): string {
+    public static getName (): string {
         return "VertixBase/Modules/ServiceBase";
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public constructor(...args: any[]) {
+    public constructor ( ...args: any[] ) {
         super();
 
-        this.logger = new Logger(this);
+        this.logger = new Logger( this );
 
-        if (this.initialize) {
+        if ( this.initialize ) {
             this.initialization = {
                 promise: this.initialize(),
                 state: "pending"
             };
 
             this.initialization.promise
-                .then(() => (this.initialization.state = "resolved"))
-                .catch((reason) => {
+                .then( () => ( this.initialization.state = "resolved" ) )
+                .catch( ( reason ) => {
                     this.initialization.state = "rejected";
                     this.initialization.reason = reason;
-                });
+                } );
 
             return;
         }
@@ -45,11 +45,11 @@ export abstract class ServiceBase extends ObjectBase {
 
     protected async initialize?(): Promise<void>;
 
-    public isWithDependencies() {
+    public isWithDependencies () {
         return false;
     }
 
-    public getInitialization() {
+    public getInitialization () {
         return this.initialization;
     }
 }

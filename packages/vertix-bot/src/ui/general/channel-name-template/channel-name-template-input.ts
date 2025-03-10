@@ -10,29 +10,29 @@ import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfa
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ChannelNameTemplateInput extends UIElementInputBase {
-    private config = ConfigManager.$.get<MasterChannelConfigInterfaceV3>("Vertix/Config/MasterChannel", VERSION_UI_V3);
+    private config = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/ChannelNameTemplateInput";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getStyle(): Promise<UIInputStyleTypes> {
+    protected async getStyle (): Promise<UIInputStyleTypes> {
         return "short";
     }
 
-    protected async getLabel(): Promise<string> {
+    protected async getLabel (): Promise<string> {
         return "SET DEFAULT DYNAMIC CHANNELS NAME";
     }
 
-    protected async getPlaceholder(): Promise<string> {
+    protected async getPlaceholder (): Promise<string> {
         return this.config.data.settings.dynamicChannelNameTemplate;
     }
 
-    protected async getValue(): Promise<string> {
+    protected async getValue (): Promise<string> {
         return (
             this.uiArgs?.dynamicChannelNameTemplate ||
             this.content?.placeholder ||
@@ -40,11 +40,11 @@ export class ChannelNameTemplateInput extends UIElementInputBase {
         );
     }
 
-    protected async getMinLength(): Promise<number> {
+    protected async getMinLength (): Promise<number> {
         return 0;
     }
 
-    protected async getMaxLength(): Promise<number> {
+    protected async getMaxLength (): Promise<number> {
         return 50;
     }
 }

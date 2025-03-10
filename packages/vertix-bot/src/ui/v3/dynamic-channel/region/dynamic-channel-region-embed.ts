@@ -13,63 +13,63 @@ import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 type ValueOf<T> = T[keyof T];
-type RegionKeys = `region-${ValueOf<typeof DEFAULT_RTC_REGIONS>}`;
+type RegionKeys = `region-${ ValueOf<typeof DEFAULT_RTC_REGIONS> }`;
 
-const utcRegionVars = Object.values(DEFAULT_RTC_REGIONS).map((region) => {
-    return `region-${region}`;
-}) as [RegionKeys];
+const utcRegionVars = Object.values( DEFAULT_RTC_REGIONS ).map( ( region ) => {
+    return `region-${ region }`;
+} ) as [RegionKeys];
 
-const vars = new UIEmbedVars("region", "regionOptions", "regionEmoji", ...utcRegionVars);
+const vars = new UIEmbedVars( "region", "regionOptions", "regionEmoji", ...utcRegionVars );
 
-export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend(DynamicChannelEmbedBase, vars) {
-    public static getName() {
+export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend( DynamicChannelEmbedBase, vars ) {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelRegionEmbed";
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle() {
-        return `${this.vars.get().regionEmoji}  Set voice region for your channel`;
+    protected getTitle () {
+        return `${ this.vars.get().regionEmoji }  Set voice region for your channel`;
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return (
             "-# The region determines the voice server's location.\n" +
             "-# It should be the closest to all voice channel members.\n" +
             "-# The recommended is `Automatic`\n\n" +
             "Current voice region: `" +
-            this.vars.get("region") +
+            this.vars.get( "region" ) +
             "`"
         );
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const mapRegions: Record<string, string> = {};
 
-        Object.entries(DEFAULT_RTC_REGIONS).forEach(([label, value]) => {
-            const key = ("region-" + (value ?? "auto")) as RegionKeys,
-                utcRegionVar = this.vars.get(key);
+        Object.entries( DEFAULT_RTC_REGIONS ).forEach( ( [ label, value ] ) => {
+            const key = ( "region-" + ( value ?? "auto" ) ) as RegionKeys,
+                utcRegionVar = this.vars.get( key );
 
-            mapRegions[utcRegionVar] = label;
-        });
+            mapRegions[ utcRegionVar ] = label;
+        } );
 
         return {
             region: mapRegions
         };
     }
 
-    protected async getLogicAsync(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected async getLogicAsync ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
-        if (args.region) {
-            result.region = this.vars.get(`region-${args.region}` as RegionKeys);
+        if ( args.region ) {
+            result.region = this.vars.get( `region-${ args.region }` as RegionKeys );
         } else {
-            result.region = this.vars.get("region-auto");
+            result.region = this.vars.get( "region-auto" );
         }
 
-        result.regionEmoji = await EmojiManager.$.getMarkdown(DynamicChannelRegionButton.getBaseName());
+        result.regionEmoji = await EmojiManager.$.getMarkdown( DynamicChannelRegionButton.getBaseName() );
 
         return result;
     }

@@ -18,11 +18,11 @@ describe( "VertixGUI/UIEmbedBase", () => {
         const embed = new class extends UIEmbedBase {
             private vars: any = {};
 
-            public static getName() {
+            public static getName () {
                 return "test-template";
             }
 
-            public constructor() {
+            public constructor () {
                 super();
 
                 this.vars = {
@@ -39,17 +39,17 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getTitle() {
+            protected getTitle () {
                 return "Manage your Dynamic Channel";
             }
 
-            protected getDescription() {
+            protected getDescription () {
                 return `Name: '${ this.vars.name }',` +
                     `Limit: '${ this.vars.limit }',` +
                     `State: '${ this.vars.state }'`;
             }
 
-            protected getOptions() {
+            protected getOptions () {
                 return {
                     limit: {
                         [ this.vars.value ]: this.vars.limitValue,
@@ -62,7 +62,7 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getLogic() {
+            protected getLogic () {
                 const min = 0, max = 3,
                     rand3 = Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 
@@ -102,11 +102,11 @@ describe( "VertixGUI/UIEmbedBase", () => {
         const EmbedClass = class extends UIEmbedBase {
             private vars: any = {};
 
-            public static getName() {
+            public static getName () {
                 return "test-template";
             }
 
-            public constructor() {
+            public constructor () {
                 super();
 
                 this.vars = {
@@ -123,17 +123,17 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getTitle() {
+            protected getTitle () {
                 return "Manage your Dynamic Channel";
             }
 
-            protected getDescription() {
+            protected getDescription () {
                 return `Name: '${ this.vars.name }',` +
                     `Limit: '${ this.vars.limit }',` +
                     `State: '${ this.vars.state }'`;
             }
 
-            protected getOptions() {
+            protected getOptions () {
                 return {
                     limit: {
                         [ this.vars.value ]: this.vars.limitValue,
@@ -146,7 +146,7 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getLogic( args: UIArgs ) {
+            protected getLogic ( args: UIArgs ) {
                 return {
                     name: "test",
                     limit: 0 === args.limit ? this.vars.unlimited : this.vars.value,
@@ -186,11 +186,11 @@ describe( "VertixGUI/UIEmbedBase", () => {
         const embed = new class extends UIEmbedBase {
             private vars: any;
 
-            public static getName() {
+            public static getName () {
                 return "test-template";
             }
 
-            public constructor() {
+            public constructor () {
                 super();
 
                 this.vars = {
@@ -199,11 +199,11 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getDescription() {
+            protected getDescription () {
                 return uiUtilsWrapAsTemplate( "userIds" );
             }
 
-            protected getArrayOptions() {
+            protected getArrayOptions () {
                 return {
                     userIds: {
                         format: `<#${ this.vars.value }>${ this.vars.separator }`,
@@ -212,7 +212,7 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             };
 
-            protected getLogic() {
+            protected getLogic () {
                 return {
                     userIds: [ 1, 2, 3 ],
                 };
@@ -232,11 +232,11 @@ describe( "VertixGUI/UIEmbedBase", () => {
         const embed = new class extends UIEmbedBase {
             private vars: any;
 
-            public static getName() {
+            public static getName () {
                 return "test-template";
             }
 
-            public constructor() {
+            public constructor () {
                 super();
 
                 this.vars = {
@@ -245,14 +245,14 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getDescription() {
+            protected getDescription () {
                 return [
                     uiUtilsWrapAsTemplate( "userIds" ),
                     uiUtilsWrapAsTemplate( "userIds2" ),
                 ].join( "\n" );
             }
 
-            protected getArrayOptions() {
+            protected getArrayOptions () {
                 return {
                     userIds: {
                         format: `<#${ this.vars.value }>${ this.vars.separator }`,
@@ -265,7 +265,7 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             };
 
-            protected getLogic() {
+            protected getLogic () {
                 return {
                     userIds: [ 1, 2, 3 ],
                     userIds2: [ 4, 5, 6 ],
@@ -286,16 +286,16 @@ describe( "VertixGUI/UIEmbedBase", () => {
     it( "should able to handle multidimensional array selectOptions", async function () {
         // Arrange.
         const embed = new class extends UIEmbedBase {
-            public static getName() {
+            public static getName () {
                 return "test-template";
             }
 
-            protected getDescription() {
+            protected getDescription () {
                 return "good words: " + uiUtilsWrapAsTemplate( "content" ) + "\n" +
                     "userIds: " + uiUtilsWrapAsTemplate( "userIds" );
             }
 
-            protected getArrayOptions() {
+            protected getArrayOptions () {
                 return {
                     content: {
                         format: uiUtilsWrapAsTemplate( "value" ) + uiUtilsWrapAsTemplate( "separator" ),
@@ -310,7 +310,7 @@ describe( "VertixGUI/UIEmbedBase", () => {
                 };
             }
 
-            protected getLogic() {
+            protected getLogic () {
                 return {
                     content: [
                         [ "great", "amazing" ],

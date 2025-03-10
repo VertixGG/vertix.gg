@@ -10,54 +10,54 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelMetaRenameLimitedEmbed extends UIEmbedElapsedTimeBase {
     private static vars = {
-        masterChannelId: uiUtilsWrapAsTemplate("masterChannelId"),
-        masterChannelMessage: uiUtilsWrapAsTemplate("masterChannelMessage"),
-        masterChannelMessageDefault: uiUtilsWrapAsTemplate("masterChannelMessageDefault")
+        masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
+        masterChannelMessage: uiUtilsWrapAsTemplate( "masterChannelMessage" ),
+        masterChannelMessageDefault: uiUtilsWrapAsTemplate( "masterChannelMessageDefault" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelMetaRenameLimitedEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getEndTime(args: UIArgs): Date {
-        return new Date(Date.now() + args.retryAfter * 1000);
+    protected getEndTime ( args: UIArgs ): Date {
+        return new Date( Date.now() + args.retryAfter * 1000 );
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return VERTIX_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return "🙅 You renamed your channel too fast!";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
-            `Please wait \`${this.getElapsedTimeFormatFractionVariable()}\` until the next rename` +
+            `Please wait \`${ this.getElapsedTimeFormatFractionVariable() }\` until the next rename` +
             DynamicChannelMetaRenameLimitedEmbed.vars.masterChannelMessage
         );
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const { masterChannelId, masterChannelMessageDefault } = DynamicChannelMetaRenameLimitedEmbed.vars;
 
         return {
             masterChannelMessage: {
-                [masterChannelId]: ` or open a new channel: <#${masterChannelId}>`,
+                [ masterChannelId ]: ` or open a new channel: <#${ masterChannelId }>`,
 
-                [masterChannelMessageDefault]: ""
+                [ masterChannelMessageDefault ]: ""
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const result: any = {};
 
-        if (args.masterChannelId) {
+        if ( args.masterChannelId ) {
             result.masterChannelId = args.masterChannelId;
             result.masterChannelMessage = DynamicChannelMetaRenameLimitedEmbed.vars.masterChannelId;
         } else {

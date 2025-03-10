@@ -13,39 +13,39 @@ import { ClaimVoteElementsGroup } from "@vertix.gg/bot/src/ui/v3/claim/vote/clai
 import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui/v3/claim/vote/claim-vote-results-markdown";
 
 export class ClaimVoteComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/ClaimVoteComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups() {
-        return [ClaimVoteElementsGroup, UIElementsGroupBase.createSingleGroup(ClaimVoteStepInButton)];
+    public static getElementsGroups () {
+        return [ ClaimVoteElementsGroup, UIElementsGroupBase.createSingleGroup( ClaimVoteStepInButton ) ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return null;
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
-            UIEmbedsGroupBase.createSingleGroup(ClaimVoteStepInEmbed),
-            UIEmbedsGroupBase.createSingleGroup(ClaimVoteEmbed),
-            UIEmbedsGroupBase.createSingleGroup(ClaimVoteWonEmbed)
+            UIEmbedsGroupBase.createSingleGroup( ClaimVoteStepInEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( ClaimVoteEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( ClaimVoteWonEmbed )
         ];
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return null;
     }
 
-    public static getMarkdownsGroups() {
-        return [UIMarkdownsGroupBase.createSingleGroup(ClaimVoteResultsMarkdown)];
+    public static getMarkdownsGroups () {
+        return [ UIMarkdownsGroupBase.createSingleGroup( ClaimVoteResultsMarkdown ) ];
     }
 
-    public static getDefaultMarkdownsGroup() {
+    public static getDefaultMarkdownsGroup () {
         return null;
     }
 }

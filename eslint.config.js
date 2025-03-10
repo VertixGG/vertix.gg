@@ -22,9 +22,15 @@ export const tests = [
 /** @type {import("eslint").Linter.FlatConfig[]} */
 const config = [
     ...zLintGetDefaultConfig(),
-    ...[ {
+    {
         rules: {
+            "space-in-parens": [ "error", "always" ],
+            "space-before-function-paren": [ "error", "always" ],
+            "space-before-blocks": [ "error", "always" ],
+            "template-curly-spacing": [ "error", "always" ],
+            "array-bracket-spacing": [ "error", "always" ],
             "object-curly-spacing": [ "error", "always" ],
+            "computed-property-spacing": [ "error", "always" ],
             'no-restricted-imports': [
                 'error',
                 {
@@ -37,9 +43,14 @@ const config = [
                 }
             ]
         }
-    } ],
+    },
     ...tests,
+    {
+        ignores: [
+            'packages/vertix-base/src/encryption/decrypt.ts',
+            'packages/vertix-base/src/encryption/encrypt.ts'
+        ]
+    }
 ];
-
 
 export default config;

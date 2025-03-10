@@ -1,35 +1,35 @@
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPremiumResetChannelButton extends DynamicChannelButtonBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelPremiumResetChannelButton";
     }
 
-    public getId() {
+    public getId () {
         return 6;
     }
 
-    public getSortId() {
+    public getSortId () {
         return 6;
     }
 
-    public getLabelForEmbed() {
+    public getLabelForEmbed () {
         return "🔃 ∙ **Reset**";
     }
 
-    public async getLabelForMenu() {
+    public async getLabelForMenu () {
         return await this.getLabel();
     }
 
-    public async getLabel() {
+    public async getLabel () {
         return "Reset";
     }
 
-    public async getEmoji() {
+    public async getEmoji () {
         return "🔃";
     }
 
-    public getEmojiForEmbed() {
+    public getEmojiForEmbed () {
         return "🔃";
     }
 }

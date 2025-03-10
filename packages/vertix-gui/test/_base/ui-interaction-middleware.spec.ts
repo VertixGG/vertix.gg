@@ -19,11 +19,11 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction } from "discord.js";
 
 class MockComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "test-component";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 }
@@ -56,16 +56,16 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         }, client );
 
         const adapter = new class extends UIAdapterBase<VoiceChannel, ButtonInteraction<"cached">> {
-            public static getName() {
+            public static getName () {
                 return "test-adapter";
             }
 
-            public static getComponent() {
+            public static getComponent () {
                 return MockComponent;
             }
 
-            public getChannelTypes() {
-                return [ChannelType.GuildNews];
+            public getChannelTypes () {
+                return [ ChannelType.GuildNews ];
             }
 
         }( {} );
@@ -88,16 +88,16 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         }, client );
 
         const adapter = new class extends UIAdapterBase<VoiceChannel, ButtonInteraction<"cached">> {
-            public static getName() {
+            public static getName () {
                 return "test-adapter";
             }
 
-            public static getComponent() {
+            public static getComponent () {
                 return MockComponent;
             }
 
-            public getChannelTypes() {
-                return [ChannelType.GuildVoice];
+            public getChannelTypes () {
+                return [ ChannelType.GuildVoice ];
             }
         }( {} );
 

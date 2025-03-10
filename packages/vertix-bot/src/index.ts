@@ -4,8 +4,8 @@ Error.stackTraceLimit = Infinity;
 
 const promise = entryPoint();
 
-promise.catch((error) => {
-    console.error(error);
+promise.catch( ( error ) => {
+    console.error( error );
 
-    process.exit(1);
-});
+    process.exit( 1 );
+} );

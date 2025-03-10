@@ -1,10 +1,12 @@
 {
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
-    "name": "@vertix.gg/vertix",
+    "name": "vertix.gg",
     "author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
     "license": "proprietary",
     "type": "module",
-    "version": "0.0.1",
+    "version": "0.0.8",
+    "description": "Vertix - Discord Bot",
+    "private": true,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/vertixgg/vertix.git"
@@ -18,15 +20,10 @@
         "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:gui:jest )",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
-        "vertix:prettier": "bunx prettier --check \"packages/*/src/**/*.{ts,tsx,vue,css,scss,json,md}\"",
-        "vertix:prettier:fix": "bunx prettier --write \"packages/*/src/**/*.{ts,tsx,vue,css,scss,json,md}\"",
-        "vertix:format": "bun run vertix:prettier:fix && bun run vertix:eslint:fix",
         "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
-
         "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
         "vertix:bot:node:start:dev": "cd packages/vertix-bot && bun run vertix-bot:ts-node:start:dev",
-        "vertix:bot:node:start:build": "cd packages/vertix-bot/dist && node vertix-bot.mjs",
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
         "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:jest",
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
@@ -45,18 +42,22 @@
         "@types/jest": "latest",
         "@types/jest-when": "latest",
         "@types/node": "latest",
+        "@typescript-eslint/eslint-plugin": "^8.26.1",
+        "@typescript-eslint/parser": "^8.26.1",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
+        "bun-types": "^1.0.25",
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",
-        "prettier": "^3.5.3",
-        "prettier-plugin-prisma": "^5.0.0",
         "ts-mockito": "latest",
         "tsx": "^4.19.1",
         "typescript": "latest"
     },
-    "packageManager": "bun@1.1.18"
+    "packageManager": "bun@1.1.18",
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    }
 }

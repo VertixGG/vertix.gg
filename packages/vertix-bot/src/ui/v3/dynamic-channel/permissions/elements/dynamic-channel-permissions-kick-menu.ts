@@ -1,19 +1,19 @@
 import { DynamicChannelUserMenuBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-user-menu-base";
 
 export class DynamicChannelPermissionsKickMenu extends DynamicChannelUserMenuBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPermissionsKickMenu";
     }
 
-    public getId() {
+    public getId () {
         return "kick-user";
     }
 
-    protected async getPlaceholder() {
+    protected async getPlaceholder () {
         return "👢 Kick User";
     }
 
-    protected async isAvailable() {
+    protected async isAvailable () {
         return this.uiArgs?.dynamicChannelButtonsIsAccessButtonAvailable;
     }
 }

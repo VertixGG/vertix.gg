@@ -32,39 +32,39 @@ export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEm
         VERSION_UI_V3
     );
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed";
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return "https://i.imgur.com/sGjDVJ4.png";
     }
 
-    protected getTitle(): string {
-        return `${this.vars.get("editPrimaryMessageEmoji")}  •  Edit title of your channel`;
+    protected getTitle (): string {
+        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit title of your channel`;
     }
 
-    protected getDescription(): string {
-        return "\n _Title_:\n `" + this.vars.get("title") + "`\n" + "\n### Do you want to change it?";
+    protected getDescription (): string {
+        return "\n _Title_:\n `" + this.vars.get( "title" ) + "`\n" + "\n### Do you want to change it?";
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const vars = this.vars.get();
 
         return {
             title: {
-                [vars.titleDisplayValue]: vars.titleValue,
-                [vars.titleDisplayDefault]: this.configV3.data.constants.dynamicChannelPrimaryMessageTitle
+                [ vars.titleDisplayValue ]: vars.titleValue,
+                [ vars.titleDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageTitle
             }
         };
     }
 
-    protected async getLogicAsync(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected async getLogicAsync ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
         const { titleDisplayValue, titleDisplayDefault } = this.vars.get();
 
-        if (args.title) {
+        if ( args.title ) {
             result.titleValue = args.title;
             result.title = titleDisplayValue;
         } else {

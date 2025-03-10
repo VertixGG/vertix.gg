@@ -13,52 +13,52 @@ export class UIMockGeneratorUtilComponentBuilder {
     private embedsGroups: any[] = [];
     private defaultEmbedsGroup: string = "";
 
-    public withName(name: string) {
+    public withName ( name: string ) {
         this.name = name;
         return this;
     }
 
-    public withInstanceType(instanceType: UIInstancesTypes) {
+    public withInstanceType ( instanceType: UIInstancesTypes ) {
         this.instanceType = instanceType;
         return this;
     }
 
-    public withElements(...elements: any[]) {
+    public withElements ( ...elements: any[] ) {
         this.elements = elements;
         return this;
     }
 
-    public withEmbeds(...embeds: any[]) {
+    public withEmbeds ( ...embeds: any[] ) {
         this.embeds = embeds;
         return this;
     }
 
-    public withModals(...modals: any[]) {
+    public withModals ( ...modals: any[] ) {
         this.modals = modals;
         return this;
     }
 
-    public withElementsGroups(...elementsGroups: any[]) {
+    public withElementsGroups ( ...elementsGroups: any[] ) {
         this.elementsGroups = elementsGroups;
         return this;
     }
 
-    public withDefaultElementsGroup(defaultElementsGroup: string) {
+    public withDefaultElementsGroup ( defaultElementsGroup: string ) {
         this.defaultElementsGroup = defaultElementsGroup;
         return this;
     }
 
-    public withEmbedsGroups(...embedsGroups: any[]) {
+    public withEmbedsGroups ( ...embedsGroups: any[] ) {
         this.embedsGroups = embedsGroups;
         return this;
     }
 
-    public withDefaultEmbedsGroup(defaultEmbedsGroup: string) {
+    public withDefaultEmbedsGroup ( defaultEmbedsGroup: string ) {
         this.defaultEmbedsGroup = defaultEmbedsGroup;
         return this;
     }
 
-    public build() {
+    public build () {
         const name = this.name;
         const instanceType = this.instanceType;
         const elements = this.elements;
@@ -70,39 +70,39 @@ export class UIMockGeneratorUtilComponentBuilder {
         const defaultEmbedsGroup = this.defaultEmbedsGroup;
 
         return class extends UIComponentBase {
-            public static getName() {
+            public static getName () {
                 return name;
             }
 
-            public static getInstanceType() {
+            public static getInstanceType () {
                 return instanceType;
             }
 
-            protected static getElements() {
+            protected static getElements () {
                 return elements;
             }
 
-            protected static getEmbeds() {
+            protected static getEmbeds () {
                 return embeds;
             }
 
-            protected static getModals() {
+            protected static getModals () {
                 return modals;
             }
 
-            public static getElementsGroups() {
+            public static getElementsGroups () {
                 return elementsGroups;
             }
 
-            public static getDefaultElementsGroup() {
+            public static getDefaultElementsGroup () {
                 return defaultElementsGroup;
             }
 
-            public static getEmbedsGroups() {
+            public static getEmbedsGroups () {
                 return embedsGroups;
             }
 
-            public static getDefaultEmbedsGroup() {
+            public static getDefaultEmbedsGroup () {
                 return defaultEmbedsGroup;
             }
         };

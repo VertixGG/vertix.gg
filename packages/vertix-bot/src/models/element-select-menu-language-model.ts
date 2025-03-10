@@ -6,8 +6,8 @@ const model = PrismaBotClient.getPrismaClient().elementSelectMenuLanguage;
 
 // TODO: All `withContent` should be like that.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function withContent() {
-    return model.findFirst({
+async function withContent () {
+    return model.findFirst( {
         select: {
             content: {
                 select: {
@@ -17,7 +17,7 @@ async function withContent() {
                 }
             }
         }
-    });
+    } );
 }
 
 export class ElementSelectMenuLanguageModel extends ModelLanguageBase<
@@ -26,23 +26,23 @@ export class ElementSelectMenuLanguageModel extends ModelLanguageBase<
 > {
     private static instance: ElementSelectMenuLanguageModel;
 
-    public static getName(): string {
+    public static getName (): string {
         return "VertixBot/Models/ElementSelectMenuLanguageModel";
     }
 
-    public static getInstance(): ElementSelectMenuLanguageModel {
-        if (!ElementSelectMenuLanguageModel.instance) {
-            ElementSelectMenuLanguageModel.instance = new ElementSelectMenuLanguageModel(false);
+    public static getInstance (): ElementSelectMenuLanguageModel {
+        if ( !ElementSelectMenuLanguageModel.instance ) {
+            ElementSelectMenuLanguageModel.instance = new ElementSelectMenuLanguageModel( false );
         }
 
         return ElementSelectMenuLanguageModel.instance;
     }
 
-    public static get $() {
+    public static get $ () {
         return ElementSelectMenuLanguageModel.getInstance();
     }
 
-    protected getModel() {
+    protected getModel () {
         return model;
     }
 }

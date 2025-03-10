@@ -13,13 +13,13 @@ export abstract class ModelDataOwnerStrictDataBase<
     TDataModelUniqueKeys extends TDataOwnerDefaultUniqueKeys,
     TDataModelStrictData extends Record<string, any>
 > extends ModelDataOwnerBase<TModel, TDataModel, TDataModelResult, TDataModelUniqueKeys> {
-    public static getName() {
+    public static getName () {
         return "VertixBase/Bases/ModelDataOwnerStrictDataBase";
     }
 
     protected abstract getStrictDataFactor(): TDataModelStrictData;
 
-    protected async setStrictData(
+    protected async setStrictData (
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         data: Partial<TDataModelStrictData>
@@ -28,13 +28,13 @@ export abstract class ModelDataOwnerStrictDataBase<
 
         // Pick only the keys that are defined in the config.
         const filteredData = Object.fromEntries(
-            Object.entries(data).filter(([key]) => key in dataFactor)
+            Object.entries( data ).filter( ( [ key ] ) => key in dataFactor )
         ) as Partial<TDataModelStrictData>;
 
-        return this.upsert(args, keys, filteredData);
+        return this.upsert( args, keys, filteredData );
     }
 
-    protected async setStrictDataWithDefaults(
+    protected async setStrictDataWithDefaults (
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         data: Partial<TDataModelStrictData>
@@ -42,49 +42,49 @@ export abstract class ModelDataOwnerStrictDataBase<
         const defaults = this.getStrictDataFactor();
 
         const dataWithDefaults = Object.fromEntries(
-            Object.entries(defaults).map(([key, value]) => [key, data[key as keyof typeof defaults] ?? value])
+            Object.entries( defaults ).map( ( [ key, value ] ) => [ key, data[ key as keyof typeof defaults ] ?? value ] )
         ) as Partial<TDataModelStrictData>;
 
-        return this.setStrictData(args, keys, dataWithDefaults);
+        return this.setStrictData( args, keys, dataWithDefaults );
     }
 
-    public async getStrictData(
+    public async getStrictData (
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
     ) {
         let result: TDataModelStrictData | null = null;
 
-        const data = await this.get<TDataModelStrictData>(args, keys, cache);
+        const data = await this.get<TDataModelStrictData>( args, keys, cache );
 
-        if (data) {
-            const keys = Object.keys(this.getStrictDataFactor()) as (keyof TDataModelStrictData)[];
+        if ( data ) {
+            const keys = Object.keys( this.getStrictDataFactor() ) as ( keyof TDataModelStrictData )[];
 
             result = {} as TDataModelStrictData;
 
-            keys.forEach((key) => {
-                const value = data[key];
+            keys.forEach( ( key ) => {
+                const value = data[ key ];
 
-                if (!value) {
+                if ( !value ) {
                     return;
                 }
 
-                result![key] = value;
-            });
+                result![ key ] = value;
+            } );
         }
 
         return result;
     }
 
-    protected async getStrictDataWithDefaults(
+    protected async getStrictDataWithDefaults (
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
     ) {
         const defaults = this.getStrictDataFactor(),
-            data = await this.getStrictData(args, keys, cache);
+            data = await this.getStrictData( args, keys, cache );
 
-        if (!data) {
+        if ( !data ) {
             return defaults;
         }
 

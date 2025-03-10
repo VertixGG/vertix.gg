@@ -12,40 +12,40 @@ type TServiceNameDependencies<T> = {
 export abstract class ServiceWithDependenciesBase<D extends { [key: string]: ServiceBase }> extends ServiceBase {
     protected services = {} as Required<D>;
 
-    public static getName(): string {
+    public static getName (): string {
         return "Modules/ServiceBaseWithDependencies";
     }
 
     public abstract getDependencies(): TServicesNonEmpty<TServiceNameDependencies<D>>;
 
-    protected async initialize(): Promise<void> {
+    protected async initialize (): Promise<void> {
         await super.initialize?.();
 
         // Wait for all dependencies to be initialized
-        const dependencies = Object.entries(this.getDependencies()).map(async ([alias, serviceName]) => {
-            return ServiceLocator.$.waitFor(serviceName, {
+        const dependencies = Object.entries( this.getDependencies() ).map( async ( [ alias, serviceName ] ) => {
+            return ServiceLocator.$.waitFor( serviceName, {
                 internal: true,
                 metadata: {
                     source: this,
                     fulfilled: this.services
                 }
-            }).then((service) => {
-                (this.services as any)[alias] = service;
+            } ).then( ( service ) => {
+                ( this.services as any )[ alias ] = service;
 
                 return service;
-            });
-        });
+            } );
+        } );
 
-        await Promise.all(dependencies);
+        await Promise.all( dependencies );
     }
 
-    public isWithDependencies() {
+    public isWithDependencies () {
         // In order to avoid circular dependencies
         // ! there are better ways to do this, but that just fine for now.
         return true;
     }
 
-    public getServices() {
+    public getServices () {
         return this.services;
     }
 }

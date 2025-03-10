@@ -20,13 +20,13 @@ import type { ClientEvents } from "discord.js";
 
 import type { RestEvents } from "@discordjs/rest";
 
-function debugDiscordApiEvents(logger: Logger, client: Client<boolean>) {
-    if (isDebugEnabled("DISCORD", "")) {
-        const debug = (...args: any[]) => {
-            logger.debug(pc.red("DISCORD"), "", args);
+function debugDiscordApiEvents ( logger: Logger, client: Client<boolean> ) {
+    if ( isDebugEnabled( "DISCORD", "" ) ) {
+        const debug = ( ...args: any[] ) => {
+            logger.debug( pc.red( "DISCORD" ), "", args );
         };
 
-        const events: readonly (keyof ClientEvents)[] = [
+        const events: readonly ( keyof ClientEvents )[] = [
             "applicationCommandPermissionsUpdate",
             "autoModerationActionExecution",
             "autoModerationRuleCreate",
@@ -108,21 +108,21 @@ function debugDiscordApiEvents(logger: Logger, client: Client<boolean>) {
             "guildScheduledEventUserRemove"
         ];
 
-        events.forEach((event) => {
-            if (isDebugEnabled("DISCORD", event)) {
-                client.on(event, debug);
+        events.forEach( ( event ) => {
+            if ( isDebugEnabled( "DISCORD", event ) ) {
+                client.on( event, debug );
             }
-        });
+        } );
     }
 }
 
-function debugDiscordApiRestEvents(logger: Logger, client: Client<boolean>) {
-    if (isDebugEnabled("DISCORD_REST", "")) {
-        const debug = (...args: any[]) => {
-            logger.debug(pc.red("DISCORD REST"), "", args);
+function debugDiscordApiRestEvents ( logger: Logger, client: Client<boolean> ) {
+    if ( isDebugEnabled( "DISCORD_REST", "" ) ) {
+        const debug = ( ...args: any[] ) => {
+            logger.debug( pc.red( "DISCORD REST" ), "", args );
         };
 
-        const events: readonly (keyof RestEvents)[] = [
+        const events: readonly ( keyof RestEvents )[] = [
             "handlerSweep",
             "hashSweep",
             "invalidRequestWarning",
@@ -131,56 +131,56 @@ function debugDiscordApiRestEvents(logger: Logger, client: Client<boolean>) {
             "restDebug"
         ];
 
-        events.forEach((event) => {
-            if (isDebugEnabled("DISCORD_REST", event)) {
-                client.rest.on(event, debug);
+        events.forEach( ( event ) => {
+            if ( isDebugEnabled( "DISCORD_REST", event ) ) {
+                client.rest.on( event, debug );
             }
-        });
+        } );
     }
 }
 
-export default async function Main() {
+export default async function Main () {
     const logger = GlobalLogger.$;
 
-    logger.log(Main, "Bot is starting...");
+    logger.log( Main, "Bot is starting..." );
 
-    const client = new Client({
-        intents: ["GuildIntegrations", "GuildInvites", "Guilds", "GuildVoiceStates", "DirectMessages"],
-        partials: [Partials.Channel],
+    const client = new Client( {
+        intents: [ "GuildIntegrations", "GuildInvites", "Guilds", "GuildVoiceStates", "DirectMessages" ],
+        partials: [ Partials.Channel ],
         shards: "auto"
-    });
+    } );
 
-    debugDiscordApiEvents(logger, client);
+    debugDiscordApiEvents( logger, client );
 
-    debugDiscordApiRestEvents(logger, client);
+    debugDiscordApiRestEvents( logger, client );
 
-    async function onLogin() {
-        assert(client.user);
+    async function onLogin () {
+        assert( client.user );
 
-        logger.info(onLogin, `Bot: '${client.user.username}' is authenticated`);
+        logger.info( onLogin, `Bot: '${ client.user.username }' is authenticated` );
 
-        logger.log(onLogin, "Registering listeners...");
+        logger.log( onLogin, "Registering listeners..." );
 
         const handlerPromises = [];
 
-        for (const handler of Object.values(handlers)) {
-            logger.log(onLogin, `Registering handler '${handler.name}'...`);
+        for ( const handler of Object.values( handlers ) ) {
+            logger.log( onLogin, `Registering handler '${ handler.name }'...` );
 
             handlerPromises.push(
-                handler(client as Client<true>)?.then(() => {
-                    logger.log(onLogin, `Handler '${handler.name}' registered`);
-                })
+                handler( client as Client<true> )?.then( () => {
+                    logger.log( onLogin, `Handler '${ handler.name }' registered` );
+                } )
             );
         }
 
-        Promise.all(handlerPromises).then(async () => {
-            logger.log(onLogin, "All listeners registered");
+        Promise.all( handlerPromises ).then( async () => {
+            logger.log( onLogin, "All listeners registered" );
 
             TopGGManager.$.handshake();
-        });
+        } );
     }
 
-    await login(client, onLogin);
+    await login( client, onLogin );
 
     return client as Client<true>;
 }

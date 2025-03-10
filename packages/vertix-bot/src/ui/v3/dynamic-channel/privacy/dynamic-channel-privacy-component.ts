@@ -7,31 +7,31 @@ import { DynamicChannelPrivacyEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 import { DynamicChannelPrivacySelectMenu } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-select-menu";
 
 export class DynamicChannelPrivacyComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrivacyComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups() {
-        return [UIEmbedsGroupBase.createSingleGroup(DynamicChannelPrivacyEmbed)];
+    public static getEmbedsGroups () {
+        return [ UIEmbedsGroupBase.createSingleGroup( DynamicChannelPrivacyEmbed ) ];
     }
 
-    public static getElementsGroups() {
-        return [UIElementsGroupBase.createSingleGroup(DynamicChannelPrivacySelectMenu)];
+    public static getElementsGroups () {
+        return [ UIElementsGroupBase.createSingleGroup( DynamicChannelPrivacySelectMenu ) ];
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return "Vertix/UI-V3/DynamicChannelPrivacyEmbedGroup";
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return "Vertix/UI-V3/DynamicChannelPrivacyMenuGroup";
     }
 
-    public static getDefaultMarkdownsGroup() {
+    public static getDefaultMarkdownsGroup () {
         return null;
     }
 }

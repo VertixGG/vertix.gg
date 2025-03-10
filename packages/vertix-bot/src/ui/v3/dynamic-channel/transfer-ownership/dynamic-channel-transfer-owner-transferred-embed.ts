@@ -4,27 +4,27 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 export class DynamicChannelTransferOwnerTransferredEmbed extends UIEmbedBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelTransferOwnerTransferredEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🔀  Transfer channel ownership succeeded!";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return "You are no longer the owner of this channel.";
     }
 }

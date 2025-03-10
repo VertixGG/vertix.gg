@@ -14,26 +14,26 @@ import { FeedbackInviteDeveloperModal } from "@vertix.gg/bot/src/ui/general/feed
 import { WelcomeSupportButton } from "@vertix.gg/bot/src/ui/general/welcome/welcome-support-button";
 
 export class FeedbackComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/FeedbackComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Static;
     }
 
-    public static getElements() {
+    public static getElements () {
         return [
-            [FeedbackReportButton, FeedbackSuggestionButton, WelcomeSupportButton],
-            [FeedbackInviteDeveloperButton]
+            [ FeedbackReportButton, FeedbackSuggestionButton, WelcomeSupportButton ],
+            [ FeedbackInviteDeveloperButton ]
         ];
     }
 
-    public static getEmbeds() {
-        return [FeedbackEmbed];
+    public static getEmbeds () {
+        return [ FeedbackEmbed ];
     }
 
-    public static getModals() {
-        return [FeedbackModal, FeedbackReportModal, FeedbackInviteDeveloperModal];
+    public static getModals () {
+        return [ FeedbackModal, FeedbackReportModal, FeedbackInviteDeveloperModal ];
     }
 }

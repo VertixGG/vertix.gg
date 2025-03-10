@@ -11,33 +11,33 @@ import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapte
 export abstract class UIModuleBase extends UIBase {
     public customIdStrategy: UICustomIdStrategyBase;
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIModuleBase";
     }
 
-    public static getAdapters(): TAdapterClassType[] {
-        throw new ForceMethodImplementation(this, this.getAdapters.name);
+    public static getAdapters (): TAdapterClassType[] {
+        throw new ForceMethodImplementation( this, this.getAdapters.name );
     }
 
-    public static validate() {
+    public static validate () {
         const adapters = this.getAdapters();
 
         // Ensure all adapters start with the same 2 parts of the name
         const prefix = this.getName()
-            .split(DEFAULT_UI_NAMESPACE_SEPARATOR)
-            .slice(0, 2)
-            .join(DEFAULT_UI_NAMESPACE_SEPARATOR);
+            .split( DEFAULT_UI_NAMESPACE_SEPARATOR )
+            .slice( 0, 2 )
+            .join( DEFAULT_UI_NAMESPACE_SEPARATOR );
 
-        for (const adapter of adapters) {
-            if (!adapter.getName().startsWith(prefix)) {
-                throw new Error(`Adapter: '${adapter.getName()}' does not start with require prefix: '${prefix}'`);
+        for ( const adapter of adapters ) {
+            if ( !adapter.getName().startsWith( prefix ) ) {
+                throw new Error( `Adapter: '${ adapter.getName() }' does not start with require prefix: '${ prefix }'` );
             }
         }
     }
 
     protected abstract getCustomIdStrategy(): UICustomIdStrategyBase;
 
-    public constructor() {
+    public constructor () {
         super();
 
         this.customIdStrategy = this.getCustomIdStrategy();

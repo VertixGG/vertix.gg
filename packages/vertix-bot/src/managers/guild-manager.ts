@@ -30,104 +30,104 @@ export class GuildManager extends InitializeBase {
 
     private readonly updateStatsBound: OmitThisParameter<() => void>;
 
-    public static getName(): string {
+    public static getName (): string {
         return "VertixBot/Managers/Guild";
     }
 
-    public static get $() {
-        if (!GuildManager.instance) {
+    public static get $ () {
+        if ( !GuildManager.instance ) {
             GuildManager.instance = new GuildManager();
         }
 
         return GuildManager.instance;
     }
 
-    public constructor() {
+    public constructor () {
         super();
 
-        this.uiService = ServiceLocator.$.get("VertixGUI/UIService");
+        this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
 
-        this.dmService = ServiceLocator.$.get("VertixBot/Services/DirectMessage");
+        this.dmService = ServiceLocator.$.get( "VertixBot/Services/DirectMessage" );
 
-        this.masterChannelService = ServiceLocator.$.get("VertixBot/Services/MasterChannel");
+        this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
 
         this.guildModel = GuildModel.getInstance();
 
-        this.updateStatsBound = this.updateStats.bind(this);
+        this.updateStatsBound = this.updateStats.bind( this );
 
-        EventBus.$.register(this, [this.onJoined]);
+        EventBus.$.register( this, [ this.onJoined ] );
     }
 
-    public async onJoin(client: Client, guild: Guild) {
+    public async onJoin ( client: Client, guild: Guild ) {
         // Find who invited the bot.
-        const logs = await guild.fetchAuditLogs().catch((e) => {
-                this.logger.warn(this.onJoin, `Guild id: '${guild.id}' - Error fetching audit logs:`, e);
-            }),
+        const logs = await guild.fetchAuditLogs().catch( ( e ) => {
+                this.logger.warn( this.onJoin, `Guild id: '${ guild.id }' - Error fetching audit logs:`, e );
+            } ),
             entry = logs?.entries.find(
-                (entry) => entry.action === AuditLogEvent.BotAdd && entry.targetId === client.user?.id
+                ( entry ) => entry.action === AuditLogEvent.BotAdd && entry.targetId === client.user?.id
             );
 
         this.logger.info(
             this.onJoin,
-            `Guild id: '${guild.id}' - Vertix joined guild: '${guild.name}' was invited by: '${entry?.executor?.username}'`
+            `Guild id: '${ guild.id }' - Vertix joined guild: '${ guild.name }' was invited by: '${ entry?.executor?.username }'`
         );
 
         this.logger.admin(
             this.onJoin,
-            `😍 Vertix has been invited to a new guild - "${guild.name}" (${guild.memberCount})`
+            `😍 Vertix has been invited to a new guild - "${ guild.name }" (${ guild.memberCount })`
         );
         this.logger.beep();
 
         // Determine if the guild is already in the database.
-        if (await this.guildModel.isExisting(guild)) {
+        if ( await this.guildModel.isExisting( guild ) ) {
             // Updating that the bot is now in the guild.
-            await this.guildModel.update(guild, true);
+            await this.guildModel.update( guild, true );
         } else {
-            await this.guildModel.create(guild);
+            await this.guildModel.create( guild );
         }
 
         const defaultChannel =
             guild?.systemChannel ||
-            guild?.channels.cache.find((channel) => {
+            guild?.channels.cache.find( ( channel ) => {
                 return channel.type === ChannelType.GuildText;
-            });
+            } );
 
-        if (!defaultChannel || defaultChannel.type !== ChannelType.GuildText) {
-            this.logger.warn(this.onJoin, `Guild id: '${guild.id}' - Default channel not found`);
+        if ( !defaultChannel || defaultChannel.type !== ChannelType.GuildText ) {
+            this.logger.warn( this.onJoin, `Guild id: '${ guild.id }' - Default channel not found` );
             return;
         }
 
         let user: User | undefined;
 
-        if (entry?.executor?.id) {
-            user = await client.users.fetch(entry.executor.id);
+        if ( entry?.executor?.id ) {
+            user = await client.users.fetch( entry.executor.id );
         }
 
-        await this.onJoined(guild, defaultChannel, user);
+        await this.onJoined( guild, defaultChannel, user );
 
-        this.debounce(this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY);
+        this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
-    public async onLeave(client: Client, guild: Guild) {
-        this.logger.info(this.onLeave, `Guild id: '${guild.id}' - Vertix left guild: '${guild.name}'`);
+    public async onLeave ( client: Client, guild: Guild ) {
+        this.logger.info( this.onLeave, `Guild id: '${ guild.id }' - Vertix left guild: '${ guild.name }'` );
         this.logger.admin(
             this.onLeave,
-            `😭 Vertix has been kicked from a guild - "${guild.name}" (${guild.memberCount})`
+            `😭 Vertix has been kicked from a guild - "${ guild.name }" (${ guild.memberCount })`
         );
 
-        await this.dmService.sendLeaveMessageToOwner(guild);
+        await this.dmService.sendLeaveMessageToOwner( guild );
 
         // Updating that the bot is no longer in the guild.
-        await this.guildModel.update(guild, false);
+        await this.guildModel.update( guild, false );
 
         // Remove leftovers of the guild.
-        await this.masterChannelService.removeLeftOvers(guild);
+        await this.masterChannelService.removeLeftOvers( guild );
 
-        this.debounce(this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY);
+        this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
-    public async onJoined(guild: Guild, defaultChannel: TextChannel, user?: User) {
-        const welcomeAdapter = this.uiService.get("VertixBot/UI-General/WelcomeAdapter");
+    public async onJoined ( guild: Guild, defaultChannel: TextChannel, user?: User ) {
+        const welcomeAdapter = this.uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 
         welcomeAdapter?.send(
             defaultChannel,
@@ -139,9 +139,9 @@ export class GuildManager extends InitializeBase {
         );
     }
 
-    private updateStats() {
+    private updateStats () {
         TopGGManager.$.updateStats();
 
-        this.logger.debug(this.updateStats, "Stats updated via debounce");
+        this.logger.debug( this.updateStats, "Stats updated via debounce" );
     }
 }

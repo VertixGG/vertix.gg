@@ -15,33 +15,33 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
     DynamicChannelEmbedBase,
-    new UIEmbedVars("editPrimaryMessageEmoji")
+    new UIEmbedVars( "editPrimaryMessageEmoji" )
 );
 
 export class DynamicChannelPrimaryMessageEditEmbed extends DynamicChannelEmbedBaseWithVars {
     private editTitleVars;
     private editDescriptionVars;
 
-    public constructor() {
+    public constructor () {
         super();
 
-        this.editTitleVars = this.useExternal(DynamicChannelPrimaryMessageEditTitleEmbed).get();
-        this.editDescriptionVars = this.useExternal(DynamicChannelPrimaryMessageEditDescriptionEmbed).get();
+        this.editTitleVars = this.useExternal( DynamicChannelPrimaryMessageEditTitleEmbed ).get();
+        this.editDescriptionVars = this.useExternal( DynamicChannelPrimaryMessageEditDescriptionEmbed ).get();
     }
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditEmbed";
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return "https://i.imgur.com/sGjDVJ4.png";
     }
 
-    protected getTitle(): string {
-        return `${this.vars.get("editPrimaryMessageEmoji")}  •  Edit primary message of your channel`;
+    protected getTitle (): string {
+        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit primary message of your channel`;
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
             "\n _Current_:\n" +
             "\n• Title: `" +
@@ -54,8 +54,8 @@ export class DynamicChannelPrimaryMessageEditEmbed extends DynamicChannelEmbedBa
         );
     }
 
-    protected async getLogicAsync(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected async getLogicAsync ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
         result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(
             DynamicChannelPrimaryMessageEditButton.getBaseName()

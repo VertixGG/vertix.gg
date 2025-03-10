@@ -45,39 +45,39 @@ export interface DataResult {
 }
 
 export interface IDataManager {
-    getData(args: IDataGetArgs): Promise<DataResult | void>;
+    getData( args: IDataGetArgs ): Promise<DataResult | void>;
 
-    setData(args: IDataUpdateArgs): Promise<DataResult | void>;
+    setData( args: IDataUpdateArgs ): Promise<DataResult | void>;
 
-    updateData(args: IDataUpdateArgs, dbData: DataResult): Promise<void>;
+    updateData( args: IDataUpdateArgs, dbData: DataResult ): Promise<void>;
 
-    deleteData(args: IDataSelectUniqueArgs): Promise<DataResult>;
+    deleteData( args: IDataSelectUniqueArgs ): Promise<DataResult>;
 }
 
 export interface IDataModel {
-    getOwnerId(ownerId: string): Promise<{ id: string }>;
+    getOwnerId( ownerId: string ): Promise<{ id: string }>;
 
-    createData(args: Omit<IDataCreateArgs, "version">): Promise<DataResult>;
+    createData( args: Omit<IDataCreateArgs, "version"> ): Promise<DataResult>;
 
-    getData(args: Omit<IDataUpdateArgs, "version">): Promise<DataResult | null>;
+    getData( args: Omit<IDataUpdateArgs, "version"> ): Promise<DataResult | null>;
 
-    setData(args: Omit<IDataUpdateArgs, "version">): Promise<DataResult | void>;
+    setData( args: Omit<IDataUpdateArgs, "version"> ): Promise<DataResult | void>;
 
     getAllData(): Promise<DataResult[]>;
 
-    getInternalNormalizedData(args: IDataCreateArgs): DataResult;
+    getInternalNormalizedData( args: IDataCreateArgs ): DataResult;
 
-    deleteData(args: Omit<IDataSelectUniqueArgs, "version">): Promise<DataResult>;
+    deleteData( args: Omit<IDataSelectUniqueArgs, "version"> ): Promise<DataResult>;
 
-    isDataExist(args: IDataSelectUniqueArgs): Promise<boolean>;
+    isDataExist( args: IDataSelectUniqueArgs ): Promise<boolean>;
 }
 
 export interface IOwnerInnerModel {
-    findUnique(args: { where: any; include?: any }): Promise<any>;
+    findUnique( args: { where: any; include?: any } ): Promise<any>;
 }
 
 export interface IDataInnerModel {
-    create(args: {
+    create( args: {
         data: {
             ownerId: string;
             key: string;
@@ -86,7 +86,7 @@ export interface IDataInnerModel {
             values?: string[];
             object?: Record<string, any>;
         };
-    }): Promise<any>;
+    } ): Promise<any>;
 
     update(
         args: TDataWhereUnique & {
@@ -98,9 +98,9 @@ export interface IDataInnerModel {
         }
     ): Promise<any>;
 
-    delete(args: TDataWhereUnique): Promise<any>;
+    delete( args: TDataWhereUnique ): Promise<any>;
 
-    findMany(args?: { where?: any; include?: any }): Promise<any>;
+    findMany( args?: { where?: any; include?: any } ): Promise<any>;
 
     findUnique(
         args: TDataWhereUnique & {

@@ -25,35 +25,35 @@ export abstract class ModelDataBase<
     protected ownerModel: TOwnerModel;
     protected dataModel: TDataModel;
 
-    protected constructor(shouldDebugCache = true, shouldDebugModel = true) {
-        super(shouldDebugCache, shouldDebugModel);
+    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+        super( shouldDebugCache, shouldDebugModel );
 
         this.ownerModel = this.getOwnerModel();
         this.dataModel = this.getDataModel();
     }
 
-    public async createData(args: IDataCreateArgs) {
+    public async createData ( args: IDataCreateArgs ) {
         const data = {
-            ...this.getInternalNormalizedData(args),
+            ...this.getInternalNormalizedData( args ),
 
             // # CRITICAL: This is the version of the content.
             version: VERSION_UI_V2
         };
 
-        this.debugger.dumpDown(this.createData, { data, args });
+        this.debugger.dumpDown( this.createData, { data, args } );
 
-        return this.dataModel.create({
+        return this.dataModel.create( {
             data: {
                 ...data,
                 ownerId: args.ownerId,
                 key: args.key
             }
-        });
+        } );
     }
 
-    public async setData(args: IDataUpdateArgs) {
-        if (null === args.default) {
-            return this.logger.error(this.setData, `Cannot set data for: '${args.key}' to null.`);
+    public async setData ( args: IDataUpdateArgs ) {
+        if ( null === args.default ) {
+            return this.logger.error( this.setData, `Cannot set data for: '${ args.key }' to null.` );
         }
 
         const createArgs: IDataCreateArgs = {
@@ -67,7 +67,7 @@ export abstract class ModelDataBase<
         let result;
 
         try {
-            result = await this.dataModel.update({
+            result = await this.dataModel.update( {
                 where: {
                     ownerId_key_version: {
                         ownerId: args.ownerId,
@@ -75,10 +75,10 @@ export abstract class ModelDataBase<
                         key: args.key
                     }
                 },
-                data: this.getInternalNormalizedData(createArgs)
-            });
-        } catch (e) {
-            this.logger.warn(this.setData, `Issue for data for key: '${args.key}' ownerId: '${args.ownerId}'`);
+                data: this.getInternalNormalizedData( createArgs )
+            } );
+        } catch ( e ) {
+            this.logger.warn( this.setData, `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'` );
 
             return e;
         }
@@ -86,45 +86,45 @@ export abstract class ModelDataBase<
         return result;
     }
 
-    public async deleteData(args: Omit<IDataSelectUniqueArgs, "version">) {
-        return this.dataModel.delete({
-            where: this.getWhereUnique({
+    public async deleteData ( args: Omit<IDataSelectUniqueArgs, "version"> ) {
+        return this.dataModel.delete( {
+            where: this.getWhereUnique( {
                 version: VERSION_UI_V2,
                 ...args
-            })
-        });
+            } )
+        } );
     }
 
     // TODO: `version` should not be omitted.
-    public async getData(args: Omit<IDataGetArgs, "version">) {
-        this.debugger.log(this.getData, "Getting content for:", args);
+    public async getData ( args: Omit<IDataGetArgs, "version"> ) {
+        this.debugger.log( this.getData, "Getting content for:", args );
 
-        return this.ownerModel.findUnique({
+        return this.ownerModel.findUnique( {
             where: {
                 id: args.ownerId
             },
             include: {
                 data: { where: { key: args.key } }
             }
-        });
+        } );
     }
 
-    public async getAllData() {
+    public async getAllData () {
         return this.dataModel.findMany();
     }
 
-    public getInternalNormalizedData(args: IDataCreateArgs) {
+    public getInternalNormalizedData ( args: IDataCreateArgs ) {
         const data: any = {};
 
-        if ("string" === typeof args.value) {
+        if ( "string" === typeof args.value ) {
             data.type = "string";
-        } else if (Array.isArray(args.value)) {
+        } else if ( Array.isArray( args.value ) ) {
             data.type = "array";
-        } else if ("object" === typeof args.value) {
+        } else if ( "object" === typeof args.value ) {
             data.type = "object";
         }
 
-        switch (data.type) {
+        switch ( data.type ) {
             case "object":
                 data.object = args.value;
                 break;
@@ -133,24 +133,24 @@ export abstract class ModelDataBase<
                 break;
             default:
             case "string":
-                data.values = [args.value];
+                data.values = [ args.value ];
         }
 
         return data;
     }
 
-    public getOwnerId(ownerId: string): Promise<{ id: string }> {
-        return this.ownerModel.findUnique({
+    public getOwnerId ( ownerId: string ): Promise<{ id: string }> {
+        return this.ownerModel.findUnique( {
             where: {
-                [this.getOwnerIdFieldName()]: ownerId
+                [ this.getOwnerIdFieldName() ]: ownerId
             }
-        });
+        } );
     }
 
-    public async isDataExist(args: IDataSelectUniqueArgs) {
-        const result = await this.dataModel.findUnique({
-            where: this.getWhereUnique(args)
-        });
+    public async isDataExist ( args: IDataSelectUniqueArgs ) {
+        const result = await this.dataModel.findUnique( {
+            where: this.getWhereUnique( args )
+        } );
 
         return !!result;
     }
@@ -161,7 +161,7 @@ export abstract class ModelDataBase<
 
     protected abstract getDataModel(): TDataModel;
 
-    private getWhereUnique(args: IDataSelectUniqueArgs) {
+    private getWhereUnique ( args: IDataSelectUniqueArgs ) {
         return {
             ownerId_key_version: {
                 ownerId: args.ownerId,

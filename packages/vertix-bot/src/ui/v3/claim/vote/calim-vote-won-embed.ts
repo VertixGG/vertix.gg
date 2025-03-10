@@ -10,44 +10,44 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
     private static vars: any = {
-        userWonId: uiUtilsWrapAsTemplate("userWonId"),
-        userWonDisplayName: uiUtilsWrapAsTemplate("userWonDisplayName"),
+        userWonId: uiUtilsWrapAsTemplate( "userWonId" ),
+        userWonDisplayName: uiUtilsWrapAsTemplate( "userWonDisplayName" ),
 
-        previousOwnerId: uiUtilsWrapAsTemplate("previousOwnerId"),
-        previousOwnerDisplayName: uiUtilsWrapAsTemplate("previousOwnerDisplayName"),
+        previousOwnerId: uiUtilsWrapAsTemplate( "previousOwnerId" ),
+        previousOwnerDisplayName: uiUtilsWrapAsTemplate( "previousOwnerDisplayName" ),
 
-        candidatesCount: uiUtilsWrapAsTemplate("candidatesCount"),
+        candidatesCount: uiUtilsWrapAsTemplate( "candidatesCount" ),
 
-        wonMessage: uiUtilsWrapAsTemplate("wonMessage"),
-        wonSameOwner: uiUtilsWrapAsTemplate("wonSameOwner"),
-        wonSomeoneElse: uiUtilsWrapAsTemplate("wonSomeoneElse"),
+        wonMessage: uiUtilsWrapAsTemplate( "wonMessage" ),
+        wonSameOwner: uiUtilsWrapAsTemplate( "wonSameOwner" ),
+        wonSomeoneElse: uiUtilsWrapAsTemplate( "wonSomeoneElse" ),
 
-        results: uiUtilsWrapAsTemplate("results"),
-        resultsLink: uiUtilsWrapAsTemplate("resultsLink"),
-        resultsDefault: uiUtilsWrapAsTemplate("resultsDefault")
+        results: uiUtilsWrapAsTemplate( "results" ),
+        resultsLink: uiUtilsWrapAsTemplate( "resultsLink" ),
+        resultsDefault: uiUtilsWrapAsTemplate( "resultsDefault" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/ClaimVoteWonEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getEndTime(args: UIArgs): Date {
-        return new Date(Date.now() + args.elapsedTime);
+    protected getEndTime ( args: UIArgs ): Date {
+        return new Date( Date.now() + args.elapsedTime );
     }
 
-    protected getTitle() {
-        return `👑  ${ClaimVoteWonEmbed.vars.userWonDisplayName} has claimed the channel`;
+    protected getTitle () {
+        return `👑  ${ ClaimVoteWonEmbed.vars.userWonDisplayName } has claimed the channel`;
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return ClaimVoteWonEmbed.vars.wonMessage;
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const {
             userWonId,
 
@@ -63,18 +63,18 @@ export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
 
         return {
             wonMessage: {
-                [wonSomeoneElse]: `<@${userWonId}> has claimed ownership of this channel, superseding ~~${previousOwnerDisplayName}~~ as the new owner!${results}`,
-                [wonSameOwner]: `<@${userWonId}> has claimed ownership of this channel, he was already the owner! 😊${results}`
+                [ wonSomeoneElse ]: `<@${ userWonId }> has claimed ownership of this channel, superseding ~~${ previousOwnerDisplayName }~~ as the new owner!${ results }`,
+                [ wonSameOwner ]: `<@${ userWonId }> has claimed ownership of this channel, he was already the owner! 😊${ results }`
             },
 
             results: {
-                [resultsDefault]: "",
-                [resultsLink]: `\n\nFor more details click [here](${resultsLink})`
+                [ resultsDefault ]: "",
+                [ resultsLink ]: `\n\nFor more details click [here](${ resultsLink })`
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const result: any = {};
 
         result.userWonId = args.userWonId;
@@ -83,17 +83,17 @@ export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
         result.previousOwnerId = args.previousOwnerId;
         result.previousOwnerDisplayName = args.previousOwnerDisplayName;
 
-        result.candidatesCount = Object.keys(args.results || {}).length;
+        result.candidatesCount = Object.keys( args.results || {} ).length;
 
-        const resultsLink = ClaimVoteResultsMarkdown.pullout(this.uiArgs?.markdownCode);
+        const resultsLink = ClaimVoteResultsMarkdown.pullout( this.uiArgs?.markdownCode );
 
-        if (result.userWonId === result.previousOwnerId) {
+        if ( result.userWonId === result.previousOwnerId ) {
             result.wonMessage = ClaimVoteWonEmbed.vars.wonSameOwner;
         } else {
             result.wonMessage = ClaimVoteWonEmbed.vars.wonSomeoneElse;
         }
 
-        if (resultsLink) {
+        if ( resultsLink ) {
             result.resultsLink = resultsLink;
             result.results = ClaimVoteWonEmbed.vars.resultsLink;
         } else {

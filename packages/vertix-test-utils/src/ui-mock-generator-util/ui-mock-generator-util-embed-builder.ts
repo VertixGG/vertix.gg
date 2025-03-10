@@ -6,26 +6,26 @@ export class UIMockGeneratorUtilEmbedBuilder {
     private name!: string;
     private instanceType!: UIInstancesTypes;
 
-    public withName(name: string) {
+    public withName ( name: string ) {
         this.name = name;
         return this;
     }
 
-    public withInstanceType(instanceType: UIInstancesTypes) {
+    public withInstanceType ( instanceType: UIInstancesTypes ) {
         this.instanceType = instanceType;
         return this;
     }
 
-    public build() {
+    public build () {
         const name = this.name;
         const instanceType = this.instanceType;
 
         return class extends UIEmbedBase {
-            public static getName() {
+            public static getName () {
                 return name;
             }
 
-            public static getInstanceType() {
+            public static getInstanceType () {
                 return instanceType;
             }
         };

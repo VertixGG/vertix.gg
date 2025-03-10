@@ -6,35 +6,35 @@ const MIN_INPUT_LENGTH = 0,
     MAX_INPUT_LENGTH = 50;
 
 export class DynamicChannelMetaRenameInput extends UIElementInputBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelMetaRenameInput";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getStyle(): Promise<"short"> {
+    protected async getStyle (): Promise<"short"> {
         return "short";
     }
 
-    public async getLabel(): Promise<string> {
+    public async getLabel (): Promise<string> {
         return "CHOOSE NAME FOR YOUR CHANNEL";
     }
 
-    protected async getPlaceholder(): Promise<string> {
+    protected async getPlaceholder (): Promise<string> {
         return this.uiArgs?.defaultChannelName || "";
     }
 
-    protected async getValue(): Promise<string> {
+    protected async getValue (): Promise<string> {
         return this.uiArgs?.channelName || "";
     }
 
-    protected async getMinLength(): Promise<number> {
+    protected async getMinLength (): Promise<number> {
         return MIN_INPUT_LENGTH;
     }
 
-    protected async getMaxLength(): Promise<number> {
+    protected async getMaxLength (): Promise<number> {
         return MAX_INPUT_LENGTH;
     }
 }

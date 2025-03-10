@@ -10,60 +10,60 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
-export const dynamicChannelRequirements = async (interaction: UIAdapterReplyContext) => {
-    if (!interaction.channel) {
+export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyContext ) => {
+    if ( !interaction.channel ) {
         return false;
     }
 
-    const dynamicChannelDB = await ChannelModel.$.getByChannelId(interaction.channel.id);
+    const dynamicChannelDB = await ChannelModel.$.getByChannelId( interaction.channel.id );
 
-    if (!dynamicChannelDB) {
+    if ( !dynamicChannelDB ) {
         return false;
     }
 
-    const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService");
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
-    if (interaction.user.id !== dynamicChannelDB.userOwnerId) {
-        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId(dynamicChannelDB.channelId);
+    if ( interaction.user.id !== dynamicChannelDB.userOwnerId ) {
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelDB.channelId );
 
-        if (!masterChannelDB) {
+        if ( !masterChannelDB ) {
             return false;
         }
 
-        await uiService.get("VertixBot/UI-General/NotYourChannelAdapter")?.ephemeral(interaction, {
+        await uiService.get( "VertixBot/UI-General/NotYourChannelAdapter" )?.ephemeral( interaction, {
             masterChannelId: masterChannelDB.channelId
-        });
+        } );
 
         return false;
     }
 
-    if (PermissionsManager.$.isSelfAdministratorRole(interaction.guild)) {
+    if ( PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
         return true;
     }
 
     const requiredRolePermissions = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow,
         missingPermissions = [
-            ...PermissionsManager.$.getMissingPermissions(requiredRolePermissions, interaction.guild)
+            ...PermissionsManager.$.getMissingPermissions( requiredRolePermissions, interaction.guild )
         ];
 
     const result = !missingPermissions.length;
 
-    if (missingPermissions.length) {
+    if ( missingPermissions.length ) {
         GlobalLogger.$.admin(
             dynamicChannelRequirements,
-            `🔐 Dynamic Channel missing permissions - "${missingPermissions.join(", ")}" (${interaction.guild.name}) (${interaction.guild.memberCount})`
+            `🔐 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild.memberCount })`
         );
 
         GlobalLogger.$.log(
             dynamicChannelRequirements,
-            `Guild id: '${interaction.guildId}' - Required permissions:`,
+            `Guild id: '${ interaction.guildId }' - Required permissions:`,
             missingPermissions
         );
 
-        await uiService.get("VertixGUI/InternalAdapters/MissingPermissionsAdapter")?.ephemeral(interaction, {
+        await uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
             missingPermissions,
             omitterDisplayName: interaction.guild.client.user.username
-        });
+        } );
     }
 
     return result;

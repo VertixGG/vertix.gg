@@ -7,15 +7,15 @@ import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class SetupEditVerifiedRolesElementsGroup extends UIElementsGroupBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/SetupEditVerifiedRolesElementsGroup";
     }
 
-    public static getItems() {
-        const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService");
+    public static getItems () {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
         const { WizardBackButton, WizardFinishButton } = uiService.$$.getSystemElements();
 
-        return [[VerifiedRolesMenu], [VerifiedRolesEveryoneSelectMenu], [WizardBackButton!, WizardFinishButton!]];
+        return [ [ VerifiedRolesMenu ], [ VerifiedRolesEveryoneSelectMenu ], [ WizardBackButton!, WizardFinishButton! ] ];
     }
 }

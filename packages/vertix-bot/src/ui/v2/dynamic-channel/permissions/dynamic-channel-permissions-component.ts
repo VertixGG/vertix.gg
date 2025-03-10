@@ -21,44 +21,44 @@ import {
 import { DynamicChannelPermissionsAccessElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-access-elements-group";
 
 export class DynamicChannelPermissionsComponent extends UIComponentBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelPermissionsComponent";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups() {
+    public static getEmbedsGroups () {
         return [
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsPrivateEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsPublicEmbed),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsPrivateEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsPublicEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsHiddenEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsShownEmbed),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsHiddenEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsShownEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsGrantedEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsDeniedEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsBlockedEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsUnblockedEmbed),
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsKickEmbed),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsGrantedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsDeniedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsBlockedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsUnblockedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsKickEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(DynamicChannelPermissionsAccessEmbed),
+            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsAccessEmbed ),
 
-            UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed),
-            UIEmbedsGroupBase.createSingleGroup(NothingChangedEmbed)
+            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( NothingChangedEmbed )
         ];
     }
 
-    public static getElementsGroups() {
-        return [DynamicChannelPermissionsAccessElementsGroup];
+    public static getElementsGroups () {
+        return [ DynamicChannelPermissionsAccessElementsGroup ];
     }
 
-    public static getDefaultElementsGroup() {
+    public static getDefaultElementsGroup () {
         return null;
     }
 
-    public static getDefaultEmbedsGroup() {
+    public static getDefaultEmbedsGroup () {
         return null;
     }
 }

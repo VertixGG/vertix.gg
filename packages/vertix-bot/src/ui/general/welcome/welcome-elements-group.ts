@@ -5,13 +5,13 @@ import { WelcomeInviteButton } from "@vertix.gg/bot/src/ui/general/welcome/welco
 import { WelcomeSetupButton } from "@vertix.gg/bot/src/ui/general/welcome/welcome-setup-button";
 
 export class WelcomeElementsGroup extends UIElementsGroupBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/WelcomeElementsGroup";
     }
 
-    public static getItems() {
+    public static getItems () {
         return [
-            [WelcomeSupportButton, WelcomeInviteButton, WelcomeSetupButton]
+            [ WelcomeSupportButton, WelcomeInviteButton, WelcomeSetupButton ]
             // [ WelcomeSetupButton, LanguageChooseButton ]
         ];
     }

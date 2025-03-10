@@ -8,37 +8,37 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelPermissionsGrantedEmbed extends DynamicChannelPermissionsAccessEmbed {
     private static vars = {
-        separator: uiUtilsWrapAsTemplate("separator"),
-        value: uiUtilsWrapAsTemplate("value"),
+        separator: uiUtilsWrapAsTemplate( "separator" ),
+        value: uiUtilsWrapAsTemplate( "value" ),
 
-        userGrantedDisplayName: uiUtilsWrapAsTemplate("userGrantedDisplayName")
+        userGrantedDisplayName: uiUtilsWrapAsTemplate( "userGrantedDisplayName" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/DynamicChannelPermissionsGrantedEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return 0xf5cf4d; // As the emoji.
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "👍  Access granted";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
-            `**${DynamicChannelPermissionsGrantedEmbed.vars.userGrantedDisplayName}** added successfully and now has access to this channel!\n` +
+            `**${ DynamicChannelPermissionsGrantedEmbed.vars.userGrantedDisplayName }** added successfully and now has access to this channel!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected getLogic ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
         result.userGrantedDisplayName = args.userGrantedDisplayName;
 

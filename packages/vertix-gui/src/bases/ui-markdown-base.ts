@@ -15,84 +15,84 @@ export abstract class UIMarkdownBase extends UITemplateBase {
 
     private translatedContent: UIMarkdownLanguageContent | undefined;
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIMarkdownTemplateBase";
     }
 
-    public static getType(): UIType {
+    public static getType (): UIType {
         return "markdown";
     }
 
-    public static ensure() {
+    public static ensure () {
         // TODO: Probably loading should be on another flow.
         const path = this.getContentPath();
 
-        this.content = fs.readFileSync(path, "utf8");
+        this.content = fs.readFileSync( path, "utf8" );
     }
 
-    public static pullout(code: string) {
-        const result = this.generatedLinks[this.getName() + "/" + code];
+    public static pullout ( code: string ) {
+        const result = this.generatedLinks[ this.getName() + "/" + code ];
 
-        delete this.generatedLinks[this.getName() + "/" + code];
+        delete this.generatedLinks[ this.getName() + "/" + code ];
 
         return result;
     }
 
-    protected static getContentPath(): string {
-        throw new ForceMethodImplementation(this, this.getContentPath.name);
+    protected static getContentPath (): string {
+        throw new ForceMethodImplementation( this, this.getContentPath.name );
     }
 
-    public async build(uiArgs?: UIArgs) {
+    public async build ( uiArgs?: UIArgs ) {
         this.translatedContent = await this.uiService
             .getUILanguageManager()
-            .getMarkdownTranslatedContent(this, uiArgs?._language);
+            .getMarkdownTranslatedContent( this, uiArgs?._language );
 
-        return super.build(uiArgs);
+        return super.build( uiArgs );
     }
 
-    public async getTranslatableContent(): Promise<UIMarkdownLanguageContent> {
+    public async getTranslatableContent (): Promise<UIMarkdownLanguageContent> {
         const result: UIMarkdownLanguageContent = {
-            content: (this.constructor as typeof UIMarkdownBase).content
+            content: ( this.constructor as typeof UIMarkdownBase ).content
         };
 
         const options = this.getOptions();
 
-        if (Object.keys(options).length) {
+        if ( Object.keys( options ).length ) {
             result.options = options;
         }
 
         return result;
     }
 
-    protected abstract generateLink(content: string): Promise<string>;
+    protected abstract generateLink( content: string ): Promise<string>;
 
     protected abstract getCode(): string;
 
-    protected getOptions(): UIBaseTemplateOptions {
+    protected getOptions (): UIBaseTemplateOptions {
         return {};
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getLogic(args?: UIArgs): Promise<{ [key: string]: any }> {
+    protected async getLogic ( args?: UIArgs ): Promise<{ [key: string]: any }> {
         return {};
     }
 
-    protected async getAttributes() {
+    protected async getAttributes () {
         const content = this.composeTemplate(
             { content: await this.getContentInternal() },
-            await this.getLogic(this.uiArgs),
+            await this.getLogic( this.uiArgs ),
             this.getOptions()
         );
 
-        content.link = await this.generateLink(content.content);
+        content.link = await this.generateLink( content.content );
 
-        (this.constructor as typeof UIMarkdownBase).generatedLinks[this.getName() + "/" + this.getCode()] =
+        ( this.constructor as typeof UIMarkdownBase ).generatedLinks[ this.getName() + "/" + this.getCode() ] =
             content.link;
 
         return content;
     }
 
-    private async getContentInternal() {
-        return this.translatedContent?.content || (this.constructor as typeof UIMarkdownBase).content;
+    private async getContentInternal () {
+        return this.translatedContent?.content || ( this.constructor as typeof UIMarkdownBase ).content;
     }
 }

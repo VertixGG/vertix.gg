@@ -26,109 +26,109 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
 
     private uiModals: UIModalBase[] = [];
 
-    public static getName() {
+    public static getName () {
         return "VertixGUI/UIComponentBase";
     }
 
     /**
      * Function getEntities() :: Returns all entities of the component, will return all types if no args are passed.
      */
-    public static getEntities(args: UIGetEntitiesArgs = {}): UIEntityTypes {
+    public static getEntities ( args: UIGetEntitiesArgs = {} ): UIEntityTypes {
         const entities: UIEntityTypes = [],
-            argsChanged = Object.keys(args).length > 0;
+            argsChanged = Object.keys( args ).length > 0;
 
-        if (!argsChanged || args.elements) {
-            entities.push(...this.getFlatElements());
+        if ( !argsChanged || args.elements ) {
+            entities.push( ...this.getFlatElements() );
         }
 
-        if (!argsChanged || args.embeds) {
-            entities.push(...this.getFlatEmbeds());
+        if ( !argsChanged || args.embeds ) {
+            entities.push( ...this.getFlatEmbeds() );
         }
 
-        if (!argsChanged || args.modals) {
+        if ( !argsChanged || args.modals ) {
             // TODO: Fix this., same as above.
-            entities.push(...(this.getModals() as unknown as UIEntityTypes));
+            entities.push( ...( this.getModals() as unknown as UIEntityTypes ) );
         }
 
-        if (!argsChanged || args.markdowns) {
-            entities.push(...this.getFlatMarkdowns());
+        if ( !argsChanged || args.markdowns ) {
+            entities.push( ...this.getFlatMarkdowns() );
         }
 
         return entities;
     }
 
-    public static validate(validateDefaultGroups = true) {
+    public static validate ( validateDefaultGroups = true ) {
         const elements = this.getElements(),
             elementsGroup = this.getElementsGroups();
 
-        if (elements.length && elementsGroup.length) {
-            throw new Error("You can't have both elements and elementsGroup.");
+        if ( elements.length && elementsGroup.length ) {
+            throw new Error( "You can't have both elements and elementsGroup." );
         }
 
-        if (elementsGroup.length) {
-            this.getInitialGroup("element", elementsGroup);
+        if ( elementsGroup.length ) {
+            this.getInitialGroup( "element", elementsGroup );
         }
 
         const embeds = this.getEmbeds(),
             embedsGroup = this.getEmbedsGroups();
 
-        if (embeds.length && embedsGroup.length) {
-            throw new Error("You can't have both embeds and embedsGroup.");
+        if ( embeds.length && embedsGroup.length ) {
+            throw new Error( "You can't have both embeds and embedsGroup." );
         }
 
-        if (embedsGroup.length) {
-            this.getInitialGroup("embed", embedsGroup);
+        if ( embedsGroup.length ) {
+            this.getInitialGroup( "embed", embedsGroup );
         }
 
         const markdowns = this.getMarkdowns(),
             markdownsGroup = this.getMarkdownsGroups();
 
-        if (markdowns.length && markdownsGroup.length) {
-            throw new Error("You can't have both markdowns and markdownsGroup.");
+        if ( markdowns.length && markdownsGroup.length ) {
+            throw new Error( "You can't have both markdowns and markdownsGroup." );
         }
 
-        if (markdownsGroup.length) {
-            this.getInitialGroup("markdown", markdownsGroup);
+        if ( markdownsGroup.length ) {
+            this.getInitialGroup( "markdown", markdownsGroup );
         }
 
         // Ensure all entities groups have items
         // TODO: Check if this is needed. ( with test maybe )
-        if (elementsGroup.length) {
-            elementsGroup.forEach((group) => group.getItems());
+        if ( elementsGroup.length ) {
+            elementsGroup.forEach( ( group ) => group.getItems() );
         }
 
-        if (embedsGroup.length) {
-            embedsGroup.forEach((group) => group.getItems());
+        if ( embedsGroup.length ) {
+            embedsGroup.forEach( ( group ) => group.getItems() );
         }
 
-        if (markdownsGroup.length) {
-            markdownsGroup.forEach((group) => group.getItems());
+        if ( markdownsGroup.length ) {
+            markdownsGroup.forEach( ( group ) => group.getItems() );
         }
 
         // Validate markdowns.
-        this.getMarkdowns().forEach((markdown) => markdown.ensure());
+        this.getMarkdowns().forEach( ( markdown ) => markdown.ensure() );
 
         // Ensure default groups are defined.
-        if (validateDefaultGroups) {
-            if (elementsGroup.length) {
+        if ( validateDefaultGroups ) {
+            if ( elementsGroup.length ) {
                 this.getDefaultElementsGroup();
             }
-            if (embedsGroup.length) {
+            if ( embedsGroup.length ) {
                 this.getDefaultEmbedsGroup();
             }
-            if (markdownsGroup.length) {
+            if ( markdownsGroup.length ) {
                 this.getDefaultMarkdownsGroup();
             }
         }
 
-        this.ensureEntities(this.getEntities(), true);
+        this.ensureEntities( this.getEntities(), true );
 
         // TODO: Find better place for this.
         // Ensure content availability.
-        this.getFlatMarkdowns().forEach((markdown) => markdown.ensure());
+        this.getFlatMarkdowns().forEach( ( markdown ) => markdown.ensure() );
     }
 
-    public getEntitiesInstance() {
+    public getEntitiesInstance () {
         return {
             elements: this.uiElements,
             embeds: this.uiEmbeds,
@@ -137,109 +137,109 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         };
     }
 
-    protected async getSchemaInternal() {
+    protected async getSchemaInternal () {
         return {
             name: this.getName(),
             type: this.getStaticThis().getType(),
 
             entities: {
-                elements: this.uiElements.map((row) => row.map((element) => element.getSchema())),
-                embeds: this.uiEmbeds.map((embed) => embed.getSchema())
+                elements: this.uiElements.map( ( row ) => row.map( ( element ) => element.getSchema() ) ),
+                embeds: this.uiEmbeds.map( ( embed ) => embed.getSchema() )
             }
         };
     }
 
-    protected async buildDynamicEntities(args?: UIArgs) {
+    protected async buildDynamicEntities ( args?: UIArgs ) {
         // ( * ) Clear all dynamic entities.
         // ( * ) Build only dynamic elements.
 
-        const clearEntities = (entities: any[]) => {
-            entities.forEach((entity, index) => {
-                if (entity?.isDynamic()) {
+        const clearEntities = ( entities: any[] ) => {
+            entities.forEach( ( entity, index ) => {
+                if ( entity?.isDynamic() ) {
                     // Mark as deleted.
-                    delete entities[index];
+                    delete entities[ index ];
                 }
-            });
+            } );
         };
 
         // Clear elements
-        if (this.uiElements.length && Array.isArray(this.uiElements[0])) {
-            this.uiElements.forEach(clearEntities);
+        if ( this.uiElements.length && Array.isArray( this.uiElements[ 0 ] ) ) {
+            this.uiElements.forEach( clearEntities );
         }
 
-        clearEntities(this.uiEmbeds);
-        clearEntities(this.uiMarkdowns);
-        clearEntities(this.uiModals);
+        clearEntities( this.uiEmbeds );
+        clearEntities( this.uiMarkdowns );
+        clearEntities( this.uiModals );
 
         // Markdowns should be built first, since they can be used in other entities.
-        await this.buildMarkdowns(args);
+        await this.buildMarkdowns( args );
 
-        await this.buildElements(args);
-        await this.buildEmbeds(args);
-        await this.buildModals(args);
+        await this.buildElements( args );
+        await this.buildEmbeds( args );
+        await this.buildModals( args );
     }
 
-    protected async buildStaticEntities() {
+    protected async buildStaticEntities () {
         // Build only static elements.
 
         // Markdowns should be built first, since they can be used in other entities.
-        await this.buildMarkdowns(undefined, true);
+        await this.buildMarkdowns( undefined, true );
 
-        await this.buildElements(undefined, true);
-        await this.buildEmbeds(undefined, true);
-        await this.buildModals(undefined, true);
+        await this.buildElements( undefined, true );
+        await this.buildEmbeds( undefined, true );
+        await this.buildModals( undefined, true );
     }
 
-    private async buildElements(args?: UIArgs, onlyStatic = false) {
-        const elements = this.getCurrentElements().getItems(args) as UIElementsConstructor,
-            isMultiRow = Array.isArray(elements[0]),
+    private async buildElements ( args?: UIArgs, onlyStatic = false ) {
+        const elements = this.getCurrentElements().getItems( args ) as UIElementsConstructor,
+            isMultiRow = Array.isArray( elements[ 0 ] ),
             elementsRows = isMultiRow
-                ? (elements as UIEntityTypesConstructor[])
-                : [elements as UIEntityTypesConstructor];
+                ? ( elements as UIEntityTypesConstructor[] )
+                : [ elements as UIEntityTypesConstructor ];
 
-        const isEmpty = isMultiRow ? !elementsRows.length : elementsRows.every((row) => !row.length);
+        const isEmpty = isMultiRow ? !elementsRows.length : elementsRows.every( ( row ) => !row.length );
 
-        if (isEmpty) {
+        if ( isEmpty ) {
             this.uiElements.length = 0;
             return;
         }
 
         let y = 0;
-        for (const elementsRow of elementsRows) {
-            if (undefined === this.uiElements[y]) {
-                this.uiElements[y] = [];
+        for ( const elementsRow of elementsRows ) {
+            if ( undefined === this.uiElements[ y ] ) {
+                this.uiElements[ y ] = [];
             }
 
-            await this.buildEntities(this.uiElements[y], elementsRow as UIEntityTypes, onlyStatic, args);
+            await this.buildEntities( this.uiElements[ y ], elementsRow as UIEntityTypes, onlyStatic, args );
             y++;
         }
     }
 
-    private async buildEmbeds(args?: UIArgs, onlyStatic = false) {
-        const embeds = this.getCurrentEmbeds().getItems(args);
+    private async buildEmbeds ( args?: UIArgs, onlyStatic = false ) {
+        const embeds = this.getCurrentEmbeds().getItems( args );
 
-        await this.buildEntities(this.uiEmbeds, embeds as UIEntityTypes, onlyStatic, args);
+        await this.buildEntities( this.uiEmbeds, embeds as UIEntityTypes, onlyStatic, args );
     }
 
     // TODO: Test?
-    private async buildModals(args?: UIArgs, onlyStatic = false) {
+    private async buildModals ( args?: UIArgs, onlyStatic = false ) {
         const self = this.getStaticThis(),
-            modals = self.getModals() as { new (args?: UIArgs): UIModalBase }[];
+            modals = self.getModals() as { new ( args?: UIArgs ): UIModalBase }[];
 
         let i = 0;
-        for (const Modal of modals) {
-            this.uiModals[i] = (await this.buildEntity(this.uiModals[i], Modal, onlyStatic, args)) as UIModalBase;
+        for ( const Modal of modals ) {
+            this.uiModals[ i ] = ( await this.buildEntity( this.uiModals[ i ], Modal, onlyStatic, args ) ) as UIModalBase;
             i++;
         }
     }
 
-    private async buildMarkdowns(args?: UIArgs, onlyStatic = false) {
-        const markdowns = this.getCurrentMarkdowns().getItems(args);
+    private async buildMarkdowns ( args?: UIArgs, onlyStatic = false ) {
+        const markdowns = this.getCurrentMarkdowns().getItems( args );
 
-        await this.buildEntities(this.uiMarkdowns, markdowns as UIEntityTypes, onlyStatic, args);
+        await this.buildEntities( this.uiMarkdowns, markdowns as UIEntityTypes, onlyStatic, args );
     }
 
-    private getStaticThis(): typeof UIComponentBase {
+    private getStaticThis (): typeof UIComponentBase {
         return this.constructor as typeof UIComponentBase;
     }
 }

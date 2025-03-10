@@ -32,39 +32,39 @@ export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicCha
         VERSION_UI_V3
     );
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed";
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return "https://i.imgur.com/sGjDVJ4.png";
     }
 
-    protected getTitle(): string {
-        return `${this.vars.get("editPrimaryMessageEmoji")}  •  Edit description of your channel`;
+    protected getTitle (): string {
+        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit description of your channel`;
     }
 
-    protected getDescription(): string {
-        return "\n _Description_:\n `" + this.vars.get("description") + "`\n" + "\n### Do you want to change it?";
+    protected getDescription (): string {
+        return "\n _Description_:\n `" + this.vars.get( "description" ) + "`\n" + "\n### Do you want to change it?";
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const vars = this.vars.get();
 
         return {
             description: {
-                [vars.descriptionDisplayValue]: vars.descriptionValue,
-                [vars.descriptionDisplayDefault]: this.configV3.data.constants.dynamicChannelPrimaryMessageDescription
+                [ vars.descriptionDisplayValue ]: vars.descriptionValue,
+                [ vars.descriptionDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageDescription
             }
         };
     }
 
-    protected async getLogicAsync(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected async getLogicAsync ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
         const { descriptionDisplayValue, descriptionDisplayDefault } = this.vars.get();
 
-        if (args.description) {
+        if ( args.description ) {
             result.descriptionValue = args.description;
             result.description = descriptionDisplayValue;
         } else {

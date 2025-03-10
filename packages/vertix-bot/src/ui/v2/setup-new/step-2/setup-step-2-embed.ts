@@ -10,47 +10,47 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     private static vars = {
-        on: uiUtilsWrapAsTemplate("on"),
-        off: uiUtilsWrapAsTemplate("off"),
+        on: uiUtilsWrapAsTemplate( "on" ),
+        off: uiUtilsWrapAsTemplate( "off" ),
 
-        message: uiUtilsWrapAsTemplate("message"),
-        defaultMessage: uiUtilsWrapAsTemplate("defaultMessage"),
-        noButtonsMessage: uiUtilsWrapAsTemplate("noButtonsMessage"),
+        message: uiUtilsWrapAsTemplate( "message" ),
+        defaultMessage: uiUtilsWrapAsTemplate( "defaultMessage" ),
+        noButtonsMessage: uiUtilsWrapAsTemplate( "noButtonsMessage" ),
 
-        configUserMention: uiUtilsWrapAsTemplate("configUserMention"),
-        configUserMentionEnabled: uiUtilsWrapAsTemplate("configUserMentionEnabled"),
-        configUserMentionDisabled: uiUtilsWrapAsTemplate("configUserMentionDisabled"),
+        configUserMention: uiUtilsWrapAsTemplate( "configUserMention" ),
+        configUserMentionEnabled: uiUtilsWrapAsTemplate( "configUserMentionEnabled" ),
+        configUserMentionDisabled: uiUtilsWrapAsTemplate( "configUserMentionDisabled" ),
 
-        configAutoSave: uiUtilsWrapAsTemplate("configAutoSave"),
-        configAutoSaveEnabled: uiUtilsWrapAsTemplate("configAutoSaveEnabled"),
-        configAutoSaveDisabled: uiUtilsWrapAsTemplate("configAutoSaveDisabled"),
+        configAutoSave: uiUtilsWrapAsTemplate( "configAutoSave" ),
+        configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
+        configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
 
-        footer: uiUtilsWrapAsTemplate("footer"),
-        defaultFooter: uiUtilsWrapAsTemplate("defaultFooter"),
-        noButtonsFooter: uiUtilsWrapAsTemplate("noButtonsFooter")
+        footer: uiUtilsWrapAsTemplate( "footer" ),
+        defaultFooter: uiUtilsWrapAsTemplate( "defaultFooter" ),
+        noButtonsFooter: uiUtilsWrapAsTemplate( "noButtonsFooter" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V2/SetupStep2Embed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage(): string {
+    protected getImage (): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return "Step 2 - Dynamic Channels Setup";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
             "Setup dynamic channel management interface.\n\n" +
             "**_🎚 Buttons Interface_**\n\n" +
@@ -70,11 +70,11 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         );
     }
 
-    protected getFooter() {
+    protected getFooter () {
         return SetupStep2Embed.vars.footer;
     }
 
-    protected getOptions() {
+    protected getOptions () {
         const {
             on,
             off,
@@ -97,30 +97,30 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             off: "\`🔴∙Off`",
 
             message: {
-                [defaultMessage]: super.getDescription() + "\n",
-                [noButtonsMessage]: "There are no buttons selected!\n"
+                [ defaultMessage ]: super.getDescription() + "\n",
+                [ noButtonsMessage ]: "There are no buttons selected!\n"
             },
 
             configUserMention: {
-                [configUserMentionEnabled]: on,
-                [configUserMentionDisabled]: off
+                [ configUserMentionEnabled ]: on,
+                [ configUserMentionDisabled ]: off
             },
 
             configAutoSave: {
-                [configAutoSaveEnabled]: on,
-                [configAutoSaveDisabled]: off
+                [ configAutoSaveEnabled ]: on,
+                [ configAutoSaveDisabled ]: off
             },
 
             footer: {
-                [defaultFooter]:
+                [ defaultFooter ]:
                     "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
-                [noButtonsFooter]:
+                [ noButtonsFooter ]:
                     "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n"
             }
         };
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         const buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;
 
         return {

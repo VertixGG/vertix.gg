@@ -4,42 +4,42 @@ export abstract class ObjectBase {
     private readonly id: string;
     private readonly name: string = "__UNDEFINED_NAME__";
 
-    protected constructor() {
+    protected constructor () {
         this.name = this.getName();
 
         const timestamp = performance.now() * 1000000;
-        const random1 = BigInt(Math.floor(Math.random() * 1000000));
-        const random2 = BigInt(Math.floor(Math.random() * 1000000));
+        const random1 = BigInt( Math.floor( Math.random() * 1000000 ) );
+        const random2 = BigInt( Math.floor( Math.random() * 1000000 ) );
 
-        this.id = `${timestamp}${random1}${random2}`;
+        this.id = `${ timestamp }${ random1 }${ random2 }`;
     }
 
-    public static getName(): string {
-        throw new ForceMethodBase(this.name, "getName");
+    public static getName (): string {
+        throw new ForceMethodBase( this.name, "getName" );
     }
 
-    public getName(): string {
-        return (this.constructor as typeof ObjectBase).getName();
+    public getName (): string {
+        return ( this.constructor as typeof ObjectBase ).getName();
     }
 
-    public getUniqueId(): string {
+    public getUniqueId (): string {
         return this.id;
     }
 
-    public getInitialName(): string {
+    public getInitialName (): string {
         return this.name;
     }
 
-    public getHierarchyNames(): string[] {
+    public getHierarchyNames (): string[] {
         let classNames = [];
-        let obj = Object.getPrototypeOf(this);
+        let obj = Object.getPrototypeOf( this );
         let className: string;
 
-        while ((className = obj.getName()) !== "Object") {
-            classNames.push(className);
-            obj = Object.getPrototypeOf(obj);
+        while ( ( className = obj.getName() ) !== "Object" ) {
+            classNames.push( className );
+            obj = Object.getPrototypeOf( obj );
 
-            if (obj.constructor === ObjectBase) {
+            if ( obj.constructor === ObjectBase ) {
                 break;
             }
         }
@@ -49,7 +49,7 @@ export abstract class ObjectBase {
 }
 
 export abstract class TObjectMixinBase extends ObjectBase {
-    protected constructor(..._args: any[]) {
+    protected constructor ( ..._args: any[] ) {
         super();
     }
 }

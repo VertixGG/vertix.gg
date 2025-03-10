@@ -40,27 +40,27 @@ export type UIAdapterBuildSource =
 
 // TODO: constructor types should not be arrays, but a single type.
 
-export type UIElementsTypes = (typeof UIElementBase)[] | (typeof UIElementBase)[][];
+export type UIElementsTypes = ( typeof UIElementBase )[] | ( typeof UIElementBase )[][];
 export type UIElementsConstructor = { new (): UIElementBase<any> }[] | { new (): UIElementBase<any> }[][]; // TODO: Maybe passthroughs the type of the element as a generic.
 export type UIElementsTypesConstructor = UIElementsTypes | UIElementsConstructor;
 
-export type UIEmbedTypes = (typeof UIEmbedBase)[];
+export type UIEmbedTypes = ( typeof UIEmbedBase )[];
 export type UIEmbedConstructor = { new (): UIEmbedBase }[];
 export type UIEmbedTypesConstructor = UIEmbedTypes | UIEmbedConstructor;
 
-export type UIModalTypes = (typeof UIModalBase)[];
+export type UIModalTypes = ( typeof UIModalBase )[];
 export type UIModalConstructor = { new (): UIModalBase }[];
 export type UIModalTypesConstructor = UIModalTypes | UIModalConstructor;
 
-export type UIMarkdownTypes = (typeof UIMarkdownBase)[];
+export type UIMarkdownTypes = ( typeof UIMarkdownBase )[];
 export type UIMarkdownConstructor = { new (): UIMarkdownBase }[];
 export type UIMarkdownLinkConstructor = UIMarkdownTypes | UIMarkdownConstructor;
 
-export type UIEntityTypes = (typeof UIEntityBase)[];
+export type UIEntityTypes = ( typeof UIEntityBase )[];
 export type UIEntityConstructor = { new (): UIEntityBase }[];
-export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | (UIEntityTypes | UIEntityConstructor)[];
+export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | ( UIEntityTypes | UIEntityConstructor )[];
 
-export type UIComponentConstructor = { new (args?: UICreateComponentArgs): UIComponentBase };
+export type UIComponentConstructor = { new ( args?: UICreateComponentArgs ): UIComponentBase };
 export type UIComponentTypeConstructor = typeof UIComponentBase & UIComponentConstructor;
 
 // export type UIEntityUnionTypes = UIEmbedTypes | UIElementsTypes;
@@ -98,7 +98,7 @@ export interface UIExecutionStep {
     embedsGroup?: string | null;
     elementsGroup?: string | null;
     markdownGroup?: string | null;
-    getConditions?: (args: UIExecutionConditionArgs) => boolean;
+    getConditions?: ( args: UIExecutionConditionArgs ) => boolean;
 }
 
 export interface UIExecutionStepItem extends UIExecutionStep {

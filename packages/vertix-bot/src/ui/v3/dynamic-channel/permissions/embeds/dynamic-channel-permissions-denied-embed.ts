@@ -8,30 +8,30 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class DynamicChannelPermissionsDeniedEmbed extends DynamicChannelPermissionsAccessEmbed {
     private static vars = {
-        userDeniedDisplayName: uiUtilsWrapAsTemplate("userDeniedDisplayName")
+        userDeniedDisplayName: uiUtilsWrapAsTemplate( "userDeniedDisplayName" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/DynamicChannelPermissionsDeniedEmbed";
     }
 
-    public static getInstanceType(): UIInstancesTypes {
+    public static getInstanceType (): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "👎  Access canceled";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return (
-            `**${DynamicChannelPermissionsDeniedEmbed.vars.userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n` +
+            `**${ DynamicChannelPermissionsDeniedEmbed.vars.userDeniedDisplayName }** successfully revoked and no longer has access to this channel!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic(args: UIArgs) {
-        const result = super.getLogic(args);
+    protected getLogic ( args: UIArgs ) {
+        const result = super.getLogic( args );
 
         result.userDeniedDisplayName = args.userDeniedDisplayName;
 

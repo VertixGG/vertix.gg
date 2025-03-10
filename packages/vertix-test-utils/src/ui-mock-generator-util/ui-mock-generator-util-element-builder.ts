@@ -6,38 +6,38 @@ export class UIMockGeneratorUtilElementBuilder {
     private name!: string;
     private instanceType!: UIInstancesTypes;
 
-    public withName(name: string) {
+    public withName ( name: string ) {
         this.name = name;
         return this;
     }
 
-    public withInstanceType(instanceType: UIInstancesTypes) {
+    public withInstanceType ( instanceType: UIInstancesTypes ) {
         this.instanceType = instanceType;
         return this;
     }
 
-    public build() {
+    public build () {
         let name = this.name;
         const instanceType = this.instanceType;
 
         return class extends UIElementBase<any> {
-            public static getName() {
+            public static getName () {
                 return name;
             }
 
-            public static getInstanceType() {
+            public static getInstanceType () {
                 return instanceType;
             }
 
-            public async getTranslatableContent(): Promise<any> {
+            public async getTranslatableContent (): Promise<any> {
                 return {};
             }
 
-            protected async getAttributes() {
+            protected async getAttributes () {
                 return {};
             }
 
-            public static set __name(newName: string) {
+            public static set __name ( newName: string ) {
                 name = newName;
             }
         };

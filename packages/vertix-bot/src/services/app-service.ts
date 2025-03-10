@@ -18,63 +18,63 @@ interface PackageJson {
     [key: string]: any;
 }
 
-const packageJsonPath = path.resolve("./package.json");
-const packageJsonString = fs.readFileSync(packageJsonPath, { encoding: "utf8" });
-const packageJson: PackageJson = JSON.parse(packageJsonString);
+const packageJsonPath = path.resolve( "./package.json" );
+const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
+const packageJson: PackageJson = JSON.parse( packageJsonString );
 
 export class AppService extends ServiceBase {
     private client: Client<true>;
 
     private onceReadyCallback: () => void;
 
-    public static getName() {
+    public static getName () {
         return "VertixBot/Services/App";
     }
 
-    public static getVersion() {
+    public static getVersion () {
         return CURRENT_VERSION;
     }
 
-    public static getBuildVersion() {
+    public static getBuildVersion () {
         return packageJson.version;
     }
 
-    public constructor() {
+    public constructor () {
         super();
 
-        EventBus.$.register(this, [this.onReady]);
+        EventBus.$.register( this, [ this.onReady ] );
 
         this.printVersion();
     }
 
-    public getClient() {
+    public getClient () {
         return this.client;
     }
 
-    public onceReady(onceReady: () => void) {
+    public onceReady ( onceReady: () => void ) {
         this.onceReadyCallback = onceReady;
     }
 
-    public async onReady(client: Client<true>) {
-        if (this.client) {
-            this.logger.error(this.onReady, "Client is already set");
+    public async onReady ( client: Client<true> ) {
+        if ( this.client ) {
+            this.logger.error( this.onReady, "Client is already set" );
 
-            process.exit(1);
+            process.exit( 1 );
         }
 
         this.client = client;
 
-        if (!client.user || !client.application) {
-            this.logger.error(this.onReady, "Client is not ready");
+        if ( !client.user || !client.application ) {
+            this.logger.error( this.onReady, "Client is not ready" );
 
-            process.exit(1);
+            process.exit( 1 );
         }
 
-        const { Commands } = await import("@vertix.gg/bot/src/commands");
+        const { Commands } = await import( "@vertix.gg/bot/src/commands" );
 
-        await client.application.commands.set(Commands);
+        await client.application.commands.set( Commands );
 
-        this.logger.info(this.onReady, "Abandoned channels are handled.");
+        this.logger.info( this.onReady, "Abandoned channels are handled." );
 
         await this.ensureBackwardCompatibility();
 
@@ -83,16 +83,16 @@ export class AppService extends ServiceBase {
 
         this.logger.log(
             this.onReady,
-            `Ready handle is set, bot: '${username}', id: '${id}' is online, commands is set.`
+            `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.`
         );
 
-        if (this.onceReadyCallback) {
+        if ( this.onceReadyCallback ) {
             this.pingInterval();
             this.onceReadyCallback();
         }
     }
 
-    private async ensureBackwardCompatibility() {
+    private async ensureBackwardCompatibility () {
         // const { PrismaBotClient } = await import("@vertix.gg/prisma/bot-client");
         // const client = PrismaBotClient.getPrismaClient();
         //
@@ -137,16 +137,16 @@ export class AppService extends ServiceBase {
         // await ensueDataVersionMatchesNewUIMechanism.call( this );
     }
 
-    private pingInterval() {
-        setInterval(() => {
-            this.logger.log(this.pingInterval, `Ping: ${this.client.ws.ping}ms`);
-        }, 30000);
+    private pingInterval () {
+        setInterval( () => {
+            this.logger.log( this.pingInterval, `Ping: ${ this.client.ws.ping }ms` );
+        }, 30000 );
     }
 
-    private printVersion() {
+    private printVersion () {
         this.logger.info(
             this.printVersion,
-            `Version: '${AppService.getVersion()}' Build version: ${AppService.getBuildVersion()}'`
+            `Version: '${ AppService.getVersion() }' Build version: ${ AppService.getBuildVersion() }'`
         );
     }
 }

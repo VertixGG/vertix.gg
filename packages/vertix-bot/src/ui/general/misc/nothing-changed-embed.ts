@@ -4,23 +4,23 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class NothingChangedEmbed extends UIEmbedBase {
-    public static getName() {
+    public static getName () {
         return "VertixBot/UI-General/NothingChangedEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic; // TODO: Should be static.
     }
 
-    protected getTitle(): string {
+    protected getTitle (): string {
         return "🤷  Nothing changed";
     }
 
-    protected getDescription(): string {
+    protected getDescription (): string {
         return "This is may occur when you try to change something that is not changeable or is the same as before.";
     }
 
-    protected getColor(): number {
+    protected getColor (): number {
         return Colors.Red;
     }
 }

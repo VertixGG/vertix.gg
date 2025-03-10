@@ -6,12 +6,12 @@ import type { RawGuildChannelData } from "discord.js/typings/rawDataTypes";
 export class GuildChannelManagerMock extends CachedManager<Snowflake, GuildChannel, GuildChannelResolvable> {
     private guild: Guild;
 
-    public constructor(guild: Guild, _iterable?: Iterable<RawGuildChannelData>) {
-        super(guild.client, GuildChannel);
+    public constructor ( guild: Guild, _iterable?: Iterable<RawGuildChannelData> ) {
+        super( guild.client, GuildChannel );
         this.guild = guild;
     }
 
-    public getFakeInstance(): GuildChannelManager {
+    public getFakeInstance (): GuildChannelManager {
         return this as unknown as GuildChannelManager;
     }
 }

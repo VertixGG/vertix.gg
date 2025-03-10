@@ -8,23 +8,23 @@ import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/
  * Shown when the user trying to add him self to the vote list, but he is already in.
  */
 export class ClaimResultStepAlreadyInEmbed extends UIEmbedBase {
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/ClaimResultStepAlreadyInEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor() {
+    protected getColor () {
         return VERTIX_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🤷  You are already in";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         return "Your intentions are clear - you've already nominated yourself as a potential owner of this channel.";
     }
 }

@@ -11,48 +11,48 @@ import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 import type { Client, CommandInteraction, Interaction } from "discord.js";
 
-export function interactionHandler(client: Client) {
-    client.on(Events.InteractionCreate, async (interaction: Interaction) => {
-        if (interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction) {
-            const customId = ServiceLocator.$.get<UIHashService>("VertixGUI/UIHashService").getIdSilent(
+export function interactionHandler ( client: Client ) {
+    client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
+        if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
+            const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent(
                 interaction.customId
             );
 
-            const adapter = ServiceLocator.$.get<UIService>("VertixGUI/UIService").get(customId, true);
+            const adapter = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).get( customId, true );
 
             GlobalLogger.$.log(
                 interactionHandler,
-                `Interaction id: '${interaction.id}' - ${interaction.constructor.name} id: '${customId}' was used by '${interaction.user.username}'`
+                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ customId }' was used by '${ interaction.user.username }'`
             );
 
-            if (adapter) {
-                await adapter.run(interaction);
+            if ( adapter ) {
+                await adapter.run( interaction );
 
                 return;
             }
         }
 
-        if (interaction.isCommand() || interaction.isContextMenuCommand()) {
-            await handleSlashCommand(client, interaction as CommandInteraction<"cached">);
+        if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
+            await handleSlashCommand( client, interaction as CommandInteraction<"cached"> );
             return;
         }
 
-        GlobalLogger.$.debug(interactionHandler, "", interaction);
-    });
+        GlobalLogger.$.debug( interactionHandler, "", interaction );
+    } );
 }
 
-const handleSlashCommand = async (client: Client, interaction: CommandInteraction<"cached">): Promise<void> => {
+const handleSlashCommand = async ( client: Client, interaction: CommandInteraction<"cached"> ): Promise<void> => {
     GlobalLogger.$.log(
         handleSlashCommand,
-        `Guild id: '${interaction.guildId}' - Slash command: '${interaction.commandName}' were used by '${interaction.user.username}'`
+        `Guild id: '${ interaction.guildId }' - Slash command: '${ interaction.commandName }' were used by '${ interaction.user.username }'`
     );
 
-    const slashCommand = Commands.find((c) => c.name === interaction.commandName);
+    const slashCommand = Commands.find( ( c ) => c.name === interaction.commandName );
 
-    if (!slashCommand) {
-        await interaction.followUp({ content: "An error has occurred" });
+    if ( !slashCommand ) {
+        await interaction.followUp( { content: "An error has occurred" } );
         return;
     }
 
-    slashCommand.run(client, interaction);
+    slashCommand.run( client, interaction );
 };

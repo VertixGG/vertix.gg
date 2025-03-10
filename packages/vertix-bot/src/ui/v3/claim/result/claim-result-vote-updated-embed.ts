@@ -11,29 +11,29 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
  */
 export class ClaimResultVoteUpdatedEmbed extends UIEmbedBase {
     private static vars = {
-        prevUserId: uiUtilsWrapAsTemplate("prevUserId"),
-        currentUserId: uiUtilsWrapAsTemplate("currentUserId")
+        prevUserId: uiUtilsWrapAsTemplate( "prevUserId" ),
+        currentUserId: uiUtilsWrapAsTemplate( "currentUserId" )
     };
 
-    public static getName() {
+    public static getName () {
         return "Vertix/UI-V3/ClaimResultVoteUpdatedEmbed";
     }
 
-    public static getInstanceType() {
+    public static getInstanceType () {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle() {
+    protected getTitle () {
         return "🗳️  Your vote has been updated";
     }
 
-    protected getDescription() {
+    protected getDescription () {
         const { prevUserId, currentUserId } = ClaimResultVoteUpdatedEmbed.vars;
 
-        return `You've just changed your vote from <@${prevUserId}> to <@${currentUserId}> for channel ownership.`;
+        return `You've just changed your vote from <@${ prevUserId }> to <@${ currentUserId }> for channel ownership.`;
     }
 
-    protected getLogic(args: UIArgs) {
+    protected getLogic ( args: UIArgs ) {
         return {
             prevUserId: args.prevUserId,
             currentUserId: args.currentUserId

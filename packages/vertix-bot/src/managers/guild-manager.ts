@@ -55,7 +55,7 @@ export class GuildManager extends InitializeBase {
 
         this.updateStatsBound = this.updateStats.bind(this);
 
-        EventBus.$.register(this, [this.onJoined.bind(this)]);
+        EventBus.$.register(this, [this.onJoined]);
     }
 
     public async onJoin(client: Client, guild: Guild) {

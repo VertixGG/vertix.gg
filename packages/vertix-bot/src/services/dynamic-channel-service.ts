@@ -134,16 +134,17 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         this.debugger = new Debugger(this, "", isDebugEnabled("SERVICE", DynamicChannelService.getName()));
 
-        // Register event handlers with proper binding to maintain caller context
+
+        // Register event handlers
         EventBus.$.on("VertixBot/Services/Channel", "onJoin", this.onJoin.bind(this));
         EventBus.$.on("VertixBot/Services/Channel", "onLeave", this.onLeave.bind(this));
 
-        // Register methods that can be called directly through EventBus with proper binding
+        // Register methods that can be called directly through EventBus
         EventBus.$.register(this, [
-            this.onOwnerJoinDynamicChannel.bind(this),
-            this.onOwnerLeaveDynamicChannel.bind(this),
-            this.onLeaveDynamicChannelEmpty.bind(this),
-            this.updateChannelOwnership.bind(this)
+            this.onOwnerJoinDynamicChannel,
+            this.onOwnerLeaveDynamicChannel,
+            this.onLeaveDynamicChannelEmpty,
+            this.updateChannelOwnership
         ]);
     }
 
@@ -570,8 +571,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if (autoSave) {
             savedData = await UserMasterChannelDataModel.$.getData(user.userId, masterChannelDB.id);
-
-            debugger;
         }
 
         if (savedData) {
@@ -661,7 +660,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         this.logger.info(
             this.createDynamicChannel,
-            `Guild id: '${guild.id}' - Creating dynamic channel '${dynamicChannelName}' for user '${displayName}' ownerId: '${userOwnerId}'`
+            `Guild id: '${guild.id}' - Creating dynamic channel '${dynamicChannelName}' for user '${displayName}' ownerId: '${userOwnerId}' version: '${masterChannelDB.version}'`
         );
 
         // Create a channel for the user.
@@ -677,6 +676,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             type: ChannelType.GuildVoice,
             parent: masterChannel.parent,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
+            // ---
+            version: masterChannelDB.version,
             // ---
             ...defaultProperties
         });
@@ -1742,6 +1743,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         switch (caller) {
             case this.onLeaveDynamicChannel:
+                message = `➖ Dynamic channel has been **deleted**, owner: \`${meta.ownerDisplayName}\``;
+                break;
+
+            case this.onLeaveDynamicChannelEmpty:
                 message = `➖ Dynamic channel has been **deleted**, owner: \`${meta.ownerDisplayName}\``;
                 break;
 

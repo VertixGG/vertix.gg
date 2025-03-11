@@ -12,7 +12,7 @@ export class DynamicChannelClearChatButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelClearChatButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelClearChatButton.getBaseName() );
     }
 
     public static getSortId() {

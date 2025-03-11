@@ -30,7 +30,7 @@ export class EmojiManager extends InitializeBase {
     }
 
     public static get $() {
-        if ( !EmojiManager.instance ) {
+        if ( ! EmojiManager.instance ) {
             EmojiManager.instance = new EmojiManager();
         }
 
@@ -65,23 +65,15 @@ export class EmojiManager extends InitializeBase {
         } );
     }
 
-    public async awaitInitialization() {
-        if ( !this.initPromise ) {
-            this.initPromise = this.initialize();
-        }
-
-        await this.initPromise;
-    }
-
-    public async getMarkdown( baseName: string, fromCache = true ) {
-        if ( !fromCache ) {
+    public async promise() {
+        if ( ! this.initPromise ) {
             await this.initialize();
         }
-
-        return this.getCachedMarkdown( baseName );
+        return this.initPromise;
     }
 
-    public getCachedMarkdown( baseName: string ) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public getMarkdown( baseName: string, fromCache = true ) {
         const emoji = this.emojis?.items?.find( ( emoji ) => emoji.name!.includes( baseName ) );
 
         if ( emoji ) {

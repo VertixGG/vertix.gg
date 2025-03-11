@@ -14,7 +14,7 @@ export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelRegionButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelRegionButton.getBaseName() );
     }
 
     public static getSortId() {

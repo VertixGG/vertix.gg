@@ -14,7 +14,7 @@ export class DynamicChannelPermissionsAccessButton extends DynamicChannelButtonB
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelPermissionsAccessButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelPermissionsAccessButton.getBaseName() );
     }
 
     public static getSortId() {

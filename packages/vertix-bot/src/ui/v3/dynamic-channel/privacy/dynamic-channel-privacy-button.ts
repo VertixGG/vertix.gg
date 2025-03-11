@@ -14,7 +14,7 @@ export class DynamicChannelPrivacyButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelPrivacyButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelPrivacyButton.getBaseName() );
     }
 
     public static getSortId() {

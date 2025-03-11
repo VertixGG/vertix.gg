@@ -16,7 +16,7 @@ export class DynamicChannelResetChannelButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelResetChannelButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelResetChannelButton.getBaseName() );
     }
 
     public getId() {

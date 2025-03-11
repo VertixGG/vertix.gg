@@ -12,7 +12,7 @@ export class DynamicChannelRenameButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelRenameButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelRenameButton.getBaseName() );
     }
 
     public static getSortId() {

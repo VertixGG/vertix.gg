@@ -16,7 +16,7 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelClaimChannelButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelClaimChannelButton.getBaseName() );
     }
 
     public static getSortId() {

@@ -14,7 +14,7 @@ export class DynamicChannelPrimaryMessageEditButton extends DynamicChannelButton
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelPrimaryMessageEditButton.getBaseName() );
     }
 
     public static getSortId() {

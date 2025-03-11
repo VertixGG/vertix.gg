@@ -14,7 +14,7 @@ export class DynamicChannelLimitMetaButton extends DynamicChannelButtonBase {
     }
 
     public static getEmoji() {
-        return EmojiManager.$.getCachedMarkdown( DynamicChannelLimitMetaButton.getBaseName() );
+        return EmojiManager.$.getMarkdown( DynamicChannelLimitMetaButton.getBaseName() );
     }
 
     public static getSortId() {

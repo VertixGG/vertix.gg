@@ -15,7 +15,7 @@ import type { Client } from "discord.js";
 interface PackageJson {
     version: string;
 
-    [key: string]: any;
+    [ key: string ]: any;
 }
 
 const packageJsonPath = path.resolve( "./package.json" );
@@ -25,7 +25,9 @@ const packageJson: PackageJson = JSON.parse( packageJsonString );
 export class AppService extends ServiceBase {
     private client: Client<true>;
 
-    private onceReadyCallbacks: Array<() => Promise<void> >=[];
+    private isActive = false;
+
+    private onceReadyCallbacks: Array<() => Promise<void>> = [];
 
     public static getName() {
         return "VertixBot/Services/App";
@@ -52,6 +54,11 @@ export class AppService extends ServiceBase {
     }
 
     public onceReady( onceReady: () => Promise<void> ) {
+        if ( this.isActive ) {
+            onceReady();
+            return;
+        }
+
         this.onceReadyCallbacks.push( onceReady );
     }
 
@@ -64,7 +71,7 @@ export class AppService extends ServiceBase {
 
         this.client = client;
 
-        if ( !client.user || !client.application ) {
+        if ( ! client.user || ! client.application ) {
             this.logger.error( this.onReady, "Client is not ready" );
 
             process.exit( 1 );
@@ -87,6 +94,8 @@ export class AppService extends ServiceBase {
         );
 
         this.pingInterval();
+
+        this.isActive = true;
 
         await Promise.all( this.onceReadyCallbacks.map( callback => callback() ) );
     }

@@ -272,7 +272,7 @@ export async function entryPoint() {
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 
-    await EmojiManager.$.awaitInitialization().then( () => {
+    await EmojiManager.$.promise().then( () => {
         GlobalLogger.$.info( entryPoint,"Emoji manager is initialized" );
     } );
 }

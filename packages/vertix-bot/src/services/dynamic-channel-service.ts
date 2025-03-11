@@ -583,6 +583,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     ) ) || [],
                 verifiedFlagsSet: bigint[] = [];
 
+            // TODO: Find the root cause of this issue, above function expect to return at least guild id in this case.
+            if ( !verifiedRoles.length ) {
+                verifiedRoles.push( guild.id );
+            }
+
             const {
                 dynamicChannelState,
                 dynamicChannelVisibilityState,
@@ -678,7 +683,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             // ---
             version: masterChannelDB.version,
             // ---
-            ...defaultProperties
+            ...defaultProperties,
+            // --- Overwrite by saved data ---
+            permissionOverwrites,
         } );
 
         if ( !dynamic ) {

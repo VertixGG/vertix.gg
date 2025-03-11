@@ -312,23 +312,48 @@ export class PermissionsManager extends InitializeBase {
     ): Promise<void> {
         this.debugger.dumpDown( this.editChannelRolesPermissions, permissions, "Permissions" );
 
-        return new Promise( ( resolve, reject ) => {
-            for ( const roleId of roles ) {
-                const role = channel.guild.roles.cache.get( roleId );
+        const updatePromises: Promise<void>[] = [];
 
-                if ( !role ) {
-                    this.logger.warn(
-                        this.editChannelRolesPermissions,
-                        `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Role id: '${ roleId }' not found`
-                    );
-                    continue;
-                }
+        for ( const roleId of roles ) {
+            const role = channel.guild.roles.cache.get( roleId );
 
+            if ( !role ) {
+                this.logger.warn(
+                    this.editChannelRolesPermissions,
+                    `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Role id: '${ roleId }' not found`
+                );
+                continue;
+            }
+
+            updatePromises.push(
                 channel.permissionOverwrites
                     .edit( role, permissions )
-                    .catch( reject )
-                    .then( () => resolve() );
-            }
-        } );
+                    .then( () => {
+                        this.logger.log(
+                            this.editChannelRolesPermissions,
+                            `Successfully updated permissions for role: ${ roleId } in channel: ${ channel.id }`
+                        );
+                    } )
+                    .catch( ( error ) => {
+                        this.logger.error(
+                            this.editChannelRolesPermissions,
+                            `Failed to update permissions for role: ${ roleId } in channel: ${ channel.id }`,
+                            error
+                        );
+                        throw error; // Re-throw to mark the overall operation as failed
+                    } )
+            );
+        }
+
+        if ( updatePromises.length === 0 ) {
+            this.logger.warn(
+                this.editChannelRolesPermissions,
+                `No valid roles found to update permissions for channel: ${ channel.id }`
+            );
+            return;
+        }
+
+        // Wait for all permission updates to complete
+        await Promise.all( updatePromises );
     }
 }

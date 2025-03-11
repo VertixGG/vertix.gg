@@ -1364,7 +1364,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             .then( () => true );
 
         if ( success ) {
-            await this.log( initiator, channel, this.resetChannel, "done" );
+            await this.log( initiator, channel, this.resetChannel, "done", {} );
 
             if ( options.includePrimaryMessage ) {
                 const { dynamicChannelPrimaryMessageTitle, dynamicChannelPrimaryMessageDescription } =
@@ -1404,7 +1404,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             this.editPrimaryMessageDebounce( channel );
         } else {
-            await this.log( initiator, channel, this.resetChannel, "error" );
+            await this.log( initiator, channel, this.resetChannel, "error", {} );
         }
 
         return result;
@@ -1743,7 +1743,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         channel: VoiceChannel,
         caller: Function,
         action: string,
-        meta: any = {}
+        meta: any
     ) {
         const initiatorDisplayName = initiator?.member.displayName || "not provided";
 
@@ -1839,12 +1839,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 switch ( action as ChannelPrivacyState ) {
                     case "shown":
                     case "hidden":
-                        await this.log( initiator, channel, this.editChannelVisibilityState, action );
+                        await this.log( initiator, channel, this.editChannelVisibilityState, action, meta );
                         break;
 
                     case "public":
                     case "private":
-                        await this.log( initiator, channel, this.editChannelState, action );
+                        await this.log( initiator, channel, this.editChannelState, action, meta );
                         break;
                 }
                 break;

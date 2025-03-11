@@ -1,8 +1,8 @@
-export function isObject ( item: unknown ): item is Record<string, any> {
+export function isObject( item: unknown ): item is Record<string, any> {
     return <boolean>( item && typeof item === "object" && !Array.isArray( item ) );
 }
 
-export function deepMerge<T extends Record<string, any>> ( target: T, source: T ): T {
+export function deepMerge<T extends Record<string, any>>( target: T, source: T ): T {
     const output: T = { ...target }; // Creates a shallow copy of target
 
     if ( isObject( target ) && isObject( source ) ) {

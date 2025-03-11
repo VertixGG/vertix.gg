@@ -7,19 +7,19 @@ import { UI_LANGUAGES_INITIAL_ATTRIBUTES } from "@vertix.gg/gui/src/bases/ui-lan
 import { UILanguageManager } from "@vertix.gg/bot/src/ui/ui-language-manager";
 
 export class LanguageSelectMenu extends UIElementStringSelectMenu {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/LanguageSelectMenu";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder (): Promise<string> {
+    protected async getPlaceholder(): Promise<string> {
         return "🌍 Select Language";
     }
 
-    protected async getSelectOptions () {
+    protected async getSelectOptions() {
         const initialLanguage = UI_LANGUAGES_INITIAL_ATTRIBUTES,
             result = [
                 {

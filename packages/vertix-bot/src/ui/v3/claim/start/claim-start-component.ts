@@ -6,19 +6,19 @@ import { ClaimStartButton } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-sta
 import { ClaimStartEmbed } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-start-embed";
 
 export class ClaimStartComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ClaimStartComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Static;
     }
 
-    protected static getElements () {
+    protected static getElements() {
         return [ [ ClaimStartButton ] ];
     }
 
-    protected static getEmbeds () {
+    protected static getEmbeds() {
         return [ ClaimStartEmbed ];
     }
 }

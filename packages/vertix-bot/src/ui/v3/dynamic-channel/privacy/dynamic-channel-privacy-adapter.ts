@@ -16,35 +16,35 @@ import type { Message, VoiceChannel } from "discord.js";
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrivacyAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelPrivacyComponent;
     }
 
-    protected static getInitiatorElement () {
+    protected static getInitiatorElement() {
         return DynamicChannelPrivacyButton;
     }
 
-    protected async getStartArgs () {
+    protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         return this.getArgs( interaction.channel );
     }
 
-    protected async getEditMessageArgs ( message?: Message<true> ) {
+    protected async getEditMessageArgs( message?: Message<true> ) {
         return message ? this.getArgs( message.channel as VoiceChannel ) : {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindSelectMenu( "Vertix/UI-V3/DynamicChannelPrivacyMenu", this.onPrivacyMenuSelected );
     }
 
-    protected async onPrivacyMenuSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    protected async onPrivacyMenuSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const state = interaction.values[ 0 ];
 
         await this.dynamicChannelService.editChannelPrivacyState(
@@ -56,7 +56,7 @@ export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPe
         await this.editReply( interaction );
     }
 
-    private async getArgs ( channel: VoiceChannel ) {
+    private async getArgs( channel: VoiceChannel ) {
         const args: UIArgs = {};
 
         await this.assignUsersWithPermissions( channel, args );

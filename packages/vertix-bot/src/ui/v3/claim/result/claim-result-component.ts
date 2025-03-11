@@ -13,15 +13,15 @@ import { ClaimResultVoteSelfEmbed } from "@vertix.gg/bot/src/ui/v3/claim/result/
 import { ClaimResultVotedSameEmbed } from "@vertix.gg/bot/src/ui/v3/claim/result/claim-result-voted-same-embed";
 
 export class ClaimResultComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ClaimResultComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             // TODO: All the control from vote in order select the right embeds was too hard to implement.
             // TODO: Check `handleVoteStepIn` and `handleVoteStepOut`.
@@ -38,7 +38,7 @@ export class ClaimResultComponent extends UIComponentBase {
         ];
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

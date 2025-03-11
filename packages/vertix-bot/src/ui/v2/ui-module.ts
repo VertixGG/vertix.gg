@@ -13,23 +13,23 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class UIModuleV2 extends UIModuleBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/Module";
     }
 
-    public static getAdapters () {
+    public static getAdapters() {
         return Object.values( adapters );
     }
 
-    public get $$ () {
+    public get $$() {
         return this.constructor as typeof UIModuleV2;
     }
 
-    protected getCustomIdStrategy () {
+    protected getCustomIdStrategy() {
         return new UICustomIdPlainStrategy();
     }
 
-    protected async initialize () {
+    protected async initialize() {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
         DynamicChannelClaimManager.register( "Vertix/UI-V2/DynamicChannelClaimManager", {

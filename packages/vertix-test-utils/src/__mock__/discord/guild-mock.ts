@@ -18,7 +18,7 @@ export class GuildMock {
 
     public channels: GuildChannelManager;
 
-    public constructor ( client: ClientMock, data: RawGuildData | any = {} ) {
+    public constructor( client: ClientMock, data: RawGuildData | any = {} ) {
         this.client = client;
         this.data = data;
 
@@ -28,7 +28,7 @@ export class GuildMock {
         this.channels = new GuildChannelManagerMock( this.getFakeInstance() ).getFakeInstance();
     }
 
-    public getFakeInstance (): Guild {
+    public getFakeInstance(): Guild {
         return this as unknown as Guild;
     }
 }

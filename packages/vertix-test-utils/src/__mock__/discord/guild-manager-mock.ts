@@ -20,11 +20,11 @@ export class GuildManagerMock {
         [key: string]: GuildMemberMock;
     } = {};
 
-    public constructor ( guild: Guild, _iterable?: Iterable<RawGuildMemberData> ) {
+    public constructor( guild: Guild, _iterable?: Iterable<RawGuildMemberData> ) {
         this.guild = guild;
     }
 
-    public async add (
+    public async add(
         user: UserResolvable,
         options: AddGuildMemberOptions & { fetchWhenExisting: false }
     ): Promise<GuildMember | null> {
@@ -47,7 +47,7 @@ export class GuildManagerMock {
         } );
     }
 
-    public async fetch (
+    public async fetch(
         options: UserResolvable | FetchMemberOptions | ( FetchMembersOptions & { user: UserResolvable } )
     ): Promise<GuildMember> {
         if ( "string" === typeof options ) {
@@ -67,7 +67,7 @@ export class GuildManagerMock {
         } );
     }
 
-    public get cache () {
+    public get cache() {
         return {
             get: ( id: string ) => {
                 return this.members[ id ]?.getFakeInstance();
@@ -75,7 +75,7 @@ export class GuildManagerMock {
         };
     }
 
-    public getFakeInstance (): GuildMemberManager {
+    public getFakeInstance(): GuildMemberManager {
         return this as unknown as GuildMemberManager;
     }
 }

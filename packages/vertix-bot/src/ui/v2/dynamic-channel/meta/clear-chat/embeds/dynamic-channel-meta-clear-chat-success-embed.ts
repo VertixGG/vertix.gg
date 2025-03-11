@@ -12,27 +12,27 @@ export class DynamicChannelMetaClearChatSuccessEmbed extends UIEmbedBase {
         totalMessages: uiUtilsWrapAsTemplate( "totalMessages" )
     };
 
-    public static getName (): string {
+    public static getName(): string {
         return "Vertix/UI-V2/DynamicChannelMetaClearChatSuccessEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic; // TODO: change to static.
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return 0xc5ac63; // Broom like.
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return `🧹  Chat was cleared the by ${ DynamicChannelMetaClearChatSuccessEmbed.vars.ownerDisplayName }!`;
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return `Total of ${ DynamicChannelMetaClearChatSuccessEmbed.vars.totalMessages } messages.`;
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             ownerDisplayName: args.ownerDisplayName,
             totalMessages: args.totalMessages

@@ -5,19 +5,19 @@ import { FeedbackInputTitle } from "@vertix.gg/bot/src/ui/general/feedback/modal
 import { FeedbackInputDescription } from "@vertix.gg/bot/src/ui/general/feedback/modal-elements/feedback-input-description";
 
 export class FeedbackModal extends UIModalBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/FeedbackModal";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Static;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "Submit Feedback";
     }
 
-    public static getInputElements () {
+    public static getInputElements() {
         return [ [ FeedbackInputTitle ], [ FeedbackInputDescription ] ];
     }
 }

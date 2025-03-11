@@ -20,27 +20,27 @@ export class LanguageEmbed extends UIEmbedBase {
         currentLanguage: uiUtilsWrapAsTemplate( "currentLanguage" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/LanguageEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor () {
+    protected getColor() {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🌍  Select language";
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `__Current Selected Language__: **${ LanguageEmbed.vars.currentLanguage }**\n\n` +
             "Didn't find your language?\n\n" +
@@ -50,7 +50,7 @@ export class LanguageEmbed extends UIEmbedBase {
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const initialAttrs = UI_LANGUAGES_INITIAL_ATTRIBUTES,
             result: { currentLanguage: { [code: string]: string } } = {
                 currentLanguage: {
@@ -65,7 +65,7 @@ export class LanguageEmbed extends UIEmbedBase {
         return result;
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             currentLanguage: args?._language || UI_LANGUAGES_INITIAL_CODE
         };

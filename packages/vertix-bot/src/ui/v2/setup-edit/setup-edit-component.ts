@@ -21,15 +21,15 @@ import { SetupEditVerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit
  * Used to configure "Master Channel(s)".
  */
 export class SetupEditComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/ConfigComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Static;
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [
             SetupEditElementsGroup,
 
@@ -40,7 +40,7 @@ export class SetupEditComponent extends UIComponentBase {
         ];
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ),
 
@@ -51,15 +51,15 @@ export class SetupEditComponent extends UIComponentBase {
         ];
     }
 
-    protected static getModals () {
+    protected static getModals() {
         return [ ChannelNameTemplateModal ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return "Vertix/UI-V2/SetupEditElementsGroup";
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return "Vertix/UI-V2/SetupEditEmbedGroup";
     }
 }

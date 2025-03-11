@@ -97,11 +97,11 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
 
     private uiInitialLanguage!: UILanguageJSON;
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/LanguageManager";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !UILanguageManager.instance ) {
             UILanguageManager.instance = new UILanguageManager();
         }
@@ -109,25 +109,25 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         return UILanguageManager.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return UILanguageManager.getInstance();
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
     }
 
-    public getAvailableLanguages () {
+    public getAvailableLanguages() {
         return this.uiAvailableLanguages;
     }
 
-    public getInitialLanguage () {
+    public getInitialLanguage() {
         return this.uiInitialLanguage;
     }
 
-    public async getButtonTranslatedContent (
+    public async getButtonTranslatedContent(
         button: UIElementButtonBase,
         languageCode: string | undefined
     ): Promise<UIElementButtonLanguageContent> {
@@ -151,7 +151,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async getSelectMenuTranslatedContent (
+    public async getSelectMenuTranslatedContent(
         selectMenu:
             | UIElementStringSelectMenu
             | UIElementUserSelectMenu
@@ -180,7 +180,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async getTextInputTranslatedContent (
+    public async getTextInputTranslatedContent(
         textInput: UIElementInputBase,
         languageCode: string | undefined
     ): Promise<UIElementTextInputLanguageContent> {
@@ -204,7 +204,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async getEmbedTranslatedContent (
+    public async getEmbedTranslatedContent(
         embed: UIEmbedBase,
         languageCode: string | undefined
     ): Promise<UIEmbedLanguageContent> {
@@ -231,7 +231,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async getMarkdownTranslatedContent (
+    public async getMarkdownTranslatedContent(
         markdown: UIMarkdownBase,
         languageCode: string | undefined
     ): Promise<UIMarkdownLanguageContent> {
@@ -255,7 +255,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async getModalTranslatedContent (
+    public async getModalTranslatedContent(
         modal: UIModalBase,
         languageCode: string | undefined
     ): Promise<UIModalLanguageContent> {
@@ -278,8 +278,8 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async register () {
-        const tryImportAvailableLanguages = async () => {
+    public async register() {
+        const tryImportAvailableLanguages = async() => {
             // Import
             let promises: Promise<void>[] = [];
 
@@ -336,7 +336,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         await tryImportAvailableLanguages();
     }
 
-    private async ensureInitialLanguage () {
+    private async ensureInitialLanguage() {
         this.logger.info(
             this.ensureInitialLanguage,
             `Initial language code '${ UI_LANGUAGES_INITIAL_CODE }' does not exists, creating...`
@@ -357,7 +357,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         this.logger.info( this.ensureInitialLanguage, "Initial language code 'en' created." );
     }
 
-    private async validateAvailableLanguages () {
+    private async validateAvailableLanguages() {
         this.getAvailableLanguages().forEach( ( currentLanguage ) => {
             this.validateLanguage( currentLanguage, this.uiInitialLanguage );
 
@@ -365,7 +365,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         } );
     }
 
-    private validateLanguage (
+    private validateLanguage(
         currentLanguage: UILanguageJSON,
         sourceOfTruth: UILanguageJSON,
         options: UILanguageManagerValidateOptions = {}
@@ -400,7 +400,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         this.validateModalsLanguage( currentLanguage, sourceOfTruth, options );
     }
 
-    private async extractEntitiesLanguage () {
+    private async extractEntitiesLanguage() {
         const allComponents: UIComponentTypeConstructor[] = [];
 
         this.uiService.getAll().forEach( ( adapter ) => {
@@ -479,7 +479,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    private async extractElementsLanguage ( elements: { new (): UIElementBase<any> }[] | ( typeof UIElementBase )[] ) {
+    private async extractElementsLanguage( elements: { new (): UIElementBase<any> }[] | ( typeof UIElementBase )[] ) {
         const buttons: UIElementButtonLanguage[] = [],
             textInputs: UIElementTextInputLanguage[] = [],
             selectMenus: UIElementSelectMenuLanguage[] = [];
@@ -531,7 +531,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    private async extractEmbedsLanguage ( embeds: UIEmbedConstructor ): Promise<UIEmbedLanguage[]> {
+    private async extractEmbedsLanguage( embeds: UIEmbedConstructor ): Promise<UIEmbedLanguage[]> {
         const result: UIEmbedLanguage[] = [];
 
         for ( const Embed of embeds ) {
@@ -556,7 +556,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         return result;
     }
 
-    private async extractMarkdownLanguage ( markdowns: UIMarkdownConstructor ) {
+    private async extractMarkdownLanguage( markdowns: UIMarkdownConstructor ) {
         const result: UIMarkdownLanguage[] = [];
 
         for ( const Markdown of markdowns ) {
@@ -581,7 +581,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         return result;
     }
 
-    private async extractModalsLanguage ( modals: UIModalConstructor ) {
+    private async extractModalsLanguage( modals: UIModalConstructor ) {
         const result: UIModalLanguage[] = [];
 
         for ( const Modal of modals ) {
@@ -606,7 +606,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         return result;
     }
 
-    private validateElements<T extends { name: string; content: any }> (
+    private validateElements<T extends { name: string; content: any }>(
         currentLanguage: UILanguageJSON,
         currentElements: T[],
         initialElements: T[],
@@ -700,7 +700,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
     }
 
-    private validateElementsLanguage (
+    private validateElementsLanguage(
         currentLanguage: UILanguageJSON,
         initialLanguage: UILanguageJSON,
         options: UILanguageManagerValidateOptions
@@ -728,7 +728,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         );
     }
 
-    private validateEmbedsLanguage (
+    private validateEmbedsLanguage(
         currentLanguage: UILanguageJSON,
         initialLanguage: UILanguageJSON,
         options: UILanguageManagerValidateOptions
@@ -736,7 +736,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         this.validateElements( currentLanguage, currentLanguage.embeds, initialLanguage.embeds, "embed", options );
     }
 
-    private validateMarkdownsLanguage (
+    private validateMarkdownsLanguage(
         currentLanguage: UILanguageJSON,
         initialLanguage: UILanguageJSON,
         options: UILanguageManagerValidateOptions
@@ -750,7 +750,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         );
     }
 
-    private validateModalsLanguage (
+    private validateModalsLanguage(
         currentLanguage: UILanguageJSON,
         initialLanguage: UILanguageJSON,
         options: UILanguageManagerValidateOptions
@@ -758,7 +758,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         this.validateElements( currentLanguage, currentLanguage.modals, initialLanguage.modals, "modal", options );
     }
 
-    private validateString (
+    private validateString(
         initial?: string,
         current?: string,
         options?: UILanguageManagerValidateOptions
@@ -790,14 +790,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         return "valid";
     }
 
-    private readInitialLanguage () {
+    private readInitialLanguage() {
         // Read initial language file.
         const initialLanguage = fs.readFileSync( UI_LANGUAGES_INITIAL_FILE_PATH, "utf-8" );
 
         this.uiInitialLanguage = JSON.parse( initialLanguage );
     }
 
-    private getLanguageFilesPaths ( skipInitial = true ): string[] {
+    private getLanguageFilesPaths( skipInitial = true ): string[] {
         const result: string[] = [];
 
         // Get all languages from `assets/embeds-*.json` files.

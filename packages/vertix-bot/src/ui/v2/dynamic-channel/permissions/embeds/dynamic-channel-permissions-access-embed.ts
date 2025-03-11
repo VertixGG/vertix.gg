@@ -20,37 +20,37 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
         blockedUsersDefault: uiUtilsWrapAsTemplate( "blockedUsersDefault" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPermissionsAccessEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor () {
+    protected getColor() {
         return 0x4b6f91; // Same as the "members" emoji.
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "👥  Manage permissions of your channel";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const { allowedUsersDisplay, blockedUsersDisplay } = DynamicChannelPermissionsAccessEmbed._vars;
 
         return "\n**_Allowed Users_**:\n" + allowedUsersDisplay + "\n**_Blocked Users_**:\n" + blockedUsersDisplay;
     }
 
-    protected getFooter (): string {
+    protected getFooter(): string {
         return "Use the menu below to manage permissions of your channel.";
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = DynamicChannelPermissionsAccessEmbed._vars;
 
         return {
@@ -65,7 +65,7 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
         };
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             allowedUsers,
             allowedUsersDefault,
@@ -86,7 +86,7 @@ export class DynamicChannelPermissionsAccessEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result: any = {},
             {
                 allowedUsers,

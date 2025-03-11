@@ -8,11 +8,11 @@ export abstract class UIBase extends ObjectBase {
 
     protected readonly uiService: UIService;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIBase";
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.hierarchyNames = this.getHierarchyNames();
@@ -31,7 +31,7 @@ export abstract class UIBase extends ObjectBase {
     /**
      * Function `ensureGetNameExtended()` - Ensures parent extends `static getName()` correctly.
      */
-    private ensureGetNameExtended (): void {
+    private ensureGetNameExtended(): void {
         // Remove last part of `this.getName()`.
         const namespace = ( this.constructor as typeof UIBase )
             .getName()

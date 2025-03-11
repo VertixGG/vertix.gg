@@ -31,13 +31,13 @@ interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteracti
 // TODO: Should filter bad-words.
 
 export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapterWizardWithInitiatorElementBase<DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return class DynamicChannelPrimaryMessageEditWizardComponent extends DynamicChannelPrimaryMessageEditComponent {
-            public static getComponents () {
+            public static getComponents() {
                 return [
                     DynamicChannelPrimaryMessageEditTitleComponent,
                     DynamicChannelPrimaryMessageEditDescriptionComponent
@@ -46,15 +46,15 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         };
     }
 
-    protected static getInitiatorElement () {
+    protected static getInitiatorElement() {
         return DynamicChannelPrimaryMessageEditButton;
     }
 
-    protected async getStartArgs () {
+    protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs = {} ) {
+    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs = {} ) {
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channelId );
 
         if ( !masterChannelDB ) {
@@ -74,7 +74,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
     }
 
     // TODO: Extract to UIWizardAdapterBase in order to implement dynamic components
-    protected generateCustomIdForEntity ( entity: UIEntitySchemaBase ) {
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase ) {
         switch ( entity.name ) {
             case "VertixBot/UI-General/WizardNextButton":
                 entity.name = entity.name + UI_CUSTOM_ID_SEPARATOR + this.getCurrentStepIndex();
@@ -93,7 +93,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
     }
 
     // TODO: Extract to UIWizardAdapterBase in order to implement dynamic components
-    protected async onBeforeNext ( interaction: DefaultInteraction ): Promise<void> {
+    protected async onBeforeNext( interaction: DefaultInteraction ): Promise<void> {
         const customId = this.customIdStrategy.getId( interaction.customId ),
             customIdParts = customId.split( UI_CUSTOM_ID_SEPARATOR, 3 ),
             nextIndex = parseInt( customIdParts[ 2 ] );
@@ -103,7 +103,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         this.setStep( stepName, interaction );
     }
 
-    protected async onBeforeBack ( interaction: DefaultInteraction ): Promise<void> {
+    protected async onBeforeBack( interaction: DefaultInteraction ): Promise<void> {
         const customId = this.customIdStrategy.getId( interaction.customId ),
             customIdParts = customId.split( UI_CUSTOM_ID_SEPARATOR, 3 ),
             nextIndex = parseInt( customIdParts[ 2 ] );
@@ -113,7 +113,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         this.setStep( stepName, interaction );
     }
 
-    protected async onAfterFinish ( interaction: DefaultInteraction ): Promise<void> {
+    protected async onAfterFinish( interaction: DefaultInteraction ): Promise<void> {
         await this.deleteRelatedEphemeralInteractionsInternal(
             interaction,
             "Vertix/UI-V3/DynamicChannelAdapter:Vertix/UI-V3/DynamicChannelPrimaryMessageEditButton",
@@ -121,7 +121,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         );
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/NoButton",
             this.onNoButtonClicked
@@ -145,7 +145,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         );
     }
 
-    private async onNoButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onNoButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -158,7 +158,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         await this.deleteRelatedEphemeralInteractionsInternal( interaction, "Vertix/UI-V3/DynamicChannelAdapter", 1 );
     }
 
-    private async onYesButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onYesButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -171,7 +171,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent" );
     }
 
-    private async onEditTitleModalSubmit ( interaction: UIDefaultModalChannelVoiceInteraction ) {
+    private async onEditTitleModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
         const inputId =
             "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter" +
             UI_CUSTOM_ID_SEPARATOR +
@@ -195,7 +195,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
     }
 
-    private async onEditDescriptionModalSubmit ( interaction: UIDefaultModalChannelVoiceInteraction ) {
+    private async onEditDescriptionModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
         const inputId =
             "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter" +
             UI_CUSTOM_ID_SEPARATOR +

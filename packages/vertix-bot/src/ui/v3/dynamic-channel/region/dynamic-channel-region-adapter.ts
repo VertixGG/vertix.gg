@@ -16,35 +16,35 @@ import type {
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 export class DynamicChannelRegionAdapter extends DynamicChannelAdapterExuWithInitiatorElementBase<DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelRegionAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelRegionComponent;
     }
 
-    protected static getInitiatorElement () {
+    protected static getInitiatorElement() {
         return DynamicChannelRegionButton;
     }
 
-    protected async getStartArgs () {
+    protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         return await this.getArgs( interaction.channel );
     }
 
-    protected async getEditMessageArgs ( message?: Message<true> ) {
+    protected async getEditMessageArgs( message?: Message<true> ) {
         return message?.channel && message.channel instanceof VoiceChannel ? await this.getArgs( message.channel ) : {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindSelectMenu( "Vertix/UI-V3/DynamicChannelRegionSelectMenu", this.onRegionSelected );
     }
 
-    private async onRegionSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onRegionSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const newRegion = interaction.values[ 0 ];
 
         await this.dynamicChannelService.editChannelRegion( interaction, interaction.channel, newRegion );
@@ -52,7 +52,7 @@ export class DynamicChannelRegionAdapter extends DynamicChannelAdapterExuWithIni
         await this.editReply( interaction );
     }
 
-    private async getArgs ( channel: VoiceChannel ) {
+    private async getArgs( channel: VoiceChannel ) {
         return {
             region: channel.rtcRegion
         };

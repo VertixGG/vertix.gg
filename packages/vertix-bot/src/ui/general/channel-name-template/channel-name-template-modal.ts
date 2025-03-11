@@ -5,19 +5,19 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { ChannelNameTemplateInput } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-input";
 
 export class ChannelNameTemplateModal extends UIModalBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/ChannelNameTemplateModal";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getInputElements () {
+    public static getInputElements() {
         return [ [ ChannelNameTemplateInput ] ];
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "Set dynamic channels name";
     }
 }

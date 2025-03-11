@@ -34,11 +34,11 @@ class CleanupWorker extends InitializeBase {
 
     private channelService: ChannelServiceType;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Workers/CleanupWorker";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !CleanupWorker.instance ) {
             CleanupWorker.instance = new CleanupWorker();
         }
@@ -46,11 +46,11 @@ class CleanupWorker extends InitializeBase {
         return CleanupWorker.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return CleanupWorker.getInstance();
     }
 
-    private async removeDynamicChannelFromDB (
+    private async removeDynamicChannelFromDB(
         prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]>,
         channel: any
     ) {
@@ -69,7 +69,7 @@ class CleanupWorker extends InitializeBase {
         );
     }
 
-    private async removeEmptyDynamicChannels ( client: Client ) {
+    private async removeEmptyDynamicChannels( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
         const channels = await prisma.channel.findMany( {
@@ -95,7 +95,7 @@ class CleanupWorker extends InitializeBase {
             const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, channels.length );
             const chunk = channels.slice( chunkStartIndex, chunkEndIndex );
 
-            const deletePromises = chunk.map( async ( channel ) => {
+            const deletePromises = chunk.map( async( channel ) => {
                 try {
                     const guild = await client.guilds.fetch( channel.guildId );
 
@@ -152,7 +152,7 @@ class CleanupWorker extends InitializeBase {
         this.logger.info( this.removeEmptyDynamicChannels, "Dynamic channel deletion completed." );
     }
 
-    private async removeNonExistMasterChannelsFromDB ( client: Client ) {
+    private async removeNonExistMasterChannelsFromDB( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
         const masterChannels = await prisma.channel.findMany( {
@@ -173,7 +173,7 @@ class CleanupWorker extends InitializeBase {
             const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, masterChannels.length );
             const chunk = masterChannels.slice( chunkStartIndex, chunkEndIndex );
 
-            const deletePromises = chunk.map( async ( channel ) => {
+            const deletePromises = chunk.map( async( channel ) => {
                 try {
                     const guildFetch = await client.guilds
                         .fetch( channel.guildId )
@@ -245,7 +245,7 @@ class CleanupWorker extends InitializeBase {
         this.logger.info( this.removeNonExistMasterChannelsFromDB, "Non-existing master channels deletion completed." );
     }
 
-    private async removeEmptyCategories ( client: Client ) {
+    private async removeEmptyCategories( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
         const categories = await prisma.category.findMany();
@@ -262,11 +262,11 @@ class CleanupWorker extends InitializeBase {
             const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, categories.length );
             const chunk = categories.slice( chunkStartIndex, chunkEndIndex );
 
-            const deletePromises = chunk.map( async ( category ) => {
+            const deletePromises = chunk.map( async( category ) => {
                 const fetchPromise = client.guilds.fetch( category.guildId );
 
                 const fetchResult = await fetchPromise
-                    .catch( async ( error: DiscordAPIError ) => {
+                    .catch( async( error: DiscordAPIError ) => {
                         if ( error.code === 10004 ) {
                             // Unknown Guild, remove from db
                             await prisma.category.delete( {
@@ -331,7 +331,7 @@ class CleanupWorker extends InitializeBase {
         this.logger.info( this.removeEmptyCategories, "Empty categories deletion completed." );
     }
 
-    private async handleGuilds ( client: Client ) {
+    private async handleGuilds( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
         // Find all guilds that are `updated_at` at current year.
@@ -352,7 +352,7 @@ class CleanupWorker extends InitializeBase {
             const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, guilds.length );
             const chunk = guilds.slice( chunkStartIndex, chunkEndIndex );
 
-            const updatePromises = chunk.map( async ( guild ) => {
+            const updatePromises = chunk.map( async( guild ) => {
                 const guildCache = client?.guilds.cache.get( guild.guildId );
                 const name = guildCache?.name || guild.name;
                 const isInGuild = !!guildCache;
@@ -401,7 +401,7 @@ class CleanupWorker extends InitializeBase {
         );
     }
 
-    private async getGuildsDidntUpdateRecently ( prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]> ) {
+    private async getGuildsDidntUpdateRecently( prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]> ) {
         return prisma.guild.findMany( {
             where: {
                 updatedAtInternal: {
@@ -419,7 +419,7 @@ class CleanupWorker extends InitializeBase {
         } );
     }
 
-    private async handleChannels ( client: Client ) {
+    private async handleChannels( client: Client ) {
         await this.removeNonExistMasterChannelsFromDB( client );
         await this.removeEmptyDynamicChannels( client );
         await this.removeEmptyCategories( client );
@@ -427,7 +427,7 @@ class CleanupWorker extends InitializeBase {
         this.logger.info( this.handleChannels, "All channels are handled." );
     }
 
-    public async handle () {
+    public async handle() {
         this.logger.info( this.handle, "Channels worker thread is started." );
 
         PrismaBotClient = ( await import( "@vertix.gg/prisma/bot-client" ) ).PrismaBotClient;
@@ -451,7 +451,7 @@ class CleanupWorker extends InitializeBase {
             intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates ]
         } );
 
-        await login( client, async () => {
+        await login( client, async() => {
             await this.handleChannels( client );
             await this.handleGuilds( client );
         } );
@@ -460,7 +460,7 @@ class CleanupWorker extends InitializeBase {
     }
 }
 
-export function inWorker ( threadHost: ThreadHost ) {
+export function inWorker( threadHost: ThreadHost ) {
     ensureInWorker();
 
     return CleanupWorker.$.handle().catch( ( e ) => {
@@ -473,7 +473,7 @@ export function inWorker ( threadHost: ThreadHost ) {
     } );
 }
 
-export async function initWorker ( args = [] ) {
+export async function initWorker( args = [] ) {
     const { zCreateWorker } = await import( "@zenflux/worker" );
 
     return zCreateWorker( {

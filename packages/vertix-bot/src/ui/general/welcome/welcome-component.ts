@@ -5,33 +5,33 @@ import { WelcomeElementsGroup } from "@vertix.gg/bot/src/ui/general/welcome/welc
 import { WelcomeEmbed } from "@vertix.gg/bot/src/ui/general/welcome/welcome-embed";
 
 export class WelcomeComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/WelcomeComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Static;
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [
             WelcomeElementsGroup
             // WelcomeLanguageElementsGroup
         ];
     }
 
-    public static getEmbeds () {
+    public static getEmbeds() {
         return [
             WelcomeEmbed
             // LanguageEmbed,
         ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return "VertixBot/UI-General/WelcomeElementsGroup";
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return "VertixBot/UI-General/WelcomeEmbed";
     }
 }

@@ -14,22 +14,22 @@ import { DynamicChannelMetaClearChatButton } from "@vertix.gg/bot/src/ui/v2/dyna
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelMetaClearChatComponent extends UIComponentBase {
-    public static getName (): string {
+    public static getName(): string {
         return "Vertix/UI-V2/DynamicChannelMetaClearChatComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [
             // TODO: If i put `UIEmbedsGroupBase.createSingleGroup` here it does not throw error.
             UIElementsGroupBase.createSingleGroup( DynamicChannelMetaClearChatButton )
         ];
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaClearChatSuccessEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaClearChatNothingToClearEmbed ),
@@ -37,11 +37,11 @@ export class DynamicChannelMetaClearChatComponent extends UIComponentBase {
         ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return null;
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

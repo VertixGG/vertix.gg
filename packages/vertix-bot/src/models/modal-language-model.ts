@@ -5,7 +5,7 @@ import { ModelLanguageBase } from "@vertix.gg/bot/src/bases/model-language-base"
 const model = PrismaBotClient.getPrismaClient().modalLanguage;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function withContent () {
+async function withContent() {
     return model.findFirst( {
         include: {
             content: true
@@ -18,11 +18,11 @@ export class ModalLanguageModel extends ModelLanguageBase<
 > {
     private static instance: ModalLanguageModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Models/ModalLanguageModel";
     }
 
-    public static getInstance (): ModalLanguageModel {
+    public static getInstance(): ModalLanguageModel {
         if ( !ModalLanguageModel.instance ) {
             ModalLanguageModel.instance = new ModalLanguageModel( false );
         }
@@ -30,11 +30,11 @@ export class ModalLanguageModel extends ModelLanguageBase<
         return ModalLanguageModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return ModalLanguageModel.getInstance();
     }
 
-    protected getModel () {
+    protected getModel() {
         return model;
     }
 }

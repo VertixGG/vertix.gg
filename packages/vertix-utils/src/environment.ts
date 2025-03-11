@@ -1,6 +1,6 @@
 import process from "process";
 
-export function isDebugEnabled ( debugType: string, entityName: string ) {
+export function isDebugEnabled( debugType: string, entityName: string ) {
     const envVar = process.env[ `DEBUG_${ debugType }` ];
     if ( !envVar ) return false;
 

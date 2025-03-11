@@ -15,23 +15,23 @@ export class ClaimResultVotedSameEmbed extends UIEmbedBase {
         userId: uiUtilsWrapAsTemplate( "userId" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ClaimResultVotedSameEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `🗳️  You already voted for ${ ClaimResultVotedSameEmbed.vars.userDisplayName }`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return `Your vote has been already cast in favor of <@${ ClaimResultVotedSameEmbed.vars.userId }>, you can vote for someone else if you changed your mind.`;
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             userDisplayName: args.userDisplayName,
             userId: args.userId

@@ -8,19 +8,19 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelResetChannelAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelResetChannelComponent;
     }
 
-    protected getStartArgs () {
+    protected getStartArgs() {
         return {};
     }
 
-    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
+    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
         if ( argsFromManager?.result ) {
             return argsFromManager.result;
         }
@@ -28,14 +28,14 @@ export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase
         return {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "Vertix/UI-V3/DynamicChannelResetChannelButton",
             this.onResetChannelButtonClicked
         );
     }
 
-    private async onResetChannelButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onResetChannelButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         const result = await this.dynamicChannelService.resetChannel( interaction, interaction.channel, {
             includeRegion: true,
             includePrimaryMessage: true

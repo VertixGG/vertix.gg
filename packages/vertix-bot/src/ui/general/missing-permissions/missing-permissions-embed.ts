@@ -15,19 +15,19 @@ export class MissingPermissionsEmbed extends UIEmbedBase {
         missingPermissions: uiUtilsWrapAsTemplate( "missingPermissions" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/MissingPermissionsEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🔐  Oops! Certain permissions are required";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const { omitterDisplayName, missingPermissions } = MissingPermissionsEmbed.vars;
 
         return (
@@ -36,11 +36,11 @@ export class MissingPermissionsEmbed extends UIEmbedBase {
         );
     }
 
-    protected getColor () {
+    protected getColor() {
         return 0xe2ad2d; // As emoji.
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = MissingPermissionsEmbed.vars;
 
         return {
@@ -51,7 +51,7 @@ export class MissingPermissionsEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             omitterDisplayName: args.omitterDisplayName,
             missingPermissions: args.missingPermissions.map( ( permission: string ) =>

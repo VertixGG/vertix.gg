@@ -38,7 +38,7 @@ import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-v
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
-async function registerUIServices ( client: Client<true> ) {
+async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
         import( "@vertix.gg/gui/src/ui-service" ),
         import( "@vertix.gg/gui/src/ui-hash-service" ),
@@ -56,7 +56,7 @@ async function registerUIServices ( client: Client<true> ) {
     await ServiceLocator.$.waitForAll();
 }
 
-async function registerServices () {
+async function registerServices() {
     const services = await Promise.all( [
         import( "@vertix.gg/bot/src/services/app-service" ),
 
@@ -78,7 +78,7 @@ async function registerServices () {
     await ServiceLocator.$.waitForAll();
 }
 
-async function registerUIAdapters () {
+async function registerUIAdapters() {
     const uiModules = await Promise.all( [
         import( "@vertix.gg/bot/src/ui/general/ui-module" ),
         import( "@vertix.gg/bot/src/ui/v2/ui-module" ),
@@ -123,7 +123,7 @@ async function registerUIAdapters () {
     } );
 }
 
-async function registerUILanguageManager () {
+async function registerUILanguageManager() {
     const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
 
     // Register UI language manager
@@ -133,7 +133,7 @@ async function registerUILanguageManager () {
     ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).registerUILanguageManager( UILanguageManager.$ );
 }
 
-async function registerConfigs () {
+async function registerConfigs() {
     GlobalLogger.$.info( registerConfigs, "Registering configs ..." );
 
     const { ConfigManager } = await import( "@vertix.gg/base/src/managers/config-manager" );
@@ -144,7 +144,7 @@ async function registerConfigs () {
     ] );
 
     await Promise.all(
-        configs.map( async ( config ) => {
+        configs.map( async( config ) => {
             GlobalLogger.$.debug( registerConfigs, `Registering config: '${ config.default.getName() }'` );
 
             await ConfigManager.$.register<ConfigBase<ConfigBaseInterface>>( config.default );
@@ -156,7 +156,7 @@ async function registerConfigs () {
     GlobalLogger.$.info( registerConfigs, "Configs are registered" );
 }
 
-async function registerUIVersionStrategies () {
+async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Registering version strategies ..." );
 
     const versionStrategies = await Promise.all( [
@@ -185,7 +185,7 @@ async function registerUIVersionStrategies () {
     GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
 }
 
-async function createCleanupWorker () {
+async function createCleanupWorker() {
     try {
         const thread = await initWorker();
         await thread.run();
@@ -195,7 +195,7 @@ async function createCleanupWorker () {
     }
 }
 
-export async function entryPoint () {
+export async function entryPoint() {
     const envArg =
         process.argv.find( ( arg ) => arg.startsWith( "--env=" ) ) || `--env=${ process.env.DOTENV_CONFIG_PATH || ".env" }`;
 

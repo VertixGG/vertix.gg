@@ -6,11 +6,11 @@ import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v2/setu
 import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v2/channel-buttons-template/channel-buttons-template-select-menu";
 
 export class SetupEditButtonsEffectElementsGroup extends UIElementsGroupBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/SetupEditButtonsEffectElementsGroup";
     }
 
-    public static getItems () {
+    public static getItems() {
         return [
             [ ChannelButtonsTemplateSelectMenu ],
             [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ]

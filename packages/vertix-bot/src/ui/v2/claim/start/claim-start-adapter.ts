@@ -17,24 +17,24 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 }
 
 export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/ClaimStartAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return ClaimStartComponent;
     }
 
-    public getPermissions (): PermissionsBitField {
+    public getPermissions(): PermissionsBitField {
         return new PermissionsBitField( 0n );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice ];
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs ( channel: VoiceChannel, argsFromManager: UIArgs ) {
+    protected async getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
         const channelDB = await ChannelModel.$.getByChannelId( channel.id );
 
         if ( !channelDB || !channelDB.userOwnerId ) {
@@ -51,11 +51,11 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
         };
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindButton<DefaultInteraction>( "Vertix/UI-V2/ClaimStartButton", this.onClaimStartButtonClicked );
     }
 
-    private async onClaimStartButtonClicked ( interaction: DefaultInteraction ) {
+    private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
         await DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
     }
 }

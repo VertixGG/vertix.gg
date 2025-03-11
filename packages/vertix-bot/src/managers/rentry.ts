@@ -9,11 +9,11 @@ const RENTRY_BASE_URL = "https://rentry.co",
 export class RentryManager extends InitializeBase {
     private static instance: RentryManager;
 
-    public static getName () {
+    public static getName() {
         return "Managers/Rentry";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !this.instance ) {
             this.instance = new RentryManager();
         }
@@ -21,11 +21,11 @@ export class RentryManager extends InitializeBase {
         return this.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return this.getInstance();
     }
 
-    public async raw ( url: string ): Promise<{
+    public async raw( url: string ): Promise<{
         url: string;
         edit_code: string;
         text: string;
@@ -36,7 +36,7 @@ export class RentryManager extends InitializeBase {
         return response.json();
     }
 
-    public async new (
+    public async new(
         url: string,
         editCode: string,
         text: string
@@ -73,7 +73,7 @@ export class RentryManager extends InitializeBase {
         } );
     }
 
-    public async edit (
+    public async edit(
         url: string,
         editCode: string,
         text: string

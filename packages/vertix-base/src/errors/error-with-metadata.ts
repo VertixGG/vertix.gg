@@ -3,7 +3,7 @@ import util from "node:util";
 export class ErrorWithMetadata extends Error {
     public metadata: any;
 
-    public constructor ( message: string, metadata: any | null = null ) {
+    public constructor( message: string, metadata: any | null = null ) {
         super( message );
         this.metadata = metadata;
 

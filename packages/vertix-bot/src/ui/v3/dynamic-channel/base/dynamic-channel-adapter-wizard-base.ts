@@ -20,25 +20,25 @@ export abstract class DynamicChannelAdapterWizardBase<
 > extends UIWizardAdapterBase<VoiceChannel, TInteraction> {
     protected dynamicChannelService: DynamicChannelService;
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelAdapterWizardBase";
     }
 
-    public constructor ( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice ];
     }
 
-    public getPermissions () {
+    public getPermissions() {
         return new PermissionsBitField( 0n );
     }
 
-    public async isPassingInteractionRequirementsInternal ( interaction: TInteraction ) {
+    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
         return await dynamicChannelRequirements( interaction );
     }
 

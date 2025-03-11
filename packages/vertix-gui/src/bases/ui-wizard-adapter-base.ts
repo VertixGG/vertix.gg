@@ -23,11 +23,11 @@ export class UIWizardAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterExecutionStepsBase<TChannel, TInteraction> {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIWizardAdapterBase";
     }
 
-    public static getComponent (): UIWizardComponentTypeConstructor {
+    public static getComponent(): UIWizardComponentTypeConstructor {
         throw new ForceMethodImplementation( this.getName(), this.getComponent.name );
     }
 
@@ -44,7 +44,7 @@ export class UIWizardAdapterBase<
      *
      * Finally, it returns the assembled structure which will be used to guide users through the UI.
      */
-    protected static getExecutionStepsInternal () {
+    protected static getExecutionStepsInternal() {
         const result: UIExecutionSteps = {
             default: {}
         };
@@ -77,17 +77,17 @@ export class UIWizardAdapterBase<
         return result;
     }
 
-    public get $$ () {
+    public get $$() {
         return this.constructor as typeof UIWizardAdapterBase;
     }
 
-    public editReplyWithStep ( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {
+    public editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {
         this.setCurrentStepInArgs( interaction, stepName );
 
         return super.editReplyWithStep( interaction, stepName, sendArgs );
     }
 
-    public async ephemeralWithStep (
+    public async ephemeralWithStep(
         interaction: TInteraction,
         stepName: string,
         sendArgs?: UIArgs,
@@ -110,7 +110,7 @@ export class UIWizardAdapterBase<
 
     protected async onAfterFinish?( interaction: TInteraction ): Promise<void>;
 
-    protected buildEntitiesMap () {
+    protected buildEntitiesMap() {
         super.buildEntitiesMap();
 
         const { WizardBackButton, WizardNextButton, WizardFinishButton } = this.uiService.$$.getSystemElements() as {
@@ -122,14 +122,14 @@ export class UIWizardAdapterBase<
         this.bindButton<TInteraction>( WizardFinishButton.getName(), this.onWizardFinishButtonClicked );
     }
 
-    protected getCurrentStepIndex (
+    protected getCurrentStepIndex(
         interaction?: TInteraction,
         components: ( typeof UIComponentBase )[] = this.$$.getComponent().getComponents()
     ) {
         return components.findIndex( ( i ) => i.getName() === this.getCurrentExecutionStep( interaction )?.name );
     }
 
-    private async onWizardBackButtonClicked ( interaction: TInteraction ) {
+    private async onWizardBackButtonClicked( interaction: TInteraction ) {
         await this.onBeforeBack?.( interaction );
 
         const components = this.$$.getComponent().getComponents();
@@ -145,7 +145,7 @@ export class UIWizardAdapterBase<
         await this.onAfterBack?.( interaction );
     }
 
-    private async onWizardNextButtonClicked ( interaction: TInteraction ) {
+    private async onWizardNextButtonClicked( interaction: TInteraction ) {
         await this.onBeforeNext?.( interaction );
 
         const components = this.$$.getComponent().getComponents();
@@ -161,7 +161,7 @@ export class UIWizardAdapterBase<
         await this.onAfterNext?.( interaction );
     }
 
-    private async onWizardFinishButtonClicked ( interaction: TInteraction ) {
+    private async onWizardFinishButtonClicked( interaction: TInteraction ) {
         await this.onBeforeFinish?.( interaction );
 
         // TODO: ???.
@@ -169,7 +169,7 @@ export class UIWizardAdapterBase<
         await this.onAfterFinish?.( interaction );
     }
 
-    private setCurrentStepInArgs ( interaction: TInteraction, stepName: string ) {
+    private setCurrentStepInArgs( interaction: TInteraction, stepName: string ) {
         // TODO: Dynamic should be handled manually?
         if ( this.isDynamic() ) {
             return;

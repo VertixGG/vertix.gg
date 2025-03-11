@@ -14,15 +14,15 @@ import type { APIEmbedField, APIEmbedImage, APIEmbedThumbnail } from "discord.js
 export abstract class UIEmbedBase extends UITemplateBase {
     private content: UIEmbedLanguageContent | undefined;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIEmbedBase";
     }
 
-    public static getType (): UIType {
+    public static getType(): UIType {
         return "embed";
     }
 
-    public async build ( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: UIArgs ) {
         this.content = await this.uiService.getUILanguageManager().getEmbedTranslatedContent( this, uiArgs?._language );
 
         return super.build( uiArgs );
@@ -33,7 +33,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
      *
      * Note: The method called on a start-up process, the args are not available during this time.
      */
-    public async getTranslatableContent (): Promise<UIEmbedLanguageContent> {
+    public async getTranslatableContent(): Promise<UIEmbedLanguageContent> {
         const assumed = {
                 title: this.getTitle(),
                 description: this.getDescription(),
@@ -69,7 +69,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return result;
     }
 
-    protected async getAttributes () {
+    protected async getAttributes() {
         const attributes: Record<string, any> = {},
             color = this.getColor(),
             image = this.getImage(),
@@ -114,71 +114,71 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return template;
     }
 
-    protected getColor () {
+    protected getColor() {
         return -1;
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return "";
     }
 
-    protected getFields (): APIEmbedField[] {
+    protected getFields(): APIEmbedField[] {
         return [];
     }
 
-    protected getFooter (): string {
+    protected getFooter(): string {
         return "";
     }
 
-    protected getThumbnail (): APIEmbedThumbnail | null {
+    protected getThumbnail(): APIEmbedThumbnail | null {
         return null;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return "";
     }
 
-    protected getImageData (): Omit<APIEmbedImage, "url"> {
+    protected getImageData(): Omit<APIEmbedImage, "url"> {
         return {};
     }
 
-    protected getOptions (): UIBaseTemplateOptions {
+    protected getOptions(): UIBaseTemplateOptions {
         return {};
     }
 
-    protected getArrayOptions (): UIEmbedArrayOptions {
-        return {};
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getLogic ( args?: UIArgs ): { [key: string]: any } {
+    protected getArrayOptions(): UIEmbedArrayOptions {
         return {};
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getLogicAsync ( args?: UIArgs ): Promise<{ [key: string]: any }> {
+    protected getLogic( args?: UIArgs ): { [key: string]: any } {
+        return {};
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected async getLogicAsync( args?: UIArgs ): Promise<{ [key: string]: any }> {
         return Promise.resolve( {} );
     }
 
     /**
      * Function getInternalOptions() :: Used to extend the selectOptions object.
      */
-    protected getInternalOptions (): UIBaseTemplateOptions {
+    protected getInternalOptions(): UIBaseTemplateOptions {
         return {};
     }
     /**
      * Function getInternalLogic() :: Used to extend the logic object.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getInternalLogic ( args?: UIArgs ) {
+    protected getInternalLogic( args?: UIArgs ) {
         return {};
     }
 
-    protected async parseInternalData ( content: undefined | UIEmbedLanguageContent ) {
+    protected async parseInternalData( content: undefined | UIEmbedLanguageContent ) {
         return this.parseLogicInternal(
             {
                 ...this.getInternalLogic( this.uiArgs ),
@@ -190,7 +190,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
         );
     }
 
-    private async generateTemplate ( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
+    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
         const data = await this.parseInternalData( content );
 
         return this.composeTemplate( attributes, data, content?.options || {} );

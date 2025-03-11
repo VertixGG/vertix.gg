@@ -5,11 +5,11 @@ import { ModelBase } from "@vertix.gg/base/src/bases/model-base";
 export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
     private static instance: CategoryModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Models/CategoryModel";
     }
 
-    public static getInstance (): CategoryModel {
+    public static getInstance(): CategoryModel {
         if ( !CategoryModel.instance ) {
             CategoryModel.instance = new CategoryModel();
         }
@@ -17,15 +17,15 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
         return CategoryModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return CategoryModel.getInstance();
     }
 
-    public async create ( args: PrismaBot.Prisma.CategoryCreateArgs ) {
+    public async create( args: PrismaBot.Prisma.CategoryCreateArgs ) {
         return this.prisma.category.create( args );
     }
 
-    public async delete ( guildId: string, guildCategoryId?: string | null ) {
+    public async delete( guildId: string, guildCategoryId?: string | null ) {
         const where: any = { guildId };
 
         if ( guildCategoryId ) {
@@ -35,7 +35,7 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
         return this.prisma.category.deleteMany( { where } );
     }
 
-    protected getClient () {
+    protected getClient() {
         return PrismaBotClient.getPrismaClient();
     }
 }

@@ -11,15 +11,15 @@ import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapte
 export abstract class UIModuleBase extends UIBase {
     public customIdStrategy: UICustomIdStrategyBase;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIModuleBase";
     }
 
-    public static getAdapters (): TAdapterClassType[] {
+    public static getAdapters(): TAdapterClassType[] {
         throw new ForceMethodImplementation( this, this.getAdapters.name );
     }
 
-    public static validate () {
+    public static validate() {
         const adapters = this.getAdapters();
 
         // Ensure all adapters start with the same 2 parts of the name
@@ -37,7 +37,7 @@ export abstract class UIModuleBase extends UIBase {
 
     protected abstract getCustomIdStrategy(): UICustomIdStrategyBase;
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.customIdStrategy = this.getCustomIdStrategy();

@@ -65,15 +65,15 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
 
     protected abstract getDefaults(): TConfig["defaults"];
 
-    protected get model () {
+    protected get model() {
         return this.$$.configModel;
     }
 
-    public constructor ( shouldInitialize = true ) {
+    public constructor( shouldInitialize = true ) {
         super( shouldInitialize );
     }
 
-    public async initialize () {
+    public async initialize() {
         const key = this.getConfigName(),
             defaults = this.getDefaults(),
             version = this.getVersion();
@@ -101,7 +101,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
         };
     }
 
-    public get<TKey extends keyof TConfig["data"]> ( key: TKey ) {
+    public get<TKey extends keyof TConfig["data"]>( key: TKey ) {
         return this.data[ key ];
     }
 
@@ -111,14 +111,14 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      * @note: The difference between `defaults()` and `data()` is that `defaults()` returns the initial hardcoded defaults
      * while `data()` returns the current configuration from the database.
      */
-    public get defaults () {
+    public get defaults() {
         return <TConfig["defaults"]>this.config.defaults;
     }
 
     /**
      * Function `meta()` - Retrieves configuration metadata of current configuration
      */
-    public get meta () {
+    public get meta() {
         return <TConfig["meta"]>this.config.meta;
     }
 
@@ -127,21 +127,21 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      * @note: The difference between `defaults()` and `data()` is that `defaults()` returns the initial hardcoded defaults
      * both have the same interface.
      */
-    public get data () {
+    public get data() {
         return <TConfig["data"]>this.config.data;
     }
 
     public getKeys<
         TSectionKey extends keyof TConfig["defaults"],
         TSectionKeys extends keyof TConfig["defaults"][TSectionKey]
-    > ( section: TSectionKey ) {
+    >( section: TSectionKey ) {
         return Object.fromEntries( Object.entries( this.defaults[ section ] ).map( ( [ key ] ) => [ key, key ] ) ) as Record<
             TSectionKeys,
             TSectionKeys
         >;
     }
 
-    private get $$ () {
+    private get $$() {
         return this.constructor as typeof ConfigBase;
     }
 
@@ -150,7 +150,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      *
      * The use case of this function is in the development phase.
      */
-    private validateChecksum ( objA: Record<string, any>, objB: Record<string, any> ) {
+    private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
         if ( !Logger.isDebugEnabled() ) {
             return;
         }

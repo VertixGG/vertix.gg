@@ -20,7 +20,7 @@ import type { ClientEvents } from "discord.js";
 
 import type { RestEvents } from "@discordjs/rest";
 
-function debugDiscordApiEvents ( logger: Logger, client: Client<boolean> ) {
+function debugDiscordApiEvents( logger: Logger, client: Client<boolean> ) {
     if ( isDebugEnabled( "DISCORD", "" ) ) {
         const debug = ( ...args: any[] ) => {
             logger.debug( pc.red( "DISCORD" ), "", args );
@@ -116,7 +116,7 @@ function debugDiscordApiEvents ( logger: Logger, client: Client<boolean> ) {
     }
 }
 
-function debugDiscordApiRestEvents ( logger: Logger, client: Client<boolean> ) {
+function debugDiscordApiRestEvents( logger: Logger, client: Client<boolean> ) {
     if ( isDebugEnabled( "DISCORD_REST", "" ) ) {
         const debug = ( ...args: any[] ) => {
             logger.debug( pc.red( "DISCORD REST" ), "", args );
@@ -139,7 +139,7 @@ function debugDiscordApiRestEvents ( logger: Logger, client: Client<boolean> ) {
     }
 }
 
-export default async function Main () {
+export default async function Main() {
     const logger = GlobalLogger.$;
 
     logger.log( Main, "Bot is starting..." );
@@ -154,7 +154,7 @@ export default async function Main () {
 
     debugDiscordApiRestEvents( logger, client );
 
-    async function onLogin () {
+    async function onLogin() {
         assert( client.user );
 
         logger.info( onLogin, `Bot: '${ client.user.username }' is authenticated` );
@@ -173,7 +173,7 @@ export default async function Main () {
             );
         }
 
-        Promise.all( handlerPromises ).then( async () => {
+        Promise.all( handlerPromises ).then( async() => {
             logger.log( onLogin, "All listeners registered" );
 
             TopGGManager.$.handshake();

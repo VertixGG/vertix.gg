@@ -5,23 +5,23 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ChannelNameTemplateEditButton extends UIElementButtonBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/ChannelNameTemplateEditButton";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getStyle (): Promise<UIButtonStyleTypes> {
+    protected async getStyle(): Promise<UIButtonStyleTypes> {
         return "secondary";
     }
 
-    protected async getLabel () {
+    protected async getLabel() {
         return "Edit Channel Name";
     }
 
-    protected async getEmoji (): Promise<string> {
+    protected async getEmoji(): Promise<string> {
         return "#️⃣";
     }
 }

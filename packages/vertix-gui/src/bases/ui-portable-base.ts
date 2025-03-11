@@ -41,15 +41,15 @@ export abstract class UIPortableBase<
         this.buildStaticPromiseControl.reject = reject;
     } );
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIPortableBase";
     }
 
-    public static validate () {
+    public static validate() {
         throw new ForceMethodImplementation( this, this.validate.name );
     }
 
-    protected static ensureEntities ( entities: UIEntityTypes = [], validateDuplicates = false ) {
+    protected static ensureEntities( entities: UIEntityTypes = [], validateDuplicates = false ) {
         const staticThis = this as typeof UIPortableBase;
 
         staticThis.portableDebugger.log( this.ensureEntities, `Validating entities for component: '${ this.getName() }'` );
@@ -84,7 +84,7 @@ export abstract class UIPortableBase<
         }
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         // Build only static entities on load.
@@ -102,11 +102,11 @@ export abstract class UIPortableBase<
         }
     }
 
-    public async waitUntilInitialized (): Promise<void> {
+    public async waitUntilInitialized(): Promise<void> {
         return this.buildStaticPromise;
     }
 
-    public async build ( args?: UIArgs ) {
+    public async build( args?: UIArgs ) {
         // Build dynamic entities.
         await this.buildDynamicEntities( args );
 
@@ -118,7 +118,7 @@ export abstract class UIPortableBase<
     /**
      * Function getSchema() :: Get the schema of the ui.
      */
-    public getSchema () {
+    public getSchema() {
         return this.schema;
     }
 
@@ -128,18 +128,18 @@ export abstract class UIPortableBase<
      * Function buildDynamicEntities() :: Build the ui, avoid building static entities.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected buildDynamicEntities ( args?: UIArgs ): Promise<void> {
+    protected buildDynamicEntities( args?: UIArgs ): Promise<void> {
         throw new ForceMethodImplementation( this, this.buildDynamicEntities.name );
     }
 
     /**
      * Function buildStaticEntities() :: Builds only the static entities, and only on instance creation.
      */
-    protected buildStaticEntities (): Promise<void> {
+    protected buildStaticEntities(): Promise<void> {
         throw new ForceMethodImplementation( this, this.buildStaticEntities.name );
     }
 
-    protected async buildEntities ( target: any, entities: UIEntityTypes, onlyStatic = true, args?: UIArgs ) {
+    protected async buildEntities( target: any, entities: UIEntityTypes, onlyStatic = true, args?: UIArgs ) {
         for ( let i = 0; i < entities.length; i++ ) {
             const result = await this.buildEntity( target[ i ], entities[ i ], onlyStatic, args );
 
@@ -149,7 +149,7 @@ export abstract class UIPortableBase<
         }
     }
 
-    protected async buildEntity (
+    protected async buildEntity(
         current: UIEntityBase | UIPortableBase,
         EntityClass: EntityPossibleTypes,
         onlyStatic = false,

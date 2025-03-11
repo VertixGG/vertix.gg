@@ -25,11 +25,11 @@ export class PermissionsManager extends InitializeBase {
 
     private debugger: Debugger;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Managers/Permissions";
     }
 
-    public static get $ () {
+    public static get $() {
         if ( !PermissionsManager.instance ) {
             PermissionsManager.instance = new PermissionsManager();
         }
@@ -37,7 +37,7 @@ export class PermissionsManager extends InitializeBase {
         return PermissionsManager.instance;
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.appService = ServiceLocator.$.get( "VertixBot/Services/App" );
@@ -45,7 +45,7 @@ export class PermissionsManager extends InitializeBase {
         this.debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", PermissionsManager.getName() ) );
     }
 
-    public async onChannelPermissionsUpdate ( oldState: VoiceChannel, newState: VoiceChannel ) {
+    public async onChannelPermissionsUpdate( oldState: VoiceChannel, newState: VoiceChannel ) {
         this.logger.log(
             this.onChannelPermissionsUpdate,
             `Guild id: '${ oldState.guildId }', channel id: '${ oldState.id }' - Permissions were updated`
@@ -59,7 +59,7 @@ export class PermissionsManager extends InitializeBase {
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newState.permissionOverwrites );
     }
 
-    public getRolesPermissions ( context: Guild, userId = context.client.user.id ) {
+    public getRolesPermissions( context: Guild, userId = context.client.user.id ) {
         const result = new PermissionsBitField();
 
         for ( const role of context.roles.cache.values() ) {
@@ -82,7 +82,7 @@ export class PermissionsManager extends InitializeBase {
         return result;
     }
 
-    public getMissingRolePermissions ( permissions: bigint[], context: Guild, userId = context.client.user.id ): string[] {
+    public getMissingRolePermissions( permissions: bigint[], context: Guild, userId = context.client.user.id ): string[] {
         const resultMissingPermissions: PermissionOverwriteOptions = {},
             requiredPermissionsField = new PermissionsBitField( permissions );
 
@@ -122,7 +122,7 @@ export class PermissionsManager extends InitializeBase {
         return Object.keys( resultMissingPermissions );
     }
 
-    public getMissingChannelPermissions (
+    public getMissingChannelPermissions(
         permissions: bigint[],
         context: VoiceBasedChannel,
         userId = context.client.user.id
@@ -151,7 +151,7 @@ export class PermissionsManager extends InitializeBase {
      */
     public getMissingPermissions( permissions: bigint[], context: VoiceBasedChannel ): string[];
     public getMissingPermissions( permissions: bigint[], context: Guild ): string[];
-    public getMissingPermissions ( permissions: bigint[], context: VoiceBasedChannel | Guild ): string[] {
+    public getMissingPermissions( permissions: bigint[], context: VoiceBasedChannel | Guild ): string[] {
         if ( context instanceof Guild ) {
             return this.getMissingRolePermissions( permissions, context );
         }
@@ -159,7 +159,7 @@ export class PermissionsManager extends InitializeBase {
         return this.getMissingChannelPermissions( permissions, context );
     }
 
-    public getChannelDefaultInheritedPermissions ( channel: VoiceBasedChannel ) {
+    public getChannelDefaultInheritedPermissions( channel: VoiceBasedChannel ) {
         const { permissionOverwrites } = channel,
             result = [];
 
@@ -179,7 +179,7 @@ export class PermissionsManager extends InitializeBase {
         return result;
     }
 
-    public getChannelDefaultInheritedPermissionsWithUser ( channel: VoiceBasedChannel, userId: string, overrides = {} ) {
+    public getChannelDefaultInheritedPermissionsWithUser( channel: VoiceBasedChannel, userId: string, overrides = {} ) {
         const inheritedPermissions = this.getChannelDefaultInheritedPermissions( channel );
 
         return [
@@ -191,7 +191,7 @@ export class PermissionsManager extends InitializeBase {
         ];
     }
 
-    public getChannelDefaultPermissions ( userId: string, channel: VoiceBasedChannel, overrides = {} ) {
+    public getChannelDefaultPermissions( userId: string, channel: VoiceBasedChannel, overrides = {} ) {
         const inheritedPermissions = this.getChannelDefaultInheritedPermissionsWithUser( channel, userId, overrides );
 
         return {
@@ -199,7 +199,7 @@ export class PermissionsManager extends InitializeBase {
         };
     }
 
-    public async ensureChannelBotConnectivityPermissions ( channel: VoiceChannel ): Promise<void> {
+    public async ensureChannelBotConnectivityPermissions( channel: VoiceChannel ): Promise<void> {
         if ( this.isSelfAdministratorRole( channel.guild ) ) {
             return;
         }
@@ -215,7 +215,7 @@ export class PermissionsManager extends InitializeBase {
         } );
     }
 
-    public async hasMemberPermissions ( guildId: string, userId: string, permissions: PermissionResolvable ) {
+    public async hasMemberPermissions( guildId: string, userId: string, permissions: PermissionResolvable ) {
         const guild = this.appService.getClient().guilds.cache.get( guildId );
 
         if ( !guild ) {
@@ -228,7 +228,7 @@ export class PermissionsManager extends InitializeBase {
         return member.permissions.has( permissions );
     }
 
-    public hasMemberAdminPermission ( interaction: Interaction, logFunctionOwner?: Function ) {
+    public hasMemberAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
         if ( !interaction.guild ) {
             this.logger.error(
                 this.hasMemberAdminPermission,
@@ -252,7 +252,7 @@ export class PermissionsManager extends InitializeBase {
         return hasPermission;
     }
 
-    public isSelfAdministratorRole ( guild: Guild ): boolean {
+    public isSelfAdministratorRole( guild: Guild ): boolean {
         const botMember = guild.members.cache.get( guild.client.user.id );
 
         if ( !botMember ) {
@@ -262,7 +262,7 @@ export class PermissionsManager extends InitializeBase {
         return botMember.permissions.has( PermissionsBitField.Flags.Administrator );
     }
 
-    public async ensureChannelBotRolePermissions (
+    public async ensureChannelBotRolePermissions(
         channel: VoiceBasedChannel,
         permissions: PermissionsBitField
     ): Promise<void> {
@@ -305,7 +305,7 @@ export class PermissionsManager extends InitializeBase {
         await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
     }
 
-    public async editChannelRolesPermissions (
+    public async editChannelRolesPermissions(
         channel: VoiceBasedChannel,
         roles: string[],
         permissions: PermissionOverwriteOptions

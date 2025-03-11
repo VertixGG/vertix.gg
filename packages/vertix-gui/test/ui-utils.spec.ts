@@ -5,26 +5,26 @@ import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
 import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
 class ElementMockClass extends UIElementBase<any> {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/TestElementMockClass";
     }
 
-    protected getAttributes (): Promise<any> {
+    protected getAttributes(): Promise<any> {
         return Promise.resolve( undefined );
     }
 
-    public getTranslatableContent (): Promise<any> {
+    public getTranslatableContent(): Promise<any> {
         return Promise.resolve( undefined );
     }
 }
 
-describe( "VertixGUI/UI-Utils", function () {
-    beforeEach( async () => {
+describe( "VertixGUI/UI-Utils", function() {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
     } );
 
-    describe( "uiUtilsDynamicElementsRearrange", function () {
-        it( "Empty elements should return an empty array", function () {
+    describe( "uiUtilsDynamicElementsRearrange", function() {
+        it( "Empty elements should return an empty array", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [];
 
@@ -35,7 +35,7 @@ describe( "VertixGUI/UI-Utils", function () {
             expect( rearrangedElements ).toEqual( [] );
         } );
 
-        it( "Single element should return a single-row array", function () {
+        it( "Single element should return a single-row array", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [ [ new ElementMockClass() ] ];
 
@@ -46,7 +46,7 @@ describe( "VertixGUI/UI-Utils", function () {
             expect( rearrangedElements ).toEqual( [ [ elements[ 0 ][ 0 ] ] ] );
         } );
 
-        it( "10, 3 per row should be 3,3,3,1", function () {
+        it( "10, 3 per row should be 3,3,3,1", function() {
             // Arrange.
             const elements: UIElementBase<any>[] = [
                 new ElementMockClass(),
@@ -73,7 +73,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "6,6,6, 2 per row should be 2,2,2,2,2,2", function () {
+        it( "6,6,6, 2 per row should be 2,2,2,2,2,2", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass() ],
@@ -99,7 +99,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "4,4,4, 2 per row should be 2,2,2,2", function () {
+        it( "4,4,4, 2 per row should be 2,2,2,2", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass() ],
@@ -121,7 +121,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "9 elements, 2 per row should be 2,2,2,2,1", function () {
+        it( "9 elements, 2 per row should be 2,2,2,2,1", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass() ],
@@ -145,7 +145,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "6,6, 3 per row should be 3,3,3,3", function () {
+        it( "6,6, 3 per row should be 3,3,3,3", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -164,7 +164,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "4,4,4, 3 per row should be 3,3,3,3", function () {
+        it( "4,4,4, 3 per row should be 3,3,3,3", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -184,7 +184,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "5,5,5, 3 per row should be 3,3,3,3,3", function () {
+        it( "5,5,5, 3 per row should be 3,3,3,3,3", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -205,7 +205,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "8 elements, 3 per row should be 3,3,2", function () {
+        it( "8 elements, 3 per row should be 3,3,2", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -225,7 +225,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "5,5,5, 4 per row should be 4,4,4,4,4", function () {
+        it( "5,5,5, 4 per row should be 4,4,4,4,4", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -249,7 +249,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "10 elements, 4 per row should be 4,4,2", function () {
+        it( "10 elements, 4 per row should be 4,4,2", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -269,7 +269,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "5,2, 5 per row should be 5,2", function () {
+        it( "5,2, 5 per row should be 5,2", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],
@@ -287,7 +287,7 @@ describe( "VertixGUI/UI-Utils", function () {
             ] );
         } );
 
-        it( "12 elements, 5 per row should be 5,5,2", function () {
+        it( "12 elements, 5 per row should be 5,5,2", function() {
             // Arrange.
             const elements: UIElementBase<any>[][] = [
                 [ new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass(), new ElementMockClass() ],

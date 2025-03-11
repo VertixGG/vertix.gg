@@ -16,7 +16,7 @@ export abstract class ModelBaseCachedWithClient<
 
     protected debugger: Debugger;
 
-    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super( shouldDebugCache );
 
         this.prisma = this.getClient();
@@ -32,7 +32,7 @@ export abstract class ModelBaseCachedWithModel<TModel, TCacheResult> extends Cac
 
     protected debugger: Debugger;
 
-    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super( shouldDebugCache );
 
         this.model = this.getModel();
@@ -48,7 +48,7 @@ export abstract class ModelBase<TPrismaClient extends TPossibleClients> extends 
 
     protected debugger: Debugger;
 
-    protected constructor ( shouldDebugModel = true ) {
+    protected constructor( shouldDebugModel = true ) {
         super();
 
         this.prisma = this.getClient();

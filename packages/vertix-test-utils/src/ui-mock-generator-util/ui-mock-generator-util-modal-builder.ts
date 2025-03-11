@@ -7,36 +7,36 @@ export class UIMockGeneratorUtilModalBuilder {
     private instanceType!: UIInstancesTypes;
     private title!: string;
 
-    public withName ( name: string ) {
+    public withName( name: string ) {
         this.name = name;
         return this;
     }
 
-    public withInstanceType ( instanceType: UIInstancesTypes ) {
+    public withInstanceType( instanceType: UIInstancesTypes ) {
         this.instanceType = instanceType;
         return this;
     }
 
-    public withTitle ( title: string ) {
+    public withTitle( title: string ) {
         this.title = title;
         return this;
     }
 
-    public build () {
+    public build() {
         const name = this.name;
         const instanceType = this.instanceType;
         const title = this.title;
 
         return class extends UIModalBase {
-            public static getName () {
+            public static getName() {
                 return name;
             }
 
-            public static getInstanceType () {
+            public static getInstanceType() {
                 return instanceType;
             }
 
-            protected getTitle () {
+            protected getTitle() {
                 return title;
             }
         };

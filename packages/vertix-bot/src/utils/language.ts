@@ -18,11 +18,11 @@ import type { UILanguageJSON } from "@vertix.gg/gui/src/bases/ui-language-defini
 export class LanguageUtils extends InitializeBase {
     private static instance: LanguageUtils;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Utils/LanguageUtils";
     }
 
-    public static getInstance (): LanguageUtils {
+    public static getInstance(): LanguageUtils {
         if ( !LanguageUtils.instance ) {
             LanguageUtils.instance = new LanguageUtils();
         }
@@ -30,11 +30,11 @@ export class LanguageUtils extends InitializeBase {
         return LanguageUtils.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return LanguageUtils.getInstance();
     }
 
-    public export ( object: UILanguageJSON, filePath: string ) {
+    public export( object: UILanguageJSON, filePath: string ) {
         this.logger.info( this.export, `Exporting language to path: '${ filePath }'` );
 
         // Ensure path exists.
@@ -48,7 +48,7 @@ export class LanguageUtils extends InitializeBase {
         }
     }
 
-    public async import ( object: UILanguageJSON ) {
+    public async import( object: UILanguageJSON ) {
         this.logger.info( this.import, `Trying importing language with code: '${ object.code }'` );
 
         const Models = [
@@ -69,7 +69,7 @@ export class LanguageUtils extends InitializeBase {
             ];
 
         await Promise.all(
-            Models.map( async ( Model, index ) => {
+            Models.map( async( Model, index ) => {
                 const currentObject = objects[ index ],
                     count = await Model.$.getCount( object.code );
 

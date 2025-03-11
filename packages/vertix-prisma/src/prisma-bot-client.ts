@@ -33,11 +33,11 @@ export class PrismaBotClient extends ObjectBase {
 
     protected client: PrismaTypes.PrismaClient;
 
-    public static getName () {
+    public static getName() {
         return "VertixPrisma/PrismaBotInstance";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !PrismaBotClient.instance ) {
             PrismaBotClient.instance = new PrismaBotClient();
         }
@@ -45,17 +45,17 @@ export class PrismaBotClient extends ObjectBase {
         return PrismaBotClient.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return PrismaBotClient.getInstance();
     }
 
-    public static getPrismaClient (): PrismaTypes.PrismaClient {
+    public static getPrismaClient(): PrismaTypes.PrismaClient {
         const prisma = ( this as typeof PrismaBotClient ).$;
 
         return prisma.client;
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.logger = new Logger( this );
@@ -89,8 +89,8 @@ export class PrismaBotClient extends ObjectBase {
         }
     }
 
-    public async connect () {
-        return new Promise( async ( resolve, reject ) => {
+    public async connect() {
+        return new Promise( async( resolve, reject ) => {
             this.logger.log( "constructor", "Starting up the database engine ..." );
 
             await this.client.$connect();
@@ -113,23 +113,23 @@ export class PrismaBotClient extends ObjectBase {
         } );
     }
 
-    public getClient () {
+    public getClient() {
         return this.client;
     }
 
-    private async onError ( error: any ) {
+    private async onError( error: any ) {
         this.logger.error( this.onError, "", error );
     }
 
-    private async onInfo ( message: any ) {
+    private async onInfo( message: any ) {
         this.logger.info( this.onInfo, "", message );
     }
 
-    private async onQuery ( data: QueryEvent ) {
+    private async onQuery( data: QueryEvent ) {
         this.debugger.dumpDown( this.onQuery, data.query );
     }
 
-    private async onWarn ( message: any ) {
+    private async onWarn( message: any ) {
         this.logger.warn( this.onWarn, "", message );
     }
 }

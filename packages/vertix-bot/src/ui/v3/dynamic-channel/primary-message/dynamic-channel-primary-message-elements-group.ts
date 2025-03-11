@@ -34,15 +34,15 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
     private static allButtonsById: ButtonsMap = {};
     private static allButtonsByName: ButtonsMap = {};
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
     }
 
-    private static getItemFromMap ( map: ButtonsMap, key: string ): DynamicChannelButtonBase | undefined {
+    private static getItemFromMap( map: ButtonsMap, key: string ): DynamicChannelButtonBase | undefined {
         return map[ key ];
     }
 
-    private static mapButtons ( allItems: DynamicChannelButtonBase[] ) {
+    private static mapButtons( allItems: DynamicChannelButtonBase[] ) {
         allItems.forEach( ( item ) => {
             this.allButtonsById[ item.getId() ] = item;
             this.allButtonsByName[ item.getName() ] = item;
@@ -50,7 +50,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static getItems ( args?: UIArgs ) {
+    public static getItems( args?: UIArgs ) {
         // TODO: Called 3 times on startup, fix this.
         // @note: This has no visual effect, it used to define the items that will be used in the UI.
         // Then another function sort it before printing it, TODO Handle it.
@@ -77,7 +77,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
      *
      * It checks for duplicate item IDs and throws an error if found.
      */
-    public static populate () {
+    public static populate() {
         // If already populated, throw an error.
         if ( this.allButtons.length ) {
             throw new Error( `${ this.getName() } already populated` );
@@ -102,23 +102,23 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
         this.mapButtons( this.allButtons );
     }
 
-    public static getAll () {
+    public static getAll() {
         return DynamicChannelPrimaryMessageElementsGroup.allButtons;
     }
 
-    public static getById ( id: string ) {
+    public static getById( id: string ) {
         return this.getItemFromMap( this.allButtonsById, id );
     }
 
-    public static getByName ( name: string ) {
+    public static getByName( name: string ) {
         return this.getItemFromMap( this.allButtonsByName, name );
     }
 
-    public static async getEmojis ( ids: string[] ) {
+    public static async getEmojis( ids: string[] ) {
         const emojis: string[] = [];
 
         await Promise.all(
-            ids.map( async ( id ) => {
+            ids.map( async( id ) => {
                 const item = DynamicChannelPrimaryMessageElementsGroup.getById( id );
 
                 if ( item ) {
@@ -130,7 +130,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
         return emojis;
     }
 
-    public static getEmbedEmojis ( ids: string[] ) {
+    public static getEmbedEmojis( ids: string[] ) {
         const emojis: string[] = [];
 
         ids.forEach( ( id ) => {
@@ -144,13 +144,13 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
         return emojis;
     }
 
-    public static sort ( buttons: DynamicChannelButtonBase[] ) {
+    public static sort( buttons: DynamicChannelButtonBase[] ) {
         return buttons.sort(
             ( a: DynamicChannelButtonBase, b: DynamicChannelButtonBase ) => a.$$.getSortId() - b.$$.getSortId()
         );
     }
 
-    public static sortIds ( ids: string[] ) {
+    public static sortIds( ids: string[] ) {
         return ids.sort(
             ( aId: string, bId: string ) =>
                 DynamicChannelPrimaryMessageElementsGroup.getById( aId )!.$$.getSortId() -

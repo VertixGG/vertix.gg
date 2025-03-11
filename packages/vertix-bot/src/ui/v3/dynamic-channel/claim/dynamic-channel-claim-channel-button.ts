@@ -7,47 +7,47 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelClaimChannelButton";
     }
 
-    public static getBaseName () {
+    public static getBaseName() {
         return "ClaimChannel";
     }
 
-    public static getEmoji () {
+    public static getEmoji() {
         return EmojiManager.$.getCachedMarkdown( DynamicChannelClaimChannelButton.getBaseName() );
     }
 
-    public static getSortId () {
+    public static getSortId() {
         return 8;
     }
 
-    public getId () {
+    public getId() {
         return "claim-button";
     }
 
-    public getLabelForEmbed () {
+    public getLabelForEmbed() {
         return `${ DynamicChannelClaimChannelButton.getEmoji() } ∙ **Claim**`;
     }
 
-    public async getLabelForMenu () {
+    public async getLabelForMenu() {
         return await this.getLabel();
     }
 
-    public async getLabel () {
+    public async getLabel() {
         return "Claim";
     }
 
-    public async getEmoji () {
+    public async getEmoji() {
         return DynamicChannelClaimChannelButton.getEmoji();
     }
 
-    public getEmojiForEmbed (): string {
+    public getEmojiForEmbed(): string {
         return DynamicChannelClaimChannelButton.getEmoji();
     }
 
-    protected async isDisabled (): Promise<boolean> {
+    protected async isDisabled(): Promise<boolean> {
         if ( [ "starting", "active" ].includes( DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) ) {
             return true;
         }

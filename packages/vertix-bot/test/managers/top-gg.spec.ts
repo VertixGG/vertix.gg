@@ -20,7 +20,7 @@ describe( "VertixBot/Managers/TopGG", () => {
 
     let topGGManager: TopGGManager;
 
-    beforeEach( async () => {
+    beforeEach( async() => {
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/services/app-service" ) ).AppService );
 
         // Await for all services to be registered.
@@ -42,7 +42,7 @@ describe( "VertixBot/Managers/TopGG", () => {
     } );
 
     describe( "isVoted()", () => {
-        it( "should return true if workingMiddleware returns false", async () => {
+        it( "should return true if workingMiddleware returns false", async() => {
             // Arrange.
             const expectedWorkingMiddlewareResult = false;
 
@@ -57,7 +57,7 @@ describe( "VertixBot/Managers/TopGG", () => {
             expect( result ).toBe( true );
         } );
 
-        it( "should return true if cache is available and not expired", async () => {
+        it( "should return true if cache is available and not expired", async() => {
             // Arrange.
             const apiInstance = new Api( "TOP_GG_TOKEN" ),
                 originalHasVoted = apiInstance.hasVoted;
@@ -81,7 +81,7 @@ describe( "VertixBot/Managers/TopGG", () => {
             expect( fromCache ).toBe( true );
         } );
 
-        it( "should return false if cache is available but expired", async () => {
+        it( "should return false if cache is available but expired", async() => {
             // Arrange.
             const apiInstance = new Api( "TOP_GG_TOKEN" ),
                 originalHasVoted = apiInstance.hasVoted;

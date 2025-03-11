@@ -45,27 +45,27 @@ export class SetupEmbed extends UIEmbedBase {
         none: uiUtilsWrapAsTemplate( "none" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/SetupEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png";
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🛠  Setup Vertix";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "Discover the limitless possibilities of **Vertix**!\n" +
             "Customize and optimize your server to perfection.\n\n" +
@@ -83,7 +83,7 @@ export class SetupEmbed extends UIEmbedBase {
         );
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value, masterChannelsOptions } = SetupEmbed.vars;
 
         return {
@@ -109,7 +109,7 @@ export class SetupEmbed extends UIEmbedBase {
         };
     }
 
-    protected getOptions (): { [p: string]: any } {
+    protected getOptions(): { [p: string]: any } {
         const {
             masterChannels,
             masterChannelMessageDefault,
@@ -132,7 +132,7 @@ export class SetupEmbed extends UIEmbedBase {
         };
     }
 
-    protected async getLogicAsync ( args: ISetupArgs ) {
+    protected async getLogicAsync( args: ISetupArgs ) {
         const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
             "Vertix/Config/MasterChannel",
             VERSION_UI_V3
@@ -140,7 +140,7 @@ export class SetupEmbed extends UIEmbedBase {
 
         // TODO: Duplicate code, refactor.
         const result: any = {},
-            masterChannelsPromise = ( args?.masterChannels || [] ).map( async ( channel, index ) => {
+            masterChannelsPromise = ( args?.masterChannels || [] ).map( async( channel, index ) => {
                 const { data, usedEmojis, usedRoles } = this.handleChannelData( channel );
 
                 return {
@@ -175,7 +175,7 @@ export class SetupEmbed extends UIEmbedBase {
         return result;
     }
 
-    private handleChannelData ( channel: any ) {
+    private handleChannelData( channel: any ) {
         const getUsedButtons = () => {
             switch ( channel?.data?.[ 0 ]?.version ) {
                 default:

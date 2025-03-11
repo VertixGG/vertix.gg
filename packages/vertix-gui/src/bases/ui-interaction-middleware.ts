@@ -30,11 +30,11 @@ export class UIInteractionMiddleware<
 
     private readonly target: UIAdapterBase<TChannel, TInteraction>;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIInteractionMiddleware";
     }
 
-    public constructor (
+    public constructor(
         target: UIAdapterBase<TChannel, TInteraction>,
         eventArgs?: {
             onMessageFailed?: ( message: Message<true> ) => Promise<void>;
@@ -50,7 +50,7 @@ export class UIInteractionMiddleware<
         this.wrapMethods();
     }
 
-    private wrapMethods () {
+    private wrapMethods() {
         const target = this.target,
             self = this;
 
@@ -59,9 +59,9 @@ export class UIInteractionMiddleware<
 
             const method = target[ keyAsProperty ];
 
-            const wrapper = async function WrapperCallback ( ...args: [] ) {
+            const wrapper = async function WrapperCallback( ...args: [] ) {
                 // Call the passThrough method to handle the middleware logic
-                return self.passThrough( target, method, args, function () {
+                return self.passThrough( target, method, args, function() {
                     // Call the original method with the provided arguments
                     UIInteractionMiddleware.debugger.log(
                         self.passThrough,
@@ -75,7 +75,7 @@ export class UIInteractionMiddleware<
             // Preserve the original name of the method
             // @ts-expect-error - TODO: Use better design pattern to for middleware
             target[ keyAsProperty ] = new Proxy( wrapper, {
-                get ( target, prop ) {
+                get( target, prop ) {
                     if ( prop === "name" ) {
                         return method.name;
                     }
@@ -86,7 +86,7 @@ export class UIInteractionMiddleware<
         } );
     }
 
-    private async passThrough (
+    private async passThrough(
         target: UIAdapterBase<TChannel, TInteraction>,
         method: Function,
         args: any,
@@ -135,7 +135,7 @@ export class UIInteractionMiddleware<
 
     private async ensureChannel( context: TChannel, callback?: Function ): Promise<null | true>;
     private async ensureChannel( context: TInteraction, callback?: Function ): Promise<null | true>;
-    private async ensureChannel ( context: TChannel | TInteraction, callback?: Function ) {
+    private async ensureChannel( context: TChannel | TInteraction, callback?: Function ) {
         const channel = context instanceof GuildChannel ? context : ( context.channel as TChannel );
 
         const requiredTypes = this.target.getChannelTypes(),
@@ -159,11 +159,11 @@ export class UIInteractionMiddleware<
         throw new Error( `Invalid channel type. Expected: '${ expectedTypes }' but got: '${ ChannelType[ context.type ] }'` );
     }
 
-    private async ensureMessage ( context: Message<true>, callback: Function ) {
+    private async ensureMessage( context: Message<true>, callback: Function ) {
         return callback();
     }
 
-    private async ensureInteraction ( context: TInteraction, callback: Function ) {
+    private async ensureInteraction( context: TInteraction, callback: Function ) {
         if ( !( await this.ensureChannel( context as TInteraction ) ) ) {
             return null;
         }

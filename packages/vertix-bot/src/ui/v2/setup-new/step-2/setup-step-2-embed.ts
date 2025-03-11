@@ -30,27 +30,27 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         noButtonsFooter: uiUtilsWrapAsTemplate( "noButtonsFooter" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/SetupStep2Embed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "Step 2 - Dynamic Channels Setup";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             "Setup dynamic channel management interface.\n\n" +
             "**_🎚 Buttons Interface_**\n\n" +
@@ -70,11 +70,11 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         );
     }
 
-    protected getFooter () {
+    protected getFooter() {
         return SetupStep2Embed.vars.footer;
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             on,
             off,
@@ -120,7 +120,7 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;
 
         return {

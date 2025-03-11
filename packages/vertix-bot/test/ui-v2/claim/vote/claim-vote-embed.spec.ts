@@ -5,7 +5,7 @@ import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-
 import { ClaimVoteEmbed } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-embed";
 
 describe( "Vertix/UI-V2/ClaimVoteEmbed", () => {
-    beforeEach( async () => {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
         jest.useFakeTimers();
@@ -15,7 +15,7 @@ describe( "Vertix/UI-V2/ClaimVoteEmbed", () => {
         jest.clearAllTimers();
     } );
 
-    it( "should passthroughs sanity check", async () => {
+    it( "should passthroughs sanity check", async() => {
         // Arrange.
         const embed = new ClaimVoteEmbed();
 
@@ -39,7 +39,7 @@ describe( "Vertix/UI-V2/ClaimVoteEmbed", () => {
         } );
     } );
 
-    it( "it should work according to spec", async () => {
+    it( "it should work according to spec", async() => {
         // Arrange.
         const embed = new ClaimVoteEmbed();
 

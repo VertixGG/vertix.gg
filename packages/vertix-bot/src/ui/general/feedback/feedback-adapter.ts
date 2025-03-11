@@ -10,23 +10,23 @@ import type DirectMessageService from "@vertix.gg/bot/src/services/direct-messag
 import type { ModalSubmitInteraction } from "discord.js";
 
 export class FeedbackAdapter extends UIAdapterBase<any, any> {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/FeedbackAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return FeedbackComponent;
     }
 
-    public static isMultiLanguage () {
+    public static isMultiLanguage() {
         return false;
     }
 
-    protected getReplyArgs () {
+    protected getReplyArgs() {
         return {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindModalWithButton(
             "VertixBot/UI-General/FeedbackReportButton",
             "VertixBot/UI-General/FeedbackReportModal",
@@ -46,11 +46,11 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         );
     }
 
-    protected shouldDisableMiddleware () {
+    protected shouldDisableMiddleware() {
         return true;
     }
 
-    private async onReportModalSubmitted ( interaction: ModalSubmitInteraction<"cached"> ) {
+    private async onReportModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
         await this.informCollector( interaction, "issue" );
 
         await interaction.reply( {
@@ -60,7 +60,7 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         } );
     }
 
-    private async onSuggestionModalSubmitted ( interaction: ModalSubmitInteraction<"cached"> ) {
+    private async onSuggestionModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
         await this.informCollector( interaction, "suggestion" );
 
         await interaction.reply( {
@@ -70,7 +70,7 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         } );
     }
 
-    private async onInviteDeveloperModalSubmitted ( interaction: ModalSubmitInteraction<"cached"> ) {
+    private async onInviteDeveloperModalSubmitted( interaction: ModalSubmitInteraction<"cached"> ) {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
         const inviteLink = interaction.fields.getTextInputValue(
@@ -91,7 +91,7 @@ export class FeedbackAdapter extends UIAdapterBase<any, any> {
         } );
     }
 
-    private async informCollector ( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
+    private async informCollector( interaction: ModalSubmitInteraction<"cached">, type: "issue" | "suggestion" ) {
         const dmService = ServiceLocator.$.get<DirectMessageService>( "VertixBot/Services/DirectMessage" );
 
         const feedbackInputTitleId = this.customIdStrategy.generateId(

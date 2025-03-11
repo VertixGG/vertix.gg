@@ -9,30 +9,30 @@ import { DynamicChannelPremiumResetChannelEmbed } from "@vertix.gg/bot/src/ui/v2
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelPremiumResetChannelComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPremiumResetChannelComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [ UIElementsGroupBase.createSingleGroup( DynamicChannelPremiumResetChannelButton ) ];
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPremiumResetChannelEmbed ),
             UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
         ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return null;
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

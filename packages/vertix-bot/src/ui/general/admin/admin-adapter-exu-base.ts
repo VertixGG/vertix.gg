@@ -26,25 +26,25 @@ export class AdminAdapterExuBase<
 
     protected dynamicChannelService: DynamicChannelService;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/AdminAdapterExuBase";
     }
 
-    public constructor ( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
-    public getPermissions (): PermissionsBitField {
+    public getPermissions(): PermissionsBitField {
         return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    public async isPassingInteractionRequirementsInternal ( interaction: TInteraction ) {
+    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
         if ( !PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
             const botRolePermissions = PermissionsManager.$.getRolesPermissions( interaction.guild );
             const missingPermissions = botRolePermissions.missing( DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS );

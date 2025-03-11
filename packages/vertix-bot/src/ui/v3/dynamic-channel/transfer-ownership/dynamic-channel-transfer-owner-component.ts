@@ -18,19 +18,19 @@ import { DynamicChannelTransferOwnerUserSelectedEmbed } from "@vertix.gg/bot/src
 import { DynamicChannelTransferOwnerTransferredEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-transferred-embed";
 
 export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelTransferOwnerComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [ UIElementsGroupBase.createSingleGroup( DynamicChannelTransferOwnerUserMenu ), YesNoElementsGroup ];
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerUserSelectedEmbed ),
@@ -41,11 +41,11 @@ export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
         ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return null;
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

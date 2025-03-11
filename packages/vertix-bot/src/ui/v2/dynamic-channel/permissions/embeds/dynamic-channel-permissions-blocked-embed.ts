@@ -13,30 +13,30 @@ export class DynamicChannelPermissionsBlockedEmbed extends DynamicChannelPermiss
         userBlockedDisplayName: uiUtilsWrapAsTemplate( "userBlockedDisplayName" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPermissionsBlockedEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor () {
+    protected getColor() {
         return Colors.DarkRed;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🫵  User blocked";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `**${ DynamicChannelPermissionsBlockedEmbed.vars.userBlockedDisplayName }** successfully blocked and no longer has access to this channel!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
         result.userBlockedDisplayName = args.userBlockedDisplayName;

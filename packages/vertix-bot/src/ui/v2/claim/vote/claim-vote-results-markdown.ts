@@ -12,32 +12,32 @@ import { RentryManager } from "@vertix.gg/bot/src/managers/rentry";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/ClaimVoteResultsMarkdown";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected static getContentPath () {
+    protected static getContentPath() {
         return process.cwd() + "/assets/claim-vote-results-markdown.md";
     }
 
-    protected async generateLink ( content: string ) {
+    protected async generateLink( content: string ) {
         const args = this.uiArgs || {},
             result = await RentryManager.$.new( "", args.markdownCode, content );
 
         return result.url;
     }
 
-    protected getCode (): string {
+    protected getCode(): string {
         const args = this.uiArgs || {};
 
         return args.markdownCode || "";
     }
 
-    protected async getLogic ( args: UIArgs ) {
+    protected async getLogic( args: UIArgs ) {
         // TODO: Use array selectOptions.
         args.displayNameAndResults = [];
 
@@ -53,7 +53,7 @@ export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
             } );
 
         await Promise.all(
-            sortedResults.map( async ( { userId, results }, index ) => {
+            sortedResults.map( async( { userId, results }, index ) => {
                 let result = "";
 
                 const userDisplayName = await guildGetMemberDisplayName( args.guildId, userId );
@@ -74,7 +74,7 @@ export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
 
         await Promise.all(
             Object.entries( DynamicChannelVoteManager.$.getMemberVotes( args.channelId ) ).map(
-                async ( [ userId, targetId ] ) => {
+                async( [ userId, targetId ] ) => {
                     args.votesForMembersResults.push(
                         `${ await guildGetMemberDisplayName( args.guildId, userId ) } | ${ await guildGetMemberDisplayName( args.guildId, targetId ) }`
                     );

@@ -12,11 +12,11 @@ export class InvalidChannelTypeAdapter extends UIAdapterBase<
     BaseGuildTextChannel,
     UIDefaultButtonChannelVoiceInteraction
 > {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         const Component =
             ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).$$.getSystemComponents().InvalidChannelTypeComponent;
 
@@ -27,13 +27,13 @@ export class InvalidChannelTypeAdapter extends UIAdapterBase<
         return Component;
     }
 
-    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs ) {
+    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs ) {
         return {
             channelTypes: argsFromManager.channelTypes
         };
     }
 
-    protected shouldDisableMiddleware (): boolean {
+    protected shouldDisableMiddleware(): boolean {
         return true;
     }
 }

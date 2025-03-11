@@ -11,12 +11,12 @@ export abstract class ServiceBase extends ObjectBase {
         reason?: Error;
     };
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBase/Modules/ServiceBase";
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public constructor ( ...args: any[] ) {
+    public constructor( ...args: any[] ) {
         super();
 
         this.logger = new Logger( this );
@@ -45,11 +45,11 @@ export abstract class ServiceBase extends ObjectBase {
 
     protected async initialize?(): Promise<void>;
 
-    public isWithDependencies () {
+    public isWithDependencies() {
         return false;
     }
 
-    public getInitialization () {
+    public getInitialization() {
         return this.initialization;
     }
 }

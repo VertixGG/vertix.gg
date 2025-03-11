@@ -13,13 +13,13 @@ export abstract class ModelDataOwnerStrictDataBase<
     TDataModelUniqueKeys extends TDataOwnerDefaultUniqueKeys,
     TDataModelStrictData extends Record<string, any>
 > extends ModelDataOwnerBase<TModel, TDataModel, TDataModelResult, TDataModelUniqueKeys> {
-    public static getName () {
+    public static getName() {
         return "VertixBase/Bases/ModelDataOwnerStrictDataBase";
     }
 
     protected abstract getStrictDataFactor(): TDataModelStrictData;
 
-    protected async setStrictData (
+    protected async setStrictData(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         data: Partial<TDataModelStrictData>
@@ -34,7 +34,7 @@ export abstract class ModelDataOwnerStrictDataBase<
         return this.upsert( args, keys, filteredData );
     }
 
-    protected async setStrictDataWithDefaults (
+    protected async setStrictDataWithDefaults(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         data: Partial<TDataModelStrictData>
@@ -48,7 +48,7 @@ export abstract class ModelDataOwnerStrictDataBase<
         return this.setStrictData( args, keys, dataWithDefaults );
     }
 
-    public async getStrictData (
+    public async getStrictData(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
@@ -76,7 +76,7 @@ export abstract class ModelDataOwnerStrictDataBase<
         return result;
     }
 
-    protected async getStrictDataWithDefaults (
+    protected async getStrictDataWithDefaults(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true

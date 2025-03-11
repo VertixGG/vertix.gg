@@ -17,7 +17,7 @@ let versioningService: UIAdapterVersioningService;
 
 describe( "VertixGUI/UIVersioningAdapterService", () => {
 
-    beforeEach( async () => {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/gui/src/ui-adapter-versioning-service" ) ).default );
@@ -46,7 +46,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         expect( () => versioningService.registerVersions( [ 4, 6 ] ) ).toThrow( "Versions already registered" );
     } );
 
-    it( "should return the correct adapter name with version", async () => {
+    it( "should return the correct adapter name with version", async() => {
         // Arrange
         const adapters = [
             UIMockGeneratorUtil.createAdapter()
@@ -76,7 +76,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         expect( adapter!.getName() ).toBe( "Vertix/UI-V1/RenameAdapter" );
     } );
 
-    it( "should return the correct adapter name with version for deep adapter names", async () => {
+    it( "should return the correct adapter name with version for deep adapter names", async() => {
         // Arrange
         const adapters = [
             UIMockGeneratorUtil.createAdapter()
@@ -106,13 +106,13 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         expect( adapter!.getName() ).toBe( "Vertix/UI-V1/CoolEntities/RenameAdapter" );
     } );
 
-    it( "should throw an error if no version is determined", async () => {
+    it( "should throw an error if no version is determined", async() => {
         await expect(
             versioningService.determineVersion( {} as Base )
         ).rejects.toThrow( "Unable to determine version" );
     } );
 
-    it( "should determine the correct version using the fallback strategy", async () => {
+    it( "should determine the correct version using the fallback strategy", async() => {
         // Arrange
         versioningService.registerVersions( [ 1, 3 ] );
 

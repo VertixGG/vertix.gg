@@ -3,23 +3,23 @@ import { UIElementRoleSelectMenu } from "@vertix.gg/gui/src/bases/element-types/
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class VerifiedRolesMenu extends UIElementRoleSelectMenu {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/VerifiedRolesMenu";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder () {
+    protected async getPlaceholder() {
         return "Select Verified Roles";
     }
 
-    protected async getMinValues () {
+    protected async getMinValues() {
         return 0;
     }
 
-    protected async getMaxValues () {
+    protected async getMaxValues() {
         return 3;
     }
 }

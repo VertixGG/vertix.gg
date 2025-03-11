@@ -9,30 +9,30 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 import type { VoiceChannel } from "discord.js";
 
 export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaClearChatAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelMetaClearChatComponent;
     }
 
-    protected getStartArgs ( channel: VoiceChannel, argsFromManager: UIArgs ) {
+    protected getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
         return {
             ownerDisplayName: argsFromManager.ownerDisplayName,
             totalMessages: argsFromManager.totalMessages
         };
     }
 
-    protected getReplyArgs () {
+    protected getReplyArgs() {
         return {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindButton( "Vertix/UI-V2/DynamicChannelMetaClearChatButton", this.onClearChatButtonClicked );
     }
 
-    private async onClearChatButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         const result = await this.dynamicChannelService.clearChat( interaction, interaction.channel );
 
         switch ( result?.code ) {

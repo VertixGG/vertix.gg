@@ -1,4 +1,4 @@
-it( "should bypass", function () {
+it( "should bypass", function() {
     // Assert true.
     expect( true ).toBeTruthy();
 } );

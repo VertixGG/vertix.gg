@@ -7,23 +7,23 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupMaxMasterChannelsEmbed extends UIEmbedBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/SetupMaxMasterChannelsEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🤷  You have reached your master channels limit";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return `You can create up to **${ uiUtilsWrapAsTemplate( "maxMasterChannels" ) }** Master Channels in total.`;
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             maxMasterChannels: args.maxMasterChannels
         };

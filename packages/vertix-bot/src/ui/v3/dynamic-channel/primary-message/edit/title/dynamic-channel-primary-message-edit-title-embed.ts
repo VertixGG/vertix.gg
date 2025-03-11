@@ -32,23 +32,23 @@ export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEm
         VERSION_UI_V3
     );
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed";
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return "https://i.imgur.com/sGjDVJ4.png";
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit title of your channel`;
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return "\n _Title_:\n `" + this.vars.get( "title" ) + "`\n" + "\n### Do you want to change it?";
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const vars = this.vars.get();
 
         return {
@@ -59,7 +59,7 @@ export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEm
         };
     }
 
-    protected async getLogicAsync ( args: UIArgs ) {
+    protected async getLogicAsync( args: UIArgs ) {
         const result = super.getLogic( args );
 
         const { titleDisplayValue, titleDisplayDefault } = this.vars.get();

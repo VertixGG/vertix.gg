@@ -3,15 +3,15 @@ import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-
 import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
 
 class MyTemplate extends UITemplateBase {
-    public static getName () {
+    public static getName() {
         return "MyTemplate";
     }
 
-    public compose ( template: any, data: any, options: any ): any {
+    public compose( template: any, data: any, options: any ): any {
         return super.composeTemplate( template, data, options );
     }
 
-    protected getAttributes (): any {
+    protected getAttributes(): any {
         return {};
     }
 }
@@ -19,7 +19,7 @@ class MyTemplate extends UITemplateBase {
 describe( "VertixGUI/UITemplateBase", () => {
     let templateBase: MyTemplate;
 
-    beforeEach( async () => {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
         templateBase = new MyTemplate;

@@ -64,23 +64,23 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
     // Custom types.
     private currentMarkdownsType: typeof UIMarkdownsGroupBase;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIComponentBaseInfra";
     }
 
-    public static getType (): UIType {
+    public static getType(): UIType {
         return "component";
     }
 
-    public static getElementsGroups (): ( typeof UIElementsGroupBase )[] {
+    public static getElementsGroups(): ( typeof UIElementsGroupBase )[] {
         return [];
     }
 
-    public static getEmbedsGroups (): ( typeof UIEmbedsGroupBase )[] {
+    public static getEmbedsGroups(): ( typeof UIEmbedsGroupBase )[] {
         return [];
     }
 
-    public static getMarkdownsGroups (): ( typeof UIMarkdownsGroupBase )[] {
+    public static getMarkdownsGroups(): ( typeof UIMarkdownsGroupBase )[] {
         return [];
     }
 
@@ -95,50 +95,50 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
      * without a step ( eg `this.ephemeral` vs `this.ephemeralWithStep` )  and the default( first in the list of steps )
      * step should be without groups.
      */
-    public static getDefaultElementsGroup (): string | null {
+    public static getDefaultElementsGroup(): string | null {
         throw new ForceMethodImplementation( this, this.getDefaultElementsGroup.name );
     }
 
-    public static getDefaultEmbedsGroup (): string | null {
+    public static getDefaultEmbedsGroup(): string | null {
         throw new ForceMethodImplementation( this, this.getDefaultEmbedsGroup.name );
     }
 
-    public static getDefaultMarkdownsGroup (): string | null {
+    public static getDefaultMarkdownsGroup(): string | null {
         throw new ForceMethodImplementation( this, this.getDefaultMarkdownsGroup.name );
     }
 
-    protected static getElements (): UIElementsTypes | UIElementsConstructor {
+    protected static getElements(): UIElementsTypes | UIElementsConstructor {
         return [];
     }
 
-    protected static getEmbeds (): UIEmbedTypes {
+    protected static getEmbeds(): UIEmbedTypes {
         return [];
     }
 
-    protected static getModals (): ( typeof UIModalBase )[] | { new (): UIModalBase }[] {
+    protected static getModals(): ( typeof UIModalBase )[] | { new (): UIModalBase }[] {
         return [];
     }
 
-    protected static getMarkdowns (): UIMarkdownTypes {
+    protected static getMarkdowns(): UIMarkdownTypes {
         return [];
     }
 
-    protected static getFlatElements ( elements = this.getElements() ): ( typeof UIElementBase )[] {
+    protected static getFlatElements( elements = this.getElements() ): ( typeof UIElementBase )[] {
         return ( this.getTypesInternal( "element", elements, true ) as UIElementsTypes ).flat( UI_ELEMENTS_DEPTH );
     }
 
-    protected static getFlatEmbeds (): ( typeof UIEmbedBase )[] {
+    protected static getFlatEmbeds(): ( typeof UIEmbedBase )[] {
         return this.getTypesInternal( "embed", this.getEmbeds(), true ) as ( typeof UIEmbedBase )[];
     }
 
-    protected static getFlatMarkdowns (): ( typeof UIMarkdownBase )[] {
+    protected static getFlatMarkdowns(): ( typeof UIMarkdownBase )[] {
         return this.getTypesInternal( "markdown", this.getMarkdowns(), true ) as ( typeof UIMarkdownBase )[];
     }
 
     /**
      * Function getTypesInternal() :: Return the default types if they are defined, otherwise return the types from the groups.
      */
-    protected static getTypesInternal (
+    protected static getTypesInternal(
         type: UIGroupsType,
         defaultEntitleTypes: UIEntityTypesConstructor,
         getAll?: boolean
@@ -168,7 +168,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         return group.getItems() as UIEntityTypes;
     }
 
-    protected static getInitialGroup ( groupType: UIGroupsType, groups: ( typeof UIGroupBase )[] ) {
+    protected static getInitialGroup( groupType: UIGroupsType, groups: ( typeof UIGroupBase )[] ) {
         const initialGroup = this.groupTypesMap[ groupType ].getInitialGroup( this );
 
         if ( !initialGroup ) {
@@ -187,7 +187,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         );
     }
 
-    public constructor ( args?: UICreateComponentArgs ) {
+    public constructor( args?: UICreateComponentArgs ) {
         super();
 
         this.currentElementsType = args?.elementsGroupType || this.getDefaultElementsGroup();
@@ -199,7 +199,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
     }
 
     // TODO: Using toggle function with strings is not a good practice, because it's not type safe, it should be used only by internal methods.
-    public switchElementsGroup ( group: typeof UIElementsGroupBase | string ) {
+    public switchElementsGroup( group: typeof UIElementsGroupBase | string ) {
         let elementsGroup!: typeof UIElementsGroupBase;
 
         const staticThis = this.constructor as typeof UIComponentInfraBase;
@@ -229,7 +229,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
     }
 
     // TODO: Using toggle function with strings is not a good practice, because it's not type safe, it should be used only by internal methods.
-    public switchEmbedsGroup ( group: typeof UIEmbedsGroupBase | string ) {
+    public switchEmbedsGroup( group: typeof UIEmbedsGroupBase | string ) {
         let embedsGroup!: typeof UIEmbedsGroupBase;
 
         const staticThis = this.constructor as typeof UIComponentInfraBase;
@@ -256,7 +256,7 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         staticThis.ensureEntities( this.currentEmbedsType.getItems() as ( typeof UIEmbedBase )[] );
     }
 
-    public switchMarkdownsGroup ( group: typeof UIMarkdownsGroupBase | string ) {
+    public switchMarkdownsGroup( group: typeof UIMarkdownsGroupBase | string ) {
         let markdownsGroup!: typeof UIMarkdownsGroupBase;
 
         const staticThis = this.constructor as typeof UIComponentInfraBase;
@@ -283,47 +283,47 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         staticThis.ensureEntities( this.currentMarkdownsType.getItems() as ( typeof UIMarkdownBase )[] );
     }
 
-    public clearElements () {
+    public clearElements() {
         this.currentElementsType = UIElementsGroupBase.createEmptyGroup( this.getName() );
     }
 
-    public clearEmbeds () {
+    public clearEmbeds() {
         this.currentEmbedsType = UIEmbedsGroupBase.createEmptyGroup( this.getName() );
     }
 
-    public clearMarkdowns () {
+    public clearMarkdowns() {
         this.currentMarkdownsType = UIMarkdownsGroupBase.createEmptyGroup( this.getName() );
     }
 
-    public getCurrentElements () {
+    public getCurrentElements() {
         return Object.freeze( this.currentElementsType );
     }
 
-    public getCurrentEmbeds () {
+    public getCurrentEmbeds() {
         return Object.freeze( this.currentEmbedsType );
     }
 
-    public getCurrentModals () {
+    public getCurrentModals() {
         return Object.freeze( this.currentModalsType );
     }
 
-    public getCurrentMarkdowns () {
+    public getCurrentMarkdowns() {
         return Object.freeze( this.currentMarkdownsType );
     }
 
-    private getDefaultElementsGroup () {
+    private getDefaultElementsGroup() {
         let result;
 
         const staticThis = this.constructor as typeof UIComponentInfraBase,
             elementsGroups = staticThis.getElementsGroups();
 
-        function createInternalElementsGroup ( staticThis: typeof UIComponentInfraBase ) {
+        function createInternalElementsGroup( staticThis: typeof UIComponentInfraBase ) {
             return class extends UIElementsGroupBase {
-                public static getName () {
+                public static getName() {
                     return staticThis.getName() + "/ElementsGroup";
                 }
 
-                public static getItems () {
+                public static getItems() {
                     return staticThis.getTypesInternal( "element", staticThis.getElements() );
                 }
             };
@@ -342,19 +342,19 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         return result;
     }
 
-    private getDefaultEmbedsGroup () {
+    private getDefaultEmbedsGroup() {
         let result;
 
         const staticThis = this.constructor as typeof UIComponentInfraBase,
             embedsGroups = staticThis.getEmbedsGroups();
 
-        function createInternalEmbedsGroup ( staticThis: typeof UIComponentInfraBase ) {
+        function createInternalEmbedsGroup( staticThis: typeof UIComponentInfraBase ) {
             return class extends UIEmbedsGroupBase {
-                public static getName () {
+                public static getName() {
                     return staticThis.getName() + "/EmbedsGroup";
                 }
 
-                public static getItems () {
+                public static getItems() {
                     return staticThis.getTypesInternal( "embed", staticThis.getEmbeds() );
                 }
             };
@@ -373,19 +373,19 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
         return result;
     }
 
-    private getDefaultMarkdownsGroup () {
+    private getDefaultMarkdownsGroup() {
         let result;
 
         const staticThis = this.constructor as typeof UIComponentInfraBase,
             markdownsGroups = staticThis.getMarkdownsGroups();
 
-        function createInternalMarkdownsGroup ( staticThis: typeof UIComponentInfraBase ) {
+        function createInternalMarkdownsGroup( staticThis: typeof UIComponentInfraBase ) {
             return class extends UIMarkdownsGroupBase {
-                public static getName () {
+                public static getName() {
                     return staticThis.getName() + "/MarkdownsGroup";
                 }
 
-                public static getItems () {
+                public static getItems() {
                     return staticThis.getTypesInternal( "markdown", staticThis.getMarkdowns() );
                 }
             };

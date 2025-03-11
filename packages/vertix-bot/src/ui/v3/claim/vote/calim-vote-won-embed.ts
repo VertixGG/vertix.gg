@@ -27,27 +27,27 @@ export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
         resultsDefault: uiUtilsWrapAsTemplate( "resultsDefault" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ClaimVoteWonEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getEndTime ( args: UIArgs ): Date {
+    protected getEndTime( args: UIArgs ): Date {
         return new Date( Date.now() + args.elapsedTime );
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `👑  ${ ClaimVoteWonEmbed.vars.userWonDisplayName } has claimed the channel`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return ClaimVoteWonEmbed.vars.wonMessage;
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             userWonId,
 
@@ -74,7 +74,7 @@ export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result: any = {};
 
         result.userWonId = args.userWonId;

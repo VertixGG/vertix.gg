@@ -9,19 +9,19 @@ import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfa
 
 // TODO: Move to `UI-V3` folder + registration to `ui-module`
 export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfaceV3> {
-    public static getName () {
+    public static getName() {
         return "VertixBase/UI-V2/MasterChannelConfigV3";
     }
 
-    public getConfigName () {
+    public getConfigName() {
         return "Vertix/Config/MasterChannel";
     }
 
-    public getVersion () {
+    public getVersion() {
         return VERSION_UI_V3;
     }
 
-    protected getDefaults (): MasterChannelConfigInterfaceV3["defaults"] {
+    protected getDefaults(): MasterChannelConfigInterfaceV3["defaults"] {
         return {
             settings: {
                 dynamicChannelAutoSave: false,

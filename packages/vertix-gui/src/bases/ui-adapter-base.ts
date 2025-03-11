@@ -96,11 +96,11 @@ export abstract class UIAdapterBase<
             };
         } = {};
 
-        public get ( channelId: string ) {
+        public get( channelId: string ) {
             return this.messages[ channelId ];
         }
 
-        public set ( channelId: string, messageId: string, message: Message<true> ) {
+        public set( channelId: string, messageId: string, message: Message<true> ) {
             if ( !this.messages[ channelId ] ) {
                 this.messages[ channelId ] = {};
             }
@@ -111,7 +111,7 @@ export abstract class UIAdapterBase<
         public delete( channelId: string, messageId?: string ): void;
         public delete( channelId: string ): void;
 
-        public delete ( channelId: string, messageId?: string ) {
+        public delete( channelId: string, messageId?: string ) {
             if ( messageId ) {
                 delete this.messages[ channelId ][ messageId ];
             } else {
@@ -126,15 +126,15 @@ export abstract class UIAdapterBase<
 
     protected uiService: UIService;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIAdapterBase";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return this.getComponent().getInstanceType();
     }
 
-    public static validate ( validateDefaultGroups = true ) {
+    public static validate( validateDefaultGroups = true ) {
         if ( this.validatedOnce ) {
             throw new Error( `Component: '${ this.getName() }' has already been validated` );
         }
@@ -144,7 +144,7 @@ export abstract class UIAdapterBase<
         this.validatedOnce = true;
     }
 
-    public static cleanupTimer () {
+    public static cleanupTimer() {
         if ( !UIAdapterBase.staticArgs ) {
             return;
         }
@@ -194,11 +194,11 @@ export abstract class UIAdapterBase<
         } );
     }
 
-    protected static getMiddlewares () {
+    protected static getMiddlewares() {
         return [];
     }
 
-    public constructor ( protected options: TAdapterRegisterOptions ) {
+    public constructor( protected options: TAdapterRegisterOptions ) {
         super( options );
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
@@ -215,7 +215,7 @@ export abstract class UIAdapterBase<
 
         if ( !this.shouldDisableMiddleware || !this.shouldDisableMiddleware() ) {
             new UIInteractionMiddleware( this, {
-                onChannelFailed: async ( channel, channelTypes ) => {
+                onChannelFailed: async( channel, channelTypes ) => {
                     await this.uiService
                         .get( "VertixGUI/InternalAdapters/InvalidChannelTypeAdapter" )
                         ?.ephemeral( channel, {
@@ -223,7 +223,7 @@ export abstract class UIAdapterBase<
                         } );
                 },
 
-                onInteractionFailed: async ( interaction, missingPermissions ) => {
+                onInteractionFailed: async( interaction, missingPermissions ) => {
                     await this.uiService
                         .get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )
                         ?.ephemeral( interaction, {
@@ -234,11 +234,11 @@ export abstract class UIAdapterBase<
         }
     }
 
-    public get $$ () {
+    public get $$() {
         return this.constructor as typeof UIAdapterBase;
     }
 
-    public async build (
+    public async build(
         args: UIArgs,
         from: UIAdapterBuildSource = "unknown",
         context: "direct-message" | string | TInteraction | TChannel | Message<true>
@@ -280,7 +280,7 @@ export abstract class UIAdapterBase<
     /**
      * Sends a message to a channel.
      */
-    public async send ( channel: TChannel, sendArgs?: UIArgs ) {
+    public async send( channel: TChannel, sendArgs?: UIArgs ) {
         // TODO: When args switching from one adapter to another, the old args should be cleared out.
         // TODO: Old interaction should be cleared out.
         const args = await this.getArgsInternal( channel, sendArgs );
@@ -313,7 +313,7 @@ export abstract class UIAdapterBase<
         throw new Error( "Not implemented" );
     }
 
-    public async sendToUser ( guildId: string | "direct-message", userId: string, argsFromManager: UIArgs ) {
+    public async sendToUser( guildId: string | "direct-message", userId: string, argsFromManager: UIArgs ) {
         this.$$.staticDebugger.log(
             this.sendToUser,
             this.getName() + ` - Sending to user: '${ userId }' from guild id: '${ guildId }'`
@@ -328,7 +328,7 @@ export abstract class UIAdapterBase<
             );
     }
 
-    public async editReply ( interaction: TInteraction, newArgs?: UIArgs ) {
+    public async editReply( interaction: TInteraction, newArgs?: UIArgs ) {
         // TODO: Add log middleware.
         this.$$.staticDebugger.log( this.editReply, this.getName() + ` - Editing reply: '${ interaction.id }'` );
 
@@ -397,7 +397,7 @@ export abstract class UIAdapterBase<
         } );
     }
 
-    public async editMessage ( message: Message<true>, newArgs?: UIArgs ) {
+    public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         const argsId = await this.setDynamicInitialArgs( message, newArgs );
 
         const args = this.argsManager.getArgsById( this, argsId );
@@ -409,7 +409,7 @@ export abstract class UIAdapterBase<
         return await message.edit( newMessage );
     }
 
-    protected async setDynamicInitialArgs ( message: Message<true>, newArgs?: UIArgs ) {
+    protected async setDynamicInitialArgs( message: Message<true>, newArgs?: UIArgs ) {
         const argsId = message.id;
 
         let args = this.argsManager.getArgsById( this, argsId );
@@ -424,7 +424,7 @@ export abstract class UIAdapterBase<
         return argsId;
     }
 
-    public async run ( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
+    public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
         const customId = this.getCustomIdForEntity( interaction.customId ),
             entityName = customId.split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
 
@@ -452,7 +452,7 @@ export abstract class UIAdapterBase<
         await this.runEntityCallback( entityName, interaction as TInteraction );
     }
 
-    public async runInitial ( interaction: MessageComponentInteraction, args?: UIArgs ) {
+    public async runInitial( interaction: MessageComponentInteraction, args?: UIArgs ) {
         this.argsManager.setInitialArgs( this, this.argsManager.getArgsId( interaction as TInteraction ), args || {}, {
             overwrite: true
         } );
@@ -460,7 +460,7 @@ export abstract class UIAdapterBase<
         return this.run( interaction as MessageComponentInteraction );
     }
 
-    public async ephemeral (
+    public async ephemeral(
         interaction: TInteraction,
         sendArgs?: UIArgs,
         deletePreviousInteraction = this.shouldDeletePreviousReply?.() || false
@@ -506,7 +506,7 @@ export abstract class UIAdapterBase<
 
     // TODO: Determine which interaction available showModal, and use it instead of MessageComponentInteraction.
     // TODO: Method does not favor dynamic/static approach.
-    public async showModal ( modalName: string, interaction: MessageComponentInteraction<"cached"> ) {
+    public async showModal( modalName: string, interaction: MessageComponentInteraction<"cached"> ) {
         const args = await this.getArgsInternal( interaction as TInteraction, {} );
 
         // const entity = this.$$.getComponent()
@@ -533,30 +533,30 @@ export abstract class UIAdapterBase<
             } );
     }
 
-    public async waitUntilInitialized () {
+    public async waitUntilInitialized() {
         return this.getComponent().waitUntilInitialized();
     }
 
-    public getStartedMessages ( channel: TChannel ) {
+    public getStartedMessages( channel: TChannel ) {
         return this.channelStartedMessages.get( channel.id );
     }
 
-    public getPermissions (): PermissionsBitField {
+    public getPermissions(): PermissionsBitField {
         throw new ForceMethodImplementation( this, "getPermissions" );
     }
 
-    public getChannelTypes (): ChannelType[] {
+    public getChannelTypes(): ChannelType[] {
         throw new ForceMethodImplementation( this, "getChannelTypes" );
     }
 
-    public deleteArgs ( interaction: TInteraction ) {
+    public deleteArgs( interaction: TInteraction ) {
         const id = this.getArgsManager().getArgsId( interaction );
 
         this.getSystemArgs().deleteArgs( this, id );
         this.getArgsManager().deleteArgs( this, id );
     }
 
-    public async deletedStartedMessagesInternal ( channel: TChannel ) {
+    public async deletedStartedMessagesInternal( channel: TChannel ) {
         const startedMessages = this.channelStartedMessages.get( channel.id );
 
         if ( startedMessages ) {
@@ -580,7 +580,7 @@ export abstract class UIAdapterBase<
         }
     }
 
-    public async deleteRelatedComponentMessagesInternal ( channel: TChannel ) {
+    public async deleteRelatedComponentMessagesInternal( channel: TChannel ) {
         const supported = channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel;
 
         if ( supported ) {
@@ -607,7 +607,7 @@ export abstract class UIAdapterBase<
         }
     }
 
-    public async deleteRelatedEphemeralInteractionsInternal (
+    public async deleteRelatedEphemeralInteractionsInternal(
         interaction: TInteraction,
         customId: string,
         count: number
@@ -634,7 +634,7 @@ export abstract class UIAdapterBase<
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public async isPassingInteractionRequirementsInternal ( interaction: TInteraction ): Promise<boolean> {
+    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
         return true;
     }
 
@@ -660,21 +660,21 @@ export abstract class UIAdapterBase<
     protected async regenerate?( interaction: MessageComponentInteraction<"cached"> ): Promise<void>;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getStartArgs ( channel?: TChannel, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
+    protected getStartArgs( channel?: TChannel, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
         throw new ForceMethodImplementation( this, "getStartArgs" );
     }
 
     // TODO: In reply context there are always interaction, ( ensure ).
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getReplyArgs ( interaction?: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
+    protected getReplyArgs( interaction?: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
         throw new ForceMethodImplementation( this, "getReplyArgs" );
     }
 
-    protected getEditMessageArgs? ( _message?: Message<true>, _argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
+    protected getEditMessageArgs?( _message?: Message<true>, _argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
         throw new ForceMethodImplementation( this, "getEditMessageArgs" );
     }
 
-    protected buildModal ( modal: UIModalBase ): ModalComponentData {
+    protected buildModal( modal: UIModalBase ): ModalComponentData {
         const schema = modal.getSchema();
 
         return {
@@ -684,7 +684,7 @@ export abstract class UIAdapterBase<
         };
     }
 
-    protected getMessage (
+    protected getMessage(
         _from?: UIAdapterBuildSource,
         _context?: TChannel | TInteraction,
         _argsFromManager?: UIArgs
@@ -715,15 +715,15 @@ export abstract class UIAdapterBase<
         return result;
     }
 
-    protected getArgsManager () {
+    protected getArgsManager() {
         return this.argsManager;
     }
 
-    protected getSystemArgs () {
+    protected getSystemArgs() {
         return UIAdapterBase.staticSystemArgs;
     }
 
-    protected bindButton<TBindInteraction = ButtonInteraction<"cached">> (
+    protected bindButton<TBindInteraction = ButtonInteraction<"cached">>(
         buttonName: string,
         callback: ( interaction: TBindInteraction ) => Promise<void>
     ) {
@@ -732,7 +732,7 @@ export abstract class UIAdapterBase<
         this.storeEntityCallback( buttonMap, callback );
     }
 
-    protected bindModal<TBindInteraction = ModalSubmitInteraction<"cached">> (
+    protected bindModal<TBindInteraction = ModalSubmitInteraction<"cached">>(
         modalName: string,
         callback: ( interaction: TBindInteraction ) => Promise<void>
     ) {
@@ -741,19 +741,19 @@ export abstract class UIAdapterBase<
         this.storeEntityCallback( modalMap, callback );
     }
 
-    protected bindModalWithButton<TBindInteraction = ModalSubmitInteraction<"cached">> (
+    protected bindModalWithButton<TBindInteraction = ModalSubmitInteraction<"cached">>(
         buttonName: string,
         modalName: string,
         callback: ( interaction: TBindInteraction ) => Promise<void>
     ) {
         this.bindModal<TBindInteraction>( modalName, callback );
 
-        this.bindButton( buttonName, async ( interaction ) => {
+        this.bindButton( buttonName, async( interaction ) => {
             await this.showModal( modalName, interaction );
         } );
     }
 
-    protected bindSelectMenu<TBindInteraction = StringSelectMenuInteraction<"cached">> (
+    protected bindSelectMenu<TBindInteraction = StringSelectMenuInteraction<"cached">>(
         selectMenuName: string,
         callback: ( interaction: TBindInteraction ) => Promise<void>
     ) {
@@ -762,7 +762,7 @@ export abstract class UIAdapterBase<
         this.storeEntityCallback( selectMenuMap, callback );
     }
 
-    protected bindUserSelectMenu<TBindInteraction = UserSelectMenuInteraction<"cached">> (
+    protected bindUserSelectMenu<TBindInteraction = UserSelectMenuInteraction<"cached">>(
         selectMenuName: string,
         callback: ( interaction: TBindInteraction ) => Promise<void>
     ) {
@@ -771,7 +771,7 @@ export abstract class UIAdapterBase<
         this.storeEntityCallback( selectMenuMap, callback );
     }
 
-    public async awakeInternal ( message: Message<true>, argsFromManager?: UIArgs ) {
+    public async awakeInternal( message: Message<true>, argsFromManager?: UIArgs ) {
         const args = {
             ...( await this.getArgsInternal( message.channel as TChannel, argsFromManager ) ),
             ...( await this.getArgsInternal( message, argsFromManager ) )
@@ -782,7 +782,7 @@ export abstract class UIAdapterBase<
         return this.argsManager.getArgsById( this, message.id );
     }
 
-    private async isArgsExpiredInternal ( interaction: TInteraction ) {
+    private async isArgsExpiredInternal( interaction: TInteraction ) {
         if ( !this.shouldRequireArgs || !this.shouldRequireArgs( interaction ) ) {
             return false;
         }
@@ -845,7 +845,7 @@ export abstract class UIAdapterBase<
         return true;
     }
 
-    private async getArgsInternal (
+    private async getArgsInternal(
         context: TChannel | TInteraction | Message<true>,
         argsFromManager?: UIArgs
     ): Promise<UIArgs> {

@@ -16,11 +16,11 @@ export class CategoryManager extends InitializeBase {
 
     private categoryModel: CategoryModel;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Managers/Category";
     }
 
-    public static get $ () {
+    public static get $() {
         if ( !CategoryManager.instance ) {
             CategoryManager.instance = new CategoryManager();
         }
@@ -28,13 +28,13 @@ export class CategoryManager extends InitializeBase {
         return CategoryManager.instance;
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.categoryModel = CategoryModel.getInstance();
     }
 
-    public async onDelete ( category: CategoryChannel ) {
+    public async onDelete( category: CategoryChannel ) {
         const { guild, name } = category;
 
         this.logger.info(
@@ -46,7 +46,7 @@ export class CategoryManager extends InitializeBase {
         await this.categoryModel.delete( guild.id, category.id );
     }
 
-    public async create ( args: ICategoryCreateArgs ) {
+    public async create( args: ICategoryCreateArgs ) {
         const { name, guild } = args;
 
         this.logger.info(
@@ -73,7 +73,7 @@ export class CategoryManager extends InitializeBase {
             .then( () => category );
     }
 
-    public async delete ( category: CategoryChannel ) {
+    public async delete( category: CategoryChannel ) {
         const { guild, name } = category;
 
         this.logger.info(

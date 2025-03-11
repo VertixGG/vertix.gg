@@ -8,21 +8,21 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class NotYourChannelAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/NotYourChannelAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return NotYourChannelComponent;
     }
 
-    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
+    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
         return {
             masterChannelId: argsFromManager?.masterChannelId
         };
     }
 
-    protected shouldDisableMiddleware () {
+    protected shouldDisableMiddleware() {
         return true;
     }
 }

@@ -1,7 +1,7 @@
 import ObjectBase from "@vertix.gg/base/src/bases/object-base";
 
 export abstract class UICustomIdStrategyBase extends ObjectBase {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UICustomIdStrategyBase";
     }
 

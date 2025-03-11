@@ -25,15 +25,15 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
 );
 
 export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBaseWithVars {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsAccessEmbed";
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const vars = this.vars.get();
 
         return {
@@ -48,7 +48,7 @@ export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBas
         };
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = this.vars.get();
 
         return {
@@ -63,21 +63,21 @@ export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBas
         };
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `${ this.vars.get( "permissionsEmoji" ) }  Manage permissions of your channel`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const { allowedUsersDisplay, blockedUsersDisplay } = this.vars.get();
 
         return "\n**_Trusted Users_**:\n" + allowedUsersDisplay + "\n**_Blocked Users_**:\n" + blockedUsersDisplay;
     }
 
-    protected getFooter (): string {
+    protected getFooter(): string {
         return "Use the menu below to manage permissions of your channel.";
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args ),
             vars = this.vars.get();
 

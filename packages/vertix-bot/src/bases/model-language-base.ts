@@ -17,11 +17,11 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
     PrismaBot.PrismaClient,
     TPayloadWithContent
 > {
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Bases/ModelLanguageBase";
     }
 
-    public async get ( name: string, languageCode: string, cache = true ) {
+    public async get( name: string, languageCode: string, cache = true ) {
         // TODO: Find a better way to do this.
         name = name.split( UI_CUSTOM_ID_SEPARATOR, 1 )[ 0 ];
 
@@ -49,7 +49,7 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
         return result;
     }
 
-    public async create ( name: string, languageCode: string, languageName: string, content: any ) {
+    public async create( name: string, languageCode: string, languageName: string, content: any ) {
         this.logger.log(
             this.create,
             `For '${ name }' - Language code: '${ languageCode }', language name: '${ languageName }'`
@@ -68,17 +68,17 @@ export abstract class ModelLanguageBase<TModel, TPayloadWithContent> extends Mod
         } );
     }
 
-    public async getCount ( code: string ) {
+    public async getCount( code: string ) {
         return ( this.getModel() as TModelHelper<TPayloadWithContent> ).count( { where: { language: { is: { code } } } } );
     }
 
     protected abstract getModel(): TModel;
 
-    protected getClient () {
+    protected getClient() {
         return PrismaBotClient.$.getClient();
     }
 
-    protected getFindArgs ( name: string, languageCode: string ): any {
+    protected getFindArgs( name: string, languageCode: string ): any {
         return {
             where: {
                 name,

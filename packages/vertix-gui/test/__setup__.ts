@@ -7,14 +7,14 @@ declare global {
     var FinalizationRegistry: any;
 }
 
-beforeAll( async () => {
+beforeAll( async() => {
     // @ts-ignore
     globalThis.FinalizationRegistry = jest.fn( () => ( {
         register: jest.fn(),
     } ) );
 } );
 
-beforeEach( async () => {
+beforeEach( async() => {
     // Do something.
 } );
 

@@ -12,15 +12,15 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, ButtonInteraction<"cached">> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/ClaimResultAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return ClaimResultComponent;
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             "Vertix/UI-V2/ClaimResultOwnerStop": {
                 embedsGroup: "Vertix/UI-V2/ClaimResultOwnerStopEmbedGroup"
@@ -48,19 +48,19 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
         };
     }
 
-    public getPermissions (): PermissionsBitField {
+    public getPermissions(): PermissionsBitField {
         return new PermissionsBitField( 0n );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice ];
     }
 
-    protected async getStartArgs () {
+    protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs ) {
+    protected async getReplyArgs( interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs ) {
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep().name ) {
@@ -86,7 +86,7 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
         return args;
     }
 
-    protected shouldDeletePreviousReply () {
+    protected shouldDeletePreviousReply() {
         return true;
     }
 }

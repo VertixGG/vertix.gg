@@ -12,15 +12,15 @@ import { DynamicChannelMetaLimitModal } from "@vertix.gg/bot/src/ui/v2/dynamic-c
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 export class DynamicChannelMetaLimitComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaLimitComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaLimitSuccessEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelMetaLimitInvalidInputEmbed ),
@@ -28,11 +28,11 @@ export class DynamicChannelMetaLimitComponent extends UIComponentBase {
         ];
     }
 
-    public static getModals () {
+    public static getModals() {
         return [ DynamicChannelMetaLimitModal ];
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         // By default, its handles only the modal.
         return null;
     }

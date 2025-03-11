@@ -9,15 +9,15 @@ import { LanguageAdapter } from "@vertix.gg/bot/src/ui/general/language/language
 import { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/general/not-your-channel/not-your-channel-adapter";
 
 export class UIModuleGeneral extends UIModuleBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/Module";
     }
 
-    public static getAdapters () {
+    public static getAdapters() {
         return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter ];
     }
 
-    protected getCustomIdStrategy () {
+    protected getCustomIdStrategy() {
         return new UICustomIdPlainStrategy();
     }
 }

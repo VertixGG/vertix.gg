@@ -29,19 +29,19 @@ interface IGuildSettings {
 }
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
-    public static getName () {
+    public static getName() {
         return "VertixBase/Managers/GuildData";
     }
 
-    public static get $ () {
+    public static get $() {
         return GuildDataManager.getInstance();
     }
 
-    public constructor ( shouldDebugCache = isDebugEnabled( "CACHE", GuildDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugEnabled( "CACHE", GuildDataManager.getName() ) ) {
         super( shouldDebugCache );
     }
 
-    public async getAllSettings ( guildId: string, cache = false ): Promise<IGuildSettings> {
+    public async getAllSettings( guildId: string, cache = false ): Promise<IGuildSettings> {
         const data = await this.getSettingsData( guildId, null, cache, true );
 
         if ( data?.object ) {
@@ -58,7 +58,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         };
     }
 
-    public async getBadwords ( guildId: string ): Promise<string[]> {
+    public async getBadwords( guildId: string ): Promise<string[]> {
         const badwordsDB = await this.getData(
             {
                 ownerId: guildId,
@@ -77,11 +77,11 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return DEFAULT_BADWORDS;
     }
 
-    public async getBadwordsFormatted ( guildId: string ): Promise<string> {
+    public async getBadwordsFormatted( guildId: string ): Promise<string> {
         return ( await this.getBadwords( guildId ) ).join( DEFAULT_BADWORDS_SEPARATOR ) || DEFAULT_BADWORDS_INITIAL_VALUE;
     }
 
-    public async setBadwords ( guildId: string, badwords: string[] | undefined ) {
+    public async setBadwords( guildId: string, badwords: string[] | undefined ) {
         const oldBadwords = await this.getBadwordsFormatted( guildId );
 
         if ( !badwords?.length ) {
@@ -115,7 +115,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         };
     }
 
-    public async setLanguage ( guild: Guild, language: string, shouldAdminLog = true ) {
+    public async setLanguage( guild: Guild, language: string, shouldAdminLog = true ) {
         await this.setData(
             {
                 ownerId: guild.id,
@@ -134,21 +134,21 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         }
     }
 
-    public async hasSomeBadword ( guildId: string, content: string ) {
+    public async hasSomeBadword( guildId: string, content: string ) {
         return badwordsSomeUsed( content, await this.getBadwords( guildId ) );
     }
 
-    public removeFromCache ( ownerId: string ) {
+    public removeFromCache( ownerId: string ) {
         this.logger.debug( this.removeFromCache, `Removing guild data from cache for ownerId: '${ ownerId }'` );
 
         this.deleteCacheWithPrefix( ownerId );
     }
 
-    protected getSettingsKey () {
+    protected getSettingsKey() {
         return "settings";
     }
 
-    protected getDataSourceModel () {
+    protected getDataSourceModel() {
         return GuildModel.getInstance();
     }
 }

@@ -86,11 +86,11 @@ export class DynamicChannelVoteManager<
         [channelId: string]: IVoteEvent<TInteraction, TChannel>;
     } = {};
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Managers/ChannelVote";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !this.instance ) {
             this.instance = new DynamicChannelVoteManager();
         }
@@ -98,11 +98,11 @@ export class DynamicChannelVoteManager<
         return this.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return DynamicChannelVoteManager.getInstance();
     }
 
-    public constructor (
+    public constructor(
         runTime = process.env.DYNAMIC_CHANNEL_VOTE_TIMEOUT || FALLBACK_VOTE_TIMEOUT,
         addTime = process.env.DYNAMIC_CHANNEL_VOTE_ADD_TIME || FALLBACK_VOTE_ADD_TIMEOUT,
         timerInterval = process.env.DYNAMIC_CHANNEL_VOTE_TIMER_INTERVAL || FALLBACK_TIMER_INTERVAL
@@ -117,13 +117,13 @@ export class DynamicChannelVoteManager<
     }
 
     // TODO: Base timer.
-    public destroy () {
+    public destroy() {
         Object.entries( this.events ).forEach( ( [ , event ] ) => {
             clearInterval( event.intervalHandler );
         } );
     }
 
-    public start ( channel: TChannel, callback: VoteEventCallback<TChannel>, initiatorInteraction?: TInteraction ) {
+    public start( channel: TChannel, callback: VoteEventCallback<TChannel>, initiatorInteraction?: TInteraction ) {
         if ( !this.events[ channel.id ] ) {
             this.setInitialEventState( channel );
         }
@@ -156,7 +156,7 @@ export class DynamicChannelVoteManager<
         } );
     }
 
-    public stop ( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
+    public stop( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
         if ( "active" !== this.events[ channel.id ]?.state ) {
             this.logger.error(
                 this.stop,
@@ -188,15 +188,15 @@ export class DynamicChannelVoteManager<
         } );
     }
 
-    public addVote ( interaction: TInteraction, targetId: string ): VoteManagerResult {
+    public addVote( interaction: TInteraction, targetId: string ): VoteManagerResult {
         return this.addInternal( interaction, { targetId } );
     }
 
-    public addCandidate ( interaction: TInteraction ): VoteManagerResult {
+    public addCandidate( interaction: TInteraction ): VoteManagerResult {
         return this.addInternal( interaction, { isCandidate: true } );
     }
 
-    public removeVote ( interaction: TInteraction ): VoteManagerResult {
+    public removeVote( interaction: TInteraction ): VoteManagerResult {
         const channelId = interaction.channelId;
 
         if ( !channelId ) {
@@ -243,7 +243,7 @@ export class DynamicChannelVoteManager<
         return VoteManagerResult.Success;
     }
 
-    public getCandidatesCount ( channelId: string ): number {
+    public getCandidatesCount( channelId: string ): number {
         const memberVotes = this.voteMembers[ channelId ]?.votes;
         if ( !memberVotes ) {
             return 0;
@@ -253,7 +253,7 @@ export class DynamicChannelVoteManager<
     }
 
     // TODO: I dont like this.
-    public getResults ( channelId: string ): { [targetId: string]: number } {
+    public getResults( channelId: string ): { [targetId: string]: number } {
         const memberVotes = this.voteMembers[ channelId ];
         if ( !memberVotes ) {
             return {};
@@ -288,7 +288,7 @@ export class DynamicChannelVoteManager<
         return voteResult;
     }
 
-    public getWinnerId ( channelId: string ): string {
+    public getWinnerId( channelId: string ): string {
         const initiatorId = this.events[ channelId ]?.initiatorInteraction?.user.id || "";
 
         // In case of tie, the initiator wins.
@@ -306,11 +306,11 @@ export class DynamicChannelVoteManager<
         return winnerId;
     }
 
-    public getEvents (): { [channelId: string]: IVoteEvent<TInteraction, TChannel> } {
+    public getEvents(): { [channelId: string]: IVoteEvent<TInteraction, TChannel> } {
         return this.events;
     }
 
-    public getState ( channelId: string ): VoteEventState {
+    public getState( channelId: string ): VoteEventState {
         const state = this.events[ channelId ]?.state;
 
         if ( state === "active" && this.events[ channelId ].isInitialInterval ) {
@@ -320,19 +320,19 @@ export class DynamicChannelVoteManager<
         return this.events[ channelId ]?.state || "idle";
     }
 
-    public getInitiatorId ( channelId: string ): string {
+    public getInitiatorId( channelId: string ): string {
         return this.events[ channelId ]?.initiatorInteraction?.user.id || "";
     }
 
-    public getStartTime ( channelId: string ): number {
+    public getStartTime( channelId: string ): number {
         return this.events[ channelId ]?.startTime || 0;
     }
 
-    public getEndTime ( channelId: string ): number {
+    public getEndTime( channelId: string ): number {
         return this.events[ channelId ]?.endTime || 0;
     }
 
-    public isTimeExpired ( channelId: string ): boolean {
+    public isTimeExpired( channelId: string ): boolean {
         // TODO: Check why it happens.
         const updateTime = this.events[ channelId ]?.endTime as number;
 
@@ -344,7 +344,7 @@ export class DynamicChannelVoteManager<
         return Date.now() > updateTime;
     }
 
-    public getTimeSettings () {
+    public getTimeSettings() {
         return {
             runTime: this.voteRunTime,
             addTime: this.voteAddTime,
@@ -352,7 +352,7 @@ export class DynamicChannelVoteManager<
         };
     }
 
-    public getVotedFor ( interaction: TInteraction ): string {
+    public getVotedFor( interaction: TInteraction ): string {
         const channelId = interaction.channelId;
         if ( !channelId ) {
             this.logger.error(
@@ -374,7 +374,7 @@ export class DynamicChannelVoteManager<
         return memberVotes[ interaction.user.id ];
     }
 
-    public getMemberVotes ( channelId: string ): { [userId: string]: string } {
+    public getMemberVotes( channelId: string ): { [userId: string]: string } {
         const memberVotes = this.voteKeeper[ channelId ];
 
         if ( !memberVotes ) {
@@ -385,7 +385,7 @@ export class DynamicChannelVoteManager<
         return memberVotes;
     }
 
-    public hasVoted ( interaction: TInteraction ): boolean {
+    public hasVoted( interaction: TInteraction ): boolean {
         const channelId = interaction.channelId;
         if ( !channelId ) {
             this.logger.error(
@@ -407,7 +407,7 @@ export class DynamicChannelVoteManager<
         return !!memberVotes[ interaction.user.id ];
     }
 
-    public clear ( channelId: string ) {
+    public clear( channelId: string ) {
         this.logger.debug( this.clear, `Channel id: '${ channelId }' - Clearing votes` );
 
         delete this.voteMembers[ channelId ];
@@ -416,7 +416,7 @@ export class DynamicChannelVoteManager<
         this.setInitialEventState( this.events[ channelId ].channel as TChannel );
     }
 
-    private setInitialEventState ( channel: TChannel ) {
+    private setInitialEventState( channel: TChannel ) {
         this.events[ channel.id ] = {
             channel,
             state: "idle",
@@ -425,13 +425,13 @@ export class DynamicChannelVoteManager<
         };
     }
 
-    private addTime ( channelId: string, baseTime = this.events[ channelId ].endTime ) {
+    private addTime( channelId: string, baseTime = this.events[ channelId ].endTime ) {
         this.events[ channelId ].endTime = ( baseTime || 0 ) + this.voteAddTime;
     }
 
-    private addInternal ( interaction: TInteraction, args: any ): VoteManagerResult {
+    private addInternal( interaction: TInteraction, args: any ): VoteManagerResult {
         // TODO: Add type for args.
-        function initChannel ( this: any, channelId: string, targetId: string ) {
+        function initChannel( this: any, channelId: string, targetId: string ) {
             if ( !this.voteMembers[ channelId ] ) {
                 this.voteMembers[ channelId ] = {
                     channel: interaction.channel,
@@ -541,7 +541,7 @@ export class DynamicChannelVoteManager<
         return VoteManagerResult.Success;
     }
 
-    private async timer ( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
+    private async timer( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
         const channelId = channel.id as string,
             state = this.getState( channelId );
 

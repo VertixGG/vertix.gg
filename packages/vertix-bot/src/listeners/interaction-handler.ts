@@ -11,8 +11,8 @@ import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 import type { Client, CommandInteraction, Interaction } from "discord.js";
 
-export function interactionHandler ( client: Client ) {
-    client.on( Events.InteractionCreate, async ( interaction: Interaction ) => {
+export function interactionHandler( client: Client ) {
+    client.on( Events.InteractionCreate, async( interaction: Interaction ) => {
         if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
             const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent(
                 interaction.customId
@@ -41,7 +41,7 @@ export function interactionHandler ( client: Client ) {
     } );
 }
 
-const handleSlashCommand = async ( client: Client, interaction: CommandInteraction<"cached"> ): Promise<void> => {
+const handleSlashCommand = async( client: Client, interaction: CommandInteraction<"cached"> ): Promise<void> => {
     GlobalLogger.$.log(
         handleSlashCommand,
         `Guild id: '${ interaction.guildId }' - Slash command: '${ interaction.commandName }' were used by '${ interaction.user.username }'`

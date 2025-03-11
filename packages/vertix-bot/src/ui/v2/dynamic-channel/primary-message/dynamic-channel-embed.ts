@@ -34,23 +34,23 @@ export class DynamicChannelEmbed extends UIEmbedBase {
         regionValue: uiUtilsWrapAsTemplate( "regionValue" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "༄ Manage your Dynamic Channel";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         const { name, limit, state, visibilityState, region } = DynamicChannelEmbed.vars;
 
         return (
@@ -65,7 +65,7 @@ export class DynamicChannelEmbed extends UIEmbedBase {
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         return {
             limit: {
                 [ DynamicChannelEmbed.vars.limitDisplayValue ]: DynamicChannelEmbed.vars.limitValue,
@@ -86,7 +86,7 @@ export class DynamicChannelEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const {
             limitDisplayValue,
             limitDisplayUnlimited,

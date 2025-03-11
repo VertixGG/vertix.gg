@@ -11,7 +11,7 @@ import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interface
 export class MasterChannelDataModel extends MasterChannelDataModelBase<MasterChannelConfigInterface> {
     private static instance: MasterChannelDataModel;
 
-    public static get $ () {
+    public static get $() {
         if ( !this.instance ) {
             this.instance = new MasterChannelDataModel();
         }
@@ -19,22 +19,22 @@ export class MasterChannelDataModel extends MasterChannelDataModelBase<MasterCha
         return this.instance;
     }
 
-    public static getName () {
+    public static getName() {
         return "VertixBase/Models/MasterChannelDataModel";
     }
 
-    public constructor () {
+    public constructor() {
         super(
             isDebugEnabled( "CACHE", MasterChannelDataModel.getName() ),
             isDebugEnabled( "MODEL", MasterChannelDataModel.getName() )
         );
     }
 
-    protected getDataVersion () {
+    protected getDataVersion() {
         return VERSION_UI_V2;
     }
 
-    protected getConfig () {
+    protected getConfig() {
         return ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
     }
 }

@@ -44,7 +44,7 @@ interface TUIWizardElementsGroupWrapperGeneratorArgs {
  *
  * The outer function wraps up by returning this mapped array of improved components, now made suitable for UI usage.
  */
-export function UIWizardElementsGroupWrapperGenerator ( args: TUIWizardElementsGroupWrapperGeneratorArgs ) {
+export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGroupWrapperGeneratorArgs ) {
     const {
         componentName,
         componentElements,
@@ -55,16 +55,16 @@ export function UIWizardElementsGroupWrapperGenerator ( args: TUIWizardElementsG
     } = args;
 
     abstract class UIWizardElementsGroupWrapperBase extends UIElementsGroupBaseClass {
-        public static getName () {
+        public static getName() {
             // TODO: Avoid hard-coded.
             return componentName + "/ElementsGroup";
         }
 
-        protected static getComponent (): typeof UIComponentBase {
+        protected static getComponent(): typeof UIComponentBase {
             throw new ForceMethodImplementation( this, this.getComponent.name );
         }
 
-        public static getItems ( args: UIArgs ) {
+        public static getItems( args: UIArgs ) {
             // For one modal submit it called so many times.
             const currentElements: any[][] = [];
 

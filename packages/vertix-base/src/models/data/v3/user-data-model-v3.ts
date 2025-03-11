@@ -16,27 +16,27 @@ export class UserDataModelV3 extends ModelDataOwnerBase<
     PrismaBot.UserData,
     TDataOwnerDefaultUniqueKeys
 > {
-    public static getName () {
+    public static getName() {
         return "VertixBase/Models/UserDataV3";
     }
 
-    public constructor () {
+    public constructor() {
         super( isDebugEnabled( "CACHE", UserDataModelV3.getName() ), isDebugEnabled( "MODEL", UserDataModelV3.getName() ) );
     }
 
-    protected getModel () {
+    protected getModel() {
         return client.user;
     }
 
-    protected getDataModel () {
+    protected getDataModel() {
         return client.userData;
     }
 
-    protected getDataVersion () {
+    protected getDataVersion() {
         return VERSION_UI_V3;
     }
 
-    protected getDataUniqueKeyName () {
+    protected getDataUniqueKeyName() {
         return "ownerId_key_version";
     }
 }

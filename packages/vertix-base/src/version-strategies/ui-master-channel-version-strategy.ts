@@ -9,11 +9,11 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import type { Base } from "discord.js";
 
 export class UIMasterChannelVersionStrategy extends UIVersionStrategyBase {
-    public static getName () {
+    public static getName() {
         return "VertixBase/VersionStrategies/UIMasterChannelVersionStrategy";
     }
 
-    public async determine ( context?: Base | string ) {
+    public async determine( context?: Base | string ) {
         let masterChannelDBId;
 
         if ( context instanceof VoiceChannel ) {

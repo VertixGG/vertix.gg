@@ -25,7 +25,7 @@ export abstract class ModelDataOwnerConfigBase<
     TDataModelUniqueKeys,
     TDataConfig["data"][TDataConfigSlice]
 > {
-    public static getName () {
+    public static getName() {
         return "VertixBase/Bases/ModelDataOwnerConfigBase";
     }
 
@@ -33,11 +33,11 @@ export abstract class ModelDataOwnerConfigBase<
 
     protected abstract getConfigSlice(): TDataConfigSlice;
 
-    protected getStrictDataFactor (): TDataSlice {
+    protected getStrictDataFactor(): TDataSlice {
         return this.getConfig().data[ this.getConfigSlice() ];
     }
 
-    protected async getSliceData (
+    protected async getSliceData(
         args: Parameters<TModel["findUnique"]>[0],
         key: string,
         cache = true,
@@ -50,7 +50,7 @@ export abstract class ModelDataOwnerConfigBase<
             : this.getStrictData( args, keys, cache );
     }
 
-    protected async setSliceData (
+    protected async setSliceData(
         args: Parameters<TModel["findUnique"]>[0],
         key: string,
         data: Partial<TDataConfig["data"][TDataConfigSlice]>,
@@ -74,7 +74,7 @@ export abstract class ModelDataOwnerConfigBase<
      * If no result is found and caching is disabled, the method returns the default settings
      * from the configuration.
      **/
-    public async getSettings (
+    public async getSettings(
         id: string,
         cache = true,
         returnDefaults: ( ( result: any ) => TDataSlice ) | boolean = false
@@ -101,7 +101,7 @@ export abstract class ModelDataOwnerConfigBase<
         return result;
     }
 
-    public async setSettings ( id: string, settings: Partial<TDataSlice>, assignDefaults = false ) {
+    public async setSettings( id: string, settings: Partial<TDataSlice>, assignDefaults = false ) {
         const queryArgs = { where: { id } };
 
         return this.setSliceData( queryArgs, "settings", settings, assignDefaults );

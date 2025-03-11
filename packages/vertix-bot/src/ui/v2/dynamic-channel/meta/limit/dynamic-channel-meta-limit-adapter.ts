@@ -18,15 +18,15 @@ interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteracti
 export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase<
     UIDefaultButtonChannelVoiceInteraction | ModalSubmitInteractionDefault
 > {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaLimitAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelMetaLimitComponent;
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             default: {},
             "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInput": {
@@ -41,15 +41,15 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
         };
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindModal<ModalSubmitInteractionDefault>( "Vertix/UI-V2/DynamicChannelMetaLimitModal", this.onModalSubmit );
     }
 
-    protected getStartArgs () {
+    protected getStartArgs() {
         return {};
     }
 
-    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep()?.name ) {
@@ -65,11 +65,11 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
         return args;
     }
 
-    protected shouldDeletePreviousReply () {
+    protected shouldDeletePreviousReply() {
         return true;
     }
 
-    private async onModalSubmit ( interaction: ModalSubmitInteractionDefault ) {
+    private async onModalSubmit( interaction: ModalSubmitInteractionDefault ) {
         const input = interaction.fields.getTextInputValue(
                 "Vertix/UI-V2/DynamicChannelMetaLimitAdapter:Vertix/UI-V2/DynamicChannelMetaLimitInput"
             ),

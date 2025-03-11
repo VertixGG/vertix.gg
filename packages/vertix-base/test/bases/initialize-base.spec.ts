@@ -5,15 +5,15 @@ import { setupMockTimers } from "@vertix.gg/base/test/__test_utils__/setup-mock-
 import { InitializeBase } from "@vertix.gg/base/src/bases";
 
 class MockInitializeBase extends InitializeBase {
-    public static getName () {
+    public static getName() {
         return "MockInitializeBase";
     }
 
-    public constructor () {
+    public constructor() {
         super();
     }
 
-    public doDebounce ( fn: Function, delay: number ) {
+    public doDebounce( fn: Function, delay: number ) {
         return this.debounce( fn, delay );
     }
 }

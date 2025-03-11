@@ -9,21 +9,21 @@ import type { UIElementSelectMenuLanguageContent } from "@vertix.gg/gui/src/base
 export abstract class UIElementUserSelectMenu extends UIElementBase<APIUserSelectComponent> {
     private content: UIElementSelectMenuLanguageContent | undefined;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIElementUserSelectMenu";
     }
 
-    public static getComponentType (): ComponentType {
+    public static getComponentType(): ComponentType {
         return ComponentType.UserSelect;
     }
 
-    public async build ( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: UIArgs ) {
         this.content = await this.uiLanguageManager.getSelectMenuTranslatedContent( this, uiArgs?._language );
 
         return super.build( uiArgs );
     }
 
-    public async getTranslatableContent (): Promise<UIElementSelectMenuLanguageContent> {
+    public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
         return {
             placeholder: await this.getPlaceholder?.()
         };
@@ -48,7 +48,7 @@ export abstract class UIElementUserSelectMenu extends UIElementBase<APIUserSelec
 
     protected async getCustomId?(): Promise<string>;
 
-    protected async getAttributes () {
+    protected async getAttributes() {
         const custom_id = ( await this.getCustomId?.() ) || "",
             placeholder = this.content?.placeholder || ( await this.getPlaceholder?.() ),
             min_values = await this.getMinValues?.(),

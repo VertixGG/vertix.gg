@@ -125,11 +125,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
     >();
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Services/DynamicChannel";
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", DynamicChannelService.getName() ) );
@@ -147,7 +147,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         ] );
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
             channelService: "VertixBot/Services/Channel",
@@ -156,7 +156,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         };
     }
 
-    public async onJoinDynamicChannel ( args: IChannelEnterGenericArgs ) {
+    public async onJoinDynamicChannel( args: IChannelEnterGenericArgs ) {
         const { oldState, newState, displayName, channelName } = args,
             { guild } = oldState;
 
@@ -172,7 +172,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onLeaveDynamicChannel ( args: IChannelLeaveGenericArgs ) {
+    public async onLeaveDynamicChannel( args: IChannelLeaveGenericArgs ) {
         const { oldState, displayName, channelName } = args,
             { guild } = oldState;
 
@@ -201,7 +201,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onOwnerJoinDynamicChannel ( owner: GuildMember, channel: VoiceBasedChannel ) {
+    public async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
         const state = DynamicChannelVoteManager.$.getState( channel.id );
 
         this.logger.info(
@@ -211,14 +211,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async onOwnerLeaveDynamicChannel ( owner: GuildMember, channel: VoiceBasedChannel ) {
+    public async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
         this.logger.info(
             this.onOwnerLeaveDynamicChannel,
             `Guild id: '${ channel.guild.id }' - Owner: '${ owner.displayName }' left dynamic channel: '${ channel.name }'`
         );
     }
 
-    public async onLeaveDynamicChannelEmpty (
+    public async onLeaveDynamicChannelEmpty(
         channel: VoiceBasedChannel,
         channelDB: null | ChannelExtended,
         guild: Guild,
@@ -242,7 +242,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.services.channelService.delete( { guild, channel } );
     }
 
-    public async getAssembledChannelNameTemplate (
+    public async getAssembledChannelNameTemplate(
         channel: VoiceChannel,
         userId: string,
         returnDefault = false
@@ -267,7 +267,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    private async assembleChannelNameTemplate (
+    private async assembleChannelNameTemplate(
         channelNameTemplate: string,
         args: {
             userDisplayName: string | null;
@@ -302,7 +302,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async getChannelUsersWithPermissionState (
+    public async getChannelUsersWithPermissionState(
         channel: VoiceChannel,
         permissions: PermissionsBitField,
         state: boolean,
@@ -326,7 +326,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async getChannelUserIdsWithPermissionState (
+    public async getChannelUserIdsWithPermissionState(
         channel: VoiceChannel,
         permissions: PermissionsBitField,
         state: boolean,
@@ -375,7 +375,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async getPrimaryMessage ( channel: VoiceChannel ) {
+    public async getPrimaryMessage( channel: VoiceChannel ) {
         let source = "cache";
 
         let message;
@@ -416,7 +416,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return message;
     }
 
-    public async getChannelState ( channel: VoiceChannel ): Promise<ChannelState> {
+    public async getChannelState( channel: VoiceChannel ): Promise<ChannelState> {
         let result: ChannelState;
 
         if ( await this.isVerifiedRolesDeniedFlag( channel, PermissionsBitField.Flags.Connect ) ) {
@@ -428,7 +428,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async getChannelVisibilityState ( channel: VoiceChannel ): Promise<ChannelVisibilityState> {
+    public async getChannelVisibilityState( channel: VoiceChannel ): Promise<ChannelVisibilityState> {
         let result: ChannelVisibilityState;
 
         if ( await this.isVerifiedRolesDeniedFlag( channel, PermissionsBitField.Flags.ViewChannel ) ) {
@@ -440,7 +440,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async getChannelPrivacyState ( channel: VoiceChannel ) {
+    public async getChannelPrivacyState( channel: VoiceChannel ) {
         let result: ChannelPrivacyState;
 
         const state = await this.getChannelState( channel ),
@@ -457,7 +457,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public getChannelDefaultInheritedProperties ( channel: VoiceBasedChannel ) {
+    public getChannelDefaultInheritedProperties( channel: VoiceBasedChannel ) {
         const { rtcRegion, bitrate, userLimit } = channel,
             result: any = { bitrate, userLimit };
 
@@ -473,7 +473,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     /**
      * TODO: This method should be dedicated and used in other places.
      */
-    public async getChannelConfiguration (
+    public async getChannelConfiguration(
         channel: VoiceChannel,
         userId: Snowflake,
         masterChannelDBId: string,
@@ -524,7 +524,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         };
     }
 
-    public async createDynamicChannel ( args: IDynamicChannelCreateArgs ) {
+    public async createDynamicChannel( args: IDynamicChannelCreateArgs ) {
         const { displayName, guild, newState } = args,
             masterChannel = newState.channel as VoiceBasedChannel,
             userOwnerId = newState.member?.id as string;
@@ -712,7 +712,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             } )
             .catch( () => {} );
 
-        setTimeout( async () => {
+        setTimeout( async() => {
             if ( dynamic.channel.isVoiceBased() ) {
                 // newState.channel?.setRTCRegion( masterChannel.rtcRegion );
 
@@ -760,7 +760,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return dynamic;
     }
 
-    public async createPrimaryMessage ( channel: VoiceChannel, dynamicChannelDB: ChannelExtended ) {
+    public async createPrimaryMessage( channel: VoiceChannel, dynamicChannelDB: ChannelExtended ) {
         this.logger.log(
             this.createPrimaryMessage,
             `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - ` +
@@ -786,7 +786,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async editChannelName (
+    public async editChannelName(
         initiator: ModalSubmitInteraction<"cached">,
         channel: VoiceChannel,
         newChannelName: string
@@ -844,14 +844,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async editUserLimit ( initiator: ModalSubmitInteraction<"cached">, channel: VoiceChannel, newLimit: number ) {
+    public async editUserLimit( initiator: ModalSubmitInteraction<"cached">, channel: VoiceChannel, newLimit: number ) {
         let result = false;
 
         const oldLimit = channel.userLimit;
 
         await channel
             .setUserLimit( newLimit )
-            .then( async () => {
+            .then( async() => {
                 result = true;
             } )
             .catch( ( error ) => {
@@ -871,7 +871,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async editChannelState (
+    public async editChannelState(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         newState: ChannelState
@@ -950,7 +950,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async editChannelVisibilityState (
+    public async editChannelVisibilityState(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         newState: ChannelVisibilityState
@@ -1009,7 +1009,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     /**
      * @since 0.0.8
      */
-    public async editChannelPrivacyState (
+    public async editChannelPrivacyState(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         newState: ChannelPrivacyState
@@ -1082,7 +1082,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     /**
      * @since 0.0.8
      */
-    public async editChannelRegion (
+    public async editChannelRegion(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         newRegion: string
@@ -1109,7 +1109,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async editChannelOwner (
+    public async editChannelOwner(
         newOwnerId: string,
         previousOwnerId: string,
         channel: VoiceChannel,
@@ -1151,7 +1151,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.updateChannelOwnership( channel, previousOwnerId, newOwnerId, from, masterChannel );
     }
 
-    public async updateChannelOwnership (
+    public async updateChannelOwnership(
         channel: VoiceChannel,
         previousOwnerId: string,
         newOwnerId: string,
@@ -1181,7 +1181,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.editPrimaryMessageDebounce( channel );
     }
 
-    public async editPrimaryMessage ( channel: VoiceChannel ) {
+    public async editPrimaryMessage( channel: VoiceChannel ) {
         this.logger.log(
             this.editPrimaryMessage,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Editing primary message request, channel: '${ channel.name }'`
@@ -1237,14 +1237,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             );
     }
 
-    public editPrimaryMessageDebounce ( channel: VoiceChannel, delay = 800 ) {
+    public editPrimaryMessageDebounce( channel: VoiceChannel, delay = 800 ) {
         // TODO: Constant.
         this.logger.log(
             this.editPrimaryMessageDebounce,
             `Guild id: '${ channel.guildId }' - Editing primary message in channel id: '${ channel.id }'`
         );
 
-        const callback = async () => {
+        const callback = async() => {
             await this.editPrimaryMessage( channel );
 
             this.editMessageDebounceMap.delete( channel.id );
@@ -1264,7 +1264,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.editMessageDebounceMap.set( key, timeoutId );
     }
 
-    public async clearChat ( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ) {
+    public async clearChat( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ) {
         let result: IDynamicClearChatResult = {
             code: DynamicClearChatResultCode.Error
         };
@@ -1275,7 +1275,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         await channel.messages
             .fetch()
-            .then( async ( messages ) => {
+            .then( async( messages ) => {
                 // Remove non-embedded messages.
                 const messagesToDelete = messages.filter( ( message ) => !message.embeds.length );
 
@@ -1300,7 +1300,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     // Now need to see how it will know which model version to use.
-    public async resetChannel (
+    public async resetChannel(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         options = {
@@ -1410,7 +1410,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async addUserAccess (
+    public async addUserAccess(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         member: GuildMember,
@@ -1464,7 +1464,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async editUserAccess (
+    public async editUserAccess(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         member: GuildMember,
@@ -1523,7 +1523,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async removeUserAccess (
+    public async removeUserAccess(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         member: GuildMember,
@@ -1583,7 +1583,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async kickUser (
+    public async kickUser(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
         member: GuildMember
@@ -1626,7 +1626,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public isPrimaryMessage ( message: Message<true> | undefined ) {
+    public isPrimaryMessage( message: Message<true> | undefined ) {
         // TODO: Find better way to check if message is primary.
         return (
             message?.author?.id === this.services.appService.getClient().user.id &&
@@ -1634,7 +1634,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async isChannelOwner ( ownerId: string | undefined, channelId: string ) {
+    public async isChannelOwner( ownerId: string | undefined, channelId: string ) {
         this.logger.debug( this.isChannelOwner, `Channel id: '${ channelId }' - Checking if owner id: '${ ownerId }'` );
 
         if ( !ownerId ) {
@@ -1658,7 +1658,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return dynamicChannelDB.userOwnerId === ownerId;
     }
 
-    private async getVerifiedRoles ( dynamicChannel: VoiceBasedChannel ) {
+    private async getVerifiedRoles( dynamicChannel: VoiceBasedChannel ) {
         const roles = [],
             masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannel.id );
 
@@ -1681,7 +1681,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return roles;
     }
 
-    private getDeniedFlagCount ( channel: VoiceBasedChannel, roles: string[], flag: bigint ) {
+    private getDeniedFlagCount( channel: VoiceBasedChannel, roles: string[], flag: bigint ) {
         let count = 0;
 
         for ( const roleId of roles ) {
@@ -1695,7 +1695,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return count;
     }
 
-    private async isVerifiedRolesDeniedFlag ( channel: VoiceBasedChannel, flag: bigint ) {
+    private async isVerifiedRolesDeniedFlag( channel: VoiceBasedChannel, flag: bigint ) {
         const roles = await this.getVerifiedRoles( channel );
 
         // If no roles with permission overrides exist, then the flag is not denied
@@ -1717,7 +1717,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private async updateUserDataPermissionLists ( initiator: Interaction, channel: VoiceChannel ) {
+    private async updateUserDataPermissionLists( initiator: Interaction, channel: VoiceChannel ) {
         const allowedUsers = await this.getChannelUserIdsWithPermissionState(
             channel,
             DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
@@ -1738,7 +1738,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    private async log (
+    private async log(
         initiator: ModalSubmitInteraction<"cached"> | MessageComponentInteraction<"cached"> | undefined,
         channel: VoiceChannel,
         caller: Function,
@@ -2059,7 +2059,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.logInChannelDebounce( masterChannelDB, channel, message );
     }
 
-    private async logInChannelDebounce (
+    private async logInChannelDebounce(
         masterChannelDB: ChannelExtended,
         channel: VoiceChannel,
         message: string,
@@ -2118,7 +2118,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         mapItem.timer = setTimeout( this.logEmbeds.bind( this, logsChannelId ), defaultDebounceDelay );
     }
 
-    private async logEmbeds ( logsChannelId: string ) {
+    private async logEmbeds( logsChannelId: string ) {
         const mapItem = this.logInChannelDebounceMap.get( logsChannelId );
 
         if ( !mapItem ) {
@@ -2132,7 +2132,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const { masterChannelDB, logsChannel, embeds } = mapItem;
 
-        await logsChannel.send( { embeds } ).catch( async ( err ) => {
+        await logsChannel.send( { embeds } ).catch( async( err ) => {
             this.logger.error( this.log, "", err );
 
             await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, null, false );
@@ -2141,7 +2141,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         mapItem.embeds = [];
     }
 
-    private async editChannelNameInternal (
+    private async editChannelNameInternal(
         channel: VoiceChannel,
         newChannelName: string
     ): Promise<IDynamicEditChannelNameInternalResult> {
@@ -2174,7 +2174,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private async onJoin ( args: IChannelEnterGenericArgs ) {
+    private async onJoin( args: IChannelEnterGenericArgs ) {
         const { newState } = args;
 
         if ( await ChannelModel.$.isDynamic( newState.channelId! ) ) {
@@ -2182,7 +2182,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async onLeave ( args: IChannelLeaveGenericArgs ) {
+    private async onLeave( args: IChannelLeaveGenericArgs ) {
         const { oldState } = args;
 
         if ( await ChannelModel.$.isDynamic( oldState.channelId! ) ) {

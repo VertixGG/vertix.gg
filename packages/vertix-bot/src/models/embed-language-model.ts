@@ -5,7 +5,7 @@ import { ModelLanguageBase } from "@vertix.gg/bot/src/bases/model-language-base"
 const model = PrismaBotClient.getPrismaClient().embedLanguage;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function withContent () {
+async function withContent() {
     return model.findFirst( {
         include: {
             content: true
@@ -19,11 +19,11 @@ export class EmbedLanguageModel extends ModelLanguageBase<
 > {
     private static instance: EmbedLanguageModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Models/EmbedLanguageModel";
     }
 
-    public static getInstance (): EmbedLanguageModel {
+    public static getInstance(): EmbedLanguageModel {
         if ( !EmbedLanguageModel.instance ) {
             EmbedLanguageModel.instance = new EmbedLanguageModel( false );
         }
@@ -31,11 +31,11 @@ export class EmbedLanguageModel extends ModelLanguageBase<
         return EmbedLanguageModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return EmbedLanguageModel.getInstance();
     }
 
-    protected getModel () {
+    protected getModel() {
         return model;
     }
 }

@@ -23,11 +23,11 @@ export class EventBus extends ObjectBase {
 
     private lastEmittedEvents = new Map<string, any[]>();
 
-    public static getName () {
+    public static getName() {
         return "VertixBase/Modules/EventBus";
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "MODULE", EventBus.getName() ) );
@@ -35,7 +35,7 @@ export class EventBus extends ObjectBase {
         this.debugger.log( this.constructor, "EventBus is initialized" );
     }
 
-    public static getInstance (): EventBus {
+    public static getInstance(): EventBus {
         if ( !EventBus.instance ) {
             EventBus.instance = new EventBus();
         }
@@ -43,23 +43,23 @@ export class EventBus extends ObjectBase {
         return EventBus.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return EventBus.getInstance();
     }
 
-    public getObjectNames () {
+    public getObjectNames() {
         return Array.from( this.objects.keys() );
     }
 
-    public getEventNames () {
+    public getEventNames() {
         this.eventEmitter.eventNames();
     }
 
-    public getEventName ( objectName: string, methodName: string ) {
+    public getEventName( objectName: string, methodName: string ) {
         return `${ objectName }::${ methodName }`;
     }
 
-    public on ( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
+    public on( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
         this.debugger.log( this.on, `Registering event ${ objectName }::${ methodName }` );
 
         // Validate that event exists
@@ -74,7 +74,7 @@ export class EventBus extends ObjectBase {
      * Function onCalledBeforeDoInvoke(): The difference between this function and on()
      * is that this function will call the callback if the event already happened.
      */
-    public onCalledBeforeDoInvoke ( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
+    public onCalledBeforeDoInvoke( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
         this.on( objectName, methodName, callback );
 
         // If event already happened, call the callback
@@ -92,11 +92,11 @@ export class EventBus extends ObjectBase {
         }
     }
 
-    public off ( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
+    public off( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
         this.eventEmitter.off( this.getEventName( objectName, methodName ), callback );
     }
 
-    public register<T extends ObjectBase> ( object: T, methods: Function[] ) {
+    public register<T extends ObjectBase>( object: T, methods: Function[] ) {
         this.debugger.log( this.register, `Registering object ${ object.getName() }` );
 
         if ( this.objects.has( object.getName() ) ) {
@@ -111,7 +111,7 @@ export class EventBus extends ObjectBase {
         this.hook( object, methods );
     }
 
-    public unregister ( objectName: string ) {
+    public unregister( objectName: string ) {
         const object = this.objects.get( objectName );
 
         if ( !object ) {
@@ -123,7 +123,7 @@ export class EventBus extends ObjectBase {
         this.objects.delete( objectName );
     }
 
-    private emit<T extends ObjectBase> ( object: T, method: Function, ...args: any[] ) {
+    private emit<T extends ObjectBase>( object: T, method: Function, ...args: any[] ) {
         this.debugger.log( this.emit, `Emitting event ${ object.getName() }::${ method.name }` );
 
         const eventName = this.getEventName( object.getName(), method.name );
@@ -133,7 +133,7 @@ export class EventBus extends ObjectBase {
         return this.eventEmitter.emit( eventName, ...args );
     }
 
-    private hook<T extends ObjectBase> ( object: T, methods: Function[] ) {
+    private hook<T extends ObjectBase>( object: T, methods: Function[] ) {
         methods.forEach( ( method ) => {
             this.debugger.log( this.hook, `Hooking method ${ method.name } on ${ object.getName() }` );
 
@@ -141,7 +141,7 @@ export class EventBus extends ObjectBase {
 
             const originalMethod = method;
 
-            const eventBusHook = async ( ...args: any[] ) => {
+            const eventBusHook = async( ...args: any[] ) => {
                 const result = await originalMethod.apply( object, args );
 
                 this.emit( object, method, ...args );
@@ -151,7 +151,7 @@ export class EventBus extends ObjectBase {
 
             // TODO: Use better design pattern to handle losing of function names.
             ( object as any )[ method.name ] = new Proxy( eventBusHook, {
-                get ( target, prop ) {
+                get( target, prop ) {
                     if ( prop === "name" ) {
                         return method.name;
                     }
@@ -162,7 +162,7 @@ export class EventBus extends ObjectBase {
         } );
     }
 
-    private unhook<T extends ObjectBase> ( object: { object: T; methods: Function[] } ) {
+    private unhook<T extends ObjectBase>( object: { object: T; methods: Function[] } ) {
         object.methods.forEach( ( method ) => {
             this.ensureFunction( object.object, method );
 
@@ -172,7 +172,7 @@ export class EventBus extends ObjectBase {
         } );
     }
 
-    private ensureFunction<T extends ObjectBase> ( object: T, method: Function ) {
+    private ensureFunction<T extends ObjectBase>( object: T, method: Function ) {
         if ( "function" !== typeof method ) {
             throw new Error( `Method ${ method } is not a function on ${ object.getName() }` );
         }

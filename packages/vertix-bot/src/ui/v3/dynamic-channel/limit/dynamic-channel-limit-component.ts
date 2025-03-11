@@ -12,15 +12,15 @@ import { DynamicChannelLimitInvalidInputEmbed } from "@vertix.gg/bot/src/ui/v3/d
 import { DynamicChannelLimitModal } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-modal";
 
 export class DynamicChannelLimitComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelLimitComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelLimitSuccessEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelLimitInvalidInputEmbed ),
@@ -28,11 +28,11 @@ export class DynamicChannelLimitComponent extends UIComponentBase {
         ];
     }
 
-    public static getModals () {
+    public static getModals() {
         return [ DynamicChannelLimitModal ];
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         // By default, its handles only the modal.
         return null;
     }

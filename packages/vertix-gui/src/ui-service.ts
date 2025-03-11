@@ -94,11 +94,11 @@ export class UIService extends ServiceWithDependenciesBase<{
 
     private static emitter = new EventEmitter();
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIService";
     }
 
-    public static registerSystemElements ( systemElements: typeof UIService.uiSystemElements ) {
+    public static registerSystemElements( systemElements: typeof UIService.uiSystemElements ) {
         if ( !Object.keys( systemElements ).length ) {
             throw new Error( "System elements already registered" );
         }
@@ -108,7 +108,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.emitter.emit( "system-elements-registered", systemElements );
     }
 
-    public static registerSystemComponents ( systemComponents: typeof UIService.uiSystemComponents ) {
+    public static registerSystemComponents( systemComponents: typeof UIService.uiSystemComponents ) {
         if ( !Object.keys( systemComponents ).length ) {
             throw new Error( "System components already registered" );
         }
@@ -118,21 +118,21 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.emitter.emit( "system-components-registered", systemComponents );
     }
 
-    public static getSystemElements () {
+    public static getSystemElements() {
         return UIService.uiSystemElements;
     }
 
-    public static getSystemComponents () {
+    public static getSystemComponents() {
         return UIService.uiSystemComponents;
     }
 
-    protected static setupCleanupTimerInterval () {
+    protected static setupCleanupTimerInterval() {
         if ( !UIService.cleanupTimerInterval ) {
             UIService.cleanupTimerInterval = setInterval( UIAdapterBase.cleanupTimer, ADAPTER_CLEANUP_TIMER_INTERVAL );
         }
     }
 
-    public constructor ( protected client: Client<true> ) {
+    public constructor( protected client: Client<true> ) {
         super( arguments );
 
         if ( !client ) {
@@ -143,25 +143,25 @@ export class UIService extends ServiceWithDependenciesBase<{
     }
 
     // TODO: use '$$' every where to get the static.
-    public get $$ () {
+    public get $$() {
         return this.constructor as typeof UIService;
     }
 
-    public getAll () {
+    public getAll() {
         return this.uiAdaptersTypes;
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             uiHashService: "VertixGUI/UIHashService"
         };
     }
 
-    public getClient () {
+    public getClient() {
         return this.client;
     }
 
-    public get<T extends keyof TAdapterMapping = "base"> (
+    public get<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         silent = false
     ): TAdapterMapping[T] | undefined {
@@ -184,7 +184,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
-    public registerModule<T extends TModuleConstructor> ( Module: T ) {
+    public registerModule<T extends TModuleConstructor>( Module: T ) {
         Module.validate();
 
         const adapters = Module.getAdapters();
@@ -192,7 +192,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.registerAdapters( adapters, { module: new Module() } );
     }
 
-    public async registerInternalAdapters () {
+    public async registerInternalAdapters() {
         const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
 
         this.registerAdapters( Object.values( internalAdapters ) );
@@ -200,13 +200,13 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.$$.emitter.emit( "internal-adapters-registered" );
     }
 
-    public registerAdapters ( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
+    public registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
         adapters.forEach( ( adapter ) => {
             this.registerAdapter( adapter, options );
         } );
     }
 
-    public registerAdapter ( UIClass: TAdapterClassType, options: TAdapterRegisterOptions = {} ) {
+    public registerAdapter( UIClass: TAdapterClassType, options: TAdapterRegisterOptions = {} ) {
         const uiName = UIClass.getName();
 
         if ( this.uiAdaptersTypes.has( uiName ) ) {
@@ -238,7 +238,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         );
     }
 
-    public async waitForAdapter<T extends keyof TAdapterMapping = "base"> (
+    public async waitForAdapter<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         options = ADAPTER_WAITFOR_DEFAULT_OPTIONS
     ): Promise<TAdapterMapping[T] | undefined> {
@@ -270,7 +270,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    public async waitForAdapters<T extends keyof TAdapterMapping = "base"> (
+    public async waitForAdapters<T extends keyof TAdapterMapping = "base">(
         uiNames: string[],
         options = ADAPTER_WAITFOR_DEFAULT_OPTIONS
     ) {
@@ -285,7 +285,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         return result as TAdapterMapping[T][];
     }
 
-    public registerUILanguageManager ( uiLanguageManager: UILanguageManagerInterface ) {
+    public registerUILanguageManager( uiLanguageManager: UILanguageManagerInterface ) {
         if ( this.uiLanguageManager ) {
             throw new Error( "UI Language Manager is already registered" );
         }
@@ -293,47 +293,47 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.uiLanguageManager = uiLanguageManager;
     }
 
-    public getUILanguageManager () {
+    public getUILanguageManager() {
         return (
             this.uiLanguageManager ||
             new ( class NullLanguageManager extends InitializeBase implements UILanguageManagerInterface {
-                public constructor () {
+                public constructor() {
                     super();
                 }
 
-                public static getName () {
+                public static getName() {
                     return "VertixGUI/NullLanguageManager";
                 }
 
-                public getButtonTranslatedContent (
+                public getButtonTranslatedContent(
                     button: UIElementButtonBase,
                     _languageCode: string | undefined
                 ): Promise<UIElementButtonLanguageContent> {
                     return Promise.resolve( button.getTranslatableContent() );
                 }
 
-                public getEmbedTranslatedContent (
+                public getEmbedTranslatedContent(
                     embed: UIEmbedBase,
                     _languageCode: string | undefined
                 ): Promise<UIEmbedLanguageContent> {
                     return Promise.resolve( embed.getTranslatableContent() );
                 }
 
-                public getMarkdownTranslatedContent (
+                public getMarkdownTranslatedContent(
                     markdown: UIMarkdownBase,
                     _languageCode: string | undefined
                 ): Promise<UIMarkdownLanguageContent> {
                     return Promise.resolve( markdown.getTranslatableContent() );
                 }
 
-                public getModalTranslatedContent (
+                public getModalTranslatedContent(
                     modal: UIModalBase,
                     _languageCode: string | undefined
                 ): Promise<UIModalLanguageContent> {
                     return Promise.resolve( modal.getTranslatableContent() );
                 }
 
-                public getSelectMenuTranslatedContent (
+                public getSelectMenuTranslatedContent(
                     selectMenu:
                         | UIElementStringSelectMenu
                         | UIElementUserSelectMenu
@@ -344,14 +344,14 @@ export class UIService extends ServiceWithDependenciesBase<{
                     return Promise.resolve( selectMenu.getTranslatableContent() );
                 }
 
-                public getTextInputTranslatedContent (
+                public getTextInputTranslatedContent(
                     textInput: UIElementInputBase,
                     _languageCode: string | undefined
                 ): Promise<UIElementTextInputLanguageContent> {
                     return Promise.resolve( textInput.getTranslatableContent() );
                 }
 
-                public register (): Promise<void> {
+                public register(): Promise<void> {
                     return Promise.resolve( undefined );
                 }
             } )()
@@ -361,7 +361,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     /**
      * Function storeClass() :: Stores the class of the entity, the actual registration.
      */
-    private storeClass ( UIClass: TAdapterClassType, options: TAdapterRegisterOptions ) {
+    private storeClass( UIClass: TAdapterClassType, options: TAdapterRegisterOptions ) {
         const uiName = UIClass.getName();
 
         this.uiAdaptersTypes.set( uiName, UIClass );
@@ -371,7 +371,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     /**
      * Function storeInstance() :: Stores only static entity instances.
      */
-    private storeInstance ( UIClass: TAdapterClassType ) {
+    private storeInstance( UIClass: TAdapterClassType ) {
         const instance = this.createInstance( UIClass.getName() );
 
         this.uiAdaptersStaticInstances.set( UIClass.getName(), instance );
@@ -380,7 +380,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     /**
      * Function createInstance() :: Creates a new instance of the entity for `get()` and `register()`.
      */
-    private createInstance ( uiName: string ) {
+    private createInstance( uiName: string ) {
         const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterConstructor;
 
         if ( !UIClass ) {

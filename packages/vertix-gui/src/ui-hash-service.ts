@@ -26,11 +26,11 @@ export class UIHashService extends ServiceBase {
 
     private hashSaveTimeout: NodeJS.Timeout | null = null;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIHashService";
     }
 
-    public static generateHash ( input: string, maxLength = UI_MAX_CUSTOM_ID_LENGTH, shouldSign = false ): string {
+    public static generateHash( input: string, maxLength = UI_MAX_CUSTOM_ID_LENGTH, shouldSign = false ): string {
         const base = crypto.createHash( "md5" ).update( input ).digest( "hex" );
 
         // 32 * length
@@ -39,7 +39,7 @@ export class UIHashService extends ServiceBase {
         return ( ( shouldSign ? UIHashService.HASH_SIGNATURE : "" ) + hash ).slice( 0, maxLength );
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.debugger = createDebugger( this, "UI" );
@@ -47,11 +47,11 @@ export class UIHashService extends ServiceBase {
         this.loadTablesFromFile();
     }
 
-    public get $$ () {
+    public get $$() {
         return this.constructor as typeof UIHashService;
     }
 
-    public generateId (
+    public generateId(
         id: string,
         separator = UI_CUSTOM_ID_SEPARATOR,
         maxLength = UI_MAX_CUSTOM_ID_LENGTH,
@@ -127,7 +127,7 @@ export class UIHashService extends ServiceBase {
         return hash;
     }
 
-    public getId (
+    public getId(
         hash: string,
         separator: string | null = UI_CUSTOM_ID_SEPARATOR,
         options = {
@@ -184,11 +184,11 @@ export class UIHashService extends ServiceBase {
         return id;
     }
 
-    public getIdSilent ( hash: string ) {
+    public getIdSilent( hash: string ) {
         return this.getId( hash, UI_CUSTOM_ID_SEPARATOR, { silent: true, shouldCheckSignature: true } );
     }
 
-    public loadTablesFromFile ( filePath = process.cwd() + "/ui-hash-tables.json" ) {
+    public loadTablesFromFile( filePath = process.cwd() + "/ui-hash-tables.json" ) {
         if ( !this.isSaveHashEnabled() ) {
             return;
         }
@@ -212,7 +212,7 @@ export class UIHashService extends ServiceBase {
         this.hashTablesSaveLength = this.getCurrenHashTablesLength();
     }
 
-    public maybeSaveTablesToFile () {
+    public maybeSaveTablesToFile() {
         this.debugger.log( this.maybeSaveTablesToFile, "Checking if hash tables need to be saved to file", {
             old: this.hashTablesSaveLength,
             new: this.getCurrenHashTablesLength()
@@ -234,7 +234,7 @@ export class UIHashService extends ServiceBase {
         } );
     }
 
-    public async saveTablesToFile ( filePath = process.cwd() + "/ui-hash-tables.json" ) {
+    public async saveTablesToFile( filePath = process.cwd() + "/ui-hash-tables.json" ) {
         this.debugger.log( this.saveTablesToFile, "Saving hash tables to file:", filePath );
 
         const data = {
@@ -248,14 +248,14 @@ export class UIHashService extends ServiceBase {
         await fs.promises.writeFile( filePath, JSON.stringify( data, null, 2 ) );
     }
 
-    private setHashTableEntry ( id: string, hash: string, length: number ) {
+    private setHashTableEntry( id: string, hash: string, length: number ) {
         if ( !this.hashTable.has( length ) ) {
             this.hashTable.set( length, new Map() );
         }
         this.hashTable.get( length )!.set( id, hash );
     }
 
-    private handleSaveHash () {
+    private handleSaveHash() {
         if ( this.isSaveHashEnabled() ) {
             if ( this.hashSaveTimeout ) {
                 clearTimeout( this.hashSaveTimeout );
@@ -267,14 +267,14 @@ export class UIHashService extends ServiceBase {
         }
     }
 
-    private setHashTableReverseEntry ( hash: string, id: string, length: number ) {
+    private setHashTableReverseEntry( hash: string, id: string, length: number ) {
         if ( !this.hashTableReverse.has( length ) ) {
             this.hashTableReverse.set( length, new Map() );
         }
         this.hashTableReverse.get( length )!.set( hash, id );
     }
 
-    private getCurrenHashTablesLength () {
+    private getCurrenHashTablesLength() {
         // For each object in the hash table, get the size of the map and sum them up.
         return (
             Array.from( this.hashTable.values() ).reduce( ( acc, map ) => acc + map.size, 0 ) +
@@ -282,7 +282,7 @@ export class UIHashService extends ServiceBase {
         );
     }
 
-    protected isSaveHashEnabled () {
+    protected isSaveHashEnabled() {
         return true;
     }
 }

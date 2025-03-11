@@ -5,15 +5,15 @@ import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 import type { APIButtonComponentWithURL } from "discord.js";
 
 export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComponentWithURL> {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIElementButtonUrlBase";
     }
 
-    public static getComponentType () {
+    public static getComponentType() {
         return ComponentType.Button;
     }
 
-    public async getTranslatableContent (): Promise<any> {
+    public async getTranslatableContent(): Promise<any> {
         return {
             label: await this.getLabel()
         };
@@ -25,7 +25,7 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
 
     protected async isDisabled?(): Promise<boolean>;
 
-    protected async getAttributes () {
+    protected async getAttributes() {
         const type = Number( UIElementButtonUrlBase.getComponentType() ),
             label = await this.getLabel(),
             style = Number( ButtonStyle.Link ),

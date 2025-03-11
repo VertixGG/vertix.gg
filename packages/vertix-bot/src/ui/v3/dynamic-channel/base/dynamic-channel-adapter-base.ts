@@ -22,25 +22,25 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<
 
     protected dynamicChannelService: DynamicChannelService;
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelAdapterBase";
     }
 
-    public constructor ( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice ];
     }
 
-    public getPermissions () {
+    public getPermissions() {
         return new PermissionsBitField( 0n );
     }
 
-    public async isPassingInteractionRequirementsInternal ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    public async isPassingInteractionRequirementsInternal( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         return await dynamicChannelRequirements( interaction );
     }
 }

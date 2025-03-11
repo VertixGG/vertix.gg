@@ -24,11 +24,11 @@ export class Logger extends ObjectBase {
 
     private messagePrefixes: string[] = [];
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBase/Modules/Logger";
     }
 
-    public static getLogLevelString (): string {
+    public static getLogLevelString(): string {
         switch ( parseInt( process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL ) ) {
             case 0:
                 return "NONE";
@@ -49,15 +49,15 @@ export class Logger extends ObjectBase {
         }
     }
 
-    public static getLogLevel (): number {
+    public static getLogLevel(): number {
         return parseInt( process.env.LOGGER_LOG_LEVEL || DEFAULT_LOG_LEVEL );
     }
 
-    public static isDebugEnabled () {
+    public static isDebugEnabled() {
         return this.getLogLevel() >= 6;
     }
 
-    public constructor ( owner: ObjectBase | typeof ObjectBase | string ) {
+    public constructor( owner: ObjectBase | typeof ObjectBase | string ) {
         super();
 
         if ( "string" === typeof owner ) {
@@ -105,39 +105,39 @@ export class Logger extends ObjectBase {
         }
     }
 
-    public addMessagePrefix ( prefix: string ) {
+    public addMessagePrefix( prefix: string ) {
         this.messagePrefixes.push( prefix );
     }
 
-    public log ( caller: ICaller, message: string, ...params: any[] ): void {
+    public log( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_LOG_PREFIX, caller, message, ...params );
     }
 
-    public info ( caller: ICaller, message: string, ...params: any[] ): void {
+    public info( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_INFO_PREFIX, caller, message, ...params );
     }
 
-    public debug ( caller: ICaller, message: string, ...params: any[] ): void {
+    public debug( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_DEBUG_PREFIX, caller, message, ...params );
     }
 
-    public warn ( caller: ICaller, message: string, ...params: any[] ): void {
+    public warn( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_WARN_PREFIX, caller, message, ...params );
     }
 
-    public error ( caller: ICaller, message: string, ...params: any[] ): void {
+    public error( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_ERROR_PREFIX, caller, message, ...params );
     }
 
-    public admin ( caller: ICaller, message: string, ...params: any[] ): void {
+    public admin( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_ADMIN_PREFIX, caller, message, ...params );
     }
 
-    public beep () {
+    public beep() {
         console.log( "\x07" );
     }
 
-    private getTime (): string {
+    private getTime(): string {
         const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
 
         if ( !iso ) {
@@ -147,7 +147,7 @@ export class Logger extends ObjectBase {
         return iso[ 1 ] + " " + iso[ 2 ];
     }
 
-    private getCallerName ( caller: ICaller ) {
+    private getCallerName( caller: ICaller ) {
         let result: string = "";
 
         if ( typeof caller === "string" ) {
@@ -164,7 +164,7 @@ export class Logger extends ObjectBase {
         return result;
     }
 
-    private getStackTrace (): any[] {
+    private getStackTrace(): any[] {
         const stackTrace = ( new Error().stack || "" ).split( "\n" );
         const stackLines = stackTrace.slice( 1 ); // Skip the first line containing "Error"
 
@@ -193,7 +193,7 @@ export class Logger extends ObjectBase {
         return result;
     }
 
-    public getPreviousSource (): string {
+    public getPreviousSource(): string {
         // TODO: Take those from env.
         const stack = this.getStackTrace()
             .filter( ( line: any ) => line.file.includes( "/src/" ) )
@@ -218,7 +218,7 @@ export class Logger extends ObjectBase {
         return previousSource;
     }
 
-    private output ( prefix: string, caller: ICaller, message: string, ...params: any[] ): void {
+    private output( prefix: string, caller: ICaller, message: string, ...params: any[] ): void {
         const source = this.getPreviousSource() + pc.white( this.ownerName + "::" + this.getCallerName( caller ) );
 
         let messagePrefix = "";

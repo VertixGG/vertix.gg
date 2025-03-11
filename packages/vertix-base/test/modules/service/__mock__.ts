@@ -4,23 +4,23 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 export abstract class ServiceWithDependenciesBaseMock<T extends {
     [ key: string ]: ServiceBase
 }> extends ServiceWithDependenciesBase<T> {
-    public getServices () {
+    public getServices() {
         return this.services;
     }
 
-    public initialize () {
+    public initialize() {
         return super.initialize();
     }
 }
 
 export class ServiceIndependentA extends ServiceBase {
-    public static getName () {
+    public static getName() {
         return "Services/ServiceIndependentA";
     }
 }
 
 export class ServiceIndependentB extends ServiceBase {
-    public static getName () {
+    public static getName() {
         return "Services/ServiceIndependentB";
     }
 }
@@ -29,11 +29,11 @@ export class ServiceDependentA extends ServiceWithDependenciesBaseMock<{
     independentA: ServiceIndependentA,
     independentB: ServiceIndependentB,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/ServiceDependentA";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             independentA: "Services/ServiceIndependentA",
             independentB: "Services/ServiceIndependentB",
@@ -46,11 +46,11 @@ export class ServiceDependantB extends ServiceWithDependenciesBaseMock<{
     dependantC: ServiceDependantC,
     dependantD: ServiceDependantD,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/ServiceDependantB";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             independentA: "Services/ServiceIndependentA",
             dependantC: "Services/ServiceDependantC",
@@ -65,11 +65,11 @@ export class ServiceDependantC extends ServiceWithDependenciesBaseMock<{
     dependantB: ServiceDependantB,
     dependantD: ServiceDependantD,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/ServiceDependantC";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             independentA: "Services/ServiceIndependentA",
             independentB: "Services/ServiceIndependentB",
@@ -85,11 +85,11 @@ export class ServiceDependantD extends ServiceWithDependenciesBaseMock<{
     dependantB: ServiceDependantB,
     dependantC: ServiceDependantC,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/ServiceDependantD";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             independentA: "Services/ServiceIndependentA",
             independentB: "Services/ServiceIndependentB",
@@ -102,11 +102,11 @@ export class ServiceDependantD extends ServiceWithDependenciesBaseMock<{
 export class CircularServiceA extends ServiceWithDependenciesBaseMock<{
     serviceB: CircularServiceB,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/CircularA";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             serviceB: "Services/CircularB",
         };
@@ -116,11 +116,11 @@ export class CircularServiceA extends ServiceWithDependenciesBaseMock<{
 export class CircularServiceB extends ServiceWithDependenciesBaseMock<{
     serviceA: CircularServiceA,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/CircularB";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             serviceA: "Services/CircularA",
         };
@@ -128,11 +128,11 @@ export class CircularServiceB extends ServiceWithDependenciesBaseMock<{
 }
 
 export class FailingService extends ServiceBase {
-    public static getName () {
+    public static getName() {
         return "Services/Failing";
     }
 
-    protected async initialize (): Promise<void> {
+    protected async initialize(): Promise<void> {
         throw new Error( "Initialization failed" );
     }
 }
@@ -140,11 +140,11 @@ export class FailingService extends ServiceBase {
 export class DependentService extends ServiceWithDependenciesBaseMock<{
     failingService: FailingService,
 }> {
-    public static getName () {
+    public static getName() {
         return "Services/Dependent";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             failingService: "Services/Failing",
         };
@@ -152,7 +152,7 @@ export class DependentService extends ServiceWithDependenciesBaseMock<{
 }
 
 export class MultiDependentService extends ServiceDependentA {
-    public static getName () {
+    public static getName() {
         return "Services/MultiDependent";
     }
 }

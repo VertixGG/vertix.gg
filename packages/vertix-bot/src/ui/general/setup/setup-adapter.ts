@@ -45,25 +45,25 @@ type DefaultInteraction = UIDefaultButtonChannelTextInteraction | UIDefaultModal
 export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, DefaultInteraction> {
     private masterChannelService: MasterChannelService;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/SetupAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return SetupComponent;
     }
 
-    protected static getExcludedElements () {
+    protected static getExcludedElements() {
         return [ LanguageSelectMenu ];
     }
 
-    public constructor ( protected options: any ) {
+    public constructor( protected options: any ) {
         super( options );
 
         this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }
 
-    protected async getReplyArgs ( interaction: DefaultInteraction, argsFromManager?: UIArgs ): Promise<ISetupArgs> {
+    protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager?: UIArgs ): Promise<ISetupArgs> {
         const args: any = {},
             badwords = badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) );
 
@@ -77,7 +77,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         return args;
     }
 
-    protected generateCustomIdForEntity ( entity: UIEntitySchemaBase ) {
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase ) {
         switch ( entity.name ) {
             case "VertixBot/UI-General/SetupMasterCreateV3Button": {
                 return new UICustomIdHashStrategy().generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name );
@@ -87,7 +87,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         return super.generateCustomIdForEntity( entity );
     }
 
-    protected getCustomIdForEntity ( hash: string ) {
+    protected getCustomIdForEntity( hash: string ) {
         if ( hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
             return new UICustomIdHashStrategy().getId( hash );
         }
@@ -96,7 +96,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async onBeforeBuild ( args: UIArgs, from: string, interaction?: DefaultInteraction ) {
+    protected async onBeforeBuild( args: UIArgs, from: string, interaction?: DefaultInteraction ) {
         if ( "run" === from ) {
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/SetupMasterCreateButton",
@@ -129,7 +129,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         }
     }
 
-    private async onSelectEditMasterChannel ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onSelectEditMasterChannel( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const masterChannelValue = interaction.values.at( 0 );
 
         let masterChannelId, masterChannelIndex;
@@ -160,7 +160,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         this.deleteArgs( interaction as any );
     }
 
-    private async onCreateMasterChannelClicked (
+    private async onCreateMasterChannelClicked(
         interaction: UIDefaultButtonChannelTextInteraction,
         version: TVersionType = VERSION_UI_V2
     ) {
@@ -203,11 +203,11 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         this.deleteArgs( interaction );
     }
 
-    private async onEditBadwordsClicked ( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onEditBadwordsClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         await this.showModal( "VertixBot/UI-General/BadwordsModal", interaction );
     }
 
-    private async onBadwordsModalSubmitted ( interaction: UIDefaultModalChannelTextInteraction ) {
+    private async onBadwordsModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
         const badwordsInputId = this.customIdStrategy.generateId(
             "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/BadwordsInput"
         );
@@ -228,7 +228,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         await this.editReply( interaction, {} );
     }
 
-    private async onLanguageChooseClicked ( interaction: DefaultInteraction ) {
+    private async onLanguageChooseClicked( interaction: DefaultInteraction ) {
         this.uiService.get( "VertixBot/UI-General/LanguageAdapter" )?.editReply( interaction, {} );
     }
 }

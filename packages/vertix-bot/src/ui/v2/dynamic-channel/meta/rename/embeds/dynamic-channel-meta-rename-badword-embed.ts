@@ -13,27 +13,27 @@ export class DynamicChannelMetaRenameBadwordEmbed extends UIEmbedBase {
         badword: uiUtilsWrapAsTemplate( "badword" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaRenameBadwordEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "🙅  Failed to rename your channel";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return `The word \`${ DynamicChannelMetaRenameBadwordEmbed.vars.badword }\` has been classified as inappropriate by the server administrator.`;
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             badword: args.badword
         };

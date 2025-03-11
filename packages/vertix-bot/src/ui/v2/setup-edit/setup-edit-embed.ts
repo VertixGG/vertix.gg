@@ -41,27 +41,27 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/SetupEditEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `🔧  Configure Master Channel #${ SetupEditEmbed.vars.index }`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "Configure master channel according to your preferences.\n\n" +
             "**_🎛️ General_**\n\n" +
@@ -89,11 +89,11 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         );
     }
 
-    protected getFooter () {
+    protected getFooter() {
         return "Note: Changing user mention will not affect already created dynamic channels.";
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             on,
             off,
@@ -139,7 +139,7 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         };
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         return {
             ...super.getArrayOptions(),
 
@@ -150,7 +150,7 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,

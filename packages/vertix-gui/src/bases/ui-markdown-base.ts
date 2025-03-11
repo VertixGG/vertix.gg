@@ -15,22 +15,22 @@ export abstract class UIMarkdownBase extends UITemplateBase {
 
     private translatedContent: UIMarkdownLanguageContent | undefined;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIMarkdownTemplateBase";
     }
 
-    public static getType (): UIType {
+    public static getType(): UIType {
         return "markdown";
     }
 
-    public static ensure () {
+    public static ensure() {
         // TODO: Probably loading should be on another flow.
         const path = this.getContentPath();
 
         this.content = fs.readFileSync( path, "utf8" );
     }
 
-    public static pullout ( code: string ) {
+    public static pullout( code: string ) {
         const result = this.generatedLinks[ this.getName() + "/" + code ];
 
         delete this.generatedLinks[ this.getName() + "/" + code ];
@@ -38,11 +38,11 @@ export abstract class UIMarkdownBase extends UITemplateBase {
         return result;
     }
 
-    protected static getContentPath (): string {
+    protected static getContentPath(): string {
         throw new ForceMethodImplementation( this, this.getContentPath.name );
     }
 
-    public async build ( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: UIArgs ) {
         this.translatedContent = await this.uiService
             .getUILanguageManager()
             .getMarkdownTranslatedContent( this, uiArgs?._language );
@@ -50,7 +50,7 @@ export abstract class UIMarkdownBase extends UITemplateBase {
         return super.build( uiArgs );
     }
 
-    public async getTranslatableContent (): Promise<UIMarkdownLanguageContent> {
+    public async getTranslatableContent(): Promise<UIMarkdownLanguageContent> {
         const result: UIMarkdownLanguageContent = {
             content: ( this.constructor as typeof UIMarkdownBase ).content
         };
@@ -68,16 +68,16 @@ export abstract class UIMarkdownBase extends UITemplateBase {
 
     protected abstract getCode(): string;
 
-    protected getOptions (): UIBaseTemplateOptions {
+    protected getOptions(): UIBaseTemplateOptions {
         return {};
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getLogic ( args?: UIArgs ): Promise<{ [key: string]: any }> {
+    protected async getLogic( args?: UIArgs ): Promise<{ [key: string]: any }> {
         return {};
     }
 
-    protected async getAttributes () {
+    protected async getAttributes() {
         const content = this.composeTemplate(
             { content: await this.getContentInternal() },
             await this.getLogic( this.uiArgs ),
@@ -92,7 +92,7 @@ export abstract class UIMarkdownBase extends UITemplateBase {
         return content;
     }
 
-    private async getContentInternal () {
+    private async getContentInternal() {
         return this.translatedContent?.content || ( this.constructor as typeof UIMarkdownBase ).content;
     }
 }

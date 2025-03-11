@@ -12,23 +12,23 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmbedBase, new UIEmbedVars( "clearEmoji" ) );
 
 export class DynamicChannelClearChatNothingToClearEmbed extends DynamicChannelEmbedBaseWithVars {
-    public static getName (): string {
+    public static getName(): string {
         return "Vertix/UI-V3/DynamicChannelClearChatNothingToClearEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return `${ this.vars.get( "clearEmoji" ) }  There are no messages available to clear`;
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return "Keep in mind, that only non-embeds messages can be deleted.";
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
         result.clearEmoji = DynamicChannelClearChatButton.getEmoji();

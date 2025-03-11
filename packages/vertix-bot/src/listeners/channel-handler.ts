@@ -6,10 +6,10 @@ import type { VoiceState, Client } from "discord.js";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
-export function channelHandler ( client: Client ) {
+export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, VoiceStateUpdate );
 
-    async function VoiceStateUpdate ( oldState: VoiceState, newState: VoiceState ) {
+    async function VoiceStateUpdate( oldState: VoiceState, newState: VoiceState ) {
         const channelService = ServiceLocator.$.get<ChannelService>( "VertixBot/Services/Channel" );
 
         if ( !oldState.channelId && newState.channelId ) {
@@ -24,13 +24,13 @@ export function channelHandler ( client: Client ) {
         }
     }
 
-    client.on( Events.ChannelDelete, async ( channel ) => {
+    client.on( Events.ChannelDelete, async( channel ) => {
         const channelService = ServiceLocator.$.get<ChannelService>( "VertixBot/Services/Channel" );
 
         await channelService.onChannelDelete( channel );
     } );
 
-    client.on( Events.ChannelUpdate, async ( oldChannel, newChannel ) => {
+    client.on( Events.ChannelUpdate, async( oldChannel, newChannel ) => {
         const channelService = ServiceLocator.$.get<ChannelService>( "VertixBot/Services/Channel" );
 
         await channelService.onChannelUpdate( oldChannel, newChannel );

@@ -4,23 +4,23 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 export class FeedbackEmbed extends UIEmbedBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/FeedbackEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Static;
     }
 
-    protected getColor () {
+    protected getColor() {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "Appreciating your experience with Vertix";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "We want to thank you for your time and patience.\n\n" +
             "**Your experience with Vertix is important to us, and we would love to hear your feedback.**\n\n" +

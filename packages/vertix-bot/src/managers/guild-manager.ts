@@ -30,11 +30,11 @@ export class GuildManager extends InitializeBase {
 
     private readonly updateStatsBound: OmitThisParameter<() => void>;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Managers/Guild";
     }
 
-    public static get $ () {
+    public static get $() {
         if ( !GuildManager.instance ) {
             GuildManager.instance = new GuildManager();
         }
@@ -42,7 +42,7 @@ export class GuildManager extends InitializeBase {
         return GuildManager.instance;
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
@@ -58,7 +58,7 @@ export class GuildManager extends InitializeBase {
         EventBus.$.register( this, [ this.onJoined ] );
     }
 
-    public async onJoin ( client: Client, guild: Guild ) {
+    public async onJoin( client: Client, guild: Guild ) {
         // Find who invited the bot.
         const logs = await guild.fetchAuditLogs().catch( ( e ) => {
                 this.logger.warn( this.onJoin, `Guild id: '${ guild.id }' - Error fetching audit logs:`, e );
@@ -108,7 +108,7 @@ export class GuildManager extends InitializeBase {
         this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
-    public async onLeave ( client: Client, guild: Guild ) {
+    public async onLeave( client: Client, guild: Guild ) {
         this.logger.info( this.onLeave, `Guild id: '${ guild.id }' - Vertix left guild: '${ guild.name }'` );
         this.logger.admin(
             this.onLeave,
@@ -126,7 +126,7 @@ export class GuildManager extends InitializeBase {
         this.debounce( this.updateStatsBound, DEFAULT_UPDATE_STATS_DEBOUNCE_DELAY );
     }
 
-    public async onJoined ( guild: Guild, defaultChannel: TextChannel, user?: User ) {
+    public async onJoined( guild: Guild, defaultChannel: TextChannel, user?: User ) {
         const welcomeAdapter = this.uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 
         welcomeAdapter?.send(
@@ -139,7 +139,7 @@ export class GuildManager extends InitializeBase {
         );
     }
 
-    private updateStats () {
+    private updateStats() {
         TopGGManager.$.updateStats();
 
         this.logger.debug( this.updateStats, "Stats updated via debounce" );

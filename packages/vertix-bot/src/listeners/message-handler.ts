@@ -6,8 +6,8 @@ import type { DirectMessageService } from "@vertix.gg/bot/src/services/direct-me
 
 import type { Client } from "discord.js";
 
-export function messageHandler ( client: Client ) {
-    client.on( Events.MessageCreate, async ( message ) => {
+export function messageHandler( client: Client ) {
+    client.on( Events.MessageCreate, async( message ) => {
         if ( message.author.bot ) {
             return;
         }

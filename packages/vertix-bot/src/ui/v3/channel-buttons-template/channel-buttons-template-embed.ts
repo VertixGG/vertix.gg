@@ -16,15 +16,15 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
         dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ChannelButtonsTemplateEmbed";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return ChannelButtonsTemplateEmbed._vars.dynamicChannelButtonsTemplate;
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const result = {
             dynamicChannelButtonsTemplate: {
                 format: `- ( ${ ChannelButtonsTemplateEmbed._vars.value } )${ ChannelButtonsTemplateEmbed._vars.separator }`,
@@ -40,7 +40,7 @@ export class ChannelButtonsTemplateEmbed extends UIEmbedBase {
         return result;
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds(
                 args.dynamicChannelButtonsTemplate

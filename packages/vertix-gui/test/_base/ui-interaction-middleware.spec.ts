@@ -19,11 +19,11 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction } from "discord.js";
 
 class MockComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "test-component";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 }
@@ -36,7 +36,7 @@ const guild = new GuildMock( client, {
 } ).getFakeInstance();
 
 describe( "VertixGUI/UIInteractionMiddleware", () => {
-    beforeEach( async () => {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
         EventBusMock.reset();
@@ -45,7 +45,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         await ServiceLocatorMock.$.waitForAll();
     } );
 
-    it( "should protect 'send' method work only for specific channel types", async () => {
+    it( "should protect 'send' method work only for specific channel types", async() => {
         // Arrange.
         const channel = new VoiceChannel( guild, {
             id: "channel_voice_id_1",
@@ -56,15 +56,15 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         }, client );
 
         const adapter = new class extends UIAdapterBase<VoiceChannel, ButtonInteraction<"cached">> {
-            public static getName () {
+            public static getName() {
                 return "test-adapter";
             }
 
-            public static getComponent () {
+            public static getComponent() {
                 return MockComponent;
             }
 
-            public getChannelTypes () {
+            public getChannelTypes() {
                 return [ ChannelType.GuildNews ];
             }
 
@@ -77,7 +77,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         await expect( act ).rejects.toThrowError( "Invalid channel type. Expected: 'GuildNews' but got: 'GuildVoice'" );
     } );
 
-    it( "should pass 'send' method if channel type is correct", async () => {
+    it( "should pass 'send' method if channel type is correct", async() => {
         // Arrange.
         const channel = new VoiceChannel( guild, {
             id: "channel_voice_id_1",
@@ -88,15 +88,15 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         }, client );
 
         const adapter = new class extends UIAdapterBase<VoiceChannel, ButtonInteraction<"cached">> {
-            public static getName () {
+            public static getName() {
                 return "test-adapter";
             }
 
-            public static getComponent () {
+            public static getComponent() {
                 return MockComponent;
             }
 
-            public getChannelTypes () {
+            public getChannelTypes() {
                 return [ ChannelType.GuildVoice ];
             }
         }( {} );
@@ -108,7 +108,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         await expect( act ).rejects.toThrowError( "ForceMethod implementation: at 'test-adapter' method: 'getStartArgs'" );
     } );
 
-    it( "should protected 'editReply' method work only for specific permissions", async () => {
+    it( "should protected 'editReply' method work only for specific permissions", async() => {
         // Arrange.
         // const channel = new VoiceChannel( guild, {
         //     id: "channel_voice_id_1",

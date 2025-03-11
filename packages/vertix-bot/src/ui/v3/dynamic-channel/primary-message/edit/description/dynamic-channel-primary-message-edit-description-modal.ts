@@ -15,49 +15,49 @@ class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBas
         VERSION_UI_V3
     );
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditModalDescription";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getStyle (): Promise<UIInputStyleTypes> {
+    protected async getStyle(): Promise<UIInputStyleTypes> {
         return "long";
     }
 
-    protected async getLabel (): Promise<string> {
+    protected async getLabel(): Promise<string> {
         return "Description";
     }
 
-    protected async getValue (): Promise<string> {
+    protected async getValue(): Promise<string> {
         return this.uiArgs?.description || this.configV3.data.constants.dynamicChannelPrimaryMessageDescription;
     }
 
-    protected async getMinLength (): Promise<number> {
+    protected async getMinLength(): Promise<number> {
         return 0;
     }
 
-    protected async getMaxLength (): Promise<number> {
+    protected async getMaxLength(): Promise<number> {
         return 4000;
     }
 }
 
 export class DynamicChannelPrimaryMessageEditDescriptionModal extends UIModalBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "Edit Description";
     }
 
-    public static getInputElements () {
+    public static getInputElements() {
         return [ DynamicChannelPrimaryMessageEditModalDescription ];
     }
 }

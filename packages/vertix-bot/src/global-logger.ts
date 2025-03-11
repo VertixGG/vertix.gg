@@ -4,11 +4,11 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 export class GlobalLogger extends ObjectBase {
     private static instance: Logger;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/GlobalLogger";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !GlobalLogger.instance ) {
             const self = new GlobalLogger();
             GlobalLogger.instance = new Logger( self );
@@ -17,7 +17,7 @@ export class GlobalLogger extends ObjectBase {
         return GlobalLogger.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return GlobalLogger.getInstance();
     }
 }

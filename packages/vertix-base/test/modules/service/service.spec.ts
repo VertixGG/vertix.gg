@@ -43,7 +43,7 @@ describe( "VertixBase/Modules/Service", () => {
         ).toThrow();
     } );
 
-    it( "waits for a service to be registered", async () => {
+    it( "waits for a service to be registered", async() => {
         // Arrange.
         ServiceLocatorMock.$.register( ServiceIndependentA );
 
@@ -55,7 +55,7 @@ describe( "VertixBase/Modules/Service", () => {
         expect( service ).toBeInstanceOf( ServiceIndependentA );
     } );
 
-    it( "initializes dependencies correctly", async () => {
+    it( "initializes dependencies correctly", async() => {
         // Arrange.
         ServiceLocatorMock.$.register( ServiceIndependentA );
         ServiceLocatorMock.$.register( ServiceIndependentB );
@@ -72,7 +72,7 @@ describe( "VertixBase/Modules/Service", () => {
         expect( service.getServices().independentB ).toBeInstanceOf( ServiceIndependentB );
     } );
 
-    it( "throws an error when a dependency is not registered", async () => {
+    it( "throws an error when a dependency is not registered", async() => {
         // Arrange.
         const service = new ServiceDependentA();
 
@@ -80,7 +80,7 @@ describe( "VertixBase/Modules/Service", () => {
         await expect( service.initialize() ).rejects.toThrow();
     } );
 
-    it( "handles dependency initialization failure", async () => {
+    it( "handles dependency initialization failure", async() => {
         // Arrange.
         ServiceLocatorMock.$.register( FailingService );
         ServiceLocatorMock.$.register( DependentService );
@@ -91,7 +91,7 @@ describe( "VertixBase/Modules/Service", () => {
             .toThrow( "Initialization failed" );
     } );
 
-    it( "throws an error when waiting for a service times out", async () => {
+    it( "throws an error when waiting for a service times out", async() => {
         // Arrange.
         const waitForService =
             ServiceLocatorMock.$.waitFor<ServiceIndependentA>( "Services/ServiceIndependentA", { timeout: 50 } );
@@ -103,14 +103,14 @@ describe( "VertixBase/Modules/Service", () => {
         await expect( waitForService ).rejects.toThrow();
     } );
 
-    it( "handles service initialization timeout", async () => {
+    it( "handles service initialization timeout", async() => {
         // Arrange.
         class SlowService extends ServiceBase {
-            public static getName () {
+            public static getName() {
                 return "Services/Slow";
             }
 
-            protected async initialize (): Promise<void> {
+            protected async initialize(): Promise<void> {
                 await new Promise( resolve => setTimeout( resolve, 2000 ) ); // Simulate slow initialization
             }
         }
@@ -127,7 +127,7 @@ describe( "VertixBase/Modules/Service", () => {
         await expect( waitForService ).rejects.toThrow( "initialization timed out" );
     } );
 
-    it( "it should initializes service with multiple dependencies", async () => {
+    it( "it should initializes service with multiple dependencies", async() => {
         // Arrange.
         ServiceLocatorMock.$.register( ServiceIndependentA );
         ServiceLocatorMock.$.register( ServiceIndependentB );

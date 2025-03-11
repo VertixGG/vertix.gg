@@ -12,25 +12,25 @@ import type {
 import type { BaseGuildTextChannel } from "discord.js";
 
 export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction> {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/LanguageAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return LanguageComponent;
     }
 
-    protected async getReplyArgs () {
+    protected async getReplyArgs() {
         return {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindSelectMenu( "VertixBot/UI-General/LanguageSelectMenu", this.onLanguageSelected );
 
         this.bindButton( "VertixBot/UI-General/DoneButton", this.onDoneClicked );
     }
 
-    private async onLanguageSelected ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onLanguageSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const language = interaction.values[ 0 ];
 
         await GuildDataManager.$.setLanguage( interaction.guild, language );
@@ -40,7 +40,7 @@ export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDe
         } );
     }
 
-    private async onDoneClicked ( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onDoneClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {

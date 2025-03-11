@@ -28,7 +28,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
 
     protected debugger: Debugger;
 
-    public static getInstance<TModelType extends IDataModel, TManager extends ManagerDataBase<TModelType>> (
+    public static getInstance<TModelType extends IDataModel, TManager extends ManagerDataBase<TModelType>>(
         this: new () => TManager
     ): TManager {
         if ( !ManagerDataBase.instances.has( this ) ) {
@@ -38,7 +38,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         return ManagerDataBase.instances.get( this );
     }
 
-    protected constructor ( shouldDebugCache = false ) {
+    protected constructor( shouldDebugCache = false ) {
         super( shouldDebugCache );
 
         this.debugger = new Debugger( this );
@@ -46,7 +46,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         this.dataSourceModel = this.getDataSourceModel();
     }
 
-    public async getData ( args: Omit<IDataGetArgs, "version">, isOwnerIdSourceId = false ) {
+    public async getData( args: Omit<IDataGetArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, args.cache );
 
         const { ownerId, key, cache } = args,
@@ -106,7 +106,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         return data;
     }
 
-    public async getSettingsData ( ownerId: string, defaultSettings: any, cache = false, isOwnerIdSourceId = false ) {
+    public async getSettingsData( ownerId: string, defaultSettings: any, cache = false, isOwnerIdSourceId = false ) {
         this.debugger.log( this.getSettingsData, `Getting settings data for ownerId: '${ ownerId }', cache: '${ cache }' ` );
 
         return await this.getData(
@@ -120,7 +120,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         );
     }
 
-    public async setData ( args: Omit<IDataUpdateArgs, "version">, isOwnerIdSourceId = false ) {
+    public async setData( args: Omit<IDataUpdateArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, args.cache );
 
         this.logger.info(
@@ -210,7 +210,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         );
     }
 
-    public async setSettingsData ( ownerId: string, settings: any, skipGetSettings = false ) {
+    public async setSettingsData( ownerId: string, settings: any, skipGetSettings = false ) {
         let oldSettings: any = {};
 
         if ( !skipGetSettings ) {
@@ -229,7 +229,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         } );
     }
 
-    public async updateData ( args: Omit<IDataUpdateArgs, "version">, dbData: DataResult ) {
+    public async updateData( args: Omit<IDataUpdateArgs, "version">, dbData: DataResult ) {
         const { ownerId, key } = args,
             cacheKey = `${ ownerId }-${ key }`;
 
@@ -241,7 +241,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         await this.dataSourceModel.setData( args );
     }
 
-    public async deleteData ( args: Omit<IDataSelectUniqueArgs, "version">, isOwnerIdSourceId = false ) {
+    public async deleteData( args: Omit<IDataSelectUniqueArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, true );
 
         this.logger.info( this.deleteData, `Deleting data for ownerId: '${ args.ownerId }' key: '${ args.key }'` );
@@ -251,13 +251,13 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         return await this.dataSourceModel.deleteData( args );
     }
 
-    public async getAllData () {
+    public async getAllData() {
         this.logger.info( this.getAllData, "Getting all content" );
 
         return await this.dataSourceModel.getAllData();
     }
 
-    public async isExist ( ownerId: string, key: string, version = VERSION_UI_V2, cache = true ) {
+    public async isExist( ownerId: string, key: string, version = VERSION_UI_V2, cache = true ) {
         this.logger.debug(
             this.isExist,
             `Checking if data exist for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'`
@@ -292,7 +292,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
      */
     protected abstract getSettingsKey(): string;
 
-    private async normalizeArgs ( args: any, isOwnerIdSourceId: boolean, cache = true ) {
+    private async normalizeArgs( args: any, isOwnerIdSourceId: boolean, cache = true ) {
         if ( isOwnerIdSourceId ) {
             args = { ...args };
             args.ownerId = await this.getIdByOwnerSourceId( args.ownerId, cache );
@@ -301,7 +301,7 @@ export abstract class ManagerDataBase<ModelType extends IDataModel>
         return args;
     }
 
-    private async getIdByOwnerSourceId ( ownerId: string, cache: boolean ) {
+    private async getIdByOwnerSourceId( ownerId: string, cache: boolean ) {
         if ( cache ) {
             const cachedResult = this.ownerIdCache[ ownerId ];
 

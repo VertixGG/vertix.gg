@@ -36,7 +36,7 @@ const extendedModel = PrismaBot.Prisma.defineExtension( ( client ) => {
                         channelId: true,
                         guildId: true
                     },
-                    compute ( model ) {
+                    compute( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL;
                     }
                 },
@@ -44,7 +44,7 @@ const extendedModel = PrismaBot.Prisma.defineExtension( ( client ) => {
                     needs: {
                         internalType: true
                     },
-                    compute ( model ) {
+                    compute( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
                     }
                 }

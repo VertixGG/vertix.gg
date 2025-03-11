@@ -14,18 +14,18 @@ import type { UIEntityTypesConstructor, UIArgs } from "@vertix.gg/gui/src/bases/
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
 export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected static getElementsGroupExtendClass () {
+    protected static getElementsGroupExtendClass() {
         // TODO: Find better solution.
         return class extends UIElementsGroupBase {
-            public static getItems ( args: UIArgs ) {
+            public static getItems( args: UIArgs ) {
                 let result = super.getItems( args );
 
                 switch ( this.getName() ) {
@@ -50,7 +50,7 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
                 return result;
             }
 
-            private static findAndReorderYesButton (
+            private static findAndReorderYesButton(
                 elements: UIEntityTypesConstructor,
                 targetButtonName: string,
                 position: "start" | "center" | "end"
@@ -79,7 +79,7 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
         };
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             // TODO: Find better way to do this.
             ...super.getEmbedsGroups(),
@@ -88,7 +88,7 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
         ];
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [
             // TODO: Find better way to do this.
             ...super.getElementsGroups(),
@@ -97,15 +97,15 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
         ];
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup";
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return "VertixBot/UI-General/YesNoElementsGroup";
     }
 
-    public static getDefaultMarkdownsGroup () {
+    public static getDefaultMarkdownsGroup() {
         return null;
     }
 }

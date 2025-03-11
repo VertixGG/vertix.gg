@@ -12,7 +12,7 @@ const VALUE_VARIABLE_NAME = "elapsedTimeValue",
     FORMAT_SECOND_UNITS = "formatSecondUnits";
 
 export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/EmbedElapsedTimeBase";
     }
 
@@ -25,7 +25,7 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
      * eg: 1 minute and 30 seconds will be displayed as `1 minutes`.
      * eg: 30 seconds will be displayed as `30 seconds`.
      */
-    protected getElapsedTimeFormatVariable () {
+    protected getElapsedTimeFormatVariable() {
         return uiUtilsWrapAsTemplate( FORMAT_VARIABLE_NAME );
     }
 
@@ -36,11 +36,11 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
      * eg: 1 minute and 30 seconds will be displayed as `1.5 minutes`.
      * eg: 30 seconds will be displayed as `30 seconds`.
      */
-    protected getElapsedTimeFormatFractionVariable () {
+    protected getElapsedTimeFormatFractionVariable() {
         return uiUtilsWrapAsTemplate( FORMAT_FRACTION_VARIABLE_NAME );
     }
 
-    protected getElapsedTimeOptions () {
+    protected getElapsedTimeOptions() {
         const timeValue = uiUtilsWrapAsTemplate( VALUE_VARIABLE_NAME ),
             timeValueFraction = uiUtilsWrapAsTemplate( VALUE_FRACTION_VARIABLE_NAME ),
             formatMinuteUnits = uiUtilsWrapAsTemplate( FORMAT_MINUTE_UNITS ),
@@ -66,7 +66,7 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
         };
     }
 
-    protected getElapsedTimeLogic ( args: UIArgs ) {
+    protected getElapsedTimeLogic( args: UIArgs ) {
         const result: {
             [VALUE_VARIABLE_NAME]?: number;
             [VALUE_FRACTION_VARIABLE_NAME]?: number;
@@ -123,14 +123,14 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
         return result;
     }
 
-    protected getInternalOptions (): {} {
+    protected getInternalOptions(): {} {
         return {
             ...this.getElapsedTimeOptions(),
             ...super.getInternalOptions()
         };
     }
 
-    protected getInternalLogic ( args: UIArgs ) {
+    protected getInternalLogic( args: UIArgs ) {
         return {
             ...this.getElapsedTimeLogic( args ),
             ...super.getInternalLogic( args )

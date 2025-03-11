@@ -13,27 +13,27 @@ export class SetupEditButtonsEffectEmbed extends UIEmbedBase {
         index: uiUtilsWrapAsTemplate( "index" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/SetupEditButtonsEffectEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `🎚  Edit Buttons Of Master Channel #${ SetupEditButtonsEffectEmbed.vars.index }`;
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         const index = SetupEditButtonsEffectEmbed.vars.index;
 
         return (
@@ -44,11 +44,11 @@ export class SetupEditButtonsEffectEmbed extends UIEmbedBase {
         );
     }
 
-    protected getFooter () {
+    protected getFooter() {
         return "Current enabled buttons at the menu below";
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             index: args.index + 1
         };

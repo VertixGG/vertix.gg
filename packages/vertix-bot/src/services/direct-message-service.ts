@@ -22,28 +22,28 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 }> {
     private feedbackSentIds: Map<string, string> = new Map();
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Services/DirectMessage";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
             uiService: "VertixGUI/UIService"
         };
     }
 
-    protected async initialize (): Promise<void> {
+    protected async initialize(): Promise<void> {
         await super.initialize();
 
         const { appService } = this.services;
 
-        appService.onceReady( async () => {
+        appService.onceReady( async() => {
             appService.getClient().on( "messageCreate", this.onMessage.bind( this ) );
         } );
     }
 
-    public async onMessage ( message: Message ) {
+    public async onMessage( message: Message ) {
         if ( message.author.bot ) {
             return;
         }
@@ -78,7 +78,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         await adapter.sendToUser( "direct-message", message.author.id, {} );
     }
 
-    public async onOwnerMessage ( message: Message ) {
+    public async onOwnerMessage( message: Message ) {
         const command = message.content.split( " " ).filter( ( entry ) => entry.length );
 
         switch ( command[ 0 ] ) {
@@ -99,7 +99,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async handleEmbedCommand ( command: string[], message: Message ) {
+    private async handleEmbedCommand( command: string[], message: Message ) {
         if ( command.length < 2 || command.length > 3 || !command[ 1 ]?.length || !command[ 2 ]?.length ) {
             return await message.reply( OWNER_COMMAND_SYNTAX.embed );
         }
@@ -117,7 +117,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async handleEditEmbedCommand ( command: string[], message: Message ) {
+    private async handleEditEmbedCommand( command: string[], message: Message ) {
         if (
             command.length < 3 ||
             command.length > 4 ||
@@ -146,16 +146,16 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         if ( response && messageToEdit ) {
             await messageToEdit
                 .edit( { embeds: [ this.buildEmbed( response ) ] } )
-                .catch( async () => {
+                .catch( async() => {
                     await message.reply( "Message was not edited!" );
                 } )
-                .then( async () => {
+                .then( async() => {
                     await message.reply( "Message edited!" );
                 } );
         }
     }
 
-    private async sendEmbedCommand ( channel: Channel, response: any, message: Message ) {
+    private async sendEmbedCommand( channel: Channel, response: any, message: Message ) {
         if ( !channel.isSendable() ) {
             await message.reply( "Message was not sent!" );
             return;
@@ -163,15 +163,15 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 
         channel
             .send( { embeds: [ this.buildEmbed( response ) ] } )
-            .catch( async () => {
+            .catch( async() => {
                 await message.reply( "Message was not sent!" );
             } )
-            .then( async () => {
+            .then( async() => {
                 await message.reply( "Message sent!" );
             } );
     }
 
-    public async sendLeaveMessageToOwner ( guild: Guild ) {
+    public async sendLeaveMessageToOwner( guild: Guild ) {
         const adapter = this.services.uiService.get( "VertixBot/UI-General/FeedbackAdapter" );
 
         if ( !adapter ) {
@@ -182,7 +182,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         await adapter.sendToUser( guild.id, guild.ownerId, {} );
     }
 
-    public async sendToOwner ( guild: Guild, message: MessageCreateOptions ) {
+    public async sendToOwner( guild: Guild, message: MessageCreateOptions ) {
         const appService = this.services.appService;
 
         await ( await appService.getClient().users.fetch( guild.ownerId ) ).send( message ).catch( () => {
@@ -193,7 +193,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    public async sendToUser ( userId: string, message: MessageCreateOptions ) {
+    public async sendToUser( userId: string, message: MessageCreateOptions ) {
         const appService = this.services.appService;
 
         await ( await appService.getClient().users.fetch( userId ) ).send( message ).catch( () => {
@@ -201,13 +201,13 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    private async fetchEmbed ( url: string, message: Message ) {
+    private async fetchEmbed( url: string, message: Message ) {
         let response: any;
 
         try {
             const request = fetch( url );
 
-            response = await request.then( async ( _response ) => {
+            response = await request.then( async( _response ) => {
                 if ( !_response.ok ) {
                     throw _response;
                 }
@@ -222,7 +222,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         return response;
     }
 
-    private buildEmbed ( response: any ) {
+    private buildEmbed( response: any ) {
         const embedBuilder = new EmbedBuilder();
 
         if ( response.title ) {

@@ -24,19 +24,19 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelPermissionsComponent;
     }
 
-    protected static getInitiatorElement () {
+    protected static getInitiatorElement() {
         return DynamicChannelPermissionsAccessButton;
     }
 
-    protected static getExcludedElements () {
+    protected static getExcludedElements() {
         return [
             // DynamicChannelPermissionsAccessButton,
             DynamicChannelPermissionsStateButton,
@@ -44,7 +44,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         ];
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             ...super.getExecutionSteps(),
 
@@ -97,11 +97,11 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         };
     }
 
-    protected getStartArgs () {
+    protected getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
+    protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep()?.name ) {
@@ -152,7 +152,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         return args;
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         // TODO: Check if state buttons needed to move out from component, since they are non-visible.
         // Private/Public.
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
@@ -197,7 +197,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         );
     }
 
-    private async onStateButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -247,7 +247,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onStateVisibilityClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onStateVisibilityClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -309,7 +309,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onGrantSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onGrantSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const targetId = interaction.values.at( 0 ) as string,
             target = interaction.guild.members.cache.get( targetId );
 
@@ -350,7 +350,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onDenySelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onDenySelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const targetId = interaction.values.at( 0 ) as string,
             target = interaction.guild.members.cache.get( targetId );
 
@@ -385,7 +385,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onBlockSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onBlockSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const targetId = interaction.values.at( 0 ) as string,
             target = interaction.guild.members.cache.get( targetId );
 
@@ -433,7 +433,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onUnBlockSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onUnBlockSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const targetId = interaction.values.at( 0 ) as string,
             target = interaction.guild.members.cache.get( targetId );
 
@@ -467,7 +467,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         }
     }
 
-    private async onKickSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onKickSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const targetId = interaction.values.at( 0 ) as string,
             target = interaction.guild.members.cache.get( targetId );
 

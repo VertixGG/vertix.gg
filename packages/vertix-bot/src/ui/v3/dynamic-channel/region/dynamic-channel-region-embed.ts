@@ -22,19 +22,19 @@ const utcRegionVars = Object.values( DEFAULT_RTC_REGIONS ).map( ( region ) => {
 const vars = new UIEmbedVars( "region", "regionOptions", "regionEmoji", ...utcRegionVars );
 
 export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend( DynamicChannelEmbedBase, vars ) {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelRegionEmbed";
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `${ this.vars.get().regionEmoji }  Set voice region for your channel`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "-# The region determines the voice server's location.\n" +
             "-# It should be the closest to all voice channel members.\n" +
@@ -45,7 +45,7 @@ export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend( DynamicCha
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const mapRegions: Record<string, string> = {};
 
         Object.entries( DEFAULT_RTC_REGIONS ).forEach( ( [ label, value ] ) => {
@@ -60,7 +60,7 @@ export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend( DynamicCha
         };
     }
 
-    protected async getLogicAsync ( args: UIArgs ) {
+    protected async getLogicAsync( args: UIArgs ) {
         const result = super.getLogic( args );
 
         if ( args.region ) {

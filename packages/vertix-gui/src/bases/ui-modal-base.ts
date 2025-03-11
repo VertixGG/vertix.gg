@@ -21,35 +21,35 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
 
     private content: UIModalLanguageContent | undefined;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIModalBase";
     }
 
-    public static getType (): UIType {
+    public static getType(): UIType {
         return "modal";
     }
 
-    public static validate () {
+    public static validate() {
         this.ensureEntities( this.getInputElements().flat(), true );
     }
 
-    public static getInputElements (): ( typeof UIElementInputBase )[] | ( typeof UIElementInputBase )[][] {
+    public static getInputElements(): ( typeof UIElementInputBase )[] | ( typeof UIElementInputBase )[][] {
         return [];
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.uiInputElements = [];
     }
 
-    public async build ( args?: UIArgs ) {
+    public async build( args?: UIArgs ) {
         this.content = await this.uiService.getUILanguageManager().getModalTranslatedContent( this, args?._language );
 
         return super.build( args );
     }
 
-    public async getTranslatableContent (): Promise<PrismaBot.ModalContentLanguage> {
+    public async getTranslatableContent(): Promise<PrismaBot.ModalContentLanguage> {
         return {
             title: this.getTitle()
         };
@@ -57,7 +57,7 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
 
     protected abstract getTitle(): string;
 
-    protected async getSchemaInternal () {
+    protected async getSchemaInternal() {
         return {
             name: this.getName(),
             type: this.getStaticThis().getType(),
@@ -68,15 +68,15 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
         };
     }
 
-    protected async buildDynamicEntities ( args?: UIArgs ) {
+    protected async buildDynamicEntities( args?: UIArgs ) {
         await this.buildInputElements( args );
     }
 
-    protected async buildStaticEntities () {
+    protected async buildStaticEntities() {
         await this.buildInputElements( undefined, true );
     }
 
-    private async buildInputElements ( args?: UIArgs, onlyStatic = false ) {
+    private async buildInputElements( args?: UIArgs, onlyStatic = false ) {
         const elements = this.getStaticThis().getInputElements(),
             isMultiRow = Array.isArray( elements[ 0 ] ),
             elementsRows = isMultiRow
@@ -101,7 +101,7 @@ export abstract class UIModalBase extends UIPortableBase<UIModalSchema> {
         }
     }
 
-    private getStaticThis () {
+    private getStaticThis() {
         return this.constructor as typeof UIModalBase;
     }
 }

@@ -49,7 +49,7 @@ describe( "VertixBase/Modules/EventBus", () => {
         ).toThrow();
     } );
 
-    it( "should emit events and trigger callbacks", async () => {
+    it( "should emit events and trigger callbacks", async() => {
         // Arrange.
         eventbus.register( mockObject, [ mockObject.mockMethod ] );
 
@@ -66,7 +66,7 @@ describe( "VertixBase/Modules/EventBus", () => {
         expect( mockCallback ).toHaveBeenCalled();
     } );
 
-    it( "should remove event listeners when unregistering an object", async () => {
+    it( "should remove event listeners when unregistering an object", async() => {
         // Arrange.
         eventbus.register( mockObject, [ mockObject.mockMethod ] );
 
@@ -84,7 +84,7 @@ describe( "VertixBase/Modules/EventBus", () => {
         expect( mockCallback ).not.toHaveBeenCalled();
     } );
 
-    it( "should call the callback immediately if the event was already emitted", async () => {
+    it( "should call the callback immediately if the event was already emitted", async() => {
         eventbus.register( mockObject, [ mockObject.mockMethod ] );
 
         mockObject.mockMethod();
@@ -110,7 +110,7 @@ describe( "VertixBase/Modules/EventBus", () => {
         } ).toThrow( "Object nonExistentObject is not registered" );
     } );
 
-    it( "should call the callback immediately with the correct arguments if the event was already emitted", async () => {
+    it( "should call the callback immediately with the correct arguments if the event was already emitted", async() => {
         eventbus.register( mockObject, [ mockObject.mockMethod ] );
 
         const args = [ "arg1", "arg2" ];

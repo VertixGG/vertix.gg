@@ -10,21 +10,21 @@ import type { UIElementButtonLanguageContent } from "@vertix.gg/gui/src/bases/ui
 export abstract class UIElementButtonBase extends UIElementBase<APIButtonComponentWithCustomId> {
     private content: UIElementButtonLanguageContent | undefined;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIElementButtonBase";
     }
 
-    public static getComponentType (): ComponentType {
+    public static getComponentType(): ComponentType {
         return ComponentType.Button;
     }
 
-    public async build ( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: UIArgs ) {
         this.content = await this.uiLanguageManager.getButtonTranslatedContent( this, uiArgs?._language );
 
         return super.build( uiArgs );
     }
 
-    public async getTranslatableContent (): Promise<UIElementButtonLanguageContent> {
+    public async getTranslatableContent(): Promise<UIElementButtonLanguageContent> {
         const result: UIElementButtonLanguageContent = {
                 label: await this.getLabel()
             },
@@ -50,11 +50,11 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
     /**
      * Function isLabelOmitted() :: If true there will be no label in the button.
      */
-    protected async isLabelOmitted (): Promise<boolean> {
+    protected async isLabelOmitted(): Promise<boolean> {
         return false;
     }
 
-    protected async getAttributes () {
+    protected async getAttributes() {
         let style: ButtonStyle;
 
         switch ( await this.getStyle() ) {
@@ -102,15 +102,15 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
         return result;
     }
 
-    protected getOptions (): UIBaseTemplateOptions {
+    protected getOptions(): UIBaseTemplateOptions {
         return {};
     }
 
-    protected async getLogic (): Promise<{ [key: string]: any }> {
+    protected async getLogic(): Promise<{ [key: string]: any }> {
         return {};
     }
 
-    private async getLabelInternal () {
+    private async getLabelInternal() {
         if ( await this.isLabelOmitted() ) {
             return null;
         }

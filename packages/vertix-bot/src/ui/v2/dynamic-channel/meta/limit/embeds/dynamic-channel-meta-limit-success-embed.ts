@@ -13,23 +13,23 @@ export class DynamicChannelMetaLimitSuccessEmbed extends UIEmbedBase {
         userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return 0xf5cf4d; // Hand like.
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return `✋  Your channel's user limit has changed to ${ DynamicChannelMetaLimitSuccessEmbed.vars.userLimit }`;
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const { userLimitValue, userLimitUnlimited } = DynamicChannelMetaLimitSuccessEmbed.vars;
 
         return {
@@ -40,7 +40,7 @@ export class DynamicChannelMetaLimitSuccessEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const { userLimitValue, userLimitUnlimited } = DynamicChannelMetaLimitSuccessEmbed.vars;
 
         return {

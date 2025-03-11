@@ -5,19 +5,19 @@ import { DynamicChannelStringMenuBase } from "@vertix.gg/bot/src/ui/v3/dynamic-c
 import type { APISelectMenuOption } from "discord.js";
 
 export class DynamicChannelRegionSelectMenu extends DynamicChannelStringMenuBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelRegionSelectMenu";
     }
 
-    public getId (): string {
+    public getId(): string {
         throw new Error( "Method not implemented." );
     }
 
-    protected async getPlaceholder () {
+    protected async getPlaceholder() {
         return "⌖ ∙ Select Region";
     }
 
-    protected async getSelectOptions () {
+    protected async getSelectOptions() {
         return Object.entries( DEFAULT_RTC_REGIONS ).map( ( [ label, value ] ) => {
             return {
                 label,

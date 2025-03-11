@@ -9,11 +9,11 @@ import {
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
 
 export class DynamicChannelPermissionsAccessElementsGroup extends UIElementsGroupBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsAccessElementsGroup";
     }
 
-    public static getItems () {
+    public static getItems() {
         return [
             [ DynamicChannelPermissionsGrantMenu ],
             [ DynamicChannelPermissionsDenyMenu ],

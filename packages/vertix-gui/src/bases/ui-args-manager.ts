@@ -27,18 +27,18 @@ export class UIArgsManager extends InitializeBase {
         };
     } = {};
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIArgsManager";
     }
 
-    public constructor ( private readonly prefixName: string ) {
+    public constructor( private readonly prefixName: string ) {
         super();
 
         this.debugger = createDebugger( this, "UI", prefixName );
     }
 
     // TODO: Remove this method, it should be handled by initiator
-    public getArgsId ( context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): string {
+    public getArgsId( context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): string {
         let id;
 
         if ( context instanceof GuildChannel ) {
@@ -62,11 +62,11 @@ export class UIArgsManager extends InitializeBase {
         return id;
     }
 
-    public getArgsById ( self: UIBase, id: string ): UIArgs {
+    public getArgsById( self: UIBase, id: string ): UIArgs {
         return this.data[ self.getName() ]?.[ id ]?.args;
     }
 
-    public getArgs ( self: UIBase, context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): UIArgs {
+    public getArgs( self: UIBase, context: UIAdapterStartContext | UIAdapterReplyContext | Message<true> ): UIArgs {
         const argsId = this.getArgsId( context ),
             args = this.getArgsById( self, argsId );
 
@@ -95,7 +95,7 @@ export class UIArgsManager extends InitializeBase {
         return args;
     }
 
-    public setInitialArgs (
+    public setInitialArgs(
         self: UIBase,
         id: string,
         args: UIArgs,
@@ -130,7 +130,7 @@ export class UIArgsManager extends InitializeBase {
         };
     }
 
-    public setArgs (
+    public setArgs(
         self: UIBase,
         interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext,
         args: UIArgs
@@ -161,7 +161,7 @@ export class UIArgsManager extends InitializeBase {
         this.debugger.log( this.setArgs, "", newArgs );
     }
 
-    public deleteArgs ( self: UIBase | string, id: string ) {
+    public deleteArgs( self: UIBase | string, id: string ) {
         if ( typeof self !== "string" ) {
             self = self.getName();
         }
@@ -183,7 +183,7 @@ export class UIArgsManager extends InitializeBase {
         }
     }
 
-    public getData () {
+    public getData() {
         return this.data;
     }
 }

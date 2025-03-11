@@ -11,30 +11,30 @@ export class NotYourChannelEmbed extends UIEmbedBase {
         masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/NotYourChannelEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic; // TODO: Should be static.
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "⛔  This is not your channel!";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             "But you can open your own channel :)\n" +
             `\n Just click here: <#${ NotYourChannelEmbed.vars.masterChannelId }>`
         );
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return 0xff5202;
     }
 
-    protected getLogic ( args?: UIArgs ) {
+    protected getLogic( args?: UIArgs ) {
         return {
             masterChannelId: args?.masterChannelId
         };

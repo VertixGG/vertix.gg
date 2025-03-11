@@ -5,43 +5,43 @@ import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelLimitMetaButton extends DynamicChannelButtonBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelLimitMetaButton";
     }
 
-    public static getBaseName () {
+    public static getBaseName() {
         return "UserLimit";
     }
 
-    public static getEmoji () {
+    public static getEmoji() {
         return EmojiManager.$.getCachedMarkdown( DynamicChannelLimitMetaButton.getBaseName() );
     }
 
-    public static getSortId () {
+    public static getSortId() {
         return this.getSortIdAfter( DynamicChannelRenameButton );
     }
 
-    public getId () {
+    public getId() {
         return "limit";
     }
 
-    public getLabelForEmbed () {
+    public getLabelForEmbed() {
         return `${ DynamicChannelLimitMetaButton.getEmoji() } ∙ **User Limit**`;
     }
 
-    public async getLabelForMenu () {
+    public async getLabelForMenu() {
         return await this.getLabel();
     }
 
-    public async getLabel () {
+    public async getLabel() {
         return "Limit";
     }
 
-    public async getEmoji () {
+    public async getEmoji() {
         return EmojiManager.$.getMarkdown( DynamicChannelLimitMetaButton.getBaseName() );
     }
 
-    public getEmojiForEmbed () {
+    public getEmojiForEmbed() {
         return DynamicChannelLimitMetaButton.getEmoji();
     }
 }

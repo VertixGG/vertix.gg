@@ -25,23 +25,23 @@ export class ClaimVoteEmbed extends UIEmbedElapsedTimeBase {
         votes: uiUtilsWrapAsTemplate( "votes" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ClaimVoteEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getEndTime ( args: UIArgs ): Date {
+    protected getEndTime( args: UIArgs ): Date {
         return new Date( args.timeEnd );
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `👑  ${ ClaimVoteEmbed.vars.candidatesCount } Candidates wish to claim this channel`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const { userInitiatorId, candidatesState } = ClaimVoteEmbed.vars;
 
         return (
@@ -53,7 +53,7 @@ export class ClaimVoteEmbed extends UIEmbedElapsedTimeBase {
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const { candidates, candidatesDefault } = ClaimVoteEmbed.vars;
 
         return {
@@ -64,7 +64,7 @@ export class ClaimVoteEmbed extends UIEmbedElapsedTimeBase {
         };
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { value, separator, userId, votes } = ClaimVoteEmbed.vars;
 
         return {
@@ -80,7 +80,7 @@ export class ClaimVoteEmbed extends UIEmbedElapsedTimeBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result: any = {},
             candidates = Object.entries( args.results || {} )
                 .map( ( [ userId, votes ] ) => {

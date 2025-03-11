@@ -8,11 +8,11 @@ import type { Base } from "discord.js";
 import type { UIService, TAdapterMapping } from "@vertix.gg/gui/src/ui-service";
 
 class FallBackVersionStrategy extends UIVersionStrategyBase {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/FallBackVersionStrategy";
     }
 
-    public async determine () {
+    public async determine() {
         // Return the first version
         return this.versions.keys().next().value || 0;
     }
@@ -26,7 +26,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
 
     private versionStrategies: UIVersionStrategyBase[] = [ new FallBackVersionStrategy( this.versions ) ];
 
-    public constructor () {
+    public constructor() {
         super();
         // Register a timer to check if versions are registered after initialization
         setTimeout( () => {
@@ -41,17 +41,17 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
         }, 5000 ); // Check after 5 seconds to ensure all services are initialized
     }
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIVersioningAdapterService";
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             uiService: "VertixGUI/UIService"
         };
     }
 
-    public registerVersions ( range: [number, number], prefix = DEFAULT_UI_PREFIX ) {
+    public registerVersions( range: [number, number], prefix = DEFAULT_UI_PREFIX ) {
         try {
             // If already have versions, then log and return
             if ( this.versions.size ) {
@@ -89,11 +89,11 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public registerStrategy ( strategy: new ( versions: Map<number, string> ) => UIVersionStrategyBase ) {
+    public registerStrategy( strategy: new ( versions: Map<number, string> ) => UIVersionStrategyBase ) {
         this.versionStrategies.push( new strategy( this.versions ) );
     }
 
-    public async get<T extends keyof TAdapterMapping = "base"> (
+    public async get<T extends keyof TAdapterMapping = "base">(
         adapterName: string,
         context: Base | any,
         options: {
@@ -110,7 +110,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
         return this.services.uiService.get<T>( adapterNameWithVersion );
     }
 
-    public getAllVersions () {
+    public getAllVersions() {
         return this.versions;
     }
 
@@ -123,12 +123,12 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
      * `Vertix/RenameAdapter` -> `Vertix/UI-V1/RenameAdapter`
      * `Vertix/CoolEntities/RenameAdapter` -> `Vertix/UI-V1/CoolEntities/RenameAdapter`
      */
-    private formAdapterNameWithVersion ( adapterName: string, version: number, prefix: string, separator: string ) {
+    private formAdapterNameWithVersion( adapterName: string, version: number, prefix: string, separator: string ) {
         const [ firstPart, ...restParts ] = adapterName.split( separator );
         return `${ firstPart }${ separator }${ prefix }${ version }${ separator }${ restParts.join( "/" ) }`;
     }
 
-    public async determineVersion ( context: Base ) {
+    public async determineVersion( context: Base ) {
         // `Slice` used to get copy of an array
         for ( const versionStrategy of this.versionStrategies.slice().reverse() ) {
             const tryVersion = await versionStrategy.determine( context );

@@ -12,27 +12,27 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 import { DynamicChannelPrimaryMessageEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-embed";
 
 export class DynamicChannelComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannel";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic; // TODO: You should try make it static.
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [ DynamicChannelPrimaryMessageElementsGroup ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
     }
 
-    protected static getEmbeds () {
+    protected static getEmbeds() {
         return [ DynamicChannelPrimaryMessageEmbed ];
     }
 
-    protected async getSchemaInternal () {
+    protected async getSchemaInternal() {
         const schema = await super.getSchemaInternal();
 
         schema.entities.elements = uiUtilsDynamicElementsRearrange(

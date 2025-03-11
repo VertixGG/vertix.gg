@@ -14,10 +14,10 @@ describe( "VertixBase/Modules/Service" , () => {
             ServiceLocatorMock.reset();
         } );
 
-        it( "should not detect circular dependency", async () => {
+        it( "should not detect circular dependency", async() => {
             // Arrange.
             class AppService extends ServiceBase {
-                public static getName () {
+                public static getName() {
                     return "VertixBot/Services/App";
                 }
             }
@@ -25,11 +25,11 @@ describe( "VertixBase/Modules/Service" , () => {
             class UIAdapterService extends ServiceWithDependenciesBase<{
                 appService: AppService,
             }> {
-                public static getName () {
+                public static getName() {
                     return "VertixGUI/UIAdapterService";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         appService: "VertixBot/Services/App",
                     };
@@ -39,11 +39,11 @@ describe( "VertixBase/Modules/Service" , () => {
             class ChannelService extends ServiceWithDependenciesBase<{
                 appService: AppService,
             }> {
-                public static getName () {
+                public static getName() {
                     return "VertixBot/Services/Channel";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         appService: "VertixBot/Services/App",
                     };
@@ -54,11 +54,11 @@ describe( "VertixBase/Modules/Service" , () => {
                 appService: AppService,
                 channelService: ChannelService,
             }> {
-                public static getName () {
+                public static getName() {
                     return "VertixBot/Services/DynamicChannel";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         appService: "VertixBot/Services/App",
                         channelService: "VertixBot/Services/Channel",
@@ -72,11 +72,11 @@ describe( "VertixBase/Modules/Service" , () => {
                 channelService: ChannelService,
                 dynamicChannelService: DynamicChannelService,
             }> {
-                public static getName () {
+                public static getName() {
                     return "VertixBot/Services/MasterChannel";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         appService: "VertixBot/Services/App",
                         uiAdapterService: "VertixGUI/UIAdapterService",
@@ -87,7 +87,7 @@ describe( "VertixBase/Modules/Service" , () => {
             }
 
             // Act & Assert.
-            expect( async () => {
+            expect( async() => {
                 ServiceLocatorMock.$.register( AppService );
                 ServiceLocatorMock.$.register( UIAdapterService );
                 ServiceLocatorMock.$.register( ChannelService );
@@ -96,7 +96,7 @@ describe( "VertixBase/Modules/Service" , () => {
             } ).not.toThrow();
         } );
 
-        it( "should fail on circular dependencies", async () => {
+        it( "should fail on circular dependencies", async() => {
             // Arrange + Act & Assert.
             expect( () => {
                 ServiceLocatorMock.$.register( CircularServiceA );
@@ -104,16 +104,16 @@ describe( "VertixBase/Modules/Service" , () => {
             } ).toThrow( "Circular dependency detected" );
         } );
 
-        it( "should fail on complex circular dependencies", async () => {
+        it( "should fail on complex circular dependencies", async() => {
             // Arrange.
             class ServiceA extends ServiceWithDependenciesBase<{
                 serviceD: ServiceD,
             }> {
-                public static getName () {
+                public static getName() {
                     return "Services/ServiceA";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         serviceD: "Services/ServiceD",
                     };
@@ -123,11 +123,11 @@ describe( "VertixBase/Modules/Service" , () => {
             class ServiceB extends ServiceWithDependenciesBase<{
                 serviceA: ServiceA,
             }> {
-                public static getName () {
+                public static getName() {
                     return "Services/ServiceB";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         serviceA: "Services/ServiceA",
                     };
@@ -137,11 +137,11 @@ describe( "VertixBase/Modules/Service" , () => {
             class ServiceC extends ServiceWithDependenciesBase<{
                 serviceB: ServiceB,
             }> {
-                public static getName () {
+                public static getName() {
                     return "Services/ServiceC";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         serviceB: "Services/ServiceB",
                     };
@@ -151,11 +151,11 @@ describe( "VertixBase/Modules/Service" , () => {
             class ServiceD extends ServiceWithDependenciesBase<{
                 serviceC: ServiceC,
             }> {
-                public static getName () {
+                public static getName() {
                     return "Services/ServiceD";
                 }
 
-                public getDependencies () {
+                public getDependencies() {
                     return {
                         serviceC: "Services/ServiceC",
                     };

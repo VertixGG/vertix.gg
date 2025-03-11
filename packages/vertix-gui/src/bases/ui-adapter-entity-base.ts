@@ -62,27 +62,27 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
     protected customIdStrategy!: UICustomIdStrategyBase;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIAdapterEntityBase";
     }
 
-    public static getComponent (): UIComponentTypeConstructor {
+    public static getComponent(): UIComponentTypeConstructor {
         throw new ForceMethodImplementation( this.getName(), this.getComponent.name );
     }
 
-    public static isMultiLanguage () {
+    public static isMultiLanguage() {
         return true;
     }
 
-    protected static getExcludedElements (): UIEntityTypes {
+    protected static getExcludedElements(): UIEntityTypes {
         return [];
     }
 
-    protected static getExcludedElementsInternal (): UIEntityTypes {
+    protected static getExcludedElementsInternal(): UIEntityTypes {
         return this.getExcludedElements();
     }
 
-    protected constructor ( protected options: TAdapterRegisterOptions ) {
+    protected constructor( protected options: TAdapterRegisterOptions ) {
         super();
 
         const staticThis = this.constructor as typeof UIAdapterEntityBase,
@@ -96,11 +96,11 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         this.defineOptions();
     }
 
-    protected getComponent (): UIComponentBase {
+    protected getComponent(): UIComponentBase {
         return this.component;
     }
 
-    protected entitiesMapInternal () {
+    protected entitiesMapInternal() {
         this.buildEntitiesMap();
 
         this.onEntityMap?.();
@@ -108,11 +108,11 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
     protected onEntityMap?(): void;
 
-    protected getComponentCreateArgs (): UICreateComponentArgs {
+    protected getComponentCreateArgs(): UICreateComponentArgs {
         return {};
     }
 
-    protected getEntityMap ( entityName: string, silent = false ): UIEntityMapped {
+    protected getEntityMap( entityName: string, silent = false ): UIEntityMapped {
         // Check if exist in entities.
         if ( !silent && !this.entitiesMap[ entityName ] ) {
             throw new Error( `Entity: '${ entityName }' does not exist in adapter: '${ this.getName() }'` );
@@ -122,7 +122,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     }
 
     // TODO: Optimize.
-    protected getEntityInstance ( entity: typeof UIEntityBase ) {
+    protected getEntityInstance( entity: typeof UIEntityBase ) {
         const entities = this.getComponent().getEntitiesInstance();
 
         let entityInstance;
@@ -154,7 +154,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         return entityInstance;
     }
 
-    protected buildEntitiesMap () {
+    protected buildEntitiesMap() {
         const staticThis = this.constructor as typeof UIAdapterEntityBase,
             entities = [ ...staticThis.getExcludedElementsInternal(), ...staticThis.getComponent().getEntities() ];
 
@@ -163,7 +163,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         } );
     }
 
-    protected buildEntityMap ( entity: typeof UIEntityBase ) {
+    protected buildEntityMap( entity: typeof UIEntityBase ) {
         const staticThis = this.constructor as typeof UIAdapterEntityBase;
 
         staticThis.adapterEntityDebugger.log( this.buildEntitiesMap, `Built entity: '${ entity.getName() }'` );
@@ -171,7 +171,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         this.entitiesMap[ entity.getName() ] = { entity };
     }
 
-    protected buildComponentsBySchema ( schema: any ) {
+    protected buildComponentsBySchema( schema: any ) {
         // TODO: Add type.
         return schema
             .map( ( row: any ) =>
@@ -234,18 +234,18 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
             .filter( ( i: any ) => i.components.length );
     }
 
-    protected generateCustomIdForEntity ( entity: UIEntitySchemaBase | UIModalSchema ) {
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase | UIModalSchema ) {
         return (
             entity.attributes.custom_id ||
             this.customIdStrategy.generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name )
         );
     }
 
-    protected getCustomIdForEntity ( hash: string ) {
+    protected getCustomIdForEntity( hash: string ) {
         return this.customIdStrategy.getId( hash );
     }
 
-    protected storeEntityCallback ( entityMap: UIEntityMapped, callback: Function ) {
+    protected storeEntityCallback( entityMap: UIEntityMapped, callback: Function ) {
         if ( entityMap.callback ) {
             throw new Error( `Callback: '${ entityMap.entity.name }' already exists` );
         }
@@ -259,7 +259,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         entityMap.callback = callback;
     }
 
-    protected async runEntityCallback ( entityName: string, interaction: UIAdapterReplyContext ) {
+    protected async runEntityCallback( entityName: string, interaction: UIAdapterReplyContext ) {
         const mappedEntity = this.getEntityMap( entityName );
 
         if ( !mappedEntity.callback ) {
@@ -277,7 +277,7 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         await mappedEntity.callback.bind( this )( interaction, entityInstance );
     }
 
-    private defineOptions () {
+    private defineOptions() {
         const { module } = this.options;
 
         if ( module ) {

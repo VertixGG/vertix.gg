@@ -45,19 +45,19 @@ type Interactions =
 export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interactions> {
     private appService: AppService;
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/SetupEditAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return SetupEditComponent;
     }
 
-    protected static getExcludedElements () {
+    protected static getExcludedElements() {
         return [ SetupMasterEditSelectMenu ];
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             default: {},
 
@@ -82,25 +82,25 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         };
     }
 
-    public constructor ( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
         this.appService = ServiceLocator.$.get( "VertixBot/Services/App" );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs ( channel: VoiceChannel ) {
+    protected async getStartArgs( channel: VoiceChannel ) {
         return {};
     }
 
-    protected getCustomIdForEntity ( hash: string ): string {
+    protected getCustomIdForEntity( hash: string ): string {
         if ( hash === "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/SetupMasterEditSelectMenu" ) {
             return hash;
         }
         return super.getCustomIdForEntity( hash );
     }
 
-    protected async getReplyArgs ( interaction: Interactions, argsFromManager?: UIArgs ) {
+    protected async getReplyArgs( interaction: Interactions, argsFromManager?: UIArgs ) {
         let args: UIArgs = {};
 
         if ( argsFromManager?.dynamicChannelButtonsTemplate ) {
@@ -139,7 +139,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         return args;
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         // Comes from 'setup' adapter, selects the master channel to edit
         this.bindButton<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterEditSelectMenu",
@@ -215,15 +215,15 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         );
     }
 
-    protected shouldRequireArgs () {
+    protected shouldRequireArgs() {
         return true;
     }
 
-    protected async regenerate ( interaction: MessageComponentInteraction<"cached"> ): Promise<void> {
+    protected async regenerate( interaction: MessageComponentInteraction<"cached"> ): Promise<void> {
         this.uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
     }
 
-    private async onSetupMasterEditSelected ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onSetupMasterEditSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction );
 
         args.index = args.masterChannelIndex;
@@ -251,7 +251,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onSelectEditOptionSelected ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onSelectEditOptionSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         switch ( interaction.values[ 0 ] ) {
             // TODO: Use constants.
 
@@ -270,7 +270,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         }
     }
 
-    private async onTemplateEditModalSubmitted ( interaction: UIDefaultModalChannelTextInteraction ) {
+    private async onTemplateEditModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
         const channelNameInputId = this.customIdStrategy.generateId(
             "Vertix/UI-V3/SetupEditAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
         );
@@ -298,7 +298,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onButtonsSelected ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         this.getArgsManager().setArgs( this, interaction, {
             dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( interaction.values )
         } );
@@ -306,7 +306,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditButtonsEffect" );
     }
 
-    private async onButtonsEffectImmediatelyButtonsClicked (
+    private async onButtonsEffectImmediatelyButtonsClicked(
         interaction: UIDefaultStringSelectMenuChannelTextInteraction
     ) {
         const args = this.getArgsManager().getArgs( this, interaction ),
@@ -325,7 +325,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
             // Get all channels that are using this "master" channel.
-            setTimeout( async () => {
+            setTimeout( async() => {
                 const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
 
                 for ( const channelDB of channels ) {
@@ -349,7 +349,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onButtonsEffectNewlyButtonClicked ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onButtonsEffectNewlyButtonClicked( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction ),
             buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
 
@@ -363,7 +363,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onDoneButtonClicked ( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onDoneButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -388,7 +388,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         this.deleteArgs( interaction );
     }
 
-    private async onConfigExtrasSelected ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onConfigExtrasSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
             values = interaction.values;
 
@@ -433,7 +433,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onLogChannelSelected ( interaction: UIDefaultChannelSelectMenuChannelTextInteraction ) {
+    private async onLogChannelSelected( interaction: UIDefaultChannelSelectMenuChannelTextInteraction ) {
         const channelId = interaction.values.at( 0 ) || null,
             args: UIArgs = this.getArgsManager().getArgs( this, interaction );
 
@@ -452,7 +452,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onVerifiedRolesSelected ( interaction: UIDefaultStringSelectRolesChannelTextInteraction ) {
+    private async onVerifiedRolesSelected( interaction: UIDefaultStringSelectRolesChannelTextInteraction ) {
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
             roles = interaction.values;
 
@@ -468,7 +468,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditVerifiedRoles" );
     }
 
-    private async onVerifiedRolesEveryoneSelected ( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+    private async onVerifiedRolesEveryoneSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
             values = interaction.values;
 
@@ -504,7 +504,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditVerifiedRoles" );
     }
 
-    private async onBackButtonClicked ( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onBackButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -540,7 +540,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
     }
 
-    private async onFinishButtonClicked ( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onFinishButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {

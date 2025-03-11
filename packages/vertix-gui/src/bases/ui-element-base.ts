@@ -10,21 +10,21 @@ import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/l
 export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> extends UITemplateBase {
     protected readonly uiLanguageManager: UILanguageManagerInterface;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIElementBase";
     }
 
-    public static getType (): UIType {
+    public static getType(): UIType {
         return "element";
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.uiLanguageManager = this.uiService.getUILanguageManager();
     }
 
-    public static getComponentType (): ComponentType {
+    public static getComponentType(): ComponentType {
         throw new ForceMethodImplementation( this, this.getComponentType.name );
     }
 

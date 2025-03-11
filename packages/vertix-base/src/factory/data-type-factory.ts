@@ -34,17 +34,17 @@ export interface TDataDefaultResult {
 }
 
 // TODO: Make this extendable/configurable.
-export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase> ( ExtendClass: TExtendClass ) {
+export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( ExtendClass: TExtendClass ) {
     abstract class DataTypeAbstract extends ExtendClass {
-        public static getName () {
+        public static getName() {
             return "VertixBase/Models/DataType";
         }
 
-        protected constructor ( ...args: any[] ) {
+        protected constructor( ...args: any[] ) {
             super( ...args );
         }
 
-        protected getValueField ( type: TDataType ) {
+        protected getValueField( type: TDataType ) {
             switch ( type ) {
                 default:
                     return "value";
@@ -57,7 +57,7 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase> ( 
             }
         }
 
-        protected getDataType ( value: TDataType ) {
+        protected getDataType( value: TDataType ) {
             switch ( typeof value ) {
                 case "string":
                     return dataTypes.string;
@@ -77,7 +77,7 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase> ( 
          * EG: `dataTypeEnum.object` will use `config.object`
          * EG: `dataTypeEnum.array` will use `config.array`
          */
-        protected getValueAsType<T extends TDataType> ( result: TDataDefaultResult ) {
+        protected getValueAsType<T extends TDataType>( result: TDataDefaultResult ) {
             switch ( result.type ) {
                 case dataTypes.string:
                     return result.value!.toString() as T;
@@ -94,7 +94,7 @@ export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase> ( 
             throw new Error( `Unknown type: ${ result.type }` );
         }
 
-        protected transformValue<TValue extends TDataType, TType extends TDataTypeKeys> ( value: TValue, type: TType ) {
+        protected transformValue<TValue extends TDataType, TType extends TDataTypeKeys>( value: TValue, type: TType ) {
             let newValue;
             switch ( type ) {
                 case dataTypes.boolean:

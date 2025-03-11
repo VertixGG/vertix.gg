@@ -20,7 +20,7 @@ export const Welcome: ICommand = {
 
     defaultMemberPermissions: [ DEFAULT_SETUP_PERMISSIONS ],
 
-    run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
+    run: async( client: Client, interaction: CommandInteraction<"cached"> ) => {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
             uiAdapter = uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 

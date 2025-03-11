@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 
 export class ClientMock extends Client<true> {
-    public constructor ( options: any = {} ) {
+    public constructor( options: any = {} ) {
         super( {
             allowedMentions: undefined,
             closeTimeout: 0,

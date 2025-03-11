@@ -20,27 +20,27 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
         allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsHiddenEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic; // TODO: Should be static.
     }
 
-    protected getColor () {
+    protected getColor() {
         return 0xc79d5f; // Same as globe emoji.
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🙈  The channel is hidden now";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "Please be aware that only granted users can see your channel.\n\n" +
             DynamicChannelPermissionsHiddenEmbed.vars.allowedUsersDisplay +
@@ -49,7 +49,7 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             messageDefault,
             messageAccessNotAvailable,
@@ -73,7 +73,7 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
         };
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = DynamicChannelPermissionsHiddenEmbed.vars;
 
         return {
@@ -84,7 +84,7 @@ export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result: any = {},
             {
                 messageDefault,

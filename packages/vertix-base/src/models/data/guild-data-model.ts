@@ -13,28 +13,28 @@ export class GuildDataModel extends ModelDataOwnerBase<
     PrismaBot.GuildData,
     TDataOwnerDefaultUniqueKeys
 > {
-    public static getName () {
+    public static getName() {
         return "VertixBase/Models/GuildDataV3";
     }
 
-    public constructor () {
+    public constructor() {
         super( isDebugEnabled( "CACHE", GuildDataModel.getName() ), isDebugEnabled( "MODEL", GuildDataModel.getName() ) );
     }
 
-    protected getModel () {
+    protected getModel() {
         return client.guild;
     }
 
-    protected getDataModel () {
+    protected getDataModel() {
         return client.guildData;
     }
 
-    protected getDataVersion () {
+    protected getDataVersion() {
         // No backwards compatibility required.
         return "0.0.0.0" as const;
     }
 
-    protected getDataUniqueKeyName () {
+    protected getDataUniqueKeyName() {
         return "ownerId_key_version";
     }
 }

@@ -5,7 +5,7 @@ import { ModelLanguageBase } from "@vertix.gg/bot/src/bases/model-language-base"
 const model = PrismaBotClient.getPrismaClient().elementTextInputLanguage;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function withContent () {
+async function withContent() {
     return model.findFirst( {
         include: {
             content: true
@@ -18,11 +18,11 @@ export class ElementTextInputLanguageModel extends ModelLanguageBase<
 > {
     private static instance: ElementTextInputLanguageModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Models/ElementTextInputLanguageModel";
     }
 
-    public static getInstance (): ElementTextInputLanguageModel {
+    public static getInstance(): ElementTextInputLanguageModel {
         if ( !ElementTextInputLanguageModel.instance ) {
             ElementTextInputLanguageModel.instance = new ElementTextInputLanguageModel( false );
         }
@@ -30,11 +30,11 @@ export class ElementTextInputLanguageModel extends ModelLanguageBase<
         return ElementTextInputLanguageModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return ElementTextInputLanguageModel.getInstance();
     }
 
-    protected getModel () {
+    protected getModel() {
         return model;
     }
 }

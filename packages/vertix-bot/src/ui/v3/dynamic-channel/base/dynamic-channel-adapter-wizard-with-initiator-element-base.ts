@@ -16,15 +16,15 @@ import type {
 export abstract class DynamicChannelAdapterWizardWithInitiatorElementBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
 > extends DynamicChannelAdapterWizardBase<TInteraction> {
-    public static validate ( skipDefaultGroups = false ) {
+    public static validate( skipDefaultGroups = false ) {
         super.validate( skipDefaultGroups );
     }
 
-    protected static getInitiatorElement (): typeof UIElementBase<any> {
+    protected static getInitiatorElement(): typeof UIElementBase<any> {
         throw new ForceMethodImplementation( this.getName(), this.getInitiatorElement.name );
     }
 
-    protected static getExecutionSteps (): UIExecutionSteps {
+    protected static getExecutionSteps(): UIExecutionSteps {
         const component = this.getComponent();
 
         const defaultGroups: UIExecutionStep = {};
@@ -44,7 +44,7 @@ export abstract class DynamicChannelAdapterWizardWithInitiatorElementBase<
         };
     }
 
-    protected static getExcludedElementsInternal () {
+    protected static getExcludedElementsInternal() {
         const initiatorElement = this.getInitiatorElement();
 
         const excludedElements = super.getExcludedElementsInternal();
@@ -56,7 +56,7 @@ export abstract class DynamicChannelAdapterWizardWithInitiatorElementBase<
         return [ ...excludedElements, initiatorElement ];
     }
 
-    protected entitiesMapInternal () {
+    protected entitiesMapInternal() {
         super.entitiesMapInternal();
 
         // Check if element initiator is not bind.
@@ -79,7 +79,7 @@ export abstract class DynamicChannelAdapterWizardWithInitiatorElementBase<
         }
     }
 
-    protected async onInitiatorButtonClicked ( interaction: TInteraction ) {
+    protected async onInitiatorButtonClicked( interaction: TInteraction ) {
         // TODO: The use case in dynamic channels probably, it should be configurable.
         await this.ephemeral( interaction );
     }

@@ -9,15 +9,15 @@ import type { UIElementSelectMenuLanguageContent } from "@vertix.gg/gui/src/base
 export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringSelectComponent> {
     private content: UIElementSelectMenuLanguageContent | undefined;
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIElementStringSelectMenu";
     }
 
-    public static getComponentType () {
+    public static getComponentType() {
         return ComponentType.StringSelect;
     }
 
-    public async build ( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: UIArgs ) {
         // TODO: Find better way to do this.
         this.uiArgs = uiArgs;
 
@@ -26,9 +26,9 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         return super.build( uiArgs );
     }
 
-    public async getTranslatableContent (): Promise<UIElementSelectMenuLanguageContent> {
+    public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
         const translateAbleSelectEntries = await Promise.all(
-            ( await this.getSelectOptions() ).map( async ( option ) => {
+            ( await this.getSelectOptions() ).map( async( option ) => {
                 return {
                     label: option.label
                 };
@@ -76,7 +76,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
 
     protected async getCustomId?(): Promise<string>;
 
-    protected async getAttributes () {
+    protected async getAttributes() {
         const custom_id = ( await this.getCustomId?.() ) || "",
             placeholder = this.content?.placeholder || ( await this.getPlaceholder?.() ),
             min_values = await this.getMinValues?.(),
@@ -110,16 +110,16 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         return result;
     }
 
-    protected getOptions (): UIBaseTemplateOptions {
+    protected getOptions(): UIBaseTemplateOptions {
         return {};
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getDataFor ( option: APISelectMenuOption ): { [key: string]: any } {
+    protected getDataFor( option: APISelectMenuOption ): { [key: string]: any } {
         return {};
     }
 
-    private async getOptionsInternal () {
+    private async getOptionsInternal() {
         const options = this.content?.options || this.getOptions(),
             hardCodedSelectOptions = await this.getSelectOptions(),
             translatedSelectOptions = ( this.content?.selectOptions || [] ) as APISelectMenuOption[];

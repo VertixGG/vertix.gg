@@ -29,11 +29,11 @@ export abstract class UIAdapterExecutionStepsBase<
 
     private currentExecutionStep: UIExecutionStepItem = this.getInitialStep();
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIAdapterExecutionStepsBase";
     }
 
-    public static validate ( skipDefaultGroups = false ) {
+    public static validate( skipDefaultGroups = false ) {
         const component = this.getComponent();
 
         // If one of the entities group are specify but there are no execution steps for them.
@@ -103,15 +103,15 @@ export abstract class UIAdapterExecutionStepsBase<
         super.validate();
     }
 
-    protected static getExecutionSteps (): UIExecutionSteps {
+    protected static getExecutionSteps(): UIExecutionSteps {
         throw new ForceMethodImplementation( this.getName(), this.getExecutionSteps.name );
     }
 
-    protected static getExecutionStepsInternal (): UIExecutionSteps {
+    protected static getExecutionStepsInternal(): UIExecutionSteps {
         return this.getExecutionSteps();
     }
 
-    private static getExecutionStepsArray (): UIExecutionStepItem[] {
+    private static getExecutionStepsArray(): UIExecutionStepItem[] {
         this.executionStepsArray =
             this.executionStepsArray ||
             Object.entries( this.getExecutionStepsInternal() ).map( ( [ key, value ] ) => ( {
@@ -122,7 +122,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return this.executionStepsArray;
     }
 
-    public async send ( channel: TChannel, sendArgs?: UIArgs ) {
+    public async send( channel: TChannel, sendArgs?: UIArgs ) {
         const initialStep = this.getInitialStep();
 
         if ( this.getCurrentExecutionStep() !== initialStep ) {
@@ -132,7 +132,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return super.send( channel, sendArgs );
     }
 
-    public async editReply ( interaction: TInteraction, sendArgs?: UIArgs ) {
+    public async editReply( interaction: TInteraction, sendArgs?: UIArgs ) {
         const executionSteps = this.getExecutionStepsArrayAfter( this.getCurrentExecutionStep( interaction ) );
 
         /**
@@ -162,7 +162,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return this.executeEditReplyStep( this.getCurrentExecutionStep(), interaction, sendArgs );
     }
 
-    public async editMessage ( message: Message<true>, newArgs?: UIArgs ) {
+    public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         const executionSteps = this.getExecutionStepsArrayAfter( this.getCurrentExecutionStep( message as Message<true> ) );
 
         if ( executionSteps?.at( 0 )?.getConditions ) {
@@ -185,7 +185,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return this.executeEditMessageStep( this.getCurrentExecutionStep(), message, newArgs );
     }
 
-    public async ephemeralWithStep (
+    public async ephemeralWithStep(
         interaction: TInteraction,
         stepName: string,
         sendArgs?: UIArgs,
@@ -196,7 +196,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return super.ephemeral( interaction, sendArgs, shouldDeletePreviousInteraction );
     }
 
-    public async run ( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
+    public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
         const executionSteps = this.getExecutionStepsArrayAfter(
             this.getCurrentExecutionStep( interaction as TInteraction )
         );
@@ -221,7 +221,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return super.run( interaction );
     }
 
-    public async runInitial ( interaction: MessageComponentInteraction, args: UIArgs ): Promise<void> {
+    public async runInitial( interaction: MessageComponentInteraction, args: UIArgs ): Promise<void> {
         if ( this.isStatic() ) {
             const sysArgs = this.getSystemArgs();
 
@@ -235,13 +235,13 @@ export abstract class UIAdapterExecutionStepsBase<
 
     protected onStep?( stepName: string, interaction: TInteraction | Message<true>, sendArgs?: UIArgs ): Promise<void>;
 
-    protected initialize () {
+    protected initialize() {
         if ( this.isDynamic() ) {
             this.currentExecutionStep = this.getInitialStep();
         }
     }
 
-    protected editReplyWithStep ( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {
+    protected editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {
         const step = this.staticAdapterExecution.getExecutionStepsInternal()[ stepName ];
 
         if ( !step ) {
@@ -258,7 +258,7 @@ export abstract class UIAdapterExecutionStepsBase<
         );
     }
 
-    protected setStep ( stepName: string, interaction: TInteraction ) {
+    protected setStep( stepName: string, interaction: TInteraction ) {
         const step = this.staticAdapterExecution.getExecutionStepsInternal()[ stepName ];
 
         if ( !step ) {
@@ -271,13 +271,13 @@ export abstract class UIAdapterExecutionStepsBase<
         } );
     }
 
-    protected getComponentCreateArgs (): UICreateComponentArgs {
+    protected getComponentCreateArgs(): UICreateComponentArgs {
         const stepData = this.getStepDataWithEntities( this.getInitialStep() );
 
         return stepData.entities;
     }
 
-    protected getCurrentExecutionStep ( context?: TInteraction | Message<true> ) {
+    protected getCurrentExecutionStep( context?: TInteraction | Message<true> ) {
         if ( this.isStatic() ) {
             if ( !context ) {
                 throw new Error( "Missing context for the static execution." );
@@ -293,11 +293,11 @@ export abstract class UIAdapterExecutionStepsBase<
         return this.currentExecutionStep;
     }
 
-    private getInitialStep () {
+    private getInitialStep() {
         return this.staticAdapterExecution.getExecutionStepsArray()[ 0 ];
     }
 
-    private getExecutionStepsArrayAfter ( step = this.getCurrentExecutionStep() ) {
+    private getExecutionStepsArrayAfter( step = this.getCurrentExecutionStep() ) {
         if ( step.name === this.getInitialStep().name ) {
             return this.staticAdapterExecution.getExecutionStepsArray();
         }
@@ -308,7 +308,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return executionSteps.slice( index + 1 );
     }
 
-    private setStepInternal ( context: Message<true> | TInteraction | TChannel, step: UIExecutionStepItem ) {
+    private setStepInternal( context: Message<true> | TInteraction | TChannel, step: UIExecutionStepItem ) {
         const stepData = this.getStepDataWithEntities( step ),
             component = this.getComponent();
 
@@ -344,8 +344,8 @@ export abstract class UIAdapterExecutionStepsBase<
         this.currentExecutionStep = step;
     }
 
-    private getStepDataWithEntities ( step: UIExecutionStepItem ): UIExecutionStepData {
-        function getGroupByName ( name: string, groups: UIEntitiesGroupsTypes ) {
+    private getStepDataWithEntities( step: UIExecutionStepItem ): UIExecutionStepData {
+        function getGroupByName( name: string, groups: UIEntitiesGroupsTypes ) {
             for ( const group of groups ) {
                 if ( group.getName() === name ) {
                     return group;
@@ -380,7 +380,7 @@ export abstract class UIAdapterExecutionStepsBase<
         };
     }
 
-    private async executeEditReplyStep ( step: UIExecutionStepItem, interaction: TInteraction, sendArgs?: UIArgs ) {
+    private async executeEditReplyStep( step: UIExecutionStepItem, interaction: TInteraction, sendArgs?: UIArgs ) {
         this.setStepInternal( interaction, step );
 
         const result = super.editReply( interaction, sendArgs );
@@ -392,7 +392,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return result;
     }
 
-    private async executeEditMessageStep ( step: UIExecutionStepItem, message: Message<true>, sendArgs?: UIArgs ) {
+    private async executeEditMessageStep( step: UIExecutionStepItem, message: Message<true>, sendArgs?: UIArgs ) {
         this.setStepInternal( message, step );
 
         const result = super.editMessage( message, sendArgs );
@@ -404,7 +404,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return result;
     }
 
-    private get staticAdapterExecution () {
+    private get staticAdapterExecution() {
         return this.constructor as typeof UIAdapterExecutionStepsBase;
     }
 }

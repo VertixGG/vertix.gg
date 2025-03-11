@@ -15,23 +15,23 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
         stateOff: uiUtilsWrapAsTemplate( "stateOff" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder (): Promise<string> {
+    protected async getPlaceholder(): Promise<string> {
         return "🛡️ ∙ Everyone role";
     }
 
-    protected async getMinValues () {
+    protected async getMinValues() {
         return 0;
     }
 
-    protected async getSelectOptions () {
+    protected async getSelectOptions() {
         const {
             dynamicChannelIncludeEveryoneRoleLabel,
 
@@ -50,7 +50,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
         ];
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const { stateOn, stateOff } = VerifiedRolesEveryoneSelectMenu.vars;
 
         return {
@@ -63,7 +63,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
         };
     }
 
-    protected getDataFor ( option: APISelectMenuOption ) {
+    protected getDataFor( option: APISelectMenuOption ) {
         const result = {
                 state: VerifiedRolesEveryoneSelectMenu.vars.stateOff
             },

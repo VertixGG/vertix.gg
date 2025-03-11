@@ -15,23 +15,23 @@ export abstract class MasterChannelDataModelBase<T extends ConfigBaseInterface> 
     T,
     "settings"
 > {
-    public static getName () {
+    public static getName() {
         return "VertixBase/Models/MasterChannelDataModelBase";
     }
 
-    protected getModel () {
+    protected getModel() {
         return client.channel;
     }
 
-    protected getDataModel () {
+    protected getDataModel() {
         return client.channelData;
     }
 
-    protected getDataUniqueKeyName () {
+    protected getDataUniqueKeyName() {
         return "ownerId_key_version";
     }
 
-    protected getConfigSlice () {
+    protected getConfigSlice() {
         return "settings" as const;
     }
 }

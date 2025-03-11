@@ -4,7 +4,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
     describe( "validate()", () => {
-        it( "should throw error if one of the entities group are specify but there are no execution steps for them", function () {
+        it( "should throw error if one of the entities group are specify but there are no execution steps for them", function() {
             // Arrange.
             const UIAdapter = UIMockGeneratorUtil.createExecutionStepsAdapter()
                 .withName( "VertixGUI/Test" )
@@ -35,7 +35,7 @@ describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
             expect( act ).toThrow( "Missing execution step for the group: 'VertixGUI/TestElementsGroup'" );
         } );
 
-        it( "should throw error if step does not have corresponding group", function () {
+        it( "should throw error if step does not have corresponding group", function() {
             const UIAdapter = UIMockGeneratorUtil.createExecutionStepsAdapter()
                 .withExecutionSteps( {
                     "step-1": {
@@ -62,7 +62,7 @@ describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
             expect( act ).toThrow( "Missing entities group for the execution step: 'VertixGUI/TestEmbed'" );
         } );
 
-        it( "should passthroughs sanity", function () {
+        it( "should passthroughs sanity", function() {
             const UIAdapter = UIMockGeneratorUtil.createExecutionStepsAdapter()
                 .withComponent(
                     UIMockGeneratorUtil.createComponent()

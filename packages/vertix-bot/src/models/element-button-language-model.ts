@@ -5,7 +5,7 @@ import { ModelLanguageBase } from "@vertix.gg/bot/src/bases/model-language-base"
 const model = PrismaBotClient.getPrismaClient().elementButtonLanguage;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function withContent () {
+async function withContent() {
     return model.findFirst( {
         include: {
             content: true
@@ -19,11 +19,11 @@ export class ElementButtonLanguageModel extends ModelLanguageBase<
 > {
     private static instance: ElementButtonLanguageModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Models/ElementButtonLanguageModel";
     }
 
-    public static getInstance (): ElementButtonLanguageModel {
+    public static getInstance(): ElementButtonLanguageModel {
         if ( !ElementButtonLanguageModel.instance ) {
             ElementButtonLanguageModel.instance = new ElementButtonLanguageModel( false );
         }
@@ -31,11 +31,11 @@ export class ElementButtonLanguageModel extends ModelLanguageBase<
         return ElementButtonLanguageModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return ElementButtonLanguageModel.getInstance();
     }
 
-    protected getModel () {
+    protected getModel() {
         return model;
     }
 }

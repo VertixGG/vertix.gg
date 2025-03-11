@@ -13,30 +13,30 @@ export class DynamicChannelPermissionsDeniedEmbed extends DynamicChannelPermissi
         userDeniedDisplayName: uiUtilsWrapAsTemplate( "userDeniedDisplayName" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPermissionsDeniedEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor () {
+    protected getColor() {
         return Colors.Red;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "👎  Access canceled";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `**${ DynamicChannelPermissionsDeniedEmbed.vars.userDeniedDisplayName }** successfully revoked and no longer has access to this channel!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
         result.userDeniedDisplayName = args.userDeniedDisplayName;

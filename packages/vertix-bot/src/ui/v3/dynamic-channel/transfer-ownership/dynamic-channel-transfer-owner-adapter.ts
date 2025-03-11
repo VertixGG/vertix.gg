@@ -23,19 +23,19 @@ const ACCEPTED_INTERACTION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExuBase<DefaultInteraction> {
     private static acceptedInteraction: Map<string, AcceptedInteraction> = new Map<string, AcceptedInteraction>();
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelTransferOwnerAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelTransferOwnerComponent;
     }
 
-    public static getExcludedElements () {
+    public static getExcludedElements() {
         return [ DynamicChannelTransferOwnerButton ];
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             default: {},
             "Vertix/UI-V3/DynamicChannelTransferOwnerSelectUser": {
@@ -60,7 +60,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         };
     }
 
-    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
+    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
         switch ( this.getCurrentExecutionStep()?.name ) {
             case "Vertix/UI-V3/DynamicChannelTransferOwnerUserSelected":
                 return {
@@ -71,7 +71,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         return {};
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "Vertix/UI-V3/DynamicChannelTransferOwnerButton",
             this.onTransferOwnerButtonClicked
@@ -93,7 +93,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         );
     }
 
-    private async onTransferOwnerButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onTransferOwnerButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // if ( ! await TopGGManager.$.isVoted( interaction.user.id ) ) {
         //     await TopGGManager.$.sendVoteEmbed( interaction );
         //     return;
@@ -102,7 +102,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         await this.ephemeralWithStep( interaction, "Vertix/UI-V3/DynamicChannelTransferOwnerSelectUser" );
     }
 
-    private async onTransferOwnerUserSelected ( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
+    private async onTransferOwnerUserSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
         const targetId = interaction.values.at( 0 ) as string,
             target = interaction.guild.members.cache.get( targetId );
 
@@ -137,7 +137,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         } );
     }
 
-    private async onYesButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onYesButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         // Defer the interaction immediately unless it's already deferred
         if ( !interaction.deferred && !interaction.replied ) {
             try {
@@ -182,7 +182,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelTransferOwnerSuccess" );
     }
 
-    private async onNoButtonClicked ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private async onNoButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         this.clearAcceptedInteraction( interaction );
 
         await this.deleteRelatedEphemeralInteractionsInternal(
@@ -194,7 +194,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
         //await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelTransferOwnerSelectUser" );
     }
 
-    private clearAcceptedInteraction ( interaction: UIDefaultButtonChannelVoiceInteraction ) {
+    private clearAcceptedInteraction( interaction: UIDefaultButtonChannelVoiceInteraction ) {
         const acceptedInteraction = DynamicChannelTransferOwnerAdapter.acceptedInteraction.get(
             interaction.channel.id + interaction.user.id
         );

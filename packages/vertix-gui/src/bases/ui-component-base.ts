@@ -26,14 +26,14 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
 
     private uiModals: UIModalBase[] = [];
 
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIComponentBase";
     }
 
     /**
      * Function getEntities() :: Returns all entities of the component, will return all types if no args are passed.
      */
-    public static getEntities ( args: UIGetEntitiesArgs = {} ): UIEntityTypes {
+    public static getEntities( args: UIGetEntitiesArgs = {} ): UIEntityTypes {
         const entities: UIEntityTypes = [],
             argsChanged = Object.keys( args ).length > 0;
 
@@ -57,7 +57,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         return entities;
     }
 
-    public static validate ( validateDefaultGroups = true ) {
+    public static validate( validateDefaultGroups = true ) {
         const elements = this.getElements(),
             elementsGroup = this.getElementsGroups();
 
@@ -128,7 +128,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         this.getFlatMarkdowns().forEach( ( markdown ) => markdown.ensure() );
     }
 
-    public getEntitiesInstance () {
+    public getEntitiesInstance() {
         return {
             elements: this.uiElements,
             embeds: this.uiEmbeds,
@@ -137,7 +137,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         };
     }
 
-    protected async getSchemaInternal () {
+    protected async getSchemaInternal() {
         return {
             name: this.getName(),
             type: this.getStaticThis().getType(),
@@ -149,7 +149,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         };
     }
 
-    protected async buildDynamicEntities ( args?: UIArgs ) {
+    protected async buildDynamicEntities( args?: UIArgs ) {
         // ( * ) Clear all dynamic entities.
         // ( * ) Build only dynamic elements.
 
@@ -179,7 +179,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         await this.buildModals( args );
     }
 
-    protected async buildStaticEntities () {
+    protected async buildStaticEntities() {
         // Build only static elements.
 
         // Markdowns should be built first, since they can be used in other entities.
@@ -190,7 +190,7 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         await this.buildModals( undefined, true );
     }
 
-    private async buildElements ( args?: UIArgs, onlyStatic = false ) {
+    private async buildElements( args?: UIArgs, onlyStatic = false ) {
         const elements = this.getCurrentElements().getItems( args ) as UIElementsConstructor,
             isMultiRow = Array.isArray( elements[ 0 ] ),
             elementsRows = isMultiRow
@@ -215,14 +215,14 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         }
     }
 
-    private async buildEmbeds ( args?: UIArgs, onlyStatic = false ) {
+    private async buildEmbeds( args?: UIArgs, onlyStatic = false ) {
         const embeds = this.getCurrentEmbeds().getItems( args );
 
         await this.buildEntities( this.uiEmbeds, embeds as UIEntityTypes, onlyStatic, args );
     }
 
     // TODO: Test?
-    private async buildModals ( args?: UIArgs, onlyStatic = false ) {
+    private async buildModals( args?: UIArgs, onlyStatic = false ) {
         const self = this.getStaticThis(),
             modals = self.getModals() as { new ( args?: UIArgs ): UIModalBase }[];
 
@@ -233,13 +233,13 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         }
     }
 
-    private async buildMarkdowns ( args?: UIArgs, onlyStatic = false ) {
+    private async buildMarkdowns( args?: UIArgs, onlyStatic = false ) {
         const markdowns = this.getCurrentMarkdowns().getItems( args );
 
         await this.buildEntities( this.uiMarkdowns, markdowns as UIEntityTypes, onlyStatic, args );
     }
 
-    private getStaticThis (): typeof UIComponentBase {
+    private getStaticThis(): typeof UIComponentBase {
         return this.constructor as typeof UIComponentBase;
     }
 }

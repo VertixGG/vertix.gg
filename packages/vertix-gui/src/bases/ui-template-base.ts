@@ -11,7 +11,7 @@ type KeyValue = { [key: string | number]: any };
  * content values from objects, as well as extract variables from template selectOptions based on template logic.
  */
 export abstract class UITemplateBase extends UIEntityBase {
-    public static getName (): string {
+    public static getName(): string {
         return "VertixGUI/UITemplateBase";
     }
 
@@ -19,7 +19,7 @@ export abstract class UITemplateBase extends UIEntityBase {
      * Function composeTemplate() :: Returns a new object with template variables replaced with the corresponding
      * content values from the content object and selectOptions object.
      */
-    protected composeTemplate ( template: KeyValue, data: KeyValue, options: KeyValue ): KeyValue {
+    protected composeTemplate( template: KeyValue, data: KeyValue, options: KeyValue ): KeyValue {
         const parsedData = { ...data, ...this.extractVariablesFromTemplateLogic( data, options ) };
 
         return this.compileTemplate( template, parsedData );
@@ -27,7 +27,7 @@ export abstract class UITemplateBase extends UIEntityBase {
 
     // TODO: Find a better name for this method, + cover with tests.
     // + Move old tests from UIEmbedBase to this class.
-    protected parseLogicInternal ( logic: KeyValue, options: KeyValue, arrayOptions: KeyValue ) {
+    protected parseLogicInternal( logic: KeyValue, options: KeyValue, arrayOptions: KeyValue ) {
         Object.entries( arrayOptions ).forEach( ( [ key, option ] ) => {
             if ( typeof logic[ key ] !== "object" ) {
                 return;
@@ -85,7 +85,7 @@ export abstract class UITemplateBase extends UIEntityBase {
      * Function compileTemplate() :: Returns a new object with template variables replaced with the
      * corresponding content values from the variables object.
      */
-    private compileTemplate ( template: KeyValue, variables: KeyValue ): KeyValue {
+    private compileTemplate( template: KeyValue, variables: KeyValue ): KeyValue {
         const result = {} as KeyValue;
 
         for ( const key in template ) {
@@ -102,7 +102,7 @@ export abstract class UITemplateBase extends UIEntityBase {
      * Function extractVariablesFromTemplateLogic() :: Returns an object containing variables extracted from the
      * templateOptions object based on the values in the templateLogic object.
      */
-    private extractVariablesFromTemplateLogic ( templateLogic: KeyValue, templateOptions: KeyValue ): KeyValue {
+    private extractVariablesFromTemplateLogic( templateLogic: KeyValue, templateOptions: KeyValue ): KeyValue {
         const variables = templateOptions,
             appliedVariables = {} as KeyValue;
 
@@ -142,7 +142,7 @@ export abstract class UITemplateBase extends UIEntityBase {
      * Function replaceTemplateVariables() :: Recursively replaces template variables in a string or object with
      * their corresponding values from the variables object.
      */
-    private replaceTemplateVariables ( templateVariable: any, variables: KeyValue ): any {
+    private replaceTemplateVariables( templateVariable: any, variables: KeyValue ): any {
         if ( "string" === typeof templateVariable ) {
             return templateVariable.replace( UI_TEMPLATE_VAR_WRAPPER_REGEX, ( match, p1 ) => {
                 const replaced = variables[ p1 ];

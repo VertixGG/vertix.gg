@@ -1,11 +1,11 @@
 import { UIGroupBase } from "@vertix.gg/gui/src/bases/ui-group-base";
 
 export abstract class UIEmbedsGroupBase extends UIGroupBase {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/UIEmbedsGroupBase";
     }
 
-    public static getGroupTypeName () {
+    public static getGroupTypeName() {
         return "Embeds";
     }
 }

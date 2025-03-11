@@ -7,7 +7,7 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export async function guildGetMemberDisplayName( guild: string, userId: string ): Promise<string>;
 export async function guildGetMemberDisplayName( guild: Guild, userId: string ): Promise<string>;
-export async function guildGetMemberDisplayName ( guild: Guild | string, userId: string ): Promise<string> {
+export async function guildGetMemberDisplayName( guild: Guild | string, userId: string ): Promise<string> {
     if ( "string" === typeof guild ) {
         const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" ),
             client = appService.getClient();
@@ -32,7 +32,7 @@ export async function guildGetMemberDisplayName ( guild: Guild | string, userId:
     return displayName || "Unknown (Disconnected from server)";
 }
 
-export async function guildGetMembersCount ( guild: Guild, cache = true ): Promise<number> {
+export async function guildGetMembersCount( guild: Guild, cache = true ): Promise<number> {
     if ( cache ) {
         return guild.memberCount;
     }

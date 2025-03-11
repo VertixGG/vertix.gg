@@ -13,7 +13,7 @@ import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 describe( "VertixGUI/UIHashService", () => {
     let uiHashService: UIHashService;
 
-    beforeEach( async () => {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
 
         uiHashService = ServiceLocatorMock.$.get( "VertixGUI/UIHashService" );
@@ -184,8 +184,8 @@ describe( "VertixGUI/UIHashService", () => {
             expect( nonParted ).toBe( id );
         } );
 
-        describe( "$$.generateHash", function () {
-            it( "should generate a hash of maximum length equal to UI_MAX_CUSTOM_ID_LENGTH when maxLength is not provided", function () {
+        describe( "$$.generateHash", function() {
+            it( "should generate a hash of maximum length equal to UI_MAX_CUSTOM_ID_LENGTH when maxLength is not provided", function() {
                 // Arrange.
                 const input = "anyString";
 
@@ -206,7 +206,7 @@ describe( "VertixGUI/UIHashService", () => {
                 expect( hash ).toEqual( expectedMaxLengthHash );
             } );
 
-            it( "should generate a hash of a specific length when maxLength is provided", function () {
+            it( "should generate a hash of a specific length when maxLength is provided", function() {
                 // Arrange.
                 const input = "anyString";
                 const maxLength = 20;

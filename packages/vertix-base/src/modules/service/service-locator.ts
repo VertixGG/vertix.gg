@@ -17,11 +17,11 @@ export class ServiceLocator extends InitializeBase {
 
     private initializing: Set<string> = new Set();
 
-    public static getName () {
+    public static getName() {
         return "Modules/ServiceLocator";
     }
 
-    public static get $ () {
+    public static get $() {
         if ( !this.instance ) {
             this.instance = new this();
         }
@@ -29,7 +29,7 @@ export class ServiceLocator extends InitializeBase {
         return this.instance;
     }
 
-    public register<T extends ServiceBase> ( service: new ( ...args: any[] ) => T, ...args: any[] ) {
+    public register<T extends ServiceBase>( service: new ( ...args: any[] ) => T, ...args: any[] ) {
         const serviceAsClass = service as unknown as ServiceBase;
 
         if ( this.services.has( serviceAsClass.getName() ) ) {
@@ -47,11 +47,11 @@ export class ServiceLocator extends InitializeBase {
         this.emitter.emit( "service-registered", serviceInstance.getName() );
     }
 
-    public unregister ( serviceName: string ) {
+    public unregister( serviceName: string ) {
         return this.services.delete( serviceName );
     }
 
-    public get<T extends ServiceBase> ( serviceName: string, options = { silent: false } ): T {
+    public get<T extends ServiceBase>( serviceName: string, options = { silent: false } ): T {
         if ( !options.silent && !this.services.has( serviceName ) ) {
             throw new Error( `Service '${ serviceName }' is not registered` );
         }
@@ -59,7 +59,7 @@ export class ServiceLocator extends InitializeBase {
         return this.services.get( serviceName ) as T;
     }
 
-    public async waitFor<T extends ServiceBase> (
+    public async waitFor<T extends ServiceBase>(
         serviceName: string,
         options: {
             timeout?: number;
@@ -94,7 +94,7 @@ export class ServiceLocator extends InitializeBase {
         }
     }
 
-    public async waitForAll (
+    public async waitForAll(
         options: {
             timeout?: number;
             metadata?: any;
@@ -113,7 +113,7 @@ export class ServiceLocator extends InitializeBase {
         await Promise.all( waitForServices );
     }
 
-    private createServicePromise<T extends ServiceBase> ( serviceName: string ): Promise<T> {
+    private createServicePromise<T extends ServiceBase>( serviceName: string ): Promise<T> {
         return new Promise<T>( ( resolve, reject ) => {
             const listener = ( registeredServiceName: string ) => {
                 if ( registeredServiceName === serviceName ) {
@@ -139,7 +139,7 @@ export class ServiceLocator extends InitializeBase {
         } );
     }
 
-    private createTimeoutPromise<T extends ServiceBase> (
+    private createTimeoutPromise<T extends ServiceBase>(
         serviceName: string,
         timeout: number = 0,
         metadata: any
@@ -153,7 +153,7 @@ export class ServiceLocator extends InitializeBase {
         );
     }
 
-    private validateCircularDependencies ( service: ServiceWithDependenciesBase<any> ) {
+    private validateCircularDependencies( service: ServiceWithDependenciesBase<any> ) {
         const visited = new Set<string>(),
             stack = new Set<string>();
 
@@ -167,7 +167,7 @@ export class ServiceLocator extends InitializeBase {
         }
     }
 
-    private performDepthFirstSearch ( currentServiceName: string, stack: Set<string>, visited: Set<string> ): boolean {
+    private performDepthFirstSearch( currentServiceName: string, stack: Set<string>, visited: Set<string> ): boolean {
         // If the service has been visited before, it means a circular dependency exists.
         if ( visited.has( currentServiceName ) ) {
             // If the service is already on the stack, then it is definitely a circular dependency.
@@ -194,7 +194,7 @@ export class ServiceLocator extends InitializeBase {
         return false;
     }
 
-    private getDependencies ( service: ServiceWithDependenciesBase<any> ): string[] {
+    private getDependencies( service: ServiceWithDependenciesBase<any> ): string[] {
         return Object.values( service.getDependencies() );
     }
 }

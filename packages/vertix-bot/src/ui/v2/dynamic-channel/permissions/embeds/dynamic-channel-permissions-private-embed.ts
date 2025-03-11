@@ -20,27 +20,27 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
         allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPermissionsPrivateEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor () {
+    protected getColor() {
         return 0xf18b75; // Same as the "danger" color in Discord.
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return "https://i.imgur.com/NthLO3W.png";
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🚫  The channel is private now";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "Please be aware that only granted users can enter your channel.\n\n" +
             DynamicChannelPermissionsPrivateEmbed.vars.allowedUsersDisplay +
@@ -49,7 +49,7 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
         );
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = DynamicChannelPermissionsPrivateEmbed.vars;
 
         return {
@@ -60,7 +60,7 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
         };
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             messageDefault,
             messageAccessNotAvailable,
@@ -84,7 +84,7 @@ export class DynamicChannelPermissionsPrivateEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result: any = {},
             {
                 messageDefault,

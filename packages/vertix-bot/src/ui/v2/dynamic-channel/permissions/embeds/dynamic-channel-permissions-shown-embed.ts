@@ -4,19 +4,19 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 export class DynamicChannelPermissionsShownEmbed extends UIEmbedBase {
     private static vars = {};
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPermissionsShownEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic; // TODO: Should be static.
     }
 
-    protected getColor () {
+    protected getColor() {
         return 0xc79d5f; // Same as globe emoji.
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🐵  The channel is visible now";
     }
 }

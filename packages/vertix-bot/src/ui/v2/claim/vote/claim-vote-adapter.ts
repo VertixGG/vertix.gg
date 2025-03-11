@@ -24,15 +24,15 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 }
 
 export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/ClaimVoteAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return ClaimVoteComponent;
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             "Vertix/UI-V2/ClaimStepIn": {
                 embedsGroup: "Vertix/UI-V2/ClaimVoteStepInEmbedGroup",
@@ -61,28 +61,28 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         };
     }
 
-    public getPermissions (): PermissionsBitField {
+    public getPermissions(): PermissionsBitField {
         return new PermissionsBitField( 0n );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice ];
     }
 
-    protected async getStartArgs () {
+    protected async getStartArgs() {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: DefaultInteraction ) {
+    protected async getReplyArgs( interaction: DefaultInteraction ) {
         return this.getAllArgs( interaction );
     }
 
-    protected async getEditMessageArgs ( message: Message<true> ): Promise<UIArgs> {
+    protected async getEditMessageArgs( message: Message<true> ): Promise<UIArgs> {
         return this.getAllArgs( message );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async onBeforeBuild ( args: UIArgs, from: string, interaction: DefaultInteraction ): Promise<void> {
+    protected async onBeforeBuild( args: UIArgs, from: string, interaction: DefaultInteraction ): Promise<void> {
         const stepName = this.getCurrentExecutionStep()?.name;
 
         if ( "run" === from ) {
@@ -103,7 +103,7 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         }
     }
 
-    protected async onStep (
+    protected async onStep(
         stepName: string,
         interaction: DefaultInteraction & {
             channel: VoiceChannel;
@@ -129,11 +129,11 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         }
     }
 
-    protected async handleVoteRequest ( interaction: DefaultInteraction ) {
+    protected async handleVoteRequest( interaction: DefaultInteraction ) {
         await DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
     }
 
-    private async getAllArgs ( context: DefaultInteraction | Message<true> ) {
+    private async getAllArgs( context: DefaultInteraction | Message<true> ) {
         const args: UIArgs = {};
 
         const stepName = this.getCurrentExecutionStep()?.name;
@@ -150,7 +150,7 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
                 args.candidateDisplayNames = {};
 
                 await Promise.all(
-                    Object.keys( args.results ).map( async ( userId ) => {
+                    Object.keys( args.results ).map( async( userId ) => {
                         args.candidateDisplayNames[ userId ] = await guildGetMemberDisplayName( context.guild, userId );
                     } )
                 );
@@ -205,7 +205,7 @@ export class ClaimVoteAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, 
         return args;
     }
 
-    private async setBasicArgs ( context: DefaultInteraction | Message<true>, args: UIArgs ) {
+    private async setBasicArgs( context: DefaultInteraction | Message<true>, args: UIArgs ) {
         args.userInitiatorId = DynamicChannelVoteManager.$.getInitiatorId( context.channelId );
         args.userInitiatorDisplayName = await guildGetMemberDisplayName( context.guild, args.userInitiatorId );
         args.timeEnd = DynamicChannelVoteManager.$.getEndTime( context.channelId );

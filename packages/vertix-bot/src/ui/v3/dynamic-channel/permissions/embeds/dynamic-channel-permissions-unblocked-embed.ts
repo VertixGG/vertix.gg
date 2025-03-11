@@ -11,26 +11,26 @@ export class DynamicChannelPermissionsUnblockedEmbed extends DynamicChannelPermi
         userUnBlockedDisplayName: uiUtilsWrapAsTemplate( "userUnBlockedDisplayName" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsUnblockedEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "🤙  User unblocked";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `**${ DynamicChannelPermissionsUnblockedEmbed.vars.userUnBlockedDisplayName }** successfully un-blocked!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
         result.userUnBlockedDisplayName = args.userUnBlockedDisplayName;

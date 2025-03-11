@@ -21,15 +21,15 @@ import {
 import { DynamicChannelPermissionsAccessElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-access-elements-group";
 
 export class DynamicChannelPermissionsComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelPermissionsComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsPrivateEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsPublicEmbed ),
@@ -50,15 +50,15 @@ export class DynamicChannelPermissionsComponent extends UIComponentBase {
         ];
     }
 
-    public static getElementsGroups () {
+    public static getElementsGroups() {
         return [ DynamicChannelPermissionsAccessElementsGroup ];
     }
 
-    public static getDefaultElementsGroup () {
+    public static getDefaultElementsGroup() {
         return null;
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         return null;
     }
 }

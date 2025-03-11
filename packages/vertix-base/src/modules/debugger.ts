@@ -15,11 +15,11 @@ export class Debugger extends ObjectBase {
 
     declare private finalizationRegistry;
 
-    public static getName () {
+    public static getName() {
         return "VertixBase/Modules/Debugger";
     }
 
-    public constructor (
+    public constructor(
         owner: ObjectBase | typeof ObjectBase | string,
         prefix?: string,
         private shouldDebug = Logger.isDebugEnabled()
@@ -42,7 +42,7 @@ export class Debugger extends ObjectBase {
         }
     }
 
-    public enableCleanupDebug ( handle: ObjectBase, id: string = "" ) {
+    public enableCleanupDebug( handle: ObjectBase, id: string = "" ) {
         if ( !this.finalizationRegistry ) {
             this.finalizationRegistry = new FinalizationRegistry( ( id: string ) => {
                 this.log( this.constructor, `FinalizationRegistry: ${ id }` );
@@ -58,7 +58,7 @@ export class Debugger extends ObjectBase {
         this.finalizationRegistry.register( handle, id );
     }
 
-    public log ( source: Function, message: string, ...args: any[] ) {
+    public log( source: Function, message: string, ...args: any[] ) {
         if ( args && args.length > 0 ) {
             return this.logger.debug( source, message, ...args );
         }
@@ -66,14 +66,14 @@ export class Debugger extends ObjectBase {
         this.logger.debug( source, message );
     }
 
-    public dumpDown ( source: Function, object: any, objectName: string = "" ) {
+    public dumpDown( source: Function, object: any, objectName: string = "" ) {
         this.log(
             source,
             `${ objectName ? objectName + ":" : "" } ` + "🔽" + "\n" + pc.green( util.inspect( object, false, null, true ) )
         );
     }
 
-    public debugPermission ( source: Function, overwrite: PermissionOverwrites ) {
+    public debugPermission( source: Function, overwrite: PermissionOverwrites ) {
         let { id, allow, deny, type } = overwrite;
 
         this.log(
@@ -87,18 +87,18 @@ export class Debugger extends ObjectBase {
         );
     }
 
-    public debugPermissions ( source: Function, permissionOverwrites: PermissionOverwriteManager ) {
+    public debugPermissions( source: Function, permissionOverwrites: PermissionOverwriteManager ) {
         for ( const overwrite of permissionOverwrites.cache.values() ) {
             this.debugPermission( source, overwrite );
         }
     }
 
-    public isEnabled () {
+    public isEnabled() {
         return this.shouldDebug;
     }
 }
 
-export function createDebugger ( owner: ObjectBase | typeof ObjectBase | string, ownerType: string, prefix?: string ) {
+export function createDebugger( owner: ObjectBase | typeof ObjectBase | string, ownerType: string, prefix?: string ) {
     const ownerName = typeof owner === "string" ? owner : owner.getName();
 
     return new Debugger( owner, prefix, isDebugEnabled( ownerType, ownerName ) );

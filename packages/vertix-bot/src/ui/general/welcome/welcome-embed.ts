@@ -6,33 +6,33 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 export class WelcomeEmbed extends UIEmbedBase {
     private static vars = {};
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/WelcomeEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Static;
     }
 
-    protected getColor () {
+    protected getColor() {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage () {
+    protected getImage() {
         return "https://i.imgur.com/x8jMguN.gif";
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "༄ Vertix is here, let's get started!";
     }
 
-    protected getThumbnail () {
+    protected getThumbnail() {
         return {
             url: "https://s11.gifyu.com/images/SuW5n.gif"
         };
     }
 
-    protected getDescription () {
+    protected getDescription() {
         return (
             "Welcome to Vertix, an incredible addition to your server!\n" +
             "Let's collaborate and make your server even better.\n\n" +

@@ -27,7 +27,7 @@ export function DataVersioningModelFactory<
     TModelResult extends TDataDefaultResult,
     TModel extends TBaseModelStub,
     TUniqueKeys extends TDataVersioningDefaultUniqueKeys = TDataVersioningDefaultUniqueKeys
-> (
+>(
     model: TModel,
     options: {
         modelOwnerName?: PrismaBot.Prisma.ModelName;
@@ -39,11 +39,11 @@ export function DataVersioningModelFactory<
     const { modelOwnerName } = options;
 
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
-        public static getName () {
+        public static getName() {
             return options.modelNamespace ?? "VertixBase/Factory/VersioningModel";
         }
 
-        public constructor (
+        public constructor(
             shouldDebugCache = undefined === typeof options.shouldDebugCache
                 ? isDebugEnabled( "CACHE", VersioningModel.getName() )
                 : options.shouldDebugCache,
@@ -54,11 +54,11 @@ export function DataVersioningModelFactory<
             super( shouldDebugCache, shouldDebugModel );
         }
 
-        protected getModel () {
+        protected getModel() {
             return model;
         }
 
-        protected getUniqueKeyName () {
+        protected getUniqueKeyName() {
             return "key_version";
         }
 
@@ -72,7 +72,7 @@ export function DataVersioningModelFactory<
          *
          * @returns The value associated with the key and version, converted to the appropriate type, or null if not found.
          **/
-        public async get<T extends ReturnType<typeof this.getValueAsType>> (
+        public async get<T extends ReturnType<typeof this.getValueAsType>>(
             keys: TUniqueKeys,
             options: TDataVersioningOptions = {
                 cache: true
@@ -124,7 +124,7 @@ export function DataVersioningModelFactory<
          * @note __Caching__ is `off` by default for this method due to the inclusion of owner information.
          * Ensure `modelOwnerName` is set before invoking this method
          **/
-        public async getWithOwner<T extends ReturnType<typeof this.getValueAsType>, const TOwner extends object> (
+        public async getWithOwner<T extends ReturnType<typeof this.getValueAsType>, const TOwner extends object>(
             keys: TUniqueKeys,
             options: TDataVersioningOptions = {
                 cache: false
@@ -182,7 +182,7 @@ export function DataVersioningModelFactory<
          *
          * @returns The newly created entry, converted to the appropriate type, or null if creation failed.
          **/
-        public async create<T extends ReturnType<typeof this.getValueAsType>> ( keys: TUniqueKeys, value: T ) {
+        public async create<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
             // Check if exists
             if ( await this.get( keys ) ) {
                 this.logger.error( this.create, `Keys: ${ util.inspect( keys ) } already exists` );
@@ -204,7 +204,7 @@ export function DataVersioningModelFactory<
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
-        public async update<T extends ReturnType<typeof this.getValueAsType>> ( keys: TUniqueKeys, value: T ) {
+        public async update<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
             const dataType = this.getDataType( value );
 
             const newValue = await this.mergeWithExisting( keys, value );
@@ -227,7 +227,7 @@ export function DataVersioningModelFactory<
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
-        public async upsert<T extends ReturnType<typeof this.getValueAsType>> ( keys: TUniqueKeys, value: T ) {
+        public async upsert<T extends ReturnType<typeof this.getValueAsType>>( keys: TUniqueKeys, value: T ) {
             const dataType = this.getDataType( value );
 
             const result = await this.getModel().upsert<TModelResult>( {
@@ -255,7 +255,7 @@ export function DataVersioningModelFactory<
             return result ? this.getValueAsType<T>( result ) : null;
         }
 
-        public async delete ( keys: TUniqueKeys ) {
+        public async delete( keys: TUniqueKeys ) {
             const result = await this.getModel().delete( {
                 where: {
                     [ this.getUniqueKeyName() ]: keys
@@ -268,7 +268,7 @@ export function DataVersioningModelFactory<
             return result;
         }
 
-        private async mergeWithExisting ( keys: TUniqueKeys, value: any ) {
+        private async mergeWithExisting( keys: TUniqueKeys, value: any ) {
             let existing;
 
             const dataType = this.getDataType( value );
@@ -281,19 +281,19 @@ export function DataVersioningModelFactory<
             return existing ? deepMerge( existing, value ) : value;
         }
 
-        private setCacheResult ( keys: TUniqueKeys, result: TModelResult ) {
+        private setCacheResult( keys: TUniqueKeys, result: TModelResult ) {
             const keysArray = Object.values( keys ) as string[];
 
             this.setCache( this.generateCacheKey( ...keysArray ), result );
         }
 
-        private deleteCacheForKeys ( keys: TUniqueKeys ) {
+        private deleteCacheForKeys( keys: TUniqueKeys ) {
             const keysArray = Object.values( keys ) as string[];
 
             this.deleteCache( this.generateCacheKey( ...keysArray ) );
         }
 
-        private deleteCacheIfAlreadyExists ( keys: TUniqueKeys ) {
+        private deleteCacheIfAlreadyExists( keys: TUniqueKeys ) {
             const keysArray = Object.values( keys ) as string[];
 
             const cacheKey = this.generateCacheKey( ...keysArray );
@@ -305,7 +305,7 @@ export function DataVersioningModelFactory<
 
         private generateCacheKey( key: string, version: string ): string;
         private generateCacheKey( ...args: string[] ): string;
-        private generateCacheKey ( ...args: string[] ) {
+        private generateCacheKey( ...args: string[] ) {
             return args.sort().join( "|" );
         }
     }

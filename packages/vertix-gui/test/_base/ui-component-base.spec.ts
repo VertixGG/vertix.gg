@@ -5,13 +5,13 @@ import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 describe( "VertixGUI/UIComponentBase", () => {
-    beforeEach( async () => {
+    beforeEach( async() => {
         await TestWithServiceLocatorMock.withUIServiceMock();
     } );
 
     describe( "validate()", () => {
 
-        test( "ensureEntities() :: ensure error - component should have entities", function () {
+        test( "ensureEntities() :: ensure error - component should have entities", function() {
             // Arrange.
             const Class = UIMockGeneratorUtil
                 .createComponent()
@@ -26,7 +26,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             expect( action ).toThrowError( "Component: 'test' has no entities" );
         } );
 
-        test( "ensureEntities() :: ensure error - dynamic component should not allow static entities", function () {
+        test( "ensureEntities() :: ensure error - dynamic component should not allow static entities", function() {
             // Arrange
             const ClassWithElement = UIMockGeneratorUtil.createComponent()
                 .withName( "test" )
@@ -75,7 +75,7 @@ describe( "VertixGUI/UIComponentBase", () => {
     } );
 
     describe( "build()", () => {
-        test( "buildElements() :: ensure single row", async function () {
+        test( "buildElements() :: ensure single row", async function() {
             // Arrange.
             const Class = UIMockGeneratorUtil
                 .createComponent()
@@ -101,7 +101,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             expect( result[ 0 ][ 0 ].getName() ).toEqual( "entity-element" );
         } );
 
-        test( "buildElements() :: ensure single multi row", async function () {
+        test( "buildElements() :: ensure single multi row", async function() {
             // Arrange.
             const Class = UIMockGeneratorUtil
                 .createComponent()
@@ -136,7 +136,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             expect( result[ 1 ][ 0 ].getName() ).toEqual( "entity-element-row-2" );
         } );
 
-        test( "buildElements() :: ensure dynamic recreated", async function () {
+        test( "buildElements() :: ensure dynamic recreated", async function() {
             // Arrange.
             const elements = [
                 UIMockGeneratorUtil.createElement()
@@ -171,7 +171,7 @@ describe( "VertixGUI/UIComponentBase", () => {
                 .toEqual( "entity-element-changed" );
         } );
 
-        test( "buildElements() :: ensure static not recreated", async function () {
+        test( "buildElements() :: ensure static not recreated", async function() {
             // Arrange.
             const elements = [
                 UIMockGeneratorUtil.createElement()
@@ -244,7 +244,7 @@ describe( "VertixGUI/UIComponentBase", () => {
         //     await expect(action()).rejects.toThrowError("Cannot re-create static entity: 'entity-element'");
         // });
 
-        test( "buildElements() :: ensure empty rebuild removes the elements", async function () {
+        test( "buildElements() :: ensure empty rebuild removes the elements", async function() {
             // Arrange.
             const Class = UIMockGeneratorUtil
                 .createComponent()
@@ -282,7 +282,7 @@ describe( "VertixGUI/UIComponentBase", () => {
     } );
 
     describe( "switchElementsGroup()", () => {
-        it( "should able to switch between elements", async function () {
+        it( "should able to switch between elements", async function() {
             // Arrange.
             const Embed = UIMockGeneratorUtil
                 .createEmbed()
@@ -398,7 +398,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             } );
         } );
 
-        it( "should not allow dynamic component to switch dynamic elements with static elements", async function () {
+        it( "should not allow dynamic component to switch dynamic elements with static elements", async function() {
             // Arrange.
             const Embed = UIMockGeneratorUtil
                 .createEmbed()
@@ -460,7 +460,7 @@ describe( "VertixGUI/UIComponentBase", () => {
     } );
 
     describe( "clearElements()", () => {
-        it( "should build schema without elements", async function () {
+        it( "should build schema without elements", async function() {
             // Arrange.
             const Embed = UIMockGeneratorUtil
                 .createEmbed()
@@ -548,7 +548,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             } );
         } );
 
-        it( "should not effect schema elements when component recreated", async function () {
+        it( "should not effect schema elements when component recreated", async function() {
             // Arrange.
             const Embed = UIMockGeneratorUtil
                 .createEmbed()

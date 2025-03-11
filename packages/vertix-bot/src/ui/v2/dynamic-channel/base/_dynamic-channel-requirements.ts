@@ -10,7 +10,7 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
-export const dynamicChannelRequirements = async ( interaction: UIAdapterReplyContext ) => {
+export const dynamicChannelRequirements = async( interaction: UIAdapterReplyContext ) => {
     if ( !interaction.channel ) {
         return false;
     }

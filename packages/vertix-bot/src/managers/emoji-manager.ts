@@ -25,11 +25,11 @@ export class EmojiManager extends InitializeBase {
 
     private emojis: RESTGetAPIApplicationEmojisResult;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Managers/Emoji";
     }
 
-    public static get $ () {
+    public static get $() {
         if ( !EmojiManager.instance ) {
             EmojiManager.instance = new EmojiManager();
         }
@@ -37,13 +37,13 @@ export class EmojiManager extends InitializeBase {
         return EmojiManager.instance;
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "MANAGER", EmojiManager.getName() ) );
     }
 
-    protected async initialize () {
+    protected async initialize() {
         this.appService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
             silent: true,
             timeout: 5000
@@ -65,7 +65,7 @@ export class EmojiManager extends InitializeBase {
         } );
     }
 
-    public async awaitInitialization () {
+    public async awaitInitialization() {
         if ( !this.initPromise ) {
             this.initPromise = this.initialize();
         }
@@ -73,7 +73,7 @@ export class EmojiManager extends InitializeBase {
         await this.initPromise;
     }
 
-    public async getMarkdown ( baseName: string, fromCache = true ) {
+    public async getMarkdown( baseName: string, fromCache = true ) {
         if ( !fromCache ) {
             await this.initialize();
         }
@@ -81,7 +81,7 @@ export class EmojiManager extends InitializeBase {
         return this.getCachedMarkdown( baseName );
     }
 
-    public getCachedMarkdown ( baseName: string ) {
+    public getCachedMarkdown( baseName: string ) {
         const emoji = this.emojis?.items?.find( ( emoji ) => emoji.name!.includes( baseName ) );
 
         if ( emoji ) {

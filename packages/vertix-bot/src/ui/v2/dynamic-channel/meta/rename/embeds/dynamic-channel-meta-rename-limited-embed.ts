@@ -15,34 +15,34 @@ export class DynamicChannelMetaRenameLimitedEmbed extends UIEmbedElapsedTimeBase
         masterChannelMessageDefault: uiUtilsWrapAsTemplate( "masterChannelMessageDefault" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaRenameLimitedEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getEndTime ( args: UIArgs ): Date {
+    protected getEndTime( args: UIArgs ): Date {
         return new Date( Date.now() + args.retryAfter * 1000 );
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_ORANGE_RED;
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return "🙅 You renamed your channel too fast!";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `Please wait \`${ this.getElapsedTimeFormatFractionVariable() }\` until the next rename` +
             DynamicChannelMetaRenameLimitedEmbed.vars.masterChannelMessage
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const { masterChannelId, masterChannelMessageDefault } = DynamicChannelMetaRenameLimitedEmbed.vars;
 
         return {
@@ -54,7 +54,7 @@ export class DynamicChannelMetaRenameLimitedEmbed extends UIEmbedElapsedTimeBase
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result: any = {};
 
         if ( args.masterChannelId ) {

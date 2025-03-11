@@ -4,7 +4,7 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 import type { Client } from "discord.js";
 
-export async function readyHandler ( client: Client<true> ) {
+export async function readyHandler( client: Client<true> ) {
     await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
         silent: true,
         timeout: 30000
@@ -14,7 +14,7 @@ export async function readyHandler ( client: Client<true> ) {
 
     return new Promise( ( resolve ) => {
         const initialClient = client,
-            botReady = async () => {
+            botReady = async() => {
                 await appService.onReady( client );
 
                 resolve( true );

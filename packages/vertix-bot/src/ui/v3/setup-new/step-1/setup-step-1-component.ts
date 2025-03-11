@@ -8,23 +8,23 @@ import { ChannelNameTemplateEditButton } from "@vertix.gg/bot/src/ui/general/cha
 import { SetupStep1Embed } from "@vertix.gg/bot/src/ui/v3/setup-new/step-1/setup-step-1-embed";
 
 export class SetupStep1Component extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/SetupStep1Component";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getElements () {
+    public static getElements() {
         return [ [ ChannelNameTemplateEditButton ] ];
     }
 
-    public static getEmbeds () {
+    public static getEmbeds() {
         return [ SetupStep1Embed ];
     }
 
-    public static getModals () {
+    public static getModals() {
         return [ ChannelNameTemplateModal ];
     }
 }

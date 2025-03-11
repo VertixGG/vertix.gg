@@ -5,27 +5,27 @@ import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-e
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class UIWizardFinishButton extends UIElementButtonBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/WizardFinishButton";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getLabel () {
+    protected async getLabel() {
         return "✔ Finish";
     }
 
-    protected async getStyle (): Promise<UIButtonStyleTypes> {
+    protected async getStyle(): Promise<UIButtonStyleTypes> {
         return "success";
     }
 
-    protected async isDisabled () {
+    protected async isDisabled() {
         return !!this.uiArgs?._wizardIsFinishButtonDisabled;
     }
 
-    protected async isAvailable () {
+    protected async isAvailable() {
         return !!this.uiArgs?._wizardIsFinishButtonAvailable;
     }
 }

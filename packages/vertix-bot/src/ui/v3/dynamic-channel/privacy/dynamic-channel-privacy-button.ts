@@ -5,43 +5,43 @@ import { DynamicChannelPermissionsAccessButton } from "@vertix.gg/bot/src/ui/v3/
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
 export class DynamicChannelPrivacyButton extends DynamicChannelButtonBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrivacyButton";
     }
 
-    public static getBaseName () {
+    public static getBaseName() {
         return "ChannelPrivacy";
     }
 
-    public static getEmoji () {
+    public static getEmoji() {
         return EmojiManager.$.getCachedMarkdown( DynamicChannelPrivacyButton.getBaseName() );
     }
 
-    public static getSortId () {
+    public static getSortId() {
         return this.getSortIdAfter( DynamicChannelPermissionsAccessButton );
     }
 
-    public getId () {
+    public getId() {
         return "privacy";
     }
 
-    public getLabelForEmbed () {
+    public getLabelForEmbed() {
         return `${ DynamicChannelPrivacyButton.getEmoji() } ∙ **Privacy**`;
     }
 
-    public async getLabelForMenu () {
+    public async getLabelForMenu() {
         return "Privacy";
     }
 
-    public async getLabel () {
+    public async getLabel() {
         return "Privacy";
     }
 
-    public async getEmoji () {
+    public async getEmoji() {
         return EmojiManager.$.getMarkdown( DynamicChannelPrivacyButton.getBaseName() );
     }
 
-    public getEmojiForEmbed (): string {
+    public getEmojiForEmbed(): string {
         return DynamicChannelPrivacyButton.getEmoji();
     }
 }

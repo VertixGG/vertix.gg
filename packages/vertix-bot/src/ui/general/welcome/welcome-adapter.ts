@@ -14,23 +14,23 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/WelcomeAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return WelcomeComponent;
     }
 
-    public getPermissions () {
+    public getPermissions() {
         return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
     }
 
-    public getChannelTypes () {
+    public getChannelTypes() {
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    protected getMessage (
+    protected getMessage(
         from: UIAdapterBuildSource,
         context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction,
         argsFromManager?: UIArgs
@@ -45,16 +45,16 @@ export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonC
         return result;
     }
 
-    protected getStartArgs () {
+    protected getStartArgs() {
         return {};
     }
 
-    protected getReplyArgs () {
+    protected getReplyArgs() {
         return {};
     }
 
-    protected onEntityMap () {
-        this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async ( interaction ) => {
+    protected onEntityMap() {
+        this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async( interaction ) => {
             const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
                 uiAdapter = uiService.get( "VertixBot/UI-General/SetupAdapter" );
 

@@ -13,27 +13,27 @@ export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
         index: uiUtilsWrapAsTemplate( "index" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/SetupEditVerifiedRolesEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `🛡️  Edit Verified Roles Of Master Channel #${ SetupEditVerifiedRolesEmbed.vars.index }`;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const index = SetupEditVerifiedRolesEmbed.vars.index;
 
         return (
@@ -44,11 +44,11 @@ export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
         );
     }
 
-    protected getFooter () {
+    protected getFooter() {
         return "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.";
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         return {
             ...super.getLogic( args ),
 

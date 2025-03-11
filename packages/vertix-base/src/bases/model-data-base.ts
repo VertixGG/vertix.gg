@@ -25,14 +25,14 @@ export abstract class ModelDataBase<
     protected ownerModel: TOwnerModel;
     protected dataModel: TDataModel;
 
-    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super( shouldDebugCache, shouldDebugModel );
 
         this.ownerModel = this.getOwnerModel();
         this.dataModel = this.getDataModel();
     }
 
-    public async createData ( args: IDataCreateArgs ) {
+    public async createData( args: IDataCreateArgs ) {
         const data = {
             ...this.getInternalNormalizedData( args ),
 
@@ -51,7 +51,7 @@ export abstract class ModelDataBase<
         } );
     }
 
-    public async setData ( args: IDataUpdateArgs ) {
+    public async setData( args: IDataUpdateArgs ) {
         if ( null === args.default ) {
             return this.logger.error( this.setData, `Cannot set data for: '${ args.key }' to null.` );
         }
@@ -86,7 +86,7 @@ export abstract class ModelDataBase<
         return result;
     }
 
-    public async deleteData ( args: Omit<IDataSelectUniqueArgs, "version"> ) {
+    public async deleteData( args: Omit<IDataSelectUniqueArgs, "version"> ) {
         return this.dataModel.delete( {
             where: this.getWhereUnique( {
                 version: VERSION_UI_V2,
@@ -96,7 +96,7 @@ export abstract class ModelDataBase<
     }
 
     // TODO: `version` should not be omitted.
-    public async getData ( args: Omit<IDataGetArgs, "version"> ) {
+    public async getData( args: Omit<IDataGetArgs, "version"> ) {
         this.debugger.log( this.getData, "Getting content for:", args );
 
         return this.ownerModel.findUnique( {
@@ -109,11 +109,11 @@ export abstract class ModelDataBase<
         } );
     }
 
-    public async getAllData () {
+    public async getAllData() {
         return this.dataModel.findMany();
     }
 
-    public getInternalNormalizedData ( args: IDataCreateArgs ) {
+    public getInternalNormalizedData( args: IDataCreateArgs ) {
         const data: any = {};
 
         if ( "string" === typeof args.value ) {
@@ -139,7 +139,7 @@ export abstract class ModelDataBase<
         return data;
     }
 
-    public getOwnerId ( ownerId: string ): Promise<{ id: string }> {
+    public getOwnerId( ownerId: string ): Promise<{ id: string }> {
         return this.ownerModel.findUnique( {
             where: {
                 [ this.getOwnerIdFieldName() ]: ownerId
@@ -147,7 +147,7 @@ export abstract class ModelDataBase<
         } );
     }
 
-    public async isDataExist ( args: IDataSelectUniqueArgs ) {
+    public async isDataExist( args: IDataSelectUniqueArgs ) {
         const result = await this.dataModel.findUnique( {
             where: this.getWhereUnique( args )
         } );
@@ -161,7 +161,7 @@ export abstract class ModelDataBase<
 
     protected abstract getDataModel(): TDataModel;
 
-    private getWhereUnique ( args: IDataSelectUniqueArgs ) {
+    private getWhereUnique( args: IDataSelectUniqueArgs ) {
         return {
             ownerId_key_version: {
                 ownerId: args.ownerId,

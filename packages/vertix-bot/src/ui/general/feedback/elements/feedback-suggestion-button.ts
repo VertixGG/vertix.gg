@@ -5,23 +5,23 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class FeedbackSuggestionButton extends UIElementButtonBase {
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/FeedbackSuggestionButton";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Static;
     }
 
-    protected getStyle (): Promise<UIButtonStyleTypes> {
+    protected getStyle(): Promise<UIButtonStyleTypes> {
         return Promise.resolve( "secondary" );
     }
 
-    protected async getLabel () {
+    protected async getLabel() {
         return "Suggest Your Idea";
     }
 
-    protected async getEmoji () {
+    protected async getEmoji() {
         return "💡";
     }
 }

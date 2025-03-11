@@ -55,11 +55,11 @@ export class ChannelService extends ServiceWithDependenciesBase<{
 }> {
     private debugger: Debugger;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Services/Channel";
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", ChannelService.getName() ) );
@@ -69,13 +69,13 @@ export class ChannelService extends ServiceWithDependenciesBase<{
 
     // Remove this auto-generated return type.
     // getDependencies(): TServicesNonEmpty<TServiceNameDependencies<D>> {
-    public getDependencies () {
+    public getDependencies() {
         return {
             appService: "VertixBot/Services/App"
         };
     }
 
-    public async onEnter ( oldState: VoiceState, newState: VoiceState ) {
+    public async onEnter( oldState: VoiceState, newState: VoiceState ) {
         const displayName = newState.member?.displayName as string,
             channelName = newState.channel?.name as string;
 
@@ -92,7 +92,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    public async onSwitch ( oldState: VoiceState, newState: VoiceState ) {
+    public async onSwitch( oldState: VoiceState, newState: VoiceState ) {
         const displayName = newState.member?.displayName as string,
             oldChannelName = oldState.channel?.name as string,
             newChannelName = newState.channel?.name as string;
@@ -112,7 +112,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         await this.onLeaveGeneric( oldState, newState );
     }
 
-    public async onJoinGeneric ( args: IChannelEnterGenericArgs ) {
+    public async onJoinGeneric( args: IChannelEnterGenericArgs ) {
         const { oldState, newState } = args;
 
         this.debugger.log(
@@ -132,14 +132,14 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         await this.onJoin( args );
     }
 
-    public async onJoin ( args: IChannelEnterGenericArgs ) {
+    public async onJoin( args: IChannelEnterGenericArgs ) {
         this.debugger.log(
             this.onJoin,
             `Guild id: '${ args.newState.guild.id }' - User: '${ args.displayName }' joined to channel: '${ args.channelName }'`
         );
     }
 
-    public async onLeaveGeneric ( oldState: VoiceState, newState: VoiceState ) {
+    public async onLeaveGeneric( oldState: VoiceState, newState: VoiceState ) {
         const displayName = newState.member?.displayName as string,
             channelName = newState.channel?.name as string;
 
@@ -160,9 +160,9 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onLeave ( _args: IChannelLeaveGenericArgs ) {}
+    public async onLeave( _args: IChannelLeaveGenericArgs ) {}
 
-    public async onChannelDelete ( channel: DMChannel | NonThreadGuildBasedChannel ) {
+    public async onChannelDelete( channel: DMChannel | NonThreadGuildBasedChannel ) {
         this.debugger.log( this.onChannelDelete, `Channel id: '${ channel.id }' was deleted` );
 
         switch ( channel.type ) {
@@ -176,7 +176,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onChannelGuildVoiceDelete ( channel: VoiceChannel ) {
+    public async onChannelGuildVoiceDelete( channel: VoiceChannel ) {
         this.debugger.log(
             this.onChannelGuildVoiceDelete,
             `Guild id: '${ channel.guild.id }' - Voice channel: '${ channel.name }' was deleted`
@@ -187,7 +187,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         // }
     }
 
-    public async onChannelUpdate (
+    public async onChannelUpdate(
         oldChannelState: DMChannel | NonThreadGuildBasedChannel,
         newChannelState: DMChannel | NonThreadGuildBasedChannel
     ) {
@@ -207,7 +207,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async getMasterChannelByDynamicChannelId ( dynamicChannelId: string, cache = true ) {
+    public async getMasterChannelByDynamicChannelId( dynamicChannelId: string, cache = true ) {
         this.logger.log(
             this.getMasterChannelByDynamicChannelId,
             `Dynamic channel id: '${ dynamicChannelId }', cache: '${ cache }' - Trying to get master channel from database`
@@ -228,7 +228,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async getMasterChannelAndDBbyDynamicChannelId ( dynamicChannelId: string, cache: boolean = true ) {
+    public async getMasterChannelAndDBbyDynamicChannelId( dynamicChannelId: string, cache: boolean = true ) {
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelId, cache );
         if ( !masterChannelDB ) {
             return null;
@@ -245,7 +245,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         };
     }
 
-    public async create ( args: IChannelCreateArgs ) {
+    public async create( args: IChannelCreateArgs ) {
         const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
         this.logger.info(
@@ -291,7 +291,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         return { channel, db: ChannelModel.$.create( data ) };
     }
 
-    public async update ( args: IChannelUpdateArgs ) {
+    public async update( args: IChannelUpdateArgs ) {
         const { channel, userOwnerId } = args;
 
         this.logger.info(
@@ -306,7 +306,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    public async delete ( args: IChannelDeleteArgs ) {
+    public async delete( args: IChannelDeleteArgs ) {
         const { channel, guild } = args;
 
         this.logger.info(

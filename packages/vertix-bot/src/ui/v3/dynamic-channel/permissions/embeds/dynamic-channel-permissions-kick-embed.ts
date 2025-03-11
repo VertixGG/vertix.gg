@@ -11,30 +11,30 @@ export class DynamicChannelPermissionsKickEmbed extends DynamicChannelPermission
         userKickedDisplayName: uiUtilsWrapAsTemplate( "userKickedDisplayName" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsKickEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return UI_IMAGE_EMPTY_LINE_URL;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "👢  User kicked";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `**${ DynamicChannelPermissionsKickEmbed.vars.userKickedDisplayName }** successfully kicked!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
         result.userKickedDisplayName = args.userKickedDisplayName;

@@ -37,7 +37,7 @@ export class ChannelModel extends ModelWithDataBase<
 > {
     private static instance: ChannelModel;
 
-    public static get $ () {
+    public static get $() {
         if ( !this.instance ) {
             this.instance = new ChannelModel();
         }
@@ -45,23 +45,23 @@ export class ChannelModel extends ModelWithDataBase<
         return this.instance;
     }
 
-    public static getName () {
+    public static getName() {
         return "VertixBase/Models/Channel";
     }
 
-    public constructor () {
+    public constructor() {
         super( isDebugEnabled( "CACHE", ChannelModel.getName() ), isDebugEnabled( "MODEL", ChannelModel.getName() ) );
     }
 
-    protected getModel () {
+    protected getModel() {
         return clientChannelExtend.channel;
     }
 
-    protected getDataModels () {
+    protected getDataModels() {
         return [ ChannelDataModel, ChannelDataModelV3 ];
     }
 
-    public async findUnique<T extends TDataType> (
+    public async findUnique<T extends TDataType>(
         findUniqueArgs: ChannelFindUniqueArgsWithDataIncludeKey,
         cache = true
     ) {
@@ -97,7 +97,7 @@ export class ChannelModel extends ModelWithDataBase<
         return result;
     }
 
-    public async findMany<T extends TDataType> ( findManyArgs: ChannelFindManyArgsWithDataIncludeKey, cache = true ) {
+    public async findMany<T extends TDataType>( findManyArgs: ChannelFindManyArgsWithDataIncludeKey, cache = true ) {
         const type = findManyArgs.where?.internalType ?? PrismaBot.E_INTERNAL_CHANNEL_TYPES.DEFAULT_CHANNEL;
 
         this.logger.log(
@@ -116,9 +116,9 @@ export class ChannelModel extends ModelWithDataBase<
 
         const self = this;
 
-        async function handleResultWithCacheInclude () {
+        async function handleResultWithCacheInclude() {
             return Promise.all(
-                results.map( async ( result ) => {
+                results.map( async( result ) => {
                     self.setCache( self.generateCacheKey( { channelId: result.channelId } ), result );
 
                     return await self.getChannelData<T>( result, findManyArgs.include!.key, cache );
@@ -126,21 +126,21 @@ export class ChannelModel extends ModelWithDataBase<
             );
         }
 
-        function handleResultWithCache () {
+        function handleResultWithCache() {
             results.forEach( ( result ) => self.setCache( self.generateCacheKey( { channelId: result.channelId } ), result ) );
 
             return Promise.resolve( results );
         }
 
-        function handleResultWithInclude () {
+        function handleResultWithInclude() {
             return Promise.all(
-                results.map( async ( result ) => {
+                results.map( async( result ) => {
                     return await self.getChannelData<T>( result, findManyArgs.include!.key, cache );
                 } )
             );
         }
 
-        function handleResult () {
+        function handleResult() {
             return Promise.resolve( results );
         }
 
@@ -164,7 +164,7 @@ export class ChannelModel extends ModelWithDataBase<
         return handlers[ cacheKey ][ includeKey ]();
     }
 
-    public async create ( createArgs: PrismaBot.Prisma.ChannelCreateArgs["data"], cache = true ) {
+    public async create( createArgs: PrismaBot.Prisma.ChannelCreateArgs["data"], cache = true ) {
         this.logger.log(
             this.create,
             `Guild id: '${ createArgs.guildId }' - Creating entry for channel id: '${ createArgs.channelId }''`
@@ -184,7 +184,7 @@ export class ChannelModel extends ModelWithDataBase<
         return result;
     }
 
-    public async update ( updateArgs: Pick<PrismaBot.Prisma.ChannelUpdateArgs, "where" | "data">, cache = true ) {
+    public async update( updateArgs: Pick<PrismaBot.Prisma.ChannelUpdateArgs, "where" | "data">, cache = true ) {
         this.logger.log(
             this.update,
             `Guild id: '${ updateArgs.data.guildId }' - Updating entry for channel id: '${ updateArgs.where.channelId }''`
@@ -205,7 +205,7 @@ export class ChannelModel extends ModelWithDataBase<
         return result;
     }
 
-    public async delete ( deleteArgs: PrismaBot.Prisma.ChannelDeleteArgs["where"], cache = true ) {
+    public async delete( deleteArgs: PrismaBot.Prisma.ChannelDeleteArgs["where"], cache = true ) {
         this.logger.log( this.delete, `Deleting entry for channel id: '${ deleteArgs.channelId }''` );
 
         // Delete cache
@@ -221,7 +221,7 @@ export class ChannelModel extends ModelWithDataBase<
         } );
     }
 
-    public async deleteMany ( where: PrismaBot.Prisma.ChannelDeleteManyArgs["where"], cache = true ) {
+    public async deleteMany( where: PrismaBot.Prisma.ChannelDeleteManyArgs["where"], cache = true ) {
         this.logger.log( this.deleteMany, `Deleting entries for guild id: '${ where!.guildId }''` );
 
         if ( !cache ) {
@@ -239,7 +239,7 @@ export class ChannelModel extends ModelWithDataBase<
         return count;
     }
 
-    public async getMasters ( guildId: string, dataKey?: string ) {
+    public async getMasters( guildId: string, dataKey?: string ) {
         const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
             guildId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
@@ -255,7 +255,7 @@ export class ChannelModel extends ModelWithDataBase<
         return this.findMany( { where, include } );
     }
 
-    public async getDynamics ( guildId: string, dataKey?: string ) {
+    public async getDynamics( guildId: string, dataKey?: string ) {
         const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
             guildId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL
@@ -271,7 +271,7 @@ export class ChannelModel extends ModelWithDataBase<
         return this.findMany( { where, include } );
     }
 
-    public async getDynamicsByMasterId ( guildId: string, masterChannelId: string ) {
+    public async getDynamicsByMasterId( guildId: string, masterChannelId: string ) {
         return this.findMany( {
             where: {
                 guildId,
@@ -281,7 +281,7 @@ export class ChannelModel extends ModelWithDataBase<
         } );
     }
 
-    public async getByChannelId ( channelId: string | null, cache = true ) {
+    public async getByChannelId( channelId: string | null, cache = true ) {
         // TODO: Remove backwards compatibility.
         if ( !channelId ) {
             return null;
@@ -290,7 +290,7 @@ export class ChannelModel extends ModelWithDataBase<
         return this.findUnique( { where: { channelId } }, cache );
     }
 
-    public async getMasterByDynamicChannelId ( dynamicChannelId: string, cache = true ) {
+    public async getMasterByDynamicChannelId( dynamicChannelId: string, cache = true ) {
         this.logger.log(
             this.getMasterByDynamicChannelId,
             `Dynamic channel id: '${ dynamicChannelId }' - Trying to get master channel from ${ cache ? "cache" : "database" }`
@@ -305,7 +305,7 @@ export class ChannelModel extends ModelWithDataBase<
         return await this.getByChannelId( dynamicChannelDB.ownerChannelId, cache );
     }
 
-    public async getTypeCount ( guildId: string, internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
+    public async getTypeCount( guildId: string, internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
         const total = await this.model.count( {
             where: {
                 guildId,
@@ -318,19 +318,19 @@ export class ChannelModel extends ModelWithDataBase<
         return total;
     }
 
-    public async isMaster ( channelId: string, cache = true ) {
+    public async isMaster( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isMaster;
     }
 
-    public async isDynamic ( channelId: string, cache = true ) {
+    public async isDynamic( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isDynamic;
     }
 
-    public getModelByVersion ( version: string ) {
+    public getModelByVersion( version: string ) {
         return this.dataModels.find( ( m ) => m.getVersion() === version ) || this.dataModels.at( 0 );
     }
 
-    private async getChannelData<T extends TDataType> (
+    private async getChannelData<T extends TDataType>(
         result: NonNullable<ChannelExtendedResult<T>>,
         key: string,
         cache = true
@@ -353,7 +353,7 @@ export class ChannelModel extends ModelWithDataBase<
         };
     }
 
-    private generateCacheKey ( obj: Record<string, any> ) {
+    private generateCacheKey( obj: Record<string, any> ) {
         if ( !obj.channelId ) {
             throw new Error( "Missing channelId" );
         }

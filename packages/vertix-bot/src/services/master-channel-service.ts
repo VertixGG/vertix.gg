@@ -103,11 +103,11 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
     > = new Map();
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBot/Services/MasterChannel";
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", MasterChannelService.getName() ) );
@@ -121,7 +121,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         EventBus.$.on( "VertixBot/Services/Channel", "onJoin", this.onJoin.bind( this ) );
     }
 
-    public getDependencies () {
+    public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
             uiService: "VertixGUI/UIService",
@@ -130,7 +130,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         };
     }
 
-    public async onJoinMasterChannel ( args: IChannelEnterGenericArgs ) {
+    public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {
         const { displayName, channelName, oldState, newState } = { ...args },
             { guild } = newState;
 
@@ -323,7 +323,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onDeleteMasterChannel ( channel: VoiceBasedChannel ) {
+    public async onDeleteMasterChannel( channel: VoiceBasedChannel ) {
         this.logger.info(
             this.onDeleteMasterChannel,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Master channel was deleted: '${ channel.name }'`
@@ -361,7 +361,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         await ChannelModel.$.delete( where );
     }
 
-    public async createMasterChannel ( args: IMasterChannelCreateArgs ) {
+    public async createMasterChannel( args: IMasterChannelCreateArgs ) {
         const result: IMasterChannelCreateResult = {
             code: MasterChannelCreateResultCode.Error
         };
@@ -416,7 +416,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    public async isReachedMasterLimit ( guildId: string, definedLimit?: number ) {
+    public async isReachedMasterLimit( guildId: string, definedLimit?: number ) {
         const limit =
                 "number" === typeof definedLimit
                     ? definedLimit
@@ -446,7 +446,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return hasReachedLimit;
     }
 
-    public async removeLeftOvers ( guild: Guild ) {
+    public async removeLeftOvers( guild: Guild ) {
         this.logger.info( this.removeLeftOvers, `Guild id: '${ guild.id }' - Removing leftovers of guild '${ guild.name }'` );
 
         await CategoryModel.$.delete( guild.id );
@@ -457,7 +457,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     /**
      * Function `createMasterChannelInternal()` - Creates a master channel for the guild.
      */
-    private async createMasterChannelInternal ( args: IMasterChannelCreateInternalArgs ) {
+    private async createMasterChannelInternal( args: IMasterChannelCreateInternalArgs ) {
         let result;
 
         const { parent, guild } = args;
@@ -482,7 +482,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private async createMasterChannelInternalV3 ( args: IMasterChannelCreateInternalArgs ) {
+    private async createMasterChannelInternalV3( args: IMasterChannelCreateInternalArgs ) {
         const config = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
             "Vertix/Config/MasterChannel",
             VERSION_UI_V3
@@ -541,7 +541,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private async createMasterChannelInternalLegacy ( args: IMasterChannelCreateInternalArgs ) {
+    private async createMasterChannelInternalLegacy( args: IMasterChannelCreateInternalArgs ) {
         const config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
         const { guild, parent } = args;
@@ -621,7 +621,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private async onJoin ( args: IChannelEnterGenericArgs ) {
+    private async onJoin( args: IChannelEnterGenericArgs ) {
         const { newState } = args;
 
         if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
@@ -629,7 +629,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async onChannelGuildVoiceDelete ( channel: VoiceBasedChannel ) {
+    private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
         if ( await ChannelModel.$.isMaster( channel.id ) ) {
             await this.onDeleteMasterChannel( channel );
         }

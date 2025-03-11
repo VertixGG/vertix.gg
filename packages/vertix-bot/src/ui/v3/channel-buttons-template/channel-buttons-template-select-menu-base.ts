@@ -9,29 +9,29 @@ import type { APISelectMenuOption } from "discord.js";
 const allItems = DynamicChannelPrimaryMessageElementsGroup.getAll();
 
 export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectMenu {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ButtonsSelectMenuBase";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder (): Promise<string> {
+    protected async getPlaceholder(): Promise<string> {
         return "🎚 Select Buttons";
     }
 
-    protected async getMaxValues () {
+    protected async getMaxValues() {
         return 1;
     }
 
-    protected async getSelectOptions ( showUsed?: boolean ) {
+    protected async getSelectOptions( showUsed?: boolean ) {
         const values = showUsed ? await this.getUsedItems() : await this.getUnusedItems();
 
         return values.sort( ( a, b ) => parseInt( a.value ) - parseInt( b.value ) );
     }
 
-    private async getUsedItems () {
+    private async getUsedItems() {
         const values: APISelectMenuOption[] = [];
 
         for ( const itemId of this.uiArgs?.dynamicChannelButtonsTemplate || [] ) {
@@ -50,7 +50,7 @@ export class ChannelButtonsTemplateSelectMenuBase extends UIElementStringSelectM
         return values;
     }
 
-    private async getUnusedItems () {
+    private async getUnusedItems() {
         const values: APISelectMenuOption[] = [];
 
         for ( const item of allItems ) {

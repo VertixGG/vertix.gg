@@ -9,11 +9,11 @@ const client = PrismaBotClient.getPrismaClient();
 export class UserModel extends ModelDataBase<typeof client.user, typeof client.userData, PrismaBot.User> {
     private static instance: UserModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBase/Models/User";
     }
 
-    public static getInstance (): UserModel {
+    public static getInstance(): UserModel {
         if ( !UserModel.instance ) {
             UserModel.instance = new UserModel();
         }
@@ -21,18 +21,18 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
         return UserModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return UserModel.getInstance();
     }
 
-    public constructor (
+    public constructor(
         shouldDebugCache = isDebugEnabled( "CACHE", UserModel.getName() ),
         shouldDebugModel = isDebugEnabled( "MODEL", UserModel.getName() )
     ) {
         super( shouldDebugCache, shouldDebugModel );
     }
 
-    public async ensure ( args: PrismaBot.Prisma.UserCreateArgs, shouldGetFromCache = true, shouldCacheSave = true ) {
+    public async ensure( args: PrismaBot.Prisma.UserCreateArgs, shouldGetFromCache = true, shouldCacheSave = true ) {
         const userId = args.data.userId;
 
         this.logger.log(
@@ -70,7 +70,7 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
         return result;
     }
 
-    public async transferData ( userId: string, newOwnerId: string, masterChannelDBId: string ) {
+    public async transferData( userId: string, newOwnerId: string, masterChannelDBId: string ) {
         this.logger.log( this.transferData, `User id: '${ userId }' - Transferring data to new owner id: '${ newOwnerId }'` );
 
         const oldUser = await this.getOwnerModel().findUnique( {
@@ -128,19 +128,19 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
         return true;
     }
 
-    protected getClient () {
+    protected getClient() {
         return client;
     }
 
-    protected getDataModel (): typeof client.userData {
+    protected getDataModel(): typeof client.userData {
         return client.userData;
     }
 
-    protected getOwnerModel (): typeof client.user {
+    protected getOwnerModel(): typeof client.user {
         return client.user;
     }
 
-    protected getOwnerIdFieldName (): string {
+    protected getOwnerIdFieldName(): string {
         return "userId";
     }
 }

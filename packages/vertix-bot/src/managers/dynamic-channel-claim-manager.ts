@@ -91,11 +91,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
         [channelId: string]: VoiceBasedChannel;
     } = {};
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Managers/DynamicChannelClaimManager";
     }
 
-    public static register ( instanceName: string, args: TDynamicChannelClaimManagerRegisterArgs ) {
+    public static register( instanceName: string, args: TDynamicChannelClaimManagerRegisterArgs ) {
         args.ownershipTimeout =
             args.ownershipTimeout ||
             Number( process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMEOUT || FALLBACK_OWNERSHIP_TIMEOUT );
@@ -124,7 +124,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         return instance;
     }
 
-    public static get ( instanceName: string ) {
+    public static get( instanceName: string ) {
         if ( !DynamicChannelClaimManager.instances.has( instanceName ) ) {
             throw new Error(
                 `Error in '${ DynamicChannelClaimManager.getName() }', Instance '${ instanceName }' does not exist.`
@@ -134,7 +134,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         return DynamicChannelClaimManager.instances.get( instanceName )!;
     }
 
-    protected constructor (
+    protected constructor(
         private adapters: TDynamicChannelClaimAdapters,
         private steps: TDynamicChannelClaimAdapterSteps,
         private entities: TDynamicChannelClaimAdapterEntities,
@@ -175,15 +175,15 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     // TODO: Base timer.
-    public destroy () {
+    public destroy() {
         this.timerIntervals.forEach( ( interval ) => clearInterval( interval ) );
     }
 
-    public getChannelOwnershipTimeout () {
+    public getChannelOwnershipTimeout() {
         return this.ownershipTimeout;
     }
 
-    public addChannelTracking ( owner: GuildMember, channel: VoiceBasedChannel ) {
+    public addChannelTracking( owner: GuildMember, channel: VoiceBasedChannel ) {
         // Check if channel supports "Claim Channel".
         const trackingData = {
             owner,
@@ -199,7 +199,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.trackedChannels[ channel.id ] = trackingData;
     }
 
-    public removeChannelOwnerTracking ( ownerId: string, channelId?: string ) {
+    public removeChannelOwnerTracking( ownerId: string, channelId?: string ) {
         if ( !channelId?.length ) {
             this.logger.log(
                 this.removeChannelOwnerTracking,
@@ -225,7 +225,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.removeChannelTracking( channelId );
     }
 
-    public removeChannelTracking ( channelId: string ) {
+    public removeChannelTracking( channelId: string ) {
         const channel = this.trackedChannels[ channelId ]?.channel;
 
         if ( !channel ) {
@@ -238,7 +238,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         delete this.trackedChannels[ channelId ];
     }
 
-    public markChannelAsClaimable ( channel: VoiceBasedChannel ) {
+    public markChannelAsClaimable( channel: VoiceBasedChannel ) {
         this.debugger.log(
             this.markChannelAsClaimable,
             `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Marking channel as claimable.`
@@ -247,7 +247,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.claimableChannels[ channel.id ] = channel;
     }
 
-    public unmarkChannelAsClaimable ( channel: VoiceBasedChannel ) {
+    public unmarkChannelAsClaimable( channel: VoiceBasedChannel ) {
         this.debugger.log(
             this.unmarkChannelAsClaimable,
             `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Unmarking channel as claimable.`
@@ -256,11 +256,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
         delete this.claimableChannels[ channel.id ];
     }
 
-    public isOwnerTracked ( ownerId: string ) {
+    public isOwnerTracked( ownerId: string ) {
         return !!this.trackedChannels[ ownerId ];
     }
 
-    public isChannelClaimable ( channelId: string ) {
+    public isChannelClaimable( channelId: string ) {
         return !!this.claimableChannels[ channelId ];
     }
 
@@ -268,7 +268,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
      * Function handleAbandonedChannels() :: Ensures that all abandoned added to abandon list,
      * so timer can handle them later, the function is called on bot start.
      */
-    public async handleAbandonedChannels (
+    public async handleAbandonedChannels(
         client: Client,
         specificChannels?: VoiceChannel[],
         specificChannelsDB?: ChannelExtended[]
@@ -280,7 +280,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             specificChannelsDB
         } );
 
-        const handleChannels = async ( dynamicChannels: ChannelExtended[] ) => {
+        const handleChannels = async( dynamicChannels: ChannelExtended[] ) => {
             for ( const channelDB of dynamicChannels ) {
                 const guild = client.guilds.cache.get( channelDB.guildId );
 
@@ -369,7 +369,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         } else {
             const dynamicChannels = await Promise.all(
                 specificChannels.map(
-                    async ( channel ) => ( await ChannelModel.$.getByChannelId( channel.id ) ) as ChannelExtended
+                    async( channel ) => ( await ChannelModel.$.getByChannelId( channel.id ) ) as ChannelExtended
                 )
             );
 
@@ -390,7 +390,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         }
     }
 
-    public async handleVoteRequest ( interaction: IVoteDefaultComponentInteraction, forceMessage?: Message<true> ) {
+    public async handleVoteRequest( interaction: IVoteDefaultComponentInteraction, forceMessage?: Message<true> ) {
         // if ( ! await TopGGManager.$.isVoted( interaction.user.id ) ) {
         //     return await TopGGManager.$.sendVoteEmbed( interaction );
         // }
@@ -437,7 +437,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
     /**
      * Function handleVoteIdleState() :: Handles vote request/start the vote session.
      */
-    private async handleVoteRequestIdleState (
+    private async handleVoteRequestIdleState(
         interaction: IVoteDefaultComponentInteraction,
         forceMessage?: Message<true>
     ) {
@@ -472,7 +472,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         DynamicChannelVoteManager.$.addCandidate( interaction );
     }
 
-    private async handleVoteRequestActiveState ( interaction: IVoteDefaultComponentInteraction ) {
+    private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
         const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
@@ -500,7 +500,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
     }
 
-    private async handleVoteStepIn ( interaction: IVoteDefaultComponentInteraction ) {
+    private async handleVoteStepIn( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteStepIn, "customId:", interaction.customId );
 
         const { claimResultAdapter } = this.adapters;
@@ -519,7 +519,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
     }
 
-    private async handleVoteAdd ( interaction: IVoteDefaultComponentInteraction, targetId: string ) {
+    private async handleVoteAdd( interaction: IVoteDefaultComponentInteraction, targetId: string ) {
         const state = DynamicChannelVoteManager.$.addVote( interaction, targetId );
 
         this.debugger.log(
@@ -581,7 +581,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
     }
 
-    private async voteTimer (
+    private async voteTimer(
         channel: VoiceChannel,
         state: string,
         {
@@ -620,7 +620,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         }
     }
 
-    private async trackedChannelsTimer () {
+    private async trackedChannelsTimer() {
         if ( this.trackedChannels.length ) {
             this.logger.log(
                 this.trackedChannelsTimer,
@@ -691,7 +691,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         }
     }
 
-    public async isClaimButtonEnabled ( channel: VoiceBasedChannel ) {
+    public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {
         // TODO: Add dedicated method for this.
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
@@ -728,11 +728,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
         return false;
     }
 
-    private async onBotReady ( _client: Client ) {
+    private async onBotReady( _client: Client ) {
         // await this.handleAbandonedChannels(client);
     }
 
-    private async onOwnerJoinDynamicChannel ( owner: GuildMember, channel: VoiceBasedChannel ) {
+    private async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
         const state = DynamicChannelVoteManager.$.getState( channel.id );
 
         if ( "idle" === state ) {
@@ -742,13 +742,13 @@ export class DynamicChannelClaimManager extends InitializeBase {
         }
     }
 
-    private async onOwnerLeaveDynamicChannel ( owner: GuildMember, channel: VoiceBasedChannel ) {
+    private async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
         if ( await this.isClaimButtonEnabled( channel ) ) {
             this.addChannelTracking( owner, channel );
         }
     }
 
-    private async onLeaveDynamicChannelEmpty (
+    private async onLeaveDynamicChannelEmpty(
         channel: VoiceBasedChannel,
         _channelDB: null | ChannelExtended,
         _guild: Guild,
@@ -757,7 +757,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.removeChannelOwnerTracking( channel.id );
     }
 
-    private async onUpdateChannelOwnership (
+    private async onUpdateChannelOwnership(
         channel: VoiceChannel,
         _previousOwnerId: string,
         _newOwnerId: string,

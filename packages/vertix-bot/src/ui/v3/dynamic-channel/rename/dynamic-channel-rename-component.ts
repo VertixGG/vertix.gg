@@ -11,16 +11,16 @@ import {
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/embeds";
 
 export class DynamicChannelRenameComponent extends UIComponentBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelRenameComponent";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         // TODO: Ensure.
         return UIInstancesTypes.Dynamic;
     }
 
-    public static getEmbedsGroups () {
+    public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelRenameBadwordEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelRenameLimitedEmbed ),
@@ -28,11 +28,11 @@ export class DynamicChannelRenameComponent extends UIComponentBase {
         ];
     }
 
-    public static getModals () {
+    public static getModals() {
         return [ DynamicChannelRenameModal ];
     }
 
-    public static getDefaultEmbedsGroup () {
+    public static getDefaultEmbedsGroup() {
         // By default, its handles only the modal.
         return null;
     }

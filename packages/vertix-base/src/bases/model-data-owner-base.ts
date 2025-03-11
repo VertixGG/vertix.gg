@@ -27,11 +27,11 @@ export abstract class ModelDataOwnerBase<
 > extends InitializeBase {
     private dataVersioningModel;
 
-    public static getName () {
+    public static getName() {
         return "VertixBase/Bases/DataModelBase";
     }
 
-    protected constructor ( shouldDebugCache: boolean, shouldDebugModel: boolean ) {
+    protected constructor( shouldDebugCache: boolean, shouldDebugModel: boolean ) {
         super();
 
         const dataModel = this.getDataModel(),
@@ -50,7 +50,7 @@ export abstract class ModelDataOwnerBase<
             TDataModel,
             TDataModelUniqueKeys
         >( dataModel, dataModelOptions ) {
-            protected getUniqueKeyName () {
+            protected getUniqueKeyName() {
                 return self.getDataUniqueKeyName();
             }
         };
@@ -66,39 +66,39 @@ export abstract class ModelDataOwnerBase<
 
     protected abstract getDataUniqueKeyName(): string;
 
-    protected async dataCreate<T extends TDataType> (
+    protected async dataCreate<T extends TDataType>(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
         value: T
     ) {
         return this.dataVersioningModel.create<T>( this.normalizeUniqueKeys( keys ), value );
     }
 
-    protected async dataUpdate<T extends TDataType> (
+    protected async dataUpdate<T extends TDataType>(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
         value: T
     ) {
         return this.dataVersioningModel.update<T>( this.normalizeUniqueKeys( keys ), value );
     }
 
-    protected async dataUpsert<T extends TDataType> (
+    protected async dataUpsert<T extends TDataType>(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
         value: T
     ) {
         return this.dataVersioningModel.upsert<T>( this.normalizeUniqueKeys( keys ), value );
     }
 
-    protected async dataDelete ( keys: TWithOptionalProps<TDataModelUniqueKeys, "version"> ) {
+    protected async dataDelete( keys: TWithOptionalProps<TDataModelUniqueKeys, "version"> ) {
         return this.dataVersioningModel.delete( this.normalizeUniqueKeys( keys ) );
     }
 
-    protected async dataGet<T extends TDataType> (
+    protected async dataGet<T extends TDataType>(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
         cache = true
     ) {
         return ( await this.dataVersioningModel.get( this.normalizeUniqueKeys( keys ), { cache } ) ) as T;
     }
 
-    protected async dataGetWithOwner<T extends TDataType> (
+    protected async dataGetWithOwner<T extends TDataType>(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
         cache = false
     ) {
@@ -108,7 +108,7 @@ export abstract class ModelDataOwnerBase<
         );
     }
 
-    protected async create<T extends TDataType> (
+    protected async create<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
@@ -120,7 +120,7 @@ export abstract class ModelDataOwnerBase<
         return this.dataCreate<T>( keysWithOwner, value );
     }
 
-    protected async update<T extends TDataType> (
+    protected async update<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
@@ -132,7 +132,7 @@ export abstract class ModelDataOwnerBase<
         return this.dataUpdate<T>( keysWithOwner, value );
     }
 
-    protected async upsert<T extends TDataType> (
+    protected async upsert<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
@@ -144,7 +144,7 @@ export abstract class ModelDataOwnerBase<
         return this.dataUpsert<T>( keysWithOwner, value );
     }
 
-    protected async delete (
+    protected async delete(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">
     ) {
@@ -155,7 +155,7 @@ export abstract class ModelDataOwnerBase<
         return this.dataDelete( keysWithOwner );
     }
 
-    protected async get<T extends TDataType> (
+    protected async get<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
@@ -167,7 +167,7 @@ export abstract class ModelDataOwnerBase<
         return this.dataGet<T>( keysWithOwner, cache );
     }
 
-    protected async getWithOwner<T extends TDataType> (
+    protected async getWithOwner<T extends TDataType>(
         args: Parameters<TModel["findUnique"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = false
@@ -179,7 +179,7 @@ export abstract class ModelDataOwnerBase<
         return this.dataGetWithOwner<T>( keysWithOwner, cache );
     }
 
-    protected async getAll<T extends TDataType> (
+    protected async getAll<T extends TDataType>(
         args: Parameters<TModel["findMany"]>[0],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cacheUnits = true
@@ -212,7 +212,7 @@ export abstract class ModelDataOwnerBase<
         return result;
     }
 
-    protected async getUniqueKeys (
+    protected async getUniqueKeys(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         args: Parameters<TModel["findUnique"]>[0],
         method: Function
@@ -227,13 +227,13 @@ export abstract class ModelDataOwnerBase<
         return { ...keys, ...this.getOwnerUniqueKeys( owner ) } as TWithOptionalProps<TDataModelUniqueKeys, "version">;
     }
 
-    protected getOwnerUniqueKeys ( context: any ): object {
+    protected getOwnerUniqueKeys( context: any ): object {
         return {
             ownerId: context.id
         };
     }
 
-    private normalizeUniqueKeys ( keys: TWithOptionalProps<TDataModelUniqueKeys, "version"> ): TDataModelUniqueKeys {
+    private normalizeUniqueKeys( keys: TWithOptionalProps<TDataModelUniqueKeys, "version"> ): TDataModelUniqueKeys {
         keys = {
             ...keys,
 

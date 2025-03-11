@@ -11,11 +11,11 @@ const client = PrismaBotClient.getPrismaClient();
 export class GuildModel extends ModelDataBase<typeof client.guild, typeof client.guildData> {
     private static instance: GuildModel;
 
-    public static getName (): string {
+    public static getName(): string {
         return "VertixBase/Models/GuildModel";
     }
 
-    public static getInstance (): GuildModel {
+    public static getInstance(): GuildModel {
         if ( !GuildModel.instance ) {
             GuildModel.instance = new GuildModel();
         }
@@ -23,19 +23,19 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return GuildModel.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return GuildModel.getInstance();
     }
 
-    public constructor () {
+    public constructor() {
         super( isDebugEnabled( "CACHE", GuildModel.getName() ), isDebugEnabled( "MODEL", GuildModel.getName() ) );
     }
 
-    public async get ( guildId: string ) {
+    public async get( guildId: string ) {
         return this.prisma.guild.findUnique( { where: { guildId } } );
     }
 
-    public async create ( guild: Guild ) {
+    public async create( guild: Guild ) {
         const data = {
             guildId: guild.id,
             name: guild.name,
@@ -47,7 +47,7 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return this.prisma.guild.create( { data } );
     }
 
-    public async update ( guild: Guild, isInGuild: boolean ) {
+    public async update( guild: Guild, isInGuild: boolean ) {
         let result;
 
         try {
@@ -66,25 +66,25 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return result;
     }
 
-    public async isExisting ( guild: Guild ) {
+    public async isExisting( guild: Guild ) {
         return this.prisma.guild.findUnique( {
             where: { guildId: guild.id }
         } );
     }
 
-    protected getClient () {
+    protected getClient() {
         return client;
     }
 
-    protected getDataModel (): typeof client.guildData {
+    protected getDataModel(): typeof client.guildData {
         return client.guildData;
     }
 
-    protected getOwnerModel (): typeof client.guild {
+    protected getOwnerModel(): typeof client.guild {
         return client.guild;
     }
 
-    protected getOwnerIdFieldName (): string {
+    protected getOwnerIdFieldName(): string {
         return "guildId";
     }
 }

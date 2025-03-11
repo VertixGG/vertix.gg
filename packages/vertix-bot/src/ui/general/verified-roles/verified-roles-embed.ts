@@ -14,15 +14,15 @@ export class VerifiedRolesEmbed extends UIEmbedBase {
         verifiedRolesEmpty: uiUtilsWrapAsTemplate( "verifiedRolesDefault" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/VerifiedRolesEmbed";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return VerifiedRolesEmbed._vars.verifiedRolesDisplay;
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const { verifiedRoles, verifiedRolesEmpty } = VerifiedRolesEmbed._vars;
 
         return {
@@ -33,7 +33,7 @@ export class VerifiedRolesEmbed extends UIEmbedBase {
         };
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         return {
             verifiedRoles: {
                 format: `<@&${ VerifiedRolesEmbed._vars.value }>${ VerifiedRolesEmbed._vars.separator }`,
@@ -42,7 +42,7 @@ export class VerifiedRolesEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args?: UIArgs ) {
+    protected getLogic( args?: UIArgs ) {
         const result: any = {};
 
         if ( args?.dynamicChannelVerifiedRoles?.length ) {

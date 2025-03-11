@@ -10,22 +10,22 @@ import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types
 const MAX_BUTTONS_PER_ROW = 3;
 
 export class ClaimVoteElementsGroup extends UIElementsGroupBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/ClaimVoteElementsGroup";
     }
 
-    public static getItems ( args?: UIArgs ) {
+    public static getItems( args?: UIArgs ) {
         const result: ( typeof UIElementButtonBase )[][] = [];
 
         // TODO: Find better solution.
         if ( args ) {
             const buttons = Object.entries( args.candidateDisplayNames || {} ).map( ( [ userId, displayName ] ) => {
                 return class extends ClaimVoteAddButton {
-                    public static getName () {
+                    public static getName() {
                         return `${ super.getName() }:${ userId }`; // TODO: Use constant for separator.
                     }
 
-                    public async build ( uiArgs?: UIArgs ): Promise<UIEntitySchemaBase> {
+                    public async build( uiArgs?: UIArgs ): Promise<UIEntitySchemaBase> {
                         uiArgs = Object.assign( {}, uiArgs );
 
                         uiArgs.displayName = displayName;

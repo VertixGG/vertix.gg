@@ -25,7 +25,7 @@ const config = [
     {
         rules: {
             "space-in-parens": [ "error", "always" ],
-            "space-before-function-paren": [ "error", "always" ],
+            "space-before-function-paren": ["error", "never"],
             "space-before-blocks": [ "error", "always" ],
             "template-curly-spacing": [ "error", "always" ],
             "array-bracket-spacing": [ "error", "always" ],

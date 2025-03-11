@@ -55,27 +55,27 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
         resetEmoji: uiUtilsWrapAsTemplate( "resetEmoji" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelResetChannelEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getEndTime ( args: IDynamicResetChannelResult ): Date {
+    protected getEndTime( args: IDynamicResetChannelResult ): Date {
         return new Date( Date.now() + ( args.rateLimitRetryAfter || 30000 ) * 1000 );
     }
 
-    protected getColor () {
+    protected getColor() {
         return 0x7a9cbd;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return `${ DynamicChannelResetChannelEmbed.vars.resetEmoji }  Dynamic Channel has been reset to default settings! `;
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const {
             name,
             nameChanged,
@@ -117,7 +117,7 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const {
             userLimitUnlimited,
             userLimitValue,
@@ -158,7 +158,7 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
         };
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = DynamicChannelResetChannelEmbed.vars;
 
         return {
@@ -173,7 +173,7 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
         };
     }
 
-    protected getLogic ( args: IDynamicResetChannelResult ) {
+    protected getLogic( args: IDynamicResetChannelResult ) {
         const {
                 changedDisplay,
                 unchangedDisplay,

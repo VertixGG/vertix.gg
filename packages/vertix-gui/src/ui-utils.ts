@@ -1,7 +1,7 @@
 export const UI_TEMPLATE_WRAPPER_START = "{",
     UI_TEMPLATE_WRAPPER_END = "}";
 
-export function uiUtilsWrapAsTemplate<const T extends string = string> ( template: T ) {
+export function uiUtilsWrapAsTemplate<const T extends string = string>( template: T ) {
     return `${ UI_TEMPLATE_WRAPPER_START }${ template }${ UI_TEMPLATE_WRAPPER_END }` as `${ typeof UI_TEMPLATE_WRAPPER_START }${ T }${ typeof UI_TEMPLATE_WRAPPER_END }`;
 }
 

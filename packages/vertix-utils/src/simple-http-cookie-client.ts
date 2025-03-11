@@ -9,12 +9,12 @@ export class SimpleHttpCookieClient {
 
     private url: string;
 
-    public constructor ( url: string = "" ) {
+    public constructor( url: string = "" ) {
         this.cookieJar = new CookieJar();
         this.url = url;
     }
 
-    public async get ( url = this.url, headers: Record<string, string> = {} ): Promise<Response> {
+    public async get( url = this.url, headers: Record<string, string> = {} ): Promise<Response> {
         const requestOptions = {
                 method: "GET",
                 headers: { ...headers, ...this.getCookiesHeader( url ) }
@@ -26,7 +26,7 @@ export class SimpleHttpCookieClient {
         return response;
     }
 
-    public async post (
+    public async post(
         url = this.url,
         data: Record<string, any> | null = null,
         headers: Record<string, string> = {}
@@ -47,19 +47,19 @@ export class SimpleHttpCookieClient {
         return response;
     }
 
-    private getCookiesHeader ( url: string ): Record<string, string> {
+    private getCookiesHeader( url: string ): Record<string, string> {
         const cookieHeader = this.cookieJar.getCookieStringSync( url );
         return { Cookie: cookieHeader };
     }
 
-    private updateCookies ( response: Response ): void {
+    private updateCookies( response: Response ): void {
         const setCookieHeader = response.headers.get( "set-cookie" );
         if ( setCookieHeader ) {
             this.cookieJar.setCookieSync( setCookieHeader, response.url );
         }
     }
 
-    private serializeData ( data: Record<string, any> | null ): string {
+    private serializeData( data: Record<string, any> | null ): string {
         if ( !data ) return "";
 
         const searchParams = new URLSearchParams();

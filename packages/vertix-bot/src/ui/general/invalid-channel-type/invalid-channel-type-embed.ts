@@ -16,23 +16,23 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
         allowedTypes: uiUtilsWrapAsTemplate( "allowedTypes" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/InvalidChannelTypeEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getColor () {
+    protected getColor() {
         return Colors.Yellow;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "# Oops! This component is restricted in this channel type.";
     }
 
-    protected getDescription () {
+    protected getDescription() {
         const { allowedTypes } = InvalidChannelTypeEmbed.vars;
 
         return (
@@ -43,7 +43,7 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
         );
     }
 
-    protected getArrayOptions () {
+    protected getArrayOptions() {
         const { separator, value } = InvalidChannelTypeEmbed.vars;
 
         return {
@@ -54,7 +54,7 @@ export class InvalidChannelTypeEmbed extends UIEmbedBase {
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const channelTypes = args.channelTypes.map( ( type: ChannelType ) =>
             ChannelType[ type ]
                 .toString()

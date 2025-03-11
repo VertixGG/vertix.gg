@@ -45,15 +45,15 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
     private readonly regionVars;
     private readonly privacyVars;
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPrimaryMessageEmbed";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    public constructor () {
+    public constructor() {
         super();
 
         this.editTitleVars = this.useExternal( DynamicChannelPrimaryMessageEditTitleEmbed ).get();
@@ -63,19 +63,19 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
         this.privacyVars = this.useExternal( DynamicChannelPrivacyEmbed ).get();
     }
 
-    protected getColor (): number {
+    protected getColor(): number {
         return VERTIX_DEFAULT_COLOR_BRAND;
     }
 
-    protected getImage (): string {
+    protected getImage(): string {
         return "https://i.imgur.com/sGjDVJ4.png";
     }
 
-    protected getTitle (): string {
+    protected getTitle(): string {
         return this.editTitleVars.title;
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         const { name, limit, limitEmoji, renameEmoji } = this.vars.get();
 
         const { region, regionEmoji } = this.regionVars;
@@ -93,7 +93,7 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
         );
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const vars = this.vars.get();
 
         return {
@@ -110,7 +110,7 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
         };
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const { limitDisplayValue, limitDisplayUnlimited } = this.vars.get();
 
         return {

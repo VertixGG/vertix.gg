@@ -12,11 +12,11 @@ export class MissingPermissionsAdapter extends UIAdapterBase<
     BaseGuildTextChannel,
     UIDefaultButtonChannelVoiceInteraction
 > {
-    public static getName () {
+    public static getName() {
         return "VertixGUI/InternalAdapters/MissingPermissionsAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         const Component =
             ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).$$.getSystemComponents().MissingPermissionsComponent;
 
@@ -27,14 +27,14 @@ export class MissingPermissionsAdapter extends UIAdapterBase<
         return Component;
     }
 
-    protected getReplyArgs ( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs ) {
+    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager: UIArgs ) {
         return {
             omitterDisplayName: argsFromManager.omitterDisplayName || interaction.member.displayName,
             missingPermissions: argsFromManager.missingPermissions
         };
     }
 
-    protected shouldDisableMiddleware (): boolean {
+    protected shouldDisableMiddleware(): boolean {
         return true;
     }
 }

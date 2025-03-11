@@ -23,15 +23,15 @@ import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interface
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;
 
 export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBase<DefaultInteraction> {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V2/DynamicChannelMetaRenameAdapter";
     }
 
-    public static getComponent () {
+    public static getComponent() {
         return DynamicChannelMetaRenameComponent;
     }
 
-    protected static getExecutionSteps () {
+    protected static getExecutionSteps() {
         return {
             default: {},
             "Vertix/UI-V2/DynamicChannelMetaRenameBadword": {
@@ -47,11 +47,11 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs ( channel: VoiceChannel ) {
+    protected async getStartArgs( channel: VoiceChannel ) {
         return {};
     }
 
-    protected async getReplyArgs ( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
+    protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
         const args: UIArgs = {};
 
         // noinspection FallThroughInSwitchStatementJS
@@ -73,7 +73,7 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
                 } else {
                     args.defaultChannelName =  ConfigManager.$
                         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 )
-                        .get( "settings").dynamicChannelNameTemplate;
+                        .get( "settings" ).dynamicChannelNameTemplate;
 
                 }
 
@@ -85,18 +85,18 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
         return args;
     }
 
-    protected onEntityMap () {
+    protected onEntityMap() {
         this.bindModal<UIDefaultModalChannelVoiceInteraction>(
             "Vertix/UI-V2/DynamicChannelMetaRenameModal",
             this.onModalSubmit
         );
     }
 
-    protected shouldDeletePreviousReply () {
+    protected shouldDeletePreviousReply() {
         return true;
     }
 
-    private async onModalSubmit ( interaction: UIDefaultModalChannelVoiceInteraction ) {
+    private async onModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
         const renameButtonId = this.customIdStrategy.generateId(
             "Vertix/UI-V2/DynamicChannelMetaRenameAdapter:Vertix/UI-V2/DynamicChannelMetaRenameInput"
         );

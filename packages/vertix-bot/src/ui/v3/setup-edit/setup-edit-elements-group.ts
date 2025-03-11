@@ -9,11 +9,11 @@ import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v3/setup-ed
 import { LogChannelSelectMenu } from "@vertix.gg/bot/src/ui/v3/logs-channel/log-channel-select-menu";
 
 export class SetupEditElementsGroup extends UIElementsGroupBase {
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/SetupEditElementsGroup";
     }
 
-    public static getItems () {
+    public static getItems() {
         return [ [ SetupEditSelectEditOptionMenu ], [ ConfigExtrasSelectMenu ], [ LogChannelSelectMenu ], [ DoneButton ] ];
     }
 }

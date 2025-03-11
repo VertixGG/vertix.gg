@@ -17,23 +17,23 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         stateOff: uiUtilsWrapAsTemplate( "stateOff" )
     };
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/UI-General/ConfigExtrasSelectMenu";
     }
 
-    public static getInstanceType () {
+    public static getInstanceType() {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getPlaceholder (): Promise<string> {
+    protected async getPlaceholder(): Promise<string> {
         return "⌘ ∙ Configuration";
     }
 
-    protected async getMinValues () {
+    protected async getMinValues() {
         return 0;
     }
 
-    protected async getSelectOptions () {
+    protected async getSelectOptions() {
         const {
             dynamicChannelMentionableLabel,
             dynamicChannelLogsChannelLabel,
@@ -70,7 +70,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         return result;
     }
 
-    protected getOptions () {
+    protected getOptions() {
         const { stateOn, stateOff } = ConfigExtrasSelectMenu.vars;
 
         return {
@@ -85,7 +85,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         };
     }
 
-    protected getDataFor ( option: APISelectMenuOption ) {
+    protected getDataFor( option: APISelectMenuOption ) {
         const result: {
             state: typeof ConfigExtrasSelectMenu.vars.stateOn | typeof ConfigExtrasSelectMenu.vars.stateOff;
         } = { state: ConfigExtrasSelectMenu.vars.stateOff };

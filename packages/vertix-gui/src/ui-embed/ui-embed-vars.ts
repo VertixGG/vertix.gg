@@ -13,7 +13,7 @@ export class UIEmbedVars<
     private readonly varsObject;
     private readonly varsObjectFreeze;
 
-    public constructor ( ...vars: TVars ) {
+    public constructor( ...vars: TVars ) {
         this.vars = vars;
 
         const varsWrappedObject = {} as Record<string, string>;
@@ -24,25 +24,25 @@ export class UIEmbedVars<
         this.varsObjectFreeze = Object.freeze( this.varsObject );
     }
 
-    public static wrapAsVar<const T extends string> ( varName: T ) {
+    public static wrapAsVar<const T extends string>( varName: T ) {
         return `${ UIEmbedVars.affix[ 0 ] }${ varName }${ UIEmbedVars.affix[ 1 ] }` as `${ ( typeof UIEmbedVars.affix )[0] }${ T }${ ( typeof UIEmbedVars.affix )[1] }`;
     }
 
-    public keys () {
+    public keys() {
         return this.vars;
     }
 
     public get( varName: keyof typeof this.varsObject ): ( typeof this.varsObject )[keyof typeof this.varsObject];
     public get(): typeof this.varsObject;
 
-    public get ( varName?: keyof typeof this.varsObject ) {
+    public get( varName?: keyof typeof this.varsObject ) {
         if ( varName ) {
             return this.varsObject[ varName ];
         }
         return this.varsObjectFreeze;
     }
 
-    public clone () {
+    public clone() {
         return { ...this.varsObject };
     }
 }

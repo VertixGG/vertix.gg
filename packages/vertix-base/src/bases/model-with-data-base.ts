@@ -21,20 +21,20 @@ export abstract class ModelWithDataBase<
 > extends ModelBaseCachedWithModel<TOwnerModel, TOwnerModelResult> {
     protected dataModels;
 
-    public static getName () {
+    public static getName() {
         return "VertixBase/Bases/ModelWithDataBase";
     }
 
-    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+    protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {
         super( shouldDebugCache, shouldDebugModel );
 
         function WrapperMixin<
             T extends AbstractConstructor<
                 ModelDataOwnerBase<TOwnerModel, TDataModel, TDataModelResult, TDataModelUniqueKeys>
             >
-        > ( Ctor: T ) {
+        >( Ctor: T ) {
             abstract class ModelDataOwnerWrapper extends Ctor {
-                public async create<T extends TDataType> (
+                public async create<T extends TDataType>(
                     args: Parameters<TOwnerModel["findUnique"]>[0],
                     keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
                     value: T
@@ -43,7 +43,7 @@ export abstract class ModelWithDataBase<
                 }
 
                 // TODO: Rename or find more consistent names
-                public async getData<T extends TDataType> (
+                public async getData<T extends TDataType>(
                     keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
                     options: {
                         cache: boolean;
@@ -52,7 +52,7 @@ export abstract class ModelWithDataBase<
                     return await this.dataGet<T>( keys, options.cache );
                 }
 
-                public getVersion () {
+                public getVersion() {
                     return this.getDataVersion();
                 }
             }

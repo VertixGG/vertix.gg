@@ -14,26 +14,26 @@ export class DynamicChannelPermissionsGrantedEmbed extends DynamicChannelPermiss
         userGrantedDisplayName: uiUtilsWrapAsTemplate( "userGrantedDisplayName" )
     };
 
-    public static getName () {
+    public static getName() {
         return "Vertix/UI-V3/DynamicChannelPermissionsGrantedEmbed";
     }
 
-    public static getInstanceType (): UIInstancesTypes {
+    public static getInstanceType(): UIInstancesTypes {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected getTitle () {
+    protected getTitle() {
         return "👍  Access granted";
     }
 
-    protected getDescription (): string {
+    protected getDescription(): string {
         return (
             `**${ DynamicChannelPermissionsGrantedEmbed.vars.userGrantedDisplayName }** added successfully and now has access to this channel!\n` +
             super.getDescription()
         );
     }
 
-    protected getLogic ( args: UIArgs ) {
+    protected getLogic( args: UIArgs ) {
         const result = super.getLogic( args );
 
         result.userGrantedDisplayName = args.userGrantedDisplayName;

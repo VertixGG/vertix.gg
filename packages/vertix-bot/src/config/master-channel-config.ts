@@ -8,19 +8,19 @@ import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-ch
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface> {
-    public static getName () {
+    public static getName() {
         return "VertixBase/UI-V2/MasterChannelConfig";
     }
 
-    public getConfigName () {
+    public getConfigName() {
         return "Vertix/Config/MasterChannel";
     }
 
-    public getVersion () {
+    public getVersion() {
         return VERSION_UI_V2;
     }
 
-    protected getDefaults (): MasterChannelConfigInterface["defaults"] {
+    protected getDefaults(): MasterChannelConfigInterface["defaults"] {
         return {
             // Constants will be used globally for the entire bot.
             constants: {

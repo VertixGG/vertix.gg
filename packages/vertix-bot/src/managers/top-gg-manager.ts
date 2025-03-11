@@ -32,11 +32,11 @@ export class TopGGManager extends CacheBase<Date> {
     private isTryingHandshakeOnce = false;
     private isHandshakeDone = false;
 
-    public static getName () {
+    public static getName() {
         return "VertixBot/Managers/TopGG";
     }
 
-    public static getInstance () {
+    public static getInstance() {
         if ( !TopGGManager.instance ) {
             TopGGManager.instance = new TopGGManager();
         }
@@ -44,15 +44,15 @@ export class TopGGManager extends CacheBase<Date> {
         return TopGGManager.instance;
     }
 
-    public static get $ () {
+    public static get $() {
         return TopGGManager.getInstance();
     }
 
-    public static getVoteUrl () {
+    public static getVoteUrl() {
         return process.env.TOP_GG_VOTE_URL ?? "404_URL_NOT_FOUND";
     }
 
-    public constructor (
+    public constructor(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         shouldDebugCache = isDebugEnabled( "CACHE", TopGGManager.getName() ),
         timerInterval = TOP_GG_TIMER_INTERVAL,
@@ -66,11 +66,11 @@ export class TopGGManager extends CacheBase<Date> {
         this.voteInterval = voteInterval;
     }
 
-    public getVoteUrl () {
+    public getVoteUrl() {
         return TopGGManager.getVoteUrl();
     }
 
-    public getVoteEmbed () {
+    public getVoteEmbed() {
         const embed = new EmbedBuilder(),
             voteUrl = this.getVoteUrl();
 
@@ -82,7 +82,7 @@ export class TopGGManager extends CacheBase<Date> {
         return embed;
     }
 
-    public async sendVoteEmbed ( interaction: MessageComponentInteraction<"cached"> ) {
+    public async sendVoteEmbed( interaction: MessageComponentInteraction<"cached"> ) {
         return await interaction
             .reply( {
                 embeds: [ TopGGManager.$.getVoteEmbed() ],
@@ -93,7 +93,7 @@ export class TopGGManager extends CacheBase<Date> {
             } );
     }
 
-    public updateStats () {
+    public updateStats() {
         if ( !this.workingMiddleware() ) {
             return;
         }
@@ -112,7 +112,7 @@ export class TopGGManager extends CacheBase<Date> {
             } );
     }
 
-    public async isVoted ( userId: string, cache = true, shouldAdminLog = true ) {
+    public async isVoted( userId: string, cache = true, shouldAdminLog = true ) {
         if ( !this.workingMiddleware() ) {
             this.logger.admin( this.isVoted, "Working middleware failed" );
             return true;
@@ -155,7 +155,7 @@ export class TopGGManager extends CacheBase<Date> {
         return result;
     }
 
-    public handshake () {
+    public handshake() {
         if ( !process.env.TOP_GG_TOKEN ) {
             this.logger.error( this.handshake, "TOP_GG_TOKEN is not defined, the manager will be disabled" );
             return;
@@ -179,7 +179,7 @@ export class TopGGManager extends CacheBase<Date> {
 
         this.api
             .getStats( this.client?.user?.id as string )
-            .then( async ( stats ) => {
+            .then( async( stats ) => {
                 this.logger.info( this.handshake, "TopGG handshake complete, stats:", stats );
 
                 this.isHandshakeDone = true;
@@ -193,7 +193,7 @@ export class TopGGManager extends CacheBase<Date> {
             } );
     }
 
-    private workingMiddleware () {
+    private workingMiddleware() {
         if ( !process.env.TOP_GG_TOKEN ) {
             return false;
         }
@@ -211,7 +211,7 @@ export class TopGGManager extends CacheBase<Date> {
         return true;
     }
 
-    private timer () {
+    private timer() {
         this.handshake();
     }
 }

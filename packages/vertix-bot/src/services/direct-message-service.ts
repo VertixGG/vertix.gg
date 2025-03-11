@@ -38,7 +38,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 
         const { appService } = this.services;
 
-        appService.onceReady( () => {
+        appService.onceReady( async () => {
             appService.getClient().on( "messageCreate", this.onMessage.bind( this ) );
         } );
     }

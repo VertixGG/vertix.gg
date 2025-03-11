@@ -25,7 +25,7 @@ const packageJson: PackageJson = JSON.parse( packageJsonString );
 export class AppService extends ServiceBase {
     private client: Client<true>;
 
-    private onceReadyCallback: () => void;
+    private onceReadyCallbacks: Array<() => Promise<void> >=[];
 
     public static getName () {
         return "VertixBot/Services/App";
@@ -51,8 +51,8 @@ export class AppService extends ServiceBase {
         return this.client;
     }
 
-    public onceReady ( onceReady: () => void ) {
-        this.onceReadyCallback = onceReady;
+    public onceReady ( onceReady: () => Promise<void> ) {
+        this.onceReadyCallbacks.push( onceReady );
     }
 
     public async onReady ( client: Client<true> ) {
@@ -86,10 +86,9 @@ export class AppService extends ServiceBase {
             `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.`
         );
 
-        if ( this.onceReadyCallback ) {
-            this.pingInterval();
-            this.onceReadyCallback();
-        }
+        this.pingInterval();
+
+        await Promise.all( this.onceReadyCallbacks.map( callback => callback() ) );
     }
 
     private async ensureBackwardCompatibility () {

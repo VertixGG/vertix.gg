@@ -10,8 +10,6 @@ import { Routes } from "discord-api-types/v10";
 
 import { REST } from "discord.js";
 
-import type { Client } from "discord.js";
-
 import type { RESTGetAPIApplicationEmojisResult } from "discord-api-types/v9";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
@@ -48,33 +46,37 @@ export class EmojiManager extends InitializeBase {
     protected async initialize () {
         this.appService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
             silent: true,
-            timeout: 30000
+            timeout: 5000
         } );
 
         // Wait for client to be ready using AppService's onceReady
-        await new Promise<void>( ( resolve ) => {
-            this.appService.onceReady( resolve );
+        this.initPromise = new Promise<void>( ( resolve ) => {
+            this.appService.onceReady( async() => {
+                const rest = new REST( { version: GatewayVersion } ).setToken( gToken );
+
+                this.emojis = ( await rest.get(
+                    Routes.applicationEmojis( this.appService.getClient().user.id )
+                ) ) as RESTGetAPIApplicationEmojisResult;
+
+                this.debugger.dumpDown( this.initialize, this.emojis, "emojis" );
+
+                resolve();
+            } );
         } );
-
-        const rest = new REST( { version: GatewayVersion } ).setToken( gToken );
-
-        this.emojis = ( await rest.get(
-            Routes.applicationEmojis( this.appService.getClient().user.id )
-        ) ) as RESTGetAPIApplicationEmojisResult;
-
-        this.debugger.dumpDown( this.initialize, this.emojis, "emojis" );
     }
 
     public async awaitInitialization () {
-        return this.initPromise;
+        if ( !this.initPromise ) {
+            this.initPromise = this.initialize();
+        }
+
+        await this.initPromise;
     }
 
     public async getMarkdown ( baseName: string, fromCache = true ) {
         if ( !fromCache ) {
             await this.initialize();
         }
-
-        await this.initPromise;
 
         return this.getCachedMarkdown( baseName );
     }

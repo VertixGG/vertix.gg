@@ -56,7 +56,6 @@ export class EmojiManager extends InitializeBase {
             this.appService.onceReady( resolve );
         } );
 
-        const _client = this.appService.getClient() as Client<true>;
         const rest = new REST( { version: GatewayVersion } ).setToken( gToken );
 
         this.emojis = ( await rest.get(
@@ -81,7 +80,7 @@ export class EmojiManager extends InitializeBase {
     }
 
     public getCachedMarkdown ( baseName: string ) {
-        const emoji = this.emojis.items.find( ( emoji ) => emoji.name!.includes( baseName ) );
+        const emoji = this.emojis?.items?.find( ( emoji ) => emoji.name!.includes( baseName ) );
 
         if ( emoji ) {
             return `<:${ emoji.name }:${ emoji.id }>`;

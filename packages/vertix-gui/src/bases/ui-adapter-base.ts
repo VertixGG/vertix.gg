@@ -857,7 +857,7 @@ export abstract class UIAdapterBase<
             contextId = "edit-message";
         } else if ( context instanceof GuildChannel ) {
             contextId = "start";
-        } else if ( context.isMessageComponent() || context.isCommand() || context.isModalSubmit() ) {
+        } else if ( context.isMessageComponent?.() || context.isCommand?.() || context.isModalSubmit?.() ) {
             contextId = "reply";
         }
 

@@ -1,5 +1,7 @@
 import util from "node:util";
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { ModelWithDataBase } from "@vertix.gg/base/src/bases/model-with-data-base";
 
 import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
@@ -47,6 +49,10 @@ export class ChannelModel extends ModelWithDataBase<
         return "VertixBase/Models/Channel";
     }
 
+    public constructor () {
+        super( isDebugEnabled( "CACHE", ChannelModel.getName() ), isDebugEnabled( "MODEL", ChannelModel.getName() ) );
+    }
+
     protected getModel () {
         return clientChannelExtend.channel;
     }
@@ -59,7 +65,7 @@ export class ChannelModel extends ModelWithDataBase<
         findUniqueArgs: ChannelFindUniqueArgsWithDataIncludeKey,
         cache = true
     ) {
-        this.logger.log( this.findUnique, `Fetching entry for channel id: '${ util.inspect( findUniqueArgs.where ) }''` );
+        this.debugger.log( this.findUnique, `Fetching entry for channel id: '${ util.inspect( findUniqueArgs.where ) }''` );
 
         let result: ChannelExtendedResult<T>;
 

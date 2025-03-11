@@ -48,8 +48,7 @@ export abstract class ModelBase<TPrismaClient extends TPossibleClients> extends 
 
     protected debugger: Debugger;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+    protected constructor ( shouldDebugModel = true ) {
         super();
 
         this.prisma = this.getClient();

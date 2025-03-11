@@ -1,5 +1,7 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+
 import { ModelDataBase } from "@vertix.gg/base/src/bases/model-data-base";
 
 import type { Guild } from "discord.js";
@@ -23,6 +25,10 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
 
     public static get $ () {
         return GuildModel.getInstance();
+    }
+
+    public constructor () {
+        super( isDebugEnabled( "CACHE", GuildModel.getName() ), isDebugEnabled( "MODEL", GuildModel.getName() ) );
     }
 
     public async get ( guildId: string ) {

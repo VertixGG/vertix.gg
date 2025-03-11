@@ -84,6 +84,8 @@ export function DataVersioningModelFactory<
 
             let result = options.cache ? this.getCache( cacheKey ) : null;
 
+            const isFromCache = !!result;
+
             if ( !result ) {
                 const args = {
                     where: {
@@ -97,6 +99,13 @@ export function DataVersioningModelFactory<
                     this.setCache( cacheKey, result );
                 }
             }
+
+            this.debugger.dumpDown( this.get, {
+                keys,
+                options,
+                result,
+                isFromCache,
+            } );
 
             return result ? this.getValueAsType<T>( result ) : null;
         }

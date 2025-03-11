@@ -25,8 +25,8 @@ export abstract class ModelWithDataBase<
         return "VertixBase/Bases/ModelWithDataBase";
     }
 
-    protected constructor () {
-        super();
+    protected constructor ( shouldDebugCache = true, shouldDebugModel = true ) {
+        super( shouldDebugCache, shouldDebugModel );
 
         function WrapperMixin<
             T extends AbstractConstructor<

@@ -28,7 +28,7 @@ export class UserMasterChannelDataModel extends ModelDataOwnerStrictDataBase<
     private static instance: UserMasterChannelDataModel;
 
     public static getName () {
-        return "VertixBase/Models/UserChannelData";
+        return "VertixBase/Models/UserMasterChannelDataModel";
     }
 
     public constructor () {

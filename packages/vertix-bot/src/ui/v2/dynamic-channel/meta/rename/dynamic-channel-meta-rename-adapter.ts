@@ -1,5 +1,11 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
+import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+
 import { DynamicChannelMetaRenameComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-component";
 
 import { DynamicChannelAdapterExuBase } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
@@ -11,6 +17,8 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
+
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;
 
@@ -58,11 +66,16 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
                 break;
 
             default:
-                args.defaultChannelName = await this.dynamicChannelService.getAssembledChannelNameTemplate(
-                    interaction.channel,
-                    interaction.user.id,
-                    true
-                );
+                const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
+
+                if ( masterChannelDB ) {
+                    args.defaultChannelName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
+                } else {
+                    args.defaultChannelName =  ConfigManager.$
+                        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 )
+                        .get( "settings").dynamicChannelNameTemplate;
+
+                }
 
             case "Vertix/UI-V2/DynamicChannelMetaRenameSuccess":
                 args.channelName = interaction.channel.name;
@@ -91,14 +104,12 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
         let newChannelName = interaction.fields.getTextInputValue( renameButtonId ),
             masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
 
-        if ( !newChannelName ) {
             newChannelName =
                 ( await this.dynamicChannelService.getAssembledChannelNameTemplate(
                     interaction.channel,
                     interaction.user.id,
                     true
                 ) ) || interaction.channel.name;
-        }
 
         const result = await this.dynamicChannelService.editChannelName(
             interaction,

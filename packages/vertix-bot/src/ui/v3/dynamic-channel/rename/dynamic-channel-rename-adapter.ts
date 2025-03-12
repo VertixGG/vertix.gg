@@ -92,6 +92,13 @@ export class DynamicChannelRenameAdapter extends DynamicChannelAdapterExuBase<De
     }
 
     private async onModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
+        if ( !interaction.deferred && !interaction.replied ) {
+            try {
+                await interaction.deferUpdate();
+            } catch {
+            }
+        }
+
         const renameButtonId = this.customIdStrategy.generateId(
             "Vertix/UI-V3/DynamicChannelRenameAdapter:Vertix/UI-V3/DynamicChannelRenameInput"
         );
@@ -103,8 +110,8 @@ export class DynamicChannelRenameAdapter extends DynamicChannelAdapterExuBase<De
             ( await this.dynamicChannelService.getAssembledChannelNameTemplate(
                 interaction.channel,
                 interaction.user.id,
-                true
-            ) ) || interaction.channel.name;
+                newChannelName
+            ) );
 
         const result = await this.dynamicChannelService.editChannelName(
             interaction,

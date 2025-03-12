@@ -245,18 +245,23 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     public async getAssembledChannelNameTemplate(
         channel: VoiceChannel,
         userId: string,
-        returnDefault = false
-    ): Promise<string | null> {
+        newName?: string,
+    ): Promise<string> {
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id ),
             userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
         const { constants } = this.config.data,
             { settings } = this.config.data;
 
+        if ( newName?.length ) {
+            return this.assembleChannelNameTemplate( newName, {
+                userDisplayName,
+                state: await this.getChannelState( channel )
+            } );
+        }
+
         if ( !masterChannelDB ) {
-            return returnDefault
-                ? settings.dynamicChannelNameTemplate.replace( constants.dynamicChannelUserVar, userDisplayName )
-                : null;
+            return settings.dynamicChannelNameTemplate.replace( constants.dynamicChannelUserVar, userDisplayName );
         }
 
         const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );

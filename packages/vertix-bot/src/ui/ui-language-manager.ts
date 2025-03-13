@@ -278,7 +278,17 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         };
     }
 
-    public async register() {
+    public async register( options: {
+        shouldImport?: boolean;
+        shouldValidate?: boolean;
+    } = {} ) {
+        options = Object.assign( {
+            shouldImport: true,
+            shouldValidate: true
+        }, options );
+
+        const { shouldImport, shouldValidate } = options;
+
         const tryImportAvailableLanguages = async() => {
             // Import
             let promises: Promise<void>[] = [];
@@ -309,7 +319,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             this.readInitialLanguage();
 
             // Load language files.
-            await this.validateAvailableLanguages();
+            await this.loadAvailableLanguages( { shouldValidate } );
 
             // In case it exist it should be validated against hardcoded entities.
             const entitiesLanguage = await this.extractEntitiesLanguage(),
@@ -318,11 +328,11 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                     ...entitiesLanguage
                 };
 
-            this.validateLanguage( this.getInitialLanguage(), sourceOfTruth, {
+            shouldValidate && this.validateLanguage( this.getInitialLanguage(), sourceOfTruth, {
                 skipSameValues: true
             } );
 
-            await tryImportAvailableLanguages();
+            shouldImport && ( await tryImportAvailableLanguages() );
 
             return;
         }
@@ -331,7 +341,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         await this.ensureInitialLanguage();
 
         // Load language files.
-        await this.validateAvailableLanguages();
+        await this.loadAvailableLanguages( { shouldValidate } );
 
         await tryImportAvailableLanguages();
     }
@@ -357,9 +367,13 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         this.logger.info( this.ensureInitialLanguage, "Initial language code 'en' created." );
     }
 
-    private async validateAvailableLanguages() {
+    private async loadAvailableLanguages( {
+        shouldValidate = false
+    }: {
+        shouldValidate?: boolean;
+    } = {} ) {
         this.getAvailableLanguages().forEach( ( currentLanguage ) => {
-            this.validateLanguage( currentLanguage, this.uiInitialLanguage );
+            shouldValidate && this.validateLanguage( currentLanguage, this.uiInitialLanguage );
 
             this.uiAvailableLanguages.set( currentLanguage.code, currentLanguage );
         } );
@@ -405,12 +419,6 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
 
         this.uiService.getAll().forEach( ( adapter ) => {
             const AdapterType = adapter as typeof UIAdapterBase;
-
-            // TEMP:
-            // Remove?
-            if ( AdapterType.getName().includes( "UI-V3" ) ) {
-                return;
-            }
 
             if ( !AdapterType.isMultiLanguage() ) {
                 this.logger.log(

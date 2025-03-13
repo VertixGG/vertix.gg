@@ -23,6 +23,8 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { config } from "dotenv";
 
+import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
@@ -123,11 +125,19 @@ async function registerUIAdapters() {
     } );
 }
 
-async function registerUILanguageManager() {
+async function registerUILanguageManager( options: {
+    shouldImport?: boolean;
+    shouldValidate?: boolean;
+} = {} ) {
+    options = Object.assign( {
+        shouldImport: true,
+        shouldValidate: true
+    }, options );
+
     const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
 
     // Register UI language manager
-    await UILanguageManager.$.register();
+    await UILanguageManager.$.register( options );
 
     // Register UI language manager in UIService
     ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).registerUILanguageManager( UILanguageManager.$ );
@@ -195,6 +205,66 @@ async function createCleanupWorker() {
     }
 }
 
+/**
+ * Exports all available language files to the language directory
+ * @param languageCodes Optional array of language codes to export. If not provided, exports all languages.
+ */
+async function exportLanguages( languageCodes: string[] ) {
+    GlobalLogger.$.info( exportLanguages, "Exporting languages..." );
+
+    // Import the language manager and utils
+    const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+    const { LanguageUtils } = await import( "@vertix.gg/bot/src/utils/language" );
+
+    const { default: botInitialize } = await import( "./vertix" );
+    const client = await botInitialize();
+
+    // Register required services
+    await registerUIServices( client );
+
+    await registerConfigs();
+    await registerServices();
+
+    await EmojiManager.$.promise();
+
+    await registerUIAdapters();
+    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUIVersionStrategies();
+
+    const initialLanguage = UILanguageManager.$.getInitialLanguage();
+
+    // Get all available languages from the manager
+    const availableLanguages = UILanguageManager.$.getAvailableLanguages();
+
+    availableLanguages.set( initialLanguage.code, initialLanguage );
+
+    // If specific languages were requested, validate them
+    if ( languageCodes?.length ) {
+        const invalidCodes = languageCodes.filter( code => !availableLanguages.has( code ) );
+        if ( invalidCodes.length ) {
+            throw new Error( `Invalid language code(s): ${ invalidCodes.join( ", " ) }. Available codes: ${ Array.from( availableLanguages.keys() ).join( ", " ) }` );
+        }
+    }
+
+    // Filter languages if specific codes were requested
+    const languages = languageCodes.length
+        ? new Map( [ ...availableLanguages ].filter( ( [ code ] ) => languageCodes.includes( code ) ) )
+        : availableLanguages;
+
+    GlobalLogger.$.info( exportLanguages, `Found ${ languages.size } languages to export` );
+
+    // Export each language
+    for ( const [ code, language ] of languages.entries() ) {
+        const exportPath = path.join( UI_LANGUAGES_PATH, `${ code }.export${ UI_LANGUAGES_FILE_EXTENSION }` );
+        await LanguageUtils.$.export( language, exportPath );
+        GlobalLogger.$.info( exportLanguages, `Exported language: '${ code }' to ${ exportPath }` );
+    }
+
+    GlobalLogger.$.info( exportLanguages, "Language export completed successfully" );
+
+    return languages.size;
+}
+
 export async function entryPoint() {
     const envArg =
         process.argv.find( ( arg ) => arg.startsWith( "--env=" ) ) || `--env=${ process.env.DOTENV_CONFIG_PATH || ".env" }`;
@@ -244,6 +314,25 @@ export async function entryPoint() {
     if ( process.argv.includes( "--dump-env" ) ) {
         GlobalLogger.$.info( entryPoint, `Environment file variables:\n${ util.inspect( envOutput.parsed ) }` );
         process.exit( 0 );
+    }
+
+    // Handle export-languages command
+    const exportArg = process.argv.find( arg => arg.startsWith( "--export-languages" ) );
+    if ( exportArg ) {
+        GlobalLogger.$.info( entryPoint, "Export languages command detected" );
+        try {
+            // Parse language codes if provided (format: --export-languages=en,ru)
+            const languageCodes = exportArg.includes( "=" )
+                ? exportArg.split( "=" )[ 1 ].split( "," ).map( code => code.trim() )
+                : undefined;
+
+            const languageCount = await exportLanguages( languageCodes ?? [ "en" ] );
+            GlobalLogger.$.info( entryPoint, `Successfully exported ${ languageCount } languages` );
+            process.exit( 0 );
+        } catch ( error ) {
+            GlobalLogger.$.error( entryPoint, "Failed to export languages", error );
+            process.exit( 1 );
+        }
     }
 
     await PrismaBotClient.$.connect();

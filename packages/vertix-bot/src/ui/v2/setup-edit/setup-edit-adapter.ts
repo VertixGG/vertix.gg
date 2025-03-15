@@ -259,6 +259,24 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                 break;
 
             case "edit-dynamic-channel-buttons":
+                // Get current args and ensure button template values are properly converted to numbers
+                const currentArgs = this.getArgsManager().getArgs( this, interaction );
+
+                // Ensure dynamicChannelButtonsTemplate is properly converted to numbers for V2
+                if ( currentArgs.dynamicChannelButtonsTemplate ) {
+                    if ( Array.isArray( currentArgs.dynamicChannelButtonsTemplate ) ) {
+                        // Make sure all buttons are numbers
+                        currentArgs.dynamicChannelButtonsTemplate =
+                            currentArgs.dynamicChannelButtonsTemplate.map( btn =>
+                                typeof btn === "number" ? btn : Number( btn )
+                            );
+                    }
+                }
+
+                // Save the modified args back
+                this.getArgsManager().setArgs( this, interaction, currentArgs );
+
+                // Now transition to the buttons edit step
                 await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditButtons" );
                 break;
 
@@ -297,9 +315,9 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         this.getArgsManager().setArgs( this, interaction, {
-            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds(
-                interaction.values.map( ( i ) => parseInt( i ) )
-            )
+            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds( interaction.values.map(
+                ( v ) => parseInt( v )
+            ) )
         } );
 
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditButtonsEffect" );

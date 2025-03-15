@@ -29,11 +29,17 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
 
     protected async getSelectOptions() {
         const values = allItems.map( async( item ) => {
+            const itemId = item.getId();
+            // Get the template buttons and ensure we're comparing the same types
+            const templateButtons = ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ).map(
+                ( id: string | number ) => typeof id === "string" ? parseInt( id ) : id
+            );
+
             return {
                 label: await item.getLabelForMenu(),
-                value: item.getId().toString(),
+                value: itemId.toString(),
                 emoji: ( await item.getEmoji() ) as any,
-                default: ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ).includes( item.getId() )
+                default: templateButtons.includes( itemId )
             };
         } );
 

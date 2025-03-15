@@ -259,15 +259,27 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+        // Get existing args
+        const existingArgs = this.getArgsManager().getArgs( this, interaction );
+
+        // Keep button IDs as strings (don't parse to integers)
+        const buttonValues = interaction.values;
+
+        // Preserve existing args while updating the button template
         this.getArgsManager().setArgs( this, interaction, {
-            dynamicChannelButtonsTemplate: interaction.values.map( ( i ) => parseInt( i ) )
+            ...existingArgs,
+            dynamicChannelButtonsTemplate: buttonValues
         } );
 
         await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupStep2Component" );
     }
 
     private async onConfigExtrasSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
-        const argsToSet: UIArgs = {},
+        // Get existing args to preserve them
+        const existingArgs = this.getArgsManager().getArgs( this, interaction );
+
+        // Start with existing args to preserve button template and other settings
+        const argsToSet: UIArgs = { ...existingArgs },
             values = interaction.values;
 
         values.forEach( ( value ) => {
@@ -298,6 +310,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         }
 
         this.getArgsManager().setArgs( this, interaction, {
+            ...args,
             dynamicChannelVerifiedRoles: roles.sort()
         } );
 

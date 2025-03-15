@@ -114,7 +114,8 @@ export class UIArgsManager extends InitializeBase {
             this.debugger.dumpDown( this.setInitialArgs, this.data[ self.getName() ][ id ] );
 
             if ( !internalArgs.silent ) {
-                throw new Error( `${ this.prefixName }: Args with name: '${ self.getName() }' id: '${ id }' already exists` );
+                this.logger.error( this.setInitialArgs, `${ this.prefixName }: Args with name: '${ self.getName() }' id: '${ id }' already exists` );
+                return;
             }
 
             this.logger.error( this.setInitialArgs, `${ this.prefixName }: Args with id: '${ id }' already exists` );

@@ -44,7 +44,9 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
 
     private static mapButtons( allItems: DynamicChannelButtonBase[] ) {
         allItems.forEach( ( item ) => {
-            this.allButtonsById[ item.getId() ] = item;
+            const itemId = item.getId();
+
+            this.allButtonsById[ itemId ] = item;
             this.allButtonsByName[ item.getName() ] = item;
         } );
     }
@@ -107,6 +109,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
     }
 
     public static getById( id: string ) {
+        // Use the getItemFromMap method directly with the id
         return this.getItemFromMap( this.allButtonsById, id );
     }
 
@@ -151,11 +154,37 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
     }
 
     public static sortIds( ids: string[] ) {
-        return ids.sort(
-            ( aId: string, bId: string ) =>
-                DynamicChannelPrimaryMessageElementsGroup.getById( aId )!.$$.getSortId() -
-                DynamicChannelPrimaryMessageElementsGroup.getById( bId )!.$$.getSortId()
-        );
+        if ( !ids ) {
+            return [];
+        }
+
+        if ( !Array.isArray( ids ) ) {
+            return ids;
+        }
+
+        if ( ids.length === 0 ) {
+            return ids;
+        }
+
+        try {
+            const result = ids.sort(
+                ( aId: string, bId: string ) => {
+                    const aItem = DynamicChannelPrimaryMessageElementsGroup.getById( aId );
+                    const bItem = DynamicChannelPrimaryMessageElementsGroup.getById( bId );
+
+                    if ( !aItem || !bItem ) {
+                        return 0;
+                    }
+
+                    return aItem.$$.getSortId() - bItem.$$.getSortId();
+                }
+            );
+
+            return result;
+        } catch {
+            // Return unsorted array if there's an error
+            return ids;
+        }
     }
 }
 

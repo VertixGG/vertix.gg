@@ -151,12 +151,18 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
     }
 
     protected getLogic( args: UIArgs ) {
+        // Process the logs channel ID - handle array or string
+        let processedLogsChannelId = args.dynamicChannelLogsChannelId;
+        if ( Array.isArray( processedLogsChannelId ) && processedLogsChannelId.length > 0 ) {
+            processedLogsChannelId = processedLogsChannelId[ 0 ]; // Take the first item if it's an array
+        }
+
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,
 
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
-            dynamicChannelLogsChannelId: args.dynamicChannelLogsChannelId,
+            dynamicChannelLogsChannelId: processedLogsChannelId,
 
             verifiedRoles: args.dynamicChannelVerifiedRoles,
 
@@ -167,11 +173,11 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
                 ? SetupEditEmbed.vars.configAutoSaveEnabled
                 : SetupEditEmbed.vars.configAutoSaveDisabled,
 
-            configLogs: args.dynamicChannelLogsChannelId
+            configLogs: processedLogsChannelId
                 ? SetupEditEmbed.vars.configLogsEnabled
                 : SetupEditEmbed.vars.configLogsDisabled,
 
-            dynamicChannelLogsChannelDisplay: args.dynamicChannelLogsChannelId
+            dynamicChannelLogsChannelDisplay: processedLogsChannelId
                 ? SetupEditEmbed.vars.dynamicChannelLogsChannelSelected
                 : SetupEditEmbed.vars.dynamicChannelLogsChannelDefault,
 

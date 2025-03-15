@@ -2234,6 +2234,7 @@
               "channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
               "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
               "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
+              "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
               "version": "▹ UI Version: `{version}`"
             }
           },

@@ -2234,6 +2234,7 @@
               "channelsTemplateButtons": "▹ Кнопки: **{channelsTemplateButtons}**",
               "channelsVerifiedRoles": "▹ Роли: {channelsVerifiedRoles}",
               "channelsLogsChannelId": "▹ Канал логов: {channelsLogsChannelId}",
+              "channelsAutoSave": "▹ Автосохранение: `{channelsAutoSave}`",
               "version": "▹ UI Version: {version}"
             }
           },

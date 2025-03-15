@@ -7,6 +7,8 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
@@ -34,6 +36,7 @@ export class SetupEmbed extends UIEmbedBase {
             channelsTemplateButtons: uiUtilsWrapAsTemplate( "channelsTemplateButtons" ),
             channelsVerifiedRoles: uiUtilsWrapAsTemplate( "channelsVerifiedRoles" ),
             channelsLogsChannelId: uiUtilsWrapAsTemplate( "channelsLogsChannelId" ),
+            channelsAutoSave: uiUtilsWrapAsTemplate( "channelsAutoSave" ),
 
             version: uiUtilsWrapAsTemplate( "version" )
         },
@@ -100,6 +103,7 @@ export class SetupEmbed extends UIEmbedBase {
                     channelsTemplateButtons: `▹ Buttons: **${ masterChannelsOptions.channelsTemplateButtons }**`,
                     channelsVerifiedRoles: `▹ Verified Roles: ${ masterChannelsOptions.channelsVerifiedRoles }`,
                     channelsLogsChannelId: `▹ Logs Channel: ${ masterChannelsOptions.channelsLogsChannelId }`,
+                    channelsAutoSave: `▹ Auto Save: \`${ masterChannelsOptions.channelsAutoSave }\``,
                     version: `▹ UI Version: \`${ masterChannelsOptions.version }\``
                 }
             },
@@ -110,7 +114,7 @@ export class SetupEmbed extends UIEmbedBase {
         };
     }
 
-    protected getOptions(): { [p: string]: any } {
+    protected getOptions(): { [ p: string ]: any } {
         const {
             masterChannels,
             masterChannelMessageDefault,
@@ -142,18 +146,19 @@ export class SetupEmbed extends UIEmbedBase {
         // TODO: Duplicate code, refactor.
         const result: any = {},
             masterChannelsPromise = ( args?.masterChannels || [] ).map( async( channel, index ) => {
-                const { data, usedEmojis, usedRoles } = this.handleChannelData( channel );
+                const { data, usedEmojis, usedRoles } = await this.handleChannelData( channel );
 
                 return {
                     index: index + 1,
                     id: channel.channelId,
                     channelsTemplateName:
-                        data?.object?.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
+                        data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
                     channelsTemplateButtons: usedEmojis,
                     channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
-                    channelsLogsChannelId: data?.object?.dynamicChannelLogsChannelId
-                        ? `<#${ data?.object?.dynamicChannelLogsChannelId }>`
+                    channelsLogsChannelId: data.dynamicChannelLogsChannelId
+                        ? `<#${ data.dynamicChannelLogsChannelId }>`
                         : SetupEmbed.vars.none,
+                    channelsAutoSave: data.dynamicChannelAutoSave ?? "false",
                     version: channel?.version || "V2"
                 };
             } ),
@@ -176,7 +181,13 @@ export class SetupEmbed extends UIEmbedBase {
         return result;
     }
 
-    private handleChannelData( channel: any ) {
+    private async handleChannelData( channel: any ) {
+        const data = await MasterChannelDataManager.$.getAllSettings( {
+            ... channel,
+            isDynamic: false,
+            isMaster: true
+        } );
+
         // Get the version from either the top level channel object or from data[0]
         // This ensures we correctly detect the version wherever it's stored
         const getChannelVersion = () => {
@@ -202,7 +213,7 @@ export class SetupEmbed extends UIEmbedBase {
             const version = getChannelVersion();
 
             // Check if buttons array is defined and has elements
-            if ( !buttons || !buttons.length ) {
+            if ( ! buttons || ! buttons.length ) {
                 return [ "⚠️ No buttons" ]; // Return a placeholder to indicate the issue
             }
 
@@ -223,17 +234,16 @@ export class SetupEmbed extends UIEmbedBase {
             }
 
             // If no emojis were found, provide a visible error
-            if ( !result.length ) {
+            if ( ! result.length ) {
                 return [ "⚠️ No emojis found" ];
             }
 
             return result;
         };
 
-        const data = channel?.data?.[ 0 ],
-            usedButtons = data?.object?.dynamicChannelButtonsTemplate || getUsedButtons(),
+        const usedButtons = data.dynamicChannelButtonsTemplate || getUsedButtons(),
             usedEmojis = getEmojis( usedButtons ).join( ", " ),
-            usedRoles = ( data?.object.dynamicChannelVerifiedRoles || [] )
+            usedRoles = ( data.dynamicChannelVerifiedRoles || [] )
                 .map( ( roleId: string ) => {
                     return "<@&" + roleId + ">";
                 } )

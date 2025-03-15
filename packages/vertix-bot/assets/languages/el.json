@@ -2234,6 +2234,7 @@
               "channelsTemplateButtons": "▹ Κουμπιά: **{channelsTemplateButtons}**",
               "channelsVerifiedRoles": "▹ Επαληθευμένοι Ρόλοι: {channelsVerifiedRoles}",
               "channelsLogsChannelId": "▹ Κανάλι Ιστορικού: {channelsLogsChannelId}",
+              "channelsAutoSave": "▹ Αυτόματη Αποθήκευση: `{channelsAutoSave}`",
               "version": "▹ UI Version: {version}"
             }
           },

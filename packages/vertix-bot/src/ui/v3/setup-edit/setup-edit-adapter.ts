@@ -546,7 +546,6 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             try {
                 await interaction.deferUpdate();
             } catch {
-                return;
             }
         }
 

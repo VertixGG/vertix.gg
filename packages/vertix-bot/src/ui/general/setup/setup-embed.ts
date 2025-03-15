@@ -92,6 +92,7 @@ export class SetupEmbed extends UIEmbedBase {
                 separator: "\n",
                 multiSeparator: "\n\n",
                 options: {
+                    // TODO: Add auto save
                     index: `**#${ masterChannelsOptions.index }**`,
                     name: `▹ Name: <#${ masterChannelsOptions.id }>`,
                     id: `▹ Channel ID: \`${ masterChannelsOptions.id }\``,
@@ -176,24 +177,57 @@ export class SetupEmbed extends UIEmbedBase {
     }
 
     private handleChannelData( channel: any ) {
-        const getUsedButtons = () => {
-            switch ( channel?.data?.[ 0 ]?.version ) {
-                default:
-                    return DynamicChannelElementsGroup.getAll();
+        // Get the version from either the top level channel object or from data[0]
+        // This ensures we correctly detect the version wherever it's stored
+        const getChannelVersion = () => {
+            // Check all possible locations for version information
+            return channel?.version || channel?.data?.[ 0 ]?.version;
+        };
 
+        const getUsedButtons = () => {
+            const version = getChannelVersion();
+
+            switch ( version ) {
                 case VERSION_UI_V3:
-                    return DynamicChannelPrimaryMessageElementsGroup.getAll();
+                    // Extract just the IDs from the button objects for V3
+                    return DynamicChannelPrimaryMessageElementsGroup.getAll().map( btn => btn.getId() );
+
+                default:
+                    // Extract just the IDs from the button objects for V2 (default)
+                    return DynamicChannelElementsGroup.getAll().map( btn => btn.getId() );
             }
         };
 
-        const getEmojis = ( buttons: string[] ) => {
-            switch ( channel?.data?.[ 0 ]?.version ) {
-                default:
-                    return DynamicChannelElementsGroup.getEmbedEmojis( buttons.map( ( b ) => Number( b ) ) );
+        const getEmojis = ( buttons: string[] | number[] ) => {
+            const version = getChannelVersion();
 
-                case VERSION_UI_V3:
-                    return DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis( buttons );
+            // Check if buttons array is defined and has elements
+            if ( !buttons || !buttons.length ) {
+                return [ "⚠️ No buttons" ]; // Return a placeholder to indicate the issue
             }
+
+            let result: string[] = [];
+
+            switch ( version ) {
+                case VERSION_UI_V3:
+                    // For V3: Ensure all values are strings as V3 getById expects strings
+                    const stringButtons = buttons.map( b => String( b ) );
+                    result = DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis( stringButtons );
+                    break;
+
+                default:
+                    // For V2: Ensure all values are numbers as V2 getById expects numbers
+                    const numberedButtons = buttons.map( b => typeof b === "number" ? b : Number( b ) );
+                    result = DynamicChannelElementsGroup.getEmbedEmojis( numberedButtons );
+                    break;
+            }
+
+            // If no emojis were found, provide a visible error
+            if ( !result.length ) {
+                return [ "⚠️ No emojis found" ];
+            }
+
+            return result;
         };
 
         const data = channel?.data?.[ 0 ],
@@ -204,6 +238,7 @@ export class SetupEmbed extends UIEmbedBase {
                     return "<@&" + roleId + ">";
                 } )
                 .join( ", " );
+
         return { data, usedEmojis, usedRoles };
     }
 }

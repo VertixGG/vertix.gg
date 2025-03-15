@@ -352,7 +352,15 @@ export async function entryPoint() {
 
     await registerUIAdapters();
 
-    await registerUILanguageManager();
+    await EmojiManager.$.promise().then( () => {
+        GlobalLogger.$.info( entryPoint,"Emoji manager is initialized" );
+    } );
+
+    await registerUILanguageManager( {
+        shouldImport: true,
+        shouldValidate: true
+    } );
+
     await registerUIVersionStrategies();
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
@@ -360,8 +368,4 @@ export async function entryPoint() {
     // await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
-
-    await EmojiManager.$.promise().then( () => {
-        GlobalLogger.$.info( entryPoint,"Emoji manager is initialized" );
-    } );
 }

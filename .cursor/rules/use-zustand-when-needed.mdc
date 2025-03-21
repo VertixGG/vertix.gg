@@ -1,6 +1,0 @@
----
-description: Use zustand when needed
-globs: *.tsx,*ts
-alwaysApply: true
----
-Use zustand when needed

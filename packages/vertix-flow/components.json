@@ -1,0 +1,20 @@
+{
+    "$schema": "https://ui.shadcn.com/schema.json",
+    "style": "new-york",
+    "rsc": false,
+    "tsx": true,
+    "tailwind": {
+        "config": "tailwind.config.js",
+        "css": "src/index.css",
+        "baseColor": "zinc",
+        "cssVariables": true,
+        "prefix": ""
+    },
+    "aliases": {
+        "ui": "@vertix.gg/flow/src/components/ui",
+        "utils": "@vertix.gg/flow/src/lib/utils",
+        "hooks": "@vertix.gg/flow/src/hooks",
+        "components": "@vertix.gg/flow/src/components"
+    },
+    "iconLibrary": "lucide"
+}

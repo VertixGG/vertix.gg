@@ -1,82 +1,112 @@
 import React, { useState } from "react";
 
+import { Button } from "@vertix.gg/flow/src/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@vertix.gg/flow/src/components/ui/dialog";
+import { cn } from "@vertix.gg/flow/src/lib/utils";
+
 interface FileSelectorProps {
-  onFileSelected: ( filePath: string, content: string ) => void;
+    onFileSelected: ( filePath: string, content: string ) => void;
+    className?: string;
 }
 
-export const FileSelector: React.FC<FileSelectorProps> = ( { onFileSelected } ) => {
-  const [ selectedFile, setSelectedFile ] = useState<string | null>( null );
-  const [ isLoading, setIsLoading ] = useState( false );
-  const [ error, setError ] = useState<string | null>( null );
-
-  const handleFileSearch = async() => {
-    setIsLoading( true );
-    setError( null );
-
-    try {
-      // In a real implementation, this would use a file system API
-      // For now, we'll simulate finding UI module files
-      const mockFiles = [
-        "/packages/vertix-bot/src/ui/general/ui-module.ts",
-        "/packages/vertix-bot/src/ui/v3/ui-module.ts",
-      ];
-
-      // Show dialog to select a file
-      const selectedPath = mockFiles[ 0 ]; // In real implementation, user would select this
-      setSelectedFile( selectedPath );
-
-      // Mock file content for demonstration
-      const mockContent = `
-import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
-import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
-import { SetupAdapter } from "@vertix.gg/bot/src/ui/general/setup/setup-adapter";
-import { WelcomeAdapter } from "@vertix.gg/bot/src/ui/general/welcome/welcome-adapter";
-import { FeedbackAdapter } from "@vertix.gg/bot/src/ui/general/feedback/feedback-adapter";
-
-export class UIModuleGeneral extends UIModuleBase {
-    public static getName() {
-        return "VertixBot/UI-General/Module";
-    }
-
-    public static getAdapters() {
-        return [ FeedbackAdapter, SetupAdapter, WelcomeAdapter ];
-    }
-
-    protected getCustomIdStrategy() {
-        return new UICustomIdPlainStrategy();
-    }
+// Mock file data structure - this would be replaced with your actual data source
+interface FileItem {
+    name: string;
+    content: string;
+    path: string;
 }
-      `;
 
-      onFileSelected( selectedPath, mockContent );
-    } catch ( err ) {
-      setError( "Error loading file: " + ( err instanceof Error ? err.message : String( err ) ) );
-    } finally {
-      setIsLoading( false );
-    }
-  };
+export const FileSelector: React.FC<FileSelectorProps> = ( { onFileSelected, className } ) => {
+    const [ selectedFile, setSelectedFile ] = useState<string | null>( null );
+    const [ isLoading, setIsLoading ] = useState( false );
+    const [ error, setError ] = useState<string | null>( null );
+    const [ open, setOpen ] = useState( false );
 
-  return (
-    <div style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
-      <h3>Select UI Module</h3>
-      <button
-        onClick={handleFileSearch}
-        disabled={isLoading}
-      >
-        {isLoading ? "Loading..." : "Search for UI Module Files"}
-      </button>
+    // Example mock data - replace with your actual file list
+    const mockFiles: FileItem[] = [
+        { name: "button.ui-module.ts", content: "// Button module content", path: "/ui/button.ui-module.ts" },
+        { name: "input.ui-module.ts", content: "// Input module content", path: "/ui/input.ui-module.ts" },
+        { name: "card.ui-module.ts", content: "// Card module content", path: "/ui/card.ui-module.ts" },
+        { name: "dialog.ui-module.ts", content: "// Dialog module content", path: "/ui/dialog.ui-module.ts" },
+        { name: "dropdown.ui-module.ts", content: "// Dropdown module content", path: "/ui/dropdown.ui-module.ts" },
+        { name: "form.ui-module.ts", content: "// Form module content", path: "/ui/form.ui-module.ts" },
+    ];
 
-      {selectedFile && (
-        <div style={{ marginTop: "10px" }}>
-          <strong>Selected file:</strong> {selectedFile}
+    const handleFileSelect = async( file: FileItem ) => {
+        setSelectedFile( file.name );
+        setOpen( false );
+        setIsLoading( true );
+
+        try {
+            // In a real implementation, you might fetch the content here if not already available
+            onFileSelected( file.path, file.content );
+        } catch ( err ) {
+            setError( "Error selecting file: " + ( err instanceof Error ? err.message : String( err ) ) );
+        } finally {
+            setIsLoading( false );
+        }
+    };
+
+    return (
+        <div className={cn( "space-y-4", className )}>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    <Button disabled={isLoading} variant="default">
+                        {isLoading ? "Loading..." : "Select UI Modules File"}
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-800 text-white">
+                    <DialogHeader>
+                        <DialogTitle>Select UI Module</DialogTitle>
+                        <DialogDescription className="text-zinc-400">
+                            Choose a UI module file from the list below.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="h-72 overflow-y-auto rounded-md border border-zinc-800 p-4 bg-zinc-900">
+                            <ul className="space-y-2">
+                                {mockFiles.map( ( file, index ) => (
+                                    <li key={index}>
+                                        <Button
+                                            variant="ghost"
+                                            className="w-full justify-start text-left font-normal text-zinc-200 hover:bg-zinc-800 hover:text-white"
+                                            onClick={() => handleFileSelect( file )}
+                                        >
+                                            {file.name}
+                                        </Button>
+                                    </li>
+                                ) )}
+                            </ul>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => setOpen( false )}
+                            className="bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white"
+                        >
+                            Cancel
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {selectedFile && (
+                <div className="text-sm">
+                    <span className="font-medium">Selected file:</span> {selectedFile}
+                </div>
+            )}
+
+            {error && <div className="text-sm text-red-500">{error}</div>}
         </div>
-      )}
-
-      {error && (
-        <div style={{ color: "red", marginTop: "10px" }}>
-          {error}
-        </div>
-      )}
-    </div>
-  );
+    );
 };

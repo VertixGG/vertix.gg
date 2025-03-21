@@ -1,0 +1,80 @@
+{
+    "folders": [
+        {
+            "name": "Root",
+            "path": "."
+        },
+        {
+            "name": "Base",
+            "path": "./packages/vertix-base"
+        },
+        {
+            "name": "Bot",
+            "path": "./packages/vertix-bot"
+        },
+        {
+            "name": "GUI",
+            "path": "./packages/vertix-gui"
+        },
+        {
+            "name": "Flow",
+            "path": "./packages/vertix-flow"
+        },
+        {
+            "name": "Utils",
+            "path": "./packages/vertix-utils"
+        },
+        {
+            "name": "Prisma",
+            "path": "./packages/vertix-prisma"
+        },
+        {
+            "name": "Test-Utils",
+            "path": "./packages/vertix-test-utils"
+        }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        },
+        "eslint.workingDirectories": [
+            "./packages/vertix-base",
+            "./packages/vertix-bot",
+            "./packages/vertix-gui",
+            "./packages/vertix-flow",
+            "./packages/vertix-utils",
+            "./packages/vertix-test-utils",
+            "./packages/vertix-prisma"
+        ],
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/dist": true,
+            "**/.git": true
+        },
+        "files.exclude": {
+            "**/.git": true,
+            "**/node_modules": true,
+            "**/dist": true,
+            "**/.next": true
+        },
+        "tailwindCSS.includeLanguages": {
+            "typescript": "javascript",
+            "typescriptreact": "javascript"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative"
+    },
+    "extensions": {
+        "recommendations": [
+            "esbenp.prettier-vscode",
+            "dbaeumer.vscode-eslint",
+            "bradlc.vscode-tailwindcss",
+            "ms-vscode.vscode-typescript-next",
+            "streetsidesoftware.code-spell-checker",
+            "oven.bun-vscode",
+            "Prisma.prisma"
+        ]
+    }
+}

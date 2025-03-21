@@ -12,10 +12,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import {
     ActionRowBuilder,
-    BaseGuildTextChannel,
-    BaseGuildVoiceChannel,
     ButtonBuilder,
-    ComponentType,
     GuildChannel,
     Message
 } from "discord.js";
@@ -37,19 +34,12 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 
 import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
-import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
-
 import type {
-    BaseMessageOptions,
-    ButtonInteraction,
     ChannelType,
     InteractionEditReplyOptions,
     MessageComponentInteraction,
-    ModalComponentData,
     ModalSubmitInteraction,
     PermissionsBitField,
-    StringSelectMenuInteraction,
-    UserSelectMenuInteraction
 } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
@@ -64,7 +54,6 @@ const ADAPTER_CLEANUP_STATIC_ARGS_TIMEOUT = Number( process.env.ADAPTER_CLEANUP_
  * TInteraction - The channel type that will be used if the adapter replies to interaction.
  */
 export abstract class UIAdapterBase<
-    // TODO: Generic are useless...
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterEntityBase {
@@ -82,43 +71,6 @@ export abstract class UIAdapterBase<
 
     private static staticArgs = new UIArgsManager( picocolors.green( "StaticArgs" ) );
     private static staticSystemArgs = new UIArgsManager( picocolors.red( "SystemArgs" ) );
-
-    /**
-     * Managing Discord messages sent in different channels.
-     *
-     * The class keeps track of started messages, by channel and message ID.
-     */
-    private channelStartedMessages = new ( class StartedMessages {
-        // TODO: Clear them out after a while, figure out how it works.
-        private messages: {
-            [channelId: string]: {
-                [messageId: string]: Message<true>;
-            };
-        } = {};
-
-        public get( channelId: string ) {
-            return this.messages[ channelId ];
-        }
-
-        public set( channelId: string, messageId: string, message: Message<true> ) {
-            if ( !this.messages[ channelId ] ) {
-                this.messages[ channelId ] = {};
-            }
-
-            this.messages[ channelId ][ messageId ] = message;
-        }
-
-        public delete( channelId: string, messageId?: string ): void;
-        public delete( channelId: string ): void;
-
-        public delete( channelId: string, messageId?: string ) {
-            if ( messageId ) {
-                delete this.messages[ channelId ][ messageId ];
-            } else {
-                delete this.messages[ channelId ];
-            }
-        }
-    } )();
 
     private readonly argsManager: UIArgsManager;
 
@@ -192,10 +144,6 @@ export abstract class UIAdapterBase<
                 }
             )
         } );
-    }
-
-    protected static getMiddlewares() {
-        return [];
     }
 
     public constructor( protected options: TAdapterRegisterOptions ) {
@@ -277,153 +225,6 @@ export abstract class UIAdapterBase<
         return schema;
     }
 
-    /**
-     * Sends a message to a channel.
-     */
-    public async send( channel: TChannel, sendArgs?: UIArgs ) {
-        // TODO: When args switching from one adapter to another, the old args should be cleared out.
-        // TODO: Old interaction should be cleared out.
-        const args = await this.getArgsInternal( channel, sendArgs );
-
-        this.$$.staticDebugger.dumpDown( this.send, args, "getStartArgs" );
-
-        await this.build( args, "send", channel );
-
-        const message = this.getMessage( "send", channel, sendArgs );
-
-        if ( channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel ) {
-            const result = await channel.send( message ).catch( ( e ) => {
-                this.$$.staticLogger.error( this.ephemeral, "", e );
-
-                return null;
-            } );
-
-            if ( !result ) {
-                return null;
-            }
-
-            this.channelStartedMessages.set( channel.id, result.id, result );
-
-            // New Interaction?
-            this.argsManager.setInitialArgs( this, result.id, args );
-
-            return result;
-        }
-
-        throw new Error( "Not implemented" );
-    }
-
-    public async sendToUser( guildId: string | "direct-message", userId: string, argsFromManager: UIArgs ) {
-        this.$$.staticDebugger.log(
-            this.sendToUser,
-            this.getName() + ` - Sending to user: '${ userId }' from guild id: '${ guildId }'`
-        );
-
-        await this.build( argsFromManager, "send-to-user", guildId );
-
-        await ( await this.uiService.getClient().users.fetch( userId ) )
-            .send( this.getMessage() )
-            .catch( () =>
-                this.$$.staticLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )
-            );
-    }
-
-    public async editReply( interaction: TInteraction, newArgs?: UIArgs ) {
-        // TODO: Add log middleware.
-        this.$$.staticDebugger.log( this.editReply, this.getName() + ` - Editing reply: '${ interaction.id }'` );
-
-        if ( await this.isArgsExpiredInternal( interaction ) ) {
-            return;
-        }
-
-        if ( this.isDynamic() ) {
-            const argsId = this.argsManager.getArgsId( interaction ),
-                args = await this.getArgsInternal( interaction as TInteraction, newArgs );
-
-            this.getArgsManager().setInitialArgs( this, argsId, args );
-        }
-
-        const args = this.argsManager.getArgs( this, interaction );
-
-        await this.build( args, "edit", interaction );
-
-        const message = this.getMessage( "edit", interaction, newArgs );
-
-        if ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) {
-            const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
-
-            disabledComponents.forEach( ( row: any ) => {
-                for ( const component of row.components ) {
-                    if ( component.type === ComponentType.UserSelect || component.type === ComponentType.ChannelSelect ) {
-                        row.components.splice( row.components.indexOf( component ), 1 );
-                    }
-                }
-            } );
-
-            const reindexDisabledComponents = [];
-
-            for ( const row of disabledComponents ) {
-                if ( row.components.length > 0 ) {
-                    reindexDisabledComponents.push( row );
-                }
-            }
-
-            await interaction
-                .update( {
-                    components: reindexDisabledComponents,
-                    embeds: message.embeds
-                } )
-                .catch( ( e ) => {
-                    this.$$.staticLogger.error( this.editReply, "", e );
-                } );
-        } else {
-            if ( !interaction.isCommand() && !interaction.deferred ) {
-                // TODO: Use dedicated method.
-                if (
-                    false ===
-                    ( await interaction.deferUpdate().catch( ( e ) => {
-                        this.$$.staticLogger.error( this.editReply, "", e );
-
-                        return false;
-                    } ) )
-                ) {
-                    return;
-                }
-            }
-        }
-
-        return await interaction.editReply( message ).catch( ( e ) => {
-            this.$$.staticLogger.error( this.editReply, "", e );
-        } );
-    }
-
-    public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
-        const argsId = await this.setDynamicInitialArgs( message, newArgs );
-
-        const args = this.argsManager.getArgsById( this, argsId );
-
-        await this.build( args, "edit-message", message );
-
-        const newMessage = this.getMessage( "edit-message", message.channel as TChannel, newArgs );
-
-        return await message.edit( newMessage );
-    }
-
-    protected async setDynamicInitialArgs( message: Message<true>, newArgs?: UIArgs ) {
-        const argsId = message.id;
-
-        let args = this.argsManager.getArgsById( this, argsId );
-
-        // TODO: Ensure how it possible that dynamic args exist.
-        if ( !args && this.isDynamic() ) {
-            const argsInternal = await this.getArgsInternal( message, newArgs || {} );
-
-            this.argsManager.setInitialArgs( this, argsId, argsInternal );
-        }
-
-        return argsId;
-    }
-
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
         const customId = this.getCustomIdForEntity( interaction.customId ),
             entityName = customId.split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
@@ -460,85 +261,13 @@ export abstract class UIAdapterBase<
         return this.run( interaction as MessageComponentInteraction );
     }
 
-    public async ephemeral(
-        interaction: TInteraction,
-        sendArgs?: UIArgs,
-        deletePreviousInteraction = this.shouldDeletePreviousReply?.() || false
-    ) {
-        const args = await this.getArgsInternal( interaction, sendArgs ),
-            caller = this.ephemeral.name;
-
-        await this.build( args, "reply", interaction );
-
-        const message = this.getMessage( "reply", interaction, sendArgs ),
-            shouldDeletePreviousInteraction =
-                deletePreviousInteraction && !interaction.isCommand() && interaction.message?.id,
-            messageId = ( shouldDeletePreviousInteraction && interaction.message?.id ) || 0,
-            interactionInternalId = interaction.user.id + UI_CUSTOM_ID_SEPARATOR + messageId;
-
-        if ( shouldDeletePreviousInteraction && this.$$.ephemeralInteractions[ interactionInternalId ] ) {
-            // TODO: If interaction not used for awhile, it will be expired.
-            const previousInteraction = this.$$.ephemeralInteractions[ interactionInternalId ].interaction;
-
-            // TODO: Avoid catching here.
-            await previousInteraction.deleteReply().catch( ( e ) => {
-                this.$$.staticLogger.error( caller, "", e );
-            } );
-        }
-
-        return interaction
-            .reply( {
-                ...message,
-                ephemeral: true
-            } )
-            .then( ( _result ) => {
-                if ( shouldDeletePreviousInteraction ) {
-                    this.$$.ephemeralInteractions[ interactionInternalId ] = {
-                        interaction,
-                        rawCustomId: this.getCustomIdForEntity( interaction.customId )
-                    };
-                }
-            } )
-            .catch( ( e ) => {
-                this.$$.staticLogger.error( caller, "", e );
-            } );
-    }
-
-    // TODO: Determine which interaction available showModal, and use it instead of MessageComponentInteraction.
-    // TODO: Method does not favor dynamic/static approach.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public async showModal( modalName: string, interaction: MessageComponentInteraction<"cached"> ) {
-        const args = await this.getArgsInternal( interaction as TInteraction, {} );
-
-        // const entity = this.$$.getComponent()
-        //     .getEntities( { modals: true })
-        //     .find( ( entity ) => entity.getName() === modalName );
-        //
-        // if ( ! entity ) {
-        //     throw new Error( `Modal entity: '${ modalName }' not found` );
-        // }
-
-        // this.buildEntityMap( entity );
-
-        await this.build( args, "show-modal", interaction as TInteraction );
-
-        const entityMapped = this.getEntityMap( modalName ),
-            modalInstance = this.getEntityInstance( entityMapped.entity ) as UIModalBase,
-            modal = this.buildModal( modalInstance );
-
-        await interaction
-            .showModal( modal )
-            .catch( ( error ) => this.$$.staticLogger.error( this.showModal, "", error ) )
-            .then( () => {
-                // this.deleteArgs( this.getArgsId( interaction as TInteraction ) );
-            } );
+        // TODO: Implement the logic
     }
 
     public async waitUntilInitialized() {
         return this.getComponent().waitUntilInitialized();
-    }
-
-    public getStartedMessages( channel: TChannel ) {
-        return this.channelStartedMessages.get( channel.id );
     }
 
     public getPermissions(): PermissionsBitField {
@@ -554,83 +283,6 @@ export abstract class UIAdapterBase<
 
         this.getSystemArgs().deleteArgs( this, id );
         this.getArgsManager().deleteArgs( this, id );
-    }
-
-    public async deletedStartedMessagesInternal( channel: TChannel ) {
-        const startedMessages = this.channelStartedMessages.get( channel.id );
-
-        if ( startedMessages ) {
-            const messages = Object.entries( startedMessages ) || [],
-                messageLength = messages.length;
-
-            for ( let i = 0; i < messageLength; i++ ) {
-                const [ id, message ] = messages[ i ];
-
-                await message.delete();
-
-                this.channelStartedMessages.delete( channel.id, id );
-            }
-
-            // If started channel has no messages, deletedStartedMessagesInternal it.
-            if ( !Object.keys( this.channelStartedMessages.get( channel.id )?.messages || {} ).length ) {
-                this.getArgsManager().deleteArgs( this, channel.id );
-
-                this.channelStartedMessages.delete( channel.id );
-            }
-        }
-    }
-
-    public async deleteRelatedComponentMessagesInternal( channel: TChannel ) {
-        const supported = channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel;
-
-        if ( supported ) {
-            const messages = await channel.messages.fetch().catch( ( e ) => {
-                this.$$.staticLogger.error( this.deleteRelatedComponentMessagesInternal, "", e );
-            } );
-
-            if ( !messages ) {
-                return;
-            }
-
-            // Remove all messages that have adapter's components.
-            const messagesToDelete = messages.filter( ( message ) => {
-                const json = message.toJSON() as any;
-
-                if ( json?.components ) {
-                    return json.components.some( ( row: any ) =>
-                        row.components.some( ( component: any ) => component.custom_id?.startsWith( this.getName() ) )
-                    );
-                }
-            } );
-
-            await channel.bulkDelete( messagesToDelete );
-        }
-    }
-
-    public async deleteRelatedEphemeralInteractionsInternal(
-        interaction: TInteraction,
-        customId: string,
-        count: number
-    ) {
-        let deletedCount = 0;
-
-        for ( const [ key, it ] of Object.entries( this.$$.ephemeralInteractions ) ) {
-            if ( deletedCount >= count ) {
-                break;
-            }
-
-            if ( key.includes( interaction.user.id ) && it.rawCustomId === customId ) {
-                await it.interaction.deleteReply().catch( ( e ) => {
-                    this.$$.staticLogger.error( this.ephemeral, "", e );
-                } );
-
-                delete this.$$.ephemeralInteractions[ key ];
-
-                ++deletedCount;
-            }
-        }
-
-        return deletedCount;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -664,55 +316,14 @@ export abstract class UIAdapterBase<
         throw new ForceMethodImplementation( this, "getStartArgs" );
     }
 
-    // TODO: In reply context there are always interaction, ( ensure ).
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected getReplyArgs( interaction?: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
         throw new ForceMethodImplementation( this, "getReplyArgs" );
     }
 
-    protected getEditMessageArgs?( _message?: Message<true>, _argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected getEditMessageArgs?( _message?: Message<true>, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
         throw new ForceMethodImplementation( this, "getEditMessageArgs" );
-    }
-
-    protected buildModal( modal: UIModalBase ): ModalComponentData {
-        const schema = modal.getSchema();
-
-        return {
-            ...schema.attributes,
-            customId: this.generateCustomIdForEntity( schema ),
-            components: this.buildComponentsBySchema( schema.entities )
-        };
-    }
-
-    protected getMessage(
-        _from?: UIAdapterBuildSource,
-        _context?: TChannel | TInteraction,
-        _argsFromManager?: UIArgs
-    ): BaseMessageOptions {
-        const result: BaseMessageOptions = {
-            embeds: [],
-            components: [],
-            content: ""
-        };
-
-        let schema = this.getComponent().getSchema();
-
-        switch ( schema.type ) {
-            case "component":
-                if ( schema.entities.embeds ) {
-                    result.embeds = schema.entities.embeds.map( ( embed: any ) => embed.attributes );
-                }
-
-                if ( schema.entities.elements ) {
-                    result.components = this.buildComponentsBySchema( schema.entities.elements );
-                }
-                break;
-
-            default:
-                throw new Error( `Unknown schema type: '${ schema.type }'` );
-        }
-
-        return result;
     }
 
     protected getArgsManager() {
@@ -721,54 +332,6 @@ export abstract class UIAdapterBase<
 
     protected getSystemArgs() {
         return UIAdapterBase.staticSystemArgs;
-    }
-
-    protected bindButton<TBindInteraction = ButtonInteraction<"cached">>(
-        buttonName: string,
-        callback: ( interaction: TBindInteraction ) => Promise<void>
-    ) {
-        const buttonMap = this.getEntityMap( buttonName );
-
-        this.storeEntityCallback( buttonMap, callback );
-    }
-
-    protected bindModal<TBindInteraction = ModalSubmitInteraction<"cached">>(
-        modalName: string,
-        callback: ( interaction: TBindInteraction ) => Promise<void>
-    ) {
-        const modalMap = this.getEntityMap( modalName );
-
-        this.storeEntityCallback( modalMap, callback );
-    }
-
-    protected bindModalWithButton<TBindInteraction = ModalSubmitInteraction<"cached">>(
-        buttonName: string,
-        modalName: string,
-        callback: ( interaction: TBindInteraction ) => Promise<void>
-    ) {
-        this.bindModal<TBindInteraction>( modalName, callback );
-
-        this.bindButton( buttonName, async( interaction ) => {
-            await this.showModal( modalName, interaction );
-        } );
-    }
-
-    protected bindSelectMenu<TBindInteraction = StringSelectMenuInteraction<"cached">>(
-        selectMenuName: string,
-        callback: ( interaction: TBindInteraction ) => Promise<void>
-    ) {
-        const selectMenuMap = this.getEntityMap( selectMenuName );
-
-        this.storeEntityCallback( selectMenuMap, callback );
-    }
-
-    protected bindUserSelectMenu<TBindInteraction = UserSelectMenuInteraction<"cached">>(
-        selectMenuName: string,
-        callback: ( interaction: TBindInteraction ) => Promise<void>
-    ) {
-        const selectMenuMap = this.getEntityMap( selectMenuName );
-
-        this.storeEntityCallback( selectMenuMap, callback );
     }
 
     public async awakeInternal( message: Message<true>, argsFromManager?: UIArgs ) {
@@ -820,8 +383,6 @@ export abstract class UIAdapterBase<
             content: "The interaction has expired. Please create new one."
         };
 
-        // TODO: Make dedicated method for this.
-        // TODO: Add to FAQ.
         const { RegenerateButton } = this.uiService.$$.getSystemElements();
 
         if ( RegenerateButton && this.regenerate ) {
@@ -849,7 +410,6 @@ export abstract class UIAdapterBase<
         context: TChannel | TInteraction | Message<true>,
         argsFromManager?: UIArgs
     ): Promise<UIArgs> {
-        // TODO: Refactor this method.
         let args: UIArgs = {},
             contextId: "start" | "reply" | "edit-message" | "unknown" = "unknown";
 

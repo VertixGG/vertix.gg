@@ -23,6 +23,8 @@ import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { UserSelectMenuInteraction, MessageComponentInteraction , StringSelectMenuInteraction, ModalSubmitInteraction, ButtonInteraction , ComponentBuilder } from "discord.js";
+
 import type {
     UIEntitySchemaBase,
     UIComponentConstructor,
@@ -36,7 +38,6 @@ import type { UIEntityBase } from "@vertix.gg/gui/src/bases/ui-entity-base";
 
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { ComponentBuilder } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
@@ -95,6 +96,8 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
         this.defineOptions();
     }
+
+    protected abstract showModal( modalName: string, interaction: MessageComponentInteraction<"cached"> ): Promise<void>;
 
     protected getComponent(): UIComponentBase {
         return this.component;
@@ -275,6 +278,54 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         }
 
         await mappedEntity.callback.bind( this )( interaction, entityInstance );
+    }
+
+    protected bindButton<TBindInteraction = ButtonInteraction<"cached">>(
+        buttonName: string,
+        callback: ( interaction: TBindInteraction ) => Promise<void>
+    ) {
+        const buttonMap = this.getEntityMap( buttonName );
+
+        this.storeEntityCallback( buttonMap, callback );
+    }
+
+    protected bindModal<TBindInteraction = ModalSubmitInteraction<"cached">>(
+        modalName: string,
+        callback: ( interaction: TBindInteraction ) => Promise<void>
+    ) {
+        const modalMap = this.getEntityMap( modalName );
+
+        this.storeEntityCallback( modalMap, callback );
+    }
+
+    protected bindModalWithButton<TBindInteraction = ModalSubmitInteraction<"cached">>(
+        buttonName: string,
+        modalName: string,
+        callback: ( interaction: TBindInteraction ) => Promise<void>
+    ) {
+        this.bindModal<TBindInteraction>( modalName, callback );
+
+        this.bindButton( buttonName, async( interaction ) => {
+            await this.showModal( modalName, interaction );
+        } );
+    }
+
+    protected bindSelectMenu<TBindInteraction = StringSelectMenuInteraction<"cached">>(
+        selectMenuName: string,
+        callback: ( interaction: TBindInteraction ) => Promise<void>
+    ) {
+        const selectMenuMap = this.getEntityMap( selectMenuName );
+
+        this.storeEntityCallback( selectMenuMap, callback );
+    }
+
+    protected bindUserSelectMenu<TBindInteraction = UserSelectMenuInteraction<"cached">>(
+        selectMenuName: string,
+        callback: ( interaction: TBindInteraction ) => Promise<void>
+    ) {
+        const selectMenuMap = this.getEntityMap( selectMenuName );
+
+        this.storeEntityCallback( selectMenuMap, callback );
     }
 
     private defineOptions() {

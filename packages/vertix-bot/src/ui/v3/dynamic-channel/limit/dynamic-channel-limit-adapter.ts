@@ -66,13 +66,6 @@ export class DynamicChannelLimitAdapter extends DynamicChannelAdapterExuBase<
     }
 
     private async onModalSubmit( interaction: ModalSubmitInteractionDefault ) {
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-            }
-        }
-
         const limitButtonId = this.customIdStrategy.generateId(
             "Vertix/UI-V3/DynamicChannelLimitAdapter:Vertix/UI-V3/DynamicChannelLimitInput"
         );

@@ -107,7 +107,7 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
             target = interaction.guild.members.cache.get( targetId );
 
         if ( !target ) {
-            await interaction.deferUpdate().catch( () => {} );
+            await this.updateInteractionDefer( interaction );
             return;
         }
 
@@ -138,15 +138,6 @@ export class DynamicChannelTransferOwnerAdapter extends DynamicChannelAdapterExu
     }
 
     private async onYesButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-                return;
-            }
-        }
-
         const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
 
         if ( "active" === state ) {

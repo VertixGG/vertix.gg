@@ -45,14 +45,6 @@ export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPe
     }
 
     protected async onPrivacyMenuSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-            }
-        }
-
         const state = interaction.values[ 0 ];
 
         await this.dynamicChannelService.editChannelPrivacyState(

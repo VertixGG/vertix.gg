@@ -452,9 +452,6 @@ export class DynamicChannelClaimManager extends InitializeBase {
             return;
         }
 
-        // TODO: Maybe it can cause some issues.
-        await interaction.deferUpdate();
-
         this.removeChannelOwnerTracking( channelDB.userOwnerId, interaction.channelId );
 
         DynamicChannelVoteManager.$.start(

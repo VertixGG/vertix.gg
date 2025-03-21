@@ -213,15 +213,6 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-                return;
-            }
-        }
-
         switch ( await this.dynamicChannelService.getChannelState( interaction.channel ) ) {
             case "public":
                 /*
@@ -271,15 +262,6 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
     }
 
     private async onStateVisibilityClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-                return;
-            }
-        }
-
         switch ( await this.dynamicChannelService.getChannelVisibilityState( interaction.channel ) ) {
             case "shown":
                 if (
@@ -341,7 +323,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             target = interaction.guild.members.cache.get( targetId );
 
         if ( !target ) {
-            await interaction.deferUpdate().catch( () => {} );
+            await this.updateInteractionDefer( interaction );
             return;
         }
 
@@ -382,7 +364,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             target = interaction.guild.members.cache.get( targetId );
 
         if ( !target ) {
-            await interaction.deferUpdate().catch( () => {} );
+            await this.updateInteractionDefer( interaction );
             return;
         }
 
@@ -417,7 +399,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             target = interaction.guild.members.cache.get( targetId );
 
         if ( !target ) {
-            await interaction.deferUpdate().catch( () => {} );
+            await this.updateInteractionDefer( interaction );
             return;
         }
 
@@ -465,7 +447,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             target = interaction.guild.members.cache.get( targetId );
 
         if ( !target ) {
-            await interaction.deferUpdate().catch( () => {} );
+            await this.updateInteractionDefer( interaction );
             return;
         }
 
@@ -499,7 +481,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuBa
             target = interaction.guild.members.cache.get( targetId );
 
         if ( !target ) {
-            await interaction.deferUpdate().catch( () => {} );
+            await this.updateInteractionDefer( interaction );
             return;
         }
 

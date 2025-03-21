@@ -546,14 +546,6 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     }
 
     private async onFinishButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-            }
-        }
-
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction );
 
         // TODO: Find better way to handle this

@@ -37,8 +37,6 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
 
         switch ( result?.code ) {
             case "success":
-                await interaction.deferUpdate();
-
                 this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup" );
 
                 // Search embeds with "🧹" in title and delete them.

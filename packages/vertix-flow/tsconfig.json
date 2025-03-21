@@ -1,0 +1,18 @@
+{
+    "extends": "./tsconfig.paths.json",
+    "compilerOptions": {
+        "typeRoots": [
+            "../../node_modules/@types",
+        ],
+        "types": [
+            "node",
+            "bun-types"
+        ],
+        "jsx": "react",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    }
+}

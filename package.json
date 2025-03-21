@@ -32,10 +32,12 @@
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
     },
     "dependencies": {
+        "@typescript-eslint/types": "^8.27.0",
+        "@typescript-eslint/typescript-estree": "^8.27.0",
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
-        "discord.js": "latest",
-        "discord-api-types": "latest"
+        "discord-api-types": "latest",
+        "discord.js": "latest"
     },
     "devDependencies": {
         "@swc/jest": "latest",

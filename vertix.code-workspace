@@ -34,20 +34,10 @@
         }
     ],
     "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "prettier.enable": false,
         "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": "explicit"
+            "source.fixAll": "explicit"
         },
-        "eslint.workingDirectories": [
-            "./packages/vertix-base",
-            "./packages/vertix-bot",
-            "./packages/vertix-gui",
-            "./packages/vertix-flow",
-            "./packages/vertix-utils",
-            "./packages/vertix-test-utils",
-            "./packages/vertix-prisma"
-        ],
         "typescript.tsdk": "node_modules/typescript/lib",
         "search.exclude": {
             "**/node_modules": true,
@@ -64,7 +54,9 @@
             "typescript": "javascript",
             "typescriptreact": "javascript"
         },
-        "typescript.preferences.importModuleSpecifier": "relative"
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "eslint.workingDirectories": [{ "mode": "auto" }],
+        "eslint.useFlatConfig": false,
     },
     "extensions": {
         "recommendations": [

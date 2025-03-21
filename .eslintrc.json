@@ -1,0 +1,28 @@
+
+{
+    "extends": [
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "space-in-parens": ["error", "always"],
+        "space-before-function-paren": ["error", "never"],
+        "space-before-blocks": ["error", "always"],
+        "template-curly-spacing": ["error", "always"],
+        "array-bracket-spacing": ["error", "always"],
+        "object-curly-spacing": ["error", "always"],
+        "computed-property-spacing": ["error", "always"],
+        "@typescript-eslint/type-annotation-spacing": ["error", {
+            "before": true,
+            "after": true,
+            "overrides": {
+                "colon": {
+                    "before": true,
+                    "after": true
+                }
+            }
+        }]
+    }
+}

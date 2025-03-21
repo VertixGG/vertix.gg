@@ -4,5 +4,7 @@
         "source.fixAll.eslint": "explicit"
     },
     "prettier.enable": false,
-    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "eslint.useFlatConfig": true
 }

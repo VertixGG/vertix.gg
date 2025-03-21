@@ -15,6 +15,8 @@ import { FileSelector } from "@vertix.gg/flow/src/components/file-selector";
 import { AdaptersDisplay } from "@vertix.gg/flow/src/components/adapters-display";
 import { parseUIModule } from "@vertix.gg/flow/src/components/module-parser";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@vertix.gg/flow/src/components/ui/card";
+
 import type {
   Connection,
   Edge,
@@ -76,15 +78,22 @@ export const FlowEditor: React.FC = () => {
   }, [] );
 
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+    <div className="w-full h-full flex flex-col">
       {/* Top section with file selector and adapter display */}
-      <div style={{ flex: "0 0 auto" }}>
-        <FileSelector onFileSelected={handleFileSelected} />
-        <AdaptersDisplay moduleName={moduleName} adapters={adapters} />
+      <div className="flex-none bg-background">
+        <Card className="m-4 border">
+          <CardHeader className="pb-2">
+            <CardTitle>UI Module Viewer</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FileSelector onFileSelected={handleFileSelected} />
+            <AdaptersDisplay moduleName={moduleName} adapters={adapters} />
+          </CardContent>
+        </Card>
       </div>
 
       {/* Flow editor canvas */}
-      <div style={{ flex: "1 1 auto", minHeight: 0 }}>
+      <div className="flex-1 min-h-0">
         <ReactFlow
           nodes={nodes}
           edges={edges}

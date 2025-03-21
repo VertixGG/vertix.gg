@@ -14,7 +14,7 @@ export class SetupMasterCreateV3Button extends UIElementButtonBase {
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Create Master Channel (V3)" );
+        return Promise.resolve( "Create V3-Master Channel" );
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
@@ -22,6 +22,6 @@ export class SetupMasterCreateV3Button extends UIElementButtonBase {
     }
 
     protected async getEmoji(): Promise<string> {
-        return "➕";
+        return "✨";
     }
 }

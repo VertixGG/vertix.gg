@@ -13,7 +13,7 @@ import {
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 interface FileSelectorProps {
-    onFileSelected: ( filePath: string, content: string ) => void;
+    onFileSelected: (filePath: string, content: string) => void;
     className?: string;
 }
 
@@ -24,11 +24,11 @@ interface FileItem {
     path: string;
 }
 
-export const FileSelector: React.FC<FileSelectorProps> = ( { onFileSelected, className } ) => {
-    const [ selectedFile, setSelectedFile ] = useState<string | null>( null );
-    const [ isLoading, setIsLoading ] = useState( false );
-    const [ error, setError ] = useState<string | null>( null );
-    const [ open, setOpen ] = useState( false );
+export const FileSelector: React.FC<FileSelectorProps> = ({ onFileSelected, className }) => {
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [open, setOpen] = useState(false);
 
     // Example mock data - replace with your actual file list
     const mockFiles: FileItem[] = [
@@ -40,60 +40,53 @@ export const FileSelector: React.FC<FileSelectorProps> = ( { onFileSelected, cla
         { name: "form.ui-module.ts", content: "// Form module content", path: "/ui/form.ui-module.ts" },
     ];
 
-    const handleFileSelect = async( file: FileItem ) => {
-        setSelectedFile( file.name );
-        setOpen( false );
-        setIsLoading( true );
+    const handleFileSelect = async (file: FileItem) => {
+        setSelectedFile(file.name);
+        setOpen(false);
+        setIsLoading(true);
 
         try {
             // In a real implementation, you might fetch the content here if not already available
-            onFileSelected( file.path, file.content );
-        } catch ( err ) {
-            setError( "Error selecting file: " + ( err instanceof Error ? err.message : String( err ) ) );
+            onFileSelected(file.path, file.content);
+        } catch (err) {
+            setError("Error selecting file: " + (err instanceof Error ? err.message : String(err)));
         } finally {
-            setIsLoading( false );
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className={cn( "space-y-4", className )}>
+        <div className={cn("space-y-4", className)}>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button disabled={isLoading} variant="default">
                         {isLoading ? "Loading..." : "Select UI Modules File"}
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] bg-zinc-950 border-zinc-800 text-white">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Select UI Module</DialogTitle>
-                        <DialogDescription className="text-zinc-400">
-                            Choose a UI module file from the list below.
-                        </DialogDescription>
+                        <DialogDescription>Choose a UI module file from the list below.</DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="h-72 overflow-y-auto rounded-md border border-zinc-800 p-4 bg-zinc-900">
-                            <ul className="space-y-2">
-                                {mockFiles.map( ( file, index ) => (
+                    <div className="py-4">
+                        <div className="h-72 overflow-y-auto border">
+                            <ul>
+                                {mockFiles.map((file, index) => (
                                     <li key={index}>
                                         <Button
                                             variant="ghost"
-                                            className="w-full justify-start text-left font-normal text-zinc-200 hover:bg-zinc-800 hover:text-white"
-                                            onClick={() => handleFileSelect( file )}
+                                            className="w-full justify-start text-left"
+                                            onClick={() => handleFileSelect(file)}
                                         >
                                             {file.name}
                                         </Button>
                                     </li>
-                                ) )}
+                                ))}
                             </ul>
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => setOpen( false )}
-                            className="bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white"
-                        >
+                        <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
                             Cancel
                         </Button>
                     </DialogFooter>

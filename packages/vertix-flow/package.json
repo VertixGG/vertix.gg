@@ -2,7 +2,9 @@
     "name": "@vertix.gg/flow",
     "type": "module",
     "scripts": {
-        "vertix-flow:dev": "bun run --hot src/dev-server.ts"
+        "vertix-flow:dev": "bunx --bun vite",
+        "vertix-flow:build": "vite build",
+        "vertix-flow:preview": "vite preview"
     },
     "dependencies": {
         "@vertix.gg/base": "workspace:*",
@@ -13,6 +15,8 @@
     "devDependencies": {
         "@types/react": "^18.2.47",
         "@types/react-dom": "^18.2.18",
-        "bun-types": "latest"
+        "@vitejs/plugin-react": "^4.2.1",
+        "bun-types": "latest",
+        "vite": "^5.0.12"
     }
 }

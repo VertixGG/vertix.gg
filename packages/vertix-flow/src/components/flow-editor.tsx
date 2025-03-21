@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import "reactflow/dist/style.css";
 
 import ReactFlow, {
@@ -7,8 +7,13 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
-  addEdge
+  addEdge,
+  BackgroundVariant
 } from "reactflow";
+
+import { FileSelector } from "@vertix.gg/flow/src/components/file-selector";
+import { AdaptersDisplay } from "@vertix.gg/flow/src/components/adapters-display";
+import { parseUIModule } from "@vertix.gg/flow/src/components/module-parser";
 
 import type {
   Connection,
@@ -42,9 +47,17 @@ const initialEdges: Edge[] = [
   { id: "e2-3", source: "2", target: "3" },
 ];
 
+interface Adapter {
+  name: string;
+  path: string;
+  fullPath: string;
+}
+
 export const FlowEditor: React.FC = () => {
   const [ nodes, _, onNodesChange ] = useNodesState( initialNodes );
   const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
+  const [ moduleName, setModuleName ] = useState<string>( "" );
+  const [ adapters, setAdapters ] = useState<Adapter[]>( [] );
 
   // Handle new connections between nodes
   const onConnect = useCallback(
@@ -52,20 +65,39 @@ export const FlowEditor: React.FC = () => {
     [ setEdges ]
   );
 
+  // Handle UI module file selection
+  const handleFileSelected = useCallback( ( filePath: string, content: string ) => {
+    // Parse the UI module file to extract adapter information
+    const parsedModule = parseUIModule( filePath, content );
+
+    // Update state with the parsed information
+    setModuleName( parsedModule.moduleName );
+    setAdapters( parsedModule.adapters );
+  }, [] );
+
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-      >
-        <Controls />
-        <MiniMap />
-        <Background variant="dots" gap={12} size={1} />
-      </ReactFlow>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      {/* Top section with file selector and adapter display */}
+      <div style={{ flex: "0 0 auto" }}>
+        <FileSelector onFileSelected={handleFileSelected} />
+        <AdaptersDisplay moduleName={moduleName} adapters={adapters} />
+      </div>
+
+      {/* Flow editor canvas */}
+      <div style={{ flex: "1 1 auto", minHeight: 0 }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          fitView
+        >
+          <Controls />
+          <MiniMap />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        </ReactFlow>
+      </div>
     </div>
   );
 };

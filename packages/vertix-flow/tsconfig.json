@@ -5,10 +5,9 @@
             "../../node_modules/@types",
         ],
         "types": [
-            "node",
-            "bun-types"
+            "node"
         ],
-        "jsx": "react",
+        "jsx": "react-jsx",
         "module": "ESNext",
         "moduleResolution": "bundler",
         "strict": true,

@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+    },
+    "include": [
+        "jest.config.ts",
+        "src/**/*.ts"
+    ]
+}

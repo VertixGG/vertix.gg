@@ -4,15 +4,19 @@ import { ModelLanguageBase } from "@vertix.gg/bot/src/bases/model-language-base"
 
 const model = PrismaBotClient.getPrismaClient().elementButtonLanguage;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function withContent() {
     return model.findFirst( {
         include: {
-            content: true,
+            content: true
         }
     } );
 }
 
-export class ElementButtonLanguageModel extends ModelLanguageBase<typeof model, PrismaBot.Prisma.PromiseReturnType<typeof withContent>> {
+export class ElementButtonLanguageModel extends ModelLanguageBase<
+    typeof model,
+    PrismaBot.Prisma.PromiseReturnType<typeof withContent>
+> {
     private static instance: ElementButtonLanguageModel;
 
     public static getName(): string {
@@ -20,7 +24,7 @@ export class ElementButtonLanguageModel extends ModelLanguageBase<typeof model, 
     }
 
     public static getInstance(): ElementButtonLanguageModel {
-        if ( ! ElementButtonLanguageModel.instance ) {
+        if ( !ElementButtonLanguageModel.instance ) {
             ElementButtonLanguageModel.instance = new ElementButtonLanguageModel( false );
         }
 

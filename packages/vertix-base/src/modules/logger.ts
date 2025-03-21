@@ -81,7 +81,10 @@ export class Logger extends ObjectBase {
             return;
         }
 
-        if ( process.env.LOGGER_LOG_PREVIOUS_CALLER_SOURCE_DISABLED && "true" === process.env.LOGGER_LOG_PREVIOUS_CALLER_SOURCE_DISABLED ) {
+        if (
+            process.env.LOGGER_LOG_PREVIOUS_CALLER_SOURCE_DISABLED &&
+            "true" === process.env.LOGGER_LOG_PREVIOUS_CALLER_SOURCE_DISABLED
+        ) {
             this.getPreviousSource = () => "";
         }
 
@@ -100,35 +103,34 @@ export class Logger extends ObjectBase {
             case 5:
                 this.debug = () => {};
         }
-
     }
 
     public addMessagePrefix( prefix: string ) {
         this.messagePrefixes.push( prefix );
     }
 
-    public log( caller: ICaller, message: string, ... params: any[] ): void {
-        this.output( DEFAULT_LOG_PREFIX, caller, message, ... params );
+    public log( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_LOG_PREFIX, caller, message, ...params );
     }
 
-    public info( caller: ICaller, message: string, ... params: any[] ): void {
-        this.output( DEFAULT_INFO_PREFIX, caller, message, ... params );
+    public info( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_INFO_PREFIX, caller, message, ...params );
     }
 
-    public debug( caller: ICaller, message: string, ... params: any[] ): void {
-        this.output( DEFAULT_DEBUG_PREFIX, caller, message, ... params );
+    public debug( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_DEBUG_PREFIX, caller, message, ...params );
     }
 
-    public warn( caller: ICaller, message: string, ... params: any[] ): void {
-        this.output( DEFAULT_WARN_PREFIX, caller, message, ... params );
+    public warn( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_WARN_PREFIX, caller, message, ...params );
     }
 
-    public error( caller: ICaller, message: string, ... params: any[] ): void {
-        this.output( DEFAULT_ERROR_PREFIX, caller, message, ... params );
+    public error( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_ERROR_PREFIX, caller, message, ...params );
     }
 
-    public admin( caller: ICaller, message: string, ... params: any[] ): void {
-        this.output( DEFAULT_ADMIN_PREFIX, caller, message, ... params );
+    public admin( caller: ICaller, message: string, ...params: any[] ): void {
+        this.output( DEFAULT_ADMIN_PREFIX, caller, message, ...params );
     }
 
     public beep() {
@@ -138,7 +140,7 @@ export class Logger extends ObjectBase {
     private getTime(): string {
         const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
 
-        if ( ! iso ) {
+        if ( !iso ) {
             return "Invalid Time";
         }
 
@@ -154,7 +156,7 @@ export class Logger extends ObjectBase {
             result = caller.name;
         }
 
-        if ( ! result || ! result.length ) {
+        if ( !result || !result.length ) {
             console.error( "Invalid Caller", new Error().stack );
             result = "_CALLER_UNKNOWN_";
         }
@@ -163,28 +165,28 @@ export class Logger extends ObjectBase {
     }
 
     private getStackTrace(): any[] {
-        const stackTrace = (new Error().stack || "").split("\n");
-        const stackLines = stackTrace.slice(1); // Skip the first line containing "Error"
+        const stackTrace = ( new Error().stack || "" ).split( "\n" );
+        const stackLines = stackTrace.slice( 1 ); // Skip the first line containing "Error"
 
         const stackRegex = / at (.+?) \((.+?)\)/;
         const result = [];
 
-        for (let i = 0; i < stackLines.length; i++) {
-            const line = stackLines[i];
-            const match = line.match(stackRegex);
+        for ( let i = 0; i < stackLines.length; i++ ) {
+            const line = stackLines[ i ];
+            const match = line.match( stackRegex );
 
-            if (match) {
-                const [, context, file] = match;
+            if ( match ) {
+                const [ , context, file ] = match;
                 const parsedLine: any = { context, file };
 
-                if (line.startsWith("new")) {
+                if ( line.startsWith( "new" ) ) {
                     parsedLine.isNew = true;
-                    parsedLine.object = context.split(" ")[1];
-                } else if (context !== "Object.<anonymous>") {
+                    parsedLine.object = context.split( " " )[ 1 ];
+                } else if ( context !== "Object.<anonymous>" ) {
                     parsedLine.object = context;
                 }
 
-                result.push(parsedLine);
+                result.push( parsedLine );
             }
         }
 
@@ -195,9 +197,9 @@ export class Logger extends ObjectBase {
         // TODO: Take those from env.
         const stack = this.getStackTrace()
             .filter( ( line: any ) => line.file.includes( "/src/" ) )
-            .filter( ( line: any ) => ! line.file.includes( "logger.ts" ) )
-            .filter( ( line: any ) => ! line.file.includes( "debugger.ts" ) )
-            .filter( ( line: any ) => ! line.file.includes( "/node_modules/" ) );
+            .filter( ( line: any ) => !line.file.includes( "logger.ts" ) )
+            .filter( ( line: any ) => !line.file.includes( "debugger.ts" ) )
+            .filter( ( line: any ) => !line.file.includes( "/node_modules/" ) );
 
         let previousSource = "";
 
@@ -210,13 +212,13 @@ export class Logger extends ObjectBase {
             // Extract file name from file path.
             // const previousCallerFileName = stack[ 1 ].file.split( "/" ).pop();
 
-            previousSource = ( `${ previousCallerName }::${ previousCallerMethod }]` ) + "[";
+            previousSource = `${ previousCallerName }::${ previousCallerMethod }]` + "[";
         }
 
         return previousSource;
     }
 
-    private output( prefix: string, caller: ICaller, message: string, ... params: any[] ): void {
+    private output( prefix: string, caller: ICaller, message: string, ...params: any[] ): void {
         const source = this.getPreviousSource() + pc.white( this.ownerName + "::" + this.getCallerName( caller ) );
 
         let messagePrefix = "";
@@ -233,5 +235,4 @@ export class Logger extends ObjectBase {
 
         Logger.lastLogTime = new Date().getTime();
     }
-
 }

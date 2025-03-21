@@ -10,11 +10,11 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     private static instance: UserModel;
 
     public static getName(): string {
-        return "VertixBase/Models/UserModel";
+        return "VertixBase/Models/User";
     }
 
     public static getInstance(): UserModel {
-        if ( ! UserModel.instance ) {
+        if ( !UserModel.instance ) {
             UserModel.instance = new UserModel();
         }
 
@@ -35,7 +35,8 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     public async ensure( args: PrismaBot.Prisma.UserCreateArgs, shouldGetFromCache = true, shouldCacheSave = true ) {
         const userId = args.data.userId;
 
-        this.logger.log( this.ensure,
+        this.logger.log(
+            this.ensure,
             `User id: '${ args.data.userId }' username: '${ args.data.username }' - Ensuring entry exists`
         );
 
@@ -44,20 +45,18 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
             const cached = this.getCache( userId );
 
             if ( cached ) {
-                this.logger.log( this.ensure,
-                    `User id: '${ userId }' - Found in cache`
-                );
+                this.logger.log( this.ensure, `User id: '${ userId }' - Found in cache` );
 
                 return cached;
             }
         }
 
-        if ( ! args.data.username ) {
+        if ( !args.data.username ) {
             args.data.username = "";
         }
 
         const result = await this.ownerModel.upsert( {
-            // # CRITICAL: This is the field that is used to identify the user.
+            // # CRITICAL: This is the field used to identify the user.
             where: { userId },
 
             create: args.data,
@@ -72,24 +71,20 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
     }
 
     public async transferData( userId: string, newOwnerId: string, masterChannelDBId: string ) {
-        this.logger.log( this.transferData,
-            `User id: '${ userId }' - Transferring data to new owner id: '${ newOwnerId }'`
-        );
+        this.logger.log( this.transferData, `User id: '${ userId }' - Transferring data to new owner id: '${ newOwnerId }'` );
 
         const oldUser = await this.getOwnerModel().findUnique( {
             where: { userId }
         } );
 
-        if ( ! oldUser ) {
-            this.logger.error( this.transferData,
-                `User id: '${ userId }' - User not found`
-            );
+        if ( !oldUser ) {
+            this.logger.error( this.transferData, `User id: '${ userId }' - User not found` );
             return false;
         }
 
         const newUser = await this.ensure( {
             data: {
-                userId: newOwnerId,
+                userId: newOwnerId
             }
         } );
 
@@ -104,12 +99,12 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
         const newOwnerData = await this.getDataModel().findFirst( {
             where: {
                 key: dataKey,
-                ownerId: newUser.id,
+                ownerId: newUser.id
             }
         } );
 
         // TODO: Find better solution.
-        if ( ! newOwnerData ) {
+        if ( !newOwnerData ) {
             // Transfer data ownership.
             await this.getDataModel().updateMany( {
                 where: { key: dataKey, ownerId: oldUser.id },
@@ -124,7 +119,8 @@ export class UserModel extends ModelDataBase<typeof client.user, typeof client.u
                 }
             } );
 
-            this.logger.warn( this.transferData,
+            this.logger.warn(
+                this.transferData,
                 `User id: '${ userId }' - Owner data already exists, data was not transferred, old user data was deleted`
             );
         }

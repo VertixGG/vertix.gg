@@ -21,26 +21,22 @@ export class ServiceLocator extends InitializeBase {
         return "Modules/ServiceLocator";
     }
 
-    public static getInstance(): ServiceLocator {
-        if ( ! ServiceLocator.instance ) {
-            ServiceLocator.instance = new ServiceLocator();
+    public static get $() {
+        if ( !this.instance ) {
+            this.instance = new this();
         }
 
-        return ServiceLocator.instance;
+        return this.instance;
     }
 
-    public static get $() {
-        return ServiceLocator.getInstance();
-    }
-
-    public register<T extends ServiceBase>( service: new () => T ): void {
+    public register<T extends ServiceBase>( service: new ( ...args: any[] ) => T, ...args: any[] ) {
         const serviceAsClass = service as unknown as ServiceBase;
 
         if ( this.services.has( serviceAsClass.getName() ) ) {
             throw new Error( `Service '${ serviceAsClass.getName() }' is already registered` );
         }
 
-        const serviceInstance = new service();
+        const serviceInstance = new service( ...args );
 
         this.services.set( serviceInstance.getName(), serviceInstance );
 
@@ -56,24 +52,31 @@ export class ServiceLocator extends InitializeBase {
     }
 
     public get<T extends ServiceBase>( serviceName: string, options = { silent: false } ): T {
-        if ( ! options.silent && ! this.services.has( serviceName ) ) {
+        if ( !options.silent && !this.services.has( serviceName ) ) {
             throw new Error( `Service '${ serviceName }' is not registered` );
         }
 
         return this.services.get( serviceName ) as T;
     }
 
-    public async waitFor<T extends ServiceBase>( serviceName: string, options: {
-        timeout?: number,
-        metadata?: any,
-        internal?: boolean
-    } = {} ): Promise<T> {
+    public async waitFor<T extends ServiceBase>(
+        serviceName: string,
+        options: {
+            timeout?: number;
+            metadata?: any;
+            internal?: boolean;
+            silent?: boolean;
+        } = {}
+    ): Promise<T> {
         options = {
+            silent: false,
             timeout: 0,
-            ... options,
+            ...options
         };
 
-        const service = this.get( serviceName );
+        const service = this.get( serviceName, {
+            silent: !!options.silent
+        } );
 
         if ( service && service.getInitialization().state === "resolved" ) {
             return service as T;
@@ -81,10 +84,8 @@ export class ServiceLocator extends InitializeBase {
 
         this.initializing.add( serviceName );
 
-        const waitForService =
-                this.createServicePromise<T>( serviceName ),
-            waitForTimeout =
-                this.createTimeoutPromise<T>( serviceName, options.timeout, options.metadata );
+        const waitForService = this.createServicePromise<T>( serviceName ),
+            waitForTimeout = this.createTimeoutPromise<T>( serviceName, options.timeout, options.metadata );
 
         try {
             return await Promise.race( [ waitForService, waitForTimeout ] );
@@ -93,18 +94,21 @@ export class ServiceLocator extends InitializeBase {
         }
     }
 
-    public async waitForAll( options: {
-        timeout?: number,
-        metadata?: any,
-        internal?: boolean
-    } = {} ): Promise<void> {
+    public async waitForAll(
+        options: {
+            timeout?: number;
+            metadata?: any;
+            internal?: boolean;
+        } = {}
+    ): Promise<void> {
         options = {
             timeout: 0,
-            ... options,
+            ...options
         };
 
-        const waitForServices = Array.from( this.services.keys() )
-            .map( serviceName => this.waitFor( serviceName, options ) );
+        const waitForServices = Array.from( this.services.keys() ).map( ( serviceName ) =>
+            this.waitFor( serviceName, options )
+        );
 
         await Promise.all( waitForServices );
     }
@@ -127,24 +131,22 @@ export class ServiceLocator extends InitializeBase {
                         return;
                     }
 
-                    initialization.promise
-                        .then( () => resolve( service ) )
-                        .catch( reject );
+                    initialization.promise.then( () => resolve( service ) ).catch( reject );
                 }
             };
 
-            this.services.has( serviceName ) ?
-                listener( serviceName ) :
-                this.emitter.on( "service-registered", listener );
+            this.services.has( serviceName ) ? listener( serviceName ) : this.emitter.on( "service-registered", listener );
         } );
     }
 
-    private createTimeoutPromise<T extends ServiceBase>( serviceName: string, timeout: number = 0, metadata: any ): Promise<T> {
+    private createTimeoutPromise<T extends ServiceBase>(
+        serviceName: string,
+        timeout: number = 0,
+        metadata: any
+    ): Promise<T> {
         return new Promise<T>( ( _, reject ) =>
             setTimeout( () => {
-                const error = new ErrorWithMetadata(
-                    `Service '${ serviceName }' initialization timed out`, metadata
-                );
+                const error = new ErrorWithMetadata( `Service '${ serviceName }' initialization timed out`, metadata );
 
                 reject( error );
             }, timeout )
@@ -157,8 +159,7 @@ export class ServiceLocator extends InitializeBase {
 
         const serviceName = service.getName();
 
-        const hasCircularDependency =
-            this.performDepthFirstSearch( serviceName, stack, visited );
+        const hasCircularDependency = this.performDepthFirstSearch( serviceName, stack, visited );
 
         if ( hasCircularDependency ) {
             throw new Error( `Circular dependency detected stack: ${ Array.from( stack ).join( " -> " ) }
@@ -177,8 +178,9 @@ export class ServiceLocator extends InitializeBase {
         stack.add( currentServiceName );
 
         const service = this.get( currentServiceName, { silent: true } ),
-            dependencies = service?.isWithDependencies() ?
-                this.getDependencies( service as unknown as ServiceWithDependenciesBase<any> ) : [];
+            dependencies = service?.isWithDependencies()
+                ? this.getDependencies( service as unknown as ServiceWithDependenciesBase<any> )
+                : [];
 
         // The recursive call will go down the dependency tree to search for circular dependencies.
         for ( const dependency of dependencies ) {

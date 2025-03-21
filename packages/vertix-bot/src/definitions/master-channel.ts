@@ -13,7 +13,7 @@ export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField(
     Flags.ReadMessageHistory,
     Flags.SendMessages,
     Flags.ViewChannel,
-    Flags.EmbedLinks,
+    Flags.EmbedLinks
 ] );
 
 export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
@@ -22,8 +22,8 @@ export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
         Flags.ViewChannel,
         Flags.Connect,
         Flags.ReadMessageHistory,
-        Flags.ManageChannels, // Temporarily.
-    ],
+        Flags.ManageChannels // Temporarily.
+    ]
 };
 
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
@@ -36,17 +36,17 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
         Flags.ReadMessageHistory,
         Flags.SendMessages,
         Flags.ViewChannel,
-        Flags.EmbedLinks,
+        Flags.EmbedLinks
         // Flags.ManageGuild,
-    ],
+    ]
 };
 
 export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
-    deny: [ Flags.SendMessages ],
+    deny: [ Flags.SendMessages ]
 };
 
-export const DEFAULT_SETUP_PERMISSIONS  = [
+export const DEFAULT_SETUP_PERMISSIONS = [
     PermissionsBitField.Flags.ManageGuild,
     PermissionsBitField.Flags.ManageChannels,
-    PermissionsBitField.Flags.ManageRoles,
+    PermissionsBitField.Flags.ManageRoles
 ];

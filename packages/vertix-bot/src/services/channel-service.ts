@@ -1,9 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
+import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-
-import { ChannelDataManager } from "@vertix.gg/base/src/managers/channel-data-manager";
-
-import { ChannelModel } from "@vertix.gg/base/src/models/channel-model";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
@@ -15,6 +13,8 @@ import { ChannelType } from "discord.js";
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
@@ -32,25 +32,26 @@ import type {
 } from "discord.js";
 
 interface IChannelCreateArgs extends CategoryCreateChannelOptions {
-    guild: Guild,
+    guild: Guild;
     parent?: CategoryChannel;
-    userOwnerId: string,
-    ownerChannelId?: string,
-    internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES,
+    userOwnerId: string;
+    ownerChannelId?: string;
+    internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES;
+    version: TVersionType;
 }
 
 interface IChannelUpdateArgs {
-    channel: GuildChannel,
-    userOwnerId: string,
+    channel: GuildChannel;
+    userOwnerId: string;
 }
 
 interface IChannelDeleteArgs {
-    guild: Guild,
-    channel: GuildChannel,
+    guild: Guild;
+    channel: GuildChannel;
 }
 
 export class ChannelService extends ServiceWithDependenciesBase<{
-    appService: AppService,
+    appService: AppService;
 }> {
     private debugger: Debugger;
 
@@ -61,24 +62,16 @@ export class ChannelService extends ServiceWithDependenciesBase<{
     public constructor() {
         super();
 
-        this.debugger = new Debugger(
-            this,
-            "",
-            isDebugEnabled( "SERVICE", ChannelService.getName() )
-        );
+        this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", ChannelService.getName() ) );
 
-        EventBus.$.register( this, [
-            this.onJoin,
-            this.onLeave,
-            this.onChannelGuildVoiceDelete,
-        ] );
+        EventBus.$.register( this, [ this.onJoin, this.onLeave, this.onChannelGuildVoiceDelete ] );
     }
 
     // Remove this auto-generated return type.
     // getDependencies(): TServicesNonEmpty<TServiceNameDependencies<D>> {
     public getDependencies() {
         return {
-            appService: "VertixBot/Services/App",
+            appService: "VertixBot/Services/App"
         };
     }
 
@@ -86,7 +79,8 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         const displayName = newState.member?.displayName as string,
             channelName = newState.channel?.name as string;
 
-        this.logger.log( this.onEnter,
+        this.logger.log(
+            this.onEnter,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' joined to channel: '${ channelName }'`
         );
 
@@ -103,7 +97,8 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             oldChannelName = oldState.channel?.name as string,
             newChannelName = newState.channel?.name as string;
 
-        this.logger.log( this.onSwitch,
+        this.logger.log(
+            this.onSwitch,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' switched from channel: '${ oldChannelName }' to channel: '${ newChannelName }'`
         );
 
@@ -120,13 +115,17 @@ export class ChannelService extends ServiceWithDependenciesBase<{
     public async onJoinGeneric( args: IChannelEnterGenericArgs ) {
         const { oldState, newState } = args;
 
-        this.debugger.log( this.onJoinGeneric,
-            `Guild id: '${ oldState.guild.id }' - oldChannelId: '${ oldState.channelId }' - newChannelId: '${ newState.channelId }'` );
+        this.debugger.log(
+            this.onJoinGeneric,
+            `Guild id: '${ oldState.guild.id }' - oldChannelId: '${ oldState.channelId }' - newChannelId: '${ newState.channelId }'`
+        );
 
-        if ( ! newState.channelId ) {
-            this.logger.error( this.onJoinGeneric,
+        if ( !newState.channelId ) {
+            this.logger.error(
+                this.onJoinGeneric,
                 `Guild id: '${ oldState.guild.id }' - User: '${ args.displayName }' ` +
-                `joined to channel: '${ args.channelName }' but channel id is not found.` );
+                    `joined to channel: '${ args.channelName }' but channel id is not found.`
+            );
             return;
         }
 
@@ -134,7 +133,8 @@ export class ChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async onJoin( args: IChannelEnterGenericArgs ) {
-        this.debugger.log( this.onJoin,
+        this.debugger.log(
+            this.onJoin,
             `Guild id: '${ args.newState.guild.id }' - User: '${ args.displayName }' joined to channel: '${ args.channelName }'`
         );
     }
@@ -143,7 +143,8 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         const displayName = newState.member?.displayName as string,
             channelName = newState.channel?.name as string;
 
-        this.logger.log( this.onLeaveGeneric,
+        this.logger.log(
+            this.onLeaveGeneric,
             `Guild id: '${ oldState.guild.id }' - User: '${ displayName }' left channel guild: '${ oldState.guild.name }'`
         );
 
@@ -159,9 +160,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onLeave( _args: IChannelLeaveGenericArgs ) {
-
-    }
+    public async onLeave( _args: IChannelLeaveGenericArgs ) {}
 
     public async onChannelDelete( channel: DMChannel | NonThreadGuildBasedChannel ) {
         this.debugger.log( this.onChannelDelete, `Channel id: '${ channel.id }' was deleted` );
@@ -178,7 +177,8 @@ export class ChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async onChannelGuildVoiceDelete( channel: VoiceChannel ) {
-        this.debugger.log( this.onChannelGuildVoiceDelete,
+        this.debugger.log(
+            this.onChannelGuildVoiceDelete,
             `Guild id: '${ channel.guild.id }' - Voice channel: '${ channel.name }' was deleted`
         );
 
@@ -187,32 +187,41 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         // }
     }
 
-    public async onChannelUpdate( oldChannelState: DMChannel | NonThreadGuildBasedChannel, newChannelState: DMChannel | NonThreadGuildBasedChannel ) {
+    public async onChannelUpdate(
+        oldChannelState: DMChannel | NonThreadGuildBasedChannel,
+        newChannelState: DMChannel | NonThreadGuildBasedChannel
+    ) {
         this.logger.log( this.onChannelUpdate, `Channel id: '${ oldChannelState.id }' was updated` );
 
         if ( ChannelType.GuildVoice === oldChannelState.type && newChannelState.type === ChannelType.GuildVoice ) {
             // If permissions were updated.
-            if ( ( oldChannelState as VoiceChannel ).permissionOverwrites.cache.toJSON() !== ( newChannelState as VoiceChannel ).permissionOverwrites.cache.toJSON() ) {
-                await PermissionsManager.$
-                    .onChannelPermissionsUpdate( oldChannelState as VoiceChannel, newChannelState as VoiceChannel );
+            if (
+                ( oldChannelState as VoiceChannel ).permissionOverwrites.cache.toJSON() !==
+                ( newChannelState as VoiceChannel ).permissionOverwrites.cache.toJSON()
+            ) {
+                await PermissionsManager.$.onChannelPermissionsUpdate(
+                    oldChannelState as VoiceChannel,
+                    newChannelState as VoiceChannel
+                );
             }
         }
     }
 
     public async getMasterChannelByDynamicChannelId( dynamicChannelId: string, cache = true ) {
-        this.logger.log( this.getMasterChannelByDynamicChannelId,
+        this.logger.log(
+            this.getMasterChannelByDynamicChannelId,
             `Dynamic channel id: '${ dynamicChannelId }', cache: '${ cache }' - Trying to get master channel from database`
         );
 
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelId, cache );
 
-        if ( ! masterChannelDB ) {
+        if ( !masterChannelDB ) {
             return null;
         }
 
         const result = await this.services.appService.getClient().channels.fetch( masterChannelDB.channelId );
 
-        if ( ! result || result.type !== ChannelType.GuildVoice ) {
+        if ( !result || result.type !== ChannelType.GuildVoice ) {
             return null;
         }
 
@@ -220,52 +229,56 @@ export class ChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async getMasterChannelAndDBbyDynamicChannelId( dynamicChannelId: string, cache: boolean = true ) {
-        const masterChannelDB = await ChannelModel.$.getMasterChannelDBByDynamicChannelId( dynamicChannelId, cache );
-        if ( ! masterChannelDB ) {
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelId, cache );
+        if ( !masterChannelDB ) {
             return null;
         }
 
         const masterChannel = await this.services.appService.getClient().channels.fetch( masterChannelDB.channelId );
-        if ( ! masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
+        if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
             return null;
         }
 
         return {
             channel: masterChannel,
-            db: masterChannelDB,
+            db: masterChannelDB
         };
     }
 
     public async create( args: IChannelCreateArgs ) {
         const { name, guild, userOwnerId, internalType, ownerChannelId = null } = args;
 
-        this.logger.info( this.create,
+        this.logger.info(
+            this.create,
             `Guild id: '${ guild.id }' - Creating channel for guild: '${ guild.name }' with the following properties: ` +
-            `name: '${ name }' ownerId: '${ userOwnerId }' internalType: '${ internalType }' ` +
-            `ownerChannelId: '${ args.ownerChannelId }'`
+                `name: '${ name }' ownerId: '${ userOwnerId }' internalType: '${ internalType }' ` +
+                `ownerChannelId: '${ args.ownerChannelId }'`
         );
 
-        const channel = await guild.channels.create( args ).catch( () =>
-            this.logger.error( this.create,
-                `Guild id: '${ guild.id }' - Error while creating channel for guild: '${ guild.name }'`
-            ) );
+        const channel = await guild.channels
+            .create( args )
+            .catch( () =>
+                this.logger.error(
+                    this.create,
+                    `Guild id: '${ guild.id }' - Error while creating channel for guild: '${ guild.name }'`
+                )
+            );
 
-        if ( ! channel ) {
+        if ( !channel ) {
             return null;
         }
 
         // Data to be inserted into the database.
-        const data: any = {
+        const data: PrismaBot.Prisma.ChannelCreateArgs["data"] = {
             internalType,
             userOwnerId,
+            version: args.version,
             channelId: channel.id,
             guildId: guild.id,
-            createdAtDiscord: channel.createdTimestamp,
+            createdAtDiscord: channel.createdTimestamp
         };
 
-        this.debugger.log( this.create,
-            `Guild id: '${ guild.id }' - Channel id '${ channel.id }' was created`
-        );
+        this.debugger.log( this.create, `Guild id: '${ guild.id }' - Channel id '${ channel.id }' was created` );
 
         if ( channel.parentId ) {
             data.categoryId = channel.parentId;
@@ -275,42 +288,37 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             data.ownerChannelId = ownerChannelId;
         }
 
-        return { channel, db: ChannelModel.$.create( { data } ) };
+        return { channel, db: ChannelModel.$.create( data ) };
     }
 
     public async update( args: IChannelUpdateArgs ) {
         const { channel, userOwnerId } = args;
 
-        this.logger.info( this.update,
+        this.logger.info(
+            this.update,
             `Guild id: '${ channel.guild.id }' - Updating channel: '${ channel.name }' channel id: '${ channel.id }' ` +
-            `guild: '${ channel.guild.name }' with the following properties: ownerId: '${ userOwnerId }'`
+                `guild: '${ channel.guild.name }' with the following properties: ownerId: '${ userOwnerId }'`
         );
 
-        const where = {
+        await ChannelModel.$.update( {
             where: { channelId: channel.id },
             data: { userOwnerId }
-        };
-
-        await ChannelModel.$.update( where,
-            ( cache ) => ChannelDataManager.$.removeFromCache( cache.id )
-        );
+        } );
     }
 
     public async delete( args: IChannelDeleteArgs ) {
         const { channel, guild } = args;
 
-        this.logger.info( this.delete,
+        this.logger.info(
+            this.delete,
             `Guild id: '${ guild.id } - Deleting channel: '${ channel.name }' channel id: '${ channel.id }' guild: '${ guild.name }'`
         );
 
         const where = {
-            guildId: guild.id,
-            channelId: channel.id,
+            channelId: channel.id
         };
 
-        await ChannelModel.$.delete( where,
-            ( cached ) => ChannelDataManager.$.removeFromCache( cached.id )
-        ).catch( ( e ) => this.logger.error( this.delete, "", e ) );
+        await ChannelModel.$.delete( where ).catch( ( e ) => this.logger.error( this.delete, "", e ) );
 
         // Some channels are not deletable, so we need to catch the error.
         await channel.delete().catch( ( e ) => this.logger.error( this.delete, "", e ) );

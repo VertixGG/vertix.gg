@@ -3,11 +3,11 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 export abstract class CacheBase<CacheResult> extends InitializeBase {
-    private cache: Map<string, CacheResult>;
+    private readonly cache: Map<string, CacheResult>;
 
     private cacheDebugger: Debugger;
 
-    public constructor( shouldDebugCache = true  ) {
+    protected constructor( shouldDebugCache = true ) {
         super();
 
         this.cacheDebugger = new Debugger( this, undefined, shouldDebugCache );
@@ -28,7 +28,7 @@ export abstract class CacheBase<CacheResult> extends InitializeBase {
         return result;
     }
 
-    protected getMap() {
+    protected getCacheMap() {
         return this.cache;
     }
 
@@ -43,7 +43,7 @@ export abstract class CacheBase<CacheResult> extends InitializeBase {
     protected deleteCache( key: string ): boolean {
         this.cacheDebugger.log( this.deleteCache, `Deleting cache for key: '${ key }'` );
 
-        if ( ! this.cache.has( key ) ) {
+        if ( !this.cache.has( key ) ) {
             this.cacheDebugger.log( this.deleteCache, `Cache for key: '${ key }' does not exist` );
 
             return false;

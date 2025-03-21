@@ -2,9 +2,7 @@ import type { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
 export class ForceMethodBase extends Error {
     public constructor( className: string, methodName: string ) {
-        super(
-            `ForceMethod implementation: at '${ className }' method: '${ methodName }'`
-        );
+        super( `ForceMethod implementation: at '${ className }' method: '${ methodName }'` );
     }
 }
 

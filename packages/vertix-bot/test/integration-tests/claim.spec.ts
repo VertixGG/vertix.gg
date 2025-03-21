@@ -1,7 +1,7 @@
-it("should bypass", function () {
+it( "should bypass", function() {
     // Assert true.
-    expect(true).toBeTruthy();
-});
+    expect( true ).toBeTruthy();
+} );
 // import assert from "assert";
 //
 // import {
@@ -34,19 +34,19 @@ it("should bypass", function () {
 // import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 // import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 //
-// import { UIAdapterManager } from "@vertix.gg/bot/src/ui-v2/ui-adapter-manager";
+// import { UIAdapterManager } from "@vertix.gg/bot/src/ui/v2/ui-adapter-manager";
 // import { GUIManager } from "@vertix.gg/bot/src/managers/gui";
 //
-// import { ClaimStartAdapter } from "@vertix.gg/bot/src/ui-v2/claim/start/claim-start-adapter";
-// import { ClaimVoteAdapter } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-adapter";
-// import { ClaimResultAdapter } from "@vertix.gg/bot/src/ui-v2/claim/result/claim-result-adapter";
+// import { ClaimStartAdapter } from "@vertix.gg/bot/src/ui/v2/claim/start/claim-start-adapter";
+// import { ClaimVoteAdapter } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-adapter";
+// import { ClaimResultAdapter } from "@vertix.gg/bot/src/ui/v2/claim/result/claim-result-adapter";
 //
 // import { ChannelModel, ChannelResult } from "@vertix.gg/bot/src/models/channel-model";
 //
 // import { EditDynamicChannel } from "@vertix/ui/edit-dynamic-channel/edit-dynamic-channel";
 // import { AppManager } from "@vertix.gg/bot/src/managers/app-manager";
-// import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-results-markdown";
-// import { DynamicChannelAdapter } from "@vertix.gg/bot/src/ui-v2/dynamic-channel/dynamic-channel-adapter";
+// import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-results-markdown";
+// import { DynamicChannelAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/dynamic-channel-adapter";
 //
 // const waitForChannelMessage = ( channel: VoiceChannel, method: "send" | "edit" = "send", timeout = 1000 ) => new Promise( ( resolve, reject ) => {
 //     const timeoutHandler = setTimeout( () => reject( `Reject while waiting for: 'channel.${ method }'` + new Error().stack ), timeout );
@@ -361,7 +361,7 @@ it("should bypass", function () {
 //                 categoryId: "category_id_1",
 //             } );
 //
-//         // Add owner to tracking, simulate that he left the channel, and trigger on the abandon worker.
+//         // Add owner to tracking, simulate that he left the channel, and trigger on the abandon timer.
 //         // - it will trigger send message(Claim Start) to the channel.
 //         claimManager.addChannelTracking( ownerUser.id, channel );
 //         claimManager.handleAbandonedChannels( client );

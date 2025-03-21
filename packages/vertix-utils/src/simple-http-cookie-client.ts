@@ -16,25 +16,31 @@ export class SimpleHttpCookieClient {
 
     public async get( url = this.url, headers: Record<string, string> = {} ): Promise<Response> {
         const requestOptions = {
-            method: "GET",
-            headers: { ... headers, ... this.getCookiesHeader( url ) },
-        }, response = await fetch( url, requestOptions );
+                method: "GET",
+                headers: { ...headers, ...this.getCookiesHeader( url ) }
+            },
+            response = await fetch( url, requestOptions );
 
         this.updateCookies( response );
 
         return response;
     }
 
-    public async post( url = this.url, data: Record<string, any> | null = null, headers: Record<string, string> = {} ): Promise<Response> {
+    public async post(
+        url = this.url,
+        data: Record<string, any> | null = null,
+        headers: Record<string, string> = {}
+    ): Promise<Response> {
         const requestOptions = {
-            method: "POST",
-            headers: {
-                ... headers,
-                ... this.getCookiesHeader( url ),
-                "Content-Type": "application/x-www-form-urlencoded",
+                method: "POST",
+                headers: {
+                    ...headers,
+                    ...this.getCookiesHeader( url ),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: this.serializeData( data )
             },
-            body: this.serializeData( data ),
-        }, response = await fetch( url, requestOptions );
+            response = await fetch( url, requestOptions );
 
         this.updateCookies( response );
 
@@ -54,7 +60,7 @@ export class SimpleHttpCookieClient {
     }
 
     private serializeData( data: Record<string, any> | null ): string {
-        if ( ! data ) return "";
+        if ( !data ) return "";
 
         const searchParams = new URLSearchParams();
         for ( const [ key, value ] of Object.entries( data ) ) {

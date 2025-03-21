@@ -9,6 +9,7 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import type * as PrismaTypes from "@vertix.gg/prisma/._bot-client-internal";
+import type * as PrismaLibrary from "@vertix.gg/prisma/._bot-client-library";
 
 const require = module.createRequire( import.meta.url );
 
@@ -16,12 +17,12 @@ const require = module.createRequire( import.meta.url );
 const Prisma = require( "@vertix.gg/prisma/._bot-client-internal" );
 
 type QueryEvent = {
-    timestamp: Date
-    query: string
-    params: string
-    duration: number
-    target: string
-}
+    timestamp: Date;
+    query: string;
+    params: string;
+    duration: number;
+    target: string;
+};
 
 // TODO Rename its not instance, its singleton, facade, etc. or just PrismaBot
 export class PrismaBotClient extends ObjectBase {
@@ -37,7 +38,7 @@ export class PrismaBotClient extends ObjectBase {
     }
 
     public static getInstance() {
-        if ( ! PrismaBotClient.instance ) {
+        if ( !PrismaBotClient.instance ) {
             PrismaBotClient.instance = new PrismaBotClient();
         }
 
@@ -61,8 +62,7 @@ export class PrismaBotClient extends ObjectBase {
         this.debugger = new Debugger( this );
         this.logger.addMessagePrefix( pc.blue( "Prisma" ) );
 
-        let options: PrismaTypes.Prisma.PrismaClientOptions = {
-        };
+        let options: PrismaTypes.Prisma.PrismaClientOptions = {};
 
         if ( "true" === process.env.DEBUG_PRISMA ) {
             options = {
@@ -71,8 +71,8 @@ export class PrismaBotClient extends ObjectBase {
                     { level: "warn", emit: "event" },
                     { level: "info", emit: "event" },
                     { level: "error", emit: "event" },
-                    { level: "query", emit: "event" },
-                ],
+                    { level: "query", emit: "event" }
+                ]
             };
         }
 
@@ -90,7 +90,7 @@ export class PrismaBotClient extends ObjectBase {
     }
 
     public async connect() {
-        return new Promise( async ( resolve, reject ) => {
+        return new Promise( async( resolve, reject ) => {
             this.logger.log( "constructor", "Starting up the database engine ..." );
 
             await this.client.$connect();
@@ -103,8 +103,8 @@ export class PrismaBotClient extends ObjectBase {
             }, 5000 );
 
             // Run ping command to check if connection is established
-            const ping =  await this.client.$runCommandRaw({
-                "ping": "1"
+            const ping = await this.client.$runCommandRaw( {
+                ping: "1"
             } );
 
             clearTimeout( timeoutId );
@@ -137,3 +137,4 @@ export class PrismaBotClient extends ObjectBase {
 global.PrismaBot = Prisma;
 
 export { Prisma as PrismaBot };
+export type { PrismaLibrary as PrismaBotLibrary };

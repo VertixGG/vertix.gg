@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import { MockEventBus, MockObject } from "@vertix.gg/base/test/modules/event-bus/__mock__";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
@@ -47,7 +49,7 @@ describe( "VertixBase/Modules/EventBus", () => {
         ).toThrow();
     } );
 
-    it( "should emit events and trigger callbacks", async () => {
+    it( "should emit events and trigger callbacks", async() => {
         // Arrange.
         eventbus.register( mockObject, [ mockObject.mockMethod ] );
 
@@ -64,7 +66,7 @@ describe( "VertixBase/Modules/EventBus", () => {
         expect( mockCallback ).toHaveBeenCalled();
     } );
 
-    it( "should remove event listeners when unregistering an object", async () => {
+    it( "should remove event listeners when unregistering an object", async() => {
         // Arrange.
         eventbus.register( mockObject, [ mockObject.mockMethod ] );
 
@@ -80,5 +82,44 @@ describe( "VertixBase/Modules/EventBus", () => {
 
         // Assert.
         expect( mockCallback ).not.toHaveBeenCalled();
+    } );
+
+    it( "should call the callback immediately if the event was already emitted", async() => {
+        eventbus.register( mockObject, [ mockObject.mockMethod ] );
+
+        mockObject.mockMethod();
+
+        await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+        eventbus.onCalledBeforeDoInvoke( mockObject.getName(), "mockMethod", mockCallback );
+
+        expect( mockCallback ).toHaveBeenCalled();
+    } );
+
+    it( "should not call the callback immediately if the event was not emitted", () => {
+        eventbus.register( mockObject, [ mockObject.mockMethod ] );
+
+        eventbus.onCalledBeforeDoInvoke( mockObject.getName(), "mockMethod", mockCallback );
+
+        expect( mockCallback ).not.toHaveBeenCalled();
+    } );
+
+    it( "should throw an error if the object is not registered", () => {
+        expect( () => {
+            eventbus.onCalledBeforeDoInvoke( "nonExistentObject", "mockMethod", mockCallback );
+        } ).toThrow( "Object nonExistentObject is not registered" );
+    } );
+
+    it( "should call the callback immediately with the correct arguments if the event was already emitted", async() => {
+        eventbus.register( mockObject, [ mockObject.mockMethod ] );
+
+        const args = [ "arg1", "arg2" ];
+        mockObject.mockMethod( ...args );
+
+        await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+        eventbus.onCalledBeforeDoInvoke( mockObject.getName(), "mockMethod", mockCallback );
+
+        expect( mockCallback ).toHaveBeenCalledWith( ...args );
     } );
 } );

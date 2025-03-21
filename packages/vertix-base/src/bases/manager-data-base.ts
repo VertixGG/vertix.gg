@@ -1,3 +1,5 @@
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
@@ -14,16 +16,29 @@ import type {
 const DEFAULT_OWNER_ID_CACHE_TIMEOUT = /* 1 hour */ 60 * 60 * 1000;
 
 // TODO: Refactor.
-export abstract class ManagerDataBase<
-    ModelType extends IDataModel
-> extends CacheBase<DataResult> implements IDataManager {
-    private ownerIdCache: { [ ownerId: string ]: string } = {};
+export abstract class ManagerDataBase<ModelType extends IDataModel>
+    extends CacheBase<DataResult>
+    implements IDataManager
+{
+    private static instances: Map<any, any> = new Map();
+
+    private ownerIdCache: { [ownerId: string]: string } = {};
 
     private dataSourceModel: ModelType;
 
     protected debugger: Debugger;
 
-    public constructor( shouldDebugCache = false ) {
+    public static getInstance<TModelType extends IDataModel, TManager extends ManagerDataBase<TModelType>>(
+        this: new () => TManager
+    ): TManager {
+        if ( !ManagerDataBase.instances.has( this ) ) {
+            ManagerDataBase.instances.set( this, new this() );
+        }
+
+        return ManagerDataBase.instances.get( this );
+    }
+
+    protected constructor( shouldDebugCache = false ) {
         super( shouldDebugCache );
 
         this.debugger = new Debugger( this );
@@ -31,46 +46,43 @@ export abstract class ManagerDataBase<
         this.dataSourceModel = this.getDataSourceModel();
     }
 
-    public async getData( args: IDataGetArgs, isOwnerIdSourceId = false ) {
+    public async getData( args: Omit<IDataGetArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, args.cache );
 
         const { ownerId, key, cache } = args,
             cacheKey = `${ ownerId }-${ key }`;
 
-        this.logger.log( this.getData,
-            `Getting data for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'`
-        );
+        this.logger.log( this.getData, `Getting data for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'` );
 
         // Get from cache.
         if ( cache ) {
             const cached = this.getCache( cacheKey );
 
             if ( cached ) {
-                this.debugger.log( this.getData, `Getting cached data for ownerId: '${ ownerId }' key: '${ key }' - Returned from: 'cache'` );
+                this.debugger.log(
+                    this.getData,
+                    `Getting cached data for ownerId: '${ ownerId }' key: '${ key }' - Returned from: 'cache'`
+                );
                 return cached;
             }
         }
 
         // Get from database.
-        const dbData = await this.dataSourceModel.getData( args ).catch( () => {
-        } );
+        const dbData = await this.dataSourceModel.getData( args ).catch( () => {} );
 
-        if ( ! dbData ) {
-            this.logger.debug( this.getData,
-                `Could not find data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
-            );
+        if ( !dbData ) {
+            this.logger.debug( this.getData, `Could not find data for ownerId: '${ args.ownerId }' key: '${ args.key }'` );
             return;
         }
 
-        let data: DataResult,
-            message: string;
+        let data: DataResult, message: string;
 
         // If not exist, create.
-        if ( args.default !== null && ! dbData?.data?.length ) {
+        if ( args.default !== null && !dbData?.data?.length ) {
             data = await this.dataSourceModel.createData( {
                 key: args.key,
                 value: args.default,
-                ownerId: dbData.id,
+                ownerId: dbData.id
             } );
 
             message = "Created new";
@@ -80,9 +92,7 @@ export abstract class ManagerDataBase<
 
             message = "Getting";
         } else {
-            this.logger.debug( this.getData,
-                `Could not find data for ownerId: '${ args.ownerId }'`
-            );
+            this.logger.debug( this.getData, `Could not find data for ownerId: '${ args.ownerId }'` );
             return;
         }
 
@@ -97,42 +107,46 @@ export abstract class ManagerDataBase<
     }
 
     public async getSettingsData( ownerId: string, defaultSettings: any, cache = false, isOwnerIdSourceId = false ) {
-        this.debugger.log( this.getSettingsData,
-            `Getting settings data for ownerId: '${ ownerId }', cache: '${ cache }' `
-        );
+        this.debugger.log( this.getSettingsData, `Getting settings data for ownerId: '${ ownerId }', cache: '${ cache }' ` );
 
-        return await this.getData( {
-            ownerId,
-            key: this.getSettingsKey(),
-            cache,
-            default: defaultSettings,
-        }, isOwnerIdSourceId );
+        return await this.getData(
+            {
+                ownerId,
+                key: this.getSettingsKey(),
+                cache,
+                default: defaultSettings
+            },
+            isOwnerIdSourceId
+        );
     }
 
-    public async setData( args: IDataUpdateArgs, isOwnerIdSourceId = false ) {
+    public async setData( args: Omit<IDataUpdateArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, args.cache );
 
-        this.logger.info( this.setData,
+        this.logger.info(
+            this.setData,
             `Setting data for ownerId: '${ args.ownerId }' key: '${ args.key }', skipGet: '${ args.skipGet }' cache: '${ args.cache }'`
         );
 
         args.cache = true;
 
-        if ( ! args.skipGet ) {
+        if ( !args.skipGet ) {
             // Don't create on default.
             const dbData = await this.getData( {
-                ... args,
-                default: null,
+                ...args,
+                default: null
             } );
 
             // If exist, replace.
             if ( dbData ) {
-                this.logger.debug( this.setData,
+                this.logger.debug(
+                    this.setData,
                     `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' already exist, replacing...`
                 );
 
-                if ( ! args.default ) {
-                    this.logger.error( this.setData,
+                if ( !args.default ) {
+                    this.logger.error(
+                        this.setData,
                         `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' already exist, but no default value was provided, aborting...`
                     );
                     return;
@@ -140,7 +154,7 @@ export abstract class ManagerDataBase<
 
                 // Since the content should be saved in cache, we need to map the content to the correct format.
                 const mappedDBData = this.dataSourceModel.getInternalNormalizedData( {
-                    ... dbData,
+                    ...dbData,
                     value: args.default
                 } );
 
@@ -149,7 +163,8 @@ export abstract class ManagerDataBase<
 
             // If not exist, create.
             if ( null !== args.default ) {
-                this.logger.debug( this.setData,
+                this.logger.debug(
+                    this.setData,
                     `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' does not exist, creating...`
                 );
 
@@ -157,7 +172,7 @@ export abstract class ManagerDataBase<
                 const data = await this.dataSourceModel.createData( {
                     key: args.key,
                     value: args.default,
-                    ownerId: args.ownerId,
+                    ownerId: args.ownerId
                 } );
 
                 // Set cache.
@@ -167,21 +182,20 @@ export abstract class ManagerDataBase<
             }
         } else {
             if ( null === args.default ) {
-                this.logger.error( this.setData,
+                this.logger.error(
+                    this.setData,
                     `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' does not exist, but no default value was provided, aborting...`
                 );
                 return;
             }
 
-            this.logger.debug( this.setData,
-                `Setting data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
-            );
+            this.logger.debug( this.setData, `Setting data for ownerId: '${ args.ownerId }' key: '${ args.key }'` );
 
             // `dataSourceModel.createData` calls, `dataSourceModel.getInternalNormalizedData` internally.
             const data = await this.dataSourceModel.createData( {
                 key: args.key,
                 value: args.default,
-                ownerId: args.ownerId,
+                ownerId: args.ownerId
             } );
 
             // Set cache.
@@ -190,7 +204,8 @@ export abstract class ManagerDataBase<
             return data;
         }
 
-        this.logger.error( this.setData,
+        this.logger.error(
+            this.setData,
             `Data for ownerId: '${ args.ownerId }' key: '${ args.key }' does not exist, but no default value was provided, aborting...`
         );
     }
@@ -198,8 +213,8 @@ export abstract class ManagerDataBase<
     public async setSettingsData( ownerId: string, settings: any, skipGetSettings = false ) {
         let oldSettings: any = {};
 
-        if ( ! skipGetSettings ) {
-            oldSettings = ( await this.getSettingsData( ownerId, null, true ) )?.object || {} as any;
+        if ( !skipGetSettings ) {
+            oldSettings = ( await this.getSettingsData( ownerId, null, true ) )?.object || ( {} as any );
         }
 
         Object.entries( settings ).forEach( ( [ key, value ] ) => {
@@ -210,17 +225,15 @@ export abstract class ManagerDataBase<
             ownerId,
             key: this.getSettingsKey(),
             default: oldSettings,
-            skipGet: skipGetSettings,
+            skipGet: skipGetSettings
         } );
     }
 
-    public async updateData( args: IDataUpdateArgs, dbData: DataResult ) {
+    public async updateData( args: Omit<IDataUpdateArgs, "version">, dbData: DataResult ) {
         const { ownerId, key } = args,
             cacheKey = `${ ownerId }-${ key }`;
 
-        this.logger.info( this.updateData,
-            `Updating data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
-        );
+        this.logger.info( this.updateData, `Updating data for ownerId: '${ args.ownerId }' key: '${ args.key }'` );
 
         // Set cache.
         this.setCache( cacheKey, dbData );
@@ -228,12 +241,10 @@ export abstract class ManagerDataBase<
         await this.dataSourceModel.setData( args );
     }
 
-    public async deleteData( args: IDataSelectUniqueArgs, isOwnerIdSourceId = false ) {
+    public async deleteData( args: Omit<IDataSelectUniqueArgs, "version">, isOwnerIdSourceId = false ) {
         args = await this.normalizeArgs( args, isOwnerIdSourceId, true );
 
-        this.logger.info( this.deleteData,
-            `Deleting data for ownerId: '${ args.ownerId }' key: '${ args.key }'`
-        );
+        this.logger.info( this.deleteData, `Deleting data for ownerId: '${ args.ownerId }' key: '${ args.key }'` );
 
         this.removeFromCache( args.ownerId );
 
@@ -246,8 +257,9 @@ export abstract class ManagerDataBase<
         return await this.dataSourceModel.getAllData();
     }
 
-    public async isExist( ownerId: string, key: string, cache = true ) {
-        this.logger.debug( this.isExist,
+    public async isExist( ownerId: string, key: string, version = VERSION_UI_V2, cache = true ) {
+        this.logger.debug(
+            this.isExist,
             `Checking if data exist for ownerId: '${ ownerId }' key: '${ key }' cache: '${ cache }'`
         );
 
@@ -255,9 +267,7 @@ export abstract class ManagerDataBase<
             const cachedResult = this.getCache( `${ ownerId }-${ key }` );
 
             if ( cachedResult ) {
-                this.logger.debug( this.isExist,
-                    `Data for ownerId: '${ ownerId }' key: '${ key }' exist in cache`
-                );
+                this.logger.debug( this.isExist, `Data for ownerId: '${ ownerId }' key: '${ key }' exist in cache` );
 
                 return true;
             }
@@ -266,6 +276,7 @@ export abstract class ManagerDataBase<
         return await this.dataSourceModel.isDataExist( {
             ownerId,
             key,
+            version
         } );
     }
 
@@ -283,7 +294,7 @@ export abstract class ManagerDataBase<
 
     private async normalizeArgs( args: any, isOwnerIdSourceId: boolean, cache = true ) {
         if ( isOwnerIdSourceId ) {
-            args = { ... args };
+            args = { ...args };
             args.ownerId = await this.getIdByOwnerSourceId( args.ownerId, cache );
         }
 
@@ -295,8 +306,9 @@ export abstract class ManagerDataBase<
             const cachedResult = this.ownerIdCache[ ownerId ];
 
             if ( cachedResult ) {
-                this.debugger.log( this.getIdByOwnerSourceId,
-                    `Getting owner id for sourceId: '${ ownerId }', cache: '${ cache }' - Owner id: '${ cachedResult }' data from 'cache'`,
+                this.debugger.log(
+                    this.getIdByOwnerSourceId,
+                    `Getting owner id for sourceId: '${ ownerId }', cache: '${ cache }' - Owner id: '${ cachedResult }' data from 'cache'`
                 );
 
                 return cachedResult;
@@ -305,11 +317,12 @@ export abstract class ManagerDataBase<
 
         const owner = await this.dataSourceModel.getOwnerId( ownerId );
 
-        this.debugger.log( this.getIdByOwnerSourceId,
-            `Getting owner id for sourceId: '${ ownerId }', cache: '${ cache }' - Owner id: '${ owner?.id }' data from 'database'`,
+        this.debugger.log(
+            this.getIdByOwnerSourceId,
+            `Getting owner id for sourceId: '${ ownerId }', cache: '${ cache }' - Owner id: '${ owner?.id }' data from 'database'`
         );
 
-        if ( ! owner ) {
+        if ( !owner ) {
             throw new Error( `Could not find owner for sourceId: '${ ownerId }'` );
         }
 

@@ -29,16 +29,12 @@ export class PermissionsManager extends InitializeBase {
         return "VertixBot/Managers/Permissions";
     }
 
-    public static getInstance(): PermissionsManager {
-        if ( ! PermissionsManager.instance ) {
+    public static get $() {
+        if ( !PermissionsManager.instance ) {
             PermissionsManager.instance = new PermissionsManager();
         }
 
         return PermissionsManager.instance;
-    }
-
-    public static get $() {
-        return PermissionsManager.getInstance();
     }
 
     public constructor() {
@@ -50,12 +46,16 @@ export class PermissionsManager extends InitializeBase {
     }
 
     public async onChannelPermissionsUpdate( oldState: VoiceChannel, newState: VoiceChannel ) {
-        this.logger.log( this.onChannelPermissionsUpdate,
+        this.logger.log(
+            this.onChannelPermissionsUpdate,
             `Guild id: '${ oldState.guildId }', channel id: '${ oldState.id }' - Permissions were updated`
         );
 
         // Print debug new permissions.
-        this.debugger.log( this.onChannelPermissionsUpdate, `Guild id: '${ oldState.guildId }' - New permissions for channel id: '${ oldState.id }'` );
+        this.debugger.log(
+            this.onChannelPermissionsUpdate,
+            `Guild id: '${ oldState.guildId }' - New permissions for channel id: '${ oldState.id }'`
+        );
         this.debugger.debugPermissions( this.onChannelPermissionsUpdate, newState.permissionOverwrites );
     }
 
@@ -64,14 +64,14 @@ export class PermissionsManager extends InitializeBase {
 
         for ( const role of context.roles.cache.values() ) {
             // Skip if user is not in role.
-            if ( ! role.members.get( userId ) ) {
+            if ( !role.members.get( userId ) ) {
                 continue;
             }
 
             const rolePermissions = context.roles.cache.get( role.id )?.permissions;
 
             // Skip non-effected roles, or user not in role.
-            if ( ! rolePermissions || ! rolePermissions.bitfield ) {
+            if ( !rolePermissions || !rolePermissions.bitfield ) {
                 continue;
             }
 
@@ -96,14 +96,14 @@ export class PermissionsManager extends InitializeBase {
 
         for ( const role of roles ) {
             // Skip if user is not in role.
-            if ( ! role.members.get( userId ) ) {
+            if ( !role.members.get( userId ) ) {
                 continue;
             }
 
             const rolePermissions = context.roles.cache.get( role.id )?.permissions;
 
             // Skip non-effected roles, or user not in role.
-            if ( ! rolePermissions || ! rolePermissions.bitfield ) {
+            if ( !rolePermissions || !rolePermissions.bitfield ) {
                 continue;
             }
 
@@ -114,7 +114,7 @@ export class PermissionsManager extends InitializeBase {
             } );
 
             // If resultMissingPermissions is empty.
-            if ( ! Object.keys( resultMissingPermissions ).length ) {
+            if ( !Object.keys( resultMissingPermissions ).length ) {
                 break;
             }
         }
@@ -122,7 +122,11 @@ export class PermissionsManager extends InitializeBase {
         return Object.keys( resultMissingPermissions );
     }
 
-    public getMissingChannelPermissions( permissions: bigint[], context: VoiceBasedChannel, userId = context.client.user.id ): string[] {
+    public getMissingChannelPermissions(
+        permissions: bigint[],
+        context: VoiceBasedChannel,
+        userId = context.client.user.id
+    ): string[] {
         const resultMissingPermissions: PermissionOverwriteOptions = {},
             requiredPermissionsField = new PermissionsBitField( permissions );
 
@@ -155,19 +159,6 @@ export class PermissionsManager extends InitializeBase {
         return this.getMissingChannelPermissions( permissions, context );
     }
 
-    public getChannelDefaultInheritedProperties( channel: VoiceBasedChannel ) {
-        const { rtcRegion, bitrate, userLimit } = channel,
-            result: any = { bitrate, userLimit };
-
-        if ( rtcRegion !== null ) {
-            result.rtcRegion = rtcRegion;
-        }
-
-        this.debugger.log( this.getChannelDefaultInheritedProperties, JSON.stringify( result ) );
-
-        return result;
-    }
-
     public getChannelDefaultInheritedPermissions( channel: VoiceBasedChannel ) {
         const { permissionOverwrites } = channel,
             result = [];
@@ -192,35 +183,33 @@ export class PermissionsManager extends InitializeBase {
         const inheritedPermissions = this.getChannelDefaultInheritedPermissions( channel );
 
         return [
-            ... inheritedPermissions,
+            ...inheritedPermissions,
             {
                 id: userId,
-                ... overrides,
+                ...overrides
             }
         ];
     }
 
-    public getChannelDefaultProperties( userId: string, channel: VoiceBasedChannel, overrides = {} ) {
-        const inheritedProperties = this.getChannelDefaultInheritedProperties( channel ),
-            inheritedPermissions =
-                this.getChannelDefaultInheritedPermissionsWithUser( channel, userId, overrides );
+    public getChannelDefaultPermissions( userId: string, channel: VoiceBasedChannel, overrides = {} ) {
+        const inheritedPermissions = this.getChannelDefaultInheritedPermissionsWithUser( channel, userId, overrides );
 
         return {
-            ... inheritedProperties,
-            permissionOverwrites: inheritedPermissions,
+            permissionOverwrites: inheritedPermissions
         };
     }
 
-    public async ensureChannelBoConnectivityPermissions( channel: VoiceChannel ): Promise<void> {
+    public async ensureChannelBotConnectivityPermissions( channel: VoiceChannel ): Promise<void> {
         if ( this.isSelfAdministratorRole( channel.guild ) ) {
             return;
         }
 
-        await this.ensureChannelBotRolePermissions( channel, new PermissionsBitField( [
-            PermissionsBitField.Flags.ViewChannel,
-            PermissionsBitField.Flags.Connect,
-        ]) ).catch( ( error ) => {
-            this.logger.error( this.ensureChannelBoConnectivityPermissions,
+        await this.ensureChannelBotRolePermissions(
+            channel,
+            new PermissionsBitField( [ PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect ] )
+        ).catch( ( error ) => {
+            this.logger.error(
+                this.ensureChannelBotConnectivityPermissions,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - ${ error }`
             );
         } );
@@ -229,10 +218,8 @@ export class PermissionsManager extends InitializeBase {
     public async hasMemberPermissions( guildId: string, userId: string, permissions: PermissionResolvable ) {
         const guild = this.appService.getClient().guilds.cache.get( guildId );
 
-        if ( ! guild ) {
-            this.logger.error( this.hasMemberPermissions,
-                `Guild id: '${ guildId }' - Guild not found`
-            );
+        if ( !guild ) {
+            this.logger.error( this.hasMemberPermissions, `Guild id: '${ guildId }' - Guild not found` );
             return false;
         }
 
@@ -242,18 +229,22 @@ export class PermissionsManager extends InitializeBase {
     }
 
     public hasMemberAdminPermission( interaction: Interaction, logFunctionOwner?: Function ) {
-        if ( ! interaction.guild ) {
-            this.logger.error( this.hasMemberAdminPermission,
+        if ( !interaction.guild ) {
+            this.logger.error(
+                this.hasMemberAdminPermission,
                 `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - Is not a guild interaction.`
             );
             return false;
         }
 
-        const hasPermission = interaction.guild.ownerId === interaction.user.id ||
-            interaction.memberPermissions?.has( PermissionsBitField.Flags.Administrator ) || false;
+        const hasPermission =
+            interaction.guild.ownerId === interaction.user.id ||
+            interaction.memberPermissions?.has( PermissionsBitField.Flags.Administrator ) ||
+            false;
 
-        if ( logFunctionOwner && ! hasPermission ) {
-            this.logger.warn( logFunctionOwner,
+        if ( logFunctionOwner && !hasPermission ) {
+            this.logger.warn(
+                logFunctionOwner,
                 `Guild id: '${ interaction.guildId }', interaction id: '${ interaction.id }' - User: '${ interaction.user.id }' is not the guild owner`
             );
         }
@@ -264,18 +255,22 @@ export class PermissionsManager extends InitializeBase {
     public isSelfAdministratorRole( guild: Guild ): boolean {
         const botMember = guild.members.cache.get( guild.client.user.id );
 
-        if ( ! botMember ) {
+        if ( !botMember ) {
             return false;
         }
 
         return botMember.permissions.has( PermissionsBitField.Flags.Administrator );
     }
 
-    public async ensureChannelBotRolePermissions( channel: VoiceBasedChannel, permissions: PermissionsBitField ): Promise<void> {
+    public async ensureChannelBotRolePermissions(
+        channel: VoiceBasedChannel,
+        permissions: PermissionsBitField
+    ): Promise<void> {
         const botMember = channel.guild.members.cache.get( channel.guild.client.user.id );
 
-        if ( ! botMember ) {
-            this.logger.error( this.ensureChannelBotRolePermissions,
+        if ( !botMember ) {
+            this.logger.error(
+                this.ensureChannelBotRolePermissions,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Bot member not found`
             );
             return;
@@ -283,8 +278,9 @@ export class PermissionsManager extends InitializeBase {
 
         const botRole = botMember.roles.cache.first();
 
-        if ( ! botRole ) {
-            this.logger.error( this.ensureChannelBotRolePermissions,
+        if ( !botRole ) {
+            this.logger.error(
+                this.ensureChannelBotRolePermissions,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Bot role not found`
             );
             return;
@@ -297,7 +293,7 @@ export class PermissionsManager extends InitializeBase {
 
         const rolePermissions = channel.permissionOverwrites.cache.get( botRole.id );
 
-        if ( ! rolePermissions ) {
+        if ( !rolePermissions ) {
             await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
             return;
         }
@@ -309,21 +305,55 @@ export class PermissionsManager extends InitializeBase {
         await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
     }
 
-    public async editChannelRolesPermissions( channel: VoiceBasedChannel, roles: string[], permissions: PermissionOverwriteOptions ): Promise<void> {
-        return new Promise( ( resolve, reject ) => {
-            for ( const roleId of roles ) {
-                const role = channel.guild.roles.cache.get( roleId );
+    public async editChannelRolesPermissions(
+        channel: VoiceBasedChannel,
+        roles: string[],
+        permissions: PermissionOverwriteOptions
+    ): Promise<void> {
+        this.debugger.dumpDown( this.editChannelRolesPermissions, permissions, "Permissions" );
 
-                if ( ! role ) {
-                    this.logger.warn( this.editChannelRolesPermissions,
-                        `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Role id: '${ roleId }' not found` );
-                    continue;
-                }
+        const updatePromises: Promise<void>[] = [];
 
-                channel.permissionOverwrites.edit( role, permissions ).catch( reject );
+        for ( const roleId of roles ) {
+            const role = channel.guild.roles.cache.get( roleId );
+
+            if ( !role ) {
+                this.logger.warn(
+                    this.editChannelRolesPermissions,
+                    `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Role id: '${ roleId }' not found`
+                );
+                continue;
             }
 
-            resolve();
-        } );
+            updatePromises.push(
+                channel.permissionOverwrites
+                    .edit( role, permissions )
+                    .then( () => {
+                        this.logger.log(
+                            this.editChannelRolesPermissions,
+                            `Successfully updated permissions for role: ${ roleId } in channel: ${ channel.id }`
+                        );
+                    } )
+                    .catch( ( error ) => {
+                        this.logger.error(
+                            this.editChannelRolesPermissions,
+                            `Failed to update permissions for role: ${ roleId } in channel: ${ channel.id }`,
+                            error
+                        );
+                        throw error; // Re-throw to mark the overall operation as failed
+                    } )
+            );
+        }
+
+        if ( updatePromises.length === 0 ) {
+            this.logger.warn(
+                this.editChannelRolesPermissions,
+                `No valid roles found to update permissions for channel: ${ channel.id }`
+            );
+            return;
+        }
+
+        // Wait for all permission updates to complete
+        await Promise.all( updatePromises );
     }
 }

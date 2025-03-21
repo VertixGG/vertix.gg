@@ -1,10 +1,12 @@
 {
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
-    "name": "@vertix.gg/vertix",
+    "name": "vertix.gg",
     "author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
     "license": "proprietary",
     "type": "module",
-    "version": "0.0.1",
+    "version": "0.0.8",
+    "description": "Vertix - Discord Bot",
+    "private": true,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/vertixgg/vertix.git"
@@ -15,32 +17,47 @@
     "scripts": {
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
-
+        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:gui:jest )",
         "vertix:eslint": "time bunx --bun eslint .",
-        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest )",
-
+        "vertix:eslint:fix": "time bunx --bun eslint . --fix",
         "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
-        "vertix:bot:watch:dev": "bun run @z-cli @watch --workspace bot @watch --dev",
-        "vertix:bot:build": "bun run vertix-bot:build",
         "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
-        "vertix:bot:node:start:build": "cd packages/vertix-bot/dist && node vertix-bot.mjs",
-
+        "vertix:bot:node:start:dev": "cd packages/vertix-bot && bun run vertix-bot:ts-node:start:dev",
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
-        "vertix:base:jest": "cd packages/vertix-base ; bun test",
-
+        "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:jest",
+        "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
+        "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
     },
     "dependencies": {
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
-        "discord.js": "latest"
+        "discord.js": "latest",
+        "discord-api-types": "latest"
     },
     "devDependencies": {
+        "@swc/jest": "latest",
+        "@types/bun": "latest",
+        "@types/jest": "latest",
+        "@types/jest-when": "latest",
+        "@types/node": "latest",
+        "@typescript-eslint/eslint-plugin": "^8.26.1",
+        "@typescript-eslint/parser": "^8.26.1",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
+        "@zenflux/tsconfig-to-swc": "latest",
+        "bun": "latest",
+        "bun-types": "^1.0.25",
         "eslint": "latest",
+        "jest": "latest",
+        "jest-when": "latest",
+        "ts-mockito": "latest",
+        "tsx": "^4.19.1",
         "typescript": "latest"
     },
-    "packageManager": "bun@1.1.16"
+    "packageManager": "bun@1.1.18",
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    }
 }

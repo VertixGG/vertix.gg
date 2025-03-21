@@ -1,0 +1,28 @@
+{
+	"extends": "../tsconfig.json",
+	"include": [
+		"**/*.ts",
+        "./__setup__.ts"
+	],
+    "exclude": [
+        "../dist"
+    ],
+    "compilerOptions": {
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+        "target": "esnext",
+        "module": "esnext",
+        "typeRoots": [
+            "../../../node_modules/@types",
+            "../../../node_modules",
+            "../../vertix-prisma/types"
+        ],
+        "types": [
+            "node",
+            "jest",
+            "prisma-bot-client.d.ts",
+            "discord.js/typings/index.d.ts"
+        ]
+    }
+}

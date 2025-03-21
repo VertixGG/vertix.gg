@@ -5,7 +5,7 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 import type { Guild } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-export async function guildGetMemberDisplayName( guild: string, userId: string ): Promise<string>
+export async function guildGetMemberDisplayName( guild: string, userId: string ): Promise<string>;
 export async function guildGetMemberDisplayName( guild: Guild, userId: string ): Promise<string>;
 export async function guildGetMemberDisplayName( guild: Guild | string, userId: string ): Promise<string> {
     if ( "string" === typeof guild ) {
@@ -14,7 +14,7 @@ export async function guildGetMemberDisplayName( guild: Guild | string, userId: 
 
         let result = client.guilds.cache.get( guild );
 
-        if ( ! result ) {
+        if ( !result ) {
             result = await client.guilds.fetch( guild );
         }
 
@@ -25,12 +25,12 @@ export async function guildGetMemberDisplayName( guild: Guild | string, userId: 
 
     let displayName = ( guild as Guild )?.members?.cache.get( userId )?.displayName;
 
-    if ( ! displayName ) {
+    if ( !displayName ) {
         displayName = ( await ( guild as Guild )?.members?.fetch( userId ) )?.displayName;
     }
 
     return displayName || "Unknown (Disconnected from server)";
-};
+}
 
 export async function guildGetMembersCount( guild: Guild, cache = true ): Promise<number> {
     if ( cache ) {
@@ -38,10 +38,12 @@ export async function guildGetMembersCount( guild: Guild, cache = true ): Promis
     }
 
     const result = await ServiceLocator.$.get<AppService>( "VertixBot/Services/App" )
-        .getClient().guilds.fetch( {
+        .getClient()
+        .guilds.fetch( {
             guild,
-            withCounts: true,
-        } ).catch( ( e: Error ) => {
+            withCounts: true
+        } )
+        .catch( ( e: Error ) => {
             GlobalLogger.$.error( guildGetMembersCount, e.message, e );
         } );
 

@@ -6,7 +6,7 @@ const {
   objectEnumValues,
   makeStrictEnum,
   Public,
-  getRuntime,
+  getRuntime
 } = require('./runtime/index-browser.js')
 
 
@@ -16,12 +16,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 5.15.0
- * Query Engine version: 12e25d8d06f6ea5a0252864dd9a03b1bb51f3022
+ * Prisma Client JS version: 5.19.1
+ * Query Engine version: 69d742ee20b815d88e17e54db4a2a7a3b30324e3
  */
 Prisma.prismaVersion = {
-  client: "5.15.0",
-  engine: "12e25d8d06f6ea5a0252864dd9a03b1bb51f3022"
+  client: "5.19.1",
+  engine: "69d742ee20b815d88e17e54db4a2a7a3b30324e3"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -112,24 +112,14 @@ Prisma.NullTypes = {
  * Enums
  */
 
-exports.Prisma.GuildScalarFieldEnum = {
-  id: 'id',
-  guildId: 'guildId',
-  name: 'name',
-  isInGuild: 'isInGuild',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  updatedAtInternal: 'updatedAtInternal'
-};
-
-exports.Prisma.GuildDataScalarFieldEnum = {
+exports.Prisma.ConfigScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
-  version: 'version',
-  ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -144,6 +134,29 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GuildScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  name: 'name',
+  isInGuild: 'isInGuild',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  updatedAtInternal: 'updatedAtInternal'
+};
+
+exports.Prisma.GuildDataScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ChannelScalarFieldEnum = {
   id: 'id',
   channelId: 'channelId',
@@ -151,6 +164,7 @@ exports.Prisma.ChannelScalarFieldEnum = {
   userOwnerId: 'userOwnerId',
   categoryId: 'categoryId',
   ownerChannelId: 'ownerChannelId',
+  version: 'version',
   internalType: 'internalType',
   createdAtDiscord: 'createdAtDiscord',
   createdAt: 'createdAt',
@@ -160,10 +174,11 @@ exports.Prisma.ChannelScalarFieldEnum = {
 exports.Prisma.ChannelDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
-  version: 'version',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -180,10 +195,25 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.UserDataScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  version: 'version',
   type: 'type',
   object: 'object',
+  value: 'value',
   values: 'values',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserChannelDataScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  key: 'key',
   version: 'version',
+  type: 'type',
+  object: 'object',
+  value: 'value',
+  values: 'values',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -240,6 +270,14 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.E_DATA_TYPES = exports.$Enums.E_DATA_TYPES = {
+  string: 'string',
+  number: 'number',
+  boolean: 'boolean',
+  object: 'object',
+  array: 'array'
+};
+
 exports.E_INTERNAL_CHANNEL_TYPES = exports.$Enums.E_INTERNAL_CHANNEL_TYPES = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
   DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
@@ -247,13 +285,15 @@ exports.E_INTERNAL_CHANNEL_TYPES = exports.$Enums.E_INTERNAL_CHANNEL_TYPES = {
 };
 
 exports.Prisma.ModelName = {
+  Config: 'Config',
+  Category: 'Category',
   Guild: 'Guild',
   GuildData: 'GuildData',
-  Category: 'Category',
   Channel: 'Channel',
   ChannelData: 'ChannelData',
   User: 'User',
   UserData: 'UserData',
+  UserChannelData: 'UserChannelData',
   ElementButtonLanguage: 'ElementButtonLanguage',
   ElementTextInputLanguage: 'ElementTextInputLanguage',
   ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',

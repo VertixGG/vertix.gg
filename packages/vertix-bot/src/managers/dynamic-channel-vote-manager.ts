@@ -3,37 +3,33 @@ import process from "process";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import type {
-    GuildChannel,
-    MessageComponentInteraction,
-    VoiceChannel
-} from "discord.js";
+import type { GuildChannel, MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 export interface IVoteDefaultComponentInteraction extends MessageComponentInteraction<"cached"> {
     channel: VoiceChannel;
 }
 
 interface IVoteEvent<TInteraction, TChannel> {
-    state: VoteEventState,
+    state: VoteEventState;
 
-    channel: TChannel,
+    channel: TChannel;
 
-    startTime?: number,
-    endTime?: number,
+    startTime?: number;
+    endTime?: number;
 
-    isInitialInterval: boolean,
-    isInitialCandidate: boolean,
+    isInitialInterval: boolean;
+    isInitialCandidate: boolean;
 
-    intervalHandler?: NodeJS.Timeout,
+    intervalHandler?: NodeJS.Timeout;
 
-    initiatorInteraction?: TInteraction,
+    initiatorInteraction?: TInteraction;
 }
 
 interface IVoterData<TInteraction> {
-    [ memberId: string ]: {
-        interaction: TInteraction,
-        candidateOnly?: boolean,
-    }
+    [memberId: string]: {
+        interaction: TInteraction;
+        candidateOnly?: boolean;
+    };
 }
 
 enum VoteManagerResult {
@@ -42,7 +38,7 @@ enum VoteManagerResult {
     Already = "already",
     SelfManage = "self-manage",
     NoChannelId = "no-channel-id",
-    NotRunning = "not-running",
+    NotRunning = "not-running"
 }
 
 type VoteEventCallback<TChannel> = ( channel: TChannel, state: VoteEventState, args?: any ) => Promise<void>;
@@ -50,7 +46,7 @@ type VoteEventState = "idle" | "starting" | "active" | "done";
 
 const FALLBACK_VOTE_TIMEOUT = 60 * 1000, // 1 minute.
     FALLBACK_VOTE_ADD_TIMEOUT = 60 * 1000, // 1 minute.
-    FALLBACK_WORKER_INTERVAL = 1000; // 1 second.
+    FALLBACK_TIMER_INTERVAL = 1000; // 1 second.
 
 // TODO: What happens when bot restarts? should it be saved in the database?
 // TODO: convert to object oriented.
@@ -58,37 +54,36 @@ export class DynamicChannelVoteManager<
     TInteraction extends IVoteDefaultComponentInteraction = IVoteDefaultComponentInteraction,
     TChannel extends VoiceChannel | GuildChannel = VoiceChannel
 > extends InitializeBase {
-
     private static instance: DynamicChannelVoteManager;
 
     private debugger: Debugger = new Debugger( this );
 
-    private voteRunTime: number;
-    private voteAddTime: number;
-    private voteWorkerIntervalTime: number;
+    private readonly voteRunTime: number;
+    private readonly voteAddTime: number;
+    private readonly voteTimerIntervalTime: number;
 
     // Used to keep track of who voted for what.
     private voteKeeper: {
-        [ channelId: string ]: {
-            [ memberId: string ]: string, // targetId
-        }
+        [channelId: string]: {
+            [memberId: string]: string; // targetId
+        };
     } = {};
 
     /**
      * @example voteMembers[ channel.id ].votes[ targetMemberId ][ userWhoVotedId ] = content;
      */
     private voteMembers: {
-        [ channelId: string ]: {
-            channel: TChannel,
+        [channelId: string]: {
+            channel: TChannel;
 
             votes: {
-                [ targetId: string ]: IVoterData<TInteraction>
-            }
-        }
+                [targetId: string]: IVoterData<TInteraction>;
+            };
+        };
     } = {};
 
     private events: {
-        [ channelId: string ]: IVoteEvent<TInteraction, TChannel>
+        [channelId: string]: IVoteEvent<TInteraction, TChannel>;
     } = {};
 
     public static getName() {
@@ -96,7 +91,7 @@ export class DynamicChannelVoteManager<
     }
 
     public static getInstance() {
-        if ( ! this.instance ) {
+        if ( !this.instance ) {
             this.instance = new DynamicChannelVoteManager();
         }
 
@@ -110,18 +105,18 @@ export class DynamicChannelVoteManager<
     public constructor(
         runTime = process.env.DYNAMIC_CHANNEL_VOTE_TIMEOUT || FALLBACK_VOTE_TIMEOUT,
         addTime = process.env.DYNAMIC_CHANNEL_VOTE_ADD_TIME || FALLBACK_VOTE_ADD_TIMEOUT,
-        workerInterval = process.env.DYNAMIC_CHANNEL_VOTE_WORKER_INTERVAL || FALLBACK_WORKER_INTERVAL
+        timerInterval = process.env.DYNAMIC_CHANNEL_VOTE_TIMER_INTERVAL || FALLBACK_TIMER_INTERVAL
     ) {
         super();
 
         this.voteRunTime = parseInt( runTime.toString() );
         this.voteAddTime = parseInt( addTime.toString() );
-        this.voteWorkerIntervalTime = parseInt( workerInterval.toString() );
+        this.voteTimerIntervalTime = parseInt( timerInterval.toString() );
 
         this.logger.info( this.constructor.name, "Initialized with time settings:", this.getTimeSettings() );
     }
 
-    // TODO: Base worker.
+    // TODO: Base timer.
     public destroy() {
         Object.entries( this.events ).forEach( ( [ , event ] ) => {
             clearInterval( event.intervalHandler );
@@ -129,12 +124,13 @@ export class DynamicChannelVoteManager<
     }
 
     public start( channel: TChannel, callback: VoteEventCallback<TChannel>, initiatorInteraction?: TInteraction ) {
-        if ( ! this.events[ channel.id ] ) {
+        if ( !this.events[ channel.id ] ) {
             this.setInitialEventState( channel );
         }
 
         if ( "active" === this.events[ channel.id ].state ) {
-            this.logger.error( this.start,
+            this.logger.error(
+                this.start,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Channel already running`
             );
 
@@ -150,21 +146,20 @@ export class DynamicChannelVoteManager<
         this.events[ channel.id ].startTime = Date.now();
         this.events[ channel.id ].endTime = Date.now() + this.voteRunTime;
 
-        this.worker( channel, callback ).then( () => {
+        this.timer( channel, callback ).then( () => {
             this.events[ channel.id ].intervalHandler = setInterval(
-                this.worker.bind( this, channel, callback ),
-                this.voteWorkerIntervalTime
+                this.timer.bind( this, channel, callback ),
+                this.voteTimerIntervalTime
             );
 
-            this.logger.info( this.start,
-                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Vote started`
-            );
+            this.logger.info( this.start, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Vote started` );
         } );
     }
 
     public stop( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
         if ( "active" !== this.events[ channel.id ]?.state ) {
-            this.logger.error( this.stop,
+            this.logger.error(
+                this.stop,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Channel not running`
             );
 
@@ -177,12 +172,15 @@ export class DynamicChannelVoteManager<
 
         this.events[ channel.id ].state = "done";
 
-        this.logger.info( this.stop,
+        this.logger.info(
+            this.stop,
             `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Channel stopped in ${ Date.now() - this.getStartTime( channel.id ) }ms`
         );
 
-        this.logger.debug( this.stop,
-            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Votes:`, this.getResults( channel.id )
+        this.logger.debug(
+            this.stop,
+            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Votes:`,
+            this.getResults( channel.id )
         );
 
         callback( channel, this.events[ channel.id ].state ).then( () => {
@@ -201,22 +199,25 @@ export class DynamicChannelVoteManager<
     public removeVote( interaction: TInteraction ): VoteManagerResult {
         const channelId = interaction.channelId;
 
-        if ( ! channelId ) {
-            this.logger.error( this.removeVote,
+        if ( !channelId ) {
+            this.logger.error(
+                this.removeVote,
                 `Guild id: '${ interaction.guildId }', user id: '${ interaction.user.id }' - Interaction has no channelId`
             );
             return VoteManagerResult.NoChannelId;
         }
 
         if ( "active" !== this.events[ channelId ]?.state ) {
-            this.logger.error( this.addVote,
+            this.logger.error(
+                this.addVote,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Channel not running`
             );
             return VoteManagerResult.NotRunning;
         }
 
-        if ( ! this.voteMembers[ channelId ] ) {
-            this.logger.warn( this.removeVote,
+        if ( !this.voteMembers[ channelId ] ) {
+            this.logger.warn(
+                this.removeVote,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Interaction has no channel in membersVote`
             );
             return VoteManagerResult.Fail;
@@ -225,7 +226,7 @@ export class DynamicChannelVoteManager<
         const channel = this.voteMembers[ channelId ],
             targetId = this.voteKeeper[ channelId ][ interaction.user.id ];
 
-        if ( ! channel.votes[ targetId ] ) {
+        if ( !channel.votes[ targetId ] ) {
             return VoteManagerResult.Fail;
         }
 
@@ -234,7 +235,8 @@ export class DynamicChannelVoteManager<
         // Remove who voted for what.
         delete this.voteKeeper[ channelId ][ interaction.user.id ];
 
-        this.logger.log( this.removeVote,
+        this.logger.log(
+            this.removeVote,
             `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Vote removed`
         );
 
@@ -243,7 +245,7 @@ export class DynamicChannelVoteManager<
 
     public getCandidatesCount( channelId: string ): number {
         const memberVotes = this.voteMembers[ channelId ]?.votes;
-        if ( ! memberVotes ) {
+        if ( !memberVotes ) {
             return 0;
         }
 
@@ -251,21 +253,21 @@ export class DynamicChannelVoteManager<
     }
 
     // TODO: I dont like this.
-    public getResults( channelId: string ): { [ targetId: string ]: number } {
+    public getResults( channelId: string ): { [targetId: string]: number } {
         const memberVotes = this.voteMembers[ channelId ];
-        if ( ! memberVotes ) {
+        if ( !memberVotes ) {
             return {};
         }
 
-        const voteResult: { [ targetId: string ]: number } = {};
+        const voteResult: { [targetId: string]: number } = {};
 
         for ( const targetId in memberVotes.votes ) {
             if ( memberVotes.votes.hasOwnProperty( targetId ) ) {
                 const votes = memberVotes.votes[ targetId ];
 
                 for ( const [ , value ] of Object.entries( votes ) ) {
-                    if ( ! value.candidateOnly ) {
-                        if ( ! voteResult[ targetId ] ) {
+                    if ( !value.candidateOnly ) {
+                        if ( !voteResult[ targetId ] ) {
                             voteResult[ targetId ] = 0;
                         }
 
@@ -304,7 +306,7 @@ export class DynamicChannelVoteManager<
         return winnerId;
     }
 
-    public getEvents(): { [ channelId: string ]: IVoteEvent<TInteraction, TChannel> } {
+    public getEvents(): { [channelId: string]: IVoteEvent<TInteraction, TChannel> } {
         return this.events;
     }
 
@@ -334,10 +336,8 @@ export class DynamicChannelVoteManager<
         // TODO: Check why it happens.
         const updateTime = this.events[ channelId ]?.endTime as number;
 
-        if ( ! updateTime ) {
-            this.logger.error( this.isTimeExpired,
-                `Channel id: '${ channelId }' - No endTime`
-            );
+        if ( !updateTime ) {
+            this.logger.error( this.isTimeExpired, `Channel id: '${ channelId }' - No endTime` );
             return false;
         }
 
@@ -348,13 +348,13 @@ export class DynamicChannelVoteManager<
         return {
             runTime: this.voteRunTime,
             addTime: this.voteAddTime,
-            workerIntervalTime: this.voteWorkerIntervalTime,
+            timerIntervalTime: this.voteTimerIntervalTime
         };
     }
 
     public getVotedFor( interaction: TInteraction ): string {
         const channelId = interaction.channelId;
-        if ( ! channelId ) {
+        if ( !channelId ) {
             this.logger.error(
                 this.getVotedFor,
                 `Guild id: '${ interaction.guildId }', user id: '${ interaction.user.id }' - Interaction has no channelId`
@@ -363,7 +363,7 @@ export class DynamicChannelVoteManager<
         }
 
         const memberVotes = this.voteKeeper[ channelId ];
-        if ( ! memberVotes ) {
+        if ( !memberVotes ) {
             this.logger.warn(
                 this.getVotedFor,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Interaction has no channel in votes`
@@ -374,14 +374,11 @@ export class DynamicChannelVoteManager<
         return memberVotes[ interaction.user.id ];
     }
 
-    public getMemberVotes( channelId: string ): { [ userId: string ]: string } {
+    public getMemberVotes( channelId: string ): { [userId: string]: string } {
         const memberVotes = this.voteKeeper[ channelId ];
 
-        if ( ! memberVotes ) {
-            this.logger.warn(
-                this.getMemberVotes,
-                `Channel id: '${ channelId }' - No member votes found`
-            );
+        if ( !memberVotes ) {
+            this.logger.warn( this.getMemberVotes, `Channel id: '${ channelId }' - No member votes found` );
             return {};
         }
 
@@ -390,7 +387,7 @@ export class DynamicChannelVoteManager<
 
     public hasVoted( interaction: TInteraction ): boolean {
         const channelId = interaction.channelId;
-        if ( ! channelId ) {
+        if ( !channelId ) {
             this.logger.error(
                 this.hasVoted,
                 `Guild id: '${ interaction.guildId }', user id: '${ interaction.user.id }' - Interaction has no channelId`
@@ -399,7 +396,7 @@ export class DynamicChannelVoteManager<
         }
 
         const memberVotes = this.voteKeeper[ channelId ];
-        if ( ! memberVotes ) {
+        if ( !memberVotes ) {
             this.logger.warn(
                 this.hasVoted,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Interaction has no channel in votes`
@@ -407,7 +404,7 @@ export class DynamicChannelVoteManager<
             return false;
         }
 
-        return !! memberVotes[ interaction.user.id ];
+        return !!memberVotes[ interaction.user.id ];
     }
 
     public clear( channelId: string ) {
@@ -424,7 +421,7 @@ export class DynamicChannelVoteManager<
             channel,
             state: "idle",
             isInitialInterval: true,
-            isInitialCandidate: true,
+            isInitialCandidate: true
         };
     }
 
@@ -432,9 +429,10 @@ export class DynamicChannelVoteManager<
         this.events[ channelId ].endTime = ( baseTime || 0 ) + this.voteAddTime;
     }
 
-    private addInternal( interaction: TInteraction, args: any ): VoteManagerResult { // TODO: Add type for args.
+    private addInternal( interaction: TInteraction, args: any ): VoteManagerResult {
+        // TODO: Add type for args.
         function initChannel( this: any, channelId: string, targetId: string ) {
-            if ( ! this.voteMembers[ channelId ] ) {
+            if ( !this.voteMembers[ channelId ] ) {
                 this.voteMembers[ channelId ] = {
                     channel: interaction.channel,
                     votes: {}
@@ -443,7 +441,7 @@ export class DynamicChannelVoteManager<
 
             const channel = this.voteMembers[ channelId ];
 
-            if ( ! channel.votes[ targetId ] ) {
+            if ( !channel.votes[ targetId ] ) {
                 channel.votes[ targetId ] = {};
             }
 
@@ -454,11 +452,12 @@ export class DynamicChannelVoteManager<
 
         this.debugger.dumpDown( this.addInternal, {
             channelId,
-            args,
+            args
         } );
 
-        if ( ! channelId ) {
-            this.logger.error( this.addInternal,
+        if ( !channelId ) {
+            this.logger.error(
+                this.addInternal,
                 `Guild id: '${ interaction.guildId }', user id: '${ interaction.user.id }' - Interaction has no channelId`
             );
 
@@ -466,7 +465,8 @@ export class DynamicChannelVoteManager<
         }
 
         if ( "active" !== this.events[ channelId ]?.state ) {
-            this.logger.error( this.addInternal,
+            this.logger.error(
+                this.addInternal,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Channel not running`
             );
 
@@ -476,7 +476,8 @@ export class DynamicChannelVoteManager<
         if ( args.isCandidate ) {
             const channel = initChannel.call( this, channelId, interaction.user.id );
 
-            this.logger.info( this.addInternal,
+            this.logger.info(
+                this.addInternal,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }' - User id: '${ interaction.user.id }'`
             );
 
@@ -486,7 +487,7 @@ export class DynamicChannelVoteManager<
             }
 
             // TODO: Test.
-            if ( ! this.events[ channelId ].isInitialCandidate ) {
+            if ( !this.events[ channelId ].isInitialCandidate ) {
                 this.addTime( channelId );
             }
 
@@ -494,7 +495,7 @@ export class DynamicChannelVoteManager<
 
             channel.votes[ interaction.user.id ][ interaction.user.id ] = {
                 interaction,
-                candidateOnly: true,
+                candidateOnly: true
             };
 
             return VoteManagerResult.Success;
@@ -502,19 +503,21 @@ export class DynamicChannelVoteManager<
 
         const targetId = args.targetId;
 
-        this.logger.info( this.addInternal,
+        this.logger.info(
+            this.addInternal,
             `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Target id: '${ targetId }'`
         );
 
         // Self votes does not counted.
         if ( interaction.user.id === targetId ) {
-            this.logger.debug( this.addInternal,
+            this.logger.debug(
+                this.addInternal,
                 `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Trying self vote`
             );
             return VoteManagerResult.SelfManage;
         }
 
-        if ( ! this.voteKeeper[ channelId ] ) {
+        if ( !this.voteKeeper[ channelId ] ) {
             this.voteKeeper[ channelId ] = {};
         }
 
@@ -528,16 +531,17 @@ export class DynamicChannelVoteManager<
 
         const channel = initChannel.call( this, channelId, targetId );
 
-        channel.votes[ targetId ][ interaction.user.id ] = { interaction, };
+        channel.votes[ targetId ][ interaction.user.id ] = { interaction };
 
-        this.logger.log( this.addInternal,
+        this.logger.log(
+            this.addInternal,
             `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Vote added`
         );
 
         return VoteManagerResult.Success;
     }
 
-    private async worker( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
+    private async timer( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
         const channelId = channel.id as string,
             state = this.getState( channelId );
 

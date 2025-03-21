@@ -1,35 +1,21 @@
 import { jest } from "@jest/globals";
 
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
-import { ClaimVoteEmbed } from "@vertix.gg/bot/src/ui-v2/claim/vote/claim-vote-embed";
+import { ClaimVoteEmbed } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-embed";
 
-describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
-    beforeEach( async () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
-
-        // Mock ServiceLocator.
-        jest.mock( "@vertix.gg/base/src/modules/service/service-locator",
-            () => ServiceLocatorMock
-        );
-
-        // Register UIAdapterService
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-service" ) ).UIService );
-        ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/ui-v2/ui-adapter-service" ) ).UIAdapterService );
-
-        // Await for all services to be registered.
-        await ServiceLocatorMock.$.waitForAll();
+describe( "Vertix/UI-V2/ClaimVoteEmbed", () => {
+    beforeEach( async() => {
+        await TestWithServiceLocatorMock.withUIServiceMock();
 
         jest.useFakeTimers();
     } );
 
     afterEach( () => {
         jest.clearAllTimers();
-        jest.clearAllMocks();
     } );
 
-    it( "should passthroughs sanity check", async () => {
+    it( "should passthroughs sanity check", async() => {
         // Arrange.
         const embed = new ClaimVoteEmbed();
 
@@ -40,7 +26,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
 
         // Assert.
         expect( result ).toEqual( {
-            "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteEmbed",
             "type": "embed",
             "attributes": {
                 "title": "👑  0 Candidates wish to claim this channel",
@@ -53,7 +39,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
         } );
     } );
 
-    it( "it should work according to spec", async () => {
+    it( "it should work according to spec", async() => {
         // Arrange.
         const embed = new ClaimVoteEmbed();
 
@@ -70,7 +56,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
 
         // Assert.
         expect( result ).toEqual( {
-            "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+            "name": "Vertix/UI-V2/ClaimVoteEmbed",
             "type": "embed",
             "attributes": {
                 "title": "👑  3 Candidates wish to claim this channel",

@@ -1,8 +1,8 @@
 import "@vertix.gg/prisma/bot-client";
 
-import { ModelBaseCached } from "@vertix.gg/base/src/bases/model-base";
+import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
-import { CURRENT_VERSION } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 
 import type {
     IDataCreateArgs,
@@ -15,13 +15,13 @@ import type {
 } from "@vertix.gg/base/src/interfaces/data";
 
 export abstract class ModelDataBase<
-    TOwnerModel extends IOwnerInnerModel,
-    TDataModel extends IDataInnerModel,
-    TCacheResult = undefined,
->
-    extends ModelBaseCached<PrismaBot.PrismaClient, TCacheResult> implements IDataModel
+        TOwnerModel extends IOwnerInnerModel,
+        TDataModel extends IDataInnerModel,
+        TCacheResult = undefined
+    >
+    extends ModelBaseCachedWithClient<PrismaBot.PrismaClient, TCacheResult>
+    implements IDataModel
 {
-
     protected ownerModel: TOwnerModel;
     protected dataModel: TDataModel;
 
@@ -34,34 +34,34 @@ export abstract class ModelDataBase<
 
     public async createData( args: IDataCreateArgs ) {
         const data = {
-            ... this.getInternalNormalizedData( args ),
+            ...this.getInternalNormalizedData( args ),
 
             // # CRITICAL: This is the version of the content.
-            version: CURRENT_VERSION,
+            version: VERSION_UI_V2
         };
 
         this.debugger.dumpDown( this.createData, { data, args } );
 
         return this.dataModel.create( {
             data: {
-                ... data,
+                ...data,
                 ownerId: args.ownerId,
-                key: args.key,
+                key: args.key
             }
         } );
     }
 
     public async setData( args: IDataUpdateArgs ) {
         if ( null === args.default ) {
-            return this.logger.error( this.setData,
-                `Cannot set data for: '${ args.key }' to null.`
-            );
+            return this.logger.error( this.setData, `Cannot set data for: '${ args.key }' to null.` );
         }
 
         const createArgs: IDataCreateArgs = {
             ownerId: args.ownerId,
+            version: VERSION_UI_V2,
             key: args.key,
-            value: args.default,
+
+            value: args.default
         };
 
         let result;
@@ -69,17 +69,16 @@ export abstract class ModelDataBase<
         try {
             result = await this.dataModel.update( {
                 where: {
-                    ownerId_key: {
+                    ownerId_key_version: {
                         ownerId: args.ownerId,
-                        key: args.key,
-                    },
+                        version: args.version,
+                        key: args.key
+                    }
                 },
                 data: this.getInternalNormalizedData( createArgs )
             } );
         } catch ( e ) {
-            this.logger.warn( this.setData,
-                `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'`
-            );
+            this.logger.warn( this.setData, `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'` );
 
             return e;
         }
@@ -87,26 +86,25 @@ export abstract class ModelDataBase<
         return result;
     }
 
-    public async deleteData( args: IDataSelectUniqueArgs ) {
+    public async deleteData( args: Omit<IDataSelectUniqueArgs, "version"> ) {
         return this.dataModel.delete( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
-                },
-            },
+            where: this.getWhereUnique( {
+                version: VERSION_UI_V2,
+                ...args
+            } )
         } );
     }
 
-    public async getData( args: IDataGetArgs ) {
+    // TODO: `version` should not be omitted.
+    public async getData( args: Omit<IDataGetArgs, "version"> ) {
         this.debugger.log( this.getData, "Getting content for:", args );
 
         return this.ownerModel.findUnique( {
             where: {
-                id: args.ownerId,
+                id: args.ownerId
             },
             include: {
-                data: { where: { key: args.key } },
+                data: { where: { key: args.key } }
             }
         } );
     }
@@ -144,22 +142,17 @@ export abstract class ModelDataBase<
     public getOwnerId( ownerId: string ): Promise<{ id: string }> {
         return this.ownerModel.findUnique( {
             where: {
-                [ this.getOwnerIdFieldName() ]: ownerId,
-            },
+                [ this.getOwnerIdFieldName() ]: ownerId
+            }
         } );
     }
 
     public async isDataExist( args: IDataSelectUniqueArgs ) {
         const result = await this.dataModel.findUnique( {
-            where: {
-                ownerId_key: {
-                    ownerId: args.ownerId,
-                    key: args.key,
-                },
-            },
+            where: this.getWhereUnique( args )
         } );
 
-        return !! result;
+        return !!result;
     }
 
     protected abstract getOwnerIdFieldName(): string;
@@ -167,4 +160,14 @@ export abstract class ModelDataBase<
     protected abstract getOwnerModel(): TOwnerModel;
 
     protected abstract getDataModel(): TDataModel;
+
+    private getWhereUnique( args: IDataSelectUniqueArgs ) {
+        return {
+            ownerId_key_version: {
+                ownerId: args.ownerId,
+                version: args.version,
+                key: args.key
+            }
+        };
+    }
 }

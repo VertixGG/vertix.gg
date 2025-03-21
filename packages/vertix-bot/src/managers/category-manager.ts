@@ -7,8 +7,8 @@ import { CategoryModel } from "@vertix.gg/bot/src/models/category-model";
 import type { CategoryChannel, Guild } from "discord.js";
 
 export interface ICategoryCreateArgs {
-    name: string,
-    guild: Guild,
+    name: string;
+    guild: Guild;
 }
 
 export class CategoryManager extends InitializeBase {
@@ -20,16 +20,12 @@ export class CategoryManager extends InitializeBase {
         return "VertixBot/Managers/Category";
     }
 
-    public static getInstance(): CategoryManager {
-        if ( ! CategoryManager.instance ) {
+    public static get $() {
+        if ( !CategoryManager.instance ) {
             CategoryManager.instance = new CategoryManager();
         }
 
         return CategoryManager.instance;
-    }
-
-    public static get $() {
-        return CategoryManager.getInstance();
     }
 
     public constructor() {
@@ -41,7 +37,8 @@ export class CategoryManager extends InitializeBase {
     public async onDelete( category: CategoryChannel ) {
         const { guild, name } = category;
 
-        this.logger.info( this.onDelete,
+        this.logger.info(
+            this.onDelete,
             `Guild id: '${ guild.id }' - Deleting category name: '${ name }', guild: '${ guild.name }'`
         );
 
@@ -52,29 +49,35 @@ export class CategoryManager extends InitializeBase {
     public async create( args: ICategoryCreateArgs ) {
         const { name, guild } = args;
 
-        this.logger.info( this.create,
+        this.logger.info(
+            this.create,
             `Guild id: '${ guild.id }' - Creating category name: '${ name }', guild: '${ guild.name }'`
         );
 
         // Create the channel at discord.
-        const category = await guild.channels.create( {
+        const category = ( await guild.channels.create( {
             name,
-            type: ChannelType.GuildCategory,
-        } ) as CategoryChannel;
+            type: ChannelType.GuildCategory
+        } ) ) as CategoryChannel;
 
         // Add the channel to the database.
-        return this.categoryModel.create( { data: {
-            categoryId: category.id,
-            guildId: guild.id,
-            name,
-            createdAtDiscord: category.createdTimestamp,
-        } } ).then( () => category );
+        return this.categoryModel
+            .create( {
+                data: {
+                    categoryId: category.id,
+                    guildId: guild.id,
+                    name,
+                    createdAtDiscord: category.createdTimestamp
+                }
+            } )
+            .then( () => category );
     }
 
     public async delete( category: CategoryChannel ) {
         const { guild, name } = category;
 
-        this.logger.info( this.delete,
+        this.logger.info(
+            this.delete,
             `Guild id: '${ guild.id }' - Deleting category name: '${ name }', guild: '${ guild.name }'`
         );
 

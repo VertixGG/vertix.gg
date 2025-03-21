@@ -9,14 +9,19 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 export class EventBus extends ObjectBase {
     protected static instance: EventBus | null = null;
 
-    private objects = new Map<string, {
-        object: ObjectBase,
-        methods: Function[]
-    }>();
+    private debugger: Debugger;
+
+    private objects = new Map<
+        string,
+        {
+            object: ObjectBase;
+            methods: Function[];
+        }
+    >();
 
     private eventEmitter = new EventEmitter();
 
-    private debugger: Debugger;
+    private lastEmittedEvents = new Map<string, any[]>();
 
     public static getName() {
         return "VertixBase/Modules/EventBus";
@@ -25,16 +30,13 @@ export class EventBus extends ObjectBase {
     public constructor() {
         super();
 
-        this.debugger = new Debugger( this, "", isDebugEnabled(
-            "MODULE",
-            EventBus.getName()
-        ) );
+        this.debugger = new Debugger( this, "", isDebugEnabled( "MODULE", EventBus.getName() ) );
 
-        this.debugger.log( this.constructor,"EventBus is initialized" );
+        this.debugger.log( this.constructor, "EventBus is initialized" );
     }
 
     public static getInstance(): EventBus {
-        if ( ! EventBus.instance ) {
+        if ( !EventBus.instance ) {
             EventBus.instance = new EventBus();
         }
 
@@ -55,39 +57,55 @@ export class EventBus extends ObjectBase {
 
     public getEventName( objectName: string, methodName: string ) {
         return `${ objectName }::${ methodName }`;
-    };
+    }
 
-    public on( objectName: string, methodName: string, callback: ( ... args: any[] ) => void ) {
+    public on( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
         this.debugger.log( this.on, `Registering event ${ objectName }::${ methodName }` );
 
         // Validate that event exists
-        if ( ! this.objects.has( objectName ) ) {
+        if ( !this.objects.has( objectName ) ) {
             throw new Error( `Object ${ objectName } is not registered` );
         }
 
-        this.eventEmitter.on(
-            this.getEventName( objectName, methodName ),
-            callback
-        );
+        this.eventEmitter.on( this.getEventName( objectName, methodName ), callback );
     }
 
-    public off( objectName: string, methodName: string, callback: ( ... args: any[] ) => void ) {
-        this.eventEmitter.off(
-            this.getEventName( objectName, methodName ),
-            callback
-        );
+    /**
+     * Function onCalledBeforeDoInvoke(): The difference between this function and on()
+     * is that this function will call the callback if the event already happened.
+     */
+    public onCalledBeforeDoInvoke( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
+        this.on( objectName, methodName, callback );
+
+        // If event already happened, call the callback
+        if ( this.objects.has( objectName ) ) {
+            const object = this.objects.get( objectName );
+
+            if ( object ) {
+                const method = object.methods.find( ( method ) => method.name === methodName );
+
+                if ( method && this.lastEmittedEvents.has( this.getEventName( objectName, methodName ) ) ) {
+                    this.debugger.log( this.onCalledBeforeDoInvoke, `Recall callback for ${ objectName }::${ methodName }` );
+                    callback( ...this.lastEmittedEvents.get( this.getEventName( objectName, methodName ) )! );
+                }
+            }
+        }
+    }
+
+    public off( objectName: string, methodName: string, callback: ( ...args: any[] ) => void ) {
+        this.eventEmitter.off( this.getEventName( objectName, methodName ), callback );
     }
 
     public register<T extends ObjectBase>( object: T, methods: Function[] ) {
         this.debugger.log( this.register, `Registering object ${ object.getName() }` );
 
         if ( this.objects.has( object.getName() ) ) {
-            throw new Error( `Object ${ object.getName() } is already registered` );
+            throw new Error( `Error in: '${ this.getName() }', object: '${ object.getName() }' is already registered` );
         }
 
         this.objects.set( object.getName(), {
             object,
-            methods,
+            methods
         } );
 
         this.hook( object, methods );
@@ -96,7 +114,7 @@ export class EventBus extends ObjectBase {
     public unregister( objectName: string ) {
         const object = this.objects.get( objectName );
 
-        if ( ! object ) {
+        if ( !object ) {
             return false;
         }
 
@@ -105,26 +123,28 @@ export class EventBus extends ObjectBase {
         this.objects.delete( objectName );
     }
 
-    private emit<T extends ObjectBase>( object: T, method: Function, ... args: any[] ) {
+    private emit<T extends ObjectBase>( object: T, method: Function, ...args: any[] ) {
         this.debugger.log( this.emit, `Emitting event ${ object.getName() }::${ method.name }` );
 
         const eventName = this.getEventName( object.getName(), method.name );
 
-        return this.eventEmitter.emit( eventName, ... args );
+        this.lastEmittedEvents.set( eventName, args );
+
+        return this.eventEmitter.emit( eventName, ...args );
     }
 
     private hook<T extends ObjectBase>( object: T, methods: Function[] ) {
-        methods.forEach( method => {
+        methods.forEach( ( method ) => {
             this.debugger.log( this.hook, `Hooking method ${ method.name } on ${ object.getName() }` );
 
             this.ensureFunction( object, method );
 
             const originalMethod = method;
 
-            const eventBusHook = async ( ... args: any[] ) => {
+            const eventBusHook = async( ...args: any[] ) => {
                 const result = await originalMethod.apply( object, args );
 
-                this.emit( object, method, ... args );
+                this.emit( object, method, ...args );
 
                 return result;
             };
@@ -142,21 +162,14 @@ export class EventBus extends ObjectBase {
         } );
     }
 
-    private unhook<T extends ObjectBase>( object: {
-        object: T,
-        methods: Function[]
-    } ) {
-
-        object.methods.forEach( method => {
+    private unhook<T extends ObjectBase>( object: { object: T; methods: Function[] } ) {
+        object.methods.forEach( ( method ) => {
             this.ensureFunction( object.object, method );
 
-            this.eventEmitter.removeAllListeners(
-                this.getEventName( object.object.getName(), method.name )
-            );
+            this.eventEmitter.removeAllListeners( this.getEventName( object.object.getName(), method.name ) );
 
             ( object.object as any )[ method.name ] = method;
         } );
-
     }
 
     private ensureFunction<T extends ObjectBase>( object: T, method: Function ) {

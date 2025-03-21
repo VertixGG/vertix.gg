@@ -2,8 +2,8 @@ import { jest } from "@jest/globals";
 
 import { ChannelType, MessageComponentInteraction, SnowflakeUtil, VoiceChannel } from "discord.js";
 
-import { ClientMock } from "@vertix.gg/bot/test/__mock__/discord/client-mock";
-import { GuildMock } from "@vertix.gg/bot/test/__mock__/discord/guild-mock";
+import { ClientMock } from "@vertix.gg/test-utils/src/__mock__/discord/client-mock";
+import { GuildMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-mock";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
@@ -88,7 +88,7 @@ describe( "VertixBot/Managers/ChannelVote", () => {
         manager = new MockDynamicChannelVoteManager( 0, 1, 0 );
     } );
 
-    afterEach( async () => {
+    afterEach( async() => {
         manager.destroy();
 
         jest.clearAllTimers();
@@ -110,7 +110,7 @@ describe( "VertixBot/Managers/ChannelVote", () => {
                 expect( mockCallback ).toHaveBeenCalled();
             } );
 
-            it( "should not start the vote manager if it is already running for the specified channel", async () => {
+            it( "should not start the vote manager if it is already running for the specified channel", async() => {
                 // Arrange - Define a mock callback function.
                 const mockCallback = jest.fn( () => Promise.resolve() );
 
@@ -129,7 +129,7 @@ describe( "VertixBot/Managers/ChannelVote", () => {
         } );
 
         describe( "stop()", () => {
-            it( "should stop the channel and call the callback", async () => {
+            it( "should stop the channel and call the callback", async() => {
                 // Arrange - Define a mock callback function.
                 const mockCallback = jest.fn( () => Promise.resolve() );
 
@@ -145,7 +145,7 @@ describe( "VertixBot/Managers/ChannelVote", () => {
                 expect( mockCallback ).toHaveBeenCalledWith( channel, "done" );
             } );
 
-            it( "should log an error if the channel is not running", async () => {
+            it( "should log an error if the channel is not running", async() => {
                 // Arrange - Define a mock callback function.
                 const mockCallback = jest.fn( () => Promise.resolve() );
 
@@ -164,7 +164,7 @@ describe( "VertixBot/Managers/ChannelVote", () => {
             } );
         } );
 
-        it( "full integration", async () => {
+        it( "full integration", async() => {
             // Arrange - Define a mock callback function.
             const mockCallback = jest.fn( () => Promise.resolve() );
 

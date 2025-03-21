@@ -15,7 +15,7 @@ import type TopGG from "@top-gg/sdk";
 import type { Client, MessageComponentInteraction } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-const TOP_GG_WORKER_INTERVAL = 1000 * 60 * 60, // 1 hour
+const TOP_GG_TIMER_INTERVAL = 1000 * 60 * 60, // 1 hour
     TOP_GG_VOTE_INTERVAL = 1000 * 60 * 60 * 12; // 12 hours
 
 export class TopGGManager extends CacheBase<Date> {
@@ -26,7 +26,7 @@ export class TopGGManager extends CacheBase<Date> {
     private api!: TopGG.Api;
     private client!: Client;
 
-    private readonly workerInterval: number;
+    private readonly timerInterval: number;
     private readonly voteInterval: number;
 
     private isTryingHandshakeOnce = false;
@@ -37,7 +37,7 @@ export class TopGGManager extends CacheBase<Date> {
     }
 
     public static getInstance() {
-        if ( ! TopGGManager.instance ) {
+        if ( !TopGGManager.instance ) {
             TopGGManager.instance = new TopGGManager();
         }
 
@@ -55,14 +55,14 @@ export class TopGGManager extends CacheBase<Date> {
     public constructor(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         shouldDebugCache = isDebugEnabled( "CACHE", TopGGManager.getName() ),
-        workerInterval = TOP_GG_WORKER_INTERVAL,
+        timerInterval = TOP_GG_TIMER_INTERVAL,
         voteInterval = TOP_GG_VOTE_INTERVAL
     ) {
         super();
 
-        this.appService = ServiceLocator.$.get( "VertixBot/Services/App");
+        this.appService = ServiceLocator.$.get( "VertixBot/Services/App" );
 
-        this.workerInterval = workerInterval;
+        this.timerInterval = timerInterval;
         this.voteInterval = voteInterval;
     }
 
@@ -75,38 +75,45 @@ export class TopGGManager extends CacheBase<Date> {
             voteUrl = this.getVoteUrl();
 
         embed.setTitle( "👑 Vote for us to unlock this feature!" );
-        embed.setDescription( `This is a premium feature, but you can unlock it for free! [**Vote for us on top.gg!**](${ voteUrl })` );
+        embed.setDescription(
+            `This is a premium feature, but you can unlock it for free! [**Vote for us on top.gg!**](${ voteUrl })`
+        );
 
         return embed;
     }
 
     public async sendVoteEmbed( interaction: MessageComponentInteraction<"cached"> ) {
-        return await interaction.reply( {
-            embeds: [ TopGGManager.$.getVoteEmbed() ],
-            ephemeral: true,
-        } ).catch( ( e ) => {
-            this.logger.error( this.sendVoteEmbed, "", e );
-        } );
+        return await interaction
+            .reply( {
+                embeds: [ TopGGManager.$.getVoteEmbed() ],
+                ephemeral: true
+            } )
+            .catch( ( e ) => {
+                this.logger.error( this.sendVoteEmbed, "", e );
+            } );
     }
 
     public updateStats() {
-        if ( ! this.workingMiddleware() ) {
+        if ( !this.workingMiddleware() ) {
             return;
         }
 
-        return this.api.postStats( {
-            serverCount: this.client.guilds.cache.size + 1000,
-            shardId: this.client.shard?.ids[ 0 ] ?? 0,
-            shardCount: this.client.shard?.count ?? 1,
-        } ).then( () => {
-            this.logger.info( this.updateStats, "TopGG stats updated" );
-        } ).catch( ( e ) => {
-            this.logger.error( this.updateStats, "", e );
-        } );
+        return this.api
+            .postStats( {
+                serverCount: this.client.guilds.cache.size + 1000,
+                shardId: this.client.shard?.ids[ 0 ] ?? 0,
+                shardCount: this.client.shard?.count ?? 1
+            } )
+            .then( () => {
+                this.logger.info( this.updateStats, "TopGG stats updated" );
+            } )
+            .catch( ( e ) => {
+                this.logger.error( this.updateStats, "", e );
+            } );
     }
 
     public async isVoted( userId: string, cache = true, shouldAdminLog = true ) {
-        if ( ! this.workingMiddleware() ) {
+        if ( !this.workingMiddleware() ) {
             this.logger.admin( this.isVoted, "Working middleware failed" );
             return true;
         }
@@ -116,7 +123,7 @@ export class TopGGManager extends CacheBase<Date> {
             const cache = this.getCache( userId );
 
             // If cache is not expired, return true.
-            if ( cache && ( new Date().getTime() - cache.getTime() ) < this.voteInterval ) {
+            if ( cache && new Date().getTime() - cache.getTime() < this.voteInterval ) {
                 return true;
             }
         }
@@ -129,7 +136,10 @@ export class TopGGManager extends CacheBase<Date> {
         if ( shouldAdminLog && result ) {
             const displayName = this.client.users.cache.get( userId )?.username ?? "Unknown";
 
-            this.logger.admin( this.isVoted, `👑 Vertix received topGG Vote - From user id: '${ userId }', name: '${ displayName }'` );
+            this.logger.admin(
+                this.isVoted,
+                `👑 Vertix received topGG Vote - From user id: '${ userId }', name: '${ displayName }'`
+            );
         }
 
         // Vote failed, we can't know if user voted or not, so we return true.
@@ -146,7 +156,7 @@ export class TopGGManager extends CacheBase<Date> {
     }
 
     public handshake() {
-        if ( ! process.env.TOP_GG_TOKEN ) {
+        if ( !process.env.TOP_GG_TOKEN ) {
             this.logger.error( this.handshake, "TOP_GG_TOKEN is not defined, the manager will be disabled" );
             return;
         }
@@ -154,12 +164,12 @@ export class TopGGManager extends CacheBase<Date> {
         this.api = new Api( process.env.TOP_GG_TOKEN as string );
         this.client = this.appService.getClient();
 
-        if ( ! this.isTryingHandshakeOnce ) {
+        if ( !this.isTryingHandshakeOnce ) {
             this.isTryingHandshakeOnce = true;
 
             this.logger.info( this.handshake, "TopGG manager is initializing..." );
 
-            setInterval( this.worker.bind( this ), this.workerInterval );
+            setInterval( this.timer.bind( this ), this.timerInterval );
         }
 
         this.api = new Api( process.env.TOP_GG_TOKEN as string );
@@ -167,30 +177,33 @@ export class TopGGManager extends CacheBase<Date> {
 
         this.logger.info( this.handshake, "TopGG manager is trying to handshake with top.gg API..." );
 
-        this.api.getStats( this.client?.user?.id as string ).then( async ( stats ) => {
-            this.logger.info( this.handshake, "TopGG handshake complete, stats:", stats );
+        this.api
+            .getStats( this.client?.user?.id as string )
+            .then( async( stats ) => {
+                this.logger.info( this.handshake, "TopGG handshake complete, stats:", stats );
 
-            this.isHandshakeDone = true;
+                this.isHandshakeDone = true;
 
-            await this.updateStats();
-        } ).catch( ( e ) => {
-            this.isHandshakeDone = false;
+                await this.updateStats();
+            } )
+            .catch( ( e ) => {
+                this.isHandshakeDone = false;
 
-            this.logger.error( this.handshake, "", e );
-        } );
+                this.logger.error( this.handshake, "", e );
+            } );
     }
 
     private workingMiddleware() {
-        if ( ! process.env.TOP_GG_TOKEN ) {
+        if ( !process.env.TOP_GG_TOKEN ) {
             return false;
         }
 
-        if ( ! this.isHandshakeDone ) {
+        if ( !this.isHandshakeDone ) {
             this.logger.error( this.workingMiddleware, "Handshake is not done yet" );
             return false;
         }
 
-        if ( ! this.client.user ) {
+        if ( !this.client.user ) {
             this.logger.error( this.workingMiddleware, "Client user is not ready" );
             return false;
         }
@@ -198,7 +211,7 @@ export class TopGGManager extends CacheBase<Date> {
         return true;
     }
 
-    private worker() {
+    private timer() {
         this.handshake();
     }
 }

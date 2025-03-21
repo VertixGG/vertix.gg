@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "prisma-generate-bot": "bunx prisma generate --schema prisma/bot.schema.prisma",
-        "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma"
+        "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma",
+        "prisma-migrate-bot-deploy": "bunx prisma migrate deploy --schema prisma/bot.schema.prisma",
+        "prisma-migrate-api-deploy": "bunx prisma migrate deploy --schema prisma/api.schema.prisma"
     },
     "dependencies": {
         "@prisma/client": "latest",
@@ -20,6 +22,10 @@
         "./._bot-client-internal": {
             "require": "./src/prisma-bot-client/index.js",
             "types": "./src/prisma-bot-client/index.d.ts"
+        },
+        "./._bot-client-library": {
+            "require": "./src/prisma-bot-client/runtime/library.js",
+            "types": "./src/prisma-bot-client/runtime/library.d.ts"
         }
     }
 }

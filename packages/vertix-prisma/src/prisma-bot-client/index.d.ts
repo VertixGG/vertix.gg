@@ -54,6 +54,16 @@ export type MarkdownContentLanguage = $Result.DefaultSelection<Prisma.$MarkdownC
  */
 export type ModalContentLanguage = $Result.DefaultSelection<Prisma.$ModalContentLanguagePayload>
 /**
+ * Model Config
+ * 
+ */
+export type Config = $Result.DefaultSelection<Prisma.$ConfigPayload>
+/**
+ * Model Category
+ * 
+ */
+export type Category = $Result.DefaultSelection<Prisma.$CategoryPayload>
+/**
  * Model Guild
  * 
  */
@@ -63,11 +73,6 @@ export type Guild = $Result.DefaultSelection<Prisma.$GuildPayload>
  * 
  */
 export type GuildData = $Result.DefaultSelection<Prisma.$GuildDataPayload>
-/**
- * Model Category
- * 
- */
-export type Category = $Result.DefaultSelection<Prisma.$CategoryPayload>
 /**
  * Model Channel
  * 
@@ -88,6 +93,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  * 
  */
 export type UserData = $Result.DefaultSelection<Prisma.$UserDataPayload>
+/**
+ * Model UserChannelData
+ * 
+ */
+export type UserChannelData = $Result.DefaultSelection<Prisma.$UserChannelDataPayload>
 /**
  * Model ElementButtonLanguage
  * 
@@ -123,7 +133,18 @@ export type ModalLanguage = $Result.DefaultSelection<Prisma.$ModalLanguagePayloa
  * Enums
  */
 export namespace $Enums {
-  export const E_INTERNAL_CHANNEL_TYPES: {
+  export const E_DATA_TYPES: {
+  string: 'string',
+  number: 'number',
+  boolean: 'boolean',
+  object: 'object',
+  array: 'array'
+};
+
+export type E_DATA_TYPES = (typeof E_DATA_TYPES)[keyof typeof E_DATA_TYPES]
+
+
+export const E_INTERNAL_CHANNEL_TYPES: {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
   DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
   MASTER_CREATE_CHANNEL: 'MASTER_CREATE_CHANNEL'
@@ -132,6 +153,10 @@ export namespace $Enums {
 export type E_INTERNAL_CHANNEL_TYPES = (typeof E_INTERNAL_CHANNEL_TYPES)[keyof typeof E_INTERNAL_CHANNEL_TYPES]
 
 }
+
+export type E_DATA_TYPES = $Enums.E_DATA_TYPES
+
+export const E_DATA_TYPES: typeof $Enums.E_DATA_TYPES
 
 export type E_INTERNAL_CHANNEL_TYPES = $Enums.E_INTERNAL_CHANNEL_TYPES
 
@@ -144,16 +169,16 @@ export const E_INTERNAL_CHANNEL_TYPES: typeof $Enums.E_INTERNAL_CHANNEL_TYPES
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Guilds
- * const guilds = await prisma.guild.findMany()
+ * // Fetch zero or more Configs
+ * const configs = await prisma.config.findMany()
  * ```
  *
  * 
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
  */
 export class PrismaClient<
-  T extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
-  U = 'log' extends keyof T ? T['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<T['log']> : never : never,
+  ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
+  U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
   ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -165,15 +190,15 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Guilds
-   * const guilds = await prisma.guild.findMany()
+   * // Fetch zero or more Configs
+   * const configs = await prisma.config.findMany()
    * ```
    *
    * 
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
    */
 
-  constructor(optionsArg ?: Prisma.Subset<T, Prisma.PrismaClientOptions>);
+  constructor(optionsArg ?: Prisma.Subset<ClientOptions, Prisma.PrismaClientOptions>);
   $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): void;
 
   /**
@@ -225,9 +250,29 @@ export class PrismaClient<
    */
   $runCommandRaw(command: Prisma.InputJsonObject): Prisma.PrismaPromise<Prisma.JsonObject>
 
-  $extends: $Extensions.ExtendsHook<'extends', Prisma.TypeMapCb, ExtArgs>
+  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
 
       /**
+   * `prisma.config`: Exposes CRUD operations for the **Config** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Configs
+    * const configs = await prisma.config.findMany()
+    * ```
+    */
+  get config(): Prisma.ConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.category`: Exposes CRUD operations for the **Category** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Categories
+    * const categories = await prisma.category.findMany()
+    * ```
+    */
+  get category(): Prisma.CategoryDelegate<ExtArgs>;
+
+  /**
    * `prisma.guild`: Exposes CRUD operations for the **Guild** model.
     * Example usage:
     * ```ts
@@ -246,16 +291,6 @@ export class PrismaClient<
     * ```
     */
   get guildData(): Prisma.GuildDataDelegate<ExtArgs>;
-
-  /**
-   * `prisma.category`: Exposes CRUD operations for the **Category** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Categories
-    * const categories = await prisma.category.findMany()
-    * ```
-    */
-  get category(): Prisma.CategoryDelegate<ExtArgs>;
 
   /**
    * `prisma.channel`: Exposes CRUD operations for the **Channel** model.
@@ -296,6 +331,16 @@ export class PrismaClient<
     * ```
     */
   get userData(): Prisma.UserDataDelegate<ExtArgs>;
+
+  /**
+   * `prisma.userChannelData`: Exposes CRUD operations for the **UserChannelData** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserChannelData
+    * const userChannelData = await prisma.userChannelData.findMany()
+    * ```
+    */
+  get userChannelData(): Prisma.UserChannelDataDelegate<ExtArgs>;
 
   /**
    * `prisma.elementButtonLanguage`: Exposes CRUD operations for the **ElementButtonLanguage** model.
@@ -413,8 +458,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 5.15.0
-   * Query Engine version: 12e25d8d06f6ea5a0252864dd9a03b1bb51f3022
+   * Prisma Client JS version: 5.19.1
+   * Query Engine version: 69d742ee20b815d88e17e54db4a2a7a3b30324e3
    */
   export type PrismaVersion = {
     client: string
@@ -426,51 +471,13 @@ export namespace Prisma {
    * Utility Types
    */
 
-  /**
-   * From https://github.com/sindresorhus/type-fest/
-   * Matches a JSON object.
-   * This type can be useful to enforce some input to be JSON-compatible or as a super-type to be extended from. 
-   */
-  export type JsonObject = {[Key in string]?: JsonValue}
 
-  /**
-   * From https://github.com/sindresorhus/type-fest/
-   * Matches a JSON array.
-   */
-  export interface JsonArray extends Array<JsonValue> {}
-
-  /**
-   * From https://github.com/sindresorhus/type-fest/
-   * Matches any valid JSON value.
-   */
-  export type JsonValue = string | number | boolean | JsonObject | JsonArray | null
-
-  /**
-   * Matches a JSON object.
-   * Unlike `JsonObject`, this type allows undefined and read-only properties.
-   */
-  export type InputJsonObject = {readonly [Key in string]?: InputJsonValue | null}
-
-  /**
-   * Matches a JSON array.
-   * Unlike `JsonArray`, readonly arrays are assignable to this type.
-   */
-  export interface InputJsonArray extends ReadonlyArray<InputJsonValue | null> {}
-
-  /**
-   * Matches any valid value that can be used as an input for operations like
-   * create and update as the value of a JSON field. Unlike `JsonValue`, this
-   * type allows read-only arrays and read-only object properties and disallows
-   * `null` at the top level.
-   *
-   * `null` cannot be used as the value of a JSON field because its meaning
-   * would be ambiguous. Use `Prisma.JsonNull` to store the JSON null value or
-   * `Prisma.DbNull` to clear the JSON value and set the field to the database
-   * NULL value instead.
-   *
-   * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
-   */
-  export type InputJsonValue = string | number | boolean | InputJsonObject | InputJsonArray | { toJSON(): unknown }
+  export import JsonObject = runtime.JsonObject
+  export import JsonArray = runtime.JsonArray
+  export import JsonValue = runtime.JsonValue
+  export import InputJsonObject = runtime.InputJsonObject
+  export import InputJsonArray = runtime.InputJsonArray
+  export import InputJsonValue = runtime.InputJsonValue
 
   /**
    * Types of the values used to represent different kinds of `null` values when working with JSON fields.
@@ -833,13 +840,15 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    Config: 'Config',
+    Category: 'Category',
     Guild: 'Guild',
     GuildData: 'GuildData',
-    Category: 'Category',
     Channel: 'Channel',
     ChannelData: 'ChannelData',
     User: 'User',
     UserData: 'UserData',
+    UserChannelData: 'UserChannelData',
     ElementButtonLanguage: 'ElementButtonLanguage',
     ElementTextInputLanguage: 'ElementTextInputLanguage',
     ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',
@@ -855,87 +864,234 @@ export namespace Prisma {
     db?: Datasource
   }
 
-
-  interface TypeMapCb extends $Utils.Fn<{extArgs: $Extensions.InternalArgs}, $Utils.Record<string, any>> {
-    returns: Prisma.TypeMap<this['params']['extArgs']>
+  interface TypeMapCb extends $Utils.Fn<{extArgs: $Extensions.InternalArgs, clientOptions: PrismaClientOptions }, $Utils.Record<string, any>> {
+    returns: Prisma.TypeMap<this['params']['extArgs'], this['params']['clientOptions']>
   }
 
-  export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: 'guild' | 'guildData' | 'category' | 'channel' | 'channelData' | 'user' | 'userData' | 'elementButtonLanguage' | 'elementTextInputLanguage' | 'elementSelectMenuLanguage' | 'embedLanguage' | 'markdownLanguage' | 'modalLanguage'
+      modelProps: "config" | "category" | "guild" | "guildData" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "elementButtonLanguage" | "elementTextInputLanguage" | "elementSelectMenuLanguage" | "embedLanguage" | "markdownLanguage" | "modalLanguage"
       txIsolationLevel: never
-    },
+    }
     model: {
+      Config: {
+        payload: Prisma.$ConfigPayload<ExtArgs>
+        fields: Prisma.ConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.ConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          findMany: {
+            args: Prisma.ConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>[]
+          }
+          create: {
+            args: Prisma.ConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          createMany: {
+            args: Prisma.ConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.ConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          update: {
+            args: Prisma.ConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.ConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.ConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateConfig>
+          }
+          groupBy: {
+            args: Prisma.ConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ConfigGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.ConfigFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.ConfigAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.ConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<ConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      Category: {
+        payload: Prisma.$CategoryPayload<ExtArgs>
+        fields: Prisma.CategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.CategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          findMany: {
+            args: Prisma.CategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
+          create: {
+            args: Prisma.CategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          createMany: {
+            args: Prisma.CategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.CategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          update: {
+            args: Prisma.CategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.CategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.CategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCategory>
+          }
+          groupBy: {
+            args: Prisma.CategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CategoryGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.CategoryFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.CategoryAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.CategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<CategoryCountAggregateOutputType> | number
+          }
+        }
+      }
       Guild: {
         payload: Prisma.$GuildPayload<ExtArgs>
         fields: Prisma.GuildFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.GuildFindUniqueArgs<ExtArgs>,
+            args: Prisma.GuildFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.GuildFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.GuildFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>
           }
           findFirst: {
-            args: Prisma.GuildFindFirstArgs<ExtArgs>,
+            args: Prisma.GuildFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.GuildFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.GuildFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>
           }
           findMany: {
-            args: Prisma.GuildFindManyArgs<ExtArgs>,
+            args: Prisma.GuildFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>[]
           }
           create: {
-            args: Prisma.GuildCreateArgs<ExtArgs>,
+            args: Prisma.GuildCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>
           }
           createMany: {
-            args: Prisma.GuildCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.GuildCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.GuildDeleteArgs<ExtArgs>,
+            args: Prisma.GuildDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>
           }
           update: {
-            args: Prisma.GuildUpdateArgs<ExtArgs>,
+            args: Prisma.GuildUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>
           }
           deleteMany: {
-            args: Prisma.GuildDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.GuildDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.GuildUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.GuildUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.GuildUpsertArgs<ExtArgs>,
+            args: Prisma.GuildUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildPayload>
           }
           aggregate: {
-            args: Prisma.GuildAggregateArgs<ExtArgs>,
+            args: Prisma.GuildAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateGuild>
           }
           groupBy: {
-            args: Prisma.GuildGroupByArgs<ExtArgs>,
+            args: Prisma.GuildGroupByArgs<ExtArgs>
             result: $Utils.Optional<GuildGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.GuildFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.GuildFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.GuildAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.GuildAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.GuildCountArgs<ExtArgs>,
+            args: Prisma.GuildCountArgs<ExtArgs>
             result: $Utils.Optional<GuildCountAggregateOutputType> | number
           }
         }
@@ -945,146 +1101,72 @@ export namespace Prisma {
         fields: Prisma.GuildDataFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.GuildDataFindUniqueArgs<ExtArgs>,
+            args: Prisma.GuildDataFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.GuildDataFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.GuildDataFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>
           }
           findFirst: {
-            args: Prisma.GuildDataFindFirstArgs<ExtArgs>,
+            args: Prisma.GuildDataFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.GuildDataFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.GuildDataFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>
           }
           findMany: {
-            args: Prisma.GuildDataFindManyArgs<ExtArgs>,
+            args: Prisma.GuildDataFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>[]
           }
           create: {
-            args: Prisma.GuildDataCreateArgs<ExtArgs>,
+            args: Prisma.GuildDataCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>
           }
           createMany: {
-            args: Prisma.GuildDataCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.GuildDataCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.GuildDataDeleteArgs<ExtArgs>,
+            args: Prisma.GuildDataDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>
           }
           update: {
-            args: Prisma.GuildDataUpdateArgs<ExtArgs>,
+            args: Prisma.GuildDataUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>
           }
           deleteMany: {
-            args: Prisma.GuildDataDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.GuildDataDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.GuildDataUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.GuildDataUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.GuildDataUpsertArgs<ExtArgs>,
+            args: Prisma.GuildDataUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GuildDataPayload>
           }
           aggregate: {
-            args: Prisma.GuildDataAggregateArgs<ExtArgs>,
+            args: Prisma.GuildDataAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateGuildData>
           }
           groupBy: {
-            args: Prisma.GuildDataGroupByArgs<ExtArgs>,
+            args: Prisma.GuildDataGroupByArgs<ExtArgs>
             result: $Utils.Optional<GuildDataGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.GuildDataFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.GuildDataFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.GuildDataAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.GuildDataAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.GuildDataCountArgs<ExtArgs>,
+            args: Prisma.GuildDataCountArgs<ExtArgs>
             result: $Utils.Optional<GuildDataCountAggregateOutputType> | number
-          }
-        }
-      }
-      Category: {
-        payload: Prisma.$CategoryPayload<ExtArgs>
-        fields: Prisma.CategoryFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.CategoryFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.CategoryFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          findFirst: {
-            args: Prisma.CategoryFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.CategoryFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          findMany: {
-            args: Prisma.CategoryFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
-          }
-          create: {
-            args: Prisma.CategoryCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          createMany: {
-            args: Prisma.CategoryCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
-          }
-          delete: {
-            args: Prisma.CategoryDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          update: {
-            args: Prisma.CategoryUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          deleteMany: {
-            args: Prisma.CategoryDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
-          }
-          updateMany: {
-            args: Prisma.CategoryUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
-          }
-          upsert: {
-            args: Prisma.CategoryUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
-          }
-          aggregate: {
-            args: Prisma.CategoryAggregateArgs<ExtArgs>,
-            result: $Utils.Optional<AggregateCategory>
-          }
-          groupBy: {
-            args: Prisma.CategoryGroupByArgs<ExtArgs>,
-            result: $Utils.Optional<CategoryGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.CategoryFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.CategoryAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
-          }
-          count: {
-            args: Prisma.CategoryCountArgs<ExtArgs>,
-            result: $Utils.Optional<CategoryCountAggregateOutputType> | number
           }
         }
       }
@@ -1093,71 +1175,71 @@ export namespace Prisma {
         fields: Prisma.ChannelFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ChannelFindUniqueArgs<ExtArgs>,
+            args: Prisma.ChannelFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ChannelFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.ChannelFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>
           }
           findFirst: {
-            args: Prisma.ChannelFindFirstArgs<ExtArgs>,
+            args: Prisma.ChannelFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ChannelFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.ChannelFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>
           }
           findMany: {
-            args: Prisma.ChannelFindManyArgs<ExtArgs>,
+            args: Prisma.ChannelFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>[]
           }
           create: {
-            args: Prisma.ChannelCreateArgs<ExtArgs>,
+            args: Prisma.ChannelCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>
           }
           createMany: {
-            args: Prisma.ChannelCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ChannelCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.ChannelDeleteArgs<ExtArgs>,
+            args: Prisma.ChannelDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>
           }
           update: {
-            args: Prisma.ChannelUpdateArgs<ExtArgs>,
+            args: Prisma.ChannelUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>
           }
           deleteMany: {
-            args: Prisma.ChannelDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ChannelDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ChannelUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ChannelUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.ChannelUpsertArgs<ExtArgs>,
+            args: Prisma.ChannelUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelPayload>
           }
           aggregate: {
-            args: Prisma.ChannelAggregateArgs<ExtArgs>,
+            args: Prisma.ChannelAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateChannel>
           }
           groupBy: {
-            args: Prisma.ChannelGroupByArgs<ExtArgs>,
+            args: Prisma.ChannelGroupByArgs<ExtArgs>
             result: $Utils.Optional<ChannelGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.ChannelFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ChannelFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.ChannelAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ChannelAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.ChannelCountArgs<ExtArgs>,
+            args: Prisma.ChannelCountArgs<ExtArgs>
             result: $Utils.Optional<ChannelCountAggregateOutputType> | number
           }
         }
@@ -1167,71 +1249,71 @@ export namespace Prisma {
         fields: Prisma.ChannelDataFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ChannelDataFindUniqueArgs<ExtArgs>,
+            args: Prisma.ChannelDataFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ChannelDataFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.ChannelDataFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>
           }
           findFirst: {
-            args: Prisma.ChannelDataFindFirstArgs<ExtArgs>,
+            args: Prisma.ChannelDataFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ChannelDataFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.ChannelDataFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>
           }
           findMany: {
-            args: Prisma.ChannelDataFindManyArgs<ExtArgs>,
+            args: Prisma.ChannelDataFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>[]
           }
           create: {
-            args: Prisma.ChannelDataCreateArgs<ExtArgs>,
+            args: Prisma.ChannelDataCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>
           }
           createMany: {
-            args: Prisma.ChannelDataCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ChannelDataCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.ChannelDataDeleteArgs<ExtArgs>,
+            args: Prisma.ChannelDataDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>
           }
           update: {
-            args: Prisma.ChannelDataUpdateArgs<ExtArgs>,
+            args: Prisma.ChannelDataUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>
           }
           deleteMany: {
-            args: Prisma.ChannelDataDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ChannelDataDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ChannelDataUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ChannelDataUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.ChannelDataUpsertArgs<ExtArgs>,
+            args: Prisma.ChannelDataUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ChannelDataPayload>
           }
           aggregate: {
-            args: Prisma.ChannelDataAggregateArgs<ExtArgs>,
+            args: Prisma.ChannelDataAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateChannelData>
           }
           groupBy: {
-            args: Prisma.ChannelDataGroupByArgs<ExtArgs>,
+            args: Prisma.ChannelDataGroupByArgs<ExtArgs>
             result: $Utils.Optional<ChannelDataGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.ChannelDataFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ChannelDataFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.ChannelDataAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ChannelDataAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.ChannelDataCountArgs<ExtArgs>,
+            args: Prisma.ChannelDataCountArgs<ExtArgs>
             result: $Utils.Optional<ChannelDataCountAggregateOutputType> | number
           }
         }
@@ -1241,71 +1323,71 @@ export namespace Prisma {
         fields: Prisma.UserFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.UserFindUniqueArgs<ExtArgs>,
+            args: Prisma.UserFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
           }
           findFirst: {
-            args: Prisma.UserFindFirstArgs<ExtArgs>,
+            args: Prisma.UserFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
           }
           findMany: {
-            args: Prisma.UserFindManyArgs<ExtArgs>,
+            args: Prisma.UserFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
           }
           create: {
-            args: Prisma.UserCreateArgs<ExtArgs>,
+            args: Prisma.UserCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
           }
           createMany: {
-            args: Prisma.UserCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.UserCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.UserDeleteArgs<ExtArgs>,
+            args: Prisma.UserDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
           }
           update: {
-            args: Prisma.UserUpdateArgs<ExtArgs>,
+            args: Prisma.UserUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
           }
           deleteMany: {
-            args: Prisma.UserDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.UserDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.UserUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.UserUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.UserUpsertArgs<ExtArgs>,
+            args: Prisma.UserUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
           }
           aggregate: {
-            args: Prisma.UserAggregateArgs<ExtArgs>,
+            args: Prisma.UserAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateUser>
           }
           groupBy: {
-            args: Prisma.UserGroupByArgs<ExtArgs>,
+            args: Prisma.UserGroupByArgs<ExtArgs>
             result: $Utils.Optional<UserGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.UserFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.UserFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.UserAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.UserAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.UserCountArgs<ExtArgs>,
+            args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
           }
         }
@@ -1315,72 +1397,146 @@ export namespace Prisma {
         fields: Prisma.UserDataFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.UserDataFindUniqueArgs<ExtArgs>,
+            args: Prisma.UserDataFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.UserDataFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.UserDataFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>
           }
           findFirst: {
-            args: Prisma.UserDataFindFirstArgs<ExtArgs>,
+            args: Prisma.UserDataFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.UserDataFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.UserDataFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>
           }
           findMany: {
-            args: Prisma.UserDataFindManyArgs<ExtArgs>,
+            args: Prisma.UserDataFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>[]
           }
           create: {
-            args: Prisma.UserDataCreateArgs<ExtArgs>,
+            args: Prisma.UserDataCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>
           }
           createMany: {
-            args: Prisma.UserDataCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.UserDataCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.UserDataDeleteArgs<ExtArgs>,
+            args: Prisma.UserDataDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>
           }
           update: {
-            args: Prisma.UserDataUpdateArgs<ExtArgs>,
+            args: Prisma.UserDataUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>
           }
           deleteMany: {
-            args: Prisma.UserDataDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.UserDataDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.UserDataUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.UserDataUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.UserDataUpsertArgs<ExtArgs>,
+            args: Prisma.UserDataUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserDataPayload>
           }
           aggregate: {
-            args: Prisma.UserDataAggregateArgs<ExtArgs>,
+            args: Prisma.UserDataAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateUserData>
           }
           groupBy: {
-            args: Prisma.UserDataGroupByArgs<ExtArgs>,
+            args: Prisma.UserDataGroupByArgs<ExtArgs>
             result: $Utils.Optional<UserDataGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.UserDataFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.UserDataFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.UserDataAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.UserDataAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.UserDataCountArgs<ExtArgs>,
+            args: Prisma.UserDataCountArgs<ExtArgs>
             result: $Utils.Optional<UserDataCountAggregateOutputType> | number
+          }
+        }
+      }
+      UserChannelData: {
+        payload: Prisma.$UserChannelDataPayload<ExtArgs>
+        fields: Prisma.UserChannelDataFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserChannelDataFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserChannelDataFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          findFirst: {
+            args: Prisma.UserChannelDataFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserChannelDataFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          findMany: {
+            args: Prisma.UserChannelDataFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>[]
+          }
+          create: {
+            args: Prisma.UserChannelDataCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          createMany: {
+            args: Prisma.UserChannelDataCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.UserChannelDataDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          update: {
+            args: Prisma.UserChannelDataUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserChannelDataDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserChannelDataUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.UserChannelDataUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserChannelDataPayload>
+          }
+          aggregate: {
+            args: Prisma.UserChannelDataAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserChannelData>
+          }
+          groupBy: {
+            args: Prisma.UserChannelDataGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserChannelDataGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.UserChannelDataFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.UserChannelDataAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.UserChannelDataCountArgs<ExtArgs>
+            result: $Utils.Optional<UserChannelDataCountAggregateOutputType> | number
           }
         }
       }
@@ -1389,71 +1545,71 @@ export namespace Prisma {
         fields: Prisma.ElementButtonLanguageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ElementButtonLanguageFindUniqueArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>
           }
           findFirst: {
-            args: Prisma.ElementButtonLanguageFindFirstArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>
           }
           findMany: {
-            args: Prisma.ElementButtonLanguageFindManyArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>[]
           }
           create: {
-            args: Prisma.ElementButtonLanguageCreateArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>
           }
           createMany: {
-            args: Prisma.ElementButtonLanguageCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementButtonLanguageCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.ElementButtonLanguageDeleteArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>
           }
           update: {
-            args: Prisma.ElementButtonLanguageUpdateArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>
           }
           deleteMany: {
-            args: Prisma.ElementButtonLanguageDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementButtonLanguageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ElementButtonLanguageUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementButtonLanguageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.ElementButtonLanguageUpsertArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementButtonLanguagePayload>
           }
           aggregate: {
-            args: Prisma.ElementButtonLanguageAggregateArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateElementButtonLanguage>
           }
           groupBy: {
-            args: Prisma.ElementButtonLanguageGroupByArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageGroupByArgs<ExtArgs>
             result: $Utils.Optional<ElementButtonLanguageGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.ElementButtonLanguageFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ElementButtonLanguageFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.ElementButtonLanguageAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ElementButtonLanguageAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.ElementButtonLanguageCountArgs<ExtArgs>,
+            args: Prisma.ElementButtonLanguageCountArgs<ExtArgs>
             result: $Utils.Optional<ElementButtonLanguageCountAggregateOutputType> | number
           }
         }
@@ -1463,71 +1619,71 @@ export namespace Prisma {
         fields: Prisma.ElementTextInputLanguageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ElementTextInputLanguageFindUniqueArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>
           }
           findFirst: {
-            args: Prisma.ElementTextInputLanguageFindFirstArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>
           }
           findMany: {
-            args: Prisma.ElementTextInputLanguageFindManyArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>[]
           }
           create: {
-            args: Prisma.ElementTextInputLanguageCreateArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>
           }
           createMany: {
-            args: Prisma.ElementTextInputLanguageCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementTextInputLanguageCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.ElementTextInputLanguageDeleteArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>
           }
           update: {
-            args: Prisma.ElementTextInputLanguageUpdateArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>
           }
           deleteMany: {
-            args: Prisma.ElementTextInputLanguageDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementTextInputLanguageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ElementTextInputLanguageUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementTextInputLanguageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.ElementTextInputLanguageUpsertArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementTextInputLanguagePayload>
           }
           aggregate: {
-            args: Prisma.ElementTextInputLanguageAggregateArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateElementTextInputLanguage>
           }
           groupBy: {
-            args: Prisma.ElementTextInputLanguageGroupByArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageGroupByArgs<ExtArgs>
             result: $Utils.Optional<ElementTextInputLanguageGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.ElementTextInputLanguageFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ElementTextInputLanguageFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.ElementTextInputLanguageAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ElementTextInputLanguageAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.ElementTextInputLanguageCountArgs<ExtArgs>,
+            args: Prisma.ElementTextInputLanguageCountArgs<ExtArgs>
             result: $Utils.Optional<ElementTextInputLanguageCountAggregateOutputType> | number
           }
         }
@@ -1537,71 +1693,71 @@ export namespace Prisma {
         fields: Prisma.ElementSelectMenuLanguageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>
           }
           findFirst: {
-            args: Prisma.ElementSelectMenuLanguageFindFirstArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>
           }
           findMany: {
-            args: Prisma.ElementSelectMenuLanguageFindManyArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>[]
           }
           create: {
-            args: Prisma.ElementSelectMenuLanguageCreateArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>
           }
           createMany: {
-            args: Prisma.ElementSelectMenuLanguageCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementSelectMenuLanguageCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.ElementSelectMenuLanguageDeleteArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>
           }
           update: {
-            args: Prisma.ElementSelectMenuLanguageUpdateArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>
           }
           deleteMany: {
-            args: Prisma.ElementSelectMenuLanguageDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementSelectMenuLanguageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ElementSelectMenuLanguageUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ElementSelectMenuLanguageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.ElementSelectMenuLanguageUpsertArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ElementSelectMenuLanguagePayload>
           }
           aggregate: {
-            args: Prisma.ElementSelectMenuLanguageAggregateArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateElementSelectMenuLanguage>
           }
           groupBy: {
-            args: Prisma.ElementSelectMenuLanguageGroupByArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageGroupByArgs<ExtArgs>
             result: $Utils.Optional<ElementSelectMenuLanguageGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.ElementSelectMenuLanguageFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ElementSelectMenuLanguageFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.ElementSelectMenuLanguageAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ElementSelectMenuLanguageAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.ElementSelectMenuLanguageCountArgs<ExtArgs>,
+            args: Prisma.ElementSelectMenuLanguageCountArgs<ExtArgs>
             result: $Utils.Optional<ElementSelectMenuLanguageCountAggregateOutputType> | number
           }
         }
@@ -1611,71 +1767,71 @@ export namespace Prisma {
         fields: Prisma.EmbedLanguageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.EmbedLanguageFindUniqueArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>
           }
           findFirst: {
-            args: Prisma.EmbedLanguageFindFirstArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.EmbedLanguageFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>
           }
           findMany: {
-            args: Prisma.EmbedLanguageFindManyArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>[]
           }
           create: {
-            args: Prisma.EmbedLanguageCreateArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>
           }
           createMany: {
-            args: Prisma.EmbedLanguageCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.EmbedLanguageCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.EmbedLanguageDeleteArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>
           }
           update: {
-            args: Prisma.EmbedLanguageUpdateArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>
           }
           deleteMany: {
-            args: Prisma.EmbedLanguageDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.EmbedLanguageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.EmbedLanguageUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.EmbedLanguageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.EmbedLanguageUpsertArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$EmbedLanguagePayload>
           }
           aggregate: {
-            args: Prisma.EmbedLanguageAggregateArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateEmbedLanguage>
           }
           groupBy: {
-            args: Prisma.EmbedLanguageGroupByArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageGroupByArgs<ExtArgs>
             result: $Utils.Optional<EmbedLanguageGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.EmbedLanguageFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.EmbedLanguageFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.EmbedLanguageAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.EmbedLanguageAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.EmbedLanguageCountArgs<ExtArgs>,
+            args: Prisma.EmbedLanguageCountArgs<ExtArgs>
             result: $Utils.Optional<EmbedLanguageCountAggregateOutputType> | number
           }
         }
@@ -1685,71 +1841,71 @@ export namespace Prisma {
         fields: Prisma.MarkdownLanguageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.MarkdownLanguageFindUniqueArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>
           }
           findFirst: {
-            args: Prisma.MarkdownLanguageFindFirstArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>
           }
           findMany: {
-            args: Prisma.MarkdownLanguageFindManyArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>[]
           }
           create: {
-            args: Prisma.MarkdownLanguageCreateArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>
           }
           createMany: {
-            args: Prisma.MarkdownLanguageCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.MarkdownLanguageCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.MarkdownLanguageDeleteArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>
           }
           update: {
-            args: Prisma.MarkdownLanguageUpdateArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>
           }
           deleteMany: {
-            args: Prisma.MarkdownLanguageDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.MarkdownLanguageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.MarkdownLanguageUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.MarkdownLanguageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.MarkdownLanguageUpsertArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$MarkdownLanguagePayload>
           }
           aggregate: {
-            args: Prisma.MarkdownLanguageAggregateArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateMarkdownLanguage>
           }
           groupBy: {
-            args: Prisma.MarkdownLanguageGroupByArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageGroupByArgs<ExtArgs>
             result: $Utils.Optional<MarkdownLanguageGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.MarkdownLanguageFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.MarkdownLanguageFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.MarkdownLanguageAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.MarkdownLanguageAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.MarkdownLanguageCountArgs<ExtArgs>,
+            args: Prisma.MarkdownLanguageCountArgs<ExtArgs>
             result: $Utils.Optional<MarkdownLanguageCountAggregateOutputType> | number
           }
         }
@@ -1759,71 +1915,71 @@ export namespace Prisma {
         fields: Prisma.ModalLanguageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ModalLanguageFindUniqueArgs<ExtArgs>,
+            args: Prisma.ModalLanguageFindUniqueArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ModalLanguageFindUniqueOrThrowArgs<ExtArgs>,
+            args: Prisma.ModalLanguageFindUniqueOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>
           }
           findFirst: {
-            args: Prisma.ModalLanguageFindFirstArgs<ExtArgs>,
+            args: Prisma.ModalLanguageFindFirstArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ModalLanguageFindFirstOrThrowArgs<ExtArgs>,
+            args: Prisma.ModalLanguageFindFirstOrThrowArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>
           }
           findMany: {
-            args: Prisma.ModalLanguageFindManyArgs<ExtArgs>,
+            args: Prisma.ModalLanguageFindManyArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>[]
           }
           create: {
-            args: Prisma.ModalLanguageCreateArgs<ExtArgs>,
+            args: Prisma.ModalLanguageCreateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>
           }
           createMany: {
-            args: Prisma.ModalLanguageCreateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ModalLanguageCreateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           delete: {
-            args: Prisma.ModalLanguageDeleteArgs<ExtArgs>,
+            args: Prisma.ModalLanguageDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>
           }
           update: {
-            args: Prisma.ModalLanguageUpdateArgs<ExtArgs>,
+            args: Prisma.ModalLanguageUpdateArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>
           }
           deleteMany: {
-            args: Prisma.ModalLanguageDeleteManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ModalLanguageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ModalLanguageUpdateManyArgs<ExtArgs>,
-            result: Prisma.BatchPayload
+            args: Prisma.ModalLanguageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
           }
           upsert: {
-            args: Prisma.ModalLanguageUpsertArgs<ExtArgs>,
+            args: Prisma.ModalLanguageUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ModalLanguagePayload>
           }
           aggregate: {
-            args: Prisma.ModalLanguageAggregateArgs<ExtArgs>,
+            args: Prisma.ModalLanguageAggregateArgs<ExtArgs>
             result: $Utils.Optional<AggregateModalLanguage>
           }
           groupBy: {
-            args: Prisma.ModalLanguageGroupByArgs<ExtArgs>,
+            args: Prisma.ModalLanguageGroupByArgs<ExtArgs>
             result: $Utils.Optional<ModalLanguageGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.ModalLanguageFindRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ModalLanguageFindRawArgs<ExtArgs>
+            result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.ModalLanguageAggregateRawArgs<ExtArgs>,
-            result: Prisma.JsonObject
+            args: Prisma.ModalLanguageAggregateRawArgs<ExtArgs>
+            result: JsonObject
           }
           count: {
-            args: Prisma.ModalLanguageCountArgs<ExtArgs>,
+            args: Prisma.ModalLanguageCountArgs<ExtArgs>
             result: $Utils.Optional<ModalLanguageCountAggregateOutputType> | number
           }
         }
@@ -1840,7 +1996,7 @@ export namespace Prisma {
       }
     }
   }
-  export const defineExtension: $Extensions.ExtendsHook<'define', Prisma.TypeMapCb, $Extensions.DefaultArgs>
+  export const defineExtension: $Extensions.ExtendsHook<"define", Prisma.TypeMapCb, $Extensions.DefaultArgs>
   export type DefaultPrismaClient = PrismaClient
   export type ErrorFormat = 'pretty' | 'colorless' | 'minimal'
   export interface PrismaClientOptions {
@@ -1883,6 +2039,7 @@ export namespace Prisma {
       timeout?: number
     }
   }
+
 
   /* Types for Logging */
   export type LogLevel = 'info' | 'query' | 'warn' | 'error'
@@ -2038,10 +2195,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     data: number
+    channelData: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | UserCountOutputTypeCountDataArgs
+    channelData?: boolean | UserCountOutputTypeCountChannelDataArgs
   }
 
   // Custom InputTypes
@@ -2060,6 +2219,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserDataWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserChannelDataWhereInput
   }
 
 
@@ -2536,6 +2702,1862 @@ export namespace Prisma {
 
 
   /**
+   * Model Config
+   */
+
+  export type AggregateConfig = {
+    _count: ConfigCountAggregateOutputType | null
+    _min: ConfigMinAggregateOutputType | null
+    _max: ConfigMaxAggregateOutputType | null
+  }
+
+  export type ConfigMinAggregateOutputType = {
+    id: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ConfigMaxAggregateOutputType = {
+    id: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ConfigCountAggregateOutputType = {
+    id: number
+    key: number
+    version: number
+    type: number
+    object: number
+    value: number
+    values: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ConfigMinAggregateInputType = {
+    id?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ConfigMaxAggregateInputType = {
+    id?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ConfigCountAggregateInputType = {
+    id?: true
+    key?: true
+    version?: true
+    type?: true
+    object?: true
+    value?: true
+    values?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Config to aggregate.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Configs
+    **/
+    _count?: true | ConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ConfigMaxAggregateInputType
+  }
+
+  export type GetConfigAggregateType<T extends ConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateConfig[P]>
+      : GetScalarType<T[P], AggregateConfig[P]>
+  }
+
+
+
+
+  export type ConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ConfigWhereInput
+    orderBy?: ConfigOrderByWithAggregationInput | ConfigOrderByWithAggregationInput[]
+    by: ConfigScalarFieldEnum[] | ConfigScalarFieldEnum
+    having?: ConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ConfigCountAggregateInputType | true
+    _min?: ConfigMinAggregateInputType
+    _max?: ConfigMaxAggregateInputType
+  }
+
+  export type ConfigGroupByOutputType = {
+    id: string
+    key: string
+    version: string
+    type: $Enums.E_DATA_TYPES
+    object: JsonValue | null
+    value: string | null
+    values: string[]
+    createdAt: Date
+    updatedAt: Date
+    _count: ConfigCountAggregateOutputType | null
+    _min: ConfigMinAggregateOutputType | null
+    _max: ConfigMaxAggregateOutputType | null
+  }
+
+  type GetConfigGroupByPayload<T extends ConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], ConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["config"]>
+
+
+  export type ConfigSelectScalar = {
+    id?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $ConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Config"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      key: string
+      version: string
+      type: $Enums.E_DATA_TYPES
+      object: Prisma.JsonValue | null
+      value: string | null
+      values: string[]
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["config"]>
+    composites: {}
+  }
+
+  type ConfigGetPayload<S extends boolean | null | undefined | ConfigDefaultArgs> = $Result.GetResult<Prisma.$ConfigPayload, S>
+
+  type ConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ConfigCountAggregateInputType | true
+    }
+
+  export interface ConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Config'], meta: { name: 'Config' } }
+    /**
+     * Find zero or one Config that matches the filter.
+     * @param {ConfigFindUniqueArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ConfigFindUniqueArgs>(args: SelectSubset<T, ConfigFindUniqueArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Config that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ConfigFindUniqueOrThrowArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Config that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigFindFirstArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ConfigFindFirstArgs>(args?: SelectSubset<T, ConfigFindFirstArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Config that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigFindFirstOrThrowArgs} args - Arguments to find a Config
+     * @example
+     * // Get one Config
+     * const config = await prisma.config.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Configs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Configs
+     * const configs = await prisma.config.findMany()
+     * 
+     * // Get first 10 Configs
+     * const configs = await prisma.config.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const configWithIdOnly = await prisma.config.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ConfigFindManyArgs>(args?: SelectSubset<T, ConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Config.
+     * @param {ConfigCreateArgs} args - Arguments to create a Config.
+     * @example
+     * // Create one Config
+     * const Config = await prisma.config.create({
+     *   data: {
+     *     // ... data to create a Config
+     *   }
+     * })
+     * 
+     */
+    create<T extends ConfigCreateArgs>(args: SelectSubset<T, ConfigCreateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Configs.
+     * @param {ConfigCreateManyArgs} args - Arguments to create many Configs.
+     * @example
+     * // Create many Configs
+     * const config = await prisma.config.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ConfigCreateManyArgs>(args?: SelectSubset<T, ConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Config.
+     * @param {ConfigDeleteArgs} args - Arguments to delete one Config.
+     * @example
+     * // Delete one Config
+     * const Config = await prisma.config.delete({
+     *   where: {
+     *     // ... filter to delete one Config
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ConfigDeleteArgs>(args: SelectSubset<T, ConfigDeleteArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Config.
+     * @param {ConfigUpdateArgs} args - Arguments to update one Config.
+     * @example
+     * // Update one Config
+     * const config = await prisma.config.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ConfigUpdateArgs>(args: SelectSubset<T, ConfigUpdateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Configs.
+     * @param {ConfigDeleteManyArgs} args - Arguments to filter Configs to delete.
+     * @example
+     * // Delete a few Configs
+     * const { count } = await prisma.config.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ConfigDeleteManyArgs>(args?: SelectSubset<T, ConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Configs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Configs
+     * const config = await prisma.config.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ConfigUpdateManyArgs>(args: SelectSubset<T, ConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Config.
+     * @param {ConfigUpsertArgs} args - Arguments to update or create a Config.
+     * @example
+     * // Update or create a Config
+     * const config = await prisma.config.upsert({
+     *   create: {
+     *     // ... data to create a Config
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Config we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ConfigUpsertArgs>(args: SelectSubset<T, ConfigUpsertArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+    /**
+     * Find zero or more Configs that matches the filter.
+     * @param {ConfigFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const config = await prisma.config.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+     */
+    findRaw(args?: ConfigFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Config.
+     * @param {ConfigAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const config = await prisma.config.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: ConfigAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Configs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigCountArgs} args - Arguments to filter Configs to count.
+     * @example
+     * // Count the number of Configs
+     * const count = await prisma.config.count({
+     *   where: {
+     *     // ... the filter for the Configs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ConfigCountArgs>(
+      args?: Subset<T, ConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Config.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ConfigAggregateArgs>(args: Subset<T, ConfigAggregateArgs>): Prisma.PrismaPromise<GetConfigAggregateType<T>>
+
+    /**
+     * Group by Config.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ConfigGroupByArgs['orderBy'] }
+        : { orderBy?: ConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Config model
+   */
+  readonly fields: ConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Config.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Config model
+   */ 
+  interface ConfigFieldRefs {
+    readonly id: FieldRef<"Config", 'String'>
+    readonly key: FieldRef<"Config", 'String'>
+    readonly version: FieldRef<"Config", 'String'>
+    readonly type: FieldRef<"Config", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"Config", 'Json'>
+    readonly value: FieldRef<"Config", 'String'>
+    readonly values: FieldRef<"Config", 'String[]'>
+    readonly createdAt: FieldRef<"Config", 'DateTime'>
+    readonly updatedAt: FieldRef<"Config", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Config findUnique
+   */
+  export type ConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config findUniqueOrThrow
+   */
+  export type ConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config findFirst
+   */
+  export type ConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Configs.
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Configs.
+     */
+    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Config findFirstOrThrow
+   */
+  export type ConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Config to fetch.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Configs.
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Configs.
+     */
+    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Config findMany
+   */
+  export type ConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which Configs to fetch.
+     */
+    where?: ConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Configs to fetch.
+     */
+    orderBy?: ConfigOrderByWithRelationInput | ConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Configs.
+     */
+    cursor?: ConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Configs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Configs.
+     */
+    skip?: number
+    distinct?: ConfigScalarFieldEnum | ConfigScalarFieldEnum[]
+  }
+
+  /**
+   * Config create
+   */
+  export type ConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to create a Config.
+     */
+    data: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
+  }
+
+  /**
+   * Config createMany
+   */
+  export type ConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Configs.
+     */
+    data: ConfigCreateManyInput | ConfigCreateManyInput[]
+  }
+
+  /**
+   * Config update
+   */
+  export type ConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to update a Config.
+     */
+    data: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
+    /**
+     * Choose, which Config to update.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config updateMany
+   */
+  export type ConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Configs.
+     */
+    data: XOR<ConfigUpdateManyMutationInput, ConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which Configs to update
+     */
+    where?: ConfigWhereInput
+  }
+
+  /**
+   * Config upsert
+   */
+  export type ConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * The filter to search for the Config to update in case it exists.
+     */
+    where: ConfigWhereUniqueInput
+    /**
+     * In case the Config found by the `where` argument doesn't exist, create a new Config with this data.
+     */
+    create: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
+    /**
+     * In case the Config was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * Config delete
+   */
+  export type ConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Filter which Config to delete.
+     */
+    where: ConfigWhereUniqueInput
+  }
+
+  /**
+   * Config deleteMany
+   */
+  export type ConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Configs to delete
+     */
+    where?: ConfigWhereInput
+  }
+
+  /**
+   * Config findRaw
+   */
+  export type ConfigFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Config aggregateRaw
+   */
+  export type ConfigAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Config without action
+   */
+  export type ConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Config
+     */
+    select?: ConfigSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Category
+   */
+
+  export type AggregateCategory = {
+    _count: CategoryCountAggregateOutputType | null
+    _avg: CategoryAvgAggregateOutputType | null
+    _sum: CategorySumAggregateOutputType | null
+    _min: CategoryMinAggregateOutputType | null
+    _max: CategoryMaxAggregateOutputType | null
+  }
+
+  export type CategoryAvgAggregateOutputType = {
+    createdAtDiscord: number | null
+  }
+
+  export type CategorySumAggregateOutputType = {
+    createdAtDiscord: number | null
+  }
+
+  export type CategoryMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    categoryId: string | null
+    guildId: string | null
+    createdAtDiscord: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CategoryMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    categoryId: string | null
+    guildId: string | null
+    createdAtDiscord: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CategoryCountAggregateOutputType = {
+    id: number
+    name: number
+    categoryId: number
+    guildId: number
+    createdAtDiscord: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CategoryAvgAggregateInputType = {
+    createdAtDiscord?: true
+  }
+
+  export type CategorySumAggregateInputType = {
+    createdAtDiscord?: true
+  }
+
+  export type CategoryMinAggregateInputType = {
+    id?: true
+    name?: true
+    categoryId?: true
+    guildId?: true
+    createdAtDiscord?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CategoryMaxAggregateInputType = {
+    id?: true
+    name?: true
+    categoryId?: true
+    guildId?: true
+    createdAtDiscord?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CategoryCountAggregateInputType = {
+    id?: true
+    name?: true
+    categoryId?: true
+    guildId?: true
+    createdAtDiscord?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Category to aggregate.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Categories
+    **/
+    _count?: true | CategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CategoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CategorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CategoryMaxAggregateInputType
+  }
+
+  export type GetCategoryAggregateType<T extends CategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCategory[P]>
+      : GetScalarType<T[P], AggregateCategory[P]>
+  }
+
+
+
+
+  export type CategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CategoryWhereInput
+    orderBy?: CategoryOrderByWithAggregationInput | CategoryOrderByWithAggregationInput[]
+    by: CategoryScalarFieldEnum[] | CategoryScalarFieldEnum
+    having?: CategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CategoryCountAggregateInputType | true
+    _avg?: CategoryAvgAggregateInputType
+    _sum?: CategorySumAggregateInputType
+    _min?: CategoryMinAggregateInputType
+    _max?: CategoryMaxAggregateInputType
+  }
+
+  export type CategoryGroupByOutputType = {
+    id: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt: Date
+    updatedAt: Date
+    _count: CategoryCountAggregateOutputType | null
+    _avg: CategoryAvgAggregateOutputType | null
+    _sum: CategorySumAggregateOutputType | null
+    _min: CategoryMinAggregateOutputType | null
+    _max: CategoryMaxAggregateOutputType | null
+  }
+
+  type GetCategoryGroupByPayload<T extends CategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], CategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    categoryId?: boolean
+    guildId?: boolean
+    createdAtDiscord?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["category"]>
+
+
+  export type CategorySelectScalar = {
+    id?: boolean
+    name?: boolean
+    categoryId?: boolean
+    guildId?: boolean
+    createdAtDiscord?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Category"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      categoryId: string
+      guildId: string
+      createdAtDiscord: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["category"]>
+    composites: {}
+  }
+
+  type CategoryGetPayload<S extends boolean | null | undefined | CategoryDefaultArgs> = $Result.GetResult<Prisma.$CategoryPayload, S>
+
+  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: CategoryCountAggregateInputType | true
+    }
+
+  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Category'], meta: { name: 'Category' } }
+    /**
+     * Find zero or one Category that matches the filter.
+     * @param {CategoryFindUniqueArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CategoryFindUniqueArgs>(args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Category that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {CategoryFindUniqueOrThrowArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Category that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindFirstArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CategoryFindFirstArgs>(args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Category that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindFirstOrThrowArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Categories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Categories
+     * const categories = await prisma.category.findMany()
+     * 
+     * // Get first 10 Categories
+     * const categories = await prisma.category.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const categoryWithIdOnly = await prisma.category.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CategoryFindManyArgs>(args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Category.
+     * @param {CategoryCreateArgs} args - Arguments to create a Category.
+     * @example
+     * // Create one Category
+     * const Category = await prisma.category.create({
+     *   data: {
+     *     // ... data to create a Category
+     *   }
+     * })
+     * 
+     */
+    create<T extends CategoryCreateArgs>(args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Categories.
+     * @param {CategoryCreateManyArgs} args - Arguments to create many Categories.
+     * @example
+     * // Create many Categories
+     * const category = await prisma.category.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CategoryCreateManyArgs>(args?: SelectSubset<T, CategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Category.
+     * @param {CategoryDeleteArgs} args - Arguments to delete one Category.
+     * @example
+     * // Delete one Category
+     * const Category = await prisma.category.delete({
+     *   where: {
+     *     // ... filter to delete one Category
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CategoryDeleteArgs>(args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Category.
+     * @param {CategoryUpdateArgs} args - Arguments to update one Category.
+     * @example
+     * // Update one Category
+     * const category = await prisma.category.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CategoryUpdateArgs>(args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Categories.
+     * @param {CategoryDeleteManyArgs} args - Arguments to filter Categories to delete.
+     * @example
+     * // Delete a few Categories
+     * const { count } = await prisma.category.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CategoryDeleteManyArgs>(args?: SelectSubset<T, CategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Categories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Categories
+     * const category = await prisma.category.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CategoryUpdateManyArgs>(args: SelectSubset<T, CategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Category.
+     * @param {CategoryUpsertArgs} args - Arguments to update or create a Category.
+     * @example
+     * // Update or create a Category
+     * const category = await prisma.category.upsert({
+     *   create: {
+     *     // ... data to create a Category
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Category we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+    /**
+     * Find zero or more Categories that matches the filter.
+     * @param {CategoryFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const category = await prisma.category.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+     */
+    findRaw(args?: CategoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Category.
+     * @param {CategoryAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const category = await prisma.category.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: CategoryAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Categories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryCountArgs} args - Arguments to filter Categories to count.
+     * @example
+     * // Count the number of Categories
+     * const count = await prisma.category.count({
+     *   where: {
+     *     // ... the filter for the Categories we want to count
+     *   }
+     * })
+    **/
+    count<T extends CategoryCountArgs>(
+      args?: Subset<T, CategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Category.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CategoryAggregateArgs>(args: Subset<T, CategoryAggregateArgs>): Prisma.PrismaPromise<GetCategoryAggregateType<T>>
+
+    /**
+     * Group by Category.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CategoryGroupByArgs['orderBy'] }
+        : { orderBy?: CategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Category model
+   */
+  readonly fields: CategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Category.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Category model
+   */ 
+  interface CategoryFieldRefs {
+    readonly id: FieldRef<"Category", 'String'>
+    readonly name: FieldRef<"Category", 'String'>
+    readonly categoryId: FieldRef<"Category", 'String'>
+    readonly guildId: FieldRef<"Category", 'String'>
+    readonly createdAtDiscord: FieldRef<"Category", 'Int'>
+    readonly createdAt: FieldRef<"Category", 'DateTime'>
+    readonly updatedAt: FieldRef<"Category", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Category findUnique
+   */
+  export type CategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category findUniqueOrThrow
+   */
+  export type CategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category findFirst
+   */
+  export type CategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category findFirstOrThrow
+   */
+  export type CategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category findMany
+   */
+  export type CategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter, which Categories to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category create
+   */
+  export type CategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * The data needed to create a Category.
+     */
+    data: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
+  }
+
+  /**
+   * Category createMany
+   */
+  export type CategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Categories.
+     */
+    data: CategoryCreateManyInput | CategoryCreateManyInput[]
+  }
+
+  /**
+   * Category update
+   */
+  export type CategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * The data needed to update a Category.
+     */
+    data: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
+    /**
+     * Choose, which Category to update.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category updateMany
+   */
+  export type CategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Categories.
+     */
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Categories to update
+     */
+    where?: CategoryWhereInput
+  }
+
+  /**
+   * Category upsert
+   */
+  export type CategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * The filter to search for the Category to update in case it exists.
+     */
+    where: CategoryWhereUniqueInput
+    /**
+     * In case the Category found by the `where` argument doesn't exist, create a new Category with this data.
+     */
+    create: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
+    /**
+     * In case the Category was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * Category delete
+   */
+  export type CategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Filter which Category to delete.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category deleteMany
+   */
+  export type CategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Categories to delete
+     */
+    where?: CategoryWhereInput
+  }
+
+  /**
+   * Category findRaw
+   */
+  export type CategoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Category aggregateRaw
+   */
+  export type CategoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Category without action
+   */
+  export type CategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+  }
+
+
+  /**
    * Model Guild
    */
 
@@ -2771,10 +4793,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends GuildFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildFindUniqueArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends GuildFindUniqueArgs>(args: SelectSubset<T, GuildFindUniqueArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one Guild that matches the filter or throw an error with `error.code='P2025'` 
@@ -2787,10 +4807,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends GuildFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends GuildFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first Guild that matches the filter.
@@ -2804,10 +4822,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends GuildFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildFindFirstArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends GuildFindFirstArgs>(args?: SelectSubset<T, GuildFindFirstArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first Guild that matches the filter or
@@ -2822,10 +4838,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends GuildFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends GuildFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more Guilds that matches the filter.
@@ -2842,10 +4856,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const guildWithIdOnly = await prisma.guild.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends GuildFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends GuildFindManyArgs>(args?: SelectSubset<T, GuildFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a Guild.
@@ -2858,10 +4870,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends GuildCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildCreateArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends GuildCreateArgs>(args: SelectSubset<T, GuildCreateArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many Guilds.
@@ -2874,10 +4884,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends GuildCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends GuildCreateManyArgs>(args?: SelectSubset<T, GuildCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a Guild.
@@ -2890,10 +4898,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends GuildDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDeleteArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends GuildDeleteArgs>(args: SelectSubset<T, GuildDeleteArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one Guild.
@@ -2909,10 +4915,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends GuildUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildUpdateArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends GuildUpdateArgs>(args: SelectSubset<T, GuildUpdateArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more Guilds.
@@ -2925,10 +4929,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends GuildDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends GuildDeleteManyArgs>(args?: SelectSubset<T, GuildDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more Guilds.
@@ -2946,10 +4948,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends GuildUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends GuildUpdateManyArgs>(args: SelectSubset<T, GuildUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one Guild.
@@ -2967,10 +4967,8 @@ export namespace Prisma {
      *     // ... the filter for the Guild we want to update
      *   }
      * })
-    **/
-    upsert<T extends GuildUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildUpsertArgs<ExtArgs>>
-    ): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends GuildUpsertArgs>(args: SelectSubset<T, GuildUpsertArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more Guilds that matches the filter.
@@ -2979,10 +4977,8 @@ export namespace Prisma {
      * const guild = await prisma.guild.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: GuildFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: GuildFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a Guild.
@@ -2994,10 +4990,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: GuildAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: GuildAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of Guilds.
@@ -3137,31 +5132,30 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__GuildClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-    data<T extends Guild$dataArgs<ExtArgs> = {}>(args?: Subset<T, Guild$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'findMany'> | Null>;
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    data<T extends Guild$dataArgs<ExtArgs> = {}>(args?: Subset<T, Guild$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -3549,8 +5543,9 @@ export namespace Prisma {
   export type GuildDataMinAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3559,8 +5554,9 @@ export namespace Prisma {
   export type GuildDataMaxAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3569,10 +5565,11 @@ export namespace Prisma {
   export type GuildDataCountAggregateOutputType = {
     id: number
     key: number
+    version: number
     type: number
     object: number
+    value: number
     values: number
-    version: number
     ownerId: number
     createdAt: number
     updatedAt: number
@@ -3583,8 +5580,9 @@ export namespace Prisma {
   export type GuildDataMinAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -3593,8 +5591,9 @@ export namespace Prisma {
   export type GuildDataMaxAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -3603,10 +5602,11 @@ export namespace Prisma {
   export type GuildDataCountAggregateInputType = {
     id?: true
     key?: true
+    version?: true
     type?: true
     object?: true
+    value?: true
     values?: true
-    version?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -3688,10 +5688,11 @@ export namespace Prisma {
   export type GuildDataGroupByOutputType = {
     id: string
     key: string
-    type: string
+    version: string
+    type: $Enums.E_DATA_TYPES
     object: JsonValue | null
+    value: string | null
     values: string[]
-    version: string | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -3717,10 +5718,11 @@ export namespace Prisma {
   export type GuildDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3731,10 +5733,11 @@ export namespace Prisma {
   export type GuildDataSelectScalar = {
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3752,10 +5755,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       key: string
-      type: string
+      version: string
+      type: $Enums.E_DATA_TYPES
       object: Prisma.JsonValue | null
+      value: string | null
       values: string[]
-      version: string | null
       ownerId: string
       createdAt: Date
       updatedAt: Date
@@ -3782,10 +5786,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends GuildDataFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDataFindUniqueArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends GuildDataFindUniqueArgs>(args: SelectSubset<T, GuildDataFindUniqueArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one GuildData that matches the filter or throw an error with `error.code='P2025'` 
@@ -3798,10 +5800,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends GuildDataFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDataFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends GuildDataFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first GuildData that matches the filter.
@@ -3815,10 +5815,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends GuildDataFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDataFindFirstArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends GuildDataFindFirstArgs>(args?: SelectSubset<T, GuildDataFindFirstArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first GuildData that matches the filter or
@@ -3833,10 +5831,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends GuildDataFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDataFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends GuildDataFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more GuildData that matches the filter.
@@ -3853,10 +5849,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const guildDataWithIdOnly = await prisma.guildData.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends GuildDataFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDataFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends GuildDataFindManyArgs>(args?: SelectSubset<T, GuildDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a GuildData.
@@ -3869,10 +5863,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends GuildDataCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDataCreateArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends GuildDataCreateArgs>(args: SelectSubset<T, GuildDataCreateArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many GuildData.
@@ -3885,10 +5877,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends GuildDataCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDataCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends GuildDataCreateManyArgs>(args?: SelectSubset<T, GuildDataCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a GuildData.
@@ -3901,10 +5891,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends GuildDataDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDataDeleteArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends GuildDataDeleteArgs>(args: SelectSubset<T, GuildDataDeleteArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one GuildData.
@@ -3920,10 +5908,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends GuildDataUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDataUpdateArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends GuildDataUpdateArgs>(args: SelectSubset<T, GuildDataUpdateArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more GuildData.
@@ -3936,10 +5922,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends GuildDataDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, GuildDataDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends GuildDataDeleteManyArgs>(args?: SelectSubset<T, GuildDataDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more GuildData.
@@ -3957,10 +5941,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends GuildDataUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDataUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends GuildDataUpdateManyArgs>(args: SelectSubset<T, GuildDataUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one GuildData.
@@ -3978,10 +5960,8 @@ export namespace Prisma {
      *     // ... the filter for the GuildData we want to update
      *   }
      * })
-    **/
-    upsert<T extends GuildDataUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, GuildDataUpsertArgs<ExtArgs>>
-    ): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends GuildDataUpsertArgs>(args: SelectSubset<T, GuildDataUpsertArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more GuildData that matches the filter.
@@ -3990,10 +5970,8 @@ export namespace Prisma {
      * const guildData = await prisma.guildData.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: GuildDataFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: GuildDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a GuildData.
@@ -4005,10 +5983,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: GuildDataAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: GuildDataAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of GuildData.
@@ -4148,31 +6125,30 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__GuildDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-    guild<T extends GuildDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GuildDefaultArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    guild<T extends GuildDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GuildDefaultArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -4182,10 +6158,11 @@ export namespace Prisma {
   interface GuildDataFieldRefs {
     readonly id: FieldRef<"GuildData", 'String'>
     readonly key: FieldRef<"GuildData", 'String'>
-    readonly type: FieldRef<"GuildData", 'String'>
-    readonly object: FieldRef<"GuildData", 'Json'>
-    readonly values: FieldRef<"GuildData", 'String[]'>
     readonly version: FieldRef<"GuildData", 'String'>
+    readonly type: FieldRef<"GuildData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"GuildData", 'Json'>
+    readonly value: FieldRef<"GuildData", 'String'>
+    readonly values: FieldRef<"GuildData", 'String[]'>
     readonly ownerId: FieldRef<"GuildData", 'String'>
     readonly createdAt: FieldRef<"GuildData", 'DateTime'>
     readonly updatedAt: FieldRef<"GuildData", 'DateTime'>
@@ -4530,972 +6507,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Category
-   */
-
-  export type AggregateCategory = {
-    _count: CategoryCountAggregateOutputType | null
-    _avg: CategoryAvgAggregateOutputType | null
-    _sum: CategorySumAggregateOutputType | null
-    _min: CategoryMinAggregateOutputType | null
-    _max: CategoryMaxAggregateOutputType | null
-  }
-
-  export type CategoryAvgAggregateOutputType = {
-    createdAtDiscord: number | null
-  }
-
-  export type CategorySumAggregateOutputType = {
-    createdAtDiscord: number | null
-  }
-
-  export type CategoryMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    categoryId: string | null
-    guildId: string | null
-    createdAtDiscord: number | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type CategoryMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    categoryId: string | null
-    guildId: string | null
-    createdAtDiscord: number | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type CategoryCountAggregateOutputType = {
-    id: number
-    name: number
-    categoryId: number
-    guildId: number
-    createdAtDiscord: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type CategoryAvgAggregateInputType = {
-    createdAtDiscord?: true
-  }
-
-  export type CategorySumAggregateInputType = {
-    createdAtDiscord?: true
-  }
-
-  export type CategoryMinAggregateInputType = {
-    id?: true
-    name?: true
-    categoryId?: true
-    guildId?: true
-    createdAtDiscord?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type CategoryMaxAggregateInputType = {
-    id?: true
-    name?: true
-    categoryId?: true
-    guildId?: true
-    createdAtDiscord?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type CategoryCountAggregateInputType = {
-    id?: true
-    name?: true
-    categoryId?: true
-    guildId?: true
-    createdAtDiscord?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type CategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Category to aggregate.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Categories
-    **/
-    _count?: true | CategoryCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: CategoryAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: CategorySumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CategoryMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CategoryMaxAggregateInputType
-  }
-
-  export type GetCategoryAggregateType<T extends CategoryAggregateArgs> = {
-        [P in keyof T & keyof AggregateCategory]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCategory[P]>
-      : GetScalarType<T[P], AggregateCategory[P]>
-  }
-
-
-
-
-  export type CategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CategoryWhereInput
-    orderBy?: CategoryOrderByWithAggregationInput | CategoryOrderByWithAggregationInput[]
-    by: CategoryScalarFieldEnum[] | CategoryScalarFieldEnum
-    having?: CategoryScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CategoryCountAggregateInputType | true
-    _avg?: CategoryAvgAggregateInputType
-    _sum?: CategorySumAggregateInputType
-    _min?: CategoryMinAggregateInputType
-    _max?: CategoryMaxAggregateInputType
-  }
-
-  export type CategoryGroupByOutputType = {
-    id: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt: Date
-    updatedAt: Date
-    _count: CategoryCountAggregateOutputType | null
-    _avg: CategoryAvgAggregateOutputType | null
-    _sum: CategorySumAggregateOutputType | null
-    _min: CategoryMinAggregateOutputType | null
-    _max: CategoryMaxAggregateOutputType | null
-  }
-
-  type GetCategoryGroupByPayload<T extends CategoryGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CategoryGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CategoryGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CategoryGroupByOutputType[P]>
-            : GetScalarType<T[P], CategoryGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type CategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    categoryId?: boolean
-    guildId?: boolean
-    createdAtDiscord?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["category"]>
-
-
-  export type CategorySelectScalar = {
-    id?: boolean
-    name?: boolean
-    categoryId?: boolean
-    guildId?: boolean
-    createdAtDiscord?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-
-  export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Category"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      categoryId: string
-      guildId: string
-      createdAtDiscord: number
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["category"]>
-    composites: {}
-  }
-
-  type CategoryGetPayload<S extends boolean | null | undefined | CategoryDefaultArgs> = $Result.GetResult<Prisma.$CategoryPayload, S>
-
-  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: CategoryCountAggregateInputType | true
-    }
-
-  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Category'], meta: { name: 'Category' } }
-    /**
-     * Find zero or one Category that matches the filter.
-     * @param {CategoryFindUniqueArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUnique<T extends CategoryFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
-
-    /**
-     * Find one Category that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {CategoryFindUniqueOrThrowArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
-
-    /**
-     * Find the first Category that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryFindFirstArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirst<T extends CategoryFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
-
-    /**
-     * Find the first Category that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryFindFirstOrThrowArgs} args - Arguments to find a Category
-     * @example
-     * // Get one Category
-     * const category = await prisma.category.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
-
-    /**
-     * Find zero or more Categories that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Categories
-     * const categories = await prisma.category.findMany()
-     * 
-     * // Get first 10 Categories
-     * const categories = await prisma.category.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const categoryWithIdOnly = await prisma.category.findMany({ select: { id: true } })
-     * 
-    **/
-    findMany<T extends CategoryFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'findMany'>>
-
-    /**
-     * Create a Category.
-     * @param {CategoryCreateArgs} args - Arguments to create a Category.
-     * @example
-     * // Create one Category
-     * const Category = await prisma.category.create({
-     *   data: {
-     *     // ... data to create a Category
-     *   }
-     * })
-     * 
-    **/
-    create<T extends CategoryCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
-
-    /**
-     * Create many Categories.
-     * @param {CategoryCreateManyArgs} args - Arguments to create many Categories.
-     * @example
-     * // Create many Categories
-     * const category = await prisma.category.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-    **/
-    createMany<T extends CategoryCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, CategoryCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a Category.
-     * @param {CategoryDeleteArgs} args - Arguments to delete one Category.
-     * @example
-     * // Delete one Category
-     * const Category = await prisma.category.delete({
-     *   where: {
-     *     // ... filter to delete one Category
-     *   }
-     * })
-     * 
-    **/
-    delete<T extends CategoryDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
-
-    /**
-     * Update one Category.
-     * @param {CategoryUpdateArgs} args - Arguments to update one Category.
-     * @example
-     * // Update one Category
-     * const category = await prisma.category.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    update<T extends CategoryUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
-
-    /**
-     * Delete zero or more Categories.
-     * @param {CategoryDeleteManyArgs} args - Arguments to filter Categories to delete.
-     * @example
-     * // Delete a few Categories
-     * const { count } = await prisma.category.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-    **/
-    deleteMany<T extends CategoryDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, CategoryDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Categories.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Categories
-     * const category = await prisma.category.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    updateMany<T extends CategoryUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, CategoryUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Category.
-     * @param {CategoryUpsertArgs} args - Arguments to update or create a Category.
-     * @example
-     * // Update or create a Category
-     * const category = await prisma.category.upsert({
-     *   create: {
-     *     // ... data to create a Category
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Category we want to update
-     *   }
-     * })
-    **/
-    upsert<T extends CategoryUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>
-    ): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
-
-    /**
-     * Find zero or more Categories that matches the filter.
-     * @param {CategoryFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const category = await prisma.category.findRaw({
-     *   filter: { age: { $gt: 25 } } 
-     * })
-    **/
-    findRaw(
-      args?: CategoryFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Category.
-     * @param {CategoryAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const category = await prisma.category.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-    **/
-    aggregateRaw(
-      args?: CategoryAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Count the number of Categories.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryCountArgs} args - Arguments to filter Categories to count.
-     * @example
-     * // Count the number of Categories
-     * const count = await prisma.category.count({
-     *   where: {
-     *     // ... the filter for the Categories we want to count
-     *   }
-     * })
-    **/
-    count<T extends CategoryCountArgs>(
-      args?: Subset<T, CategoryCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CategoryCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Category.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CategoryAggregateArgs>(args: Subset<T, CategoryAggregateArgs>): Prisma.PrismaPromise<GetCategoryAggregateType<T>>
-
-    /**
-     * Group by Category.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CategoryGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends CategoryGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: CategoryGroupByArgs['orderBy'] }
-        : { orderBy?: CategoryGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, CategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Category model
-   */
-  readonly fields: CategoryFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Category.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
-  }
-
-
-
-  /**
-   * Fields of the Category model
-   */ 
-  interface CategoryFieldRefs {
-    readonly id: FieldRef<"Category", 'String'>
-    readonly name: FieldRef<"Category", 'String'>
-    readonly categoryId: FieldRef<"Category", 'String'>
-    readonly guildId: FieldRef<"Category", 'String'>
-    readonly createdAtDiscord: FieldRef<"Category", 'Int'>
-    readonly createdAt: FieldRef<"Category", 'DateTime'>
-    readonly updatedAt: FieldRef<"Category", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Category findUnique
-   */
-  export type CategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category findUniqueOrThrow
-   */
-  export type CategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category findFirst
-   */
-  export type CategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Categories.
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Categories.
-     */
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
-  }
-
-  /**
-   * Category findFirstOrThrow
-   */
-  export type CategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Category to fetch.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Categories.
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Categories.
-     */
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
-  }
-
-  /**
-   * Category findMany
-   */
-  export type CategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter, which Categories to fetch.
-     */
-    where?: CategoryWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Categories to fetch.
-     */
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Categories.
-     */
-    cursor?: CategoryWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Categories from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Categories.
-     */
-    skip?: number
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
-  }
-
-  /**
-   * Category create
-   */
-  export type CategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * The data needed to create a Category.
-     */
-    data: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
-  }
-
-  /**
-   * Category createMany
-   */
-  export type CategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Categories.
-     */
-    data: CategoryCreateManyInput | CategoryCreateManyInput[]
-  }
-
-  /**
-   * Category update
-   */
-  export type CategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * The data needed to update a Category.
-     */
-    data: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
-    /**
-     * Choose, which Category to update.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category updateMany
-   */
-  export type CategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Categories.
-     */
-    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
-    /**
-     * Filter which Categories to update
-     */
-    where?: CategoryWhereInput
-  }
-
-  /**
-   * Category upsert
-   */
-  export type CategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * The filter to search for the Category to update in case it exists.
-     */
-    where: CategoryWhereUniqueInput
-    /**
-     * In case the Category found by the `where` argument doesn't exist, create a new Category with this data.
-     */
-    create: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
-    /**
-     * In case the Category was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
-  }
-
-  /**
-   * Category delete
-   */
-  export type CategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-    /**
-     * Filter which Category to delete.
-     */
-    where: CategoryWhereUniqueInput
-  }
-
-  /**
-   * Category deleteMany
-   */
-  export type CategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Categories to delete
-     */
-    where?: CategoryWhereInput
-  }
-
-  /**
-   * Category findRaw
-   */
-  export type CategoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Category aggregateRaw
-   */
-  export type CategoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Category without action
-   */
-  export type CategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Category
-     */
-    select?: CategorySelect<ExtArgs> | null
-  }
-
-
-  /**
    * Model Channel
    */
 
@@ -5522,6 +6533,7 @@ export namespace Prisma {
     userOwnerId: string | null
     categoryId: string | null
     ownerChannelId: string | null
+    version: string | null
     internalType: $Enums.E_INTERNAL_CHANNEL_TYPES | null
     createdAtDiscord: number | null
     createdAt: Date | null
@@ -5535,6 +6547,7 @@ export namespace Prisma {
     userOwnerId: string | null
     categoryId: string | null
     ownerChannelId: string | null
+    version: string | null
     internalType: $Enums.E_INTERNAL_CHANNEL_TYPES | null
     createdAtDiscord: number | null
     createdAt: Date | null
@@ -5548,6 +6561,7 @@ export namespace Prisma {
     userOwnerId: number
     categoryId: number
     ownerChannelId: number
+    version: number
     internalType: number
     createdAtDiscord: number
     createdAt: number
@@ -5571,6 +6585,7 @@ export namespace Prisma {
     userOwnerId?: true
     categoryId?: true
     ownerChannelId?: true
+    version?: true
     internalType?: true
     createdAtDiscord?: true
     createdAt?: true
@@ -5584,6 +6599,7 @@ export namespace Prisma {
     userOwnerId?: true
     categoryId?: true
     ownerChannelId?: true
+    version?: true
     internalType?: true
     createdAtDiscord?: true
     createdAt?: true
@@ -5597,6 +6613,7 @@ export namespace Prisma {
     userOwnerId?: true
     categoryId?: true
     ownerChannelId?: true
+    version?: true
     internalType?: true
     createdAtDiscord?: true
     createdAt?: true
@@ -5697,6 +6714,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId: string | null
     ownerChannelId: string | null
+    version: string
     internalType: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt: Date
@@ -5729,6 +6747,7 @@ export namespace Prisma {
     userOwnerId?: boolean
     categoryId?: boolean
     ownerChannelId?: boolean
+    version?: boolean
     internalType?: boolean
     createdAtDiscord?: boolean
     createdAt?: boolean
@@ -5745,6 +6764,7 @@ export namespace Prisma {
     userOwnerId?: boolean
     categoryId?: boolean
     ownerChannelId?: boolean
+    version?: boolean
     internalType?: boolean
     createdAtDiscord?: boolean
     createdAt?: boolean
@@ -5768,6 +6788,7 @@ export namespace Prisma {
       userOwnerId: string
       categoryId: string | null
       ownerChannelId: string | null
+      version: string
       internalType: $Enums.E_INTERNAL_CHANNEL_TYPES
       createdAtDiscord: number
       createdAt: Date
@@ -5795,10 +6816,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends ChannelFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelFindUniqueArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends ChannelFindUniqueArgs>(args: SelectSubset<T, ChannelFindUniqueArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one Channel that matches the filter or throw an error with `error.code='P2025'` 
@@ -5811,10 +6830,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends ChannelFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends ChannelFindUniqueOrThrowArgs>(args: SelectSubset<T, ChannelFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first Channel that matches the filter.
@@ -5828,10 +6845,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends ChannelFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelFindFirstArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends ChannelFindFirstArgs>(args?: SelectSubset<T, ChannelFindFirstArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first Channel that matches the filter or
@@ -5846,10 +6861,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends ChannelFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends ChannelFindFirstOrThrowArgs>(args?: SelectSubset<T, ChannelFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more Channels that matches the filter.
@@ -5866,10 +6879,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const channelWithIdOnly = await prisma.channel.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends ChannelFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends ChannelFindManyArgs>(args?: SelectSubset<T, ChannelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a Channel.
@@ -5882,10 +6893,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends ChannelCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelCreateArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends ChannelCreateArgs>(args: SelectSubset<T, ChannelCreateArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many Channels.
@@ -5898,10 +6907,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends ChannelCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends ChannelCreateManyArgs>(args?: SelectSubset<T, ChannelCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a Channel.
@@ -5914,10 +6921,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends ChannelDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDeleteArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends ChannelDeleteArgs>(args: SelectSubset<T, ChannelDeleteArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one Channel.
@@ -5933,10 +6938,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends ChannelUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelUpdateArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends ChannelUpdateArgs>(args: SelectSubset<T, ChannelUpdateArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more Channels.
@@ -5949,10 +6952,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends ChannelDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends ChannelDeleteManyArgs>(args?: SelectSubset<T, ChannelDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more Channels.
@@ -5970,10 +6971,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends ChannelUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends ChannelUpdateManyArgs>(args: SelectSubset<T, ChannelUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one Channel.
@@ -5991,10 +6990,8 @@ export namespace Prisma {
      *     // ... the filter for the Channel we want to update
      *   }
      * })
-    **/
-    upsert<T extends ChannelUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelUpsertArgs<ExtArgs>>
-    ): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends ChannelUpsertArgs>(args: SelectSubset<T, ChannelUpsertArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more Channels that matches the filter.
@@ -6003,10 +7000,8 @@ export namespace Prisma {
      * const channel = await prisma.channel.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: ChannelFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: ChannelFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a Channel.
@@ -6018,10 +7013,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: ChannelAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: ChannelAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of Channels.
@@ -6161,31 +7155,30 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-    data<T extends Channel$dataArgs<ExtArgs> = {}>(args?: Subset<T, Channel$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'findMany'> | Null>;
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    data<T extends Channel$dataArgs<ExtArgs> = {}>(args?: Subset<T, Channel$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -6199,6 +7192,7 @@ export namespace Prisma {
     readonly userOwnerId: FieldRef<"Channel", 'String'>
     readonly categoryId: FieldRef<"Channel", 'String'>
     readonly ownerChannelId: FieldRef<"Channel", 'String'>
+    readonly version: FieldRef<"Channel", 'String'>
     readonly internalType: FieldRef<"Channel", 'E_INTERNAL_CHANNEL_TYPES'>
     readonly createdAtDiscord: FieldRef<"Channel", 'Int'>
     readonly createdAt: FieldRef<"Channel", 'DateTime'>
@@ -6576,8 +7570,9 @@ export namespace Prisma {
   export type ChannelDataMinAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6586,8 +7581,9 @@ export namespace Prisma {
   export type ChannelDataMaxAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6596,10 +7592,11 @@ export namespace Prisma {
   export type ChannelDataCountAggregateOutputType = {
     id: number
     key: number
+    version: number
     type: number
     object: number
+    value: number
     values: number
-    version: number
     ownerId: number
     createdAt: number
     updatedAt: number
@@ -6610,8 +7607,9 @@ export namespace Prisma {
   export type ChannelDataMinAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6620,8 +7618,9 @@ export namespace Prisma {
   export type ChannelDataMaxAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6630,10 +7629,11 @@ export namespace Prisma {
   export type ChannelDataCountAggregateInputType = {
     id?: true
     key?: true
+    version?: true
     type?: true
     object?: true
+    value?: true
     values?: true
-    version?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -6715,10 +7715,11 @@ export namespace Prisma {
   export type ChannelDataGroupByOutputType = {
     id: string
     key: string
-    type: string
+    version: string
+    type: $Enums.E_DATA_TYPES
     object: JsonValue | null
+    value: string | null
     values: string[]
-    version: string | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -6744,10 +7745,11 @@ export namespace Prisma {
   export type ChannelDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6758,10 +7760,11 @@ export namespace Prisma {
   export type ChannelDataSelectScalar = {
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6779,10 +7782,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       key: string
-      type: string
+      version: string
+      type: $Enums.E_DATA_TYPES
       object: Prisma.JsonValue | null
+      value: string | null
       values: string[]
-      version: string | null
       ownerId: string
       createdAt: Date
       updatedAt: Date
@@ -6809,10 +7813,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends ChannelDataFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDataFindUniqueArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends ChannelDataFindUniqueArgs>(args: SelectSubset<T, ChannelDataFindUniqueArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one ChannelData that matches the filter or throw an error with `error.code='P2025'` 
@@ -6825,10 +7827,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends ChannelDataFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDataFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends ChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, ChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first ChannelData that matches the filter.
@@ -6842,10 +7842,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends ChannelDataFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDataFindFirstArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends ChannelDataFindFirstArgs>(args?: SelectSubset<T, ChannelDataFindFirstArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first ChannelData that matches the filter or
@@ -6860,10 +7858,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends ChannelDataFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDataFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends ChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, ChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more ChannelData that matches the filter.
@@ -6880,10 +7876,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const channelDataWithIdOnly = await prisma.channelData.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends ChannelDataFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDataFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends ChannelDataFindManyArgs>(args?: SelectSubset<T, ChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a ChannelData.
@@ -6896,10 +7890,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends ChannelDataCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDataCreateArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends ChannelDataCreateArgs>(args: SelectSubset<T, ChannelDataCreateArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many ChannelData.
@@ -6912,10 +7904,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends ChannelDataCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDataCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends ChannelDataCreateManyArgs>(args?: SelectSubset<T, ChannelDataCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a ChannelData.
@@ -6928,10 +7918,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends ChannelDataDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDataDeleteArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends ChannelDataDeleteArgs>(args: SelectSubset<T, ChannelDataDeleteArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one ChannelData.
@@ -6947,10 +7935,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends ChannelDataUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDataUpdateArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends ChannelDataUpdateArgs>(args: SelectSubset<T, ChannelDataUpdateArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more ChannelData.
@@ -6963,10 +7949,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends ChannelDataDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ChannelDataDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends ChannelDataDeleteManyArgs>(args?: SelectSubset<T, ChannelDataDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ChannelData.
@@ -6984,10 +7968,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends ChannelDataUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDataUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends ChannelDataUpdateManyArgs>(args: SelectSubset<T, ChannelDataUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one ChannelData.
@@ -7005,10 +7987,8 @@ export namespace Prisma {
      *     // ... the filter for the ChannelData we want to update
      *   }
      * })
-    **/
-    upsert<T extends ChannelDataUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, ChannelDataUpsertArgs<ExtArgs>>
-    ): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends ChannelDataUpsertArgs>(args: SelectSubset<T, ChannelDataUpsertArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more ChannelData that matches the filter.
@@ -7017,10 +7997,8 @@ export namespace Prisma {
      * const channelData = await prisma.channelData.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: ChannelDataFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: ChannelDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a ChannelData.
@@ -7032,10 +8010,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: ChannelDataAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: ChannelDataAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of ChannelData.
@@ -7175,31 +8152,30 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__ChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -7209,10 +8185,11 @@ export namespace Prisma {
   interface ChannelDataFieldRefs {
     readonly id: FieldRef<"ChannelData", 'String'>
     readonly key: FieldRef<"ChannelData", 'String'>
-    readonly type: FieldRef<"ChannelData", 'String'>
-    readonly object: FieldRef<"ChannelData", 'Json'>
-    readonly values: FieldRef<"ChannelData", 'String[]'>
     readonly version: FieldRef<"ChannelData", 'String'>
+    readonly type: FieldRef<"ChannelData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"ChannelData", 'Json'>
+    readonly value: FieldRef<"ChannelData", 'String'>
+    readonly values: FieldRef<"ChannelData", 'String[]'>
     readonly ownerId: FieldRef<"ChannelData", 'String'>
     readonly createdAt: FieldRef<"ChannelData", 'DateTime'>
     readonly updatedAt: FieldRef<"ChannelData", 'DateTime'>
@@ -7721,6 +8698,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     data?: boolean | User$dataArgs<ExtArgs>
+    channelData?: boolean | User$channelDataArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -7735,6 +8713,7 @@ export namespace Prisma {
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | User$dataArgs<ExtArgs>
+    channelData?: boolean | User$channelDataArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -7742,6 +8721,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       data: Prisma.$UserDataPayload<ExtArgs>[]
+      channelData: Prisma.$UserChannelDataPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7772,10 +8752,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends UserFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one User that matches the filter or throw an error with `error.code='P2025'` 
@@ -7788,10 +8766,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first User that matches the filter.
@@ -7805,10 +8781,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends UserFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first User that matches the filter or
@@ -7823,10 +8797,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends UserFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -7843,10 +8815,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const userWithIdOnly = await prisma.user.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends UserFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a User.
@@ -7859,10 +8829,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends UserCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, UserCreateArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many Users.
@@ -7875,10 +8843,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends UserCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends UserCreateManyArgs>(args?: SelectSubset<T, UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a User.
@@ -7891,10 +8857,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends UserDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDeleteArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one User.
@@ -7910,10 +8874,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends UserUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, UserUpdateArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more Users.
@@ -7926,10 +8888,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends UserDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends UserDeleteManyArgs>(args?: SelectSubset<T, UserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more Users.
@@ -7947,10 +8907,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends UserUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, UserUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends UserUpdateManyArgs>(args: SelectSubset<T, UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one User.
@@ -7968,10 +8926,8 @@ export namespace Prisma {
      *     // ... the filter for the User we want to update
      *   }
      * })
-    **/
-    upsert<T extends UserUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, UserUpsertArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -7980,10 +8936,8 @@ export namespace Prisma {
      * const user = await prisma.user.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: UserFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: UserFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a User.
@@ -7995,10 +8949,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: UserAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: UserAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of Users.
@@ -8138,31 +9091,31 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-    data<T extends User$dataArgs<ExtArgs> = {}>(args?: Subset<T, User$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'findMany'> | Null>;
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    data<T extends User$dataArgs<ExtArgs> = {}>(args?: Subset<T, User$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany"> | Null>
+    channelData<T extends User$channelDataArgs<ExtArgs> = {}>(args?: Subset<T, User$channelDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -8521,6 +9474,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.channelData
+   */
+  export type User$channelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    where?: UserChannelDataWhereInput
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    cursor?: UserChannelDataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8548,8 +9521,9 @@ export namespace Prisma {
   export type UserDataMinAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8558,8 +9532,9 @@ export namespace Prisma {
   export type UserDataMaxAggregateOutputType = {
     id: string | null
     key: string | null
-    type: string | null
     version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8568,10 +9543,11 @@ export namespace Prisma {
   export type UserDataCountAggregateOutputType = {
     id: number
     key: number
+    version: number
     type: number
     object: number
+    value: number
     values: number
-    version: number
     ownerId: number
     createdAt: number
     updatedAt: number
@@ -8582,8 +9558,9 @@ export namespace Prisma {
   export type UserDataMinAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -8592,8 +9569,9 @@ export namespace Prisma {
   export type UserDataMaxAggregateInputType = {
     id?: true
     key?: true
-    type?: true
     version?: true
+    type?: true
+    value?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -8602,10 +9580,11 @@ export namespace Prisma {
   export type UserDataCountAggregateInputType = {
     id?: true
     key?: true
+    version?: true
     type?: true
     object?: true
+    value?: true
     values?: true
-    version?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
@@ -8687,10 +9666,11 @@ export namespace Prisma {
   export type UserDataGroupByOutputType = {
     id: string
     key: string
-    type: string
+    version: string
+    type: $Enums.E_DATA_TYPES
     object: JsonValue | null
+    value: string | null
     values: string[]
-    version: string | null
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -8716,10 +9696,11 @@ export namespace Prisma {
   export type UserDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8730,10 +9711,11 @@ export namespace Prisma {
   export type UserDataSelectScalar = {
     id?: boolean
     key?: boolean
+    version?: boolean
     type?: boolean
     object?: boolean
+    value?: boolean
     values?: boolean
-    version?: boolean
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8751,10 +9733,11 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       key: string
-      type: string
+      version: string
+      type: $Enums.E_DATA_TYPES
       object: Prisma.JsonValue | null
+      value: string | null
       values: string[]
-      version: string | null
       ownerId: string
       createdAt: Date
       updatedAt: Date
@@ -8781,10 +9764,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends UserDataFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDataFindUniqueArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends UserDataFindUniqueArgs>(args: SelectSubset<T, UserDataFindUniqueArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one UserData that matches the filter or throw an error with `error.code='P2025'` 
@@ -8797,10 +9778,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends UserDataFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDataFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends UserDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first UserData that matches the filter.
@@ -8814,10 +9793,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends UserDataFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDataFindFirstArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends UserDataFindFirstArgs>(args?: SelectSubset<T, UserDataFindFirstArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first UserData that matches the filter or
@@ -8832,10 +9809,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends UserDataFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDataFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends UserDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more UserData that matches the filter.
@@ -8852,10 +9827,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const userDataWithIdOnly = await prisma.userData.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends UserDataFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDataFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends UserDataFindManyArgs>(args?: SelectSubset<T, UserDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a UserData.
@@ -8868,10 +9841,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends UserDataCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDataCreateArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends UserDataCreateArgs>(args: SelectSubset<T, UserDataCreateArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many UserData.
@@ -8884,10 +9855,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends UserDataCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDataCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends UserDataCreateManyArgs>(args?: SelectSubset<T, UserDataCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a UserData.
@@ -8900,10 +9869,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends UserDataDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDataDeleteArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends UserDataDeleteArgs>(args: SelectSubset<T, UserDataDeleteArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one UserData.
@@ -8919,10 +9886,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends UserDataUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDataUpdateArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends UserDataUpdateArgs>(args: SelectSubset<T, UserDataUpdateArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more UserData.
@@ -8935,10 +9900,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends UserDataDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, UserDataDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends UserDataDeleteManyArgs>(args?: SelectSubset<T, UserDataDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more UserData.
@@ -8956,10 +9919,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends UserDataUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDataUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends UserDataUpdateManyArgs>(args: SelectSubset<T, UserDataUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one UserData.
@@ -8977,10 +9938,8 @@ export namespace Prisma {
      *     // ... the filter for the UserData we want to update
      *   }
      * })
-    **/
-    upsert<T extends UserDataUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, UserDataUpsertArgs<ExtArgs>>
-    ): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends UserDataUpsertArgs>(args: SelectSubset<T, UserDataUpsertArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more UserData that matches the filter.
@@ -8989,10 +9948,8 @@ export namespace Prisma {
      * const userData = await prisma.userData.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: UserDataFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: UserDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a UserData.
@@ -9004,10 +9961,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: UserDataAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: UserDataAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of UserData.
@@ -9147,31 +10103,30 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__UserDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -9181,10 +10136,11 @@ export namespace Prisma {
   interface UserDataFieldRefs {
     readonly id: FieldRef<"UserData", 'String'>
     readonly key: FieldRef<"UserData", 'String'>
-    readonly type: FieldRef<"UserData", 'String'>
-    readonly object: FieldRef<"UserData", 'Json'>
-    readonly values: FieldRef<"UserData", 'String[]'>
     readonly version: FieldRef<"UserData", 'String'>
+    readonly type: FieldRef<"UserData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"UserData", 'Json'>
+    readonly value: FieldRef<"UserData", 'String'>
+    readonly values: FieldRef<"UserData", 'String[]'>
     readonly ownerId: FieldRef<"UserData", 'String'>
     readonly createdAt: FieldRef<"UserData", 'DateTime'>
     readonly updatedAt: FieldRef<"UserData", 'DateTime'>
@@ -9529,6 +10485,993 @@ export namespace Prisma {
 
 
   /**
+   * Model UserChannelData
+   */
+
+  export type AggregateUserChannelData = {
+    _count: UserChannelDataCountAggregateOutputType | null
+    _min: UserChannelDataMinAggregateOutputType | null
+    _max: UserChannelDataMaxAggregateOutputType | null
+  }
+
+  export type UserChannelDataMinAggregateOutputType = {
+    id: string | null
+    channelId: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    ownerId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserChannelDataMaxAggregateOutputType = {
+    id: string | null
+    channelId: string | null
+    key: string | null
+    version: string | null
+    type: $Enums.E_DATA_TYPES | null
+    value: string | null
+    ownerId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserChannelDataCountAggregateOutputType = {
+    id: number
+    channelId: number
+    key: number
+    version: number
+    type: number
+    object: number
+    value: number
+    values: number
+    ownerId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UserChannelDataMinAggregateInputType = {
+    id?: true
+    channelId?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserChannelDataMaxAggregateInputType = {
+    id?: true
+    channelId?: true
+    key?: true
+    version?: true
+    type?: true
+    value?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserChannelDataCountAggregateInputType = {
+    id?: true
+    channelId?: true
+    key?: true
+    version?: true
+    type?: true
+    object?: true
+    value?: true
+    values?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UserChannelDataAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserChannelData to aggregate.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserChannelData
+    **/
+    _count?: true | UserChannelDataCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserChannelDataMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserChannelDataMaxAggregateInputType
+  }
+
+  export type GetUserChannelDataAggregateType<T extends UserChannelDataAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserChannelData]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserChannelData[P]>
+      : GetScalarType<T[P], AggregateUserChannelData[P]>
+  }
+
+
+
+
+  export type UserChannelDataGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserChannelDataWhereInput
+    orderBy?: UserChannelDataOrderByWithAggregationInput | UserChannelDataOrderByWithAggregationInput[]
+    by: UserChannelDataScalarFieldEnum[] | UserChannelDataScalarFieldEnum
+    having?: UserChannelDataScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserChannelDataCountAggregateInputType | true
+    _min?: UserChannelDataMinAggregateInputType
+    _max?: UserChannelDataMaxAggregateInputType
+  }
+
+  export type UserChannelDataGroupByOutputType = {
+    id: string
+    channelId: string
+    key: string
+    version: string
+    type: $Enums.E_DATA_TYPES
+    object: JsonValue | null
+    value: string | null
+    values: string[]
+    ownerId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: UserChannelDataCountAggregateOutputType | null
+    _min: UserChannelDataMinAggregateOutputType | null
+    _max: UserChannelDataMaxAggregateOutputType | null
+  }
+
+  type GetUserChannelDataGroupByPayload<T extends UserChannelDataGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserChannelDataGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserChannelDataGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserChannelDataGroupByOutputType[P]>
+            : GetScalarType<T[P], UserChannelDataGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserChannelDataSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channelId?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userChannelData"]>
+
+
+  export type UserChannelDataSelectScalar = {
+    id?: boolean
+    channelId?: boolean
+    key?: boolean
+    version?: boolean
+    type?: boolean
+    object?: boolean
+    value?: boolean
+    values?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UserChannelDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $UserChannelDataPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserChannelData"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      channelId: string
+      key: string
+      version: string
+      type: $Enums.E_DATA_TYPES
+      object: Prisma.JsonValue | null
+      value: string | null
+      values: string[]
+      ownerId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["userChannelData"]>
+    composites: {}
+  }
+
+  type UserChannelDataGetPayload<S extends boolean | null | undefined | UserChannelDataDefaultArgs> = $Result.GetResult<Prisma.$UserChannelDataPayload, S>
+
+  type UserChannelDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<UserChannelDataFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: UserChannelDataCountAggregateInputType | true
+    }
+
+  export interface UserChannelDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserChannelData'], meta: { name: 'UserChannelData' } }
+    /**
+     * Find zero or one UserChannelData that matches the filter.
+     * @param {UserChannelDataFindUniqueArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserChannelDataFindUniqueArgs>(args: SelectSubset<T, UserChannelDataFindUniqueArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one UserChannelData that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {UserChannelDataFindUniqueOrThrowArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first UserChannelData that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataFindFirstArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserChannelDataFindFirstArgs>(args?: SelectSubset<T, UserChannelDataFindFirstArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first UserChannelData that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataFindFirstOrThrowArgs} args - Arguments to find a UserChannelData
+     * @example
+     * // Get one UserChannelData
+     * const userChannelData = await prisma.userChannelData.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more UserChannelData that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserChannelData
+     * const userChannelData = await prisma.userChannelData.findMany()
+     * 
+     * // Get first 10 UserChannelData
+     * const userChannelData = await prisma.userChannelData.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userChannelDataWithIdOnly = await prisma.userChannelData.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserChannelDataFindManyArgs>(args?: SelectSubset<T, UserChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a UserChannelData.
+     * @param {UserChannelDataCreateArgs} args - Arguments to create a UserChannelData.
+     * @example
+     * // Create one UserChannelData
+     * const UserChannelData = await prisma.userChannelData.create({
+     *   data: {
+     *     // ... data to create a UserChannelData
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserChannelDataCreateArgs>(args: SelectSubset<T, UserChannelDataCreateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many UserChannelData.
+     * @param {UserChannelDataCreateManyArgs} args - Arguments to create many UserChannelData.
+     * @example
+     * // Create many UserChannelData
+     * const userChannelData = await prisma.userChannelData.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserChannelDataCreateManyArgs>(args?: SelectSubset<T, UserChannelDataCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a UserChannelData.
+     * @param {UserChannelDataDeleteArgs} args - Arguments to delete one UserChannelData.
+     * @example
+     * // Delete one UserChannelData
+     * const UserChannelData = await prisma.userChannelData.delete({
+     *   where: {
+     *     // ... filter to delete one UserChannelData
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserChannelDataDeleteArgs>(args: SelectSubset<T, UserChannelDataDeleteArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one UserChannelData.
+     * @param {UserChannelDataUpdateArgs} args - Arguments to update one UserChannelData.
+     * @example
+     * // Update one UserChannelData
+     * const userChannelData = await prisma.userChannelData.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserChannelDataUpdateArgs>(args: SelectSubset<T, UserChannelDataUpdateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more UserChannelData.
+     * @param {UserChannelDataDeleteManyArgs} args - Arguments to filter UserChannelData to delete.
+     * @example
+     * // Delete a few UserChannelData
+     * const { count } = await prisma.userChannelData.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserChannelDataDeleteManyArgs>(args?: SelectSubset<T, UserChannelDataDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserChannelData
+     * const userChannelData = await prisma.userChannelData.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserChannelDataUpdateManyArgs>(args: SelectSubset<T, UserChannelDataUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one UserChannelData.
+     * @param {UserChannelDataUpsertArgs} args - Arguments to update or create a UserChannelData.
+     * @example
+     * // Update or create a UserChannelData
+     * const userChannelData = await prisma.userChannelData.upsert({
+     *   create: {
+     *     // ... data to create a UserChannelData
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserChannelData we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserChannelDataUpsertArgs>(args: SelectSubset<T, UserChannelDataUpsertArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+    /**
+     * Find zero or more UserChannelData that matches the filter.
+     * @param {UserChannelDataFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const userChannelData = await prisma.userChannelData.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+     */
+    findRaw(args?: UserChannelDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a UserChannelData.
+     * @param {UserChannelDataAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const userChannelData = await prisma.userChannelData.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: UserChannelDataAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataCountArgs} args - Arguments to filter UserChannelData to count.
+     * @example
+     * // Count the number of UserChannelData
+     * const count = await prisma.userChannelData.count({
+     *   where: {
+     *     // ... the filter for the UserChannelData we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserChannelDataCountArgs>(
+      args?: Subset<T, UserChannelDataCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserChannelDataCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserChannelDataAggregateArgs>(args: Subset<T, UserChannelDataAggregateArgs>): Prisma.PrismaPromise<GetUserChannelDataAggregateType<T>>
+
+    /**
+     * Group by UserChannelData.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserChannelDataGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserChannelDataGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserChannelDataGroupByArgs['orderBy'] }
+        : { orderBy?: UserChannelDataGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserChannelDataGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserChannelDataGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserChannelData model
+   */
+  readonly fields: UserChannelDataFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserChannelData.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserChannelData model
+   */ 
+  interface UserChannelDataFieldRefs {
+    readonly id: FieldRef<"UserChannelData", 'String'>
+    readonly channelId: FieldRef<"UserChannelData", 'String'>
+    readonly key: FieldRef<"UserChannelData", 'String'>
+    readonly version: FieldRef<"UserChannelData", 'String'>
+    readonly type: FieldRef<"UserChannelData", 'E_DATA_TYPES'>
+    readonly object: FieldRef<"UserChannelData", 'Json'>
+    readonly value: FieldRef<"UserChannelData", 'String'>
+    readonly values: FieldRef<"UserChannelData", 'String[]'>
+    readonly ownerId: FieldRef<"UserChannelData", 'String'>
+    readonly createdAt: FieldRef<"UserChannelData", 'DateTime'>
+    readonly updatedAt: FieldRef<"UserChannelData", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserChannelData findUnique
+   */
+  export type UserChannelDataFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData findUniqueOrThrow
+   */
+  export type UserChannelDataFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData findFirst
+   */
+  export type UserChannelDataFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserChannelData.
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserChannelData.
+     */
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * UserChannelData findFirstOrThrow
+   */
+  export type UserChannelDataFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserChannelData.
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserChannelData.
+     */
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * UserChannelData findMany
+   */
+  export type UserChannelDataFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter, which UserChannelData to fetch.
+     */
+    where?: UserChannelDataWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserChannelData to fetch.
+     */
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserChannelData.
+     */
+    cursor?: UserChannelDataWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserChannelData from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserChannelData.
+     */
+    skip?: number
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * UserChannelData create
+   */
+  export type UserChannelDataCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserChannelData.
+     */
+    data: XOR<UserChannelDataCreateInput, UserChannelDataUncheckedCreateInput>
+  }
+
+  /**
+   * UserChannelData createMany
+   */
+  export type UserChannelDataCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserChannelData.
+     */
+    data: UserChannelDataCreateManyInput | UserChannelDataCreateManyInput[]
+  }
+
+  /**
+   * UserChannelData update
+   */
+  export type UserChannelDataUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserChannelData.
+     */
+    data: XOR<UserChannelDataUpdateInput, UserChannelDataUncheckedUpdateInput>
+    /**
+     * Choose, which UserChannelData to update.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData updateMany
+   */
+  export type UserChannelDataUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserChannelData.
+     */
+    data: XOR<UserChannelDataUpdateManyMutationInput, UserChannelDataUncheckedUpdateManyInput>
+    /**
+     * Filter which UserChannelData to update
+     */
+    where?: UserChannelDataWhereInput
+  }
+
+  /**
+   * UserChannelData upsert
+   */
+  export type UserChannelDataUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserChannelData to update in case it exists.
+     */
+    where: UserChannelDataWhereUniqueInput
+    /**
+     * In case the UserChannelData found by the `where` argument doesn't exist, create a new UserChannelData with this data.
+     */
+    create: XOR<UserChannelDataCreateInput, UserChannelDataUncheckedCreateInput>
+    /**
+     * In case the UserChannelData was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserChannelDataUpdateInput, UserChannelDataUncheckedUpdateInput>
+  }
+
+  /**
+   * UserChannelData delete
+   */
+  export type UserChannelDataDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    /**
+     * Filter which UserChannelData to delete.
+     */
+    where: UserChannelDataWhereUniqueInput
+  }
+
+  /**
+   * UserChannelData deleteMany
+   */
+  export type UserChannelDataDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserChannelData to delete
+     */
+    where?: UserChannelDataWhereInput
+  }
+
+  /**
+   * UserChannelData findRaw
+   */
+  export type UserChannelDataFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * UserChannelData aggregateRaw
+   */
+  export type UserChannelDataAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * UserChannelData without action
+   */
+  export type UserChannelDataDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model ElementButtonLanguage
    */
 
@@ -9732,10 +11675,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends ElementButtonLanguageFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementButtonLanguageFindUniqueArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends ElementButtonLanguageFindUniqueArgs>(args: SelectSubset<T, ElementButtonLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one ElementButtonLanguage that matches the filter or throw an error with `error.code='P2025'` 
@@ -9748,10 +11689,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends ElementButtonLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first ElementButtonLanguage that matches the filter.
@@ -9765,10 +11704,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends ElementButtonLanguageFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementButtonLanguageFindFirstArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends ElementButtonLanguageFindFirstArgs>(args?: SelectSubset<T, ElementButtonLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first ElementButtonLanguage that matches the filter or
@@ -9783,10 +11720,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends ElementButtonLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more ElementButtonLanguages that matches the filter.
@@ -9803,10 +11738,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const elementButtonLanguageWithIdOnly = await prisma.elementButtonLanguage.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends ElementButtonLanguageFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementButtonLanguageFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends ElementButtonLanguageFindManyArgs>(args?: SelectSubset<T, ElementButtonLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a ElementButtonLanguage.
@@ -9819,10 +11752,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends ElementButtonLanguageCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementButtonLanguageCreateArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends ElementButtonLanguageCreateArgs>(args: SelectSubset<T, ElementButtonLanguageCreateArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many ElementButtonLanguages.
@@ -9835,10 +11766,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends ElementButtonLanguageCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementButtonLanguageCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends ElementButtonLanguageCreateManyArgs>(args?: SelectSubset<T, ElementButtonLanguageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a ElementButtonLanguage.
@@ -9851,10 +11780,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends ElementButtonLanguageDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementButtonLanguageDeleteArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends ElementButtonLanguageDeleteArgs>(args: SelectSubset<T, ElementButtonLanguageDeleteArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one ElementButtonLanguage.
@@ -9870,10 +11797,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends ElementButtonLanguageUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementButtonLanguageUpdateArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends ElementButtonLanguageUpdateArgs>(args: SelectSubset<T, ElementButtonLanguageUpdateArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more ElementButtonLanguages.
@@ -9886,10 +11811,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends ElementButtonLanguageDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementButtonLanguageDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends ElementButtonLanguageDeleteManyArgs>(args?: SelectSubset<T, ElementButtonLanguageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ElementButtonLanguages.
@@ -9907,10 +11830,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends ElementButtonLanguageUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementButtonLanguageUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends ElementButtonLanguageUpdateManyArgs>(args: SelectSubset<T, ElementButtonLanguageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one ElementButtonLanguage.
@@ -9928,10 +11849,8 @@ export namespace Prisma {
      *     // ... the filter for the ElementButtonLanguage we want to update
      *   }
      * })
-    **/
-    upsert<T extends ElementButtonLanguageUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementButtonLanguageUpsertArgs<ExtArgs>>
-    ): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends ElementButtonLanguageUpsertArgs>(args: SelectSubset<T, ElementButtonLanguageUpsertArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more ElementButtonLanguages that matches the filter.
@@ -9940,10 +11859,8 @@ export namespace Prisma {
      * const elementButtonLanguage = await prisma.elementButtonLanguage.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: ElementButtonLanguageFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: ElementButtonLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a ElementButtonLanguage.
@@ -9955,10 +11872,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: ElementButtonLanguageAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: ElementButtonLanguageAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of ElementButtonLanguages.
@@ -10098,30 +12014,29 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__ElementButtonLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -10677,10 +12592,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends ElementTextInputLanguageFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementTextInputLanguageFindUniqueArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends ElementTextInputLanguageFindUniqueArgs>(args: SelectSubset<T, ElementTextInputLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one ElementTextInputLanguage that matches the filter or throw an error with `error.code='P2025'` 
@@ -10693,10 +12606,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends ElementTextInputLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first ElementTextInputLanguage that matches the filter.
@@ -10710,10 +12621,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends ElementTextInputLanguageFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementTextInputLanguageFindFirstArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends ElementTextInputLanguageFindFirstArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first ElementTextInputLanguage that matches the filter or
@@ -10728,10 +12637,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends ElementTextInputLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more ElementTextInputLanguages that matches the filter.
@@ -10748,10 +12655,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const elementTextInputLanguageWithIdOnly = await prisma.elementTextInputLanguage.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends ElementTextInputLanguageFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementTextInputLanguageFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends ElementTextInputLanguageFindManyArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a ElementTextInputLanguage.
@@ -10764,10 +12669,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends ElementTextInputLanguageCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementTextInputLanguageCreateArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends ElementTextInputLanguageCreateArgs>(args: SelectSubset<T, ElementTextInputLanguageCreateArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many ElementTextInputLanguages.
@@ -10780,10 +12683,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends ElementTextInputLanguageCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementTextInputLanguageCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends ElementTextInputLanguageCreateManyArgs>(args?: SelectSubset<T, ElementTextInputLanguageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a ElementTextInputLanguage.
@@ -10796,10 +12697,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends ElementTextInputLanguageDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementTextInputLanguageDeleteArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends ElementTextInputLanguageDeleteArgs>(args: SelectSubset<T, ElementTextInputLanguageDeleteArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one ElementTextInputLanguage.
@@ -10815,10 +12714,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends ElementTextInputLanguageUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementTextInputLanguageUpdateArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends ElementTextInputLanguageUpdateArgs>(args: SelectSubset<T, ElementTextInputLanguageUpdateArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more ElementTextInputLanguages.
@@ -10831,10 +12728,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends ElementTextInputLanguageDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementTextInputLanguageDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends ElementTextInputLanguageDeleteManyArgs>(args?: SelectSubset<T, ElementTextInputLanguageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ElementTextInputLanguages.
@@ -10852,10 +12747,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends ElementTextInputLanguageUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementTextInputLanguageUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends ElementTextInputLanguageUpdateManyArgs>(args: SelectSubset<T, ElementTextInputLanguageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one ElementTextInputLanguage.
@@ -10873,10 +12766,8 @@ export namespace Prisma {
      *     // ... the filter for the ElementTextInputLanguage we want to update
      *   }
      * })
-    **/
-    upsert<T extends ElementTextInputLanguageUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementTextInputLanguageUpsertArgs<ExtArgs>>
-    ): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends ElementTextInputLanguageUpsertArgs>(args: SelectSubset<T, ElementTextInputLanguageUpsertArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more ElementTextInputLanguages that matches the filter.
@@ -10885,10 +12776,8 @@ export namespace Prisma {
      * const elementTextInputLanguage = await prisma.elementTextInputLanguage.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: ElementTextInputLanguageFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: ElementTextInputLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a ElementTextInputLanguage.
@@ -10900,10 +12789,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: ElementTextInputLanguageAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: ElementTextInputLanguageAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of ElementTextInputLanguages.
@@ -11043,30 +12931,29 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__ElementTextInputLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -11622,10 +13509,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends ElementSelectMenuLanguageFindUniqueArgs>(args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one ElementSelectMenuLanguage that matches the filter or throw an error with `error.code='P2025'` 
@@ -11638,10 +13523,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends ElementSelectMenuLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first ElementSelectMenuLanguage that matches the filter.
@@ -11655,10 +13538,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends ElementSelectMenuLanguageFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends ElementSelectMenuLanguageFindFirstArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first ElementSelectMenuLanguage that matches the filter or
@@ -11673,10 +13554,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends ElementSelectMenuLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more ElementSelectMenuLanguages that matches the filter.
@@ -11693,10 +13572,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const elementSelectMenuLanguageWithIdOnly = await prisma.elementSelectMenuLanguage.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends ElementSelectMenuLanguageFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementSelectMenuLanguageFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends ElementSelectMenuLanguageFindManyArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a ElementSelectMenuLanguage.
@@ -11709,10 +13586,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends ElementSelectMenuLanguageCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementSelectMenuLanguageCreateArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends ElementSelectMenuLanguageCreateArgs>(args: SelectSubset<T, ElementSelectMenuLanguageCreateArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many ElementSelectMenuLanguages.
@@ -11725,10 +13600,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends ElementSelectMenuLanguageCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementSelectMenuLanguageCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends ElementSelectMenuLanguageCreateManyArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a ElementSelectMenuLanguage.
@@ -11741,10 +13614,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends ElementSelectMenuLanguageDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementSelectMenuLanguageDeleteArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends ElementSelectMenuLanguageDeleteArgs>(args: SelectSubset<T, ElementSelectMenuLanguageDeleteArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one ElementSelectMenuLanguage.
@@ -11760,10 +13631,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends ElementSelectMenuLanguageUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementSelectMenuLanguageUpdateArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends ElementSelectMenuLanguageUpdateArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpdateArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more ElementSelectMenuLanguages.
@@ -11776,10 +13645,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends ElementSelectMenuLanguageDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ElementSelectMenuLanguageDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends ElementSelectMenuLanguageDeleteManyArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ElementSelectMenuLanguages.
@@ -11797,10 +13664,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends ElementSelectMenuLanguageUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementSelectMenuLanguageUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends ElementSelectMenuLanguageUpdateManyArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one ElementSelectMenuLanguage.
@@ -11818,10 +13683,8 @@ export namespace Prisma {
      *     // ... the filter for the ElementSelectMenuLanguage we want to update
      *   }
      * })
-    **/
-    upsert<T extends ElementSelectMenuLanguageUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, ElementSelectMenuLanguageUpsertArgs<ExtArgs>>
-    ): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends ElementSelectMenuLanguageUpsertArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpsertArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more ElementSelectMenuLanguages that matches the filter.
@@ -11830,10 +13693,8 @@ export namespace Prisma {
      * const elementSelectMenuLanguage = await prisma.elementSelectMenuLanguage.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: ElementSelectMenuLanguageFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: ElementSelectMenuLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a ElementSelectMenuLanguage.
@@ -11845,10 +13706,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: ElementSelectMenuLanguageAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: ElementSelectMenuLanguageAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of ElementSelectMenuLanguages.
@@ -11988,30 +13848,29 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__ElementSelectMenuLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -12567,10 +14426,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends EmbedLanguageFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, EmbedLanguageFindUniqueArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends EmbedLanguageFindUniqueArgs>(args: SelectSubset<T, EmbedLanguageFindUniqueArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one EmbedLanguage that matches the filter or throw an error with `error.code='P2025'` 
@@ -12583,10 +14440,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends EmbedLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first EmbedLanguage that matches the filter.
@@ -12600,10 +14455,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends EmbedLanguageFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, EmbedLanguageFindFirstArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends EmbedLanguageFindFirstArgs>(args?: SelectSubset<T, EmbedLanguageFindFirstArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first EmbedLanguage that matches the filter or
@@ -12618,10 +14471,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends EmbedLanguageFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, EmbedLanguageFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends EmbedLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, EmbedLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more EmbedLanguages that matches the filter.
@@ -12638,10 +14489,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const embedLanguageWithIdOnly = await prisma.embedLanguage.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends EmbedLanguageFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, EmbedLanguageFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends EmbedLanguageFindManyArgs>(args?: SelectSubset<T, EmbedLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a EmbedLanguage.
@@ -12654,10 +14503,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends EmbedLanguageCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, EmbedLanguageCreateArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends EmbedLanguageCreateArgs>(args: SelectSubset<T, EmbedLanguageCreateArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many EmbedLanguages.
@@ -12670,10 +14517,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends EmbedLanguageCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, EmbedLanguageCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends EmbedLanguageCreateManyArgs>(args?: SelectSubset<T, EmbedLanguageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a EmbedLanguage.
@@ -12686,10 +14531,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends EmbedLanguageDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, EmbedLanguageDeleteArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends EmbedLanguageDeleteArgs>(args: SelectSubset<T, EmbedLanguageDeleteArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one EmbedLanguage.
@@ -12705,10 +14548,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends EmbedLanguageUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, EmbedLanguageUpdateArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends EmbedLanguageUpdateArgs>(args: SelectSubset<T, EmbedLanguageUpdateArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more EmbedLanguages.
@@ -12721,10 +14562,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends EmbedLanguageDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, EmbedLanguageDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends EmbedLanguageDeleteManyArgs>(args?: SelectSubset<T, EmbedLanguageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more EmbedLanguages.
@@ -12742,10 +14581,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends EmbedLanguageUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, EmbedLanguageUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends EmbedLanguageUpdateManyArgs>(args: SelectSubset<T, EmbedLanguageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one EmbedLanguage.
@@ -12763,10 +14600,8 @@ export namespace Prisma {
      *     // ... the filter for the EmbedLanguage we want to update
      *   }
      * })
-    **/
-    upsert<T extends EmbedLanguageUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, EmbedLanguageUpsertArgs<ExtArgs>>
-    ): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends EmbedLanguageUpsertArgs>(args: SelectSubset<T, EmbedLanguageUpsertArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more EmbedLanguages that matches the filter.
@@ -12775,10 +14610,8 @@ export namespace Prisma {
      * const embedLanguage = await prisma.embedLanguage.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: EmbedLanguageFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: EmbedLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a EmbedLanguage.
@@ -12790,10 +14623,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: EmbedLanguageAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: EmbedLanguageAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of EmbedLanguages.
@@ -12933,30 +14765,29 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__EmbedLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -13512,10 +15343,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends MarkdownLanguageFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, MarkdownLanguageFindUniqueArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends MarkdownLanguageFindUniqueArgs>(args: SelectSubset<T, MarkdownLanguageFindUniqueArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one MarkdownLanguage that matches the filter or throw an error with `error.code='P2025'` 
@@ -13528,10 +15357,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends MarkdownLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first MarkdownLanguage that matches the filter.
@@ -13545,10 +15372,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends MarkdownLanguageFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, MarkdownLanguageFindFirstArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends MarkdownLanguageFindFirstArgs>(args?: SelectSubset<T, MarkdownLanguageFindFirstArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first MarkdownLanguage that matches the filter or
@@ -13563,10 +15388,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends MarkdownLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more MarkdownLanguages that matches the filter.
@@ -13583,10 +15406,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const markdownLanguageWithIdOnly = await prisma.markdownLanguage.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends MarkdownLanguageFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, MarkdownLanguageFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends MarkdownLanguageFindManyArgs>(args?: SelectSubset<T, MarkdownLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a MarkdownLanguage.
@@ -13599,10 +15420,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends MarkdownLanguageCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, MarkdownLanguageCreateArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends MarkdownLanguageCreateArgs>(args: SelectSubset<T, MarkdownLanguageCreateArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many MarkdownLanguages.
@@ -13615,10 +15434,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends MarkdownLanguageCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, MarkdownLanguageCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends MarkdownLanguageCreateManyArgs>(args?: SelectSubset<T, MarkdownLanguageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a MarkdownLanguage.
@@ -13631,10 +15448,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends MarkdownLanguageDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, MarkdownLanguageDeleteArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends MarkdownLanguageDeleteArgs>(args: SelectSubset<T, MarkdownLanguageDeleteArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one MarkdownLanguage.
@@ -13650,10 +15465,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends MarkdownLanguageUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, MarkdownLanguageUpdateArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends MarkdownLanguageUpdateArgs>(args: SelectSubset<T, MarkdownLanguageUpdateArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more MarkdownLanguages.
@@ -13666,10 +15479,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends MarkdownLanguageDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, MarkdownLanguageDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends MarkdownLanguageDeleteManyArgs>(args?: SelectSubset<T, MarkdownLanguageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more MarkdownLanguages.
@@ -13687,10 +15498,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends MarkdownLanguageUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, MarkdownLanguageUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends MarkdownLanguageUpdateManyArgs>(args: SelectSubset<T, MarkdownLanguageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one MarkdownLanguage.
@@ -13708,10 +15517,8 @@ export namespace Prisma {
      *     // ... the filter for the MarkdownLanguage we want to update
      *   }
      * })
-    **/
-    upsert<T extends MarkdownLanguageUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, MarkdownLanguageUpsertArgs<ExtArgs>>
-    ): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends MarkdownLanguageUpsertArgs>(args: SelectSubset<T, MarkdownLanguageUpsertArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more MarkdownLanguages that matches the filter.
@@ -13720,10 +15527,8 @@ export namespace Prisma {
      * const markdownLanguage = await prisma.markdownLanguage.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: MarkdownLanguageFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: MarkdownLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a MarkdownLanguage.
@@ -13735,10 +15540,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: MarkdownLanguageAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: MarkdownLanguageAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of MarkdownLanguages.
@@ -13878,30 +15682,29 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__MarkdownLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -14457,10 +16260,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUnique<T extends ModalLanguageFindUniqueArgs<ExtArgs>>(
-      args: SelectSubset<T, ModalLanguageFindUniqueArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+     */
+    findUnique<T extends ModalLanguageFindUniqueArgs>(args: SelectSubset<T, ModalLanguageFindUniqueArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
      * Find one ModalLanguage that matches the filter or throw an error with `error.code='P2025'` 
@@ -14473,10 +16274,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findUniqueOrThrow<T extends ModalLanguageFindUniqueOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ModalLanguageFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+     */
+    findUniqueOrThrow<T extends ModalLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ModalLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
      * Find the first ModalLanguage that matches the filter.
@@ -14490,10 +16289,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirst<T extends ModalLanguageFindFirstArgs<ExtArgs>>(
-      args?: SelectSubset<T, ModalLanguageFindFirstArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+     */
+    findFirst<T extends ModalLanguageFindFirstArgs>(args?: SelectSubset<T, ModalLanguageFindFirstArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
      * Find the first ModalLanguage that matches the filter or
@@ -14508,10 +16305,8 @@ export namespace Prisma {
      *     // ... provide filter here
      *   }
      * })
-    **/
-    findFirstOrThrow<T extends ModalLanguageFindFirstOrThrowArgs<ExtArgs>>(
-      args?: SelectSubset<T, ModalLanguageFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+     */
+    findFirstOrThrow<T extends ModalLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ModalLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
      * Find zero or more ModalLanguages that matches the filter.
@@ -14528,10 +16323,8 @@ export namespace Prisma {
      * // Only select the `id`
      * const modalLanguageWithIdOnly = await prisma.modalLanguage.findMany({ select: { id: true } })
      * 
-    **/
-    findMany<T extends ModalLanguageFindManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ModalLanguageFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'findMany'>>
+     */
+    findMany<T extends ModalLanguageFindManyArgs>(args?: SelectSubset<T, ModalLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findMany">>
 
     /**
      * Create a ModalLanguage.
@@ -14544,10 +16337,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    create<T extends ModalLanguageCreateArgs<ExtArgs>>(
-      args: SelectSubset<T, ModalLanguageCreateArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+     */
+    create<T extends ModalLanguageCreateArgs>(args: SelectSubset<T, ModalLanguageCreateArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
      * Create many ModalLanguages.
@@ -14560,10 +16351,8 @@ export namespace Prisma {
      *   ]
      * })
      *     
-    **/
-    createMany<T extends ModalLanguageCreateManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ModalLanguageCreateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    createMany<T extends ModalLanguageCreateManyArgs>(args?: SelectSubset<T, ModalLanguageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Delete a ModalLanguage.
@@ -14576,10 +16365,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    delete<T extends ModalLanguageDeleteArgs<ExtArgs>>(
-      args: SelectSubset<T, ModalLanguageDeleteArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+     */
+    delete<T extends ModalLanguageDeleteArgs>(args: SelectSubset<T, ModalLanguageDeleteArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
      * Update one ModalLanguage.
@@ -14595,10 +16382,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    update<T extends ModalLanguageUpdateArgs<ExtArgs>>(
-      args: SelectSubset<T, ModalLanguageUpdateArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+     */
+    update<T extends ModalLanguageUpdateArgs>(args: SelectSubset<T, ModalLanguageUpdateArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
      * Delete zero or more ModalLanguages.
@@ -14611,10 +16396,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    deleteMany<T extends ModalLanguageDeleteManyArgs<ExtArgs>>(
-      args?: SelectSubset<T, ModalLanguageDeleteManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    deleteMany<T extends ModalLanguageDeleteManyArgs>(args?: SelectSubset<T, ModalLanguageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ModalLanguages.
@@ -14632,10 +16415,8 @@ export namespace Prisma {
      *   }
      * })
      * 
-    **/
-    updateMany<T extends ModalLanguageUpdateManyArgs<ExtArgs>>(
-      args: SelectSubset<T, ModalLanguageUpdateManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<BatchPayload>
+     */
+    updateMany<T extends ModalLanguageUpdateManyArgs>(args: SelectSubset<T, ModalLanguageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create or update one ModalLanguage.
@@ -14653,10 +16434,8 @@ export namespace Prisma {
      *     // ... the filter for the ModalLanguage we want to update
      *   }
      * })
-    **/
-    upsert<T extends ModalLanguageUpsertArgs<ExtArgs>>(
-      args: SelectSubset<T, ModalLanguageUpsertArgs<ExtArgs>>
-    ): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+     */
+    upsert<T extends ModalLanguageUpsertArgs>(args: SelectSubset<T, ModalLanguageUpsertArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
     /**
      * Find zero or more ModalLanguages that matches the filter.
@@ -14665,10 +16444,8 @@ export namespace Prisma {
      * const modalLanguage = await prisma.modalLanguage.findRaw({
      *   filter: { age: { $gt: 25 } } 
      * })
-    **/
-    findRaw(
-      args?: ModalLanguageFindRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    findRaw(args?: ModalLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
      * Perform aggregation operations on a ModalLanguage.
@@ -14680,10 +16457,9 @@ export namespace Prisma {
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
-    **/
-    aggregateRaw(
-      args?: ModalLanguageAggregateRawArgs
-    ): Prisma.PrismaPromise<JsonObject>
+     */
+    aggregateRaw(args?: ModalLanguageAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
 
     /**
      * Count the number of ModalLanguages.
@@ -14823,30 +16599,29 @@ export namespace Prisma {
    * https://github.com/prisma/prisma-client-js/issues/707
    */
   export interface Prisma__ModalLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: 'PrismaPromise';
-
-
+    readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
   }
+
 
 
 
@@ -15202,6 +16977,34 @@ export namespace Prisma {
    * Enums
    */
 
+  export const ConfigScalarFieldEnum: {
+    id: 'id',
+    key: 'key',
+    version: 'version',
+    type: 'type',
+    object: 'object',
+    value: 'value',
+    values: 'values',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ConfigScalarFieldEnum = (typeof ConfigScalarFieldEnum)[keyof typeof ConfigScalarFieldEnum]
+
+
+  export const CategoryScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    categoryId: 'categoryId',
+    guildId: 'guildId',
+    createdAtDiscord: 'createdAtDiscord',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
   export const GuildScalarFieldEnum: {
     id: 'id',
     guildId: 'guildId',
@@ -15218,29 +17021,17 @@ export namespace Prisma {
   export const GuildDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
+    version: 'version',
     type: 'type',
     object: 'object',
+    value: 'value',
     values: 'values',
-    version: 'version',
     ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type GuildDataScalarFieldEnum = (typeof GuildDataScalarFieldEnum)[keyof typeof GuildDataScalarFieldEnum]
-
-
-  export const CategoryScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    categoryId: 'categoryId',
-    guildId: 'guildId',
-    createdAtDiscord: 'createdAtDiscord',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
   export const ChannelScalarFieldEnum: {
@@ -15250,6 +17041,7 @@ export namespace Prisma {
     userOwnerId: 'userOwnerId',
     categoryId: 'categoryId',
     ownerChannelId: 'ownerChannelId',
+    version: 'version',
     internalType: 'internalType',
     createdAtDiscord: 'createdAtDiscord',
     createdAt: 'createdAt',
@@ -15262,10 +17054,11 @@ export namespace Prisma {
   export const ChannelDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
+    version: 'version',
     type: 'type',
     object: 'object',
+    value: 'value',
     values: 'values',
-    version: 'version',
     ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -15288,16 +17081,34 @@ export namespace Prisma {
   export const UserDataScalarFieldEnum: {
     id: 'id',
     key: 'key',
+    version: 'version',
     type: 'type',
     object: 'object',
+    value: 'value',
     values: 'values',
-    version: 'version',
     ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type UserDataScalarFieldEnum = (typeof UserDataScalarFieldEnum)[keyof typeof UserDataScalarFieldEnum]
+
+
+  export const UserChannelDataScalarFieldEnum: {
+    id: 'id',
+    channelId: 'channelId',
+    key: 'key',
+    version: 'version',
+    type: 'type',
+    object: 'object',
+    value: 'value',
+    values: 'values',
+    ownerId: 'ownerId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UserChannelDataScalarFieldEnum = (typeof UserChannelDataScalarFieldEnum)[keyof typeof UserChannelDataScalarFieldEnum]
 
 
   export const ElementButtonLanguageScalarFieldEnum: {
@@ -15396,9 +17207,23 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'E_DATA_TYPES'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type EnumE_DATA_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_DATA_TYPES'>
+    
+
+
+  /**
+   * Reference to a field of type 'E_DATA_TYPES[]'
+   */
+  export type ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'E_DATA_TYPES[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -15417,13 +17242,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -15434,6 +17252,13 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -15467,6 +17292,143 @@ export namespace Prisma {
    * Deep Input Types
    */
 
+
+  export type ConfigWhereInput = {
+    AND?: ConfigWhereInput | ConfigWhereInput[]
+    OR?: ConfigWhereInput[]
+    NOT?: ConfigWhereInput | ConfigWhereInput[]
+    id?: StringFilter<"Config"> | string
+    key?: StringFilter<"Config"> | string
+    version?: StringFilter<"Config"> | string
+    type?: EnumE_DATA_TYPESFilter<"Config"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"Config">
+    value?: StringNullableFilter<"Config"> | string | null
+    values?: StringNullableListFilter<"Config">
+    createdAt?: DateTimeFilter<"Config"> | Date | string
+    updatedAt?: DateTimeFilter<"Config"> | Date | string
+  }
+
+  export type ConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    key_version?: ConfigKeyVersionCompoundUniqueInput
+    AND?: ConfigWhereInput | ConfigWhereInput[]
+    OR?: ConfigWhereInput[]
+    NOT?: ConfigWhereInput | ConfigWhereInput[]
+    key?: StringFilter<"Config"> | string
+    version?: StringFilter<"Config"> | string
+    type?: EnumE_DATA_TYPESFilter<"Config"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"Config">
+    value?: StringNullableFilter<"Config"> | string | null
+    values?: StringNullableListFilter<"Config">
+    createdAt?: DateTimeFilter<"Config"> | Date | string
+    updatedAt?: DateTimeFilter<"Config"> | Date | string
+  }, "id" | "key_version">
+
+  export type ConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ConfigCountOrderByAggregateInput
+    _max?: ConfigMaxOrderByAggregateInput
+    _min?: ConfigMinOrderByAggregateInput
+  }
+
+  export type ConfigScalarWhereWithAggregatesInput = {
+    AND?: ConfigScalarWhereWithAggregatesInput | ConfigScalarWhereWithAggregatesInput[]
+    OR?: ConfigScalarWhereWithAggregatesInput[]
+    NOT?: ConfigScalarWhereWithAggregatesInput | ConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Config"> | string
+    key?: StringWithAggregatesFilter<"Config"> | string
+    version?: StringWithAggregatesFilter<"Config"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"Config"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableWithAggregatesFilter<"Config">
+    value?: StringNullableWithAggregatesFilter<"Config"> | string | null
+    values?: StringNullableListFilter<"Config">
+    createdAt?: DateTimeWithAggregatesFilter<"Config"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Config"> | Date | string
+  }
+
+  export type CategoryWhereInput = {
+    AND?: CategoryWhereInput | CategoryWhereInput[]
+    OR?: CategoryWhereInput[]
+    NOT?: CategoryWhereInput | CategoryWhereInput[]
+    id?: StringFilter<"Category"> | string
+    name?: StringFilter<"Category"> | string
+    categoryId?: StringFilter<"Category"> | string
+    guildId?: StringFilter<"Category"> | string
+    createdAtDiscord?: IntFilter<"Category"> | number
+    createdAt?: DateTimeFilter<"Category"> | Date | string
+    updatedAt?: DateTimeFilter<"Category"> | Date | string
+  }
+
+  export type CategoryOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    categoryId?: SortOrder
+    guildId?: SortOrder
+    createdAtDiscord?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CategoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CategoryWhereInput | CategoryWhereInput[]
+    OR?: CategoryWhereInput[]
+    NOT?: CategoryWhereInput | CategoryWhereInput[]
+    name?: StringFilter<"Category"> | string
+    categoryId?: StringFilter<"Category"> | string
+    guildId?: StringFilter<"Category"> | string
+    createdAtDiscord?: IntFilter<"Category"> | number
+    createdAt?: DateTimeFilter<"Category"> | Date | string
+    updatedAt?: DateTimeFilter<"Category"> | Date | string
+  }, "id">
+
+  export type CategoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    categoryId?: SortOrder
+    guildId?: SortOrder
+    createdAtDiscord?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CategoryCountOrderByAggregateInput
+    _avg?: CategoryAvgOrderByAggregateInput
+    _max?: CategoryMaxOrderByAggregateInput
+    _min?: CategoryMinOrderByAggregateInput
+    _sum?: CategorySumOrderByAggregateInput
+  }
+
+  export type CategoryScalarWhereWithAggregatesInput = {
+    AND?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
+    OR?: CategoryScalarWhereWithAggregatesInput[]
+    NOT?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Category"> | string
+    name?: StringWithAggregatesFilter<"Category"> | string
+    categoryId?: StringWithAggregatesFilter<"Category"> | string
+    guildId?: StringWithAggregatesFilter<"Category"> | string
+    createdAtDiscord?: IntWithAggregatesFilter<"Category"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
+  }
 
   export type GuildWhereInput = {
     AND?: GuildWhereInput | GuildWhereInput[]
@@ -15539,10 +17501,11 @@ export namespace Prisma {
     NOT?: GuildDataWhereInput | GuildDataWhereInput[]
     id?: StringFilter<"GuildData"> | string
     key?: StringFilter<"GuildData"> | string
-    type?: StringFilter<"GuildData"> | string
+    version?: StringFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"GuildData">
+    value?: StringNullableFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableFilter<"GuildData"> | string | null
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
@@ -15552,10 +17515,11 @@ export namespace Prisma {
   export type GuildDataOrderByWithRelationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15564,28 +17528,30 @@ export namespace Prisma {
 
   export type GuildDataWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    ownerId_key?: GuildDataOwnerIdKeyCompoundUniqueInput
+    ownerId_key_version?: GuildDataOwnerIdKeyVersionCompoundUniqueInput
     AND?: GuildDataWhereInput | GuildDataWhereInput[]
     OR?: GuildDataWhereInput[]
     NOT?: GuildDataWhereInput | GuildDataWhereInput[]
     key?: StringFilter<"GuildData"> | string
-    type?: StringFilter<"GuildData"> | string
+    version?: StringFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"GuildData">
+    value?: StringNullableFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableFilter<"GuildData"> | string | null
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
     guild?: XOR<GuildRelationFilter, GuildWhereInput>
-  }, "id" | "ownerId_key">
+  }, "id" | "ownerId_key_version">
 
   export type GuildDataOrderByWithAggregationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15600,77 +17566,14 @@ export namespace Prisma {
     NOT?: GuildDataScalarWhereWithAggregatesInput | GuildDataScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"GuildData"> | string
     key?: StringWithAggregatesFilter<"GuildData"> | string
-    type?: StringWithAggregatesFilter<"GuildData"> | string
+    version?: StringWithAggregatesFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableWithAggregatesFilter<"GuildData">
+    value?: StringNullableWithAggregatesFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableWithAggregatesFilter<"GuildData"> | string | null
     ownerId?: StringWithAggregatesFilter<"GuildData"> | string
     createdAt?: DateTimeWithAggregatesFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GuildData"> | Date | string
-  }
-
-  export type CategoryWhereInput = {
-    AND?: CategoryWhereInput | CategoryWhereInput[]
-    OR?: CategoryWhereInput[]
-    NOT?: CategoryWhereInput | CategoryWhereInput[]
-    id?: StringFilter<"Category"> | string
-    name?: StringFilter<"Category"> | string
-    categoryId?: StringFilter<"Category"> | string
-    guildId?: StringFilter<"Category"> | string
-    createdAtDiscord?: IntFilter<"Category"> | number
-    createdAt?: DateTimeFilter<"Category"> | Date | string
-    updatedAt?: DateTimeFilter<"Category"> | Date | string
-  }
-
-  export type CategoryOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    categoryId?: SortOrder
-    guildId?: SortOrder
-    createdAtDiscord?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type CategoryWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: CategoryWhereInput | CategoryWhereInput[]
-    OR?: CategoryWhereInput[]
-    NOT?: CategoryWhereInput | CategoryWhereInput[]
-    name?: StringFilter<"Category"> | string
-    categoryId?: StringFilter<"Category"> | string
-    guildId?: StringFilter<"Category"> | string
-    createdAtDiscord?: IntFilter<"Category"> | number
-    createdAt?: DateTimeFilter<"Category"> | Date | string
-    updatedAt?: DateTimeFilter<"Category"> | Date | string
-  }, "id">
-
-  export type CategoryOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    categoryId?: SortOrder
-    guildId?: SortOrder
-    createdAtDiscord?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: CategoryCountOrderByAggregateInput
-    _avg?: CategoryAvgOrderByAggregateInput
-    _max?: CategoryMaxOrderByAggregateInput
-    _min?: CategoryMinOrderByAggregateInput
-    _sum?: CategorySumOrderByAggregateInput
-  }
-
-  export type CategoryScalarWhereWithAggregatesInput = {
-    AND?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
-    OR?: CategoryScalarWhereWithAggregatesInput[]
-    NOT?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Category"> | string
-    name?: StringWithAggregatesFilter<"Category"> | string
-    categoryId?: StringWithAggregatesFilter<"Category"> | string
-    guildId?: StringWithAggregatesFilter<"Category"> | string
-    createdAtDiscord?: IntWithAggregatesFilter<"Category"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
   }
 
   export type ChannelWhereInput = {
@@ -15683,6 +17586,7 @@ export namespace Prisma {
     userOwnerId?: StringFilter<"Channel"> | string
     categoryId?: StringNullableFilter<"Channel"> | string | null
     ownerChannelId?: StringNullableFilter<"Channel"> | string | null
+    version?: StringFilter<"Channel"> | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFilter<"Channel"> | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFilter<"Channel"> | number
     createdAt?: DateTimeFilter<"Channel"> | Date | string
@@ -15697,6 +17601,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -15714,6 +17619,7 @@ export namespace Prisma {
     userOwnerId?: StringFilter<"Channel"> | string
     categoryId?: StringNullableFilter<"Channel"> | string | null
     ownerChannelId?: StringNullableFilter<"Channel"> | string | null
+    version?: StringFilter<"Channel"> | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFilter<"Channel"> | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFilter<"Channel"> | number
     createdAt?: DateTimeFilter<"Channel"> | Date | string
@@ -15728,6 +17634,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -15749,6 +17656,7 @@ export namespace Prisma {
     userOwnerId?: StringWithAggregatesFilter<"Channel"> | string
     categoryId?: StringNullableWithAggregatesFilter<"Channel"> | string | null
     ownerChannelId?: StringNullableWithAggregatesFilter<"Channel"> | string | null
+    version?: StringWithAggregatesFilter<"Channel"> | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESWithAggregatesFilter<"Channel"> | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntWithAggregatesFilter<"Channel"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Channel"> | Date | string
@@ -15761,10 +17669,11 @@ export namespace Prisma {
     NOT?: ChannelDataWhereInput | ChannelDataWhereInput[]
     id?: StringFilter<"ChannelData"> | string
     key?: StringFilter<"ChannelData"> | string
-    type?: StringFilter<"ChannelData"> | string
+    version?: StringFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"ChannelData">
+    value?: StringNullableFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableFilter<"ChannelData"> | string | null
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
@@ -15774,10 +17683,11 @@ export namespace Prisma {
   export type ChannelDataOrderByWithRelationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15786,28 +17696,30 @@ export namespace Prisma {
 
   export type ChannelDataWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    ownerId_key?: ChannelDataOwnerIdKeyCompoundUniqueInput
+    ownerId_key_version?: ChannelDataOwnerIdKeyVersionCompoundUniqueInput
     AND?: ChannelDataWhereInput | ChannelDataWhereInput[]
     OR?: ChannelDataWhereInput[]
     NOT?: ChannelDataWhereInput | ChannelDataWhereInput[]
     key?: StringFilter<"ChannelData"> | string
-    type?: StringFilter<"ChannelData"> | string
+    version?: StringFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"ChannelData">
+    value?: StringNullableFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableFilter<"ChannelData"> | string | null
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
     channel?: XOR<ChannelRelationFilter, ChannelWhereInput>
-  }, "id" | "ownerId_key">
+  }, "id" | "ownerId_key_version">
 
   export type ChannelDataOrderByWithAggregationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15822,10 +17734,11 @@ export namespace Prisma {
     NOT?: ChannelDataScalarWhereWithAggregatesInput | ChannelDataScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ChannelData"> | string
     key?: StringWithAggregatesFilter<"ChannelData"> | string
-    type?: StringWithAggregatesFilter<"ChannelData"> | string
+    version?: StringWithAggregatesFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableWithAggregatesFilter<"ChannelData">
+    value?: StringNullableWithAggregatesFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableWithAggregatesFilter<"ChannelData"> | string | null
     ownerId?: StringWithAggregatesFilter<"ChannelData"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ChannelData"> | Date | string
@@ -15841,6 +17754,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     data?: UserDataListRelationFilter
+    channelData?: UserChannelDataListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -15850,6 +17764,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     data?: UserDataOrderByRelationAggregateInput
+    channelData?: UserChannelDataOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -15862,6 +17777,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     data?: UserDataListRelationFilter
+    channelData?: UserChannelDataListRelationFilter
   }, "id" | "userId">
 
   export type UserOrderByWithAggregationInput = {
@@ -15892,10 +17808,11 @@ export namespace Prisma {
     NOT?: UserDataWhereInput | UserDataWhereInput[]
     id?: StringFilter<"UserData"> | string
     key?: StringFilter<"UserData"> | string
-    type?: StringFilter<"UserData"> | string
+    version?: StringFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"UserData">
+    value?: StringNullableFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableFilter<"UserData"> | string | null
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
@@ -15905,10 +17822,11 @@ export namespace Prisma {
   export type UserDataOrderByWithRelationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15917,28 +17835,30 @@ export namespace Prisma {
 
   export type UserDataWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    ownerId_key?: UserDataOwnerIdKeyCompoundUniqueInput
+    ownerId_key_version?: UserDataOwnerIdKeyVersionCompoundUniqueInput
     AND?: UserDataWhereInput | UserDataWhereInput[]
     OR?: UserDataWhereInput[]
     NOT?: UserDataWhereInput | UserDataWhereInput[]
     key?: StringFilter<"UserData"> | string
-    type?: StringFilter<"UserData"> | string
+    version?: StringFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"UserData">
+    value?: StringNullableFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableFilter<"UserData"> | string | null
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "ownerId_key">
+  }, "id" | "ownerId_key_version">
 
   export type UserDataOrderByWithAggregationInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15953,13 +17873,100 @@ export namespace Prisma {
     NOT?: UserDataScalarWhereWithAggregatesInput | UserDataScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"UserData"> | string
     key?: StringWithAggregatesFilter<"UserData"> | string
-    type?: StringWithAggregatesFilter<"UserData"> | string
+    version?: StringWithAggregatesFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableWithAggregatesFilter<"UserData">
+    value?: StringNullableWithAggregatesFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableWithAggregatesFilter<"UserData"> | string | null
     ownerId?: StringWithAggregatesFilter<"UserData"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserData"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserData"> | Date | string
+  }
+
+  export type UserChannelDataWhereInput = {
+    AND?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    OR?: UserChannelDataWhereInput[]
+    NOT?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    id?: StringFilter<"UserChannelData"> | string
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type UserChannelDataOrderByWithRelationInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type UserChannelDataWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    ownerId_channelId_key_version?: UserChannelDataOwnerIdChannelIdKeyVersionCompoundUniqueInput
+    AND?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    OR?: UserChannelDataWhereInput[]
+    NOT?: UserChannelDataWhereInput | UserChannelDataWhereInput[]
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "ownerId_channelId_key_version">
+
+  export type UserChannelDataOrderByWithAggregationInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UserChannelDataCountOrderByAggregateInput
+    _max?: UserChannelDataMaxOrderByAggregateInput
+    _min?: UserChannelDataMinOrderByAggregateInput
+  }
+
+  export type UserChannelDataScalarWhereWithAggregatesInput = {
+    AND?: UserChannelDataScalarWhereWithAggregatesInput | UserChannelDataScalarWhereWithAggregatesInput[]
+    OR?: UserChannelDataScalarWhereWithAggregatesInput[]
+    NOT?: UserChannelDataScalarWhereWithAggregatesInput | UserChannelDataScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserChannelData"> | string
+    channelId?: StringWithAggregatesFilter<"UserChannelData"> | string
+    key?: StringWithAggregatesFilter<"UserChannelData"> | string
+    version?: StringWithAggregatesFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESWithAggregatesFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableWithAggregatesFilter<"UserChannelData">
+    value?: StringNullableWithAggregatesFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringWithAggregatesFilter<"UserChannelData"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UserChannelData"> | Date | string
   }
 
   export type ElementButtonLanguageWhereInput = {
@@ -16280,6 +18287,152 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ModalLanguage"> | Date | string
   }
 
+  export type ConfigCreateInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: ConfigCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ConfigUncheckedCreateInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: ConfigCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ConfigUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConfigUncheckedUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConfigCreateManyInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: ConfigCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ConfigUpdateManyMutationInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConfigUncheckedUpdateManyInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: ConfigUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryCreateInput = {
+    id?: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CategoryUncheckedCreateInput = {
+    id?: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CategoryUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryUncheckedUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryCreateManyInput = {
+    id?: string
+    name: string
+    categoryId: string
+    guildId: string
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CategoryUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryUncheckedUpdateManyInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type GuildCreateInput = {
     id?: string
     guildId: string
@@ -16353,10 +18506,11 @@ export namespace Prisma {
   export type GuildDataCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     guild: GuildCreateNestedOneWithoutDataInput
@@ -16365,10 +18519,11 @@ export namespace Prisma {
   export type GuildDataUncheckedCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16376,10 +18531,11 @@ export namespace Prisma {
 
   export type GuildDataUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     guild?: GuildUpdateOneRequiredWithoutDataNestedInput
@@ -16387,10 +18543,11 @@ export namespace Prisma {
 
   export type GuildDataUncheckedUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16399,10 +18556,11 @@ export namespace Prisma {
   export type GuildDataCreateManyInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16410,87 +18568,23 @@ export namespace Prisma {
 
   export type GuildDataUpdateManyMutationInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildDataUncheckedUpdateManyInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryCreateInput = {
-    id?: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CategoryUncheckedCreateInput = {
-    id?: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CategoryUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryUncheckedUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryCreateManyInput = {
-    id?: string
-    name: string
-    categoryId: string
-    guildId: string
-    createdAtDiscord: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type CategoryUpdateManyMutationInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CategoryUncheckedUpdateManyInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
-    guildId?: StringFieldUpdateOperationsInput | string
-    createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16502,6 +18596,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -16516,6 +18611,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -16529,6 +18625,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16542,6 +18639,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16556,6 +18654,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -16568,6 +18667,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16580,6 +18680,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16589,10 +18690,11 @@ export namespace Prisma {
   export type ChannelDataCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     channel: ChannelCreateNestedOneWithoutDataInput
@@ -16601,10 +18703,11 @@ export namespace Prisma {
   export type ChannelDataUncheckedCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16612,10 +18715,11 @@ export namespace Prisma {
 
   export type ChannelDataUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     channel?: ChannelUpdateOneRequiredWithoutDataNestedInput
@@ -16623,10 +18727,11 @@ export namespace Prisma {
 
   export type ChannelDataUncheckedUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16635,10 +18740,11 @@ export namespace Prisma {
   export type ChannelDataCreateManyInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16646,20 +18752,22 @@ export namespace Prisma {
 
   export type ChannelDataUpdateManyMutationInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelDataUncheckedUpdateManyInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16672,6 +18780,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     data?: UserDataCreateNestedManyWithoutUserInput
+    channelData?: UserChannelDataCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -16681,6 +18790,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     data?: UserDataUncheckedCreateNestedManyWithoutUserInput
+    channelData?: UserChannelDataUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -16689,6 +18799,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: UserDataUpdateManyWithoutUserNestedInput
+    channelData?: UserChannelDataUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -16697,6 +18808,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: UserDataUncheckedUpdateManyWithoutUserNestedInput
+    channelData?: UserChannelDataUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -16724,10 +18836,11 @@ export namespace Prisma {
   export type UserDataCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutDataInput
@@ -16736,10 +18849,11 @@ export namespace Prisma {
   export type UserDataUncheckedCreateInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16747,10 +18861,11 @@ export namespace Prisma {
 
   export type UserDataUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutDataNestedInput
@@ -16758,10 +18873,11 @@ export namespace Prisma {
 
   export type UserDataUncheckedUpdateInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16770,10 +18886,11 @@ export namespace Prisma {
   export type UserDataCreateManyInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16781,20 +18898,115 @@ export namespace Prisma {
 
   export type UserDataUpdateManyMutationInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserDataUncheckedUpdateManyInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataCreateInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChannelDataInput
+  }
+
+  export type UserChannelDataUncheckedCreateInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataUpdateInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChannelDataNestedInput
+  }
+
+  export type UserChannelDataUncheckedUpdateInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataCreateManyInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataUpdateManyMutationInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateManyInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17169,9 +19381,47 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type EnumE_DATA_TYPESFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
+  }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    isSet?: boolean
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    isSet?: boolean
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -17185,56 +19435,41 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-    isSet?: boolean
+  export type ConfigKeyVersionCompoundUniqueInput = {
+    key: string
+    version: string
   }
 
-  export type GuildDataListRelationFilter = {
-    every?: GuildDataWhereInput
-    some?: GuildDataWhereInput
-    none?: GuildDataWhereInput
-  }
-
-  export type GuildDataOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type GuildCountOrderByAggregateInput = {
+  export type ConfigCountOrderByAggregateInput = {
     id?: SortOrder
-    guildId?: SortOrder
-    name?: SortOrder
-    isInGuild?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    updatedAtInternal?: SortOrder
   }
 
-  export type GuildMaxOrderByAggregateInput = {
+  export type ConfigMaxOrderByAggregateInput = {
     id?: SortOrder
-    guildId?: SortOrder
-    name?: SortOrder
-    isInGuild?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    updatedAtInternal?: SortOrder
   }
 
-  export type GuildMinOrderByAggregateInput = {
+  export type ConfigMinOrderByAggregateInput = {
     id?: SortOrder
-    guildId?: SortOrder
-    name?: SortOrder
-    isInGuild?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    updatedAtInternal?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -17255,119 +19490,14 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type EnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel> | $Enums.E_DATA_TYPES
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-    isSet?: boolean
-  }
-  export type JsonNullableFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    isSet?: boolean
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-    isSet?: boolean
-  }
-
-  export type GuildRelationFilter = {
-    is?: GuildWhereInput
-    isNot?: GuildWhereInput
-  }
-
-  export type GuildDataOwnerIdKeyCompoundUniqueInput = {
-    ownerId: string
-    key: string
-  }
-
-  export type GuildDataCountOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    object?: SortOrder
-    values?: SortOrder
-    version?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type GuildDataMaxOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    version?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type GuildDataMinOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    version?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+    _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
+    _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -17402,6 +19532,20 @@ export namespace Prisma {
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
     isSet?: boolean
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -17469,6 +19613,132 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+    isSet?: boolean
+  }
+
+  export type GuildDataListRelationFilter = {
+    every?: GuildDataWhereInput
+    some?: GuildDataWhereInput
+    none?: GuildDataWhereInput
+  }
+
+  export type GuildDataOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type GuildCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    name?: SortOrder
+    isInGuild?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    updatedAtInternal?: SortOrder
+  }
+
+  export type GuildMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    name?: SortOrder
+    isInGuild?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    updatedAtInternal?: SortOrder
+  }
+
+  export type GuildMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    name?: SortOrder
+    isInGuild?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    updatedAtInternal?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type GuildRelationFilter = {
+    is?: GuildWhereInput
+    isNot?: GuildWhereInput
+  }
+
+  export type GuildDataOwnerIdKeyVersionCompoundUniqueInput = {
+    ownerId: string
+    key: string
+    version: string
+  }
+
+  export type GuildDataCountOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildDataMaxOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildDataMinOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type EnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel = never> = {
     equals?: $Enums.E_INTERNAL_CHANNEL_TYPES | EnumE_INTERNAL_CHANNEL_TYPESFieldRefInput<$PrismaModel>
     in?: $Enums.E_INTERNAL_CHANNEL_TYPES[] | ListEnumE_INTERNAL_CHANNEL_TYPESFieldRefInput<$PrismaModel>
@@ -17493,6 +19763,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -17510,6 +19781,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -17523,6 +19795,7 @@ export namespace Prisma {
     userOwnerId?: SortOrder
     categoryId?: SortOrder
     ownerChannelId?: SortOrder
+    version?: SortOrder
     internalType?: SortOrder
     createdAtDiscord?: SortOrder
     createdAt?: SortOrder
@@ -17548,18 +19821,20 @@ export namespace Prisma {
     isNot?: ChannelWhereInput
   }
 
-  export type ChannelDataOwnerIdKeyCompoundUniqueInput = {
+  export type ChannelDataOwnerIdKeyVersionCompoundUniqueInput = {
     ownerId: string
     key: string
+    version: string
   }
 
   export type ChannelDataCountOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17568,8 +19843,9 @@ export namespace Prisma {
   export type ChannelDataMaxOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17578,8 +19854,9 @@ export namespace Prisma {
   export type ChannelDataMinOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17591,7 +19868,17 @@ export namespace Prisma {
     none?: UserDataWhereInput
   }
 
+  export type UserChannelDataListRelationFilter = {
+    every?: UserChannelDataWhereInput
+    some?: UserChannelDataWhereInput
+    none?: UserChannelDataWhereInput
+  }
+
   export type UserDataOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserChannelDataOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17624,18 +19911,20 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type UserDataOwnerIdKeyCompoundUniqueInput = {
+  export type UserDataOwnerIdKeyVersionCompoundUniqueInput = {
     ownerId: string
     key: string
+    version: string
   }
 
   export type UserDataCountOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
+    version?: SortOrder
     type?: SortOrder
     object?: SortOrder
+    value?: SortOrder
     values?: SortOrder
-    version?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17644,8 +19933,9 @@ export namespace Prisma {
   export type UserDataMaxOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17654,8 +19944,54 @@ export namespace Prisma {
   export type UserDataMinOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
-    type?: SortOrder
     version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserChannelDataOwnerIdChannelIdKeyVersionCompoundUniqueInput = {
+    ownerId: string
+    channelId: string
+    key: string
+    version: string
+  }
+
+  export type UserChannelDataCountOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    object?: SortOrder
+    value?: SortOrder
+    values?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserChannelDataMaxOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserChannelDataMinOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    key?: SortOrder
+    version?: SortOrder
+    type?: SortOrder
+    value?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17905,6 +20241,40 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type ConfigCreatevaluesInput = {
+    set: string[]
+  }
+
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type EnumE_DATA_TYPESFieldUpdateOperationsInput = {
+    set?: $Enums.E_DATA_TYPES
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+    unset?: boolean
+  }
+
+  export type ConfigUpdatevaluesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type GuildDataCreateNestedManyWithoutGuildInput = {
     create?: XOR<GuildDataCreateWithoutGuildInput, GuildDataUncheckedCreateWithoutGuildInput> | GuildDataCreateWithoutGuildInput[] | GuildDataUncheckedCreateWithoutGuildInput[]
     connectOrCreate?: GuildDataCreateOrConnectWithoutGuildInput | GuildDataCreateOrConnectWithoutGuildInput[]
@@ -17919,16 +20289,8 @@ export namespace Prisma {
     connect?: GuildDataWhereUniqueInput | GuildDataWhereUniqueInput[]
   }
 
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
-  }
-
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -17979,25 +20341,12 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-    unset?: boolean
-  }
-
   export type GuildUpdateOneRequiredWithoutDataNestedInput = {
     create?: XOR<GuildCreateWithoutDataInput, GuildUncheckedCreateWithoutDataInput>
     connectOrCreate?: GuildCreateOrConnectWithoutDataInput
     upsert?: GuildUpsertWithoutDataInput
     connect?: GuildWhereUniqueInput
     update?: XOR<XOR<GuildUpdateToOneWithWhereWithoutDataInput, GuildUpdateWithoutDataInput>, GuildUncheckedUpdateWithoutDataInput>
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ChannelDataCreateNestedManyWithoutChannelInput = {
@@ -18076,11 +20425,25 @@ export namespace Prisma {
     connect?: UserDataWhereUniqueInput | UserDataWhereUniqueInput[]
   }
 
+  export type UserChannelDataCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+  }
+
   export type UserDataUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserDataCreateWithoutUserInput, UserDataUncheckedCreateWithoutUserInput> | UserDataCreateWithoutUserInput[] | UserDataUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserDataCreateOrConnectWithoutUserInput | UserDataCreateOrConnectWithoutUserInput[]
     createMany?: UserDataCreateManyUserInputEnvelope
     connect?: UserDataWhereUniqueInput | UserDataWhereUniqueInput[]
+  }
+
+  export type UserChannelDataUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
   }
 
   export type UserDataUpdateManyWithoutUserNestedInput = {
@@ -18097,6 +20460,20 @@ export namespace Prisma {
     deleteMany?: UserDataScalarWhereInput | UserDataScalarWhereInput[]
   }
 
+  export type UserChannelDataUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    upsert?: UserChannelDataUpsertWithWhereUniqueWithoutUserInput | UserChannelDataUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    set?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    disconnect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    delete?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    update?: UserChannelDataUpdateWithWhereUniqueWithoutUserInput | UserChannelDataUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserChannelDataUpdateManyWithWhereWithoutUserInput | UserChannelDataUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+  }
+
   export type UserDataUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserDataCreateWithoutUserInput, UserDataUncheckedCreateWithoutUserInput> | UserDataCreateWithoutUserInput[] | UserDataUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserDataCreateOrConnectWithoutUserInput | UserDataCreateOrConnectWithoutUserInput[]
@@ -18109,6 +20486,20 @@ export namespace Prisma {
     update?: UserDataUpdateWithWhereUniqueWithoutUserInput | UserDataUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserDataUpdateManyWithWhereWithoutUserInput | UserDataUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserDataScalarWhereInput | UserDataScalarWhereInput[]
+  }
+
+  export type UserChannelDataUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput> | UserChannelDataCreateWithoutUserInput[] | UserChannelDataUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutUserInput | UserChannelDataCreateOrConnectWithoutUserInput[]
+    upsert?: UserChannelDataUpsertWithWhereUniqueWithoutUserInput | UserChannelDataUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserChannelDataCreateManyUserInputEnvelope
+    set?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    disconnect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    delete?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    update?: UserChannelDataUpdateWithWhereUniqueWithoutUserInput | UserChannelDataUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserChannelDataUpdateManyWithWhereWithoutUserInput | UserChannelDataUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
   }
 
   export type UserDataCreatevaluesInput = {
@@ -18132,6 +20523,29 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutDataInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDataInput, UserUpdateWithoutDataInput>, UserUncheckedUpdateWithoutDataInput>
+  }
+
+  export type UserChannelDataCreatevaluesInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutChannelDataInput = {
+    create?: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChannelDataInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserChannelDataUpdatevaluesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutChannelDataNestedInput = {
+    create?: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChannelDataInput
+    upsert?: UserUpsertWithoutChannelDataInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChannelDataInput, UserUpdateWithoutChannelDataInput>, UserUncheckedUpdateWithoutChannelDataInput>
   }
 
   export type LanguageCreateEnvelopeInput = {
@@ -18249,9 +20663,26 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedEnumE_DATA_TYPESFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    isSet?: boolean
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -18263,18 +20694,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-    isSet?: boolean
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -18305,41 +20724,14 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.E_DATA_TYPES | EnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    in?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
+    not?: NestedEnumE_DATA_TYPESWithAggregatesFilter<$PrismaModel> | $Enums.E_DATA_TYPES
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-    isSet?: boolean
+    _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
+    _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
   }
 
   export type NestedIntNullableFilter<$PrismaModel = never> = {
@@ -18351,21 +20743,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-    isSet?: boolean
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
     isSet?: boolean
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> = 
@@ -18399,6 +20776,20 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -18424,6 +20815,46 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+    isSet?: boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+    isSet?: boolean
   }
 
   export type NestedEnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel = never> = {
@@ -18513,10 +20944,11 @@ export namespace Prisma {
   export type GuildDataCreateWithoutGuildInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18524,10 +20956,11 @@ export namespace Prisma {
   export type GuildDataUncheckedCreateWithoutGuildInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18563,10 +20996,11 @@ export namespace Prisma {
     NOT?: GuildDataScalarWhereInput | GuildDataScalarWhereInput[]
     id?: StringFilter<"GuildData"> | string
     key?: StringFilter<"GuildData"> | string
-    type?: StringFilter<"GuildData"> | string
+    version?: StringFilter<"GuildData"> | string
+    type?: EnumE_DATA_TYPESFilter<"GuildData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"GuildData">
+    value?: StringNullableFilter<"GuildData"> | string | null
     values?: StringNullableListFilter<"GuildData">
-    version?: StringNullableFilter<"GuildData"> | string | null
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
@@ -18629,10 +21063,11 @@ export namespace Prisma {
   export type ChannelDataCreateWithoutChannelInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18640,10 +21075,11 @@ export namespace Prisma {
   export type ChannelDataUncheckedCreateWithoutChannelInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18679,10 +21115,11 @@ export namespace Prisma {
     NOT?: ChannelDataScalarWhereInput | ChannelDataScalarWhereInput[]
     id?: StringFilter<"ChannelData"> | string
     key?: StringFilter<"ChannelData"> | string
-    type?: StringFilter<"ChannelData"> | string
+    version?: StringFilter<"ChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"ChannelData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"ChannelData">
+    value?: StringNullableFilter<"ChannelData"> | string | null
     values?: StringNullableListFilter<"ChannelData">
-    version?: StringNullableFilter<"ChannelData"> | string | null
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
@@ -18695,6 +21132,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -18708,6 +21146,7 @@ export namespace Prisma {
     userOwnerId: string
     categoryId?: string | null
     ownerChannelId?: string | null
+    version?: string
     internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord: number
     createdAt?: Date | string
@@ -18736,6 +21175,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18748,6 +21188,7 @@ export namespace Prisma {
     userOwnerId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
     internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18757,10 +21198,11 @@ export namespace Prisma {
   export type UserDataCreateWithoutUserInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18768,10 +21210,11 @@ export namespace Prisma {
   export type UserDataUncheckedCreateWithoutUserInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18783,6 +21226,41 @@ export namespace Prisma {
 
   export type UserDataCreateManyUserInputEnvelope = {
     data: UserDataCreateManyUserInput | UserDataCreateManyUserInput[]
+  }
+
+  export type UserChannelDataCreateWithoutUserInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataUncheckedCreateWithoutUserInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataCreateOrConnectWithoutUserInput = {
+    where: UserChannelDataWhereUniqueInput
+    create: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserChannelDataCreateManyUserInputEnvelope = {
+    data: UserChannelDataCreateManyUserInput | UserChannelDataCreateManyUserInput[]
   }
 
   export type UserDataUpsertWithWhereUniqueWithoutUserInput = {
@@ -18807,13 +21285,47 @@ export namespace Prisma {
     NOT?: UserDataScalarWhereInput | UserDataScalarWhereInput[]
     id?: StringFilter<"UserData"> | string
     key?: StringFilter<"UserData"> | string
-    type?: StringFilter<"UserData"> | string
+    version?: StringFilter<"UserData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserData"> | $Enums.E_DATA_TYPES
     object?: JsonNullableFilter<"UserData">
+    value?: StringNullableFilter<"UserData"> | string | null
     values?: StringNullableListFilter<"UserData">
-    version?: StringNullableFilter<"UserData"> | string | null
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
+  }
+
+  export type UserChannelDataUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserChannelDataWhereUniqueInput
+    update: XOR<UserChannelDataUpdateWithoutUserInput, UserChannelDataUncheckedUpdateWithoutUserInput>
+    create: XOR<UserChannelDataCreateWithoutUserInput, UserChannelDataUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserChannelDataUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserChannelDataWhereUniqueInput
+    data: XOR<UserChannelDataUpdateWithoutUserInput, UserChannelDataUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserChannelDataUpdateManyWithWhereWithoutUserInput = {
+    where: UserChannelDataScalarWhereInput
+    data: XOR<UserChannelDataUpdateManyMutationInput, UserChannelDataUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserChannelDataScalarWhereInput = {
+    AND?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+    OR?: UserChannelDataScalarWhereInput[]
+    NOT?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+    id?: StringFilter<"UserChannelData"> | string
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
   }
 
   export type UserCreateWithoutDataInput = {
@@ -18822,6 +21334,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    channelData?: UserChannelDataCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDataInput = {
@@ -18830,6 +21343,7 @@ export namespace Prisma {
     username?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    channelData?: UserChannelDataUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDataInput = {
@@ -18853,6 +21367,7 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelData?: UserChannelDataUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDataInput = {
@@ -18860,6 +21375,57 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelData?: UserChannelDataUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutChannelDataInput = {
+    id?: string
+    userId: string
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    data?: UserDataCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutChannelDataInput = {
+    id?: string
+    userId: string
+    username?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    data?: UserDataUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutChannelDataInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+  }
+
+  export type UserUpsertWithoutChannelDataInput = {
+    update: XOR<UserUpdateWithoutChannelDataInput, UserUncheckedUpdateWithoutChannelDataInput>
+    create: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutChannelDataInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutChannelDataInput, UserUncheckedUpdateWithoutChannelDataInput>
+  }
+
+  export type UserUpdateWithoutChannelDataInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    data?: UserDataUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutChannelDataInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    data?: UserDataUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LanguageUpdateInput = {
@@ -18916,40 +21482,44 @@ export namespace Prisma {
   export type GuildDataCreateManyGuildInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: GuildDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type GuildDataUpdateWithoutGuildInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildDataUncheckedUpdateWithoutGuildInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildDataUncheckedUpdateManyWithoutGuildInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: GuildDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18957,40 +21527,44 @@ export namespace Prisma {
   export type ChannelDataCreateManyChannelInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: ChannelDataCreatevaluesInput | string[]
-    version?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type ChannelDataUpdateWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelDataUncheckedUpdateWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChannelDataUncheckedUpdateManyWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18998,40 +21572,93 @@ export namespace Prisma {
   export type UserDataCreateManyUserInput = {
     id?: string
     key: string
-    type?: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
     object?: InputJsonValue | null
+    value?: string | null
     values?: UserDataCreatevaluesInput | string[]
-    version?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataCreateManyUserInput = {
+    id?: string
+    channelId: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type UserDataUpdateWithoutUserInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserDataUncheckedUpdateWithoutUserInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserDataUncheckedUpdateManyWithoutUserInput = {
     key?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
     object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: UserDataUpdatevaluesInput | string[]
-    version?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUpdateWithoutUserInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateWithoutUserInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateManyWithoutUserInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19113,6 +21740,14 @@ export namespace Prisma {
      */
     export type ModalContentLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ModalContentLanguageDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use ConfigDefaultArgs instead
+     */
+    export type ConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ConfigDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use CategoryDefaultArgs instead
+     */
+    export type CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CategoryDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use GuildDefaultArgs instead
      */
     export type GuildArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildDefaultArgs<ExtArgs>
@@ -19120,10 +21755,6 @@ export namespace Prisma {
      * @deprecated Use GuildDataDefaultArgs instead
      */
     export type GuildDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildDataDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use CategoryDefaultArgs instead
-     */
-    export type CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CategoryDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ChannelDefaultArgs instead
      */
@@ -19140,6 +21771,10 @@ export namespace Prisma {
      * @deprecated Use UserDataDefaultArgs instead
      */
     export type UserDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDataDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use UserChannelDataDefaultArgs instead
+     */
+    export type UserChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserChannelDataDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ElementButtonLanguageDefaultArgs instead
      */

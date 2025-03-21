@@ -4,10 +4,11 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
+import type UIService from "@vertix.gg/gui/src/ui-service";
+
 import type { Client, CommandInteraction } from "discord.js";
 
 import type { ICommand } from "@vertix.gg/bot/src/interfaces/command";
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
 
 const name = "help";
 
@@ -19,9 +20,10 @@ export const Help: ICommand = {
 
     defaultMemberPermissions: [ DEFAULT_SETUP_PERMISSIONS ],
 
-    run: async ( client: Client, interaction: CommandInteraction<"cached"> ) => {
-        const uiAdapter = ServiceLocator.$.get<UIAdapterService>( "VertixBot/UI-V2/UIAdapterService" );
+    run: async( client: Client, interaction: CommandInteraction<"cached"> ) => {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
+            uiAdapter = uiService.get( "VertixBot/UI-General/FeedbackAdapter" );
 
-        uiAdapter.get( "VertixBot/UI-V2/FeedbackAdapter" )?.ephemeral( interaction );
+        uiAdapter?.ephemeral( interaction );
     }
 };

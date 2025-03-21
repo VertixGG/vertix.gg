@@ -1,28 +1,26 @@
 import { jest } from "@jest/globals";
 
 import { Api } from "@top-gg/sdk";
+import { EventBusMock } from "@vertix.gg/test-utils/src/__mock__/event-bus-mock";
 
-import { ServiceLocatorMock } from "@vertix.gg/utils/src/service-locator-mock";
+import { ServiceLocatorMock } from "@vertix.gg/test-utils/src/__mock__/service-locator-mock";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
 jest.mock( "@top-gg/sdk" );
+
+// Mock original ServiceLocator.
+ServiceLocatorMock.mockOrigin();
+
+// Mock original EventBus.
+EventBusMock.mockOrigin();
 
 describe( "VertixBot/Managers/TopGG", () => {
     const userId = "userId";
 
     let topGGManager: TopGGManager;
 
-    beforeEach( async () => {
-        // Reset ServiceLocator.
-        ServiceLocatorMock.reset();
-
-        // Mock ServiceLocator.
-        jest.mock( "@vertix.gg/base/src/modules/service/service-locator",
-            () => ServiceLocatorMock
-        );
-
-        // Register AppService
+    beforeEach( async() => {
         ServiceLocatorMock.$.register( ( await import( "@vertix.gg/bot/src/services/app-service" ) ).AppService );
 
         // Await for all services to be registered.
@@ -36,11 +34,15 @@ describe( "VertixBot/Managers/TopGG", () => {
     } );
 
     afterEach( () => {
-        jest.resetAllMocks();
+        // Reset ServiceLocator.
+        ServiceLocatorMock.reset();
+
+        // Reset EventBusMock.
+        EventBusMock.reset();
     } );
 
     describe( "isVoted()", () => {
-        it( "should return true if workingMiddleware returns false", async () => {
+        it( "should return true if workingMiddleware returns false", async() => {
             // Arrange.
             const expectedWorkingMiddlewareResult = false;
 
@@ -55,7 +57,7 @@ describe( "VertixBot/Managers/TopGG", () => {
             expect( result ).toBe( true );
         } );
 
-        it( "should return true if cache is available and not expired", async () => {
+        it( "should return true if cache is available and not expired", async() => {
             // Arrange.
             const apiInstance = new Api( "TOP_GG_TOKEN" ),
                 originalHasVoted = apiInstance.hasVoted;
@@ -79,7 +81,7 @@ describe( "VertixBot/Managers/TopGG", () => {
             expect( fromCache ).toBe( true );
         } );
 
-        it( "should return false if cache is available but expired", async () => {
+        it( "should return false if cache is available but expired", async() => {
             // Arrange.
             const apiInstance = new Api( "TOP_GG_TOKEN" ),
                 originalHasVoted = apiInstance.hasVoted;

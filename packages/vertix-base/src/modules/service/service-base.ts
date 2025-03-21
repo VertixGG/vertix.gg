@@ -6,16 +6,17 @@ export abstract class ServiceBase extends ObjectBase {
     protected logger: Logger;
 
     private readonly initialization: {
-        promise: Promise<void>,
-        state: "pending" | "resolved" | "rejected",
-        reason?: Error,
+        promise: Promise<void>;
+        state: "pending" | "resolved" | "rejected";
+        reason?: Error;
     };
 
     public static getName(): string {
         return "VertixBase/Modules/ServiceBase";
     }
 
-    public constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public constructor( ...args: any[] ) {
         super();
 
         this.logger = new Logger( this );
@@ -23,12 +24,12 @@ export abstract class ServiceBase extends ObjectBase {
         if ( this.initialize ) {
             this.initialization = {
                 promise: this.initialize(),
-                state: "pending",
+                state: "pending"
             };
 
             this.initialization.promise
-                .then( () => this.initialization.state = "resolved" )
-                .catch( reason => {
+                .then( () => ( this.initialization.state = "resolved" ) )
+                .catch( ( reason ) => {
                     this.initialization.state = "rejected";
                     this.initialization.reason = reason;
                 } );
@@ -38,7 +39,7 @@ export abstract class ServiceBase extends ObjectBase {
 
         this.initialization = {
             promise: Promise.resolve(),
-            state: "resolved",
+            state: "resolved"
         };
     }
 

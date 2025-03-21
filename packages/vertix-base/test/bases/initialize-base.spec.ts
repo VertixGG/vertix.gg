@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import { setupMockTimers } from "@vertix.gg/base/test/__test_utils__/setup-mock-timers";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases";

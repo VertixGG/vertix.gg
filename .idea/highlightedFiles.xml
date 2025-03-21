@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectTreeColorHighlighter">
+    <files>
+      <node color="3" path="$PROJECT_DIR$/package.json" />
+      <node color="2" path="$PROJECT_DIR$/packages/vertix-base" />
+      <node color="4" path="$PROJECT_DIR$/packages/vertix-bot" />
+      <node color="4" path="$PROJECT_DIR$/packages/vertix-bot/src/ui" />
+      <node color="16" path="$PROJECT_DIR$/packages/vertix-bot/src/ui-v2" />
+      <node color="11" path="$PROJECT_DIR$/packages/vertix-bot/src/ui/general" />
+      <node color="16" path="$PROJECT_DIR$/packages/vertix-bot/src/ui/v2" />
+      <node color="10" path="$PROJECT_DIR$/packages/vertix-bot/src/ui/v3" />
+      <node color="9" path="$PROJECT_DIR$/packages/vertix-gui" />
+      <node color="7" path="$PROJECT_DIR$/packages/vertix-prisma" />
+      <node color="8" path="$PROJECT_DIR$/packages/vertix-test-utils" />
+      <node color="1" path="$PROJECT_DIR$/packages/vertix-utils" />
+    </files>
+    <colors>
+      <color id="1" value="#52dcde3d" name="Color 1" enabled="true" />
+      <color id="2" value="#ff000026" name="Color 2" enabled="true" />
+      <color id="3" value="#fefc22" name="Color 3" enabled="true" />
+      <color id="4" value="#53be794c" name="Color 4" enabled="true" />
+      <color id="5" value="#00f2ff" name="Color 5" enabled="true" />
+      <color id="6" value="#00b5ff" name="Color 6" enabled="true" />
+      <color id="7" value="#b892db3c" name="Color 7" enabled="true" />
+      <color id="8" value="#464b50" name="Color 8" enabled="true" />
+      <color id="9" value="#4780be4c" name="Color 9" enabled="true" />
+      <color id="10" value="#00ff3a36" name="Color 10" enabled="true" />
+      <color id="11" value="#626a36" name="Color 11" enabled="true" />
+      <color id="16" value="#53be791d" name="Color 16" enabled="true" />
+    </colors>
+    <option name="marksForCollapsedHighlights" value="Dots" />
+  </component>
+</project>

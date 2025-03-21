@@ -10,7 +10,7 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
     }
 
     public static getInstance(): CategoryModel {
-        if ( ! CategoryModel.instance ) {
+        if ( !CategoryModel.instance ) {
             CategoryModel.instance = new CategoryModel();
         }
 
@@ -39,4 +39,3 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
         return PrismaBotClient.getPrismaClient();
     }
 }
-

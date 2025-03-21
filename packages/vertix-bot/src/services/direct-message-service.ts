@@ -1,16 +1,15 @@
-import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
-
 import fetch from "cross-fetch";
 
-import { EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
+
+import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { VERTIX_OWNERS_IDS } from "@vertix.gg/bot/src/definitions/app";
 
+import type { Channel, Guild, Message, MessageCreateOptions } from "discord.js";
+
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-
-import type { UIAdapterService } from "@vertix.gg/bot/src/ui-v2/ui-adapter-service";
-
-import type { Guild, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 const OWNER_COMMAND_SYNTAX = {
     embed: "!embed <#channel_id> <https://message_url.com>",
@@ -18,8 +17,8 @@ const OWNER_COMMAND_SYNTAX = {
 };
 
 export class DirectMessageService extends ServiceWithDependenciesBase<{
-    appService: AppService,
-    uiAdapterService: UIAdapterService,
+    appService: AppService;
+    uiService: UIService;
 }> {
     private feedbackSentIds: Map<string, string> = new Map();
 
@@ -30,7 +29,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            uiAdapterService: "VertixBot/UI-V2/UIAdapterService",
+            uiService: "VertixGUI/UIService"
         };
     }
 
@@ -39,13 +38,22 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 
         const { appService } = this.services;
 
-        appService.onceReady( () => {
+        appService.onceReady( async() => {
             appService.getClient().on( "messageCreate", this.onMessage.bind( this ) );
         } );
     }
 
     public async onMessage( message: Message ) {
-        this.logger.admin( this.onMessage,
+        if ( message.author.bot ) {
+            return;
+        }
+
+        if ( message.channel.type !== ChannelType.DM ) {
+            return;
+        }
+
+        this.logger.admin(
+            this.onMessage,
             `💬 Vertix received DM from '${ message.author.tag }' content: '${ message.content }'`
         );
 
@@ -57,10 +65,9 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        const adapter = this.services.uiAdapterService
-            .get( "VertixBot/UI-V2/FeedbackAdapter" );
+        const adapter = this.services.uiService.get( "VertixBot/UI-General/FeedbackAdapter" );
 
-        if ( ! adapter ) {
+        if ( !adapter ) {
             this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );
             return;
         }
@@ -72,8 +79,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     }
 
     public async onOwnerMessage( message: Message ) {
-        const command = message.content.split( " " )
-            .filter( ( entry ) => entry.length );
+        const command = message.content.split( " " ).filter( ( entry ) => entry.length );
 
         switch ( command[ 0 ] ) {
             case "!embed":
@@ -87,23 +93,20 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
             default:
                 let syntaxMessage = "Available commands:\n\n";
 
-                Object.values( OWNER_COMMAND_SYNTAX ).forEach(
-                    ( syntax ) => syntaxMessage += `${ syntax }\n`
-                );
+                Object.values( OWNER_COMMAND_SYNTAX ).forEach( ( syntax ) => ( syntaxMessage += `${ syntax }\n` ) );
 
                 await message.reply( syntaxMessage );
         }
     }
 
     private async handleEmbedCommand( command: string[], message: Message ) {
-        if ( command.length < 2 || command.length > 3 || ! command[ 1 ]?.length || ! command[ 2 ]?.length ) {
+        if ( command.length < 2 || command.length > 3 || !command[ 1 ]?.length || !command[ 2 ]?.length ) {
             return await message.reply( OWNER_COMMAND_SYNTAX.embed );
         }
 
-        const channel = await this.services.appService
-            .getClient().channels.fetch( command[ 1 ] );
+        const channel = await this.services.appService.getClient().channels.fetch( command[ 1 ] );
 
-        if ( ! channel || ! channel.isTextBased() ) {
+        if ( !channel || !channel.isTextBased() ) {
             return await message.reply( "Invalid channel!" );
         }
 
@@ -115,52 +118,63 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
     }
 
     private async handleEditEmbedCommand( command: string[], message: Message ) {
-        if ( command.length < 3 || command.length > 4 || ! command[ 1 ]?.length || ! command[ 2 ]?.length || ! command[ 3 ]?.length ) {
+        if (
+            command.length < 3 ||
+            command.length > 4 ||
+            !command[ 1 ]?.length ||
+            !command[ 2 ]?.length ||
+            !command[ 3 ]?.length
+        ) {
             return await message.reply( OWNER_COMMAND_SYNTAX.edit_embed );
         }
 
-        const channel = await this.services.appService
-            .getClient().channels.fetch( command[ 1 ] );
+        const channel = await this.services.appService.getClient().channels.fetch( command[ 1 ] );
 
-        if ( ! channel || ! channel.isTextBased() ) {
+        if ( !channel || !channel.isTextBased() ) {
             return await message.reply( "Invalid channel!" );
         }
 
         // Find message.
         const messageToEdit = await channel.messages.fetch( command[ 2 ] ).catch( () => null );
 
-        if ( ! messageToEdit ) {
+        if ( !messageToEdit ) {
             await message.reply( "Message not found!" );
         }
 
         const response = await this.fetchEmbed( command[ 3 ], message );
 
         if ( response && messageToEdit ) {
-            await messageToEdit.edit( { embeds: [ this.buildEmbed( response ) ] } )
-                .catch( async () => {
+            await messageToEdit
+                .edit( { embeds: [ this.buildEmbed( response ) ] } )
+                .catch( async() => {
                     await message.reply( "Message was not edited!" );
                 } )
-                .then( async () => {
+                .then( async() => {
                     await message.reply( "Message edited!" );
                 } );
         }
     }
 
-    private async sendEmbedCommand( channel: TextBasedChannel, response: any, message: Message ) {
-        channel.send( { embeds: [ this.buildEmbed( response ) ] } )
-            .catch( async () => {
+    private async sendEmbedCommand( channel: Channel, response: any, message: Message ) {
+        if ( !channel.isSendable() ) {
+            await message.reply( "Message was not sent!" );
+            return;
+        }
+
+        channel
+            .send( { embeds: [ this.buildEmbed( response ) ] } )
+            .catch( async() => {
                 await message.reply( "Message was not sent!" );
             } )
-            .then( async () => {
+            .then( async() => {
                 await message.reply( "Message sent!" );
             } );
     }
 
     public async sendLeaveMessageToOwner( guild: Guild ) {
-        const adapter = this.services.uiAdapterService
-            .get( "VertixBot/UI-V2/FeedbackAdapter" );
+        const adapter = this.services.uiService.get( "VertixBot/UI-General/FeedbackAdapter" );
 
-        if ( ! adapter ) {
+        if ( !adapter ) {
             this.logger.error( this.sendLeaveMessageToOwner, "Failed to get feedback adapter!" );
             return;
         }
@@ -172,7 +186,10 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         const appService = this.services.appService;
 
         await ( await appService.getClient().users.fetch( guild.ownerId ) ).send( message ).catch( () => {
-            this.logger.error( this.sendToOwner, `Guild id: '${ guild.id } - Failed to send message to guild ownerId: '${ guild.ownerId }'` );
+            this.logger.error(
+                this.sendToOwner,
+                `Guild id: '${ guild.id } - Failed to send message to guild ownerId: '${ guild.ownerId }'`
+            );
         } );
     }
 
@@ -190,8 +207,8 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         try {
             const request = fetch( url );
 
-            response = await request.then( async ( _response ) => {
-                if ( ! _response.ok ) {
+            response = await request.then( async( _response ) => {
+                if ( !_response.ok ) {
                     throw _response;
                 }
 

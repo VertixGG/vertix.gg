@@ -5,7 +5,10 @@ import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwindcss()],
+    plugins: [
+        react(),
+        tailwindcss(),
+    ],
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
@@ -17,10 +20,10 @@ export default defineConfig({
         strictPort: true, // Fail if port is already in use
         proxy: {
             // Proxy API requests to the Fastify server
-            "/api": {
-                target: "http://localhost:3000",
+            '/api': {
+                target: 'http://localhost:3000',
                 changeOrigin: true,
-            },
+            }
         },
     },
 });

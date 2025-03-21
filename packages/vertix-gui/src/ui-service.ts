@@ -192,7 +192,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.registerAdapters( adapters, { module: new Module() } );
     }
 
-    public async registerInternalAdapters() {
+    public async registerSystemUIAdapters() {
         const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
 
         this.registerAdapters( Object.values( internalAdapters ) );

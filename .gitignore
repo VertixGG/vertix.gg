@@ -7,3 +7,4 @@ packages/vertix-base/src/encryption/key.ts
 .env
 
 vertix_backup*
+.qodo

@@ -80,13 +80,7 @@ async function registerServices() {
     await ServiceLocator.$.waitForAll();
 }
 
-async function registerUIAdapters() {
-    const uiModules = await Promise.all( [
-        import( "@vertix.gg/bot/src/ui/general/ui-module" ),
-        import( "@vertix.gg/bot/src/ui/v2/ui-module" ),
-        import( "@vertix.gg/bot/src/ui/v3/ui-module" )
-    ] );
-
+async function registerSystemUI() {
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     // TODO: Current wizard buttons for V3, are unused, those should become module specific.
@@ -102,19 +96,27 @@ async function registerUIAdapters() {
         WizardFinishButton: UIWizardFinishButton
     } );
 
-    const { InvalidChannelTypeComponent } = await import(
-            "@vertix.gg/bot/src/ui/general/invalid-channel-type/invalid-channel-type-component"
-        ),
-        { MissingPermissionsComponent } = await import(
-            "@vertix.gg/bot/src/ui/general/missing-permissions/missing-permissions-component"
-        );
+    const { InvalidChannelTypeComponent } = await import( "@vertix.gg/bot/src/ui/general/invalid-channel-type/invalid-channel-type-component" ),
+        { MissingPermissionsComponent } = await import( "@vertix.gg/bot/src/ui/general/missing-permissions/missing-permissions-component" );
 
     uiService.$$.registerSystemComponents( {
         InvalidChannelTypeComponent: InvalidChannelTypeComponent,
         MissingPermissionsComponent: MissingPermissionsComponent
     } );
 
-    await uiService.registerInternalAdapters();
+    await uiService.registerSystemUIAdapters();
+}
+
+async function registerUIAdapters() {
+    const uiModules = await Promise.all( [
+        import( "@vertix.gg/bot/src/ui/general/ui-module" ),
+        import( "@vertix.gg/bot/src/ui/v2/ui-module" ),
+        import( "@vertix.gg/bot/src/ui/v3/ui-module" )
+    ] );
+
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+
+    await registerSystemUI();
 
     uiModules.forEach( ( module ) => {
         GlobalLogger.$.debug( registerUIAdapters, `Registering UI module: '${ module.default.getName() }'` );

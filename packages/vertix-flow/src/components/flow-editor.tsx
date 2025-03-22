@@ -164,11 +164,27 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
     const flowDataResource = useFlowData( modulePath, flowName );
     const flowData = flowDataResource.read();
 
+    // Use a ref to track if we've already sent the schema to avoid infinite loops
+    const hasLoadedSchema = React.useRef( false );
+    // Store schema ID to detect actual changes
+    const lastSchemaId = React.useRef( '' );
+    const schemaId = flowData?.schema?.name || '';
+
     useEffect( () => {
-        if ( flowData?.schema && onSchemaLoaded ) {
+        // Only load the schema when it's available and either:
+        // 1. We haven't loaded any schema yet, or
+        // 2. The schema has actually changed (different schema ID)
+        if (
+            flowData?.schema &&
+            onSchemaLoaded &&
+            ( !hasLoadedSchema.current || lastSchemaId.current !== schemaId )
+        ) {
+            hasLoadedSchema.current = true;
+            lastSchemaId.current = schemaId;
             onSchemaLoaded( flowData.schema );
         }
-    }, [ flowData, onSchemaLoaded ] );
+        // Only re-run when schema ID changes, not on every render
+    }, [ schemaId, flowData?.schema, onSchemaLoaded ] );
 
     if ( !flowData ) {
         return <div>No flow data available</div>;
@@ -244,7 +260,7 @@ export const FlowEditor: React.FC = () => {
     const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
     const [ moduleName, setModuleName ] = useState<string>( "" );
-    const [ modulePath, setModulePath ] = useState<string>( "" );
+    const [ modulePath, setModulePath ] = useState<string>( "" ); // eslint-disable-line @typescript-eslint/no-unused-vars
     const [ flows, setFlows ] = useState<FlowItem[]>( [] );
     const [ selectedFlow, setSelectedFlow ] = useState<FlowItem | null>( null );
 

@@ -1,6 +1,6 @@
 import "@xyflow/react/dist/style.css";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 
 import {
     ReactFlow,
@@ -9,8 +9,7 @@ import {
     Background,
     BackgroundVariant,
     Panel,
-    useReactFlow,
-    ReactFlowInstance
+    ReactFlowProvider
 } from "@xyflow/react";
 
 import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
@@ -25,7 +24,8 @@ import type {
     EdgeChange,
     Connection,
     Node,
-    Edge
+    Edge,
+    ReactFlowInstance
 } from "@xyflow/react";
 
 // Mapping for custom node types
@@ -51,9 +51,9 @@ interface FlowDiagramDisplayProps {
 }
 
 /**
- * Displays the React Flow diagram with the nodes and edges
+ * Inner component that uses React Flow
  */
-export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
+const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     nodes,
     edges,
     onNodesChange,
@@ -62,18 +62,21 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
     onZoomChange
 } ) => {
     const { setError } = useFlowUI();
-    const reactFlowInstance = useReactFlow();
+    const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
 
     const onInit = useCallback( ( instance: ReactFlowInstance ) => {
         // This gets called once when the flow is initialized
         // and ensures proper rendering of groups
         try {
+            // Save the instance to our ref
+            reactFlowInstanceRef.current = instance;
+
             setTimeout( () => {
                 window.dispatchEvent( new Event( 'resize' ) );
 
                 // Initialize zoom value
-                if ( onZoomChange ) {
-                    onZoomChange( instance.getZoom() );
+                if ( onZoomChange && reactFlowInstanceRef.current ) {
+                    onZoomChange( reactFlowInstanceRef.current.getZoom() );
                 }
             }, 100 );
         } catch ( err ) {
@@ -92,47 +95,58 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
     }, [ setError ] );
 
     const handleMove = useCallback( () => {
-        if ( onZoomChange && reactFlowInstance ) {
-            onZoomChange( reactFlowInstance.getZoom() );
+        if ( onZoomChange && reactFlowInstanceRef.current ) {
+            onZoomChange( reactFlowInstanceRef.current.getZoom() );
         }
-    }, [ onZoomChange, reactFlowInstance ] );
+    }, [ onZoomChange ] );
 
     return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            fitView
+            defaultViewport={{ x: 0, y: 0, zoom: 0.15 }}
+            nodesDraggable={true}
+            proOptions={{ hideAttribution: true }}
+            elementsSelectable={true}
+            elevateEdgesOnSelect={true}
+            snapToGrid={true}
+            snapGrid={[ 10, 10 ]}
+            onInit={onInit}
+            onMove={handleMove}
+        >
+            <Controls />
+            <MiniMap
+                nodeStrokeWidth={3}
+                zoomable
+                pannable
+            />
+            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+            <Panel position="top-right">
+                <button
+                    className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs px-2 py-1 rounded shadow"
+                    onClick={handleRefresh}
+                >
+                    Refresh
+                </button>
+            </Panel>
+        </ReactFlow>
+    );
+};
+
+/**
+ * Wrapper component that provides the ReactFlow context
+ */
+export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( props ) => {
+    return (
         <div style={{ width: "100%", height: "100%" }}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                nodeTypes={nodeTypes}
-                fitView
-                defaultViewport={{ x: 0, y: 0, zoom: 0.15 }}
-                nodesDraggable={true}
-                proOptions={{ hideAttribution: true }}
-                elementsSelectable={true}
-                elevateEdgesOnSelect={true}
-                snapToGrid={true}
-                snapGrid={[ 10, 10 ]}
-                onInit={onInit}
-                onMove={handleMove}
-            >
-                <Controls />
-                <MiniMap
-                    nodeStrokeWidth={3}
-                    zoomable
-                    pannable
-                />
-                <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-                <Panel position="top-right">
-                    <button
-                        className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs px-2 py-1 rounded shadow"
-                        onClick={handleRefresh}
-                    >
-                        Refresh
-                    </button>
-                </Panel>
-            </ReactFlow>
+            <ReactFlowProvider>
+                <FlowDiagramInner {...props} />
+            </ReactFlowProvider>
         </div>
     );
 };

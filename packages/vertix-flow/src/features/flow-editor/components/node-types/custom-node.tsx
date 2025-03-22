@@ -34,7 +34,7 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
   if ( type === "component" ) {
     return (
       <div className="p-4 bg-[#2f3136] rounded-lg shadow-lg text-white">
-        <div className="font-semibold text-lg">{label}</div>
+        <div className="font-semibold text-base">{label}</div>
         <div className="text-[#b9bbbe] text-xs mt-1">{type}</div>
       </div>
     );
@@ -46,7 +46,7 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
     const buttons = elements?.flat() || []; // Get all buttons if they exist
 
     return (
-      <div className="min-w-[400px] max-w-[600px] bg-[#36393f] rounded-lg overflow-hidden">
+      <div className="min-w-[400px] max-w-[600px] bg-[#36393f] rounded-lg">
         {/* Main embed content */}
         <div className="p-4 border-l-4 border-[#5865f2]">
           {/* Embed Header */}
@@ -111,8 +111,8 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
   // Fallback for any other node type
   return (
     <div className="p-3 bg-[#2f3136] rounded-lg shadow-lg text-white max-w-[150px]">
-      <div className="font-medium text-center truncate">{label}</div>
-      {type && <div className="text-[#b9bbbe] text-xs mt-1 text-center truncate">{type}</div>}
+      <div className="font-medium text-sm text-center">{label}</div>
+      {type && <div className="text-[#b9bbbe] text-[10px] mt-1 text-center">{type}</div>}
     </div>
   );
 };

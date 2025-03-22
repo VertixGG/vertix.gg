@@ -17,7 +17,7 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
   return (
     <div className="relative">
       <div className="absolute -top-6 left-0 right-0 text-center">
-        <span className={`text-xs font-medium px-2 py-1 rounded-sm shadow-sm ${
+        <span className={`text-[10px] font-medium px-2 py-1 rounded-sm shadow-sm ${
           isComponentsGroup ? 'bg-blue-50 text-blue-600' : 'bg-neutral-100 text-neutral-600'
         }`}>
           {data.label}

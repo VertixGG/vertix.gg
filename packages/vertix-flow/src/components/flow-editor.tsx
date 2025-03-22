@@ -1,4 +1,4 @@
-import React, { useCallback, useState, Suspense } from "react";
+import React, { useCallback, useState, Suspense, useEffect } from "react";
 import "reactflow/dist/style.css";
 
 import ReactFlow, {
@@ -9,6 +9,7 @@ import ReactFlow, {
     useEdgesState,
     addEdge,
     BackgroundVariant,
+    Position,
 } from "reactflow";
 
 import { UIModuleSelector } from "@vertix.gg/flow/src/components/ui-module-selector";
@@ -24,31 +25,8 @@ import type { UIModuleFile } from "@vertix.gg/flow/src/hooks/use-ui-modules";
 import { useFlowData } from "@vertix.gg/flow/src/hooks/use-ui-modules";
 
 // Initial nodes setup
-const initialNodes: Node[] = [
-    {
-        id: "1",
-        type: "input",
-        data: { label: "Input Node" },
-        position: { x: 250, y: 25 },
-    },
-    {
-        id: "2",
-        data: { label: "Default Node" },
-        position: { x: 100, y: 125 },
-    },
-    {
-        id: "3",
-        type: "output",
-        data: { label: "Output Node" },
-        position: { x: 250, y: 250 },
-    },
-];
-
-// Initial edges setup
-const initialEdges: Edge[] = [
-    { id: "e1-2", source: "1", target: "2" },
-    { id: "e2-3", source: "2", target: "3" },
-];
+const initialNodes: Node[] = [];
+const initialEdges: Edge[] = [];
 
 interface FlowItem {
     name: string;
@@ -56,10 +34,141 @@ interface FlowItem {
     modulePath?: string; // Added module path for fetching flow data
 }
 
+interface FlowSchema {
+    name: string;
+    type: string;
+    entities: {
+        elements: Array<Array<{
+            name: string;
+            type: string;
+            attributes: Record<string, any>;
+            isAvailable: boolean;
+        }>>;
+        embeds: Array<{
+            name: string;
+            type: string;
+            attributes: Record<string, any>;
+            isAvailable: boolean;
+        }>;
+    };
+}
+
+// Function to generate nodes and edges from schema
+function generateFlowDiagram( schema: FlowSchema ): { nodes: Node[], edges: Edge[] } {
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+
+    // Add root component node
+    nodes.push( {
+        id: 'root',
+        type: 'input',
+        data: {
+            label: schema.name.split( '/' ).pop() || 'Component',
+            type: schema.type
+        },
+        position: { x: 250, y: 50 },
+        style: {
+            background: '#60a5fa',
+            color: 'white',
+            borderRadius: '4px',
+            padding: '10px',
+            minWidth: '150px',
+            textAlign: 'center' as const
+        }
+    } );
+
+    // Add embed nodes
+    if ( schema.entities.embeds ) {
+        schema.entities.embeds.forEach( ( embed, index ) => {
+            const id = `embed-${ index }`;
+            nodes.push( {
+                id,
+                type: 'default',
+                data: {
+                    label: embed.name.split( '/' ).pop() || 'Embed',
+                    type: 'embed',
+                    attributes: embed.attributes
+                },
+                position: { x: 150, y: 150 + ( index * 100 ) },
+                style: {
+                    background: '#a78bfa',
+                    color: 'white',
+                    borderRadius: '4px',
+                    padding: '10px',
+                    width: '180px',
+                    textAlign: 'center' as const
+                },
+                sourcePosition: Position.Right,
+                targetPosition: Position.Left
+            } );
+
+            // Connect to root
+            edges.push( {
+                id: `root-to-${ id }`,
+                source: 'root',
+                target: id,
+                animated: true,
+                style: { stroke: '#a78bfa' }
+            } );
+        } );
+    }
+
+    // Add element nodes
+    if ( schema.entities.elements ) {
+        schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
+            elementGroup.forEach( ( element, index ) => {
+                const id = `element-${ groupIndex }-${ index }`;
+                const xPosition = 450 + ( groupIndex * 220 );
+                nodes.push( {
+                    id,
+                    type: 'default',
+                    data: {
+                        label: element.name.split( '/' ).pop() || 'Element',
+                        type: element.type,
+                        attributes: element.attributes
+                    },
+                    position: { x: xPosition, y: 150 + ( index * 100 ) },
+                    style: {
+                        background: '#34d399',
+                        color: 'white',
+                        borderRadius: '4px',
+                        padding: '10px',
+                        width: '180px',
+                        textAlign: 'center' as const
+                    },
+                    sourcePosition: Position.Right,
+                    targetPosition: Position.Left
+                } );
+
+                // Connect to root
+                edges.push( {
+                    id: `root-to-${ id }`,
+                    source: 'root',
+                    target: id,
+                    animated: true,
+                    style: { stroke: '#34d399' }
+                } );
+            } );
+        } );
+    }
+
+    return { nodes, edges };
+}
+
 // Flow data display component
-function FlowDataDisplay( { modulePath, flowName }: { modulePath: string; flowName: string } ) {
+function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
+    modulePath: string;
+    flowName: string;
+    onSchemaLoaded?: ( schema: any ) => void;
+} ) {
     const flowDataResource = useFlowData( modulePath, flowName );
     const flowData = flowDataResource.read();
+
+    useEffect( () => {
+        if ( flowData?.schema && onSchemaLoaded ) {
+            onSchemaLoaded( flowData.schema );
+        }
+    }, [ flowData, onSchemaLoaded ] );
 
     if ( !flowData ) {
         return <div>No flow data available</div>;
@@ -111,8 +220,28 @@ function FlowDataDisplay( { modulePath, flowName }: { modulePath: string; flowNa
     );
 }
 
+// Custom node component for displaying node details
+const CustomNode = ( { data }: { data: any } ) => {
+    return (
+        <div className="p-2 rounded shadow-md bg-white border border-gray-200">
+            <div className="font-medium text-sm">{data.label}</div>
+            <div className="text-xs text-gray-500">{data.type}</div>
+            {data.attributes && (
+                <div className="mt-1">
+                    {data.attributes.label && (
+                        <div className="text-xs font-medium">{data.attributes.label}</div>
+                    )}
+                    {data.attributes.emoji && (
+                        <div className="text-sm">{data.attributes.emoji.name}</div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
 export const FlowEditor: React.FC = () => {
-    const [ nodes, , onNodesChange ] = useNodesState( initialNodes );
+    const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
     const [ moduleName, setModuleName ] = useState<string>( "" );
     const [ modulePath, setModulePath ] = useState<string>( "" );
@@ -141,12 +270,25 @@ export const FlowEditor: React.FC = () => {
 
         // Reset selected flow when module changes
         setSelectedFlow( null );
-    }, [] );
+
+        // Reset flow diagram
+        setNodes( [] );
+        setEdges( [] );
+    }, [ setNodes, setEdges ] );
 
     // Handle flow selection
     const handleFlowSelect = useCallback( ( flow: FlowItem ) => {
         setSelectedFlow( flow );
     }, [] );
+
+    // Handle schema loaded from flow data
+    const handleSchemaLoaded = useCallback( ( schema: FlowSchema ) => {
+        if ( schema ) {
+            const { nodes: flowNodes, edges: flowEdges } = generateFlowDiagram( schema );
+            setNodes( flowNodes );
+            setEdges( flowEdges );
+        }
+    }, [ setNodes, setEdges ] );
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -172,6 +314,7 @@ export const FlowEditor: React.FC = () => {
                                     <FlowDataDisplay
                                         modulePath={selectedFlow.modulePath}
                                         flowName={selectedFlow.name}
+                                        onSchemaLoaded={handleSchemaLoaded}
                                     />
                                 </Suspense>
                             )}
@@ -196,6 +339,7 @@ export const FlowEditor: React.FC = () => {
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
                     fitView
+                    nodeTypes={{ default: CustomNode }}
                 >
                     <Controls />
                     <MiniMap />

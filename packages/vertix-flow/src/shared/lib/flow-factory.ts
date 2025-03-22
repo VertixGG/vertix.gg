@@ -39,10 +39,17 @@ export class DefaultFlowFactory implements FlowFactory {
     } );
 
     // Process embeds with their buttons
+    let estimatedEmbedHeight = 0;
+
     if ( schema.entities && schema.entities.embeds ) {
       schema.entities.embeds.forEach( ( embed, index ) => {
         const id = `embed-${ index }`;
         const embedLabel = embed.name.split( "/" ).pop() || "Embed";
+
+        // Estimate the embed's height based on its content
+        const embedContentLength = JSON.stringify( embed.attributes ).length;
+        // Base height plus additional height for content
+        estimatedEmbedHeight = 300 + Math.min( 200, embedContentLength / 10 );
 
         nodes.push( {
           id,
@@ -91,9 +98,14 @@ export class DefaultFlowFactory implements FlowFactory {
                         ( groupPadding * 2 );
       const groupHeight = elementHeight + ( groupPadding * 2 );
 
-      // Center position for the group
+      // Calculate position based on the embed's position and estimated height
+      const embedY = 150; // From the embed node position
+      const embedHeight = estimatedEmbedHeight || 500; // Use estimated height or fallback
+      const verticalSpacing = 80; // Space between embed and group
+
+      // Center position for the group, position below the embed
       const groupX = 250 - ( groupWidth / 2 );
-      const groupY = 650;
+      const groupY = embedY + embedHeight + verticalSpacing;
 
       // Create group node first
       const groupId = "elements-group";

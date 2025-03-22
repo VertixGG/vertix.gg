@@ -1,12 +1,6 @@
 import type { Edge, Node } from "@xyflow/react";
 
-export interface FlowItem {
-    name: string;
-    FlowClass?: unknown; // Changed from any to unknown for better type safety
-    modulePath?: string; // Module path for fetching flow data
-}
-
-export interface FlowSchema {
+export interface FlowComponent {
     name: string;
     type: string;
     entities: {
@@ -45,9 +39,10 @@ export interface UIModulesResponse {
 }
 
 export interface FlowData {
+    name: string; // name of the flow eg `VertixBot/UI-General/WelcomeFlow`
     transactions: string[];
     requiredData: Record<string, string[]>;
-    schema: FlowSchema;
+    components: FlowComponent[];
 }
 
 export interface NodeData {

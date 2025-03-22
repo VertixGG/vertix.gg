@@ -85,8 +85,8 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
     /**
      * Get the component associated with this flow
      */
-    public static getComponent() {
-        return class SetupNewWizardComponent extends UIWizardComponentBase {
+    public static getComponents() {
+        return [ class SetupNewWizardComponent extends UIWizardComponentBase {
             public static getName() {
                 return "Vertix/UI-V3/SetupNewWizardComponent";
             }
@@ -104,7 +104,7 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
                     UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed ),
                 ];
             }
-        };
+        } ];
     }
 
     /**

@@ -41,7 +41,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     const [ zoomLevel, setZoomLevel ] = useState<number>( 0.15 );
 
     // Get diagram state and actions from store
-    const { nodes, edges, setNodes, setEdges, handleSchemaLoaded } = useFlowDiagram();
+    const { nodes, edges, setNodes, setEdges, handleSchemaLoaded: handleFlowDataLoaded } = useFlowDiagram();
 
     // Calculate layout based on viewport dimensions
     const { width } = getViewportDimensions();
@@ -170,7 +170,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                                         <FlowDataDisplay
                                             modulePath={modulePath}
                                             flowName={flowName}
-                                            onSchemaLoaded={handleSchemaLoaded}
+                                            onFlowDataLoaded={handleFlowDataLoaded}
                                         />
                                     </div>
                                 </div>

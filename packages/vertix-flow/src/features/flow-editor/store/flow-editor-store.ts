@@ -59,7 +59,7 @@ export const useFlowDiagram = () => {
     setEdges: state.setEdges,
     updateNodePosition: state.updateNodePosition,
     clearDiagram: state.clearDiagram,
-    handleSchemaLoaded: state.handleSchemaLoaded,
+    handleSchemaLoaded: state.handleFlowDataLoaded,
   } ) );
 };
 

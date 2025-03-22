@@ -6,6 +6,9 @@
         "vertix-flow:dev": "concurrently \"bun run vertix-flow:dev:server\" \"bun run vertix-flow:dev:client\"",
         "vertix-flow:dev:client": "bunx --bun vite --host",
         "vertix-flow:dev:server": "bun run --watch src/server/server.ts",
+        "vertix-flow:tsx": "concurrently \"npm run vertix-flow:tsx:server\" \"npm run vertix-flow:tsx:client\"",
+        "vertix-flow:tsx:client": "npx vite --host",
+        "vertix-flow:tsx:server": "npx dotenv-cli -e .env -- tsx --watch src/server/server.ts",
         "vertix-flow:build": "vite build",
         "vertix-flow:preview": "vite preview"
     },

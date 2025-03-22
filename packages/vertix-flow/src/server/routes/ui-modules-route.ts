@@ -2,6 +2,8 @@ import path from "path";
 
 import { fileURLToPath } from "node:url";
 
+import * as util from "node:util";
+
 import { Type } from "@fastify/type-provider-typebox";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
@@ -32,7 +34,7 @@ interface UIModulesResponse {
 /**
  * UI Flow schema interface
  */
-interface FlowSchema {
+interface FlowComponent {
     name?: string;
     type: string;
     entities?: {
@@ -45,9 +47,10 @@ interface FlowSchema {
  * UI Flow response interface
  */
 interface UIFlowResponse {
+    name: string;
     transactions: string[];
     requiredData: Record<string, string[]>;
-    schema: FlowSchema;
+    components: FlowComponent[];
 }
 
 /**
@@ -176,50 +179,28 @@ export class UIModulesRoute extends InitializeBase {
             // Get the JSON representation
             const flowData = await flowInstance.toJSON();
 
-            // Debug logs to understand schema structure
+            // Check name property or provide default
+            if ( !flowData.name ) {
+                flowData.name = ( flowInstance.constructor as any ).getName?.() || flowName;
+            }
+
+            // Debug logs to understand component structure
             console.log( "[DEBUG] Original flow data structure:", JSON.stringify( {
-                hasSchema: !!flowData.schema,
-                schemaType: flowData.schema ? typeof flowData.schema : "null",
-                schemaKeys: flowData.schema ? Object.keys( flowData.schema ) : []
+                hasComponents: !!flowData.components,
+                componentsType: flowData.components ? typeof flowData.components : "null",
+                componentsLength: flowData.components ? flowData.components.length : 0
             }, null, 2 ) );
 
-            // Debug log buildSchema method if available
-            if ( typeof flowInstance.buildSchema === "function" ) {
+            // Debug log build methods if available
+            if ( typeof flowInstance.buildComponentSchemas === "function" ) {
+                console.log( "[DEBUG] Flow has buildComponentSchemas method" );
+            } else if ( typeof flowInstance.buildSchema === "function" ) {
                 console.log( "[DEBUG] Flow has buildSchema method" );
-
-                // Check if component has build method
-                const component = flowInstance.getComponent();
-                console.log( "[DEBUG] Component:", {
-                    name: component?.constructor?.name || "unknown",
-                    hasBuild: typeof component?.build === "function",
-                } );
+            } else {
+                console.log( "[DEBUG] Flow has no schema building methods" );
             }
 
-            // Ensure schema is always an object with a type property
-            if ( !flowData.schema ) {
-                console.log( "[DEBUG] Schema is null or undefined, providing default" );
-                flowData.schema = {
-                    type: "default",
-                    name: flowName,
-                    entities: { elements: [], embeds: [] }
-                };
-            } else if ( typeof flowData.schema !== "object" ) {
-                console.log( "[DEBUG] Schema is not an object, providing default" );
-                flowData.schema = {
-                    type: "default",
-                    name: flowName,
-                    entities: { elements: [], embeds: [] }
-                };
-            } else if ( !flowData.schema.type ) {
-                console.log( "[DEBUG] Schema has no type property, adding default type" );
-                flowData.schema.type = "default";
-            }
-
-            console.log( "[DEBUG] Final flow data structure:", JSON.stringify( {
-                hasSchema: !!flowData.schema,
-                schemaType: typeof flowData.schema,
-                schemaKeys: Object.keys( flowData.schema )
-            }, null, 2 ) );
+            console.log( "[DEBUG] Final flow data structure:", util.inspect( flowData, { depth: null } ) );
 
             return flowData;
         } catch ( err ) {
@@ -262,16 +243,19 @@ export class UIModulesRoute extends InitializeBase {
             } ),
             response: {
                 200: Type.Object( {
+                    name: Type.String(),
                     transactions: Type.Array( Type.String() ),
                     requiredData: Type.Record( Type.String(), Type.Array( Type.String() ) ),
-                    schema: Type.Object( {
-                        type: Type.String(),
-                        name: Type.Optional( Type.String() ),
-                        entities: Type.Optional( Type.Object( {
-                            elements: Type.Array( Type.Array( Type.Any() ) ),
-                            embeds: Type.Array( Type.Any() )
-                        } ) )
-                    } )
+                    components: Type.Array(
+                        Type.Object( {
+                            type: Type.String(),
+                            name: Type.Optional( Type.String() ),
+                            entities: Type.Optional( Type.Object( {
+                                elements: Type.Array( Type.Array( Type.Any() ) ),
+                                embeds: Type.Array( Type.Any() )
+                            } ) )
+                        } )
+                    )
                 } )
             }
         };

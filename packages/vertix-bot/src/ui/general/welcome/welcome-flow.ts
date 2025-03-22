@@ -48,8 +48,8 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
     /**
      * Get the component associated with this flow
      */
-    public static getComponent() {
-        return WelcomeComponent;
+    public static getComponents() {
+        return [ WelcomeComponent ];
     }
 
     /**

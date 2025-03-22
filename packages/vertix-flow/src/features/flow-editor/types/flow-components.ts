@@ -2,7 +2,7 @@
  * Shared type definitions for flow editor components
  */
 
-import type { FlowSchema, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowComponent, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 
 /**
  * Base display props for components that display flow data
@@ -14,8 +14,8 @@ export interface FlowDisplayBaseProps {
 /**
  * Props for components that display flow schema
  */
-export interface FlowSchemaDisplayProps extends FlowDisplayBaseProps {
-  schema: FlowSchema;
+export interface FlowComponentDisplayProps extends FlowDisplayBaseProps {
+  component: FlowComponent;
 }
 
 /**
@@ -34,7 +34,7 @@ export interface FlowDataLoaderProps {
   modulePath: string;
   flowName: string;
   onDataLoaded?: ( data: FlowData ) => void;
-  onSchemaLoaded?: ( schema: FlowSchema ) => void;
+  onFlowDataLoaded?: ( data: FlowData ) => void;
   onError?: ( error: Error ) => void;
 }
 

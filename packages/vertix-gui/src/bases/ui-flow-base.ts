@@ -1,9 +1,12 @@
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
-import { UIAdapterEntityBase } from "@vertix.gg/gui/src/bases/ui-adapter-entity-base";
+import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { PermissionsBitField, ChannelType } from "discord.js";
+
+import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 /**
  * Base interface for flow states
@@ -42,18 +45,20 @@ export interface FlowIntegrationPoint {
 
 /**
  * Base class for UI flows
+ * Extends UIInstanceTypeBase directly to focus on state machine functionality
+ * without requiring interaction handling capabilities
  */
 export abstract class UIFlowBase<
     TState extends string,
     TTransition extends string,
     TData extends UIFlowData = UIFlowData
-> extends UIAdapterEntityBase {
+> extends UIInstanceTypeBase {
     private currentState: TState;
     private readonly transitions: Map<TState, Set<TTransition>> = new Map();
     private data: TData;
 
-    public constructor( options: TAdapterRegisterOptions ) {
-        super( options );
+    public constructor( protected options: TAdapterRegisterOptions ) {
+        super();
 
         this.currentState = this.getInitialState();
         this.data = this.getInitialData();
@@ -65,8 +70,8 @@ export abstract class UIFlowBase<
         return "VertixGUI/UIFlowBase";
     }
 
-    public static getComponent(): any {
-        throw new ForceMethodImplementation( "UIFlowBase", "getComponent" );
+    public static getComponents(): UIComponentConstructor[] {
+        throw new ForceMethodImplementation( "UIFlowBase", "getComponents" );
     }
 
     /**
@@ -93,18 +98,19 @@ export abstract class UIFlowBase<
         return {};
     }
 
-    public getPermissions(): PermissionsBitField {
-        throw new ForceMethodImplementation( "UIFlowBase", "getPermissions" );
-    }
+    /**
+     * Returns the permissions required to use this flow
+     */
+    public abstract getPermissions(): PermissionsBitField;
 
-    public getChannelTypes(): ChannelType[] {
-        throw new ForceMethodImplementation( "UIFlowBase", "getChannelTypes" );
-    }
+    /**
+     * Returns the channel types this flow supports
+     */
+    public abstract getChannelTypes(): ChannelType[];
 
     protected abstract getInitialState(): TState;
     protected abstract getInitialData(): TData;
     protected abstract initializeTransitions(): void;
-    protected abstract showModal(): Promise<void>;
 
     protected hasTransitions( state: TState ): boolean {
         return this.transitions.has( state );
@@ -178,12 +184,34 @@ export abstract class UIFlowBase<
     }
 
     /**
-     * Build schema from component
+     * Get the component instances for this flow
      */
-    public async buildSchema() {
-        await this.getComponent().waitUntilInitialized();
-        const schema = await this.getComponent().build( {} );
-        return schema;
+    public getComponents() {
+        return ( this.constructor as typeof UIFlowBase ).getComponents();
+    }
+
+    /**
+     * Build schema from components
+     */
+    public async buildComponentSchemas() {
+        const components = this.getComponents();
+        const schemas: any[] = [];
+
+        for ( const Component of components ) {
+            const component = new Component();
+
+            if ( component ) {
+                await component.waitUntilInitialized();
+            }
+
+            const result = await component.build( {} );
+
+            schemas.push(  result );
+        }
+
+        console.log( "[DEBUG] Schemas:", schemas );
+
+        return schemas.length ? schemas : null;
     }
 
     /**
@@ -213,7 +241,7 @@ export abstract class UIFlowBase<
                 handoffPoints,
                 externalReferences: externalRefs
             },
-            schema: await this.buildSchema()
+            components: await this.buildComponentSchemas()
         };
     }
 }

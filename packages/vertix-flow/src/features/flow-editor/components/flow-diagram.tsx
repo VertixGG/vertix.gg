@@ -18,7 +18,7 @@ import { GroupNode } from "./node-types/group-node";
 import { CompoundNode } from "./node-types/compound-node";
 import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
-import type { FlowSchema, FlowDiagram } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowComponent, FlowDiagram, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 import type {
     NodeChange,
     EdgeChange,
@@ -36,9 +36,38 @@ const nodeTypes = {
 };
 
 // Function to generate flow diagram using factory - don't use hooks here
-export function generateFlowDiagram( schema: FlowSchema ): FlowDiagram {
+export function generateFlowDiagram( flowData: FlowData ): FlowDiagram {
+    console.log("[DEBUG] Generating flow diagram from:", {
+        name: flowData.name,
+        hasComponents: !!flowData.components,
+        componentsCount: flowData.components?.length,
+        firstComponentName: flowData.components?.[0]?.name,
+        hasElements: !!flowData.components?.[0]?.entities?.elements?.length,
+        hasEmbeds: !!flowData.components?.[0]?.entities?.embeds?.length
+    });
+
     // Use the factory singleton directly instead of the hook
-    return flowFactory.createFlowDiagram( schema );
+    const result = flowFactory.createFlowDiagram( flowData );
+
+    console.log("[DEBUG] Generated flow diagram:", {
+        nodesCount: result.nodes.length,
+        edgesCount: result.edges.length,
+        nodeTypes: result.nodes.map(n => n.type)
+    });
+
+    return result;
+}
+
+// Backward compatibility function for when only schema is available
+export function generateFlowDiagramFromComponent( component: FlowComponent ): FlowDiagram {
+    // Create a FlowData object with the component
+    const flowData: FlowData = {
+        name: component.name || "Unknown",
+        components: [component],
+        transactions: [],
+        requiredData: {}
+    };
+    return generateFlowDiagram( flowData );
 }
 
 interface FlowDiagramDisplayProps {
@@ -63,6 +92,18 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
 } ) => {
     const { setError } = useFlowUI();
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
+
+    // Log the complete node structure
+    console.log("[DEBUG] Flow diagram nodes structure:",
+        JSON.stringify(nodes.map(node => ({
+            id: node.id,
+            type: node.type,
+            dataType: node.data?.type,
+            dataLabel: node.data?.label,
+            hasChildNodes: node.data?.childNodes ? true : false,
+            childNodesCount: node.data?.childNodes ? (node.data.childNodes as any[]).length : 0
+        })), null, 2)
+    );
 
     const onInit = useCallback( ( instance: ReactFlowInstance ) => {
         // This gets called once when the flow is initialized

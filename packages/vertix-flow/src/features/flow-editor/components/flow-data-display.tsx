@@ -16,7 +16,7 @@ import {
 import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 import type { FlowDataLoaderProps } from "../types/flow-components";
 
-export interface FlowDataDisplayProps extends Pick<FlowDataLoaderProps, 'modulePath' | 'flowName' | 'onSchemaLoaded'> {
+export interface FlowDataDisplayProps extends Pick<FlowDataLoaderProps, 'modulePath' | 'flowName' | 'onFlowDataLoaded'> {
   className?: string; // Additional prop to satisfy linter
 }
 
@@ -26,7 +26,7 @@ export interface FlowDataDisplayProps extends Pick<FlowDataLoaderProps, 'moduleP
 export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
     modulePath,
     flowName,
-    onSchemaLoaded,
+    onFlowDataLoaded,
     className,
 } ) => {
     const [ flowData, setFlowData ] = useState<FlowData | null>( null );
@@ -41,8 +41,8 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
             setFlowData( data );
 
             // When we get the data, call the callback if provided
-            if ( data && onSchemaLoaded ) {
-                onSchemaLoaded( data.schema );
+            if ( data && onFlowDataLoaded ) {
+                onFlowDataLoaded( data );
             }
         } catch ( err ) {
             console.error( "Error loading flow data:", err );
@@ -50,7 +50,7 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
         } finally {
             setLoading( false );
         }
-    }, [ data, onSchemaLoaded, setError, setLoading ] );
+    }, [ data, onFlowDataLoaded, setError, setLoading ] );
 
     // If we have an error, show it
     if ( error ) {
@@ -62,7 +62,8 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
         return <LoadingState message="Loading flow data..." />;
     }
 
-    const { schema, transactions, requiredData } = flowData;
+    const { components, transactions, requiredData } = flowData;
+    const schemaType = components && components.length > 0 ? components[0].type : 'unknown';
 
     return (
         <Card className={`overflow-auto max-h-[500px] ${ className || '' }`}>
@@ -70,7 +71,7 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
                 <CardTitle>
                     Flow: {flowName}
                     <Badge variant="outline" className="ml-2">
-                        {schema.type}
+                        {schemaType}
                     </Badge>
                 </CardTitle>
             </CardHeader>

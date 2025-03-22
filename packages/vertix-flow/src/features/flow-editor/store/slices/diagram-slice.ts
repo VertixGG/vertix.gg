@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
 import type { Node, Edge } from "@xyflow/react";
-import type { FlowSchema } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 
 /**
  * Diagram state for the flow editor
@@ -19,7 +19,7 @@ export interface DiagramActions {
   setEdges: ( edgesOrFn: Edge[] | ( ( prev: Edge[] ) => Edge[] ) ) => void;
   updateNodePosition: ( nodeId: string, position: { x: number, y: number } ) => void;
   clearDiagram: () => void;
-  handleSchemaLoaded: ( schema: FlowSchema ) => void;
+  handleFlowDataLoaded: ( flowData: FlowData ) => void;
 }
 
 /**
@@ -64,11 +64,11 @@ export const createDiagramSlice: StateCreator<
   // Clear the diagram data
   clearDiagram: () => set( initialDiagramState ),
 
-  // Generate diagram from schema
-  handleSchemaLoaded: ( schema ) => {
-    if ( !schema ) return;
+  // Generate diagram from flow data
+  handleFlowDataLoaded: ( flowData ) => {
+    if ( !flowData ) return;
 
-    const { nodes, edges } = generateFlowDiagram( schema );
+    const { nodes, edges } = generateFlowDiagram( flowData );
     set( { nodes, edges } );
   }
 } );

@@ -63,6 +63,82 @@ export const createUIModulesRoute: FastifyPluginAsync = async( fastify ) => {
                     }
                 },
             } );
+
+            // Add endpoint to get flow data using query parameters
+            const flowDataQuerySchema = {
+                querystring: Type.Object( {
+                    modulePath: Type.String(),
+                    flowName: Type.String()
+                } ),
+                response: {
+                    200: Type.Object( {
+                        transactions: Type.Array( Type.String() ),
+                        requiredData: Type.Record( Type.String(), Type.Array( Type.String() ) ),
+                        schema: Type.Any()
+                    } ),
+                },
+            };
+
+            instance.get( "/ui-flows", {
+                schema: flowDataQuerySchema,
+                handler: async( request, reply ) => {
+                    try {
+                        const { modulePath, flowName } = request.query as { modulePath: string; flowName: string };
+
+                        // Get the absolute path to the UI modules directory
+                        const uiModulesPath = path.resolve( __dirname, "../../../..", "vertix-bot/src/ui" );
+                        const fullModulePath = path.join( uiModulesPath, modulePath );
+
+                        instance.log.info( `Loading module from: ${ fullModulePath }` );
+                        instance.log.info( `Looking for flow: ${ flowName }` );
+
+                        // Import the module
+                        const module = await import( fullModulePath );
+                        const ModuleClass = module.default;
+
+                        if ( !ModuleClass || typeof ModuleClass.getFlows !== 'function' ) {
+                            reply.status( 404 ).send( {
+                                error: "Invalid module",
+                                message: "The module does not have a getFlows method"
+                            } );
+                            return;
+                        }
+
+                        // Get all flow classes
+                        const flows = ModuleClass.getFlows();
+
+                        // Find the requested flow
+                        const FlowClass = flows.find( ( flow: any ) =>
+                            flow.getName() === flowName
+                        );
+
+                        if ( !FlowClass ) {
+                            reply.status( 404 ).send( {
+                                error: "Flow not found",
+                                message: `Flow "${ flowName }" not found in module`
+                            } );
+                            return;
+                        }
+
+                        // Create an instance of the flow
+                        const flowInstance = new FlowClass( {
+                            adapter: null,
+                            options: {}
+                        } );
+
+                        // Get the JSON representation
+                        const flowData = await flowInstance.toJSON();
+
+                        return flowData;
+                    } catch ( err ) {
+                        instance.log.error( "Error getting flow data:", err );
+                        reply.status( 500 ).send( {
+                            error: "Failed to get flow data",
+                            message: err instanceof Error ? err.message : "Unknown error"
+                        } );
+                    }
+                }
+            } );
         },
         { prefix: "/api" }
     );

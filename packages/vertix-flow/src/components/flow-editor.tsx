@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, Suspense } from "react";
 import "reactflow/dist/style.css";
 
 import ReactFlow, {
@@ -16,9 +16,12 @@ import { FlowListDisplay } from "@vertix.gg/flow/src/components/flow-list-displa
 import { FlowInteraction } from "@vertix.gg/flow/src/components/flow-interaction";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@vertix.gg/flow/src/components/ui/card";
+import { Separator } from "@vertix.gg/flow/src/components/ui/separator";
+import { Badge } from "@vertix.gg/flow/src/components/ui/badge";
 
 import type { Connection, Edge, Node } from "reactflow";
 import type { UIModuleFile } from "@vertix.gg/flow/src/hooks/use-ui-modules";
+import { useFlowData } from "@vertix.gg/flow/src/hooks/use-ui-modules";
 
 // Initial nodes setup
 const initialNodes: Node[] = [
@@ -50,12 +53,69 @@ const initialEdges: Edge[] = [
 interface FlowItem {
     name: string;
     FlowClass?: any; // The actual flow class (optional now)
+    modulePath?: string; // Added module path for fetching flow data
+}
+
+// Flow data display component
+function FlowDataDisplay( { modulePath, flowName }: { modulePath: string; flowName: string } ) {
+    const flowDataResource = useFlowData( modulePath, flowName );
+    const flowData = flowDataResource.read();
+
+    if ( !flowData ) {
+        return <div>No flow data available</div>;
+    }
+
+    return (
+        <div className="space-y-4">
+            <h3 className="text-lg font-medium">Flow Data: {flowName}</h3>
+
+            <div>
+                <h4 className="text-sm font-medium mb-2">Transactions:</h4>
+                <div className="flex flex-wrap gap-2">
+                    {flowData.transactions.map( ( transaction, index ) => (
+                        <Badge key={index}>{transaction}</Badge>
+                    ) )}
+                </div>
+            </div>
+
+            <Separator />
+
+            <div>
+                <h4 className="text-sm font-medium mb-2">Required Data:</h4>
+                <div className="space-y-2">
+                    {Object.entries( flowData.requiredData ).map( ( [ transaction, data ], index ) => (
+                        <div key={index} className="pl-2 border-l-2 border-primary">
+                            <div className="font-medium">{transaction}:</div>
+                            <div className="flex flex-wrap gap-1 pl-3">
+                                {data.map( ( field, i ) => (
+                                    <Badge key={i} variant="outline" className="text-xs">{field}</Badge>
+                                ) )}
+                            </div>
+                        </div>
+                    ) )}
+                </div>
+            </div>
+
+            {flowData.schema && (
+                <>
+                    <Separator />
+                    <div>
+                        <h4 className="text-sm font-medium mb-2">Schema:</h4>
+                        <pre className="text-xs bg-muted p-2 rounded-md overflow-auto max-h-[200px]">
+                            {JSON.stringify( flowData.schema, null, 2 )}
+                        </pre>
+                    </div>
+                </>
+            )}
+        </div>
+    );
 }
 
 export const FlowEditor: React.FC = () => {
     const [ nodes, , onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
     const [ moduleName, setModuleName ] = useState<string>( "" );
+    const [ modulePath, setModulePath ] = useState<string>( "" );
     const [ flows, setFlows ] = useState<FlowItem[]>( [] );
     const [ selectedFlow, setSelectedFlow ] = useState<FlowItem | null>( null );
 
@@ -66,11 +126,13 @@ export const FlowEditor: React.FC = () => {
     const handleModuleSelected = useCallback( ( module: UIModuleFile ) => {
         // Update state with the module information
         setModuleName( module.moduleInfo?.name || "" );
+        setModulePath( module.path || "" );
 
         if ( module.moduleInfo?.flows ) {
             // Use the flows data from moduleInfo directly
             const flowItems = module.moduleInfo.flows.map( flowName => ( {
-                name: flowName
+                name: flowName,
+                modulePath: module.path
             } ) );
             setFlows( flowItems );
         } else {
@@ -104,6 +166,16 @@ export const FlowEditor: React.FC = () => {
                                     onFlowSelect={handleFlowSelect}
                                 />
                             )}
+
+                            {selectedFlow && selectedFlow.modulePath && (
+                                <Suspense fallback={<div>Loading flow data...</div>}>
+                                    <FlowDataDisplay
+                                        modulePath={selectedFlow.modulePath}
+                                        flowName={selectedFlow.name}
+                                    />
+                                </Suspense>
+                            )}
+
                             {selectedFlow && selectedFlow.FlowClass && (
                                 <FlowInteraction
                                     flowName={selectedFlow.name}

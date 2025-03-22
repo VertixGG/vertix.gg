@@ -17,6 +17,12 @@ export interface UIModulesResponse {
     files: UIModuleFile[];
 }
 
+export interface FlowData {
+    transactions: string[];
+    requiredData: Record<string, string[]>;
+    schema: any;
+}
+
 // Create axios instance with default config
 const api = axios.create( {
     baseURL: import.meta.env.VITE_API_URL || "", // Use API URL from .env or empty string for relative URLs
@@ -43,5 +49,28 @@ export function useUIModuleContent( filePath: string ) {
             return response.data;
         },
         [ `ui-module-content-${ filePath }` ] // Cache key based on file path
+    );
+}
+
+export function useFlowData( modulePath: string, flowName: string ) {
+    return useAsyncResource(
+        async() => {
+            if ( !modulePath || !flowName ) {
+                return null;
+            }
+
+            // Remove leading slash from modulePath if it exists
+            const normalizedPath = modulePath.startsWith( '/' ) ? modulePath.substring( 1 ) : modulePath;
+
+            // Use query parameters instead of path parameters
+            const response = await api.get<FlowData>( `/api/ui-flows`, {
+                params: {
+                    modulePath: normalizedPath,
+                    flowName: flowName
+                }
+            } );
+            return response.data;
+        },
+        [ `flow-data-${ modulePath }-${ flowName }` ] // Cache key based on module path and flow name
     );
 }

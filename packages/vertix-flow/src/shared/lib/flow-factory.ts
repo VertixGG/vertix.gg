@@ -79,13 +79,25 @@ export class DefaultFlowFactory implements FlowFactory {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-          // Position elements in a row below the embed
-          const elementCount = elementGroup.length;
-          const spacing = 150; // Space between elements
-          const totalWidth = ( elementCount - 1 ) * spacing;
-          const startX = 250 - ( totalWidth / 2 ); // Center the row below the embed
-          const xPosition = startX + ( index * spacing );
-          const yPosition = 400; // Position directly below the embed
+          // Position directly below the corresponding bottom button
+          const yPosition = 930; // Position at the very bottom of the flow diagram
+
+          // For 3 buttons layout: left button, middle button, right button
+          // Calculate x position - these match approximately positions in the image
+          let xPosition = 250; // Default center
+
+          if ( elementGroup.length === 3 ) {
+            if ( index === 0 ) xPosition = 125; // Left button (Community Server)
+            else if ( index === 1 ) xPosition = 250; // Middle button (Invite Vertix)
+            else if ( index === 2 ) xPosition = 375; // Right button (Setup)
+          }
+          // For other numbers of buttons, space them evenly
+          else {
+            const spacing = 150;
+            const totalWidth = elementGroup.length * spacing;
+            const startX = 250 - ( totalWidth / 2 ) + ( spacing / 2 );
+            xPosition = startX + ( index * spacing );
+          }
 
           nodes.push( {
             id,

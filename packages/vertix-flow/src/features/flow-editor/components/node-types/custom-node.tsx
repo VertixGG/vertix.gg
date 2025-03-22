@@ -110,7 +110,7 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
 
   // Fallback for any other node type
   return (
-    <div className="p-3 bg-[#2f3136] rounded-lg shadow-lg text-white max-w-[150px]">
+    <div className="p-3 bg-[#2f3136] rounded-lg shadow-lg text-white">
       <div className="font-medium text-sm text-center">{label}</div>
       {type && <div className="text-[#b9bbbe] text-[10px] mt-1 text-center">{type}</div>}
     </div>

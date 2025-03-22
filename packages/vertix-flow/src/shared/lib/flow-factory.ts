@@ -36,7 +36,8 @@ export class DefaultFlowFactory implements FlowFactory {
         type: schema.type
       },
       position: { x: 250, y: 50 },
-      style: this.createNodeStyle()
+      style: this.createNodeStyle(),
+      draggable: true
     } );
 
     // Process embeds with their buttons
@@ -55,7 +56,8 @@ export class DefaultFlowFactory implements FlowFactory {
             elements: schema.entities.elements // Pass buttons as elements to the embed
           },
           position: { x: 250, y: 150 },
-          style: this.createNodeStyle()
+          style: this.createNodeStyle(),
+          draggable: true
         } );
 
         // Connect to root
@@ -88,7 +90,8 @@ export class DefaultFlowFactory implements FlowFactory {
             position: { x: 250, y: 250 }, // Just put them below the embed
             style: this.createNodeStyle(),
             sourcePosition: Position.Top,
-            targetPosition: Position.Bottom
+            targetPosition: Position.Bottom,
+            draggable: true
           } );
 
           // Connect to embed

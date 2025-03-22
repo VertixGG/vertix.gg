@@ -162,6 +162,7 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
                 onConnect={onConnect}
                 nodeTypes={nodeTypes}
                 fitView
+                nodesDraggable={true}
             >
                 <Controls />
                 <MiniMap />

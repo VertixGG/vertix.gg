@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 
 import {
-    useNodesState,
-    useEdgesState,
-    addEdge
+    addEdge,
+    applyNodeChanges,
+    applyEdgeChanges
 } from "reactflow";
 
 import { FlowDataDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-data-display";
@@ -17,7 +17,9 @@ import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/com
 import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
 
 import type {
-    Connection
+    Connection,
+    NodeChange,
+    EdgeChange
 } from "reactflow";
 
 export const FlowEditor: React.FC = () => {
@@ -26,6 +28,7 @@ export const FlowEditor: React.FC = () => {
         nodes,
         edges,
         setEdges,
+        setNodes,
         handleSchemaLoaded
     } = useFlowEditorStore();
 
@@ -33,8 +36,13 @@ export const FlowEditor: React.FC = () => {
     const { selectedModule, selectedFlow } = useModuleSelectorStore();
 
     // Continue using React Flow's hooks for handling node changes
-    const [ , , onNodesChange ] = useNodesState( nodes );
-    const [ , , onEdgesChange ] = useEdgesState( edges );
+    const onNodesChange = useCallback( ( changes: NodeChange[] ) => {
+        setNodes( applyNodeChanges( changes, nodes ) );
+    }, [ setNodes, nodes ] );
+
+    const onEdgesChange = useCallback( ( changes: EdgeChange[] ) => {
+        setEdges( applyEdgeChanges( changes, edges ) );
+    }, [ setEdges, edges ] );
 
     const onConnect = useCallback( ( params: Connection ) => {
         setEdges( prevEdges => addEdge( params, prevEdges ) );

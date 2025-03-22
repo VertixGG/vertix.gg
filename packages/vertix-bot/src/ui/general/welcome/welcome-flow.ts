@@ -1,9 +1,6 @@
-import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
-
-import { PermissionsBitField, PermissionFlagsBits, ChannelType } from "discord.js";
-
+import { UIFlowBase, FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
-
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 /**
@@ -38,55 +35,93 @@ export interface WelcomeFlowData {
 }
 
 /**
- * Defines the valid state transitions for the Welcome flow
- */
-export const WELCOME_FLOW_TRANSITIONS: Record<WelcomeFlowState, WelcomeFlowTransition[]> = {
-    [ WelcomeFlowState.INITIAL ]: [
-        WelcomeFlowTransition.CLICK_SETUP,
-        WelcomeFlowTransition.CLICK_SUPPORT,
-        WelcomeFlowTransition.CLICK_INVITE,
-        WelcomeFlowTransition.SELECT_LANGUAGE,
-    ],
-    [ WelcomeFlowState.SETUP_CLICKED ]: [], // Flow hands over to Setup Wizard
-    [ WelcomeFlowState.SUPPORT_CLICKED ]: [],
-    [ WelcomeFlowState.INVITE_CLICKED ]: [],
-    [ WelcomeFlowState.LANGUAGE_SELECTED ]: [
-        WelcomeFlowTransition.CLICK_SETUP,
-        WelcomeFlowTransition.CLICK_SUPPORT,
-        WelcomeFlowTransition.CLICK_INVITE,
-    ],
-};
-
-/**
- * Defines the next state for each transition
- */
-export const WELCOME_FLOW_NEXT_STATES: Record<WelcomeFlowTransition, WelcomeFlowState> = {
-    [ WelcomeFlowTransition.CLICK_SETUP ]: WelcomeFlowState.SETUP_CLICKED,
-    [ WelcomeFlowTransition.CLICK_SUPPORT ]: WelcomeFlowState.SUPPORT_CLICKED,
-    [ WelcomeFlowTransition.CLICK_INVITE ]: WelcomeFlowState.INVITE_CLICKED,
-    [ WelcomeFlowTransition.SELECT_LANGUAGE ]: WelcomeFlowState.LANGUAGE_SELECTED,
-};
-
-/**
- * Defines the required data for each transition
- */
-export const WELCOME_FLOW_REQUIRED_DATA: Record<WelcomeFlowTransition, ( keyof WelcomeFlowData )[]> = {
-    [ WelcomeFlowTransition.CLICK_SETUP ]: [],
-    [ WelcomeFlowTransition.CLICK_SUPPORT ]: [],
-    [ WelcomeFlowTransition.CLICK_INVITE ]: [],
-    [ WelcomeFlowTransition.SELECT_LANGUAGE ]: [ "selectedLanguage" ],
-};
-
-/**
  * Welcome flow implementation
  */
 export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransition, WelcomeFlowData> {
+    /**
+     * Get the name of this flow
+     */
     public static getName(): string {
         return "VertixBot/UI-General/WelcomeFlow";
     }
 
+    /**
+     * Get the component associated with this flow
+     */
     public static getComponent() {
         return WelcomeComponent;
+    }
+
+    /**
+     * Returns the valid transitions for each state in the Welcome flow
+     */
+    public static getFlowTransitions(): Record<WelcomeFlowState, WelcomeFlowTransition[]> {
+        return {
+            [ WelcomeFlowState.INITIAL ]: [
+                WelcomeFlowTransition.CLICK_SETUP,
+                WelcomeFlowTransition.CLICK_SUPPORT,
+                WelcomeFlowTransition.CLICK_INVITE,
+                WelcomeFlowTransition.SELECT_LANGUAGE,
+            ],
+            [ WelcomeFlowState.SETUP_CLICKED ]: [], // Terminal state - flow hands over to Setup Wizard
+            [ WelcomeFlowState.SUPPORT_CLICKED ]: [],
+            [ WelcomeFlowState.INVITE_CLICKED ]: [],
+            [ WelcomeFlowState.LANGUAGE_SELECTED ]: [
+                WelcomeFlowTransition.CLICK_SETUP,
+                WelcomeFlowTransition.CLICK_SUPPORT,
+                WelcomeFlowTransition.CLICK_INVITE,
+            ],
+        };
+    }
+
+    /**
+     * Returns the next state for each transition
+     */
+    public static getNextStates(): Record<WelcomeFlowTransition, WelcomeFlowState> {
+        return {
+            [ WelcomeFlowTransition.CLICK_SETUP ]: WelcomeFlowState.SETUP_CLICKED,
+            [ WelcomeFlowTransition.CLICK_SUPPORT ]: WelcomeFlowState.SUPPORT_CLICKED,
+            [ WelcomeFlowTransition.CLICK_INVITE ]: WelcomeFlowState.INVITE_CLICKED,
+            [ WelcomeFlowTransition.SELECT_LANGUAGE ]: WelcomeFlowState.LANGUAGE_SELECTED,
+        };
+    }
+
+    /**
+     * Returns the required data for each transition
+     */
+    public static getRequiredData(): Record<WelcomeFlowTransition, ( keyof WelcomeFlowData )[]> {
+        return {
+            [ WelcomeFlowTransition.CLICK_SETUP ]: [],
+            [ WelcomeFlowTransition.CLICK_SUPPORT ]: [],
+            [ WelcomeFlowTransition.CLICK_INVITE ]: [],
+            [ WelcomeFlowTransition.SELECT_LANGUAGE ]: [ "selectedLanguage" ],
+        };
+    }
+
+    /**
+     * Returns documentation about handoff points in this flow
+     */
+    public static getHandoffPoints(): FlowIntegrationPoint[] {
+        return [
+            {
+                flowName: "Vertix/UI-V3/SetupNewWizardFlow",
+                description: "Hands off to Setup Wizard when setup button is clicked",
+                sourceState: WelcomeFlowState.SETUP_CLICKED,
+                transition: WelcomeFlowTransition.CLICK_SETUP,
+                requiredData: []
+            }
+        ];
+    }
+
+    /**
+     * Returns external component references needed by this flow
+     */
+    public static getExternalReferences(): Record<string, string> {
+        return {
+            setupWizardFlow: "Vertix/UI-V3/SetupNewWizardFlow",
+            setupWizardAdapter: "Vertix/UI-V3/SetupNewWizardAdapter",
+            setupWizardEntryTransition: "START_SETUP"
+        };
     }
 
     public constructor( options: TAdapterRegisterOptions ) {
@@ -110,8 +145,8 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
     }
 
     protected initializeTransitions(): void {
-        // Initialize transitions based on WELCOME_FLOW_TRANSITIONS
-        Object.entries( WELCOME_FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        // Initialize transitions based on static method
+        Object.entries( WelcomeFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.addTransitions( state as WelcomeFlowState, transitions );
         } );
     }
@@ -130,20 +165,20 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
     }
 
     public getAvailableTransitions(): WelcomeFlowTransition[] {
-        return WELCOME_FLOW_TRANSITIONS[ this.getCurrentState() ];
+        return WelcomeFlow.getFlowTransitions()[ this.getCurrentState() ];
     }
 
     public getNextState( transition: WelcomeFlowTransition ): WelcomeFlowState {
-        return WELCOME_FLOW_NEXT_STATES[ transition ];
+        return WelcomeFlow.getNextStates()[ transition ];
     }
 
     public getRequiredData( transition: WelcomeFlowTransition ): ( keyof WelcomeFlowData )[] {
-        return WELCOME_FLOW_REQUIRED_DATA[ transition ];
+        return WelcomeFlow.getRequiredData()[ transition ];
     }
 
     protected showModal(): Promise<void> {
         // Implementation will depend on your modal system
-        // For now, return a resolved promise
+        // For flow definition, just return a resolved promise
         return Promise.resolve();
     }
 }

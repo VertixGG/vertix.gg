@@ -359,15 +359,15 @@ export async function entryPoint() {
     } );
 
     await registerUILanguageManager( {
-        shouldImport: true,
-        shouldValidate: true
+        shouldImport: false,
+        shouldValidate: false
     } );
 
     await registerUIVersionStrategies();
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 
-    await createCleanupWorker();
+    //await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 }

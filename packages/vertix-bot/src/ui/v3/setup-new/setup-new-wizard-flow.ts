@@ -1,4 +1,4 @@
-import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { UIFlowBase, FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
 
@@ -60,72 +60,35 @@ export interface SetupWizardFlowData {
     errorCode?: string;
     errorMessage?: string;
 
+    // Cross-flow context data
+    originFlow?: string;
+    originState?: string;
+    originTransition?: string;
+    sourceButton?: string;
+    wizardType?: string;
+
     // Index signature for UIFlowData compatibility
     [key: string]: unknown;
 }
 
 /**
- * Defines the valid state transitions for the Setup Wizard flow
- */
-export const SETUP_WIZARD_FLOW_TRANSITIONS: Record<SetupWizardFlowState, SetupWizardFlowTransition[]> = {
-    [ SetupWizardFlowState.INITIAL ]: [ SetupWizardFlowTransition.START_SETUP ],
-    [ SetupWizardFlowState.STEP_1_NAME_TEMPLATE ]: [
-        SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE,
-        SetupWizardFlowTransition.ERROR_OCCURRED,
-    ],
-    [ SetupWizardFlowState.STEP_2_BUTTONS ]: [
-        SetupWizardFlowTransition.SELECT_BUTTONS,
-        SetupWizardFlowTransition.ERROR_OCCURRED,
-    ],
-    [ SetupWizardFlowState.STEP_3_ROLES ]: [
-        SetupWizardFlowTransition.SELECT_ROLES,
-        SetupWizardFlowTransition.FINISH_SETUP,
-        SetupWizardFlowTransition.ERROR_OCCURRED,
-    ],
-    [ SetupWizardFlowState.COMPLETED ]: [],
-    [ SetupWizardFlowState.ERROR ]: [ SetupWizardFlowTransition.START_SETUP ],
-};
-
-/**
- * Defines the next state for each transition
- */
-export const SETUP_WIZARD_FLOW_NEXT_STATES: Record<SetupWizardFlowTransition, SetupWizardFlowState> = {
-    [ SetupWizardFlowTransition.START_SETUP ]: SetupWizardFlowState.STEP_1_NAME_TEMPLATE,
-    [ SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE ]: SetupWizardFlowState.STEP_2_BUTTONS,
-    [ SetupWizardFlowTransition.SELECT_BUTTONS ]: SetupWizardFlowState.STEP_3_ROLES,
-    [ SetupWizardFlowTransition.SELECT_ROLES ]: SetupWizardFlowState.STEP_3_ROLES,
-    [ SetupWizardFlowTransition.FINISH_SETUP ]: SetupWizardFlowState.COMPLETED,
-    [ SetupWizardFlowTransition.ERROR_OCCURRED ]: SetupWizardFlowState.ERROR,
-};
-
-/**
- * Defines the required data for each state transition
- */
-export const SETUP_WIZARD_FLOW_REQUIRED_DATA: Record<SetupWizardFlowTransition, ( keyof SetupWizardFlowData )[]> = {
-    [ SetupWizardFlowTransition.START_SETUP ]: [],
-    [ SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE ]: [ "dynamicChannelNameTemplate" ],
-    [ SetupWizardFlowTransition.SELECT_BUTTONS ]: [ "dynamicChannelButtonsTemplate" ],
-    [ SetupWizardFlowTransition.SELECT_ROLES ]: [ "dynamicChannelVerifiedRoles" ],
-    [ SetupWizardFlowTransition.FINISH_SETUP ]: [
-        "dynamicChannelNameTemplate",
-        "dynamicChannelButtonsTemplate",
-        "dynamicChannelVerifiedRoles",
-    ],
-    [ SetupWizardFlowTransition.ERROR_OCCURRED ]: [ "errorCode", "errorMessage" ],
-};
-
-/**
  * Setup wizard flow implementation
  */
 export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizardFlowTransition, SetupWizardFlowData> {
+    /**
+     * Get the name of this flow
+     */
     public static getName() {
         return "Vertix/UI-V3/SetupNewWizardFlow";
     }
 
+    /**
+     * Get the component associated with this flow
+     */
     public static getComponent() {
         return class SetupNewWizardComponent extends UIWizardComponentBase {
             public static getName() {
-                return "Vertix/UI-V3//SetupNewWizardComponent";
+                return "Vertix/UI-V3/SetupNewWizardComponent";
             }
 
             public static getComponents() {
@@ -141,6 +104,89 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
                     UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed ),
                 ];
             }
+        };
+    }
+
+    /**
+     * Returns the valid transitions for each state
+     */
+    public static getFlowTransitions(): Record<SetupWizardFlowState, SetupWizardFlowTransition[]> {
+        return {
+            [ SetupWizardFlowState.INITIAL ]: [ SetupWizardFlowTransition.START_SETUP ],
+            [ SetupWizardFlowState.STEP_1_NAME_TEMPLATE ]: [
+                SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE,
+                SetupWizardFlowTransition.ERROR_OCCURRED,
+            ],
+            [ SetupWizardFlowState.STEP_2_BUTTONS ]: [
+                SetupWizardFlowTransition.SELECT_BUTTONS,
+                SetupWizardFlowTransition.ERROR_OCCURRED,
+            ],
+            [ SetupWizardFlowState.STEP_3_ROLES ]: [
+                SetupWizardFlowTransition.SELECT_ROLES,
+                SetupWizardFlowTransition.FINISH_SETUP,
+                SetupWizardFlowTransition.ERROR_OCCURRED,
+            ],
+            [ SetupWizardFlowState.COMPLETED ]: [],
+            [ SetupWizardFlowState.ERROR ]: [ SetupWizardFlowTransition.START_SETUP ],
+        };
+    }
+
+    /**
+     * Returns the next state for each transition
+     */
+    public static getNextStates(): Record<SetupWizardFlowTransition, SetupWizardFlowState> {
+        return {
+            [ SetupWizardFlowTransition.START_SETUP ]: SetupWizardFlowState.STEP_1_NAME_TEMPLATE,
+            [ SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE ]: SetupWizardFlowState.STEP_2_BUTTONS,
+            [ SetupWizardFlowTransition.SELECT_BUTTONS ]: SetupWizardFlowState.STEP_3_ROLES,
+            [ SetupWizardFlowTransition.SELECT_ROLES ]: SetupWizardFlowState.STEP_3_ROLES,
+            [ SetupWizardFlowTransition.FINISH_SETUP ]: SetupWizardFlowState.COMPLETED,
+            [ SetupWizardFlowTransition.ERROR_OCCURRED ]: SetupWizardFlowState.ERROR,
+        };
+    }
+
+    /**
+     * Returns the required data for each transition
+     */
+    public static getRequiredData(): Record<SetupWizardFlowTransition, ( keyof SetupWizardFlowData )[]> {
+        return {
+            [ SetupWizardFlowTransition.START_SETUP ]: [],
+            [ SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE ]: [ "dynamicChannelNameTemplate" ],
+            [ SetupWizardFlowTransition.SELECT_BUTTONS ]: [ "dynamicChannelButtonsTemplate" ],
+            [ SetupWizardFlowTransition.SELECT_ROLES ]: [ "dynamicChannelVerifiedRoles" ],
+            [ SetupWizardFlowTransition.FINISH_SETUP ]: [
+                "dynamicChannelNameTemplate",
+                "dynamicChannelButtonsTemplate",
+                "dynamicChannelVerifiedRoles",
+            ],
+            [ SetupWizardFlowTransition.ERROR_OCCURRED ]: [ "errorCode", "errorMessage" ],
+        };
+    }
+
+    /**
+     * Returns entry point documentation
+     */
+    public static getEntryPoints(): FlowIntegrationPoint[] {
+        return [
+            {
+                flowName: "VertixBot/UI-General/WelcomeFlow",
+                description: "Entry point from Welcome flow when setup button is clicked",
+                sourceState: "SETUP_CLICKED",
+                targetState: SetupWizardFlowState.INITIAL,
+                transition: SetupWizardFlowTransition.START_SETUP,
+                requiredData: [ "originFlow", "originState", "originTransition", "sourceButton" ]
+            }
+        ];
+    }
+
+    /**
+     * Returns external component references
+     */
+    public static getExternalReferences(): Record<string, string> {
+        return {
+            welcomeFlow: "VertixBot/UI-General/WelcomeFlow",
+            welcomeAdapter: "VertixBot/UI-General/WelcomeAdapter",
+            masterChannelService: "Vertix/Services/MasterChannelService"
         };
     }
 
@@ -165,8 +211,8 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
     }
 
     protected initializeTransitions(): void {
-        // Initialize transitions based on SETUP_WIZARD_FLOW_TRANSITIONS
-        Object.entries( SETUP_WIZARD_FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        // Initialize transitions based on static method
+        Object.entries( SetupWizardFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.addTransitions( state as SetupWizardFlowState, transitions );
         } );
     }
@@ -185,20 +231,20 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
     }
 
     public getAvailableTransitions(): SetupWizardFlowTransition[] {
-        return SETUP_WIZARD_FLOW_TRANSITIONS[ this.getCurrentState() ];
+        return SetupWizardFlow.getFlowTransitions()[ this.getCurrentState() ];
     }
 
     public getNextState( transition: SetupWizardFlowTransition ): SetupWizardFlowState {
-        return SETUP_WIZARD_FLOW_NEXT_STATES[ transition ];
+        return SetupWizardFlow.getNextStates()[ transition ];
     }
 
     public getRequiredData( transition: SetupWizardFlowTransition ): ( keyof SetupWizardFlowData )[] {
-        return SETUP_WIZARD_FLOW_REQUIRED_DATA[ transition ];
+        return SetupWizardFlow.getRequiredData()[ transition ];
     }
 
     protected showModal(): Promise<void> {
         // Implementation will depend on your modal system
-        // For now, return a resolved promise
+        // For flow definition, just return a resolved promise
         return Promise.resolve();
     }
 }

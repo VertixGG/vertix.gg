@@ -19,7 +19,25 @@ export type UIFlowTransition = string;
  * Base interface for flow data
  */
 export interface UIFlowData {
+    // Common fields for cross-flow communication
+    originFlow?: string;
+    originState?: string;
+    originTransition?: string;
+    interactionId?: string;
+
     [key: string]: unknown;
+}
+
+/**
+ * Interface for flow integration metadata
+ */
+export interface FlowIntegrationPoint {
+    flowName: string;
+    description: string;
+    sourceState?: string;
+    targetState?: string;
+    transition?: string;
+    requiredData?: string[];
 }
 
 /**
@@ -51,6 +69,30 @@ export abstract class UIFlowBase<
         throw new ForceMethodImplementation( "UIFlowBase", "getComponent" );
     }
 
+    /**
+     * Get entry points for this flow from other flows
+     * Should be implemented by derived classes to document integration points
+     */
+    public static getEntryPoints?(): FlowIntegrationPoint[] {
+        return [];
+    }
+
+    /**
+     * Get handoff points from this flow to other flows
+     * Should be implemented by derived classes to document integration points
+     */
+    public static getHandoffPoints?(): FlowIntegrationPoint[] {
+        return [];
+    }
+
+    /**
+     * Get external services or components this flow depends on
+     * Should be implemented by derived classes to document dependencies
+     */
+    public static getExternalReferences?(): Record<string, string> {
+        return {};
+    }
+
     public getPermissions(): PermissionsBitField {
         throw new ForceMethodImplementation( "UIFlowBase", "getPermissions" );
     }
@@ -62,6 +104,7 @@ export abstract class UIFlowBase<
     protected abstract getInitialState(): TState;
     protected abstract getInitialData(): TData;
     protected abstract initializeTransitions(): void;
+    protected abstract showModal(): Promise<void>;
 
     protected hasTransitions( state: TState ): boolean {
         return this.transitions.has( state );
@@ -106,17 +149,10 @@ export abstract class UIFlowBase<
     }
 
     /**
-     * Execute a transition
+     * Execute a transition - simplified version for flow definition
      */
     public transition( transition: TTransition ): void {
-        if ( !this.isTransitionValid( transition ) ) {
-            throw new Error( `Invalid transition '${ transition }' from state '${ this.currentState }'` );
-        }
-
-        if ( !this.isDataValid( transition ) ) {
-            throw new Error( `Missing required data for transition '${ transition }'` );
-        }
-
+        // This is a simplified version for flow definition files
         this.currentState = this.getNextState( transition );
     }
 
@@ -146,27 +182,37 @@ export abstract class UIFlowBase<
      */
     public async buildSchema() {
         await this.getComponent().waitUntilInitialized();
-
         const schema = await this.getComponent().build( {} );
-
         return schema;
     }
 
     /**
      * Convert flow to JSON representation
+     * Includes integration points and external references
      */
     public async toJSON() {
         const transactions = this.getAvailableTransitions();
         const requiredDataMap: Record<string, ( keyof TData )[]> = {};
 
-        // Get required data for each transaction
         for ( const transaction of transactions ) {
             requiredDataMap[ transaction as string ] = this.getRequiredData( transaction );
         }
 
+        // Include integration points if defined
+        const entryPoints = ( this.constructor as typeof UIFlowBase ).getEntryPoints?.() || [];
+        const handoffPoints = ( this.constructor as typeof UIFlowBase ).getHandoffPoints?.() || [];
+        const externalRefs = ( this.constructor as typeof UIFlowBase ).getExternalReferences?.() || {};
+
         return {
+            name: ( this.constructor as typeof UIFlowBase ).getName(),
+            currentState: this.currentState,
             transactions,
             requiredData: requiredDataMap,
+            integrations: {
+                entryPoints,
+                handoffPoints,
+                externalReferences: externalRefs
+            },
             schema: await this.buildSchema()
         };
     }

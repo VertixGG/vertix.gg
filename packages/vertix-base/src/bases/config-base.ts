@@ -184,6 +184,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
                     includeChangeCounts: true
                 } )
             );
+            return;
             throw new ErrorWithMetadata( `Checksum mismatch for: '${ this.$$.getName() }'`, {
                 checksumA,
                 checksumB

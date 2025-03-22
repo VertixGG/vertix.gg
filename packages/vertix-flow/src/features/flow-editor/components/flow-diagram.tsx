@@ -130,14 +130,25 @@ const CustomNode = ( { data }: { data: ExtendedNodeData } ) => {
 
 // Custom group node component
 const GroupNode = ( { data }: { data: { label: string } } ) => {
+    const isComponentsGroup = data.label === "Components";
+    const isElementsGroup = data.label === "Elements";
+
     return (
         <>
             <div className="absolute -top-6 left-0 right-0 text-center">
-                <span className="text-xs font-medium px-2 py-1 bg-neutral-100 text-neutral-600 rounded-sm shadow-sm">
+                <span className={`text-xs font-medium px-2 py-1 rounded-sm shadow-sm ${
+                    isComponentsGroup ? 'bg-blue-50 text-blue-600' : 'bg-neutral-100 text-neutral-600'
+                }`}>
                     {data.label}
                 </span>
             </div>
-            <div className="w-full h-full rounded-lg border border-dashed border-neutral-400 bg-white/5"></div>
+            <div className={`w-full h-full rounded-lg border border-dashed ${
+                isComponentsGroup
+                    ? 'border-blue-300 bg-blue-50/5'
+                    : isElementsGroup
+                    ? 'border-neutral-400 bg-white/5'
+                    : 'border-neutral-300 bg-white/5'
+            }`}></div>
         </>
     );
 };

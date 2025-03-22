@@ -48,7 +48,8 @@
             "**/.git": true,
             "**/node_modules": true,
             "**/dist": true,
-            "**/.next": true
+            "**/.next": true,
+            "**/packages/**": true
         },
         "tailwindCSS.includeLanguages": {
             "typescript": "javascript",
@@ -57,6 +58,7 @@
         "typescript.preferences.importModuleSpecifier": "relative",
         "eslint.workingDirectories": [{ "mode": "auto" }],
         "eslint.useFlatConfig": false,
+        "typescript.tsserver.maxTsServerMemory": 8072
     },
     "extensions": {
         "recommendations": [

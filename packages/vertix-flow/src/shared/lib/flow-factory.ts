@@ -1,4 +1,4 @@
-import type { Node, Edge } from "reactflow";
+import type { Node, Edge } from "@xyflow/react";
 
 import type { FlowSchema, FlowDiagram } from "@vertix.gg/flow/src/shared/types/flow";
 
@@ -135,8 +135,8 @@ export class DefaultFlowFactory implements FlowFactory {
               attributes: element.attributes
             },
             position: { x: xPos, y: yPos },
-            parentNode: groupId,  // Set parent relationship
-            extent: 'parent',     // Constrain to parent
+            parentId: groupId,  // Changed from parentNode to parentId
+            extent: 'parent',
             draggable: true,
             style: {
               width: elementWidth

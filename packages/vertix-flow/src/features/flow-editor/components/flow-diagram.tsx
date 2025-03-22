@@ -1,14 +1,15 @@
-import "reactflow/dist/style.css";
+import "@xyflow/react/dist/style.css";
 
 import React, { useCallback } from "react";
 
-import ReactFlow, {
+import {
+    ReactFlow,
     MiniMap,
     Controls,
     Background,
     BackgroundVariant,
     Panel
-} from "reactflow";
+} from "@xyflow/react";
 
 import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
 
@@ -19,7 +20,7 @@ import type {
     Connection,
     Node,
     Edge
-} from "reactflow";
+} from "@xyflow/react";
 
 interface DiscordEmbed {
     title?: string;

@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
 
-import type { Node, Edge } from "reactflow";
+import type { Node, Edge } from "@xyflow/react";
 
 import type { UIModuleFile, FlowSchema } from "@vertix.gg/flow/src/shared/types/flow";
 

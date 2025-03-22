@@ -92,7 +92,13 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                 className="min-h-screen"
             >
                 {/* Sidebar */}
-                <ResizablePanel defaultSize={sidebarWidth} minSize={20}>
+                <ResizablePanel
+                    defaultSize={sidebarWidth}
+                    minSize={10}
+                    maxSize={sidebarWidth}
+                    collapsible={false}
+                    collapsedSize={0}
+                >
                     <div className="flex flex-col h-full">
                         <div className="p-4 border-b bg-primary/5">
                             <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>

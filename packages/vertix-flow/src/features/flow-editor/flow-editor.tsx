@@ -37,6 +37,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     // State for the module path and flow name
     const [ modulePath, setModulePath ] = useState<string | null>( initialModulePath || null );
     const [ flowName, setFlowName ] = useState<string | null>( initialFlowName || null );
+    const [ activeTab, setActiveTab ] = useState<string>( "modules" );
 
     // Get diagram state and actions from store
     const { nodes, edges, setNodes, setEdges, handleSchemaLoaded } = useFlowDiagram();
@@ -65,6 +66,8 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     // Module selection handler
     const handleModuleClick = useCallback( ( module: UIModuleFile ) => {
         setModulePath( module.path );
+        // Switch to flows tab after selecting a module
+        setActiveTab( "flows" );
     }, [] );
 
     // Flow selection handler
@@ -90,7 +93,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                 {/* Sidebar */}
                 <ResizablePanel defaultSize={sidebarWidth} minSize={20}>
                     <div className="flex flex-col h-full">
-                        <Tabs defaultValue="modules" className="flex-grow">
+                        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
                             <div className="p-4 border-b">
                                 <TabsList className="grid w-full grid-cols-2">
                                     <TabsTrigger value="modules">Modules</TabsTrigger>

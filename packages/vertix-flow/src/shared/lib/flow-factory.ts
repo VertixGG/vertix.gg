@@ -75,29 +75,27 @@ export class DefaultFlowFactory implements FlowFactory {
     // Process elements
     if ( schema.entities && schema.entities.elements ) {
       schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
+        // Calculate position variables based on the number of elements
+        const numElements = elementGroup.length;
+        const buttonWidth = 120; // Approximate width of a button
+        const totalButtonsWidth = numElements * buttonWidth;
+        const padding = 20; // Space between buttons
+
+        // Total width including padding between buttons
+        const totalWidth = totalButtonsWidth + ( ( numElements - 1 ) * padding );
+
+        // Starting X position to center the buttons under the embed
+        const startX = 250 - ( totalWidth / 2 ) + ( buttonWidth / 2 );
+
         elementGroup.forEach( ( element, index ) => {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-          // Position directly below the corresponding bottom button
-          const yPosition = 930; // Position at the very bottom of the flow diagram
+          // Calculate x position based on index and button width + padding
+          const xPosition = startX + ( index * ( buttonWidth + padding ) );
 
-          // For 3 buttons layout: left button, middle button, right button
-          // Calculate x position - these match approximately positions in the image
-          let xPosition = 250; // Default center
-
-          if ( elementGroup.length === 3 ) {
-            if ( index === 0 ) xPosition = 125; // Left button (Community Server)
-            else if ( index === 1 ) xPosition = 250; // Middle button (Invite Vertix)
-            else if ( index === 2 ) xPosition = 375; // Right button (Setup)
-          }
-          // For other numbers of buttons, space them evenly
-          else {
-            const spacing = 150;
-            const totalWidth = elementGroup.length * spacing;
-            const startX = 250 - ( totalWidth / 2 ) + ( spacing / 2 );
-            xPosition = startX + ( index * spacing );
-          }
+          // Y position relative to the embed's position
+          const yPosition = 930; // This is a reasonable position below the embed
 
           nodes.push( {
             id,

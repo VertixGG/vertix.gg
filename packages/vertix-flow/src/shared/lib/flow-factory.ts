@@ -101,11 +101,15 @@ export class DefaultFlowFactory implements FlowFactory {
       // Calculate position based on the embed's position and estimated height
       const embedY = 150; // From the embed node position
       const embedHeight = estimatedEmbedHeight || 500; // Use estimated height or fallback
-      const verticalSpacing = 80; // Space between embed and group
 
-      // Center position for the group, position below the embed
+      // Need to position at the very bottom of the diagram, after the buttons
+      // Buttons are normally at the bottom of the embed
+      const buttonAreaHeight = 120; // Increased height to account for buttons and image
+      const verticalSpacing = 50; // Increased spacing for better visual separation
+
+      // Center position for the group, position below the buttons at the bottom of the embed
       const groupX = 250 - ( groupWidth / 2 );
-      const groupY = embedY + embedHeight + verticalSpacing;
+      const groupY = embedY + embedHeight + buttonAreaHeight + verticalSpacing;
 
       // Create group node first
       const groupId = "elements-group";

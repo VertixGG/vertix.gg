@@ -1,22 +1,56 @@
-import app from "@vertix.gg/flow/src/server/app";
+import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+import { createApp } from "./app";
+import { environment } from "./config/environment";
 
-const server = app();
-
-const start = async() => {
-    try {
-        const port = process.env.PORT ? parseInt( process.env.PORT ) : 3000;
-        const host = process.env.HOST || "0.0.0.0";
-
-        await server.listen( { host, port } );
-        console.log( `Server running at http://localhost:${ port }` );
-    } catch ( err ) {
-        server.log.error( err );
-        process.exit( 1 );
+/**
+ * Server class responsible for starting and managing the server
+ */
+export class Server extends InitializeBase {
+    /**
+     * Get the name of the class
+     */
+    public static getName(): string {
+        return "VertixFlow/Server/Server";
     }
-};
 
+    constructor() {
+        super();
+    }
+
+    protected initialize(): void {
+        this.logger.info( "initialize", "Server initialized" );
+    }
+
+    /**
+     * Start the server with optional port and host configuration
+     */
+    public async start( options?: { port?: number; host?: string } ): Promise<void> {
+        try {
+            const { serverFactory } = await createApp();
+
+            // Configure server with provided options or environment defaults
+            const port = options?.port || environment.getPort();
+            const host = options?.host || environment.getHost();
+
+            serverFactory.configure( { port, host } );
+
+            // Start listening
+            await serverFactory.start();
+
+            this.logger.info( "start", `Server running at http://${ host === "0.0.0.0" ? "localhost" : host }:${ port }` );
+        } catch ( error ) {
+            this.logger.error( "start", "Failed to start server", error );
+            process.exit( 1 );
+        }
+    }
+}
+
+// Create server instance
+const server = new Server();
+
+// Start server if this file is run directly
 if ( import.meta.url === `file://${ process.argv[ 1 ] }` ) {
-    start();
+    server.start();
 }
 
 export default server;

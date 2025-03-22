@@ -6,6 +6,8 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
+import { ConfigBaseInterface } from "@vertix.gg/base/src/interfaces/config-base-interface";
+import { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export interface UIModuleFile {
     name: string;
@@ -37,38 +39,52 @@ async function registerConfigs() {
 
 // Initialize services once when module is loaded
 const servicesInitialized = ( async() => {
-    const uiServices = await Promise.all( [
-        import( "@vertix.gg/gui/src/ui-service" ),
-        import( "@vertix.gg/gui/src/ui-hash-service" ),
-        import( "@vertix.gg/gui/src/ui-adapter-versioning-service" ),
-    ] );
+    try {
+        const uiServices = await Promise.all( [
+            import( "@vertix.gg/gui/src/ui-service" ),
+            import( "@vertix.gg/gui/src/ui-hash-service" ),
+            import( "@vertix.gg/gui/src/ui-adapter-versioning-service" ),
+        ] );
 
+        console.log( "[DEBUG] Initializing UI services..." );
 
-    uiServices.forEach( ( service ) => {
-        ServiceLocator.$.register<ServiceBase>( service.default, {} );
-    } );
+        uiServices.forEach( ( service ) => {
+            console.log( `[DEBUG] Registering service: ${ service.default?.getName?.() || 'unknown' }` );
+            ServiceLocator.$.register<ServiceBase>( service.default, {} );
+        } );
 
-    await registerConfigs();
+        await registerConfigs();
 
+        console.log( "[DEBUG] Waiting for all services..." );
+        await ServiceLocator.$.waitForAll();
 
-    await ServiceLocator.$.waitForAll();
+        // Get UI service to register wizard buttons
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        console.log( "[DEBUG] Got UI service: ", !!uiService );
 
-    // Get UI service to register wizard buttons
-    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        // Register the wizard buttons
+        const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/general/regenerate/ui-regenerate-button" ),
+            { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-back-button" ),
+            { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-next-button" ),
+            { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-finish-button" );
 
-    // Register the wizard buttons
-    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/general/regenerate/ui-regenerate-button" ),
-        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-back-button" ),
-        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-next-button" ),
-        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-finish-button" );
+        uiService.$$.registerSystemElements( {
+            RegenerateButton: UIRegenerateButton,
+            WizardBackButton: UIWizardBackButton,
+            WizardNextButton: UIWizardNextButton,
+            WizardFinishButton: UIWizardFinishButton
+        } );
 
-    uiService.$$.registerSystemElements( {
-        RegenerateButton: UIRegenerateButton,
-        WizardBackButton: UIWizardBackButton,
-        WizardNextButton: UIWizardNextButton,
-        WizardFinishButton: UIWizardFinishButton
-    } );
+        console.log( "[DEBUG] Services initialization complete" );
+        return true;
+    } catch ( error ) {
+        console.error( "[ERROR] Failed to initialize services:", error );
+        throw error;
+    }
 } )();
+
+// Export the initialization promise so it can be awaited
+export { servicesInitialized };
 
 export async function scanUIModules( baseDir: string ): Promise<UIModuleFile[]> {
     // Wait for services to be initialized if they haven't been

@@ -1,35 +1,69 @@
-import fastify from "fastify";
-import cors from "@fastify/cors";
+import { FastifyInstance } from "fastify";
+import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { createUIModulesRoute } from "@vertix.gg/flow/src/server/routes/ui-modules";
+import { ServerFactory } from "./core/server-factory";
+import { registerAllRoutes } from "./routes";
 
-import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+/**
+ * Application factory class that creates and configures the server
+ */
+export class AppFactory extends InitializeBase {
+    private readonly serverFactory: ServerFactory;
 
-export default () => {
-    const app = fastify( {
-        logger: true,
-        disableRequestLogging: process.env.NODE_ENV === "production",
-    } ).withTypeProvider<TypeBoxTypeProvider>();
+    /**
+     * Get the name of the class
+     */
+    public static getName(): string {
+        return "VertixFlow/Server/AppFactory";
+    }
 
-    // Register plugins
-    app.register( cors, {
-        origin: true, // Allow all origins in development
-    } );
+    constructor() {
+        super();
 
-    // Register API routes - remove the duplicate /api prefix
-    app.register( createUIModulesRoute );
+        this.serverFactory = new ServerFactory();
+    }
 
-    // Add health check endpoint
-    app.get( "/api/health", async() => {
-        return { status: "ok" };
-    } );
+    protected initialize(): void {
+        this.logger.info( "initialize", "Application factory initialized" );
+    }
 
-    // Add a root route for frontend
-    app.get( "/", async() => {
-        // When using vite-plugin-fastify, this will be handled by Vite
-        // But we need this route defined to prevent 404
-        return { message: "Frontend should be handled by Vite" };
-    } );
+    /**
+     * Create and configure the application server
+     */
+    public async create(): Promise<FastifyInstance> {
+        try {
+            const server = this.serverFactory.getInstance();
 
-    return app;
+            // Register all API routes
+            await registerAllRoutes( server );
+
+            this.logger.info( "create", "Application server created successfully" );
+
+            return server;
+        } catch ( error ) {
+            this.logger.error( "create", "Failed to create application server", error );
+            throw error;
+        }
+    }
+
+    /**
+     * Get the server factory
+     */
+    public getServerFactory(): ServerFactory {
+        return this.serverFactory;
+    }
+}
+
+// Factory function to create a new application
+export const createApp = async(): Promise<{
+    app: FastifyInstance;
+    serverFactory: ServerFactory;
+}> => {
+    const appFactory = new AppFactory();
+    const app = await appFactory.create();
+
+    return {
+        app,
+        serverFactory: appFactory.getServerFactory()
+    };
 };

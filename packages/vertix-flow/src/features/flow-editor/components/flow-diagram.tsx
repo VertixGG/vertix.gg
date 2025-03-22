@@ -8,7 +8,9 @@ import {
     Controls,
     Background,
     BackgroundVariant,
-    Panel
+    Panel,
+    useReactFlow,
+    ReactFlowInstance
 } from "@xyflow/react";
 
 import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
@@ -45,6 +47,7 @@ interface FlowDiagramDisplayProps {
     onNodesChange?: ( changes: NodeChange[] ) => void;
     onEdgesChange?: ( changes: EdgeChange[] ) => void;
     onConnect?: ( connection: Connection ) => void;
+    onZoomChange?: ( zoom: number ) => void;
 }
 
 /**
@@ -55,22 +58,29 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
     edges,
     onNodesChange,
     onEdgesChange,
-    onConnect
+    onConnect,
+    onZoomChange
 } ) => {
     const { setError } = useFlowUI();
+    const reactFlowInstance = useReactFlow();
 
-    const onInit = useCallback( () => {
+    const onInit = useCallback( ( instance: ReactFlowInstance ) => {
         // This gets called once when the flow is initialized
         // and ensures proper rendering of groups
         try {
             setTimeout( () => {
                 window.dispatchEvent( new Event( 'resize' ) );
+
+                // Initialize zoom value
+                if ( onZoomChange ) {
+                    onZoomChange( instance.getZoom() );
+                }
             }, 100 );
         } catch ( err ) {
             console.error( "Error initializing flow diagram:", err );
             setError( "Failed to initialize flow diagram" );
         }
-    }, [ setError ] );
+    }, [ setError, onZoomChange ] );
 
     const handleRefresh = useCallback( () => {
         try {
@@ -80,6 +90,12 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
             setError( "Failed to refresh flow diagram" );
         }
     }, [ setError ] );
+
+    const handleMove = useCallback( () => {
+        if ( onZoomChange && reactFlowInstance ) {
+            onZoomChange( reactFlowInstance.getZoom() );
+        }
+    }, [ onZoomChange, reactFlowInstance ] );
 
     return (
         <div style={{ width: "100%", height: "100%" }}>
@@ -99,6 +115,7 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
                 snapToGrid={true}
                 snapGrid={[ 10, 10 ]}
                 onInit={onInit}
+                onMove={handleMove}
             >
                 <Controls />
                 <MiniMap

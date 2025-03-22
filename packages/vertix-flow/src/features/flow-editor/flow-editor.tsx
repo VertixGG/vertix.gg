@@ -38,6 +38,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     const [ modulePath, setModulePath ] = useState<string | null>( initialModulePath || null );
     const [ flowName, setFlowName ] = useState<string | null>( initialFlowName || null );
     const [ activeTab, setActiveTab ] = useState<string>( "modules" );
+    const [ zoomLevel, setZoomLevel ] = useState<number>( 0.15 );
 
     // Get diagram state and actions from store
     const { nodes, edges, setNodes, setEdges, handleSchemaLoaded } = useFlowDiagram();
@@ -82,6 +83,11 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
             setFlowName( null );
         }
     }, [ modulePath ] );
+
+    // Add a callback to listen for zoom changes
+    const handleZoomChange = useCallback( ( zoom: number ) => {
+        setZoomLevel( Number( zoom.toFixed( 2 ) ) );
+    }, [] );
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">
@@ -129,6 +135,11 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                                 )}
                             </TabsContent>
                         </Tabs>
+
+                        {/* Zoom level indicator */}
+                        <div className="p-2 border-t text-center text-xs text-muted-foreground bg-muted/30">
+                            Zoom: {Math.round( zoomLevel * 100 )}%
+                        </div>
                     </div>
                 </ResizablePanel>
 
@@ -152,6 +163,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                                             onNodesChange={onNodesChange}
                                             onEdgesChange={onEdgesChange}
                                             onConnect={onConnect}
+                                            onZoomChange={handleZoomChange}
                                         />
                                     </div>
                                     <div className="md:w-1/3 p-4 overflow-y-auto">

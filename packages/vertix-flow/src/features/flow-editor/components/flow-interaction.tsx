@@ -10,6 +10,7 @@ import {
   TransitionsControls,
   FlowStateDataDisplay
 } from "./interaction";
+import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 import type { FlowInteractionController } from "@vertix.gg/flow/src/shared/lib/flow-factory";
 
@@ -41,11 +42,12 @@ export function FlowInteraction( {
     const [ availableTransitions, setAvailableTransitions ] = useState<string[]>( [] );
     const [ flowData, setFlowData ] = useState<Record<string, unknown>>( {} );
     const [ controller, setController ] = useState<FlowInteractionController | null>( null );
-    const [ error, setError ] = useState<string | null>( null );
+    const { error, setError, setLoading } = useFlowUI();
 
     // Initialize flow
     useEffect( () => {
         try {
+            setLoading( true );
             // Use factory directly instead of the hook to avoid React hooks issues
             const interactionController = flowFactory.createFlowInteraction( FlowClass );
             setController( interactionController );
@@ -59,13 +61,16 @@ export function FlowInteraction( {
         } catch ( err ) {
             console.error( "Error initializing flow:", err );
             setError( "Failed to initialize flow" );
+        } finally {
+            setLoading( false );
         }
-    }, [ FlowClass ] );
+    }, [ FlowClass, setError, setLoading ] );
 
     const handleTransition = useCallback( ( transition: string ) => {
         if ( !controller ) return;
 
         try {
+            setLoading( true );
             controller.performTransition( transition );
 
             // Update state after transition
@@ -78,8 +83,10 @@ export function FlowInteraction( {
         } catch ( err ) {
             console.error( `Error during transition ${ transition }:`, err );
             setError( `Failed to perform transition: ${ transition }` );
+        } finally {
+            setLoading( false );
         }
-    }, [ controller ] );
+    }, [ controller, setError, setLoading ] );
 
     // Show error state if there's an error
     if ( error ) {

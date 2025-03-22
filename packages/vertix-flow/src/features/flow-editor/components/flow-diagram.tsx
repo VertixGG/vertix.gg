@@ -15,6 +15,7 @@ import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
 import { CustomNode } from "./node-types/custom-node";
 import { GroupNode } from "./node-types/group-node";
 import { CompoundNode } from "./node-types/compound-node";
+import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 import type { FlowSchema, FlowDiagram } from "@vertix.gg/flow/src/shared/types/flow";
 import type {
@@ -56,13 +57,29 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
     onEdgesChange,
     onConnect
 } ) => {
+    const { setError } = useFlowUI();
+
     const onInit = useCallback( () => {
         // This gets called once when the flow is initialized
         // and ensures proper rendering of groups
-        setTimeout( () => {
-            window.dispatchEvent( new Event( 'resize' ) );
-        }, 100 );
-    }, [] );
+        try {
+            setTimeout( () => {
+                window.dispatchEvent( new Event( 'resize' ) );
+            }, 100 );
+        } catch ( err ) {
+            console.error( "Error initializing flow diagram:", err );
+            setError( "Failed to initialize flow diagram" );
+        }
+    }, [ setError ] );
+
+    const handleRefresh = useCallback( () => {
+        try {
+            window.location.reload();
+        } catch ( err ) {
+            console.error( "Error refreshing flow diagram:", err );
+            setError( "Failed to refresh flow diagram" );
+        }
+    }, [ setError ] );
 
     return (
         <div style={{ width: "100%", height: "100%" }}>
@@ -92,7 +109,7 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
                 <Panel position="top-right">
                     <button
                         className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs px-2 py-1 rounded shadow"
-                        onClick={() => window.location.reload()}
+                        onClick={handleRefresh}
                     >
                         Refresh
                     </button>

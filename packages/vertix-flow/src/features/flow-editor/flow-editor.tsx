@@ -1,114 +1,168 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { applyNodeChanges, applyEdgeChanges, addEdge } from "@xyflow/react";
 
-import {
-    addEdge,
-    applyNodeChanges,
-    applyEdgeChanges
-} from "@xyflow/react";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@vertix.gg/flow/src/shared/components/resizable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@vertix.gg/flow/src/shared/components/tabs";
+import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
+import { Card } from "@vertix.gg/flow/src/shared/components/card";
 
 import { FlowDataDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-data-display";
 import { FlowDiagramDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
-import useFlowEditorStore from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
+import { useFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
+import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 
 import { FlowList } from "@vertix.gg/flow/src/features/flow-list/components/flow-list";
 
 import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/components/module-selector";
 
-import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
-
 import { getViewportDimensions } from "@vertix.gg/flow/src/shared/lib/position-calculator";
 
-import type {
-    Connection,
-    NodeChange,
-    EdgeChange
-} from "@xyflow/react";
+import type { NodeChange, EdgeChange, Connection } from "@xyflow/react";
+import type { UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
+
+export interface FlowEditorProps {
+    // Optionally specify initial module path and flow name, if not specified, user must select
+    initialModulePath?: string;
+    initialFlowName?: string;
+}
 
 /**
- * FlowEditor component integrates all flow-related functionality
- * It acts as the main container for the flow editor feature
+ * FlowEditor is the main component for the flow editor
+ * It handles module and flow selection, and displays the selected flow
  */
-export const FlowEditor: React.FC = () => {
-    // Get viewport dimensions for responsive layout
-    const [ viewport, setViewport ] = useState( getViewportDimensions() );
+export const FlowEditor: React.FC<FlowEditorProps> = ( {
+    initialModulePath,
+    initialFlowName,
+} ) => {
+    // State for the module path and flow name
+    const [ modulePath, setModulePath ] = useState<string | null>( initialModulePath || null );
+    const [ flowName, setFlowName ] = useState<string | null>( initialFlowName || null );
 
-    // Listen for window resize events to update layout
-    useEffect( () => {
-        const handleResize = () => {
-            setViewport( getViewportDimensions() );
-        };
+    // Get diagram state and actions from store
+    const { nodes, edges, setNodes, setEdges, handleSchemaLoaded } = useFlowDiagram();
 
-        window.addEventListener( 'resize', handleResize );
-        return () => {
-            window.removeEventListener( 'resize', handleResize );
-        };
-    }, [] );
-
-    // Get state and actions from flow editor store
-    const {
-        nodes,
-        edges,
-        setEdges,
-        setNodes,
-        handleSchemaLoaded
-    } = useFlowEditorStore();
-
-    // Get selected module and flow from module selector store
-    const { selectedModule, selectedFlow } = useModuleSelectorStore();
+    // Calculate layout based on viewport dimensions
+    const { width } = getViewportDimensions();
+    const isWide = width > 1200;
+    const sidebarWidth = isWide ? 25 : 35;
+    const diagramWidth = 100 - sidebarWidth;
 
     // Handle node changes
     const onNodesChange = useCallback( ( changes: NodeChange[] ) => {
         setNodes( applyNodeChanges( changes, nodes ) );
-    }, [ setNodes, nodes ] );
+    }, [ nodes, setNodes ] );
 
     // Handle edge changes
     const onEdgesChange = useCallback( ( changes: EdgeChange[] ) => {
-        setEdges( applyEdgeChanges( changes, edges ) );
-    }, [ setEdges, edges ] );
+        setEdges( edgs => applyEdgeChanges( changes, edgs ) );
+    }, [ setEdges ] );
 
     // Handle new connections
     const onConnect = useCallback( ( params: Connection ) => {
-        setEdges( prevEdges => addEdge( params, prevEdges ) );
+        setEdges( edgs => addEdge( params, edgs ) );
     }, [ setEdges ] );
 
-    // Calculate column widths based on viewport
-    const sidebarWidth = viewport.width < 1200 ? 3 : 3; // Adjust based on screen size
-    const diagramWidth = 12 - sidebarWidth;
+    // Module selection handler
+    const handleModuleClick = useCallback( ( module: UIModuleFile ) => {
+        setModulePath( module.path );
+    }, [] );
+
+    // Flow selection handler
+    const handleFlowClick = useCallback( ( newFlowName: string ) => {
+        setFlowName( newFlowName );
+    }, [] );
+
+    // Reset flow when module path changes
+    useEffect( () => {
+        if ( modulePath ) {
+            setFlowName( null );
+        }
+    }, [ modulePath ] );
 
     return (
-        <div className={`grid grid-cols-12 gap-4 p-4 h-screen`}>
-            <div className={`col-span-${ sidebarWidth } space-y-4 overflow-auto`}>
-                <ModuleSelector />
-                <FlowList />
+        <div className="flex h-screen bg-background overflow-hidden">
+            <LoadingIndicator />
 
-                {selectedModule && selectedFlow && (
-                    <FlowDataDisplay
-                        modulePath={selectedModule.path}
-                        flowName={selectedFlow}
-                        onSchemaLoaded={handleSchemaLoaded}
-                    />
-                )}
-            </div>
+            <ResizablePanelGroup
+                direction="horizontal"
+                className="min-h-screen"
+            >
+                {/* Sidebar */}
+                <ResizablePanel defaultSize={sidebarWidth} minSize={20}>
+                    <div className="flex flex-col h-full">
+                        <Tabs defaultValue="modules" className="flex-grow">
+                            <div className="p-4 border-b">
+                                <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="modules">Modules</TabsTrigger>
+                                    <TabsTrigger value="flows">Flows</TabsTrigger>
+                                </TabsList>
+                            </div>
 
-            <div className={`col-span-${ diagramWidth } bg-neutral-50 rounded-lg border h-full`}>
-                {nodes.length > 0 ? (
-                    <FlowDiagramDisplay
-                        nodes={nodes}
-                        edges={edges}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        onConnect={onConnect}
-                    />
-                ) : (
-                    <div className="flex items-center justify-center h-full">
-                        <p className="text-neutral-400">
-                            {selectedFlow
-                                ? "Loading flow diagram..."
-                                : "Select a module and flow to display"}
-                        </p>
+                            <TabsContent value="modules" className="p-4 h-full overflow-y-auto">
+                                <ModuleSelector
+                                    onSelectModule={handleModuleClick}
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="flows" className="p-4 h-full overflow-y-auto">
+                                {modulePath ? (
+                                    <FlowList
+                                        onSelectFlow={handleFlowClick}
+                                    />
+                                ) : (
+                                    <Card className="p-4">
+                                        <p>Please select a module first</p>
+                                    </Card>
+                                )}
+                            </TabsContent>
+                        </Tabs>
                     </div>
-                )}
-            </div>
+                </ResizablePanel>
+
+                <ResizableHandle />
+
+                {/* Main content area */}
+                <ResizablePanel defaultSize={diagramWidth} minSize={30}>
+                    <div className="flex flex-col h-full">
+                        {modulePath && flowName ? (
+                            <div className="flex flex-col h-full">
+                                <div className="p-4">
+                                    <h2 className="text-xl font-bold">{flowName}</h2>
+                                    <p className="text-sm text-muted-foreground">{modulePath}</p>
+                                </div>
+                                <Separator />
+                                <div className="flex flex-col md:flex-row h-full">
+                                    <div className="md:w-2/3 h-[400px] md:h-full p-4">
+                                        <FlowDiagramDisplay
+                                            nodes={nodes}
+                                            edges={edges}
+                                            onNodesChange={onNodesChange}
+                                            onEdgesChange={onEdgesChange}
+                                            onConnect={onConnect}
+                                        />
+                                    </div>
+                                    <div className="md:w-1/3 p-4 overflow-y-auto">
+                                        <FlowDataDisplay
+                                            modulePath={modulePath}
+                                            flowName={flowName}
+                                            onSchemaLoaded={handleSchemaLoaded}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-full">
+                                <div className="text-center">
+                                    <h2 className="text-xl font-bold">Select a Flow</h2>
+                                    <p className="text-muted-foreground">
+                                        Please select a module and flow from the sidebar
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
         </div>
     );
 };

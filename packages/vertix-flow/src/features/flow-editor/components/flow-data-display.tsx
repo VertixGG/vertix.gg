@@ -5,6 +5,7 @@ import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
 
 import { useFlowData } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-data";
+import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 import {
   ErrorState,
   LoadingState,
@@ -29,13 +30,14 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
     className,
 } ) => {
     const [ flowData, setFlowData ] = useState<FlowData | null>( null );
-    const [ error, setError ] = useState<string | null>( null );
+    const { error, setError, setLoading } = useFlowUI();
 
     const flowDataResource = useFlowData( modulePath, flowName );
     const data = flowDataResource.read?.().data;
 
     useEffect( () => {
         try {
+            setLoading( true );
             setFlowData( data );
 
             // When we get the data, call the callback if provided
@@ -45,8 +47,10 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
         } catch ( err ) {
             console.error( "Error loading flow data:", err );
             setError( "Failed to load flow data" );
+        } finally {
+            setLoading( false );
         }
-    }, [ data, onSchemaLoaded ] );
+    }, [ data, onSchemaLoaded, setError, setLoading ] );
 
     // If we have an error, show it
     if ( error ) {

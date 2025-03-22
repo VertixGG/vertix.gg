@@ -8,6 +8,31 @@ let's refactor the project, here are the requirements:
 - Use zustand state management when needed
 - Use design patterns where applicable
 
+🧠 Rule Name
+
+react-flow-important-rule-avoid-using-hard-coded-values-for-calculation-of-position
+
+📜 Description
+
+Avoid using hard-coded pixel values (e.g., x: 100, y: 200) when positioning nodes, edges, or cursors in React Flow. This can lead to rigid layouts that break across screen sizes, zoom levels, or dynamic content changes. Instead, use relative calculations based on node dimensions, parent containers, or viewport metrics.
+
+
+✅ Correct Example
+const position = {
+  x: parentWidth / 2 - nodeWidth / 2,
+  y: parentHeight / 2 - nodeHeight / 2,
+};
+
+
+❌ Incorrect Example
+const position = {
+  x: 150,
+  y: 300,
+};
+
+
+💡 Why It’s Important
+Hardcoded values reduce flexibility and make the flow layout brittle to changes in screen resolution, zoom level, or dynamic node sizes. Using dynamic or contextual values leads to more responsive and maintainable designs.
 
 Please tell me your refactor plan, and let part it to small chunks and proceed step by step
 

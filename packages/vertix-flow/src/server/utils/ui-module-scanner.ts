@@ -5,6 +5,7 @@ import path from "path";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
+import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
 
 export interface UIModuleFile {
     name: string;
@@ -16,6 +17,24 @@ export interface UIModuleFile {
     };
 }
 
+async function registerConfigs() {
+
+    const { ConfigManager } = await import( "@vertix.gg/base/src/managers/config-manager" );
+
+    const configs = await Promise.all( [
+        import( "@vertix.gg/bot/src/config/master-channel-config" ),
+        import( "@vertix.gg/bot/src/config/master-channel-config-v3" )
+    ] );
+
+    await Promise.all(
+        configs.map( async( config ) => {
+            await ConfigManager.$.register<ConfigBase<ConfigBaseInterface>>( config.default );
+
+        } )
+    );
+
+}
+
 // Initialize services once when module is loaded
 const servicesInitialized = ( async() => {
     const uiServices = await Promise.all( [
@@ -24,11 +43,31 @@ const servicesInitialized = ( async() => {
         import( "@vertix.gg/gui/src/ui-adapter-versioning-service" ),
     ] );
 
+
     uiServices.forEach( ( service ) => {
         ServiceLocator.$.register<ServiceBase>( service.default, {} );
     } );
 
+    await registerConfigs();
+
+
     await ServiceLocator.$.waitForAll();
+
+    // Get UI service to register wizard buttons
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+
+    // Register the wizard buttons
+    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/general/regenerate/ui-regenerate-button" ),
+        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-back-button" ),
+        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-next-button" ),
+        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-finish-button" );
+
+    uiService.$$.registerSystemElements( {
+        RegenerateButton: UIRegenerateButton,
+        WizardBackButton: UIWizardBackButton,
+        WizardNextButton: UIWizardNextButton,
+        WizardFinishButton: UIWizardFinishButton
+    } );
 } )();
 
 export async function scanUIModules( baseDir: string ): Promise<UIModuleFile[]> {

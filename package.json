@@ -34,6 +34,7 @@
     "dependencies": {
         "@typescript-eslint/types": "^8.27.0",
         "@typescript-eslint/typescript-estree": "^8.27.0",
+        "@xyflow/react": "^12.4.4",
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
         "discord-api-types": "latest",

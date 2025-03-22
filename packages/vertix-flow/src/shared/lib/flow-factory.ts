@@ -1,11 +1,15 @@
 import type { Node, Edge } from "@xyflow/react";
 
 import type { FlowSchema, FlowDiagram } from "@vertix.gg/flow/src/shared/types/flow";
+import {
+  calculateGroupPosition,
+  getViewportDimensions
+} from "@vertix.gg/flow/src/shared/lib/position-calculator";
 
 // Factory interface for creating flow operations
 export interface FlowFactory {
   createFlowDiagram( schema: FlowSchema ): FlowDiagram;
-  createFlowInteraction( flowClass: any ): FlowInteractionController;
+  createFlowInteraction( flowClass: unknown ): FlowInteractionController;
   createNodeStyle(): Record<string, unknown>;
 }
 
@@ -23,263 +27,143 @@ export class DefaultFlowFactory implements FlowFactory {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
+    // Get viewport dimensions for responsive layout
+    const { width: viewportWidth, height: viewportHeight } = getViewportDimensions();
+
     // Define canvas dimensions for relative positioning
-    const canvasWidth = 1000;  // Default canvas width
-    const canvasHeight = 800;  // Default canvas height
+    const canvasWidth = Math.min( viewportWidth * 0.9, 1200 );  // Responsive with max width
+    const canvasHeight = Math.min( viewportHeight * 0.8, 900 ); // Responsive with max height
 
-    // Calculate positions relative to canvas dimensions
-    const centerX = canvasWidth / 2;
-    const topPadding = canvasHeight * 0.05;  // 5% of canvas height from top
-
-    // Create a parent "Components" group that will contain everything
-    const componentsGroupId = "components-group";
-    const componentsGroupPadding = 40; // Padding around all components
-
-    // We'll determine the size after calculating all child nodes
-    let minX = Number.MAX_VALUE;
-    let minY = Number.MAX_VALUE;
-    let maxX = 0;
-    let maxY = 0;
-
-    // Store nodes temporarily
-    const tempNodes: Node[] = [];
-
-    // Add root component node
+    // Create a hierarchical structure for compound nodes
     const rootLabel = schema.name.split( "/" ).pop() || "Component";
-    const rootNodeWidth = 200;  // Estimated width
-    const rootNodeHeight = 80;  // Estimated height
 
-    // Position for root node
-    const rootX = centerX - ( rootNodeWidth / 2 );
-    const rootY = topPadding;
+    // Calculate embed data
+    let embedAttributes = {};
 
-    // Update bounds
-    minX = Math.min( minX, rootX );
-    minY = Math.min( minY, rootY );
-    maxX = Math.max( maxX, rootX + rootNodeWidth );
-    maxY = Math.max( maxY, rootY + rootNodeHeight );
+    // Collect embed data
+    if ( schema.entities && schema.entities.embeds && schema.entities.embeds.length > 0 ) {
+      const embed = schema.entities.embeds[ 0 ];
+      embedAttributes = embed.attributes;
+    }
 
-    tempNodes.push( {
-      id: "root",
-      type: "custom",
-      data: {
-        label: rootLabel,
-        type: schema.type
-      },
-      position: {
-        x: rootX,
-        y: rootY
-      },
-      style: this.createNodeStyle(),
-      draggable: true
-    } );
+    // Calculate element layout for the buttons
+    interface ElementNode {
+      id: string;
+      label: string;
+      type: string;
+      attributes?: Record<string, unknown>;
+    }
 
-    // Process embeds with their buttons
-    let estimatedEmbedHeight = 0;
-    const embedNodeWidth = 500;  // Estimated embed width
-    const verticalGapBetweenNodes = canvasHeight * 0.08;  // 8% of canvas height
+    const elementNodes: ElementNode[] = [];
 
-    if ( schema.entities && schema.entities.embeds ) {
-      schema.entities.embeds.forEach( ( embed, index ) => {
-        const id = `embed-${ index }`;
-        const embedLabel = embed.name.split( "/" ).pop() || "Embed";
+    if ( schema.entities && schema.entities.elements ) {
+      // Process elements/buttons
+      schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
+        elementGroup.forEach( ( element ) => {
+          const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-        // Estimate the embed's height based on its content
-        const embedContentLength = JSON.stringify( embed.attributes ).length;
-        // Base height plus additional height for content, relative to content size
-        estimatedEmbedHeight = Math.max( canvasHeight * 0.25,
-                                      300 + Math.min( 200, embedContentLength / 10 ) );
-
-        // Position embed below root node with vertical gap
-        const embedX = centerX - ( embedNodeWidth / 2 );
-        const embedY = topPadding + rootNodeHeight + verticalGapBetweenNodes;
-
-        // Update bounds
-        minX = Math.min( minX, embedX );
-        minY = Math.min( minY, embedY );
-        maxX = Math.max( maxX, embedX + embedNodeWidth );
-        maxY = Math.max( maxY, embedY + estimatedEmbedHeight );
-
-        tempNodes.push( {
-          id,
-          type: "custom",
-          data: {
-            label: embedLabel,
-            type: "embed",
-            attributes: embed.attributes,
-            elements: schema.entities.elements
-          },
-          position: {
-            x: embedX,
-            y: embedY
-          },
-          style: this.createNodeStyle(),
-          draggable: true
-        } );
-
-        // Connect to root
-        edges.push( {
-          id: `root-to-${ id }`,
-          source: "root",
-          target: id,
-          animated: true,
-          style: { stroke: "#a78bfa" },
-          type: 'smoothstep'
+          // Add to element nodes collection for the Elements group
+          elementNodes.push( {
+            id: `element-${ groupIndex }-${ element.name }`,
+            label: elementLabel,
+            type: element.type,
+            attributes: element.attributes
+          } );
         } );
       } );
     }
 
-    // Process elements
-    if ( schema.entities && schema.entities.elements ) {
-      // Count total elements to determine group size
-      let totalElements = 0;
-      schema.entities.elements.forEach( group => totalElements += group.length );
-
-      // Skip creating a group if there are no elements
-      if ( totalElements > 0 ) {
-        // Settings for element layout - based on relative sizes
-        const elementWidth = Math.min( 160, canvasWidth / ( totalElements * 1.5 ) );
-        const elementSpacing = elementWidth * 0.2;  // 20% of element width
-        const groupPadding = elementWidth * 0.15;   // 15% of element width
-        const elementHeight = elementWidth * 0.4;   // 40% of element width
-
-        // Calculate group dimensions
-        const groupWidth = ( elementWidth * totalElements ) +
-                         ( elementSpacing * ( totalElements - 1 ) ) +
-                         ( groupPadding * 2 );
-        const groupHeight = elementHeight + ( groupPadding * 2 );
-
-        // Calculate embed position values
-        const embedY = topPadding + rootNodeHeight + verticalGapBetweenNodes;
-        const embedBottomY = embedY + estimatedEmbedHeight;
-
-        // Calculate vertical position relative to embed's bottom
-        const relativeSpacing = canvasHeight * 0.06;  // 6% of canvas height
-        const buttonAreaHeight = estimatedEmbedHeight * 0.2;  // 20% of embed height for buttons
-
-        // Group position calculation
-        const groupX = centerX - ( groupWidth / 2 );  // Center horizontally
-        const groupY = embedBottomY + buttonAreaHeight + relativeSpacing;
-
-        // Update bounds
-        minX = Math.min( minX, groupX );
-        minY = Math.min( minY, groupY );
-        maxX = Math.max( maxX, groupX + groupWidth );
-        maxY = Math.max( maxY, groupY + groupHeight );
-
-        // Create group node
-        const elementsGroupId = "elements-group";
-        tempNodes.push( {
-          id: elementsGroupId,
-          type: "group",
-          data: { label: "Elements" },
-          position: { x: groupX, y: groupY },
-          style: {
-            width: groupWidth,
-            height: groupHeight,
-            zIndex: 0
-          },
-          draggable: true,
-          className: 'react-flow__node-group'
-        } );
-
-        // Create element nodes inside the group with relative positioning
-        let elementIndex = 0;
-
-        schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
-          elementGroup.forEach( ( element, index ) => {
-            const id = `element-${ groupIndex }-${ index }`;
-            const elementLabel = element.name.split( "/" ).pop() || "Element";
-
-            // Calculate relative position within the group
-            const xPos = groupPadding + ( elementIndex * ( elementWidth + elementSpacing ) );
-            const yPos = groupPadding; // Centered vertically in group
-
-            elementIndex++;
-
-            tempNodes.push( {
-              id,
-              type: "custom",
-              data: {
-                label: elementLabel,
-                type: element.type,
-                attributes: element.attributes
-              },
-              position: { x: xPos, y: yPos },
-              parentId: elementsGroupId,
-              extent: 'parent',
-              draggable: true,
-              style: {
-                width: elementWidth
-              }
-            } );
-
-            // Connect to embed
-            edges.push( {
-              id: `embed-to-${ id }`,
-              source: "embed-0",
-              target: id,
-              animated: true,
-              style: { stroke: "#34d399" },
-              type: 'smoothstep',
-              zIndex: 0
-            } );
-          } );
-        } );
-      }
-    }
-
-    // Calculate the components group dimensions with padding
-    const componentsGroupWidth = ( maxX - minX ) + ( componentsGroupPadding * 2 );
-    const componentsGroupHeight = ( maxY - minY ) + ( componentsGroupPadding * 2 );
-
-    // Add the parent components group first
-    nodes.push( {
-      id: componentsGroupId,
-      type: "group",
-      data: { label: "Components" },
-      position: {
-        x: minX - componentsGroupPadding,
-        y: minY - componentsGroupPadding
-      },
-      style: {
-        width: componentsGroupWidth,
-        height: componentsGroupHeight,
-        zIndex: -1,
-        backgroundColor: 'rgba(245, 247, 250, 0.1)',
-        border: '1px dashed #9ca3af'
-      },
-      draggable: true,
-      className: 'react-flow__node-group'
+    // Calculate group position using the new utility
+    const groupPosition = calculateGroupPosition( {
+      containerWidth: canvasWidth,
+      containerHeight: canvasHeight
     } );
 
-    // Now add all temporary nodes as children of the components group
-    tempNodes.forEach( node => {
-      if ( node.id !== componentsGroupId ) {
-        // Adjust position to be relative to the parent group
-        const offsetX = node.position.x - ( minX - componentsGroupPadding );
-        const offsetY = node.position.y - ( minY - componentsGroupPadding );
+    // Create the nested component structure using compound nodes
+    // This will create actual HTML nesting in the DOM
+    nodes.push( {
+      id: "components-group",
+      type: "compound",
+      position: { x: groupPosition.x, y: groupPosition.y },  // Dynamic position
+      style: {
+        width: groupPosition.width,
+        height: groupPosition.height,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      },
+      data: {
+        label: "Components",
+        type: "group",
+        groupType: "Components",
+        childNodes: [
+          // Root component node at the top
+          {
+            id: "root",
+            label: rootLabel,
+            type: "component"
+          },
+          // Embed node with attributes in the center
+          {
+            id: "embed-0",
+            label: schema.entities?.embeds?.[ 0 ]?.name.split( "/" ).pop() || "Embed",
+            type: "embed",
+            attributes: embedAttributes,
+            elements: schema.entities?.elements  // Pass elements data to show buttons
+          },
+          // Add Elements group at the bottom
+          ...( elementNodes.length > 0 ? [ {
+            id: "elements-group",
+            label: "Elements",
+            type: "group",
+            groupType: "Elements",
+            // Convert element nodes to proper format
+            childNodes: elementNodes.map( node => ( {
+              ...node,
+              // Make sure each element has a unique ID
+              id: `element-${ node.id }`,
+              // Ensure type is preserved
+              type: node.type || 'element'
+            } ) )
+          } ] : [] )
+        ]
+      },
+      draggable: true
+    } );
 
-        // For non-nested groups, set the parent
-        if ( !node.parentId ) {
-          node.parentId = componentsGroupId;
-          node.position = { x: offsetX, y: offsetY };
-          node.extent = 'parent';
-        }
-      }
+    // Add edge from embed to elements group if elements exist
+    if ( elementNodes.length > 0 ) {
+      edges.push( {
+        id: `embed-to-elements`,
+        source: "embed-0",
+        target: "elements-group",
+        animated: true,
+        style: { stroke: "#34d399" },
+        type: 'smoothstep',
+        zIndex: 0
+      } );
+    }
 
-      // Add the node to the final nodes array
-      nodes.push( node );
+    // Add edge from root to embed
+    edges.push( {
+      id: `root-to-embed`,
+      source: "root",
+      target: "embed-0",
+      animated: true,
+      style: { stroke: "#a78bfa" },
+      type: 'smoothstep'
     } );
 
     return { nodes, edges };
   }
 
-  public createFlowInteraction( flowClass: any ): FlowInteractionController {
+  public createFlowInteraction( flowClass: unknown ): FlowInteractionController {
     return {
       getInitialState: () => {
         try {
-          return flowClass.getInitialState();
+          // Type assertion here since we're expecting a certain interface
+          return ( flowClass as { getInitialState: () => string } ).getInitialState();
         } catch ( error ) {
           console.error( "Error getting initial state:", error );
           return "error";
@@ -288,7 +172,11 @@ export class DefaultFlowFactory implements FlowFactory {
 
       getAvailableTransitions: ( state: string ) => {
         try {
-          return flowClass.getAvailableTransitions( state ) || [];
+          // Type assertion with safety check
+          const transitions = ( flowClass as {
+            getAvailableTransitions: ( state: string ) => string[]
+          } ).getAvailableTransitions( state );
+          return transitions || [];
         } catch ( error ) {
           console.error( "Error getting available transitions:", error );
           return [];
@@ -297,8 +185,13 @@ export class DefaultFlowFactory implements FlowFactory {
 
       performTransition: ( transition: string ) => {
         try {
-          if ( flowClass.transition ) {
-            flowClass.transition( transition );
+          // Type check before executing
+          const flowClassWithTransition = flowClass as {
+            transition?: ( transitionName: string ) => void
+          };
+
+          if ( flowClassWithTransition.transition ) {
+            flowClassWithTransition.transition( transition );
           } else {
             console.warn( "Flow class does not implement transition method" );
           }
@@ -309,7 +202,11 @@ export class DefaultFlowFactory implements FlowFactory {
 
       getStateData: () => {
         try {
-          return flowClass.getData() || {};
+          // Type assertion with safety
+          const data = ( flowClass as {
+            getData: () => Record<string, unknown> | null
+          } ).getData();
+          return data || {};
         } catch ( error ) {
           console.error( "Error getting flow data:", error );
           return {};

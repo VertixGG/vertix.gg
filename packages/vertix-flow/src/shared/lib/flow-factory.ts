@@ -8,7 +8,7 @@ import type { FlowSchema, FlowDiagram } from "@vertix.gg/flow/src/shared/types/f
 export interface FlowFactory {
   createFlowDiagram( schema: FlowSchema ): FlowDiagram;
   createFlowInteraction( flowClass: any ): FlowInteractionController;
-  createNodeStyle( nodeType: string ): Record<string, unknown>;
+  createNodeStyle(): Record<string, unknown>;
 }
 
 // Interface for flow interaction control
@@ -30,16 +30,16 @@ export class DefaultFlowFactory implements FlowFactory {
 
     nodes.push( {
       id: "root",
-      type: "input",
+      type: "custom",
       data: {
         label: rootLabel,
         type: schema.type
       },
       position: { x: 250, y: 50 },
-      style: this.createNodeStyle( "root" )
+      style: this.createNodeStyle()
     } );
 
-    // Process embeds
+    // Process embeds with their buttons
     if ( schema.entities && schema.entities.embeds ) {
       schema.entities.embeds.forEach( ( embed, index ) => {
         const id = `embed-${ index }`;
@@ -47,16 +47,15 @@ export class DefaultFlowFactory implements FlowFactory {
 
         nodes.push( {
           id,
-          type: "default",
+          type: "custom",
           data: {
             label: embedLabel,
             type: "embed",
-            attributes: embed.attributes
+            attributes: embed.attributes,
+            elements: schema.entities.elements // Pass buttons as elements to the embed
           },
-          position: { x: 150, y: 150 + ( index * 100 ) },
-          style: this.createNodeStyle( "embed" ),
-          sourcePosition: Position.Right,
-          targetPosition: Position.Left
+          position: { x: 250, y: 150 },
+          style: this.createNodeStyle()
         } );
 
         // Connect to root
@@ -65,7 +64,8 @@ export class DefaultFlowFactory implements FlowFactory {
           source: "root",
           target: id,
           animated: true,
-          style: { stroke: "#a78bfa" }
+          style: { stroke: "#a78bfa" },
+          type: 'smoothstep'
         } );
       } );
     }
@@ -77,28 +77,28 @@ export class DefaultFlowFactory implements FlowFactory {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-          const xPosition = 450 + ( groupIndex * 220 );
           nodes.push( {
             id,
-            type: "default",
+            type: "custom",
             data: {
               label: elementLabel,
               type: element.type,
               attributes: element.attributes
             },
-            position: { x: xPosition, y: 150 + ( index * 100 ) },
-            style: this.createNodeStyle( "element" ),
-            sourcePosition: Position.Right,
-            targetPosition: Position.Left
+            position: { x: 250, y: 250 }, // Just put them below the embed
+            style: this.createNodeStyle(),
+            sourcePosition: Position.Top,
+            targetPosition: Position.Bottom
           } );
 
-          // Connect to root
+          // Connect to embed
           edges.push( {
-            id: `root-to-${ id }`,
-            source: "root",
+            id: `embed-to-${ id }`,
+            source: "embed-0",
             target: id,
             animated: true,
-            style: { stroke: "#34d399" }
+            style: { stroke: "#34d399" },
+            type: 'smoothstep'
           } );
         } );
       } );
@@ -150,44 +150,9 @@ export class DefaultFlowFactory implements FlowFactory {
     };
   }
 
-  public createNodeStyle( nodeType: string ): Record<string, unknown> {
-    // Base style common to all nodes
-    const baseStyle = {
-      borderRadius: "4px",
-      padding: "10px",
-      textAlign: "center" as const,
-      minWidth: "150px",
-    };
-
-    // Type-specific styles
-    switch ( nodeType ) {
-      case "root":
-        return {
-          ...baseStyle,
-          background: "#60a5fa",
-          color: "white",
-        };
-      case "embed":
-        return {
-          ...baseStyle,
-          background: "#a78bfa",
-          color: "white",
-          width: "180px",
-        };
-      case "element":
-        return {
-          ...baseStyle,
-          background: "#34d399",
-          color: "white",
-          width: "180px",
-        };
-      default:
-        return {
-          ...baseStyle,
-          background: "#f3f4f6",
-          color: "#374151",
-        };
-    }
+  public createNodeStyle(): Record<string, unknown> {
+    // Remove all styling from here since we handle it in the CustomNode component
+    return {};
   }
 }
 

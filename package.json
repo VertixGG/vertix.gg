@@ -4,7 +4,7 @@
     "author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
     "license": "proprietary",
     "type": "module",
-    "version": "0.0.8",
+    "version": "0.0.0",
     "description": "Vertix - Discord Bot",
     "private": true,
     "repository": {

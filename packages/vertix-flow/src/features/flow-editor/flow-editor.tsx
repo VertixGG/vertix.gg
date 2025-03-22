@@ -45,7 +45,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     // Calculate layout based on viewport dimensions
     const { width } = getViewportDimensions();
     const isWide = width > 1200;
-    const sidebarWidth = isWide ? 25 : 35;
+    const sidebarWidth = isWide ? 18 : 25;
     const diagramWidth = 100 - sidebarWidth;
 
     // Handle node changes

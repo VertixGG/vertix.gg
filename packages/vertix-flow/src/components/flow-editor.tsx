@@ -184,6 +184,7 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
     const flowDataResource = useFlowData( modulePath, flowName );
     const [ error, setError ] = React.useState<string | null>( null );
     const [ isLoading, setIsLoading ] = React.useState( true );
+    const [ flowData, setFlowData ] = React.useState<any>( null );
 
     // Create a stable reference to the onSchemaLoaded callback using useCallback
     const stableOnSchemaLoaded = React.useCallback( ( schema: any ) => {
@@ -192,45 +193,46 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
         }
     }, [ onSchemaLoaded ] );
 
-    // Memoize the flow data to avoid unnecessary re-renders
-    const flowData = React.useMemo( () => {
+    // Use a ref to track if we've already processed this schema
+    const processedSchemaId = React.useRef<string | null>( null );
+
+    // Use effect to handle data loading
+    React.useEffect( () => {
         try {
-            setIsLoading( true );
             const data = flowDataResource.read();
-            console.log( 'Flow data received:', data );
+            console.log( 'Flow data loaded successfully:', data );
+            setFlowData( data );
             setIsLoading( false );
-            return data;
         } catch ( error ) {
             // If the error is a Promise, it means the data is still loading
             if ( error instanceof Promise ) {
+                // Handle loading state - data will be loaded when the promise resolves
                 error.then( () => {
-                    setIsLoading( false );
+                    // We'll handle this on the next effect cycle
                 } ).catch( err => {
                     console.error( "Error loading flow data:", err );
                     setError( "Failed to load flow data. See console for details." );
                     setIsLoading( false );
                 } );
-                throw error; // Re-throw to let Suspense handle it
+                // We need to re-throw for Suspense to catch
+                throw error;
             }
 
             // Otherwise it's an actual error
             console.error( "Error reading flow data:", error );
             setError( error instanceof Error ? error.message : "Unknown error occurred" );
             setIsLoading( false );
-            return null;
         }
     }, [ flowDataResource ] );
 
-    // Use a ref to track if we've already processed this schema
-    const processedSchemaId = React.useRef<string | null>( null );
-
-    // Create a stable version of the schema for comparison
-    const schemaId = React.useMemo( () => flowData?.schema?.name || '', [ flowData?.schema?.name ] );
-
-    // Separate effect to handle schema loading - runs once per schema
+    // Separate effect to handle schema processing after data is loaded
     React.useEffect( () => {
+        if ( !flowData || !flowData.schema ) return;
+
+        const schemaId = flowData.schema.name || '';
+
         // Only run if we have data and the schema ID has changed
-        if ( flowData?.schema && schemaId && processedSchemaId.current !== schemaId ) {
+        if ( schemaId && processedSchemaId.current !== schemaId ) {
             console.log( 'Processing schema:', schemaId );
             console.log( 'Schema data structure:', JSON.stringify( flowData.schema ) );
 
@@ -261,7 +263,7 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
             // Cleanup timeout on unmount or when dependencies change
             return () => clearTimeout( timeoutId );
         }
-    }, [ schemaId, flowData?.schema, stableOnSchemaLoaded ] );
+    }, [ flowData, stableOnSchemaLoaded ] );
 
     if ( isLoading ) {
         return <div>Loading flow data...</div>;
@@ -293,7 +295,7 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
                 <h4 className="text-sm font-medium mb-2">Transactions:</h4>
                 <div className="flex flex-wrap gap-2">
                     {Array.isArray( flowData.transactions ) && flowData.transactions.length > 0 ? (
-                        flowData.transactions.map( ( transaction, index ) => (
+                        flowData.transactions.map( ( transaction: string, index: number ) => (
                             <Badge key={index}>{transaction}</Badge>
                         ) )
                     ) : (
@@ -308,11 +310,11 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
                 <h4 className="text-sm font-medium mb-2">Required Data:</h4>
                 <div className="space-y-2">
                     {flowData.requiredData && Object.keys( flowData.requiredData ).length > 0 ? (
-                        Object.entries( flowData.requiredData ).map( ( [ transaction, data ], index ) => (
+                        Object.entries( flowData.requiredData ).map( ( [ transaction, data ]: [string, unknown], index: number ) => (
                             <div key={index} className="pl-2 border-l-2 border-primary">
                                 <div className="font-medium">{transaction}:</div>
                                 <div className="flex flex-wrap gap-1 pl-3">
-                                    {Array.isArray( data ) ? data.map( ( field, i ) => (
+                                    {Array.isArray( data ) ? data.map( ( field: string, i: number ) => (
                                         <Badge key={i} variant="outline" className="text-xs">{field}</Badge>
                                     ) ) : <span className="text-gray-500">Invalid data format</span>}
                                 </div>
@@ -366,6 +368,7 @@ export const FlowEditor: React.FC = () => {
     const [ modulePath, setModulePath ] = useState<string>( "" ); // eslint-disable-line @typescript-eslint/no-unused-vars
     const [ flows, setFlows ] = useState<FlowItem[]>( [] );
     const [ selectedFlow, setSelectedFlow ] = useState<FlowItem | null>( null );
+    const [ diagramGenerated, setDiagramGenerated ] = useState( false );
 
     // Handle new connections between nodes
     const onConnect = useCallback( ( params: Connection ) => setEdges( ( eds ) => addEdge( params, eds ) ), [ setEdges ] );
@@ -393,11 +396,14 @@ export const FlowEditor: React.FC = () => {
         // Reset flow diagram
         setNodes( [] );
         setEdges( [] );
+        setDiagramGenerated( false );
     }, [ setNodes, setEdges ] );
 
     // Handle flow selection
     const handleFlowSelect = useCallback( ( flow: FlowItem ) => {
         setSelectedFlow( flow );
+        // Reset diagram state when selecting a new flow
+        setDiagramGenerated( false );
     }, [] );
 
     // Handle schema loaded from flow data
@@ -418,12 +424,30 @@ export const FlowEditor: React.FC = () => {
             console.log( 'Generated nodes:', flowNodes.length );
             console.log( 'Generated edges:', flowEdges.length );
 
-            setNodes( flowNodes );
-            setEdges( flowEdges );
+            if ( flowNodes.length > 0 ) {
+                setNodes( flowNodes );
+                setEdges( flowEdges );
+                setDiagramGenerated( true );
+                console.log( 'Diagram nodes and edges set' );
+            } else {
+                console.warn( 'No nodes generated from schema' );
+            }
         } catch ( error ) {
             console.error( 'Error generating flow diagram:', error );
         }
     }, [ setNodes, setEdges ] );
+
+    // Effect to ensure ReactFlow relayout when nodes change
+    React.useEffect( () => {
+        if ( nodes.length > 0 ) {
+            // Force ReactFlow to update layout
+            const timeoutId = setTimeout( () => {
+                console.log( 'Forcing ReactFlow layout update' );
+                window.dispatchEvent( new Event( 'resize' ) );
+            }, 100 );
+            return () => clearTimeout( timeoutId );
+        }
+    }, [ nodes, diagramGenerated ] );
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -466,20 +490,27 @@ export const FlowEditor: React.FC = () => {
             </div>
 
             {/* Flow editor canvas */}
-            <div className="flex-1 min-h-0">
-                <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    fitView
-                    nodeTypes={{ default: CustomNode }}
-                >
-                    <Controls />
-                    <MiniMap />
-                    <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-                </ReactFlow>
+            <div className="flex-1 min-h-0 overflow-hidden border-t">
+                {nodes.length > 0 ? (
+                    <ReactFlow
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
+                        fitView
+                        nodeTypes={{ default: CustomNode }}
+                        className="bg-gray-50"
+                    >
+                        <Controls />
+                        <MiniMap />
+                        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+                    </ReactFlow>
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <p>{selectedFlow ? "Diagram will appear here" : "Select a flow to visualize"}</p>
+                    </div>
+                )}
             </div>
         </div>
     );

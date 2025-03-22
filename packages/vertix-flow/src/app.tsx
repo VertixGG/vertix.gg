@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-import { FlowEditor } from "@vertix.gg/flow/src/components/flow-editor";
+import { FlowEditor } from "@vertix.gg/flow/src/features/flow-editor/flow-editor";
 
 // Initialize React app with React Flow
 const App = () => {

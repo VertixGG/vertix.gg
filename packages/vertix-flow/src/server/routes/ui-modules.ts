@@ -1,7 +1,10 @@
 import path from "path";
+
 import { Type } from "@sinclair/typebox";
-import type { FastifyPluginAsync } from "fastify";
+
 import { scanUIModules } from "@vertix.gg/flow/src/server/utils/ui-module-scanner";
+
+import type { FastifyPluginAsync } from "fastify";
 
 export const createUIModulesRoute: FastifyPluginAsync = async( fastify ) => {
     // Add prefix to all routes
@@ -96,7 +99,7 @@ export const createUIModulesRoute: FastifyPluginAsync = async( fastify ) => {
                         const module = await import( fullModulePath );
                         const ModuleClass = module.default;
 
-                        if ( !ModuleClass || typeof ModuleClass.getFlows !== 'function' ) {
+                        if ( !ModuleClass || typeof ModuleClass.getFlows !== "function" ) {
                             reply.status( 404 ).send( {
                                 error: "Invalid module",
                                 message: "The module does not have a getFlows method"

@@ -144,7 +144,7 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
         };
     }
 
-    constructor( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
     }
 

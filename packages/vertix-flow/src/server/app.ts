@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from "fastify";
+import fastify from "fastify";
 import cors from "@fastify/cors";
 
 import { createUIModulesRoute } from "@vertix.gg/flow/src/server/routes/ui-modules";
@@ -25,7 +25,7 @@ export default () => {
     } );
 
     // Add a root route for frontend
-    app.get( "/", async( request, reply ) => {
+    app.get( "/", async() => {
         // When using vite-plugin-fastify, this will be handled by Vite
         // But we need this route defined to prevent 404
         return { message: "Frontend should be handled by Vite" };

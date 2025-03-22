@@ -34,7 +34,7 @@ export abstract class UIFlowBase<
     private readonly transitions: Map<TState, Set<TTransition>> = new Map();
     private data: TData;
 
-    constructor( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
         this.currentState = this.getInitialState();
@@ -139,5 +139,35 @@ export abstract class UIFlowBase<
      */
     public getData(): TData {
         return this.data;
+    }
+
+    /**
+     * Build schema from component
+     */
+    public async buildSchema() {
+        await this.getComponent().waitUntilInitialized();
+
+        const schema = await this.getComponent().build( {} );
+
+        return schema;
+    }
+
+    /**
+     * Convert flow to JSON representation
+     */
+    public async toJSON() {
+        const transactions = this.getAvailableTransitions();
+        const requiredDataMap: Record<string, ( keyof TData )[]> = {};
+
+        // Get required data for each transaction
+        for ( const transaction of transactions ) {
+            requiredDataMap[ transaction as string ] = this.getRequiredData( transaction );
+        }
+
+        return {
+            transactions,
+            requiredData: requiredDataMap,
+            schema: await this.buildSchema()
+        };
     }
 }

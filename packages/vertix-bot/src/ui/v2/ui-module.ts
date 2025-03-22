@@ -22,7 +22,7 @@ export class UIModuleV2 extends UIModuleBase {
     }
 
     public static getFlows() {
-        return []
+        return [];
     }
 
     public get $$() {

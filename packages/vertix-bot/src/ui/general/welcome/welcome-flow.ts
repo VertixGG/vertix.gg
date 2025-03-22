@@ -89,7 +89,7 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
         return WelcomeComponent;
     }
 
-    constructor( options: TAdapterRegisterOptions ) {
+    public constructor( options: TAdapterRegisterOptions ) {
         super( options );
     }
 

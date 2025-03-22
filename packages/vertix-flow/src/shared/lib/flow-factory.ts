@@ -79,6 +79,11 @@ export class DefaultFlowFactory implements FlowFactory {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
+          // Calculate position for elements to be displayed in a row at the bottom
+          // This creates a more spread out layout similar to the second image
+          const xPosition = 150 + ( index * 200 ); // Spread elements horizontally
+          const yPosition = 600; // Place them at the bottom
+
           nodes.push( {
             id,
             type: "custom",
@@ -87,7 +92,7 @@ export class DefaultFlowFactory implements FlowFactory {
               type: element.type,
               attributes: element.attributes
             },
-            position: { x: 250, y: 250 }, // Just put them below the embed
+            position: { x: xPosition, y: yPosition },
             style: this.createNodeStyle(),
             sourcePosition: Position.Top,
             targetPosition: Position.Bottom,

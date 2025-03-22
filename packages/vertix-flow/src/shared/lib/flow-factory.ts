@@ -93,7 +93,7 @@ export class DefaultFlowFactory implements FlowFactory {
 
       // Center position for the group
       const groupX = 250 - ( groupWidth / 2 );
-      const groupY = 400;
+      const groupY = 650;
 
       // Create group node first
       const groupId = "elements-group";

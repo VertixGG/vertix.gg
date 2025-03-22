@@ -60,8 +60,11 @@ export function useFlowData( modulePath: string, flowName: string ) {
     return useAsyncResource(
         async() => {
             if ( !modulePath || !flowName ) {
+                console.warn( "useFlowData called without modulePath or flowName" );
                 return null;
             }
+
+            console.log( `Fetching flow data for ${ modulePath } / ${ flowName }` );
 
             // Normalize paths for consistent caching
             const normalizedPath = modulePath.startsWith( '/' ) ? modulePath.substring( 1 ) : modulePath;
@@ -71,17 +74,21 @@ export function useFlowData( modulePath: string, flowName: string ) {
 
             // Return cached data if available
             if ( flowDataCache.has( cacheKey ) ) {
-                return flowDataCache.get( cacheKey )!;
+                console.log( `Using cached data for ${ cacheKey }` );
+                return validateFlowData( flowDataCache.get( cacheKey )! );
             }
 
             // Check if there's already a pending request for this data
             if ( pendingRequests.has( cacheKey ) ) {
-                return await pendingRequests.get( cacheKey )!;
+                console.log( `Using pending request for ${ cacheKey }` );
+                const result = await pendingRequests.get( cacheKey )!;
+                return validateFlowData( result );
             }
 
             // Create new request
             const request = ( async() => {
                 try {
+                    console.log( `Making API request for ${ normalizedPath }/${ flowName }` );
                     // Use query parameters instead of path parameters
                     const response = await api.get<FlowData>( `/api/ui-flows`, {
                         params: {
@@ -90,12 +97,17 @@ export function useFlowData( modulePath: string, flowName: string ) {
                         }
                     } );
 
-                    // Cache the result
-                    if ( response.data ) {
-                        flowDataCache.set( cacheKey, response.data );
+                    console.log( `API response received for ${ normalizedPath }/${ flowName }:`, response.status );
+
+                    // Validate the response data
+                    const validatedData = validateFlowData( response.data );
+
+                    // Cache the result if it's valid
+                    if ( validatedData ) {
+                        flowDataCache.set( cacheKey, validatedData );
                     }
 
-                    return response.data;
+                    return validatedData;
                 } catch ( error ) {
                     console.error( `Error fetching flow data for ${ normalizedPath }/${ flowName }:`, error );
                     return null;
@@ -112,4 +124,18 @@ export function useFlowData( modulePath: string, flowName: string ) {
         },
         [ `flow-data-${ modulePath }-${ flowName }` ] // Cache key based on module path and flow name
     );
+}
+
+// Function to validate flow data structure
+function validateFlowData( data: FlowData | null ): FlowData | null {
+    if ( !data ) return null;
+
+    // Create a validated copy with defaults for missing properties
+    const validated: FlowData = {
+        transactions: Array.isArray( data.transactions ) ? data.transactions : [],
+        requiredData: data.requiredData && typeof data.requiredData === 'object' ? data.requiredData : {},
+        schema: data.schema || null
+    };
+
+    return validated;
 }

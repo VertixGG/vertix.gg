@@ -162,6 +162,8 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
     onSchemaLoaded?: ( schema: any ) => void;
 } ) {
     const flowDataResource = useFlowData( modulePath, flowName );
+    const [ error, setError ] = React.useState<string | null>( null );
+    const [ isLoading, setIsLoading ] = React.useState( true );
 
     // Create a stable reference to the onSchemaLoaded callback using useCallback
     const stableOnSchemaLoaded = React.useCallback( ( schema: any ) => {
@@ -173,9 +175,28 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
     // Memoize the flow data to avoid unnecessary re-renders
     const flowData = React.useMemo( () => {
         try {
-            return flowDataResource.read();
+            setIsLoading( true );
+            const data = flowDataResource.read();
+            console.log( 'Flow data received:', data );
+            setIsLoading( false );
+            return data;
         } catch ( error ) {
+            // If the error is a Promise, it means the data is still loading
+            if ( error instanceof Promise ) {
+                error.then( () => {
+                    setIsLoading( false );
+                } ).catch( err => {
+                    console.error( "Error loading flow data:", err );
+                    setError( "Failed to load flow data. See console for details." );
+                    setIsLoading( false );
+                } );
+                throw error; // Re-throw to let Suspense handle it
+            }
+
+            // Otherwise it's an actual error
             console.error( "Error reading flow data:", error );
+            setError( error instanceof Error ? error.message : "Unknown error occurred" );
+            setIsLoading( false );
             return null;
         }
     }, [ flowDataResource ] );
@@ -190,6 +211,7 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
     React.useEffect( () => {
         // Only run if we have data and the schema ID has changed
         if ( flowData?.schema && schemaId && processedSchemaId.current !== schemaId ) {
+            console.log( 'Processing schema:', schemaId );
             // Track that we've processed this schema
             processedSchemaId.current = schemaId;
 
@@ -203,9 +225,27 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
         }
     }, [ schemaId, flowData?.schema, stableOnSchemaLoaded ] );
 
-    if ( !flowData ) {
-        return <div>No flow data available</div>;
+    if ( isLoading ) {
+        return <div>Loading flow data...</div>;
     }
+
+    if ( error ) {
+        return <div className="text-red-500">Error: {error}</div>;
+    }
+
+    if ( !flowData ) {
+        return (
+            <div className="p-4 border border-yellow-300 bg-yellow-50 rounded">
+                <h3 className="font-medium">No flow data available</h3>
+                <p className="text-sm text-gray-600">Module: {modulePath}</p>
+                <p className="text-sm text-gray-600">Flow: {flowName}</p>
+            </div>
+        );
+    }
+
+    // Debug output for transactions
+    console.log( 'Transactions:', flowData.transactions );
+    console.log( 'Required data:', flowData.requiredData );
 
     return (
         <div className="space-y-4">
@@ -214,9 +254,13 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
             <div>
                 <h4 className="text-sm font-medium mb-2">Transactions:</h4>
                 <div className="flex flex-wrap gap-2">
-                    {flowData.transactions.map( ( transaction, index ) => (
-                        <Badge key={index}>{transaction}</Badge>
-                    ) )}
+                    {Array.isArray( flowData.transactions ) && flowData.transactions.length > 0 ? (
+                        flowData.transactions.map( ( transaction, index ) => (
+                            <Badge key={index}>{transaction}</Badge>
+                        ) )
+                    ) : (
+                        <span className="text-gray-500">No transactions available</span>
+                    )}
                 </div>
             </div>
 
@@ -225,16 +269,20 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
             <div>
                 <h4 className="text-sm font-medium mb-2">Required Data:</h4>
                 <div className="space-y-2">
-                    {Object.entries( flowData.requiredData ).map( ( [ transaction, data ], index ) => (
-                        <div key={index} className="pl-2 border-l-2 border-primary">
-                            <div className="font-medium">{transaction}:</div>
-                            <div className="flex flex-wrap gap-1 pl-3">
-                                {data.map( ( field, i ) => (
-                                    <Badge key={i} variant="outline" className="text-xs">{field}</Badge>
-                                ) )}
+                    {flowData.requiredData && Object.keys( flowData.requiredData ).length > 0 ? (
+                        Object.entries( flowData.requiredData ).map( ( [ transaction, data ], index ) => (
+                            <div key={index} className="pl-2 border-l-2 border-primary">
+                                <div className="font-medium">{transaction}:</div>
+                                <div className="flex flex-wrap gap-1 pl-3">
+                                    {Array.isArray( data ) ? data.map( ( field, i ) => (
+                                        <Badge key={i} variant="outline" className="text-xs">{field}</Badge>
+                                    ) ) : <span className="text-gray-500">Invalid data format</span>}
+                                </div>
                             </div>
-                        </div>
-                    ) )}
+                        ) )
+                    ) : (
+                        <span className="text-gray-500">No required data available</span>
+                    )}
                 </div>
             </div>
 

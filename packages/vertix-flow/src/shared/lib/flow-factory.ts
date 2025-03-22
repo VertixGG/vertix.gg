@@ -79,10 +79,13 @@ export class DefaultFlowFactory implements FlowFactory {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-          // Calculate position for elements to be displayed in a row at the bottom
-          // This creates a more spread out layout similar to the second image
-          const xPosition = 150 + ( index * 200 ); // Spread elements horizontally
-          const yPosition = 600; // Place them at the bottom
+          // Position elements in a row below the embed
+          const elementCount = elementGroup.length;
+          const spacing = 150; // Space between elements
+          const totalWidth = ( elementCount - 1 ) * spacing;
+          const startX = 250 - ( totalWidth / 2 ); // Center the row below the embed
+          const xPosition = startX + ( index * spacing );
+          const yPosition = 400; // Position directly below the embed
 
           nodes.push( {
             id,

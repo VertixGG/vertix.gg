@@ -1,8 +1,13 @@
 import path from "path";
-import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
+
+import { fileURLToPath } from "node:url";
+
 import { Type } from "@fastify/type-provider-typebox";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
-import { servicesInitialized } from "../utils/ui-module-scanner";
+
+import { servicesInitialized } from "@vertix.gg/flow/src/server/utils/ui-module-scanner";
+
+import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 
 /**
  * UI Module file interface
@@ -72,7 +77,8 @@ export class UIModulesRoute extends InitializeBase {
 
         try {
             // Get the absolute path to the UI modules directory
-            const uiModulesPath = path.resolve( __dirname, "../../../..", "vertix-bot/src/ui" );
+            const currentFilePath = fileURLToPath( import.meta.url );
+            const uiModulesPath = path.resolve( path.dirname( currentFilePath ), "../../../..", "vertix-bot/src/ui" );
 
             this.logger.info( "handleModules", `Scanning UI modules from: ${ uiModulesPath }` );
 
@@ -106,7 +112,7 @@ export class UIModulesRoute extends InitializeBase {
             } );
             return { files: [] };
         }
-    }
+    };
 
     /**
      * Handle UI flows request
@@ -125,7 +131,9 @@ export class UIModulesRoute extends InitializeBase {
             this.logger.info( "handleFlows", "Services initialized successfully" );
 
             // Get the absolute path to the UI modules directory
-            const uiModulesPath = path.resolve( __dirname, "../../../..", "vertix-bot/src/ui" );
+            const currentFilePath = fileURLToPath( import.meta.url );
+
+            const uiModulesPath = path.resolve( path.dirname( currentFilePath ), "../../../..", "vertix-bot/src/ui" );
             const fullModulePath = path.join( uiModulesPath, modulePath );
 
             this.logger.info( "handleFlows", `Loading module from: ${ fullModulePath }` );
@@ -171,19 +179,19 @@ export class UIModulesRoute extends InitializeBase {
             // Debug logs to understand schema structure
             console.log( "[DEBUG] Original flow data structure:", JSON.stringify( {
                 hasSchema: !!flowData.schema,
-                schemaType: flowData.schema ? typeof flowData.schema : 'null',
+                schemaType: flowData.schema ? typeof flowData.schema : "null",
                 schemaKeys: flowData.schema ? Object.keys( flowData.schema ) : []
             }, null, 2 ) );
 
             // Debug log buildSchema method if available
-            if ( typeof flowInstance.buildSchema === 'function' ) {
+            if ( typeof flowInstance.buildSchema === "function" ) {
                 console.log( "[DEBUG] Flow has buildSchema method" );
 
                 // Check if component has build method
                 const component = flowInstance.getComponent();
                 console.log( "[DEBUG] Component:", {
-                    name: component?.constructor?.name || 'unknown',
-                    hasBuild: typeof component?.build === 'function',
+                    name: component?.constructor?.name || "unknown",
+                    hasBuild: typeof component?.build === "function",
                 } );
             }
 
@@ -195,7 +203,7 @@ export class UIModulesRoute extends InitializeBase {
                     name: flowName,
                     entities: { elements: [], embeds: [] }
                 };
-            } else if ( typeof flowData.schema !== 'object' ) {
+            } else if ( typeof flowData.schema !== "object" ) {
                 console.log( "[DEBUG] Schema is not an object, providing default" );
                 flowData.schema = {
                     type: "default",
@@ -221,7 +229,7 @@ export class UIModulesRoute extends InitializeBase {
                 message: err instanceof Error ? err.message : "Unknown error"
             } );
         }
-    }
+    };
 
     /**
      * Register routes with Fastify instance

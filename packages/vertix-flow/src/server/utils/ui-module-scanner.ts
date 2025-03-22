@@ -75,10 +75,8 @@ const servicesInitialized = ( async() => {
             WizardFinishButton: UIWizardFinishButton
         } );
 
-        console.log( "[DEBUG] Services initialization complete" );
         return true;
     } catch ( error ) {
-        console.error( "[ERROR] Failed to initialize services:", error );
         throw error;
     }
 } )();
@@ -96,7 +94,6 @@ export async function scanUIModules( baseDir: string ): Promise<UIModuleFile[]> 
     try {
         await access( baseDir, constants.R_OK );
     } catch {
-        console.warn( `Directory ${ baseDir } does not exist or is not accessible` );
         return [];
     }
 

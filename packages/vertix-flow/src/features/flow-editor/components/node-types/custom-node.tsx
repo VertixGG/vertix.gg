@@ -30,15 +30,6 @@ export interface ExtendedNodeData {
 export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => {
   const { label, type, attributes, elements } = data;
 
-  console.log(`[DEBUG] Rendering CustomNode:`, {
-    label,
-    type,
-    hasAttributes: !!attributes,
-    attributeKeys: attributes ? Object.keys(attributes) : [],
-    hasElements: !!elements,
-    elementsLength: elements?.length
-  });
-
   // Root component node
   if ( type === "component" ) {
     return (
@@ -56,18 +47,6 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
 
     // Get the first row of buttons, or an empty array
     const buttons = Array.isArray(elementsArray[0]) ? elementsArray[0] : (elementsArray.flat ? elementsArray.flat() : []);
-
-    console.log(`[DEBUG] Rendering embed "${label}" with:`, {
-      hasTitle: !!embedAttributes?.title,
-      hasDescription: !!embedAttributes?.description,
-      hasThumbnail: !!embedAttributes?.thumbnail?.url,
-      hasImage: !!embedAttributes?.image?.url,
-      elementsType: typeof elementsArray,
-      elementsIsArray: Array.isArray(elementsArray),
-      elementsLength: elementsArray.length,
-      buttonsCount: buttons.length,
-      buttons: buttons.map(b => b?.attributes?.label || 'Unknown')
-    });
 
     return (
       <div className="min-w-[400px] max-w-[600px] bg-[#36393f] rounded-lg">
@@ -110,7 +89,6 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
             <div className="flex gap-2 mt-4">
               {buttons.map( ( button: any, index: number ) => {
                 if (!button || !button.attributes) {
-                  console.log(`[DEBUG] Missing button data at index ${index}:`, button);
                   return null;
                 }
 

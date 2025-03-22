@@ -91,14 +91,6 @@ export class DefaultFlowFactory implements FlowFactory {
 
     // Helper method to create component nodes from schemas
     private createComponentNodes( components: FlowComponent[] ) {
-        console.log("[DEBUG] Creating component nodes from:", JSON.stringify(components.map(c => ({
-            name: c.name,
-            type: c.type,
-            hasEntities: !!c.entities,
-            elementsCount: c.entities?.elements?.length || 0,
-            embedsCount: c.entities?.embeds?.length || 0
-        })), null, 2));
-
         return components.map( ( component, componentIndex ) => {
             const componentId = `component-${ componentIndex }`;
             const componentLabel = component.name?.split( "/" ).pop() || `Component ${ componentIndex + 1 }`;
@@ -120,9 +112,6 @@ export class DefaultFlowFactory implements FlowFactory {
                     const elements = component.entities?.elements?.length ?
                         component.entities.elements : undefined;
 
-                    console.log(`[DEBUG] Adding elements to embed ${embedIndex}:`,
-                                !!elements, elements?.length);
-
                     childNodes.push( {
                         id: `${ componentId }-embed-${ embedIndex }`,
                         label: embed.name.split( "/" ).pop() || `Embed ${ embedIndex + 1 }`,
@@ -135,9 +124,6 @@ export class DefaultFlowFactory implements FlowFactory {
 
             // Add elements group if elements exist
             if ( component.entities?.elements?.length ) {
-                console.log(`[DEBUG] Processing elements for component ${componentLabel}:`,
-                            JSON.stringify(component.entities.elements.length));
-
                 childNodes.push( {
                     id: `${ componentId }-elements-group`,
                     label: "Elements",
@@ -159,13 +145,6 @@ export class DefaultFlowFactory implements FlowFactory {
                 groupType: "Component",
                 childNodes
             };
-
-            console.log(`[DEBUG] Created component node structure for ${componentLabel}:`,
-                        JSON.stringify({
-                            id: result.id,
-                            childNodesCount: result.childNodes.length,
-                            childNodeIds: result.childNodes.map(n => n.id)
-                        }));
 
             return result;
         } );
@@ -220,7 +199,6 @@ export class DefaultFlowFactory implements FlowFactory {
                     // Type assertion here since we're expecting a certain interface
                     return ( flowClass as { getInitialState: () => string } ).getInitialState();
                 } catch ( error ) {
-                    console.error( "Error getting initial state:", error );
                     return "error";
                 }
             },
@@ -233,7 +211,6 @@ export class DefaultFlowFactory implements FlowFactory {
                     } ).getAvailableTransitions( state );
                     return transitions || [];
                 } catch ( error ) {
-                    console.error( "Error getting available transitions:", error );
                     return [];
                 }
             },
@@ -247,11 +224,9 @@ export class DefaultFlowFactory implements FlowFactory {
 
                     if ( flowClassWithTransition.transition ) {
                         flowClassWithTransition.transition( transition );
-                    } else {
-                        console.warn( "Flow class does not implement transition method" );
                     }
                 } catch ( error ) {
-                    console.error( `Error during transition ${ transition }:`, error );
+                    // Error handled silently
                 }
             },
 
@@ -263,7 +238,6 @@ export class DefaultFlowFactory implements FlowFactory {
                     } ).getData();
                     return data || {};
                 } catch ( error ) {
-                    console.error( "Error getting flow data:", error );
                     return {};
                 }
             }

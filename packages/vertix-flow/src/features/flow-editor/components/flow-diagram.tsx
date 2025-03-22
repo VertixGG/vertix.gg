@@ -1,6 +1,6 @@
 import "@xyflow/react/dist/style.css";
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 
 import {
     ReactFlow,
@@ -37,24 +37,8 @@ const nodeTypes = {
 
 // Function to generate flow diagram using factory - don't use hooks here
 export function generateFlowDiagram( flowData: FlowData ): FlowDiagram {
-    console.log("[DEBUG] Generating flow diagram from:", {
-        name: flowData.name,
-        hasComponents: !!flowData.components,
-        componentsCount: flowData.components?.length,
-        firstComponentName: flowData.components?.[0]?.name,
-        hasElements: !!flowData.components?.[0]?.entities?.elements?.length,
-        hasEmbeds: !!flowData.components?.[0]?.entities?.embeds?.length
-    });
-
     // Use the factory singleton directly instead of the hook
     const result = flowFactory.createFlowDiagram( flowData );
-
-    console.log("[DEBUG] Generated flow diagram:", {
-        nodesCount: result.nodes.length,
-        edgesCount: result.edges.length,
-        nodeTypes: result.nodes.map(n => n.type)
-    });
-
     return result;
 }
 
@@ -93,18 +77,6 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     const { setError } = useFlowUI();
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
 
-    // Log the complete node structure
-    console.log("[DEBUG] Flow diagram nodes structure:",
-        JSON.stringify(nodes.map(node => ({
-            id: node.id,
-            type: node.type,
-            dataType: node.data?.type,
-            dataLabel: node.data?.label,
-            hasChildNodes: node.data?.childNodes ? true : false,
-            childNodesCount: node.data?.childNodes ? (node.data.childNodes as any[]).length : 0
-        })), null, 2)
-    );
-
     const onInit = useCallback( ( instance: ReactFlowInstance ) => {
         // This gets called once when the flow is initialized
         // and ensures proper rendering of groups
@@ -126,7 +98,6 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
                 }
             }, 100 );
         } catch ( err ) {
-            console.error( "Error initializing flow diagram:", err );
             setError( "Failed to initialize flow diagram" );
         }
     }, [ setError, onZoomChange ] );
@@ -135,7 +106,6 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
         try {
             window.location.reload();
         } catch ( err ) {
-            console.error( "Error refreshing flow diagram:", err );
             setError( "Failed to refresh flow diagram" );
         }
     }, [ setError ] );

@@ -12,19 +12,21 @@ export interface GroupNodeProps {
  * GroupNode component renders a container for grouping other nodes
  */
 export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
-  const isFlowGroup = data.groupType === "Flow";
-  const isComponentsGroup = data.label === "Components";
-  const isElementsGroup = data.label === "Elements";
+  const { label, groupType = "Group", children } = data;
+  const className = `${groupType.toLowerCase()}-group p-4 rounded-lg shadow-md bg-gray-800 border border-gray-700 text-white`;
 
-  console.log(`[DEBUG] Rendering GroupNode:`, {
-    label: data.label,
-    groupType: data.groupType,
-    isFlowGroup,
-    isComponentsGroup,
-    isElementsGroup,
-    hasChildren: !!data.children,
-    childrenCount: Array.isArray(data.children) ? data.children.length : (data.children ? 1 : 0)
-  });
+  const isFlowGroup = groupType === "Flow";
+  const isComponentsGroup = label === "Components";
+  const isElementsGroup = label === "Elements";
+
+  if (!children || children.length === 0) {
+    return (
+      <div className={className}>
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-xs text-gray-400">Empty {groupType}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -34,7 +36,7 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
           isFlowGroup ? 'bg-violet-50 text-violet-600' :
           'bg-neutral-100 text-neutral-600'
         }`}>
-          {data.label}
+          {label}
         </span>
       </div>
       <div className={`w-full h-full rounded-lg border border-dashed ${
@@ -46,7 +48,6 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
           ? 'border-violet-300 bg-violet-50/5'
           : 'border-neutral-300 bg-transparent'
       }`}>
-        {/* This allows for actual DOM nesting of child elements */}
         <div className={`p-4 ${
           isComponentsGroup
             ? 'flex flex-col items-center justify-center h-full gap-6'
@@ -54,7 +55,7 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
             ? 'flex justify-center gap-4 flex-wrap'
             : ''
         }`}>
-          {data.children}
+          {children}
         </div>
       </div>
     </div>

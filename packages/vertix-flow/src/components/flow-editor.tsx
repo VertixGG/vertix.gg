@@ -55,15 +55,20 @@ interface FlowSchema {
 
 // Function to generate nodes and edges from schema
 function generateFlowDiagram( schema: FlowSchema ): { nodes: Node[], edges: Edge[] } {
+    console.log( 'generateFlowDiagram called with schema:', schema );
+
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
     // Add root component node
+    const rootLabel = schema.name.split( '/' ).pop() || 'Component';
+    console.log( 'Creating root node with label:', rootLabel );
+
     nodes.push( {
         id: 'root',
         type: 'input',
         data: {
-            label: schema.name.split( '/' ).pop() || 'Component',
+            label: rootLabel,
             type: schema.type
         },
         position: { x: 250, y: 50 },
@@ -77,15 +82,19 @@ function generateFlowDiagram( schema: FlowSchema ): { nodes: Node[], edges: Edge
         }
     } );
 
-    // Add embed nodes
-    if ( schema.entities.embeds ) {
+    // Check for embeds
+    if ( schema.entities && schema.entities.embeds ) {
+        console.log( 'Processing embeds:', schema.entities.embeds.length );
         schema.entities.embeds.forEach( ( embed, index ) => {
             const id = `embed-${ index }`;
+            const embedLabel = embed.name.split( '/' ).pop() || 'Embed';
+            console.log( `Creating embed node #${ index } with label:`, embedLabel );
+
             nodes.push( {
                 id,
                 type: 'default',
                 data: {
-                    label: embed.name.split( '/' ).pop() || 'Embed',
+                    label: embedLabel,
                     type: 'embed',
                     attributes: embed.attributes
                 },
@@ -111,19 +120,27 @@ function generateFlowDiagram( schema: FlowSchema ): { nodes: Node[], edges: Edge
                 style: { stroke: '#a78bfa' }
             } );
         } );
+    } else {
+        console.warn( 'No embeds found in schema or entities structure is missing' );
     }
 
-    // Add element nodes
-    if ( schema.entities.elements ) {
+    // Check for elements
+    if ( schema.entities && schema.entities.elements ) {
+        console.log( 'Processing elements:', schema.entities.elements.length );
         schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
+            console.log( `Processing element group #${ groupIndex } with ${ elementGroup.length } elements` );
+
             elementGroup.forEach( ( element, index ) => {
                 const id = `element-${ groupIndex }-${ index }`;
+                const elementLabel = element.name.split( '/' ).pop() || 'Element';
+                console.log( `Creating element node group ${ groupIndex } #${ index } with label:`, elementLabel );
+
                 const xPosition = 450 + ( groupIndex * 220 );
                 nodes.push( {
                     id,
                     type: 'default',
                     data: {
-                        label: element.name.split( '/' ).pop() || 'Element',
+                        label: elementLabel,
                         type: element.type,
                         attributes: element.attributes
                     },
@@ -150,8 +167,11 @@ function generateFlowDiagram( schema: FlowSchema ): { nodes: Node[], edges: Edge
                 } );
             } );
         } );
+    } else {
+        console.warn( 'No elements found in schema or entities structure is missing' );
     }
 
+    console.log( `Generated ${ nodes.length } nodes and ${ edges.length } edges` );
     return { nodes, edges };
 }
 
@@ -212,12 +232,30 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
         // Only run if we have data and the schema ID has changed
         if ( flowData?.schema && schemaId && processedSchemaId.current !== schemaId ) {
             console.log( 'Processing schema:', schemaId );
+            console.log( 'Schema data structure:', JSON.stringify( flowData.schema ) );
+
             // Track that we've processed this schema
             processedSchemaId.current = schemaId;
 
+            // Ensure the schema has the expected structure
+            const validSchema: FlowSchema = {
+                name: flowData.schema.name || 'Unknown',
+                type: flowData.schema.type || 'component',
+                entities: {
+                    elements: Array.isArray( flowData.schema.entities?.elements )
+                        ? flowData.schema.entities.elements
+                        : [],
+                    embeds: Array.isArray( flowData.schema.entities?.embeds )
+                        ? flowData.schema.entities.embeds
+                        : []
+                }
+            };
+
+            console.log( 'Validated schema structure:', validSchema );
+
             // Use a small timeout to debounce multiple calls
             const timeoutId = setTimeout( () => {
-                stableOnSchemaLoaded( flowData.schema );
+                stableOnSchemaLoaded( validSchema );
             }, 100 );
 
             // Cleanup timeout on unmount or when dependencies change
@@ -364,10 +402,26 @@ export const FlowEditor: React.FC = () => {
 
     // Handle schema loaded from flow data
     const handleSchemaLoaded = useCallback( ( schema: FlowSchema ) => {
-        if ( schema ) {
+        console.log( 'handleSchemaLoaded called with schema:', schema );
+
+        if ( !schema ) {
+            console.warn( 'Schema is null or undefined' );
+            return;
+        }
+
+        try {
+            console.log( 'Generating flow diagram for schema:', schema.name );
+            console.log( 'Schema entities:', schema.entities );
+
             const { nodes: flowNodes, edges: flowEdges } = generateFlowDiagram( schema );
+
+            console.log( 'Generated nodes:', flowNodes.length );
+            console.log( 'Generated edges:', flowEdges.length );
+
             setNodes( flowNodes );
             setEdges( flowEdges );
+        } catch ( error ) {
+            console.error( 'Error generating flow diagram:', error );
         }
     }, [ setNodes, setEdges ] );
 

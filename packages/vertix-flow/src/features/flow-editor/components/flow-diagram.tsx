@@ -91,6 +91,7 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
                 onConnect={onConnect}
                 nodeTypes={nodeTypes}
                 fitView
+                defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
                 nodesDraggable={true}
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={true}

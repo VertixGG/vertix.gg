@@ -1,4 +1,4 @@
-import React, { useCallback, useState, Suspense, useEffect } from "react";
+import React, { useCallback, useState, Suspense } from "react";
 import "reactflow/dist/style.css";
 
 import ReactFlow, {
@@ -162,29 +162,46 @@ function FlowDataDisplay( { modulePath, flowName, onSchemaLoaded }: {
     onSchemaLoaded?: ( schema: any ) => void;
 } ) {
     const flowDataResource = useFlowData( modulePath, flowName );
-    const flowData = flowDataResource.read();
 
-    // Use a ref to track if we've already sent the schema to avoid infinite loops
-    const hasLoadedSchema = React.useRef( false );
-    // Store schema ID to detect actual changes
-    const lastSchemaId = React.useRef( '' );
-    const schemaId = flowData?.schema?.name || '';
-
-    useEffect( () => {
-        // Only load the schema when it's available and either:
-        // 1. We haven't loaded any schema yet, or
-        // 2. The schema has actually changed (different schema ID)
-        if (
-            flowData?.schema &&
-            onSchemaLoaded &&
-            ( !hasLoadedSchema.current || lastSchemaId.current !== schemaId )
-        ) {
-            hasLoadedSchema.current = true;
-            lastSchemaId.current = schemaId;
-            onSchemaLoaded( flowData.schema );
+    // Create a stable reference to the onSchemaLoaded callback using useCallback
+    const stableOnSchemaLoaded = React.useCallback( ( schema: any ) => {
+        if ( onSchemaLoaded ) {
+            onSchemaLoaded( schema );
         }
-        // Only re-run when schema ID changes, not on every render
-    }, [ schemaId, flowData?.schema, onSchemaLoaded ] );
+    }, [ onSchemaLoaded ] );
+
+    // Memoize the flow data to avoid unnecessary re-renders
+    const flowData = React.useMemo( () => {
+        try {
+            return flowDataResource.read();
+        } catch ( error ) {
+            console.error( "Error reading flow data:", error );
+            return null;
+        }
+    }, [ flowDataResource ] );
+
+    // Use a ref to track if we've already processed this schema
+    const processedSchemaId = React.useRef<string | null>( null );
+
+    // Create a stable version of the schema for comparison
+    const schemaId = React.useMemo( () => flowData?.schema?.name || '', [ flowData?.schema?.name ] );
+
+    // Separate effect to handle schema loading - runs once per schema
+    React.useEffect( () => {
+        // Only run if we have data and the schema ID has changed
+        if ( flowData?.schema && schemaId && processedSchemaId.current !== schemaId ) {
+            // Track that we've processed this schema
+            processedSchemaId.current = schemaId;
+
+            // Use a small timeout to debounce multiple calls
+            const timeoutId = setTimeout( () => {
+                stableOnSchemaLoaded( flowData.schema );
+            }, 100 );
+
+            // Cleanup timeout on unmount or when dependencies change
+            return () => clearTimeout( timeoutId );
+        }
+    }, [ schemaId, flowData?.schema, stableOnSchemaLoaded ] );
 
     if ( !flowData ) {
         return <div>No flow data available</div>;

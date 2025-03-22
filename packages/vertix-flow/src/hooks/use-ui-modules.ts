@@ -31,6 +31,10 @@ const api = axios.create( {
     },
 } );
 
+// Cache for flow data to prevent duplicate fetches
+const flowDataCache = new Map<string, FlowData>();
+const pendingRequests = new Map<string, Promise<FlowData | null>>();
+
 export function useUIModules() {
     return useAsyncResource(
         async() => {
@@ -59,17 +63,52 @@ export function useFlowData( modulePath: string, flowName: string ) {
                 return null;
             }
 
-            // Remove leading slash from modulePath if it exists
+            // Normalize paths for consistent caching
             const normalizedPath = modulePath.startsWith( '/' ) ? modulePath.substring( 1 ) : modulePath;
 
-            // Use query parameters instead of path parameters
-            const response = await api.get<FlowData>( `/api/ui-flows`, {
-                params: {
-                    modulePath: normalizedPath,
-                    flowName: flowName
+            // Create a unique cache key
+            const cacheKey = `flow-data-${ normalizedPath }-${ flowName }`;
+
+            // Return cached data if available
+            if ( flowDataCache.has( cacheKey ) ) {
+                return flowDataCache.get( cacheKey )!;
+            }
+
+            // Check if there's already a pending request for this data
+            if ( pendingRequests.has( cacheKey ) ) {
+                return await pendingRequests.get( cacheKey )!;
+            }
+
+            // Create new request
+            const request = ( async() => {
+                try {
+                    // Use query parameters instead of path parameters
+                    const response = await api.get<FlowData>( `/api/ui-flows`, {
+                        params: {
+                            modulePath: normalizedPath,
+                            flowName: flowName
+                        }
+                    } );
+
+                    // Cache the result
+                    if ( response.data ) {
+                        flowDataCache.set( cacheKey, response.data );
+                    }
+
+                    return response.data;
+                } catch ( error ) {
+                    console.error( `Error fetching flow data for ${ normalizedPath }/${ flowName }:`, error );
+                    return null;
+                } finally {
+                    // Clean up pending request
+                    pendingRequests.delete( cacheKey );
                 }
-            } );
-            return response.data;
+            } )();
+
+            // Store the pending request
+            pendingRequests.set( cacheKey, request );
+
+            return await request;
         },
         [ `flow-data-${ modulePath }-${ flowName }` ] // Cache key based on module path and flow name
     );

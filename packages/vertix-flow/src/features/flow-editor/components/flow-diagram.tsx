@@ -126,9 +126,19 @@ const CustomNode = ( { data }: { data: ExtendedNodeData } ) => {
     );
 };
 
+// Custom group node component
+const GroupNode = ( { data }: { data: { label: string } } ) => {
+    return (
+        <div className="p-2 rounded-md bg-neutral-800/10 border border-dashed border-neutral-400">
+            <div className="text-xs text-neutral-600 font-medium mb-1 text-center">{data.label}</div>
+        </div>
+    );
+};
+
 // Mapping for custom node types
 const nodeTypes = {
     custom: CustomNode,
+    group: GroupNode,
 };
 
 // Function to generate flow diagram using factory - don't use hooks here

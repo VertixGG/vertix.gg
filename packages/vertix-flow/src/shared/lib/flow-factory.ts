@@ -74,6 +74,11 @@ export class DefaultFlowFactory implements FlowFactory {
 
     // Process elements
     if ( schema.entities && schema.entities.elements ) {
+      // Create a group node for the elements
+      const elementsGroupId = "elements-group";
+      const groupHeight = 100; // Height of the group box
+      const groupPadding = 30; // Padding around the elements within the group
+
       schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
         // Calculate position variables based on the number of elements
         const numElements = elementGroup.length;
@@ -83,6 +88,31 @@ export class DefaultFlowFactory implements FlowFactory {
 
         // Total width including padding between buttons
         const totalWidth = totalButtonsWidth + ( ( numElements - 1 ) * padding );
+
+        // Group dimensions
+        const groupWidth = totalWidth + ( groupPadding * 2 );
+
+        // Add group node
+        nodes.push( {
+          id: elementsGroupId,
+          type: "group",
+          data: {
+            label: "Elements"
+          },
+          position: {
+            x: 250 - ( groupWidth / 2 ),
+            y: 930 - ( groupPadding / 2 )
+          },
+          style: {
+            width: groupWidth,
+            height: groupHeight,
+            backgroundColor: 'rgba(240, 240, 240, 0.1)',
+            border: '1px dashed #666',
+            borderRadius: 5,
+            padding: '10px',
+          },
+          draggable: true
+        } );
 
         // Starting X position to center the buttons under the embed
         const startX = 250 - ( totalWidth / 2 ) + ( buttonWidth / 2 );
@@ -109,7 +139,9 @@ export class DefaultFlowFactory implements FlowFactory {
             style: this.createNodeStyle(),
             sourcePosition: Position.Top,
             targetPosition: Position.Bottom,
-            draggable: true
+            draggable: true,
+            parentNode: elementsGroupId,
+            extent: 'parent',
           } );
 
           // Connect to embed

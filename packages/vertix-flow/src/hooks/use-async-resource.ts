@@ -1,9 +1,9 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from "react";
 
 const promises: Map<string, TWrappedPromise<any>> = new Map();
 
 type TWrappedPromise<T> = {
-    status: 'pending' | 'fulfilled' | 'rejected';
+    status: "pending" | "fulfilled" | "rejected";
     value?: T;
     reason?: Error;
     promise: Promise<T>;
@@ -14,61 +14,61 @@ type TWrappedPromise<T> = {
  * TODO: Remove this after migration to React 19, use `React.use` instead
  */
 export function useAsyncResource<T, Args extends any[]>(
-    fetcher: (...args: Args) => Promise<T>,
+    fetcher: ( ...args: Args ) => Promise<T>,
     deps: string[] = []
 ) {
-    const key = deps.join('-');
+    const key = deps.join( "-" );
 
-    useEffect(() => {
+    useEffect( () => {
         return () => {
-            promises.delete(key);
+            promises.delete( key );
         };
-    }, []);
+    }, [] );
 
     return useMemo(
-        () => ({
-            read: (...args: Args): T => {
-                if (!promises.has(key)) {
-                    const promise = fetcher(...args);
+        () => ( {
+            read: ( ...args: Args ): T => {
+                if ( !promises.has( key ) ) {
+                    const promise = fetcher( ...args );
                     const wrappedPromise: TWrappedPromise<T> = {
-                        status: 'pending',
+                        status: "pending",
                         promise
                     };
 
                     // Promise resolution
                     promise.then(
-                        (value) => {
-                            wrappedPromise.status = 'fulfilled';
+                        ( value ) => {
+                            wrappedPromise.status = "fulfilled";
                             wrappedPromise.value = value;
                         },
-                        (reason) => {
-                            wrappedPromise.status = 'rejected';
+                        ( reason ) => {
+                            wrappedPromise.status = "rejected";
                             wrappedPromise.reason =
                                 reason instanceof Error
                                     ? reason
-                                    : new Error(String(reason));
+                                    : new Error( String( reason ) );
                         }
                     );
 
-                    promises.set(key, wrappedPromise);
+                    promises.set( key, wrappedPromise );
                 }
 
                 // Get the wrapped promise from cache
-                const wrappedPromise = promises.get(key)!;
+                const wrappedPromise = promises.get( key )!;
 
                 // Handle based on status
-                if (wrappedPromise.status === 'pending') {
+                if ( wrappedPromise.status === "pending" ) {
                     throw wrappedPromise.promise;
-                } else if (wrappedPromise.status === 'fulfilled') {
+                } else if ( wrappedPromise.status === "fulfilled" ) {
                     return wrappedPromise.value as T;
-                } else if (wrappedPromise.status === 'rejected') {
+                } else if ( wrappedPromise.status === "rejected" ) {
                     throw wrappedPromise.reason;
                 }
 
                 // This shouldn't be reached, but TypeScript needs it
-                throw new Error('Resource in an impossible state');
+                throw new Error( "Resource in an impossible state" );
             }
-        }),
+        } ),
         deps
     );
 }

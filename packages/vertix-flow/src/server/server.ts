@@ -1,21 +1,21 @@
-import app from "./app";
+import app from "@vertix.gg/flow/src/server/app";
 
 const server = app();
 
-const start = async () => {
+const start = async() => {
     try {
-        const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+        const port = process.env.PORT ? parseInt( process.env.PORT ) : 3000;
         const host = process.env.HOST || "0.0.0.0";
-        
-        await server.listen({ host, port });
-        console.log(`Server running at http://localhost:${port}`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
+
+        await server.listen( { host, port } );
+        console.log( `Server running at http://localhost:${ port }` );
+    } catch ( err ) {
+        server.log.error( err );
+        process.exit( 1 );
     }
 };
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if ( import.meta.url === `file://${ process.argv[ 1 ] }` ) {
     start();
 }
 

@@ -11,13 +11,14 @@ import ReactFlow, {
     BackgroundVariant,
 } from "reactflow";
 
-import { UIModuleSelector } from "./ui-module-selector";
-import { AdaptersDisplay } from "@vertix.gg/flow/src/components/adapters-display";
-// import { parseUIModule } from "@vertix.gg/flow/src/components/module-parser";
+import { UIModuleSelector } from "@vertix.gg/flow/src/components/ui-module-selector";
+import { FlowListDisplay } from "@vertix.gg/flow/src/components/flow-list-display";
+import { FlowInteraction } from "@vertix.gg/flow/src/components/flow-interaction";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@vertix.gg/flow/src/components/ui/card";
 
 import type { Connection, Edge, Node } from "reactflow";
+import type { UIModuleFile } from "@vertix.gg/flow/src/hooks/use-ui-modules";
 
 // Initial nodes setup
 const initialNodes: Node[] = [
@@ -46,41 +47,70 @@ const initialEdges: Edge[] = [
     { id: "e2-3", source: "2", target: "3" },
 ];
 
-interface Adapter {
+interface FlowItem {
     name: string;
-    path: string;
-    fullPath: string;
+    FlowClass?: any; // The actual flow class (optional now)
 }
 
 export const FlowEditor: React.FC = () => {
-    const [nodes, _, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-    const [moduleName, setModuleName] = useState<string>("");
-    const [adapters, setAdapters] = useState<Adapter[]>([]);
+    const [ nodes, , onNodesChange ] = useNodesState( initialNodes );
+    const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
+    const [ moduleName, setModuleName ] = useState<string>( "" );
+    const [ flows, setFlows ] = useState<FlowItem[]>( [] );
+    const [ selectedFlow, setSelectedFlow ] = useState<FlowItem | null>( null );
 
     // Handle new connections between nodes
-    const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+    const onConnect = useCallback( ( params: Connection ) => setEdges( ( eds ) => addEdge( params, eds ) ), [ setEdges ] );
 
-    // Handle UI module file selection
-    const handleFileSelected = useCallback((filePath: string, content: string) => {
-        // Parse the UI module file to extract adapter information
-        // const parsedModule = parseUIModule( filePath, content );
-        // Update state with the parsed information
-        // setModuleName( parsedModule.moduleName );
-        // setAdapters( parsedModule.adapters );
-    }, []);
+    // Handle UI module selection
+    const handleModuleSelected = useCallback( ( module: UIModuleFile ) => {
+        // Update state with the module information
+        setModuleName( module.moduleInfo?.name || "" );
+
+        if ( module.moduleInfo?.flows ) {
+            // Use the flows data from moduleInfo directly
+            const flowItems = module.moduleInfo.flows.map( flowName => ( {
+                name: flowName
+            } ) );
+            setFlows( flowItems );
+        } else {
+            setFlows( [] );
+        }
+
+        // Reset selected flow when module changes
+        setSelectedFlow( null );
+    }, [] );
+
+    // Handle flow selection
+    const handleFlowSelect = useCallback( ( flow: FlowItem ) => {
+        setSelectedFlow( flow );
+    }, [] );
 
     return (
         <div className="w-full h-full flex flex-col">
-            {/* Top section with file selector and adapter display */}
+            {/* Top section with file selector and flow list display */}
             <div className="flex-none bg-background">
                 <Card className="m-4 border">
                     <CardHeader className="pb-2">
-                        <CardTitle>UI Module Viewer</CardTitle>
+                        <CardTitle>Flow Editor</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <UIModuleSelector onModuleSelected={handleFileSelected} />
-                        <AdaptersDisplay moduleName={moduleName} adapters={adapters} />
+                        <div className="space-y-4">
+                            <UIModuleSelector onModuleSelected={handleModuleSelected} />
+                            {moduleName && (
+                                <FlowListDisplay
+                                    moduleName={moduleName}
+                                    flows={flows}
+                                    onFlowSelect={handleFlowSelect}
+                                />
+                            )}
+                            {selectedFlow && selectedFlow.FlowClass && (
+                                <FlowInteraction
+                                    flowName={selectedFlow.name}
+                                    FlowClass={selectedFlow.FlowClass}
+                                />
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
             </div>

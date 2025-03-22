@@ -21,6 +21,10 @@ export class UIModuleV2 extends UIModuleBase {
         return Object.values( adapters );
     }
 
+    public static getFlows() {
+        return []
+    }
+
     public get $$() {
         return this.constructor as typeof UIModuleV2;
     }

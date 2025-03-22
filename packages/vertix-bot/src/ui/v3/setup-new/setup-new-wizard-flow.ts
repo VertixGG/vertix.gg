@@ -1,5 +1,4 @@
 import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
 
@@ -15,6 +14,8 @@ import { SetupStep2Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-2/s
 import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/setup-step-3-component";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 /**
  * Represents the possible states in the Setup Wizard flow
@@ -67,50 +68,50 @@ export interface SetupWizardFlowData {
  * Defines the valid state transitions for the Setup Wizard flow
  */
 export const SETUP_WIZARD_FLOW_TRANSITIONS: Record<SetupWizardFlowState, SetupWizardFlowTransition[]> = {
-    [SetupWizardFlowState.INITIAL]: [SetupWizardFlowTransition.START_SETUP],
-    [SetupWizardFlowState.STEP_1_NAME_TEMPLATE]: [
+    [ SetupWizardFlowState.INITIAL ]: [ SetupWizardFlowTransition.START_SETUP ],
+    [ SetupWizardFlowState.STEP_1_NAME_TEMPLATE ]: [
         SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE,
         SetupWizardFlowTransition.ERROR_OCCURRED,
     ],
-    [SetupWizardFlowState.STEP_2_BUTTONS]: [
+    [ SetupWizardFlowState.STEP_2_BUTTONS ]: [
         SetupWizardFlowTransition.SELECT_BUTTONS,
         SetupWizardFlowTransition.ERROR_OCCURRED,
     ],
-    [SetupWizardFlowState.STEP_3_ROLES]: [
+    [ SetupWizardFlowState.STEP_3_ROLES ]: [
         SetupWizardFlowTransition.SELECT_ROLES,
         SetupWizardFlowTransition.FINISH_SETUP,
         SetupWizardFlowTransition.ERROR_OCCURRED,
     ],
-    [SetupWizardFlowState.COMPLETED]: [],
-    [SetupWizardFlowState.ERROR]: [SetupWizardFlowTransition.START_SETUP],
+    [ SetupWizardFlowState.COMPLETED ]: [],
+    [ SetupWizardFlowState.ERROR ]: [ SetupWizardFlowTransition.START_SETUP ],
 };
 
 /**
  * Defines the next state for each transition
  */
 export const SETUP_WIZARD_FLOW_NEXT_STATES: Record<SetupWizardFlowTransition, SetupWizardFlowState> = {
-    [SetupWizardFlowTransition.START_SETUP]: SetupWizardFlowState.STEP_1_NAME_TEMPLATE,
-    [SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE]: SetupWizardFlowState.STEP_2_BUTTONS,
-    [SetupWizardFlowTransition.SELECT_BUTTONS]: SetupWizardFlowState.STEP_3_ROLES,
-    [SetupWizardFlowTransition.SELECT_ROLES]: SetupWizardFlowState.STEP_3_ROLES,
-    [SetupWizardFlowTransition.FINISH_SETUP]: SetupWizardFlowState.COMPLETED,
-    [SetupWizardFlowTransition.ERROR_OCCURRED]: SetupWizardFlowState.ERROR,
+    [ SetupWizardFlowTransition.START_SETUP ]: SetupWizardFlowState.STEP_1_NAME_TEMPLATE,
+    [ SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE ]: SetupWizardFlowState.STEP_2_BUTTONS,
+    [ SetupWizardFlowTransition.SELECT_BUTTONS ]: SetupWizardFlowState.STEP_3_ROLES,
+    [ SetupWizardFlowTransition.SELECT_ROLES ]: SetupWizardFlowState.STEP_3_ROLES,
+    [ SetupWizardFlowTransition.FINISH_SETUP ]: SetupWizardFlowState.COMPLETED,
+    [ SetupWizardFlowTransition.ERROR_OCCURRED ]: SetupWizardFlowState.ERROR,
 };
 
 /**
  * Defines the required data for each state transition
  */
-export const SETUP_WIZARD_FLOW_REQUIRED_DATA: Record<SetupWizardFlowTransition, (keyof SetupWizardFlowData)[]> = {
-    [SetupWizardFlowTransition.START_SETUP]: [],
-    [SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE]: ["dynamicChannelNameTemplate"],
-    [SetupWizardFlowTransition.SELECT_BUTTONS]: ["dynamicChannelButtonsTemplate"],
-    [SetupWizardFlowTransition.SELECT_ROLES]: ["dynamicChannelVerifiedRoles"],
-    [SetupWizardFlowTransition.FINISH_SETUP]: [
+export const SETUP_WIZARD_FLOW_REQUIRED_DATA: Record<SetupWizardFlowTransition, ( keyof SetupWizardFlowData )[]> = {
+    [ SetupWizardFlowTransition.START_SETUP ]: [],
+    [ SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE ]: [ "dynamicChannelNameTemplate" ],
+    [ SetupWizardFlowTransition.SELECT_BUTTONS ]: [ "dynamicChannelButtonsTemplate" ],
+    [ SetupWizardFlowTransition.SELECT_ROLES ]: [ "dynamicChannelVerifiedRoles" ],
+    [ SetupWizardFlowTransition.FINISH_SETUP ]: [
         "dynamicChannelNameTemplate",
         "dynamicChannelButtonsTemplate",
         "dynamicChannelVerifiedRoles",
     ],
-    [SetupWizardFlowTransition.ERROR_OCCURRED]: ["errorCode", "errorMessage"],
+    [ SetupWizardFlowTransition.ERROR_OCCURRED ]: [ "errorCode", "errorMessage" ],
 };
 
 /**
@@ -118,7 +119,7 @@ export const SETUP_WIZARD_FLOW_REQUIRED_DATA: Record<SetupWizardFlowTransition, 
  */
 export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizardFlowTransition, SetupWizardFlowData> {
     public static getName() {
-        return "Vertix/UI-V3/SetupNewWizardAdapter";
+        return "Vertix/UI-V3/SetupNewWizardFlow";
     }
 
     public static getComponent() {
@@ -128,7 +129,7 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
             }
 
             public static getComponents() {
-                return [SetupStep1Component, SetupStep2Component, SetupStep3Component];
+                return [ SetupStep1Component, SetupStep2Component, SetupStep3Component ];
             }
 
             public static getEmbedsGroups() {
@@ -136,23 +137,23 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
                     // TODO: Find better way to do this.
                     ...super.getEmbedsGroups(),
 
-                    UIEmbedsGroupBase.createSingleGroup(SomethingWentWrongEmbed),
-                    UIEmbedsGroupBase.createSingleGroup(SetupMaxMasterChannelsEmbed),
+                    UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+                    UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed ),
                 ];
             }
         };
     }
 
-    constructor(options: TAdapterRegisterOptions) {
-        super(options);
+    constructor( options: TAdapterRegisterOptions ) {
+        super( options );
     }
 
     public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField(DEFAULT_SETUP_PERMISSIONS);
+        return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
     }
 
     public getChannelTypes() {
-        return [ChannelType.GuildVoice, ChannelType.GuildText];
+        return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
     protected getInitialState(): SetupWizardFlowState {
@@ -165,34 +166,34 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
 
     protected initializeTransitions(): void {
         // Initialize transitions based on SETUP_WIZARD_FLOW_TRANSITIONS
-        Object.entries(SETUP_WIZARD_FLOW_TRANSITIONS).forEach(([state, transitions]) => {
-            this.addTransitions(state as SetupWizardFlowState, transitions);
-        });
+        Object.entries( SETUP_WIZARD_FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+            this.addTransitions( state as SetupWizardFlowState, transitions );
+        } );
     }
 
-    protected addTransitions(state: SetupWizardFlowState, transitions: SetupWizardFlowTransition[]): void {
-        if (!this.hasTransitions(state)) {
-            this.setTransitionsForState(state, new Set());
+    protected addTransitions( state: SetupWizardFlowState, transitions: SetupWizardFlowTransition[] ): void {
+        if ( !this.hasTransitions( state ) ) {
+            this.setTransitionsForState( state, new Set() );
         }
-        const stateTransitions = this.getTransitionsForState(state);
-        if (stateTransitions) {
-            transitions.forEach((transition) => {
-                stateTransitions.add(transition);
-            });
-            this.setTransitionsForState(state, stateTransitions);
+        const stateTransitions = this.getTransitionsForState( state );
+        if ( stateTransitions ) {
+            transitions.forEach( ( transition ) => {
+                stateTransitions.add( transition );
+            } );
+            this.setTransitionsForState( state, stateTransitions );
         }
     }
 
     public getAvailableTransitions(): SetupWizardFlowTransition[] {
-        return SETUP_WIZARD_FLOW_TRANSITIONS[this.getCurrentState()];
+        return SETUP_WIZARD_FLOW_TRANSITIONS[ this.getCurrentState() ];
     }
 
-    public getNextState(transition: SetupWizardFlowTransition): SetupWizardFlowState {
-        return SETUP_WIZARD_FLOW_NEXT_STATES[transition];
+    public getNextState( transition: SetupWizardFlowTransition ): SetupWizardFlowState {
+        return SETUP_WIZARD_FLOW_NEXT_STATES[ transition ];
     }
 
-    public getRequiredData(transition: SetupWizardFlowTransition): (keyof SetupWizardFlowData)[] {
-        return SETUP_WIZARD_FLOW_REQUIRED_DATA[transition];
+    public getRequiredData( transition: SetupWizardFlowTransition ): ( keyof SetupWizardFlowData )[] {
+        return SETUP_WIZARD_FLOW_REQUIRED_DATA[ transition ];
     }
 
     protected showModal(): Promise<void> {

@@ -10,6 +10,7 @@ import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import { SetupWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
 
 export class UIModuleV3 extends UIModuleBase {
     public static getName() {
@@ -18,6 +19,10 @@ export class UIModuleV3 extends UIModuleBase {
 
     public static getAdapters() {
         return Object.values( adapters );
+    }
+
+    public static getFlows() {
+        return [ SetupWizardFlow ];
     }
 
     public get $$() {

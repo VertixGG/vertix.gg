@@ -1,7 +1,10 @@
 import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+
 import { PermissionsBitField, PermissionFlagsBits, ChannelType } from "discord.js";
-import { WelcomeComponent } from "./welcome-component";
+
+import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
+
+import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 /**
  * Represents the possible states in the Welcome flow
@@ -38,16 +41,16 @@ export interface WelcomeFlowData {
  * Defines the valid state transitions for the Welcome flow
  */
 export const WELCOME_FLOW_TRANSITIONS: Record<WelcomeFlowState, WelcomeFlowTransition[]> = {
-    [WelcomeFlowState.INITIAL]: [
+    [ WelcomeFlowState.INITIAL ]: [
         WelcomeFlowTransition.CLICK_SETUP,
         WelcomeFlowTransition.CLICK_SUPPORT,
         WelcomeFlowTransition.CLICK_INVITE,
         WelcomeFlowTransition.SELECT_LANGUAGE,
     ],
-    [WelcomeFlowState.SETUP_CLICKED]: [], // Flow hands over to Setup Wizard
-    [WelcomeFlowState.SUPPORT_CLICKED]: [],
-    [WelcomeFlowState.INVITE_CLICKED]: [],
-    [WelcomeFlowState.LANGUAGE_SELECTED]: [
+    [ WelcomeFlowState.SETUP_CLICKED ]: [], // Flow hands over to Setup Wizard
+    [ WelcomeFlowState.SUPPORT_CLICKED ]: [],
+    [ WelcomeFlowState.INVITE_CLICKED ]: [],
+    [ WelcomeFlowState.LANGUAGE_SELECTED ]: [
         WelcomeFlowTransition.CLICK_SETUP,
         WelcomeFlowTransition.CLICK_SUPPORT,
         WelcomeFlowTransition.CLICK_INVITE,
@@ -58,20 +61,20 @@ export const WELCOME_FLOW_TRANSITIONS: Record<WelcomeFlowState, WelcomeFlowTrans
  * Defines the next state for each transition
  */
 export const WELCOME_FLOW_NEXT_STATES: Record<WelcomeFlowTransition, WelcomeFlowState> = {
-    [WelcomeFlowTransition.CLICK_SETUP]: WelcomeFlowState.SETUP_CLICKED,
-    [WelcomeFlowTransition.CLICK_SUPPORT]: WelcomeFlowState.SUPPORT_CLICKED,
-    [WelcomeFlowTransition.CLICK_INVITE]: WelcomeFlowState.INVITE_CLICKED,
-    [WelcomeFlowTransition.SELECT_LANGUAGE]: WelcomeFlowState.LANGUAGE_SELECTED,
+    [ WelcomeFlowTransition.CLICK_SETUP ]: WelcomeFlowState.SETUP_CLICKED,
+    [ WelcomeFlowTransition.CLICK_SUPPORT ]: WelcomeFlowState.SUPPORT_CLICKED,
+    [ WelcomeFlowTransition.CLICK_INVITE ]: WelcomeFlowState.INVITE_CLICKED,
+    [ WelcomeFlowTransition.SELECT_LANGUAGE ]: WelcomeFlowState.LANGUAGE_SELECTED,
 };
 
 /**
  * Defines the required data for each transition
  */
-export const WELCOME_FLOW_REQUIRED_DATA: Record<WelcomeFlowTransition, (keyof WelcomeFlowData)[]> = {
-    [WelcomeFlowTransition.CLICK_SETUP]: [],
-    [WelcomeFlowTransition.CLICK_SUPPORT]: [],
-    [WelcomeFlowTransition.CLICK_INVITE]: [],
-    [WelcomeFlowTransition.SELECT_LANGUAGE]: ["selectedLanguage"],
+export const WELCOME_FLOW_REQUIRED_DATA: Record<WelcomeFlowTransition, ( keyof WelcomeFlowData )[]> = {
+    [ WelcomeFlowTransition.CLICK_SETUP ]: [],
+    [ WelcomeFlowTransition.CLICK_SUPPORT ]: [],
+    [ WelcomeFlowTransition.CLICK_INVITE ]: [],
+    [ WelcomeFlowTransition.SELECT_LANGUAGE ]: [ "selectedLanguage" ],
 };
 
 /**
@@ -86,16 +89,16 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
         return WelcomeComponent;
     }
 
-    constructor(options: TAdapterRegisterOptions) {
-        super(options);
+    constructor( options: TAdapterRegisterOptions ) {
+        super( options );
     }
 
     public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField(PermissionFlagsBits.ViewChannel);
+        return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
     }
 
     public getChannelTypes(): ChannelType[] {
-        return [ChannelType.GuildVoice, ChannelType.GuildText];
+        return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
     protected getInitialState(): WelcomeFlowState {
@@ -108,34 +111,34 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
 
     protected initializeTransitions(): void {
         // Initialize transitions based on WELCOME_FLOW_TRANSITIONS
-        Object.entries(WELCOME_FLOW_TRANSITIONS).forEach(([state, transitions]) => {
-            this.addTransitions(state as WelcomeFlowState, transitions);
-        });
+        Object.entries( WELCOME_FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+            this.addTransitions( state as WelcomeFlowState, transitions );
+        } );
     }
 
-    protected addTransitions(state: WelcomeFlowState, transitions: WelcomeFlowTransition[]): void {
-        if (!this.hasTransitions(state)) {
-            this.setTransitionsForState(state, new Set());
+    protected addTransitions( state: WelcomeFlowState, transitions: WelcomeFlowTransition[] ): void {
+        if ( !this.hasTransitions( state ) ) {
+            this.setTransitionsForState( state, new Set() );
         }
-        const stateTransitions = this.getTransitionsForState(state);
-        if (stateTransitions) {
-            transitions.forEach((transition) => {
-                stateTransitions.add(transition);
-            });
-            this.setTransitionsForState(state, stateTransitions);
+        const stateTransitions = this.getTransitionsForState( state );
+        if ( stateTransitions ) {
+            transitions.forEach( ( transition ) => {
+                stateTransitions.add( transition );
+            } );
+            this.setTransitionsForState( state, stateTransitions );
         }
     }
 
     public getAvailableTransitions(): WelcomeFlowTransition[] {
-        return WELCOME_FLOW_TRANSITIONS[this.getCurrentState()];
+        return WELCOME_FLOW_TRANSITIONS[ this.getCurrentState() ];
     }
 
-    public getNextState(transition: WelcomeFlowTransition): WelcomeFlowState {
-        return WELCOME_FLOW_NEXT_STATES[transition];
+    public getNextState( transition: WelcomeFlowTransition ): WelcomeFlowState {
+        return WELCOME_FLOW_NEXT_STATES[ transition ];
     }
 
-    public getRequiredData(transition: WelcomeFlowTransition): (keyof WelcomeFlowData)[] {
-        return WELCOME_FLOW_REQUIRED_DATA[transition];
+    public getRequiredData( transition: WelcomeFlowTransition ): ( keyof WelcomeFlowData )[] {
+        return WELCOME_FLOW_REQUIRED_DATA[ transition ];
     }
 
     protected showModal(): Promise<void> {

@@ -23,8 +23,18 @@ export class DefaultFlowFactory implements FlowFactory {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
+    // Define canvas dimensions for relative positioning
+    const canvasWidth = 1000;  // Default canvas width
+    const canvasHeight = 800;  // Default canvas height
+
+    // Calculate positions relative to canvas dimensions
+    const centerX = canvasWidth / 2;
+    const topPadding = canvasHeight * 0.05;  // 5% of canvas height from top
+
     // Add root component node
     const rootLabel = schema.name.split( "/" ).pop() || "Component";
+    const rootNodeWidth = 200;  // Estimated width
+    const rootNodeHeight = 80;  // Estimated height
 
     nodes.push( {
       id: "root",
@@ -33,13 +43,19 @@ export class DefaultFlowFactory implements FlowFactory {
         label: rootLabel,
         type: schema.type
       },
-      position: { x: 250, y: 50 },
+      // Center horizontally, position at top with padding
+      position: {
+        x: centerX - ( rootNodeWidth / 2 ),
+        y: topPadding
+      },
       style: this.createNodeStyle(),
       draggable: true
     } );
 
     // Process embeds with their buttons
     let estimatedEmbedHeight = 0;
+    const embedNodeWidth = 500;  // Estimated embed width
+    const verticalGapBetweenNodes = canvasHeight * 0.08;  // 8% of canvas height
 
     if ( schema.entities && schema.entities.embeds ) {
       schema.entities.embeds.forEach( ( embed, index ) => {
@@ -48,8 +64,12 @@ export class DefaultFlowFactory implements FlowFactory {
 
         // Estimate the embed's height based on its content
         const embedContentLength = JSON.stringify( embed.attributes ).length;
-        // Base height plus additional height for content
-        estimatedEmbedHeight = 300 + Math.min( 200, embedContentLength / 10 );
+        // Base height plus additional height for content, relative to content size
+        estimatedEmbedHeight = Math.max( canvasHeight * 0.25,
+                                      300 + Math.min( 200, embedContentLength / 10 ) );
+
+        // Position embed below root node with vertical gap
+        const embedY = topPadding + rootNodeHeight + verticalGapBetweenNodes;
 
         nodes.push( {
           id,
@@ -58,9 +78,13 @@ export class DefaultFlowFactory implements FlowFactory {
             label: embedLabel,
             type: "embed",
             attributes: embed.attributes,
-            elements: schema.entities.elements // Pass buttons as elements to the embed
+            elements: schema.entities.elements
           },
-          position: { x: 250, y: 150 },
+          // Center horizontally
+          position: {
+            x: centerX - ( embedNodeWidth / 2 ),
+            y: embedY
+          },
           style: this.createNodeStyle(),
           draggable: true
         } );
@@ -86,11 +110,11 @@ export class DefaultFlowFactory implements FlowFactory {
       // Skip creating a group if there are no elements
       if ( totalElements === 0 ) return { nodes, edges };
 
-      // Settings for element layout
-      const elementWidth = 160;      // Width per element
-      const elementSpacing = 30;     // Space between elements
-      const groupPadding = 30;       // Padding inside the group
-      const elementHeight = 60;      // Approximate height of an element
+      // Settings for element layout - based on relative sizes
+      const elementWidth = Math.min( 160, canvasWidth / ( totalElements * 1.5 ) );
+      const elementSpacing = elementWidth * 0.2;  // 20% of element width
+      const groupPadding = elementWidth * 0.15;   // 15% of element width
+      const elementHeight = elementWidth * 0.4;   // 40% of element width
 
       // Calculate group dimensions
       const groupWidth = ( elementWidth * totalElements ) +
@@ -98,20 +122,19 @@ export class DefaultFlowFactory implements FlowFactory {
                         ( groupPadding * 2 );
       const groupHeight = elementHeight + ( groupPadding * 2 );
 
-      // Calculate position based on the embed's position and estimated height
-      const embedY = 150; // From the embed node position
-      const embedHeight = estimatedEmbedHeight || 500; // Use estimated height or fallback
+      // Calculate embed position values
+      const embedY = topPadding + rootNodeHeight + verticalGapBetweenNodes;
+      const embedBottomY = embedY + estimatedEmbedHeight;
 
-      // Need to position at the very bottom of the diagram, after the buttons
-      // Buttons are normally at the bottom of the embed
-      const buttonAreaHeight = 120; // Increased height to account for buttons and image
-      const verticalSpacing = 50; // Increased spacing for better visual separation
+      // Calculate vertical position relative to embed's bottom
+      const relativeSpacing = canvasHeight * 0.06;  // 6% of canvas height
+      const buttonAreaHeight = estimatedEmbedHeight * 0.2;  // 20% of embed height for buttons
 
-      // Center position for the group, position below the buttons at the bottom of the embed
-      const groupX = 250 - ( groupWidth / 2 );
-      const groupY = embedY + embedHeight + buttonAreaHeight + verticalSpacing;
+      // Group position calculation
+      const groupX = centerX - ( groupWidth / 2 );  // Center horizontally
+      const groupY = embedBottomY + buttonAreaHeight + relativeSpacing;
 
-      // Create group node first
+      // Create group node
       const groupId = "elements-group";
       nodes.push( {
         id: groupId,
@@ -124,11 +147,10 @@ export class DefaultFlowFactory implements FlowFactory {
           zIndex: 0
         },
         draggable: true,
-        // Properly set the group as a container
         className: 'react-flow__node-group'
       } );
 
-      // Create element nodes inside the group
+      // Create element nodes inside the group with relative positioning
       let elementIndex = 0;
 
       schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
@@ -136,9 +158,9 @@ export class DefaultFlowFactory implements FlowFactory {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-          // Position relative to the group's top-left corner
+          // Calculate relative position within the group
           const xPos = groupPadding + ( elementIndex * ( elementWidth + elementSpacing ) );
-          const yPos = groupPadding;
+          const yPos = groupPadding; // Centered vertically in group
 
           elementIndex++;
 
@@ -151,7 +173,7 @@ export class DefaultFlowFactory implements FlowFactory {
               attributes: element.attributes
             },
             position: { x: xPos, y: yPos },
-            parentId: groupId,  // Changed from parentNode to parentId
+            parentId: groupId,
             extent: 'parent',
             draggable: true,
             style: {

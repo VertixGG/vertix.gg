@@ -156,7 +156,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                                 </div>
                                 <Separator />
                                 <div className="flex flex-col md:flex-row h-full">
-                                    <div className="md:w-2/3 h-[400px] md:h-full p-4">
+                                    <div className="md:w-3/4 h-[400px] md:h-full p-4">
                                         <FlowDiagramDisplay
                                             nodes={nodes}
                                             edges={edges}
@@ -166,7 +166,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                                             onZoomChange={handleZoomChange}
                                         />
                                     </div>
-                                    <div className="md:w-1/3 p-4 overflow-y-auto">
+                                    <div className="md:w-1/4 p-4 overflow-y-auto">
                                         <FlowDataDisplay
                                             modulePath={modulePath}
                                             flowName={flowName}

@@ -74,9 +74,14 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             setTimeout( () => {
                 window.dispatchEvent( new Event( 'resize' ) );
 
-                // Initialize zoom value
-                if ( onZoomChange && reactFlowInstanceRef.current ) {
-                    onZoomChange( reactFlowInstanceRef.current.getZoom() );
+                // Force the desired zoom level
+                if ( reactFlowInstanceRef.current ) {
+                    reactFlowInstanceRef.current.setViewport( { x: 0, y: 0, zoom: 0.85 } );
+
+                    // Update the zoom level in the UI
+                    if ( onZoomChange ) {
+                        onZoomChange( 0.85 );
+                    }
                 }
             }, 100 );
         } catch ( err ) {
@@ -108,8 +113,14 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             nodeTypes={nodeTypes}
-            fitView
-            defaultViewport={{ x: 0, y: 0, zoom: 0.15 }}
+            fitView={false}
+            defaultViewport={{ x: 0, y: 0, zoom: 0.85 }}
+            maxZoom={1.5}
+            minZoom={0.1}
+            fitViewOptions={{
+                maxZoom: 0.85,
+                padding: 0.5
+            }}
             nodesDraggable={true}
             proOptions={{ hideAttribution: true }}
             elementsSelectable={true}

@@ -93,6 +93,9 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                 {/* Sidebar */}
                 <ResizablePanel defaultSize={sidebarWidth} minSize={20}>
                     <div className="flex flex-col h-full">
+                        <div className="p-4 border-b bg-primary/5">
+                            <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>
+                        </div>
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
                             <div className="p-4 border-b">
                                 <TabsList className="grid w-full grid-cols-2">

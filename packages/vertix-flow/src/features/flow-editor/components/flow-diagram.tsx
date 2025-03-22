@@ -1,12 +1,13 @@
 import "reactflow/dist/style.css";
 
-import React from "react";
+import React, { useCallback } from "react";
 
 import ReactFlow, {
     MiniMap,
     Controls,
     Background,
-    BackgroundVariant
+    BackgroundVariant,
+    Panel
 } from "reactflow";
 
 import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
@@ -119,9 +120,9 @@ const CustomNode = ( { data }: { data: ExtendedNodeData } ) => {
 
     // Fallback for any other node type
     return (
-        <div className="p-4 bg-[#2f3136] rounded-lg shadow-lg text-white">
-            <div className="font-semibold">{label}</div>
-            {type && <div className="text-[#b9bbbe] text-xs mt-1">{type}</div>}
+        <div className="p-3 bg-[#2f3136] rounded-lg shadow-lg text-white max-w-[150px]">
+            <div className="font-medium text-center truncate">{label}</div>
+            {type && <div className="text-[#b9bbbe] text-xs mt-1 text-center truncate">{type}</div>}
         </div>
     );
 };
@@ -129,9 +130,14 @@ const CustomNode = ( { data }: { data: ExtendedNodeData } ) => {
 // Custom group node component
 const GroupNode = ( { data }: { data: { label: string } } ) => {
     return (
-        <div className="p-2 rounded-md bg-neutral-800/10 border border-dashed border-neutral-400">
-            <div className="text-xs text-neutral-600 font-medium mb-1 text-center">{data.label}</div>
-        </div>
+        <>
+            <div className="absolute -top-6 left-0 right-0 text-center">
+                <span className="text-xs font-medium px-2 py-1 bg-neutral-100 text-neutral-600 rounded-sm shadow-sm">
+                    {data.label}
+                </span>
+            </div>
+            <div className="w-full h-full rounded-lg border border-dashed border-neutral-400 bg-white/5"></div>
+        </>
     );
 };
 
@@ -162,6 +168,14 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
     onEdgesChange,
     onConnect
 } ) => {
+    const onInit = useCallback( () => {
+        // This gets called once when the flow is initialized
+        // and ensures proper rendering of groups
+        setTimeout( () => {
+            window.dispatchEvent( new Event( 'resize' ) );
+        }, 100 );
+    }, [] );
+
     return (
         <div style={{ width: "100%", height: "100%" }}>
             <ReactFlow
@@ -173,10 +187,28 @@ export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( {
                 nodeTypes={nodeTypes}
                 fitView
                 nodesDraggable={true}
+                proOptions={{ hideAttribution: true }}
+                elementsSelectable={true}
+                elevateEdgesOnSelect={true}
+                snapToGrid={true}
+                snapGrid={[ 10, 10 ]}
+                onInit={onInit}
             >
                 <Controls />
-                <MiniMap />
+                <MiniMap
+                    nodeStrokeWidth={3}
+                    zoomable
+                    pannable
+                />
                 <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+                <Panel position="top-right">
+                    <button
+                        className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs px-2 py-1 rounded shadow"
+                        onClick={() => window.location.reload()}
+                    >
+                        Refresh
+                    </button>
+                </Panel>
             </ReactFlow>
         </div>
     );

@@ -1,5 +1,3 @@
-import { Position } from "reactflow";
-
 import type { Node, Edge } from "reactflow";
 
 import type { FlowSchema, FlowDiagram } from "@vertix.gg/flow/src/shared/types/flow";
@@ -74,58 +72,59 @@ export class DefaultFlowFactory implements FlowFactory {
 
     // Process elements
     if ( schema.entities && schema.entities.elements ) {
-      // Create a group node for the elements
-      const elementsGroupId = "elements-group";
-      const groupHeight = 100; // Height of the group box
-      const groupPadding = 30; // Padding around the elements within the group
+      // Count total elements to determine group size
+      let totalElements = 0;
+      schema.entities.elements.forEach( group => totalElements += group.length );
+
+      // Skip creating a group if there are no elements
+      if ( totalElements === 0 ) return { nodes, edges };
+
+      // Settings for element layout
+      const elementWidth = 160;      // Width per element
+      const elementSpacing = 30;     // Space between elements
+      const groupPadding = 30;       // Padding inside the group
+      const elementHeight = 60;      // Approximate height of an element
+
+      // Calculate group dimensions
+      const groupWidth = ( elementWidth * totalElements ) +
+                        ( elementSpacing * ( totalElements - 1 ) ) +
+                        ( groupPadding * 2 );
+      const groupHeight = elementHeight + ( groupPadding * 2 );
+
+      // Center position for the group
+      const groupX = 250 - ( groupWidth / 2 );
+      const groupY = 400;
+
+      // Create group node first
+      const groupId = "elements-group";
+      nodes.push( {
+        id: groupId,
+        type: "group",
+        data: { label: "Elements" },
+        position: { x: groupX, y: groupY },
+        style: {
+          width: groupWidth,
+          height: groupHeight,
+          zIndex: 0
+        },
+        draggable: true,
+        // Properly set the group as a container
+        className: 'react-flow__node-group'
+      } );
+
+      // Create element nodes inside the group
+      let elementIndex = 0;
 
       schema.entities.elements.forEach( ( elementGroup, groupIndex ) => {
-        // Calculate position variables based on the number of elements
-        const numElements = elementGroup.length;
-        const buttonWidth = 120; // Approximate width of a button
-        const totalButtonsWidth = numElements * buttonWidth;
-        const padding = 20; // Space between buttons
-
-        // Total width including padding between buttons
-        const totalWidth = totalButtonsWidth + ( ( numElements - 1 ) * padding );
-
-        // Group dimensions
-        const groupWidth = totalWidth + ( groupPadding * 2 );
-
-        // Add group node
-        nodes.push( {
-          id: elementsGroupId,
-          type: "group",
-          data: {
-            label: "Elements"
-          },
-          position: {
-            x: 250 - ( groupWidth / 2 ),
-            y: 930 - ( groupPadding / 2 )
-          },
-          style: {
-            width: groupWidth,
-            height: groupHeight,
-            backgroundColor: 'rgba(240, 240, 240, 0.1)',
-            border: '1px dashed #666',
-            borderRadius: 5,
-            padding: '10px',
-          },
-          draggable: true
-        } );
-
-        // Starting X position to center the buttons under the embed
-        const startX = 250 - ( totalWidth / 2 ) + ( buttonWidth / 2 );
-
         elementGroup.forEach( ( element, index ) => {
           const id = `element-${ groupIndex }-${ index }`;
           const elementLabel = element.name.split( "/" ).pop() || "Element";
 
-          // Calculate x position based on index and button width + padding
-          const xPosition = startX + ( index * ( buttonWidth + padding ) );
+          // Position relative to the group's top-left corner
+          const xPos = groupPadding + ( elementIndex * ( elementWidth + elementSpacing ) );
+          const yPos = groupPadding;
 
-          // Y position relative to the embed's position
-          const yPosition = 930; // This is a reasonable position below the embed
+          elementIndex++;
 
           nodes.push( {
             id,
@@ -135,13 +134,13 @@ export class DefaultFlowFactory implements FlowFactory {
               type: element.type,
               attributes: element.attributes
             },
-            position: { x: xPosition, y: yPosition },
-            style: this.createNodeStyle(),
-            sourcePosition: Position.Top,
-            targetPosition: Position.Bottom,
+            position: { x: xPos, y: yPos },
+            parentNode: groupId,  // Set parent relationship
+            extent: 'parent',     // Constrain to parent
             draggable: true,
-            parentNode: elementsGroupId,
-            extent: 'parent',
+            style: {
+              width: elementWidth
+            }
           } );
 
           // Connect to embed
@@ -151,7 +150,8 @@ export class DefaultFlowFactory implements FlowFactory {
             target: id,
             animated: true,
             style: { stroke: "#34d399" },
-            type: 'smoothstep'
+            type: 'smoothstep',
+            zIndex: 0
           } );
         } );
       } );

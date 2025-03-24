@@ -1,8 +1,17 @@
-import { FastifyInstance } from "fastify";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { ServerFactory } from "./core/server-factory";
-import { registerAllRoutes } from "./routes";
+import { entryPoint as vertixBotEntrypoint } from "@vertix.gg/bot/src/entrypoint";
+
+import { ServerFactory } from "@vertix.gg/flow/src/server/core/server-factory";
+import { registerAllRoutes } from "@vertix.gg/flow/src/server/routes";
+
+import type { FastifyInstance } from "fastify";
+
+declare global {
+    // Ensure that the bot entrypoint is only initialized once, even across HMR reloads
+    // eslint-disable-next-line no-var
+    var __vertixBotInitialized: boolean | undefined;
+}
 
 /**
  * Application factory class that creates and configures the server
@@ -17,7 +26,7 @@ export class AppFactory extends InitializeBase {
         return "VertixFlow/Server/AppFactory";
     }
 
-    constructor() {
+    public constructor() {
         super();
 
         this.serverFactory = new ServerFactory();
@@ -31,6 +40,14 @@ export class AppFactory extends InitializeBase {
      * Create and configure the application server
      */
     public async create(): Promise<FastifyInstance> {
+        // Initialize vertixBot only once, not on every hot reload
+        if (!globalThis.__vertixBotInitialized) {
+            await vertixBotEntrypoint( {
+                enableListeners: false,
+            } );
+            globalThis.__vertixBotInitialized = true;
+        }
+
         try {
             const server = this.serverFactory.getInstance();
 
@@ -67,3 +84,6 @@ export const createApp = async(): Promise<{
         serverFactory: appFactory.getServerFactory()
     };
 };
+
+// Re-export the handler from './server'
+export { handler } from "./server";

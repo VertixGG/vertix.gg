@@ -16,8 +16,8 @@
     "exports": {
         "./package.json": "./package.json",
         "./bot-client": {
-            "default": "./src/prisma-bot-client.ts",
-            "types": "./types/prisma-bot-client.d.ts"
+            "types": "./types/prisma-bot-client.d.ts",
+            "default": "./src/prisma-bot-client.ts"
         },
         "./._bot-client-internal": {
             "require": "./src/prisma-bot-client/index.js",

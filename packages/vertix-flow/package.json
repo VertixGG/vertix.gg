@@ -3,7 +3,7 @@
     "type": "module",
     "version": "0.0.0",
     "scripts": {
-        "vertix-flow:dev": "concurrently \"bun run vertix-flow:dev:server\" \"bun run vertix-flow:dev:client\"",
+        "vertix-flow:dev": "concurrently \"bun run vertix-flow:dev:hot-server\" \"bun run vertix-flow:dev:client\"",
         "vertix-flow:dev:client": "bunx --bun vite --host",
         "vertix-flow:dev:server": "bun run --bun --watch src/server/server.ts",
         "vertix-flow:dev:hot-server": "bun run --bun --hot src/server/server.ts",

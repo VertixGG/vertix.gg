@@ -50,6 +50,7 @@ import type {
     TAdapterRegisterOptions,
     TPossibleAdapters
 } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 
 export type TAdapterMapping = {
     base: UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
@@ -85,6 +86,9 @@ export class UIService extends ServiceWithDependenciesBase<{
         InvalidChannelTypeComponent?: UIComponentTypeConstructor;
         MissingPermissionsComponent?: UIComponentTypeConstructor;
     } = {};
+
+    private uiModulesTypes = new Map<string, TModuleConstructor>();
+    private uiModulesInstances = new Map<string, UIModuleBase>();
 
     private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>();
     private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>();
@@ -161,6 +165,11 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.client;
     }
 
+    public getUIModules() {
+        return this.uiModulesTypes;
+    }
+
+    // TODO: Rename to getUIAdapter
     public get<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         silent = false
@@ -184,12 +193,31 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
+    public getUIModule<T extends UIModuleBase>( name: string, silent = false ): T | undefined {
+        const module = this.uiModulesInstances.get( name ) as T | undefined;
+
+        if ( !module && !silent ) {
+            throw new Error( `Module: '${ name }' does not exist` );
+        }
+
+        return module;
+    }
+
     public registerModule<T extends TModuleConstructor>( Module: T ) {
+        const moduleName = Module.getName();
+
+        if ( this.uiModulesTypes.has( moduleName ) ) {
+            throw new Error( `Module: '${ moduleName }' already exists` );
+        }
         Module.validate();
 
         const adapters = Module.getAdapters();
+        const module = new Module();
 
-        this.registerAdapters( adapters, { module: new Module() } );
+        this.uiModulesTypes.set( moduleName, Module );
+        this.uiModulesInstances.set( moduleName, module );
+
+        this.registerAdapters( adapters, { module } );
     }
 
     public async registerSystemUIAdapters() {

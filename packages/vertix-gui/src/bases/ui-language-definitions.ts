@@ -1,6 +1,14 @@
+import path from "node:path";
+
+import { zFindRootPackageJsonPath } from "@zenflux/utils/src/workspace";
+
 import type { UIBaseTemplateOptions, UIEmbedArrayOptions } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export const UI_LANGUAGES_PATH = process.cwd() + "/assets/languages/",
+export const PROJECT_ROOT_PATH = path.resolve( path.dirname( zFindRootPackageJsonPath() ), (
+    "packages/vertix-bot/"
+) );
+
+export const UI_LANGUAGES_PATH = PROJECT_ROOT_PATH + "/assets/languages/",
     UI_LANGUAGES_FILE_EXTENSION = ".json",
     UI_LANGUAGES_INITIAL_CODE = "en",
     UI_LANGUAGES_INITIAL_FILE_NAME = UI_LANGUAGES_INITIAL_CODE + UI_LANGUAGES_FILE_EXTENSION,

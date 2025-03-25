@@ -14,6 +14,8 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
+import { readyHandler } from "@vertix.gg/bot/src/listeners";
+
 import type { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import type { ClientEvents } from "discord.js";
@@ -139,7 +141,9 @@ function debugDiscordApiRestEvents( logger: Logger, client: Client<boolean> ) {
     }
 }
 
-export default async function Main() {
+export default async function Main( { enableListeners }: {
+    enableListeners?: boolean;
+} ) {
     const logger = GlobalLogger.$;
 
     logger.log( Main, "Bot is starting..." );
@@ -159,11 +163,13 @@ export default async function Main() {
 
         logger.info( onLogin, `Bot: '${ client.user.username }' is authenticated` );
 
-        logger.log( onLogin, "Registering listeners..." );
-
         const handlerPromises = [];
 
         for ( const handler of Object.values( handlers ) ) {
+            if ( ! enableListeners && handler !== readyHandler ) {
+                continue;
+            }
+
             logger.log( onLogin, `Registering handler '${ handler.name }'...` );
 
             handlerPromises.push(
@@ -178,6 +184,8 @@ export default async function Main() {
 
             TopGGManager.$.handshake();
         } );
+
+        logger.log( onLogin, "Registering listeners..." );
     }
 
     await login( client, onLogin );

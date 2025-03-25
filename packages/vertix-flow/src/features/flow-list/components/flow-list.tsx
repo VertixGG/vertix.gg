@@ -10,7 +10,7 @@ interface FlowListProps {
 export const FlowList: React.FC<FlowListProps> = ( { onSelectFlow } ) => {
     const { selectedModule, selectedFlow, setSelectedFlow } = useModuleSelectorStore();
 
-    if ( !selectedModule || !selectedModule.moduleInfo ) {
+    if ( !selectedModule ) {
         return (
             <Card>
                 <CardHeader>
@@ -23,7 +23,7 @@ export const FlowList: React.FC<FlowListProps> = ( { onSelectFlow } ) => {
         );
     }
 
-    const { flows } = selectedModule.moduleInfo;
+    const { flows } = selectedModule;
 
     const handleFlowClick = ( flowName: string ) => {
         setSelectedFlow( flowName );
@@ -38,7 +38,7 @@ export const FlowList: React.FC<FlowListProps> = ( { onSelectFlow } ) => {
                 <CardTitle>Available Flows</CardTitle>
             </CardHeader>
             <CardContent>
-                {flows && flows.length > 0 ? (
+                {flows.length > 0 ? (
                     <div className="space-y-2">
                         {flows.map( ( flowName, index ) => (
                             <div

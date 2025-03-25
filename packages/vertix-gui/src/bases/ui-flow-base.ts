@@ -1,11 +1,12 @@
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
+import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
+
 import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { PermissionsBitField, ChannelType } from "discord.js";
 
-import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 /**
@@ -41,6 +42,20 @@ export interface FlowIntegrationPoint {
     targetState?: string;
     transition?: string;
     requiredData?: string[];
+}
+
+/**
+ * Interface for component schema result
+ */
+export interface ComponentSchemaResult {
+    name?: string;
+    type?: string;
+    entities?: {
+        elements?: unknown[];
+        embeds?: unknown[];
+    };
+    components?: ComponentSchemaResult[];
+    [key: string]: unknown;
 }
 
 /**
@@ -192,10 +207,10 @@ export abstract class UIFlowBase<
 
     /**
      * Build schema from components
+     * @returns Component schema structure or null if no schemas
      */
-    public async buildComponentSchemas() {
-        const components = this.getComponents();
-        const schemas: any[] = [];
+    public async buildComponentSchemas( components = this.getComponents() ): Promise<ComponentSchemaResult[] | null> {
+        const schemas: ComponentSchemaResult[] = [];
 
         for ( const Component of components ) {
             const component = new Component();
@@ -204,14 +219,23 @@ export abstract class UIFlowBase<
                 await component.waitUntilInitialized();
             }
 
-            const result = await component.build( {} );
+            const result = await component.build( {} ) as ComponentSchemaResult;
 
-            schemas.push(  result );
+            if ( component instanceof UIWizardComponentBase ) {
+                // Get child component constructors
+                const wizardComponent = Component as typeof UIWizardComponentBase;
+
+                const childSchemas = await this.buildComponentSchemas( wizardComponent.getComponents() );
+
+                if ( childSchemas ) {
+                    result.components = childSchemas;
+                }
+            }
+
+            schemas.push( result );
         }
 
-        console.log( "[DEBUG] Schemas:", schemas );
-
-        return schemas.length ? schemas : null;
+        return schemas.length > 0 ? schemas : null;
     }
 
     /**

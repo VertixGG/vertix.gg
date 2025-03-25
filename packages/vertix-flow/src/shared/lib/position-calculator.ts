@@ -105,7 +105,7 @@ export function calculateElementsLayout(
  * If window object is not available (SSR), return default values
  */
 export function getViewportDimensions(): { width: number; height: number } {
-  if ( typeof window === 'undefined' ) {
+  if ( typeof window === "undefined" ) {
     return { width: DEFAULT_CONFIG.containerWidth, height: DEFAULT_CONFIG.containerHeight };
   }
 

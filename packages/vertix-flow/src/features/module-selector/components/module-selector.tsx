@@ -19,7 +19,7 @@ export const ModuleSelector: React.FC<ModuleSelectorProps> = ( { onSelectModule 
 
     useEffect( () => {
         if ( resource ) {
-            setModules( resource.files );
+            setModules( resource.uiModules );
         }
     }, [ resource, setModules ] );
 
@@ -65,20 +65,18 @@ export const ModuleSelector: React.FC<ModuleSelectorProps> = ( { onSelectModule 
                                 <div className="text-xs text-neutral-500 mt-1">
                                     {module.path}
                                 </div>
-                                {module.moduleInfo && (
-                                    <div className="flex flex-wrap gap-1 mt-2">
-                                        {module.moduleInfo.flows.length > 0 && (
-                                            <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                                                {module.moduleInfo.flows.length} flow(s)
-                                            </span>
-                                        )}
-                                        {module.moduleInfo.adapters.length > 0 && (
-                                            <span className="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full">
-                                                {module.moduleInfo.adapters.length} adapter(s)
-                                            </span>
-                                        )}
-                                    </div>
-                                )}
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                    {module.flows.length > 0 && (
+                                        <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                                            {module.flows.length} flow(s)
+                                        </span>
+                                    )}
+                                    {module.adapters.length > 0 && (
+                                        <span className="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full">
+                                            {module.adapters.length} adapter(s)
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         ) )}
                     </div>

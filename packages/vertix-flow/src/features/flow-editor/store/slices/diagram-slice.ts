@@ -1,5 +1,7 @@
-import { StateCreator } from 'zustand';
-import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
+import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
+
+import type { StateCreator } from "zustand";
+
 import type { Node, Edge } from "@xyflow/react";
 import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 

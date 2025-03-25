@@ -31,11 +31,9 @@ export interface FlowStateProps {
  * Props for components that need to load flow data
  */
 export interface FlowDataLoaderProps {
-  modulePath: string;
+  moduleName: string;
   flowName: string;
-  onDataLoaded?: ( data: FlowData ) => void;
   onFlowDataLoaded?: ( data: FlowData ) => void;
-  onError?: ( error: Error ) => void;
 }
 
 /**

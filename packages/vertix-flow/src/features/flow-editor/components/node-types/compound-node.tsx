@@ -1,6 +1,9 @@
 import React from "react";
-import { CustomNode, ExtendedNodeData } from "./custom-node";
-import { GroupNode } from "./group-node";
+
+import { CustomNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/custom-node";
+import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/group-node";
+
+import type { ExtendedNodeData } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/custom-node";
 
 interface ChildNode {
   id: string;
@@ -30,19 +33,19 @@ export interface CompoundNodeProps {
  * CompoundNode component that can handle nesting of elements in DOM
  */
 export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
-  const { label, type = 'compound', groupType, childNodes, attributes, elements } = data;
+  const { label, type = "compound", groupType, childNodes, attributes, elements } = data;
   const isElementsGroup = groupType === "Elements";
   const isComponentsGroup = groupType === "Components";
 
   // Render a standard node if not a group
-  if ( type !== 'group' && type !== 'compound' ) {
+  if ( type !== "group" && type !== "compound" ) {
     return <CustomNode data={{ label, type, attributes, elements } as ExtendedNodeData} />;
   }
 
   // For groups, render a container with child nodes nested inside
 
   // Special case for flow-group with Components childNodes
-  if (data.id === 'flow-group') {
+  if ( data.id === "flow-group" ) {
   }
 
   return (
@@ -56,11 +59,11 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
           className = "inline-block"; // Horizontal layout for Elements
         } else if ( isComponentsGroup ) {
           // Apply specific styling for each component in the group
-          if ( child.id.endsWith("-root") ) {
+          if ( child.id.endsWith( "-root" ) ) {
             className = "mb-6"; // Top component
-          } else if ( child.id.includes("-embed-") ) {
+          } else if ( child.id.includes( "-embed-" ) ) {
             className = "mb-8 mt-2"; // Middle embed (more space)
-          } else if ( child.id.endsWith("-elements-group") ) {
+          } else if ( child.id.endsWith( "-elements-group" ) ) {
             className = "mb-2"; // Elements group
           } else {
             className = "mb-2"; // Default spacing
@@ -71,7 +74,7 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
 
         return (
           <div key={child.id} className={className}>
-            {child.type === 'group' ? (
+            {child.type === "group" ? (
               // Recursively render nested groups
               <CompoundNode data={{
                 label: child.label,

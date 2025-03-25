@@ -1,6 +1,10 @@
-import { UIFlowBase, FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
+
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
+
+import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 /**

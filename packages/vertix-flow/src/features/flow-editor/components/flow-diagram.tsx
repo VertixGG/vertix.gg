@@ -1,6 +1,6 @@
 import "@xyflow/react/dist/style.css";
 
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback, useRef } from "react";
 
 import {
     ReactFlow,
@@ -12,13 +12,12 @@ import {
     ReactFlowProvider
 } from "@xyflow/react";
 
-import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
-import { CustomNode } from "./node-types/custom-node";
-import { GroupNode } from "./node-types/group-node";
-import { CompoundNode } from "./node-types/compound-node";
+import { CustomNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/custom-node";
+import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/group-node";
+import { CompoundNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/compound-node";
+
 import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
-import type { FlowComponent, FlowDiagram, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 import type {
     NodeChange,
     EdgeChange,
@@ -34,25 +33,6 @@ const nodeTypes = {
     group: GroupNode,
     compound: CompoundNode
 };
-
-// Function to generate flow diagram using factory - don't use hooks here
-export function generateFlowDiagram( flowData: FlowData ): FlowDiagram {
-    // Use the factory singleton directly instead of the hook
-    const result = flowFactory.createFlowDiagram( flowData );
-    return result;
-}
-
-// Backward compatibility function for when only schema is available
-export function generateFlowDiagramFromComponent( component: FlowComponent ): FlowDiagram {
-    // Create a FlowData object with the component
-    const flowData: FlowData = {
-        name: component.name || "Unknown",
-        components: [component],
-        transactions: [],
-        requiredData: {}
-    };
-    return generateFlowDiagram( flowData );
-}
 
 interface FlowDiagramDisplayProps {
     nodes: Node[];
@@ -85,7 +65,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             reactFlowInstanceRef.current = instance;
 
             setTimeout( () => {
-                window.dispatchEvent( new Event( 'resize' ) );
+                window.dispatchEvent( new Event( "resize" ) );
 
                 // Force the desired zoom level
                 if ( reactFlowInstanceRef.current ) {
@@ -97,7 +77,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
                     }
                 }
             }, 100 );
-        } catch ( err ) {
+        } catch  {
             setError( "Failed to initialize flow diagram" );
         }
     }, [ setError, onZoomChange ] );
@@ -105,7 +85,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     const handleRefresh = useCallback( () => {
         try {
             window.location.reload();
-        } catch ( err ) {
+        } catch  {
             setError( "Failed to refresh flow diagram" );
         }
     }, [ setError ] );

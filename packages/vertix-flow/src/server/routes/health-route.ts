@@ -1,6 +1,7 @@
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { Type } from "@fastify/type-provider-typebox";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 /**
  * Health check response interface
@@ -22,7 +23,7 @@ export class HealthRoute extends InitializeBase {
         return "VertixFlow/Server/Routes/HealthRoute";
     }
 
-    constructor() {
+   public constructor() {
         super();
     }
 
@@ -41,7 +42,7 @@ export class HealthRoute extends InitializeBase {
             timestamp: new Date().toISOString(),
             version: process.env.npm_package_version || "0.0.0"
         };
-    }
+    };
 
     /**
      * Register route with Fastify instance

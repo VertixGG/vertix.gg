@@ -18,7 +18,7 @@ export class Environment extends InitializeBase {
         return "VertixFlow/Server/Config/Environment";
     }
 
-    constructor() {
+    public constructor() {
         super();
     }
 

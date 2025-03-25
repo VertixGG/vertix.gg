@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-import {
-  SelectionSlice, createSelectionSlice,
-  DiagramSlice, createDiagramSlice,
-  UISlice, createUISlice
-} from "./slices";
+import { createSelectionSlice, createDiagramSlice, createUISlice
+} from "@vertix.gg/flow/src/features/flow-editor/store/slices";
+
+import type {
+  SelectionSlice,
+  DiagramSlice,
+  UISlice } from "@vertix.gg/flow/src/features/flow-editor/store/slices";
 
 /**
  * Combined state type for the entire flow editor
@@ -23,8 +25,8 @@ const useFlowEditorStore = create<FlowEditorState>()(
       ...createUISlice( ...args ),
     } ),
     {
-      name: 'flow-editor-store',
-      enabled: process.env.NODE_ENV !== 'production',
+      name: "flow-editor-store",
+      enabled: process.env.NODE_ENV !== "production",
     }
   )
 );

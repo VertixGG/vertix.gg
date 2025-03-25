@@ -12,6 +12,8 @@ import UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
+import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 export class UIWizardComponentBase extends UIComponentBase {
     public static getName() {
         return "VertixGUI/UIWizardComponentBase";
@@ -21,7 +23,7 @@ export class UIWizardComponentBase extends UIComponentBase {
         return UIInstancesTypes.Static;
     }
 
-    public static getComponents(): ( typeof UIComponentBase )[] {
+    public static getComponents(): UIComponentTypeConstructor[] {
         return [];
     }
 

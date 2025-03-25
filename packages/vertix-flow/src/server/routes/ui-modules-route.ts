@@ -1,34 +1,32 @@
 import path from "path";
 
-import { fileURLToPath } from "node:url";
-
-import * as util from "node:util";
-
 import { Type } from "@fastify/type-provider-typebox";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { servicesInitialized } from "@vertix.gg/flow/src/server/utils/ui-module-scanner";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
+import { zFindRootPackageJsonPath } from "@zenflux/utils/src/workspace";
+
+import type { FastifyInstance, FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
+import type { FlowIntegrationPoint } from "@vertix.gg/flow/src/shared/types/flow";
+import type UIService from "@vertix.gg/gui/src/ui-service";
 
 /**
  * UI Module file interface
  */
 interface UIModuleFile {
+    shortName: string;
     name: string;
     path: string;
-    moduleInfo: {
-        name: string;
-        adapters: string[];
-        flows: string[];
-    };
+    adapters: string[];
+    flows: string[];
 }
 
 /**
  * UI Modules response interface
  */
-interface UIModulesResponse {
-    files: UIModuleFile[];
+export interface UIModulesResponse {
+    uiModules: UIModuleFile[];
 }
 
 /**
@@ -51,6 +49,11 @@ interface UIFlowResponse {
     transactions: string[];
     requiredData: Record<string, string[]>;
     components: FlowComponent[];
+    integrations?: {
+        entryPoints?: FlowIntegrationPoint[];
+        handoffPoints?: FlowIntegrationPoint[];
+        externalReferences?: Record<string, string>;
+    };
 }
 
 /**
@@ -64,7 +67,7 @@ export class UIModulesRoute extends InitializeBase {
         return "VertixFlow/Server/Routes/UIModulesRoute";
     }
 
-    constructor() {
+    public constructor() {
         super();
     }
 
@@ -75,45 +78,38 @@ export class UIModulesRoute extends InitializeBase {
     /**
      * Handle UI modules request
      */
-    public handleModules = async( request: FastifyRequest, reply: FastifyReply ): Promise<UIModulesResponse> => {
-        this.logger.info( "handleModules", "UI modules requested" );
+    public handleModules = async( _request: FastifyRequest, reply: FastifyReply ): Promise<UIModulesResponse> => {
+        // Get the modules map from UIService
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const modules = Array.from( uiService.getUIModules().entries() );
 
         try {
-            // Get the absolute path to the UI modules directory
-            const currentFilePath = fileURLToPath( import.meta.url );
-            const uiModulesPath = path.resolve( path.dirname( currentFilePath ), "../../../..", "vertix-bot/src/ui" );
+            const uiModules = modules.map( ( [ key, ModuleClass ] ) => {
+                const instance = uiService.getUIModule( key );
 
-            this.logger.info( "handleModules", `Scanning UI modules from: ${ uiModulesPath }` );
-
-            // Get the UI module scanner from the original implementation
-            const { scanUIModules } = await import( "../utils/ui-module-scanner" );
-            const files = await scanUIModules( uiModulesPath );
-
-            if ( !files || files.length === 0 ) {
-                this.logger.warn( "handleModules", "No UI modules found" );
-                return { files: [] };
-            }
-
-            // Transform response to include only what's needed for the UI selector dialog
-            const transformedFiles = files.map( file => ( {
-                name: file.name,
-                path: file.path,
-                moduleInfo: {
-                    name: file.moduleInfo.name,
-                    adapters: file.moduleInfo.adapters,
-                    flows: file.moduleInfo.flows
+                if ( !instance ) {
+                    this.logger.error( "handleModules", `UI module ${ key } not found` );
+                    return null;
                 }
-            } ) );
 
-            this.logger.info( "handleModules", `Found ${ files.length } UI modules` );
-            return { files: transformedFiles };
+                return {
+                    shortName: key,
+                    name: ModuleClass.getName(),
+                    path: ModuleClass.getSourcePath().replace( path.resolve( zFindRootPackageJsonPath(), ".." ) + "/", "" ),
+                    adapters: ModuleClass.getAdapters().map( a => a.getName() ),
+                    flows: ModuleClass.getFlows().map( f => f.getName() )
+                };
+            } ).filter( ( module ): module is UIModuleFile => module !== null );
+
+            this.logger.info( "handleModules", `Found ${ uiModules.length } UI modules` );
+            return { uiModules };
         } catch ( err ) {
             this.logger.error( "handleModules", "Error scanning UI modules:", err );
             reply.status( 500 ).send( {
                 error: "Failed to scan UI modules",
-                message: err instanceof Error ? err.message : "Unknown error",
+                message: err instanceof Error ? err.message : "Unknown error"
             } );
-            return { files: [] };
+            return { uiModules: [] };
         }
     };
 
@@ -121,40 +117,25 @@ export class UIModulesRoute extends InitializeBase {
      * Handle UI flows request
      */
     public handleFlows = async( request: FastifyRequest<{
-        Querystring: { modulePath: string; flowName: string }
+        Querystring: { moduleName: string; flowName: string }
     }>, reply: FastifyReply ): Promise<UIFlowResponse | void> => {
-        const { modulePath, flowName } = request.query;
+        const { moduleName, flowName } = request.query;
 
-        this.logger.info( "handleFlows", `UI flow requested for module ${ modulePath } and flow ${ flowName }` );
+        this.logger.info( "handleFlows", `UI flow requested for module ${ moduleName } and flow ${ flowName }` );
 
         try {
-            // Ensure services are initialized before proceeding
-            this.logger.info( "handleFlows", "Waiting for services to initialize..." );
-            await servicesInitialized;
-            this.logger.info( "handleFlows", "Services initialized successfully" );
+            const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+            const moduleInstance = uiService.getUIModule( moduleName );
 
-            // Get the absolute path to the UI modules directory
-            const currentFilePath = fileURLToPath( import.meta.url );
-
-            const uiModulesPath = path.resolve( path.dirname( currentFilePath ), "../../../..", "vertix-bot/src/ui" );
-            const fullModulePath = path.join( uiModulesPath, modulePath );
-
-            this.logger.info( "handleFlows", `Loading module from: ${ fullModulePath }` );
-            this.logger.info( "handleFlows", `Looking for flow: ${ flowName }` );
-
-            // Import the module
-            const module = await import( fullModulePath );
-            const ModuleClass = module.default;
-
-            if ( !ModuleClass || typeof ModuleClass.getFlows !== "function" ) {
+            if ( !moduleInstance ) {
                 reply.status( 404 ).send( {
-                    error: "Invalid module",
-                    message: "The module does not have a getFlows method"
+                    error: "Module not found",
+                    message: `Module "${ moduleName }" not found`
                 } );
                 return;
             }
 
-            // Get all flow classes
+            const ModuleClass = moduleInstance.constructor as any;
             const flows = ModuleClass.getFlows();
 
             // Find the requested flow
@@ -184,24 +165,6 @@ export class UIModulesRoute extends InitializeBase {
                 flowData.name = ( flowInstance.constructor as any ).getName?.() || flowName;
             }
 
-            // Debug logs to understand component structure
-            console.log( "[DEBUG] Original flow data structure:", JSON.stringify( {
-                hasComponents: !!flowData.components,
-                componentsType: flowData.components ? typeof flowData.components : "null",
-                componentsLength: flowData.components ? flowData.components.length : 0
-            }, null, 2 ) );
-
-            // Debug log build methods if available
-            if ( typeof flowInstance.buildComponentSchemas === "function" ) {
-                console.log( "[DEBUG] Flow has buildComponentSchemas method" );
-            } else if ( typeof flowInstance.buildSchema === "function" ) {
-                console.log( "[DEBUG] Flow has buildSchema method" );
-            } else {
-                console.log( "[DEBUG] Flow has no schema building methods" );
-            }
-
-            console.log( "[DEBUG] Final flow data structure:", util.inspect( flowData, { depth: null } ) );
-
             return flowData;
         } catch ( err ) {
             this.logger.error( "handleFlows", "Error getting flow data:", err );
@@ -220,15 +183,13 @@ export class UIModulesRoute extends InitializeBase {
         const uiModulesSchema = {
             response: {
                 200: Type.Object( {
-                    files: Type.Array(
+                    uiModules: Type.Array(
                         Type.Object( {
+                            shortName: Type.String(),
                             name: Type.String(),
                             path: Type.String(),
-                            moduleInfo: Type.Object( {
-                                name: Type.String(),
-                                adapters: Type.Array( Type.String() ),
-                                flows: Type.Array( Type.String() )
-                            } )
+                            adapters: Type.Array( Type.String() ),
+                            flows: Type.Array( Type.String() )
                         } )
                     )
                 } )
@@ -238,7 +199,7 @@ export class UIModulesRoute extends InitializeBase {
         // Schema for UI flows request and response
         const uiFlowsSchema = {
             querystring: Type.Object( {
-                modulePath: Type.String(),
+                moduleName: Type.String(),
                 flowName: Type.String()
             } ),
             response: {
@@ -247,15 +208,39 @@ export class UIModulesRoute extends InitializeBase {
                     transactions: Type.Array( Type.String() ),
                     requiredData: Type.Record( Type.String(), Type.Array( Type.String() ) ),
                     components: Type.Array(
-                        Type.Object( {
-                            type: Type.String(),
-                            name: Type.Optional( Type.String() ),
-                            entities: Type.Optional( Type.Object( {
-                                elements: Type.Array( Type.Array( Type.Any() ) ),
-                                embeds: Type.Array( Type.Any() )
-                            } ) )
-                        } )
-                    )
+                        Type.Recursive( ( Self ) =>
+                            Type.Object( {
+                                type: Type.String(),
+                                name: Type.Optional( Type.String() ),
+                                entities: Type.Optional(
+                                    Type.Object( {
+                                        elements: Type.Array( Type.Array( Type.Any() ) ),
+                                        embeds: Type.Array( Type.Any() )
+                                    } )
+                                ),
+                                components: Type.Optional( Type.Array( Self ) )
+                            } )
+                        )
+                    ),
+                    integrations: Type.Optional( Type.Object( {
+                        entryPoints: Type.Optional( Type.Array( Type.Object( {
+                            flowName: Type.String(),
+                            description: Type.String(),
+                            sourceState: Type.Optional( Type.String() ),
+                            targetState: Type.Optional( Type.String() ),
+                            transition: Type.Optional( Type.String() ),
+                            requiredData: Type.Optional( Type.Array( Type.String() ) )
+                        } ) ) ),
+                        handoffPoints: Type.Optional( Type.Array( Type.Object( {
+                            flowName: Type.String(),
+                            description: Type.String(),
+                            sourceState: Type.Optional( Type.String() ),
+                            targetState: Type.Optional( Type.String() ),
+                            transition: Type.Optional( Type.String() ),
+                            requiredData: Type.Optional( Type.Array( Type.String() ) )
+                        } ) ) ),
+                        externalReferences: Type.Optional( Type.Record( Type.String(), Type.String() ) )
+                    } ) )
                 } )
             }
         };

@@ -1,4 +1,4 @@
-import { UIFlowBase, FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
 
@@ -14,6 +14,8 @@ import { SetupStep2Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-2/s
 import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/setup-step-3-component";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+
+import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 

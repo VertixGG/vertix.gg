@@ -46,7 +46,7 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
     const elementsArray = elements || [];
 
     // Get the first row of buttons, or an empty array
-    const buttons = Array.isArray(elementsArray[0]) ? elementsArray[0] : (elementsArray.flat ? elementsArray.flat() : []);
+    const buttons = Array.isArray( elementsArray[ 0 ] ) ? elementsArray[ 0 ] : ( elementsArray.flat ? elementsArray.flat() : [] );
 
     return (
       <div className="min-w-[400px] max-w-[600px] bg-[#36393f] rounded-lg">
@@ -88,7 +88,7 @@ export const CustomNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => 
           {buttons.length > 0 && (
             <div className="flex gap-2 mt-4">
               {buttons.map( ( button: any, index: number ) => {
-                if (!button || !button.attributes) {
+                if ( !button || !button.attributes ) {
                   return null;
                 }
 

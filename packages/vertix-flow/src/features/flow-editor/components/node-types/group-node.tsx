@@ -13,13 +13,14 @@ export interface GroupNodeProps {
  */
 export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
   const { label, groupType = "Group", children } = data;
-  const className = `${groupType.toLowerCase()}-group p-4 rounded-lg shadow-md bg-gray-800 border border-gray-700 text-white`;
+  const className = `${ groupType.toLowerCase() }-group p-4 rounded-lg shadow-md bg-gray-800 border border-gray-700 text-white`;
 
   const isFlowGroup = groupType === "Flow";
   const isComponentsGroup = label === "Components";
   const isElementsGroup = label === "Elements";
+  const isChildComponentsGroup = groupType === "ChildComponents";
 
-  if (!children || children.length === 0) {
+  if ( !children || ( Array.isArray( children ) && children.length === 0 ) ) {
     return (
       <div className={className}>
         <div className="text-sm font-medium">{label}</div>
@@ -32,28 +33,31 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
     <div className="relative">
       <div className="absolute -top-6 left-0 right-0 text-center">
         <span className={`text-[10px] font-medium px-2 py-1 rounded-sm shadow-sm ${
-          isComponentsGroup ? 'bg-blue-50 text-blue-600' :
-          isFlowGroup ? 'bg-violet-50 text-violet-600' :
-          'bg-neutral-100 text-neutral-600'
+          isComponentsGroup ? "bg-blue-50 text-blue-600" :
+          isChildComponentsGroup ? "bg-cyan-50 text-cyan-600" :
+          isFlowGroup ? "bg-violet-50 text-violet-600" :
+          "bg-neutral-100 text-neutral-600"
         }`}>
           {label}
         </span>
       </div>
       <div className={`w-full h-full rounded-lg border border-dashed ${
         isComponentsGroup
-          ? 'border-blue-300 bg-blue-50/5'
+          ? "border-blue-300 bg-blue-50/5"
+          : isChildComponentsGroup
+          ? "border-cyan-300 bg-cyan-50/5"
           : isElementsGroup
-          ? 'border-neutral-400 bg-transparent'
+          ? "border-neutral-400 bg-transparent"
           : isFlowGroup
-          ? 'border-violet-300 bg-violet-50/5'
-          : 'border-neutral-300 bg-transparent'
+          ? "border-violet-300 bg-violet-50/5"
+          : "border-neutral-300 bg-transparent"
       }`}>
         <div className={`p-4 ${
-          isComponentsGroup
-            ? 'flex flex-col items-center justify-center h-full gap-6'
+          isComponentsGroup || isChildComponentsGroup
+            ? "flex flex-col items-center justify-center h-full gap-6"
             : isElementsGroup
-            ? 'flex justify-center gap-4 flex-wrap'
-            : ''
+            ? "flex justify-center gap-4 flex-wrap"
+            : ""
         }`}>
           {children}
         </div>

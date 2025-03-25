@@ -12,16 +12,27 @@ const api = axios.create( {
     },
 } );
 
-export function useFlowData( modulePath: string, flowName: string ) {
+export function useFlowData( moduleName: string, flowName: string ) {
     return useAsyncResource(
         async() => {
-            return api.get<FlowData>( "/api/ui-flows", {
-                params: {
-                    modulePath,
-                    flowName,
-                },
-            } );
+            try {
+                console.log( `Fetching flow data for moduleName=${ moduleName }, flowName=${ flowName }` );
+                console.log( `Using API base URL: ${ api.defaults.baseURL }` );
+
+                const response = await api.get<FlowData>( "/api/ui-flows", {
+                    params: {
+                        moduleName,
+                        flowName,
+                    },
+                } );
+
+                console.log( "Flow data response:", response );
+                return response;
+            } catch ( error ) {
+                console.error( "Error fetching flow data:", error );
+                throw error;
+            }
         },
-        [ modulePath, flowName ] // Cache key and dependencies
+        [ moduleName, flowName ] // Cache key and dependencies
     );
 }

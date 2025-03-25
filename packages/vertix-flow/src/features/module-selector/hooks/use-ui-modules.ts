@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { useAsyncResource } from "@vertix.gg/flow/src/shared/utils/use-async-resource";
 
-import type { UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
+import type { UIModulesResponse } from "@vertix.gg/flow/src/server/routes/ui-modules-route";
 
 // Create axios instance with default config
 const api = axios.create( {
@@ -15,21 +15,9 @@ const api = axios.create( {
 export function useUIModules() {
     return useAsyncResource(
         async() => {
-            return api.get<{ files: UIModuleFile[] }>( "/api/ui-modules" );
+            return api.get<UIModulesResponse>( "/api/ui-modules" );
         },
         [ "ui-modules" ] // Cache key
     );
 }
 
-export function useUIModuleContent( filePath: string ) {
-    return useAsyncResource(
-        async() => {
-            if ( !filePath ) return null;
-
-            return await api.get<{ content: string }>( "/api/ui-module-content", {
-                params: { filePath },
-            } );
-        },
-        [ filePath ] // Cache key and dependencies
-    );
-}

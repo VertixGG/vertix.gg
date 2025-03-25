@@ -24,6 +24,16 @@ export interface FlowInteractionController {
     getStateData(): Record<string, unknown>;
 }
 
+interface ComponentNode {
+    id: string;
+    label: string;
+    type: string;
+    groupType?: string;
+    childNodes?: ComponentNode[];
+    attributes?: Record<string, unknown>;
+    elements?: Array<unknown>;
+}
+
 // Default implementation of the factory
 export class DefaultFlowFactory implements FlowFactory {
     public createFlowDiagram( flowData: FlowData ): FlowDiagram {
@@ -90,13 +100,13 @@ export class DefaultFlowFactory implements FlowFactory {
     }
 
     // Helper method to create component nodes from schemas
-    private createComponentNodes( components: FlowComponent[] ) {
-        return components.map( ( component, componentIndex ) => {
+    private createComponentNodes( components: FlowComponent[] ): ComponentNode[] {
+        return components.map( ( component: FlowComponent, componentIndex: number ): ComponentNode => {
             const componentId = `component-${ componentIndex }`;
             const componentLabel = component.name?.split( "/" ).pop() || `Component ${ componentIndex + 1 }`;
 
             // Create child nodes for each component
-            const childNodes = [];
+            const childNodes: ComponentNode[] = [];
 
             // Add root component node
             childNodes.push( {
@@ -138,7 +148,22 @@ export class DefaultFlowFactory implements FlowFactory {
                 } );
             }
 
-            const result = {
+            // Recursively process child components if they exist
+            if ( component.components?.length ) {
+                const childComponentsGroup: ComponentNode = {
+                    id: `${ componentId }-child-components-group`,
+                    label: "Child Components",
+                    type: "group",
+                    groupType: "ChildComponents",
+                    childNodes: this.createComponentNodes( component.components )
+                };
+
+                childNodes.push( childComponentsGroup );
+
+                // Add edges from root to child components group in the createComponentEdges method
+            }
+
+            const result: ComponentNode = {
                 id: componentId,
                 label: componentLabel,
                 type: "group",
@@ -171,6 +196,21 @@ export class DefaultFlowFactory implements FlowFactory {
                 } );
             }
 
+            // Add edges from root to child components group if components exist
+            if ( component.components?.length ) {
+                edges.push( {
+                    id: `${ componentId }-root-to-child-components`,
+                    source: `${ componentId }-root`,
+                    target: `${ componentId }-child-components-group`,
+                    animated: true,
+                    style: { stroke: "#60a5fa" },
+                    type: "smoothstep"
+                } );
+
+                // Recursively add edges for child components
+                this.createComponentEdges( component.components, edges );
+            }
+
             // Skip creating edges from embeds to elements group if we're already connecting elements to embeds
             // This avoids duplicate edges
             /*
@@ -198,7 +238,7 @@ export class DefaultFlowFactory implements FlowFactory {
                 try {
                     // Type assertion here since we're expecting a certain interface
                     return ( flowClass as { getInitialState: () => string } ).getInitialState();
-                } catch ( error ) {
+                } catch  {
                     return "error";
                 }
             },
@@ -210,7 +250,7 @@ export class DefaultFlowFactory implements FlowFactory {
                         getAvailableTransitions: ( state: string ) => string[]
                     } ).getAvailableTransitions( state );
                     return transitions || [];
-                } catch ( error ) {
+                } catch  {
                     return [];
                 }
             },
@@ -225,7 +265,7 @@ export class DefaultFlowFactory implements FlowFactory {
                     if ( flowClassWithTransition.transition ) {
                         flowClassWithTransition.transition( transition );
                     }
-                } catch ( error ) {
+                } catch  {
                     // Error handled silently
                 }
             },
@@ -237,7 +277,7 @@ export class DefaultFlowFactory implements FlowFactory {
                         getData: () => Record<string, unknown> | null
                     } ).getData();
                     return data || {};
-                } catch ( error ) {
+                } catch  {
                     return {};
                 }
             }

@@ -1,8 +1,12 @@
-import fastify, { FastifyInstance, FastifyPluginAsync } from "fastify";
+import fastify from "fastify";
 import cors from "@fastify/cors";
-import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
-import { environment } from "../config/environment";
+
+import { environment } from "@vertix.gg/flow/src/server/config/environment";
+
+import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 // Define interfaces locally since they can't be imported
 interface ServerConfig {
@@ -29,7 +33,7 @@ export class ServerFactory extends InitializeBase {
         return "VertixFlow/Server/Core/ServerFactory";
     }
 
-    constructor() {
+   public constructor() {
         super();
 
         // Create server instance with TypeBox support for JSON Schema validation

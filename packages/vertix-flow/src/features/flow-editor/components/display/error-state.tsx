@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Card, CardContent } from "@vertix.gg/flow/src/shared/components/card";
 
 export interface ErrorStateProps {

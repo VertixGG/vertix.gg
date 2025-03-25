@@ -1,5 +1,6 @@
-import React from 'react';
-import { useFlowUI } from '@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store';
+import React from "react";
+
+import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 /**
  * LoadingIndicator component that displays based on the global loading state

@@ -9,7 +9,6 @@ import type { FastifyInstance } from "fastify";
 
 declare global {
     // Ensure that the bot entrypoint is only initialized once, even across HMR reloads
-    // eslint-disable-next-line no-var
     var __vertixBotInitialized: boolean | undefined;
 }
 
@@ -41,7 +40,7 @@ export class AppFactory extends InitializeBase {
      */
     public async create(): Promise<FastifyInstance> {
         // Initialize vertixBot only once, not on every hot reload
-        if (!globalThis.__vertixBotInitialized) {
+        if ( !globalThis.__vertixBotInitialized ) {
             await vertixBotEntrypoint( {
                 enableListeners: false,
             } );
@@ -84,6 +83,3 @@ export const createApp = async(): Promise<{
         serverFactory: appFactory.getServerFactory()
     };
 };
-
-// Re-export the handler from './server'
-export { handler } from "./server";

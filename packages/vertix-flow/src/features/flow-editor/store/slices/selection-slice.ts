@@ -1,4 +1,5 @@
-import { StateCreator } from 'zustand';
+import type { StateCreator } from "zustand";
+
 import type { UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
 
 /**

@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 
+import { ErrorState, LoadingState } from "@vertix.gg/flow/src/features/flow-editor/components/display";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@vertix.gg/flow/src/shared/components/card";
 import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 
 import { flowFactory } from "@vertix.gg/flow/src/shared/lib/flow-factory";
-import { ErrorState, LoadingState } from "./display";
 import {
   CurrentStateDisplay,
   TransitionsControls,
   FlowStateDataDisplay
-} from "./interaction";
+} from "@vertix.gg/flow/src/features/flow-editor/components/interaction";
+
 import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 import type { FlowInteractionController } from "@vertix.gg/flow/src/shared/lib/flow-factory";

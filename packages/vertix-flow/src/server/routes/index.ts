@@ -1,6 +1,8 @@
-import { FastifyInstance } from "fastify";
-import healthRoutePlugin from "./health-route";
-import uiModulesRoutePlugin from "./ui-modules-route";
+
+import healthRoutePlugin from "@vertix.gg/flow/src/server/routes/health-route";
+import uiModulesRoutePlugin from "@vertix.gg/flow/src/server/routes/ui-modules-route";
+
+import type { FastifyInstance } from "fastify";
 
 /**
  * Register all API routes with a Fastify instance

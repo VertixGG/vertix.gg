@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 
 export interface RequiredDataDisplayProps {

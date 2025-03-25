@@ -7,6 +7,7 @@ export interface FlowComponent {
         elements: Array<Array<FlowElement>>;
         embeds: Array<FlowEmbed>;
     };
+    components: Array<FlowComponent>;
 }
 
 export interface FlowElement {
@@ -24,18 +25,24 @@ export interface FlowEmbed {
 }
 
 export interface UIModuleFile {
+    shortName: string;
     name: string;
     path: string;
-    moduleInfo?: {
-        name: string;
-        adapters: string[];
-        flows: string[];
-    };
-    content?: string;
+    adapters: string[];
+    flows: string[];
 }
 
 export interface UIModulesResponse {
-    files: UIModuleFile[];
+    uiModules: UIModuleFile[];
+}
+
+export interface FlowIntegrationPoint {
+    flowName: string;
+    description: string;
+    sourceState?: string;
+    targetState?: string;
+    transition?: string;
+    requiredData?: string[];
 }
 
 export interface FlowData {
@@ -43,6 +50,11 @@ export interface FlowData {
     transactions: string[];
     requiredData: Record<string, string[]>;
     components: FlowComponent[];
+    integrations?: {
+        entryPoints?: FlowIntegrationPoint[];
+        handoffPoints?: FlowIntegrationPoint[];
+        externalReferences?: Record<string, string>;
+    };
 }
 
 export interface NodeData {

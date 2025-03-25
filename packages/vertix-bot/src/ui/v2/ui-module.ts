@@ -1,3 +1,5 @@
+import { fileURLToPath } from "url";
+
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
@@ -15,6 +17,10 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 export class UIModuleV2 extends UIModuleBase {
     public static getName() {
         return "Vertix/UI-V2/Module";
+    }
+
+    public static getSourcePath() {
+        return fileURLToPath( import.meta.url );
     }
 
     public static getAdapters() {

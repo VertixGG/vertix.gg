@@ -1,3 +1,5 @@
+import { fileURLToPath } from "url";
+
 import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 
 import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
@@ -12,6 +14,10 @@ import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow"
 export class UIModuleGeneral extends UIModuleBase {
     public static getName() {
         return "VertixBot/UI-General/Module";
+    }
+
+    public static getSourcePath() {
+        return fileURLToPath( import.meta.url );
     }
 
     public static getAdapters() {

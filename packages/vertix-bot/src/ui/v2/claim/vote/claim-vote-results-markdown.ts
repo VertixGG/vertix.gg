@@ -1,7 +1,9 @@
-import process from "process";
+import path from "path";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
+
+import { zFindRootPackageJsonPath } from "@zenflux/utils/src/workspace";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
@@ -21,7 +23,9 @@ export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
     }
 
     protected static getContentPath() {
-        return process.cwd() + "/assets/claim-vote-results-markdown.md";
+        const packageRoot = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "packages/vertix-bot" );
+
+        return path.resolve( packageRoot, "assets/claim-vote-results-markdown.md" );
     }
 
     protected async generateLink( content: string ) {

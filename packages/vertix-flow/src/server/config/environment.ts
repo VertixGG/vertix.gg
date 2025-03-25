@@ -23,7 +23,7 @@ export class Environment extends InitializeBase {
     }
 
     protected initialize(): void {
-        this.logger.info( "initialize", "Environment configuration initialized" );
+        this.logger.log( this.initialize, "Environment configuration initialized" );
     }
 
     /**

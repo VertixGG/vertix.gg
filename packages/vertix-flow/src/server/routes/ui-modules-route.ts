@@ -72,7 +72,7 @@ export class UIModulesRoute extends InitializeBase {
     }
 
     protected initialize(): void {
-        this.logger.info( "initialize", "UI Modules route initialized" );
+        this.logger.log( this.initialize, "UI Modules route initialized" );
     }
 
     /**
@@ -88,7 +88,7 @@ export class UIModulesRoute extends InitializeBase {
                 const instance = uiService.getUIModule( key );
 
                 if ( !instance ) {
-                    this.logger.error( "handleModules", `UI module ${ key } not found` );
+                    this.logger.error( this.handleModules, `UI module ${ key } not found` );
                     return null;
                 }
 
@@ -101,10 +101,10 @@ export class UIModulesRoute extends InitializeBase {
                 };
             } ).filter( ( module ): module is UIModuleFile => module !== null );
 
-            this.logger.info( "handleModules", `Found ${ uiModules.length } UI modules` );
+            this.logger.info( this.handleModules, `Found ${ uiModules.length } UI modules` );
             return { uiModules };
         } catch ( err ) {
-            this.logger.error( "handleModules", "Error scanning UI modules:", err );
+            this.logger.error( this.handleModules, "Error scanning UI modules:", err );
             reply.status( 500 ).send( {
                 error: "Failed to scan UI modules",
                 message: err instanceof Error ? err.message : "Unknown error"
@@ -121,7 +121,7 @@ export class UIModulesRoute extends InitializeBase {
     }>, reply: FastifyReply ): Promise<UIFlowResponse | void> => {
         const { moduleName, flowName } = request.query;
 
-        this.logger.info( "handleFlows", `UI flow requested for module ${ moduleName } and flow ${ flowName }` );
+        this.logger.info( this.handleFlows, `UI flow requested for module ${ moduleName } and flow ${ flowName }` );
 
         try {
             const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
@@ -167,7 +167,7 @@ export class UIModulesRoute extends InitializeBase {
 
             return flowData;
         } catch ( err ) {
-            this.logger.error( "handleFlows", "Error getting flow data:", err );
+            this.logger.error( this.handleFlows, "Error getting flow data:", err );
             reply.status( 500 ).send( {
                 error: "Failed to get flow data",
                 message: err instanceof Error ? err.message : "Unknown error"

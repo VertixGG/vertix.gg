@@ -28,14 +28,14 @@ export class HealthRoute extends InitializeBase {
     }
 
     protected initialize(): void {
-        this.logger.info( "initialize", "Health route initialized" );
+        this.logger.log( this.initialize, "Health route initialized" );
     }
 
     /**
      * Handle health check request
      */
     public handler = async(): Promise<HealthResponse> => {
-        this.logger.info( "handler", "Health check requested" );
+        this.logger.info( this.handler, "Health check requested" );
 
         return {
             status: "ok",

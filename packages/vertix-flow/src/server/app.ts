@@ -32,7 +32,7 @@ export class AppFactory extends InitializeBase {
     }
 
     protected initialize(): void {
-        this.logger.info( "initialize", "Application factory initialized" );
+        this.logger.log( this.initialize, "Application factory initialized" );
     }
 
     /**
@@ -53,11 +53,11 @@ export class AppFactory extends InitializeBase {
             // Register all API routes
             await registerAllRoutes( server );
 
-            this.logger.info( "create", "Application server created successfully" );
+            this.logger.info( this.create, "Application server created successfully" );
 
             return server;
         } catch ( error ) {
-            this.logger.error( "create", "Failed to create application server", error );
+            this.logger.error( this.create, "Failed to create application server", error );
             throw error;
         }
     }

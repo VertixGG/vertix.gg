@@ -20,7 +20,7 @@ export class Server extends InitializeBase {
     }
 
     protected initialize(): void {
-        this.logger.info( "initialize", "Server initialized" );
+        this.logger.log( this.initialize, "Server initialized" );
     }
 
     /**
@@ -39,9 +39,9 @@ export class Server extends InitializeBase {
             // Start listening
             await serverFactory.start();
 
-            this.logger.info( "start", `Server running at http://${ host === "0.0.0.0" ? "localhost" : host }:${ port }` );
+            this.logger.info( this.start, `Server running at http://${ host === "0.0.0.0" ? "localhost" : host }:${ port }` );
         } catch ( error ) {
-            this.logger.error( "start", "Failed to start server", error );
+            this.logger.error( this.start, "Failed to start server", error );
             process.exit( 1 );
         }
     }

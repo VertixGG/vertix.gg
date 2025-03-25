@@ -49,7 +49,7 @@ export class ServerFactory extends InitializeBase {
     }
 
     protected initialize(): void {
-        this.logger.info( "initialize", "Server factory initialized" );
+        this.logger.log( this.initialize, "Server factory initialized" );
     }
 
     /**
@@ -90,9 +90,9 @@ export class ServerFactory extends InitializeBase {
             } );
 
             const displayHost = this.config.host === "0.0.0.0" ? "localhost" : this.config.host;
-            this.logger.info( "start", `Server running at http://${ displayHost }:${ this.config.port }` );
+            this.logger.info( this.start, `Server running at http://${ displayHost }:${ this.config.port }` );
         } catch ( error ) {
-            this.logger.error( "start", "Failed to start server", error );
+            this.logger.error( this.start, "Failed to start server", error );
             process.exit( 1 );
         }
     }

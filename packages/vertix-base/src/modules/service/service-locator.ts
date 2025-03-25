@@ -8,6 +8,11 @@ import type { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/se
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
+// We want is `ServiceLocator` to persist across HMR reloads.
+declare global {
+  var __vertix_base_service_locator__: ServiceLocator | undefined;
+}
+
 export class ServiceLocator extends InitializeBase {
     protected static instance: ServiceLocator | null = null;
 
@@ -22,11 +27,11 @@ export class ServiceLocator extends InitializeBase {
     }
 
     public static get $() {
-        if ( !this.instance ) {
-            this.instance = new this();
+        if ( !global.__vertix_base_service_locator__ ) {
+            global.__vertix_base_service_locator__ = new this();
         }
 
-        return this.instance;
+        return global.__vertix_base_service_locator__;
     }
 
     public register<T extends ServiceBase>( service: new ( ...args: any[] ) => T, ...args: any[] ) {

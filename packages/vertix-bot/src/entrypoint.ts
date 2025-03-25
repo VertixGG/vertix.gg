@@ -58,7 +58,7 @@ async function registerUIServices( client: Client<true> ) {
     await ServiceLocator.$.waitForAll();
 }
 
-async function registerServices() {
+export async function registerServices() {
     const services = await Promise.all( [
         import( "@vertix.gg/bot/src/services/app-service" ),
 
@@ -267,21 +267,20 @@ async function exportLanguages( languageCodes: string[] ) {
     return languages.size;
 }
 
-export async function entryPoint() {
+export async function entryPoint( options: {
+    enableListeners?: boolean;
+} ) {
+    options = Object.assign( {
+        enableListeners: true
+    }, options );
+
     const envArg =
         process.argv.find( ( arg ) => arg.startsWith( "--env=" ) ) || `--env=${ process.env.DOTENV_CONFIG_PATH || ".env" }`;
 
-    console.log( "ENV ARG:", envArg );
-    console.log( "PROCESS ENV BEFORE:", {
-        BOT_PRISMA_DATABASE_URL: process.env.BOT_PRISMA_DATABASE_URL,
-        PRISMA_DATABASE_URL: process.env.PRISMA_DATABASE_URL,
-        MONGO_CONNECTION: process.env.MONGO_CONNECTION
-    } );
-
     const envPath = path.join( process.cwd(), "../../", envArg.split( "=" )[ 1 ] );
 
-    console.log( "ENV PATH:", envPath );
-    console.log( "CWD:", process.cwd() );
+    GlobalLogger.$.log( entryPoint,"ENV PATH:", envPath );
+    GlobalLogger.$.log( entryPoint, "CWD:", process.cwd() );
 
     const envOutput = config( {
         path: envPath,
@@ -294,15 +293,10 @@ export async function entryPoint() {
         } );
     }
 
-    console.log( "ENV OUTPUT:", {
+    GlobalLogger.$.log( entryPoint,"ENV OUTPUT:", {
         error: envOutput.error,
-        parsed: envOutput.parsed
-    } );
-
-    console.log( "PROCESS ENV AFTER:", {
-        BOT_PRISMA_DATABASE_URL: process.env.BOT_PRISMA_DATABASE_URL,
-        PRISMA_DATABASE_URL: process.env.PRISMA_DATABASE_URL,
-        MONGO_CONNECTION: process.env.MONGO_CONNECTION
+        parsed: envOutput.parsed,
+        env: process.env
     } );
 
     if ( envOutput.error ) {
@@ -344,7 +338,9 @@ export async function entryPoint() {
     GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
 
     const { default: botInitialize } = await import( "./vertix" );
-    const client = await botInitialize();
+    const client = await botInitialize( {
+        enableListeners: options.enableListeners
+    } );
 
     await registerUIServices( client );
     await registerConfigs();
@@ -367,7 +363,7 @@ export async function entryPoint() {
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 
-    //await createCleanupWorker();
+    await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 }

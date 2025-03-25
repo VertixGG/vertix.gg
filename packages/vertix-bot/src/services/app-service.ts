@@ -10,6 +10,8 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
+import { zFindRootPackageJsonPath } from "@zenflux/utils/src/workspace";
+
 import type { Client } from "discord.js";
 
 interface PackageJson {
@@ -18,7 +20,7 @@ interface PackageJson {
     [ key: string ]: any;
 }
 
-const packageJsonPath = path.resolve( "./package.json" );
+const packageJsonPath = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "packages/vertix-bot/package.json" );
 const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
 const packageJson: PackageJson = JSON.parse( packageJsonString );
 

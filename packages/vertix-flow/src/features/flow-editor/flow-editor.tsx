@@ -4,10 +4,20 @@ import axios from "axios";
 
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
 
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@vertix.gg/flow/src/shared/components/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@vertix.gg/flow/src/shared/components/tabs";
-import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
 import { Card } from "@vertix.gg/flow/src/shared/components/card";
+import { ResizableHandle } from "@vertix.gg/flow/src/shared/components/resizable";
+
+import {
+  FlowLayout,
+  FlowLayoutContent,
+  FlowLayoutLeftSidebar,
+  FlowLayoutRightSidebar,
+  FlowLayoutMainContent,
+  FlowLayoutTopBar,
+  FlowLayoutEditor,
+  FlowLayoutActivityBar
+} from "@vertix.gg/flow/src/shared/components/flow-layout";
 
 import { FlowDataDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-data-display";
 import { FlowDiagramDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
@@ -15,10 +25,8 @@ import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-edi
 import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 
 import { FlowList } from "@vertix.gg/flow/src/features/flow-list/components/flow-list";
-
 import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/components/module-selector";
 
-import { getViewportDimensions } from "@vertix.gg/flow/src/shared/lib/position-calculator";
 import { getConnectedFlows } from "@vertix.gg/flow/src/shared/lib/flow-utils";
 
 import type { NodeChange, EdgeChange, Connection, Node, Edge } from "@xyflow/react";
@@ -35,18 +43,10 @@ const getApiBaseUrl = () => {
   return window.location.origin;
 };
 
-// Create axios instance with default config
-const api = axios.create( {
-  baseURL: getApiBaseUrl(),
-  headers: {
-    "Content-Type": "application/json",
-  },
-} );
-
 export interface FlowEditorProps {
-    // Optionally specify initial module path and flow name, if not specified, user must select
-    initialModulePath?: string;
-    initialFlowName?: string;
+  // Optionally specify initial module path and flow name, if not specified, user must select
+  initialModulePath?: string;
+  initialFlowName?: string;
 }
 
 /**
@@ -54,326 +54,330 @@ export interface FlowEditorProps {
  * It handles module and flow selection, and displays the selected flow
  */
 export const FlowEditor: React.FC<FlowEditorProps> = ( {
-    initialModulePath,
-    initialFlowName,
+  initialModulePath,
+  initialFlowName,
 } ) => {
-    // State for the module path and flow name
-    const [ modulePath, setModulePath ] = useState<string | null>( initialModulePath || null );
-    const [ flowName, setFlowName ] = useState<string | null>( initialFlowName || null );
-    const [ activeTab, setActiveTab ] = useState<string>( "modules" );
-    const [ zoomLevel, setZoomLevel ] = useState<number>( 0.15 );
-    const [ moduleName, setModuleName ] = useState<string | null>( null );
+  // State for the module path and flow name
+  const [ modulePath, setModulePath ] = useState<string | null>( initialModulePath || null );
+  const [ flowName, setFlowName ] = useState<string | null>( initialFlowName || null );
+  const [ activeTab, setActiveTab ] = useState<string>( "modules" );
+  const [ zoomLevel, setZoomLevel ] = useState<number>( 0.15 );
+  const [ moduleName, setModuleName ] = useState<string | null>( null );
 
-    // State for connected flows
-    const [ connectedFlowsData, setConnectedFlowsData ] = useState<FlowData[]>( [] );
-    const [ combinedNodes, setCombinedNodes ] = useState<Node[]>( [] );
-    const [ combinedEdges, setCombinedEdges ] = useState<Edge[]>( [] );
-    const [ isLoadingConnectedFlows, setIsLoadingConnectedFlows ] = useState<boolean>( false );
+  // State for connected flows
+  const [ connectedFlowsData, setConnectedFlowsData ] = useState<FlowData[]>( [] );
+  const [ combinedNodes, setCombinedNodes ] = useState<Node[]>( [] );
+  const [ combinedEdges, setCombinedEdges ] = useState<Edge[]>( [] );
+  const [ isLoadingConnectedFlows, setIsLoadingConnectedFlows ] = useState<boolean>( false );
 
-    // Get diagram state and actions from store
-    const { nodes, edges, handleSchemaLoaded: handleFlowDataLoaded } = useFlowDiagram();
-    const { setLoading, setError } = useFlowUI();
+  // Get diagram state and actions from store
+  const { nodes, edges, handleSchemaLoaded: handleFlowDataLoaded } = useFlowDiagram();
+  const { setError } = useFlowUI();
 
-    // Calculate layout based on viewport dimensions
-    const { width } = getViewportDimensions();
-    const isWide = width > 1200;
-    // Reduce sidebar width by another 20%
-    const sidebarWidth = isWide ? 20 : 14; // Reduced from 18 and 25
-    const diagramWidth = 100 - sidebarWidth;
+  // Handle node changes
+  const onNodesChange = useCallback( ( changes: NodeChange[] ) => {
+    setCombinedNodes( prev => applyNodeChanges( changes, prev ) );
+  }, [] );
 
-    // Handle node changes
-    const onNodesChange = useCallback( ( changes: NodeChange[] ) => {
-        setCombinedNodes( prev => applyNodeChanges( changes, prev ) );
-    }, [] );
+  // Handle edge changes
+  const onEdgesChange = useCallback( ( changes: EdgeChange[] ) => {
+    setCombinedEdges( edgs => applyEdgeChanges( changes, edgs ) );
+  }, [] );
 
-    // Handle edge changes
-    const onEdgesChange = useCallback( ( changes: EdgeChange[] ) => {
-        setCombinedEdges( edgs => applyEdgeChanges( changes, edgs ) );
-    }, [] );
+  // Handle new connections
+  const onConnect = useCallback( ( params: Connection ) => {
+    setCombinedEdges( edgs => addEdge( params, edgs ) );
+  }, [] );
 
-    // Handle new connections
-    const onConnect = useCallback( ( params: Connection ) => {
-        setCombinedEdges( edgs => addEdge( params, edgs ) );
-    }, [] );
+  // Module selection handler
+  const handleModuleClick = useCallback( ( module: UIModuleFile ) => {
+    setModulePath( module.path );
+    setModuleName( module.shortName );
+    // Switch to flows tab after selecting a module
+    setActiveTab( "flows" );
+  }, [] );
 
-    // Module selection handler
-    const handleModuleClick = useCallback( ( module: UIModuleFile ) => {
-        setModulePath( module.path );
-        setModuleName( module.shortName );
-        // Switch to flows tab after selecting a module
-        setActiveTab( "flows" );
-    }, [] );
+  // Flow selection handler
+  const handleFlowClick = useCallback( ( newFlowName: string ) => {
+    setFlowName( newFlowName );
+  }, [] );
 
-    // Flow selection handler
-    const handleFlowClick = useCallback( ( newFlowName: string ) => {
-        setFlowName( newFlowName );
-    }, [] );
+  // Reset flow when module path changes
+  useEffect( () => {
+    if ( modulePath ) {
+      setFlowName( null );
+      setConnectedFlowsData( [] );
+      setCombinedNodes( [] );
+      setCombinedEdges( [] );
+    }
+  }, [ modulePath ] );
 
-    // Reset flow when module path changes
-    useEffect( () => {
-        if ( modulePath ) {
-            setFlowName( null );
-            setConnectedFlowsData( [] );
-            setCombinedNodes( [] );
-            setCombinedEdges( [] );
-        }
-    }, [ modulePath ] );
+  // Add a callback to listen for zoom changes
+  const handleZoomChange = useCallback( ( zoom: number ) => {
+    setZoomLevel( Number( zoom.toFixed( 2 ) ) );
+  }, [] );
 
-    // Add a callback to listen for zoom changes
-    const handleZoomChange = useCallback( ( zoom: number ) => {
-        setZoomLevel( Number( zoom.toFixed( 2 ) ) );
-    }, [] );
+  // Main flow data handler
+  const handleMainFlowDataLoaded = useCallback( ( flowData: FlowData ) => {
+    // Generate the main flow diagram first
+    const mainDiagram = generateFlowDiagram( flowData );
+    setCombinedNodes( mainDiagram.nodes );
+    setCombinedEdges( mainDiagram.edges );
 
-    // Main flow data handler
-    const handleMainFlowDataLoaded = useCallback( ( flowData: FlowData ) => {
-        // Call the original handler first
-        handleFlowDataLoaded( flowData );
+    // Call the original handler
+    handleFlowDataLoaded( flowData );
 
-        // Now load connected flows
-        const connectedFlowNames = getConnectedFlows( flowData );
-        if ( connectedFlowNames.length > 0 ) {
-            loadConnectedFlows( connectedFlowNames );
-        }
-    }, [ handleFlowDataLoaded ] );
+    // Now load connected flows
+    const connectedFlowNames = getConnectedFlows( flowData );
+    if ( connectedFlowNames.length > 0 ) {
+        loadConnectedFlows( connectedFlowNames );
+    }
+  }, [ handleFlowDataLoaded ] );
 
-    // Function to load connected flows
-    const loadConnectedFlows = async( connectedFlowNames: string[] ) => {
+  // Function to load connected flows
+  const loadConnectedFlows = async( connectedFlowNames: string[] ) => {
+    try {
         setIsLoadingConnectedFlows( true );
-        setLoading( true );
+        const apiBaseUrl = getApiBaseUrl();
+        const loadedFlows: FlowData[] = [];
 
-        try {
-            const loadedFlows: FlowData[] = [];
+        for ( const connectedFlowName of connectedFlowNames ) {
+            // Extract module name from flow name (e.g., "Vertix/UI-V3/SetupNewWizardFlow" -> "Vertix/UI-V3/Module")
+            const moduleNameParts = connectedFlowName.split( "/" );
+            const connectedModuleName = `${ moduleNameParts[ 0 ] }/${ moduleNameParts[ 1 ] }/Module`;
 
-            for ( const connectedFlowName of connectedFlowNames ) {
-                console.log( `Loading connected flow: ${ connectedFlowName }` );
-
-                // Extract module name from flow name (e.g., "Vertix/UI-V3/SetupNewWizardFlow" -> "Vertix/UI-V3/Module")
-                const moduleNameParts = connectedFlowName.split( "/" );
-                const connectedModuleName = `${ moduleNameParts[ 0 ] }/${ moduleNameParts[ 1 ] }/Module`;
-
-                try {
-                    const response = await api.get<FlowData>( "/api/ui-flows", {
-                        params: {
-                            moduleName: connectedModuleName,
-                            flowName: connectedFlowName
-                        }
-                    } );
-
-                    if ( response.data ) {
-                        console.log( `Loaded connected flow data: ${ connectedFlowName }`, response.data );
-                        loadedFlows.push( response.data );
+            try {
+                const response = await axios.get<FlowData>( `${ apiBaseUrl }/api/ui-flows`, {
+                    params: {
+                        moduleName: connectedModuleName,
+                        flowName: connectedFlowName
                     }
-                } catch ( error ) {
-                    console.error( `Failed to load connected flow: ${ connectedFlowName }`, error );
-                }
-            }
-
-            setConnectedFlowsData( loadedFlows );
-
-            // Combine the flows into a single diagram
-            combineFlowDiagrams( nodes, edges, loadedFlows );
-        } catch ( error ) {
-            console.error( "Error loading connected flows:", error );
-            setError( "Failed to load connected flows" );
-        } finally {
-            setIsLoadingConnectedFlows( false );
-            setLoading( false );
-        }
-    };
-
-    // Function to combine flow diagrams
-    const combineFlowDiagrams = ( mainNodes: Node[], mainEdges: Edge[], connectedFlows: FlowData[] ) => {
-        // Start with the main flow nodes and edges
-        const allNodes = [ ...mainNodes ];
-        const allEdges = [ ...mainEdges ];
-
-        // Position offset for each connected flow
-        let offsetX = 800; // Horizontal space between flows
-
-        // Add each connected flow with an offset
-        connectedFlows.forEach( ( flowData, index ) => {
-            // Generate diagram for this flow
-            const { nodes: flowNodes, edges: flowEdges } = generateFlowDiagram( flowData );
-
-            // Add prefix to node IDs to avoid conflicts
-            const prefixedNodes = flowNodes.map( node => ( {
-                ...node,
-                id: `flow-${ index }-${ node.id }`,
-                // Apply offset to position
-                position: {
-                    x: ( node.position?.x || 0 ) + offsetX,
-                    y: ( node.position?.y || 0 )
-                },
-                // Add visual indication that this is a connected flow
-                data: {
-                    ...node.data,
-                    isConnectedFlow: true,
-                    flowIndex: index,
-                    flowName: flowData.name
-                }
-            } ) );
-
-            // Update edge source and target IDs with the prefix
-            const prefixedEdges = flowEdges.map( edge => ( {
-                ...edge,
-                id: `flow-${ index }-${ edge.id }`,
-                source: `flow-${ index }-${ edge.source }`,
-                target: `flow-${ index }-${ edge.target }`
-            } ) );
-
-            // Add connection edges between main flow and this connected flow
-            if ( index === 0 && mainNodes.length > 0 ) {
-                // Find a good node to connect from main flow to this flow
-                const mainFlowGroupId = mainNodes.find( n => n.id === "flow-group" )?.id || mainNodes[ 0 ].id;
-                const connectedFlowGroupId = prefixedNodes.find( n => n.type === "compound" )?.id || prefixedNodes[ 0 ].id;
-
-                // Add a connection edge
-                allEdges.push( {
-                    id: `connection-to-flow-${ index }`,
-                    source: mainFlowGroupId,
-                    target: connectedFlowGroupId,
-                    type: "smoothstep",
-                    animated: true,
-                    style: {
-                        stroke: "#ff9900",
-                        strokeWidth: 2
-                    },
-                    label: "Connected Flow"
                 } );
-            }
 
-            // Add to the combined collection
-            allNodes.push( ...prefixedNodes );
-            allEdges.push( ...prefixedEdges );
-
-            // Increase offset for next flow
-            offsetX += 800;
-        } );
-
-        // Update state with combined nodes and edges
-        setCombinedNodes( allNodes );
-        setCombinedEdges( allEdges );
-    };
-
-    // Update combined nodes/edges when main flow changes
-    useEffect( () => {
-        if ( nodes.length > 0 ) {
-            if ( connectedFlowsData.length > 0 ) {
-                // Recombine when main flow or connected flows change
-                combineFlowDiagrams( nodes, edges, connectedFlowsData );
-            } else {
-                // If no connected flows, just use the main flow
-                setCombinedNodes( nodes );
-                setCombinedEdges( edges );
+                if ( response.data ) {
+                    loadedFlows.push( response.data );
+                }
+            } catch ( error ) {
+                console.error( `Failed to load connected flow: ${ connectedFlowName }`, error );
             }
         }
-    }, [ nodes, edges, connectedFlowsData ] );
 
-    return (
-        <div className="flex h-screen bg-background overflow-hidden">
-            <LoadingIndicator />
+        setConnectedFlowsData( loadedFlows );
+    } catch ( error ) {
+        console.error( "Error loading connected flows:", error );
+        setError( "Failed to load connected flows" );
+    } finally {
+        setIsLoadingConnectedFlows( false );
+    }
+  };
 
-            <ResizablePanelGroup
-                direction="horizontal"
-                className="min-h-screen"
-            >
-                {/* Sidebar */}
-                <ResizablePanel
-                    defaultSize={sidebarWidth}
-                    minSize={10}
-                    maxSize={sidebarWidth}
-                    collapsible={false}
-                    collapsedSize={0}
-                >
-                    <div className="flex flex-col h-full">
-                        <div className="p-4 border-b bg-primary/5">
-                            <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>
-                        </div>
-                        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
-                            <div className="p-4 border-b">
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="modules">Modules</TabsTrigger>
-                                    <TabsTrigger value="flows">Flows</TabsTrigger>
-                                </TabsList>
-                            </div>
+  // Function to combine flow diagrams
+  const combineFlowDiagrams = ( mainNodes: Node[], mainEdges: Edge[], connectedFlows: FlowData[] ) => {
+    // Start with the main flow nodes and edges
+    const allNodes = [ ...mainNodes ];
+    const allEdges = [ ...mainEdges ];
 
-                            <TabsContent value="modules" className="p-4 h-full overflow-y-auto">
-                                <ModuleSelector
-                                    onSelectModule={handleModuleClick}
-                                />
-                            </TabsContent>
+    // Position offset for each connected flow
+    let offsetX = 800; // Horizontal space between flows
 
-                            <TabsContent value="flows" className="p-4 h-full overflow-y-auto">
-                                {modulePath ? (
-                                    <FlowList
-                                        onSelectFlow={handleFlowClick}
-                                    />
-                                ) : (
-                                    <Card className="p-4">
-                                        <p>Please select a module first</p>
-                                    </Card>
-                                )}
-                            </TabsContent>
-                        </Tabs>
+    // Add each connected flow with an offset
+    connectedFlows.forEach( ( flowData, index ) => {
+        // Generate diagram for this flow
+        const { nodes: flowNodes, edges: flowEdges } = generateFlowDiagram( flowData );
 
-                        {/* Zoom level indicator */}
-                        <div className="p-2 border-t text-center text-xs text-muted-foreground bg-muted/30">
-                            Zoom: {Math.round( zoomLevel * 100 )}%
-                        </div>
-                    </div>
-                </ResizablePanel>
+        // Add prefix to node IDs to avoid conflicts
+        const prefixedNodes = flowNodes.map( node => ( {
+            ...node,
+            id: `flow-${ index }-${ node.id }`,
+            // Apply offset to position
+            position: {
+                x: ( node.position?.x || 0 ) + offsetX,
+                y: ( node.position?.y || 0 )
+            },
+            // Add visual indication that this is a connected flow
+            data: {
+                ...node.data,
+                isConnectedFlow: true,
+                flowIndex: index,
+                flowName: flowData.name
+            }
+        } ) );
 
-                <ResizableHandle />
+        // Update edge source and target IDs with the prefix
+        const prefixedEdges = flowEdges.map( edge => ( {
+            ...edge,
+            id: `flow-${ index }-${ edge.id }`,
+            source: `flow-${ index }-${ edge.source }`,
+            target: `flow-${ index }-${ edge.target }`
+        } ) );
 
-                {/* Main content area */}
-                <ResizablePanel defaultSize={diagramWidth} minSize={30}>
-                    <div className="flex flex-col h-full">
-                        {modulePath && flowName && moduleName ? (
-                            <div className="flex flex-col h-full">
-                                <div className="p-4">
-                                    <h2 className="text-xl font-bold">{flowName}</h2>
-                                    <p className="text-sm text-muted-foreground">{modulePath}</p>
-                                    {connectedFlowsData.length > 0 && (
-                                        <div className="text-sm text-muted-foreground mt-1">
-                                            Showing with {connectedFlowsData.length} connected flows
-                                            {isLoadingConnectedFlows && <span className="ml-2">(Loading...)</span>}
-                                        </div>
-                                    )}
-                                </div>
-                                <Separator />
-                                <div className="flex flex-col md:flex-row h-full">
-                                    <div className="md:w-[60%] h-[400px] md:h-full p-4">
-                                        <FlowDiagramDisplay
-                                            nodes={combinedNodes}
-                                            edges={combinedEdges}
-                                            onNodesChange={onNodesChange}
-                                            onEdgesChange={onEdgesChange}
-                                            onConnect={onConnect}
-                                            onZoomChange={handleZoomChange}
-                                        />
-                                    </div>
-                                    <div className="md:w-[40%] p-4 overflow-y-auto">
-                                        <FlowDataDisplay
-                                            moduleName={moduleName}
-                                            flowName={flowName}
-                                            onFlowDataLoaded={handleMainFlowDataLoaded}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-center h-full">
-                                <div className="text-center">
-                                    <h2 className="text-xl font-bold">Select a Flow</h2>
-                                    <p className="text-muted-foreground">
-                                        Please select a module and flow from the sidebar
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </ResizablePanel>
-            </ResizablePanelGroup>
+        // Add connection edges between main flow and this connected flow
+        if ( index === 0 && mainNodes.length > 0 ) {
+            // Find a good node to connect from main flow to this flow
+            const mainFlowGroupId = mainNodes.find( n => n.id === "flow-group" )?.id || mainNodes[ 0 ].id;
+            const connectedFlowGroupId = prefixedNodes.find( n => n.type === "compound" )?.id || prefixedNodes[ 0 ].id;
+
+            // Add a connection edge
+            allEdges.push( {
+                id: `connection-to-flow-${ index }`,
+                source: mainFlowGroupId,
+                target: connectedFlowGroupId,
+                type: "smoothstep",
+                animated: true,
+                style: {
+                    stroke: "#ff9900",
+                    strokeWidth: 2
+                },
+                label: "Connected Flow"
+            } );
+        }
+
+        // Add to the combined collection
+        allNodes.push( ...prefixedNodes );
+        allEdges.push( ...prefixedEdges );
+
+        // Increase offset for next flow
+        offsetX += 800;
+    } );
+
+    // Update state with combined nodes and edges
+    setCombinedNodes( allNodes );
+    setCombinedEdges( allEdges );
+};
+
+  // Update combined nodes/edges when connected flows change
+  useEffect( () => {
+    if ( nodes.length > 0 && connectedFlowsData.length > 0 && !isLoadingConnectedFlows ) {
+        // Combine main flow with connected flows
+        combineFlowDiagrams( nodes, edges, connectedFlowsData );
+    }
+  }, [ nodes, edges, connectedFlowsData, isLoadingConnectedFlows ] );
+
+  return (
+    <FlowLayout>
+      <LoadingIndicator />
+
+      <FlowLayoutContent>
+        {/* Left Sidebar */}
+        <FlowLayoutLeftSidebar defaultSize={20} minSize={15} maxSize={25}>
+          <div className="p-4 border-b bg-primary/5">
+            <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>
+          </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
+            <div className="p-4 border-b">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="modules">Modules</TabsTrigger>
+                <TabsTrigger value="flows">Flows</TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="modules" className="p-4 h-full overflow-y-auto">
+              <ModuleSelector
+                onSelectModule={handleModuleClick}
+              />
+            </TabsContent>
+
+            <TabsContent value="flows" className="p-4 h-full overflow-y-auto">
+              {modulePath ? (
+                <FlowList
+                  onSelectFlow={handleFlowClick}
+                />
+              ) : (
+                <Card className="p-4">
+                  <p>Please select a module first</p>
+                </Card>
+              )}
+            </TabsContent>
+          </Tabs>
+
+          {/* Zoom level indicator */}
+          <div className="p-2 border-t text-center text-xs text-muted-foreground bg-muted/30">
+            Zoom: {Math.round( zoomLevel * 100 )}%
+          </div>
+        </FlowLayoutLeftSidebar>
+
+        <ResizableHandle />
+
+        {/* Main content (Editor with TopBar) */}
+        <FlowLayoutMainContent>
+          {modulePath && flowName && moduleName ? (
+            <>
+              {/* Top Bar */}
+              <FlowLayoutTopBar>
+                <h2 className="text-xl font-bold">{flowName}</h2>
+                <p className="text-sm text-muted-foreground">{modulePath}</p>
+                {connectedFlowsData.length > 0 && (
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Showing with {connectedFlowsData.length} connected flows
+                    {isLoadingConnectedFlows && <span className="ml-2">(Loading...)</span>}
+                  </div>
+                )}
+              </FlowLayoutTopBar>
+
+              {/* Editor */}
+              <FlowLayoutEditor>
+                <div className="h-full w-full">
+                  <FlowDiagramDisplay
+                    nodes={combinedNodes}
+                    edges={combinedEdges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    onZoomChange={handleZoomChange}
+                  />
+                </div>
+              </FlowLayoutEditor>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <h2 className="text-xl font-bold">Select a Flow</h2>
+                <p className="text-muted-foreground">
+                  Please select a module and flow from the sidebar
+                </p>
+              </div>
+            </div>
+          )}
+        </FlowLayoutMainContent>
+
+        <ResizableHandle />
+
+        {/* Right Sidebar */}
+        <FlowLayoutRightSidebar defaultSize={25} minSize={15} maxSize={40}>
+          <div className="p-4 border-b bg-muted/5">
+            <h2 className="text-lg font-semibold">Flow Details</h2>
+          </div>
+          <div className="p-4 overflow-y-auto h-full">
+            {modulePath && flowName && moduleName ? (
+              <FlowDataDisplay
+                moduleName={moduleName}
+                flowName={flowName}
+                onFlowDataLoaded={handleMainFlowDataLoaded}
+              />
+            ) : (
+              <Card className="p-4">
+                <p>Select a flow to view details</p>
+              </Card>
+            )}
+          </div>
+        </FlowLayoutRightSidebar>
+      </FlowLayoutContent>
+
+      {/* Activity Bar */}
+      <FlowLayoutActivityBar>
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            {modulePath && flowName
+              ? `Module: ${ moduleName } • Flow: ${ flowName }`
+              : "No flow selected"}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {connectedFlowsData.length > 0
+              ? `Connected flows: ${ connectedFlowsData.length }`
+              : "No connected flows"}
+          </div>
         </div>
-    );
+      </FlowLayoutActivityBar>
+    </FlowLayout>
+  );
 };

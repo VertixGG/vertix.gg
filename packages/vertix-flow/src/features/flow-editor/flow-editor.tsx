@@ -2,12 +2,12 @@ import React from "react";
 
 import { ResizableHandle } from "@vertix.gg/flow/src/shared/components/resizable";
 import {
-  FlowLayout,
-  FlowLayoutContent,
-  FlowLayoutLeftSidebar,
-  FlowLayoutRightSidebar,
-  FlowLayoutMainContent,
-  FlowLayoutActivityBar
+    FlowLayout,
+    FlowLayoutContent,
+    FlowLayoutLeftSidebar,
+    FlowLayoutRightSidebar,
+    FlowLayoutMainContent,
+    FlowLayoutActivityBar
 } from "@vertix.gg/flow/src/shared/components/flow-layout";
 
 import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
@@ -21,8 +21,8 @@ import { useConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/hook
 import { useFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-diagram";
 
 export interface FlowEditorProps {
-  initialModulePath?: string;
-  initialFlowName?: string;
+    initialModulePath?: string;
+    initialFlowName?: string;
 }
 
 /**
@@ -30,104 +30,104 @@ export interface FlowEditorProps {
  * It handles module and flow selection, and displays the selected flow
  */
 export const FlowEditor: React.FC<FlowEditorProps> = ( {
-  initialModulePath,
-  initialFlowName,
-} ) => {
-  // Module and flow selection state
-  const {
-    modulePath,
-    flowName,
-    moduleName,
-    activeTab,
-    zoomLevel,
-    handleModuleClick,
-    handleFlowClick,
-    handleZoomChange,
-    setActiveTab,
-  } = useModuleFlowSelection( {
     initialModulePath,
     initialFlowName,
-  } );
+} ) => {
+    // Module and flow selection state
+    const {
+        modulePath,
+        flowName,
+        moduleName,
+        activeTab,
+        zoomLevel,
+        handleModuleClick,
+        handleFlowClick,
+        handleZoomChange,
+        setActiveTab,
+    } = useModuleFlowSelection( {
+        initialModulePath,
+        initialFlowName,
+    } );
 
-  // Connected flows state and handlers
-  const {
-    connectedFlowsData,
-    combinedNodes,
-    combinedEdges,
-    isLoadingConnectedFlows,
-    handleMainFlowDataLoaded,
-    setCombinedNodes,
-    setCombinedEdges,
-  } = useConnectedFlows();
+    // Connected flows state and handlers
+    const {
+        connectedFlowsData,
+        combinedNodes,
+        combinedEdges,
+        isLoadingConnectedFlows,
+        handleMainFlowDataLoaded,
+        setCombinedNodes,
+        setCombinedEdges,
+    } = useConnectedFlows();
 
-  // Flow diagram handlers
-  const {
-    onNodesChange,
-    onEdgesChange,
-    onConnect,
-  } = useFlowDiagram( {
-    setCombinedNodes,
-    setCombinedEdges,
-  } );
+    // Flow diagram handlers
+    const {
+        onNodesChange,
+        onEdgesChange,
+        onConnect,
+    } = useFlowDiagram( {
+        setCombinedNodes,
+        setCombinedEdges,
+    } );
 
-  return (
-    <FlowLayout>
-      <LoadingIndicator />
+    return (
+            <FlowLayout>
+                <LoadingIndicator/>
 
-      <FlowLayoutContent>
-        {/* Left Sidebar */}
-        <FlowLayoutLeftSidebar defaultSize={20} minSize={15} maxSize={25}>
-          <FlowEditorSidebar
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            modulePath={modulePath}
-            zoomLevel={zoomLevel}
-            handleModuleClick={handleModuleClick}
-            handleFlowClick={handleFlowClick}
-          />
-        </FlowLayoutLeftSidebar>
+                <FlowLayoutContent>
+                    {/* Left Sidebar */ }
+                    <FlowLayoutLeftSidebar defaultSize={ 20 } minSize={ 15 } maxSize={ 25 }>
+                        <FlowEditorSidebar
+                                activeTab={ activeTab }
+                                setActiveTab={ setActiveTab }
+                                modulePath={ modulePath }
+                                zoomLevel={ zoomLevel }
+                                handleModuleClick={ handleModuleClick }
+                                handleFlowClick={ handleFlowClick }
+                        />
+                    </FlowLayoutLeftSidebar>
 
-        <ResizableHandle />
+                    <ResizableHandle/>
 
-        {/* Main content */}
-        <FlowLayoutMainContent>
-          <FlowEditorMain
-            modulePath={modulePath}
-            flowName={flowName}
-            moduleName={moduleName}
-            connectedFlowsData={connectedFlowsData}
-            isLoadingConnectedFlows={isLoadingConnectedFlows}
-            combinedNodes={combinedNodes}
-            combinedEdges={combinedEdges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onZoomChange={handleZoomChange}
-          />
-        </FlowLayoutMainContent>
+                    {/* Main content */ }
+                    <FlowLayoutMainContent>
+                        <FlowEditorMain
+                                modulePath={ modulePath }
+                                flowName={ flowName }
+                                moduleName={ moduleName }
+                                connectedFlowsData={ connectedFlowsData }
+                                isLoadingConnectedFlows={ isLoadingConnectedFlows }
+                                combinedNodes={ combinedNodes }
+                                combinedEdges={ combinedEdges }
+                                onNodesChange={ onNodesChange }
+                                onEdgesChange={ onEdgesChange }
+                                onConnect={ onConnect }
+                                onZoomChange={ handleZoomChange }
+                        />
+                    </FlowLayoutMainContent>
 
-        <ResizableHandle />
+                    <ResizableHandle/>
 
-        {/* Right Sidebar */}
-        <FlowLayoutRightSidebar defaultSize={25} minSize={15} maxSize={40}>
-          <FlowEditorDetails
-            modulePath={modulePath}
-            flowName={flowName}
-            moduleName={moduleName}
-            onFlowDataLoaded={handleMainFlowDataLoaded}
-          />
-        </FlowLayoutRightSidebar>
-      </FlowLayoutContent>
+                    {/* Right Sidebar */ }
+                    <FlowLayoutRightSidebar defaultSize={ 25 } minSize={ 15 } maxSize={ 40 }>
+                        <FlowEditorDetails
+                                modulePath={ modulePath }
+                                flowName={ flowName }
+                                moduleName={ moduleName }
+                                onFlowDataLoaded={ handleMainFlowDataLoaded }
+                        />
+                    </FlowLayoutRightSidebar>
+                </FlowLayoutContent>
 
-      {/* Activity Bar */}
-      <FlowLayoutActivityBar>
-        <FlowEditorActivity
-          modulePath={modulePath}
-          flowName={flowName}
-          moduleName={moduleName}
-          connectedFlowsCount={connectedFlowsData.length}
-        />
-      </FlowLayoutActivityBar>
-    </FlowLayout>
-  );
+                {/* Activity Bar */ }
+                <FlowLayoutActivityBar>
+                    <FlowEditorActivity
+                            modulePath={ modulePath }
+                            flowName={ flowName }
+                            moduleName={ moduleName }
+                            connectedFlowsCount={ connectedFlowsData.length }
+                    />
+                </FlowLayoutActivityBar>
+            </FlowLayout>
+    );
 };

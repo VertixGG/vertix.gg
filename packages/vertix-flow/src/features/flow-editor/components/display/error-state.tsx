@@ -1,6 +1,8 @@
 import React from "react";
 
-import { Card, CardContent } from "@vertix.gg/flow/src/shared/components/card";
+import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription } from "@vertix.gg/flow/src/shared/components/alert";
 
 export interface ErrorStateProps {
   message: string;
@@ -15,12 +17,11 @@ export const ErrorState: React.FC<ErrorStateProps> = ( {
   className = "min-h-[200px] flex items-center justify-center"
 } ) => {
   return (
-    <Card className={className}>
-      <CardContent>
-        <div className="text-center">
-          <p className="text-red-500">{message}</p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className={className}>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>{message}</AlertDescription>
+      </Alert>
+    </div>
   );
 };

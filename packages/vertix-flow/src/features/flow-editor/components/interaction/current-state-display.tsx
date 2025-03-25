@@ -11,7 +11,7 @@ export const CurrentStateDisplay: React.FC<CurrentStateDisplayProps> = ( { curre
   return (
     <div>
       <h3 className="font-medium mb-2">Current State</h3>
-      <div className="p-2 bg-neutral-100 rounded">
+      <div className="p-2 bg-muted rounded">
         {currentState}
       </div>
     </div>

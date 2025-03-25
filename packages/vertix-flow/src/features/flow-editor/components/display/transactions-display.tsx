@@ -16,13 +16,13 @@ export const TransactionsDisplay: React.FC<TransactionsDisplayProps> = ( { trans
           transactions.map( ( transaction: string, index: number ) => (
             <div
               key={index}
-              className="p-2 bg-neutral-100 rounded text-sm"
+              className="p-2 bg-muted rounded text-sm"
             >
               {transaction}
             </div>
           ) )
         ) : (
-          <p className="text-sm text-neutral-500">No transactions defined</p>
+          <p className="text-sm text-muted-foreground">No transactions defined</p>
         )}
       </div>
     </div>

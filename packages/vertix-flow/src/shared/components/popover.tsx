@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 function Popover( {
   ...props

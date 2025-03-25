@@ -130,7 +130,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
             <Panel position="top-right">
                 <button
-                    className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs px-2 py-1 rounded shadow"
+                    className="bg-muted hover:bg-muted/80 text-foreground text-xs px-2 py-1 rounded shadow"
                     onClick={handleRefresh}
                 >
                     Refresh

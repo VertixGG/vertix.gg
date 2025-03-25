@@ -2,6 +2,7 @@ import React from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@vertix.gg/flow/src/shared/components/tabs";
 import { Card } from "@vertix.gg/flow/src/shared/components/card";
+import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 import { FlowList } from "@vertix.gg/flow/src/features/flow-list/components/flow-list";
 import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/components/module-selector";
 
@@ -37,7 +38,7 @@ export const FlowEditorSidebar: React.FC<FlowEditorSidebarProps> = ( {
                     </TabsList>
                 </div>
 
-                <TabsContent value="modules" className="p-4 h-full overflow-y-auto">
+                <TabsContent value="modules" className="pt-1 h-full overflow-y-auto">
                     <ModuleSelector
                         onSelectModule={handleModuleClick}
                     />
@@ -49,16 +50,17 @@ export const FlowEditorSidebar: React.FC<FlowEditorSidebarProps> = ( {
                             onSelectFlow={handleFlowClick}
                         />
                     ) : (
-                        <Card className="p-4">
-                            <p>Please select a module first</p>
+                        <Card className="p-9">
+                            <p className="text-sm text-muted-foreground">Please select a module first</p>
                         </Card>
                     )}
                 </TabsContent>
             </Tabs>
 
-            {/* Zoom level indicator */}
-            <div className="p-2 border-t text-center text-xs text-muted-foreground bg-muted/30">
-                Zoom: {Math.round( zoomLevel * 100 )}%
+            <div className="p-2 border-t flex items-center justify-center gap-2 bg-muted/30">
+                <Badge variant="outline" className="text-xs">
+                    Zoom: {Math.round( zoomLevel * 100 )}%
+                </Badge>
             </div>
         </>
     );

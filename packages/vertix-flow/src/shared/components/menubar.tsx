@@ -2,7 +2,7 @@ import * as React from "react";
 import * as MenubarPrimitive from "@radix-ui/react-menubar";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 function Menubar( {
   className,

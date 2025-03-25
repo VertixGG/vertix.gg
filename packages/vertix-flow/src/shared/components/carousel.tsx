@@ -5,8 +5,9 @@ import useEmblaCarousel from "embla-carousel-react";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
-import { Button } from "@vertix.gg/flow/src/shared/components/button";
+import { Button } from "src/shared/components/button";
+
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 

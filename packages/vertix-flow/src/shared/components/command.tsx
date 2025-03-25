@@ -4,14 +4,15 @@ import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@vertix.gg/flow/src/shared/components/dialog";
+} from "src/shared/components/dialog";
+
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 function Command( {
   className,

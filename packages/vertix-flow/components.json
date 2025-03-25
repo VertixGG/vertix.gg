@@ -6,15 +6,15 @@
     "tailwind": {
         "config": "tailwind.config.js",
         "css": "src/index.css",
-        "baseColor": "zinc",
+        "baseColor": "slate",
         "cssVariables": true,
         "prefix": ""
     },
     "aliases": {
-        "ui": "@vertix.gg/flow/src/components/ui",
-        "utils": "@vertix.gg/flow/src/lib/utils",
-        "hooks": "@vertix.gg/flow/src/hooks",
-        "components": "@vertix.gg/flow/src/components"
+        "ui": "src/shared/components",
+        "utils": "src/shared/lib",
+        "hooks": "src/shared/hooks",
+        "components": "src/shared/components"
     },
     "iconLibrary": "lucide"
 }

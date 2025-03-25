@@ -9,8 +9,9 @@ import {
 
 } from "react-hook-form";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
-import { Label } from "@vertix.gg/flow/src/shared/components/label";
+import { Label } from "src/shared/components/label";
+
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 import type { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 import type * as LabelPrimitive from "@radix-ui/react-label";

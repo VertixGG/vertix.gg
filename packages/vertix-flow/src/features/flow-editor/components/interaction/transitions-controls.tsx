@@ -30,7 +30,7 @@ export const TransitionsControls: React.FC<TransitionsControlsProps> = ( {
             </Button>
           ) )
         ) : (
-          <p className="text-sm text-neutral-500">No transitions available</p>
+          <p className="text-sm text-muted-foreground">No transitions available</p>
         )}
       </div>
     </div>

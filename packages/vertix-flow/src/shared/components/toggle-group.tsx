@@ -3,8 +3,9 @@
 import * as React from "react";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
-import { toggleVariants } from "@vertix.gg/flow/src/shared/components/toggle";
+import { toggleVariants } from "src/shared/components/toggle";
+
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 import type { VariantProps } from "class-variance-authority";
 

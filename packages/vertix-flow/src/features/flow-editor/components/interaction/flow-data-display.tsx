@@ -17,7 +17,7 @@ export const FlowStateDataDisplay: React.FC<FlowStateDataDisplayProps> = ( { flo
   return (
     <div>
       <h3 className="font-medium mb-2">Flow Data</h3>
-      <div className="p-2 bg-neutral-100 rounded text-sm">
+      <div className="p-2 bg-muted rounded text-sm">
         <pre>{JSON.stringify( flowData, null, 2 )}</pre>
       </div>
     </div>

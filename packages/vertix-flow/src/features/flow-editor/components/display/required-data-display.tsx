@@ -29,7 +29,7 @@ export const RequiredDataDisplay: React.FC<RequiredDataDisplayProps> = ( { requi
           </div>
         ) )
       ) : (
-        <p className="text-sm text-neutral-500">No required data</p>
+        <p className="text-sm text-muted-foreground">No required data</p>
       )}
     </div>
   );

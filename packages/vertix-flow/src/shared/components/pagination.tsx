@@ -5,11 +5,11 @@ import {
   MoreHorizontalIcon,
 } from "lucide-react";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
+import { buttonVariants } from "src/shared/components/button";
 
-import { buttonVariants } from "@vertix.gg/flow/src/shared/components/button";
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
-import type { Button } from "@vertix.gg/flow/src/shared/components/button";
+import type { Button } from "src/shared/components/button";
 
 function Pagination( { className, ...props }: React.ComponentProps<"nav"> ) {
   return (

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cva  } from "class-variance-authority";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 import type { VariantProps } from "class-variance-authority";
 

@@ -1,4 +1,4 @@
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
+import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 function Skeleton( { className, ...props }: React.ComponentProps<"div"> ) {
   return (

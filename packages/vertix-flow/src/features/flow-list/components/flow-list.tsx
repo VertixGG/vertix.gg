@@ -1,6 +1,9 @@
 import React from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@vertix.gg/flow/src/shared/components/card";
+import { ScrollArea } from "@vertix.gg/flow/src/shared/components/scroll-area";
+import { Button } from "@vertix.gg/flow/src/shared/components/button";
+import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
+
 import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
 
 interface FlowListProps {
@@ -10,17 +13,8 @@ interface FlowListProps {
 export const FlowList: React.FC<FlowListProps> = ( { onSelectFlow } ) => {
     const { selectedModule, selectedFlow, setSelectedFlow } = useModuleSelectorStore();
 
-    if ( !selectedModule ) {
-        return (
-            <Card>
-                <CardHeader>
-                    <CardTitle>Available Flows</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-neutral-500">No module selected</p>
-                </CardContent>
-            </Card>
-        );
+    if ( ! selectedModule ) {
+        return null;
     }
 
     const { flows } = selectedModule;
@@ -33,31 +27,34 @@ export const FlowList: React.FC<FlowListProps> = ( { onSelectFlow } ) => {
     };
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Available Flows</CardTitle>
-            </CardHeader>
-            <CardContent>
-                {flows.length > 0 ? (
-                    <div className="space-y-2">
-                        {flows.map( ( flowName, index ) => (
-                            <div
-                                key={index}
-                                className={`p-3 border rounded-md cursor-pointer transition-colors ${
-                                    selectedFlow === flowName
-                                        ? "bg-blue-100 border-blue-300"
-                                        : "hover:bg-neutral-100"
-                                }`}
-                                onClick={() => handleFlowClick( flowName )}
-                            >
-                                <div className="font-medium">{flowName}</div>
+            <>
+                <h2>Available Flows</h2>
+                { flows.length > 0 ? (
+                        <ScrollArea className="h-[90%]">
+                            <div className="space-y-2">
+                                { flows.map( ( flowName, index ) => (
+                                        <React.Fragment key={ index }>
+                                            <Button
+                                                    variant="ghost"
+                                                    className={ `w-full justify-start p-3 h-auto font-normal hover:bg-muted ${
+                                                            selectedFlow === flowName
+                                                                    ? "bg-primary/10 border-primary/30"
+                                                                    : ""
+                                                    }` }
+                                                    onClick={ () => handleFlowClick( flowName ) }
+                                            >
+                                                <div className="font-medium">{ flowName }</div>
+                                            </Button>
+                                            { index < flows.length - 1 && (
+                                                    <Separator className="my-2"/>
+                                            ) }
+                                        </React.Fragment>
+                                ) ) }
                             </div>
-                        ) )}
-                    </div>
+                        </ScrollArea>
                 ) : (
-                    <p className="text-sm text-neutral-500">No flows available in this module</p>
-                )}
-            </CardContent>
-        </Card>
+                        <p className="text-sm text-muted-foreground">No flows available in this module</p>
+                ) }
+            </>
     );
 };

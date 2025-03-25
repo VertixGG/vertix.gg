@@ -111,7 +111,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     type: "smoothstep",
                     animated: true,
                     style: {
-                        stroke: "#ff9900",
+                        stroke: "hsl(var(--warning))",
                         strokeWidth: 2
                     },
                     label: "Connected Flow"

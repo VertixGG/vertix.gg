@@ -1,0 +1,7 @@
+@import "@vertix.gg/flow/src/index.css";
+
+.react-flow__node {
+    &.selected {
+        @apply border-1 border-blue-500;
+    }
+}

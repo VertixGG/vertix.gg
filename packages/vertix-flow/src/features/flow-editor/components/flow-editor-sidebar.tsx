@@ -50,9 +50,7 @@ export const FlowEditorSidebar: React.FC<FlowEditorSidebarProps> = ( {
                             onSelectFlow={handleFlowClick}
                         />
                     ) : (
-                        <Card className="p-9">
-                            <p className="text-sm text-muted-foreground">Please select a module first</p>
-                        </Card>
+                        <p className="text-sm text-center text-muted-foreground">Please select a module first</p>
                     )}
                 </TabsContent>
             </Tabs>

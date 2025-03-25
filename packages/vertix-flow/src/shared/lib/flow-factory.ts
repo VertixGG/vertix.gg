@@ -62,8 +62,6 @@ export class DefaultFlowFactory implements FlowFactory {
             type: "compound",
             position: { x: groupPosition.x, y: groupPosition.y },
             style: {
-                width: groupPosition.width,
-                height: groupPosition.height,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",

@@ -3,7 +3,10 @@ import React from "react";
 import { FlowDiagramDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
 import { FlowLayoutTopBar, FlowLayoutEditor } from "@vertix.gg/flow/src/shared/components/flow-layout";
 
+import "@vertix.gg/flow/src/features/flow-editor/components/index.css";
+
 import type { Node, Edge, NodeChange, EdgeChange, Connection } from "@xyflow/react";
+
 
 export interface FlowEditorMainProps {
     modulePath: string | null;

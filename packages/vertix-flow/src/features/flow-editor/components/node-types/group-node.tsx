@@ -1,64 +1,91 @@
 import React from "react";
 
+import { cn } from "@vertix.gg/flow/src/lib/utils";
+
 export interface GroupNodeProps {
   data: {
     label: string;
     groupType?: string;
-    children?: React.ReactNode
+    children?: React.ReactNode;
   };
 }
 
-/**
- * GroupNode component renders a container for grouping other nodes
- */
+interface GroupStyles {
+  container: string;
+  label: string;
+  content: string;
+}
+
+const GROUP_STYLES: Record<string, GroupStyles> = {
+  Flow: {
+    container: "border-blue-200 bg-blue-50/80 p-5",
+    label: "bg-blue-100 text-blue-800 border border-blue-200",
+    content: "",
+  },
+  Components: {
+    container: "border-violet-200 bg-violet-50/60 p-10",
+    label: "bg-violet-100 text-violet-800 border border-violet-200",
+    content: "flex flex-col items-center justify-center h-full gap-6",
+  },
+  ChildComponents: {
+    container: "border-emerald-200 bg-emerald-50/60 flex flex-row",
+    label: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+    content: "flex flex-row items-center gap-4 overflow-x-auto p-4",
+  },
+  Elements: {
+    container: "border-orange-200 bg-orange-50/40",
+    label: "bg-orange-100 text-orange-800 border border-orange-200",
+    content: "flex justify-center gap-4 flex-wrap",
+  },
+  Default: {
+    container: "border-teal-200 bg-teal-50/50 p-5",
+    label: "bg-teal-100 text-teal-800 border border-teal-200",
+    content: "",
+  },
+};
+
+const GroupLabel: React.FC<{ label: string; styleKey: string }> = ( { label, styleKey } ) => (
+  <div className="absolute -top-6 left-0 right-0 text-center">
+    <span className={cn(
+      "text-[10px] font-medium px-2 py-1 rounded-md shadow-sm",
+      GROUP_STYLES[ styleKey ]?.label
+    )}>
+      {label}
+    </span>
+  </div>
+);
+
+const EmptyGroup: React.FC<{ label: string; groupType: string }> = ( { label, groupType } ) => (
+  <div className={`${ groupType.toLowerCase() }-group p-4 rounded-lg shadow-md bg-card border border-border text-card-foreground`}>
+    <div className="text-sm font-medium">{label}</div>
+    <div className="text-xs text-muted-foreground">Empty {groupType}</div>
+  </div>
+);
+
 export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
   const { label, groupType = "Group", children } = data;
-  const className = `${ groupType.toLowerCase() }-group p-4 rounded-lg shadow-md bg-card border border-border text-card-foreground`;
-
-  const isFlowGroup = groupType === "Flow";
-  const isComponentsGroup = label === "Components";
-  const isElementsGroup = label === "Elements";
-  const isChildComponentsGroup = groupType === "ChildComponents";
 
   if ( !children || ( Array.isArray( children ) && children.length === 0 ) ) {
-    return (
-      <div className={className}>
-        <div className="text-sm font-medium">{label}</div>
-        <div className="text-xs text-muted-foreground">Empty {groupType}</div>
-      </div>
-    );
+    return <EmptyGroup label={label} groupType={groupType} />;
   }
+
+  const styleKey = Object.keys( GROUP_STYLES ).find( key =>
+    key === groupType ||
+    ( key === "Components" && label === "Components" ) ||
+    ( key === "Elements" && label === "Elements" )
+  ) || "Default";
 
   return (
     <div className="relative">
-      <div className="absolute -top-6 left-0 right-0 text-center">
-        <span className={`text-[10px] font-medium px-2 py-1 rounded-sm shadow-sm ${
-          isComponentsGroup ? "bg-primary/10 text-primary" :
-          isChildComponentsGroup ? "bg-cyan-50 text-cyan-600" :
-          isFlowGroup ? "bg-violet-50 text-violet-600" :
-          "bg-muted text-muted-foreground"
-        }`}>
-          {label}
-        </span>
-      </div>
-      <div className={`w-full h-full rounded-lg border border-dashed ${
-        isComponentsGroup
-          ? "border-primary/30 bg-primary/5"
-          : isChildComponentsGroup
-          ? "border-cyan-300 bg-cyan-50/5"
-          : isElementsGroup
-          ? "border-muted-foreground/40 bg-transparent"
-          : isFlowGroup
-          ? "border-violet-300 bg-violet-50/5"
-          : "border-muted-foreground/30 bg-transparent"
-      }`}>
-        <div className={`p-4 ${
-          isComponentsGroup || isChildComponentsGroup
-            ? "flex flex-col items-center justify-center h-full gap-6"
-            : isElementsGroup
-            ? "flex justify-center gap-4 flex-wrap"
-            : ""
-        }`}>
+      <GroupLabel label={label} styleKey={styleKey} />
+      <div className={cn(
+        "w-full h-full rounded-lg border border-dashed",
+        GROUP_STYLES[ styleKey ].container
+      )}>
+        <div className={cn(
+          "p-4",
+          GROUP_STYLES[ styleKey ].content
+        )}>
           {children}
         </div>
       </div>

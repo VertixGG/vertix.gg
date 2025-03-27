@@ -29,10 +29,7 @@
         "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:jest",
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
         "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
-        "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils",
-        "vertix-flow:nextjs:dev": "cd src/nextjs-server && next dev -p 3000",
-        "vertix-flow:nextjs:build": "cd src/nextjs-server && next build",
-        "vertix-flow:nextjs:start": "cd src/nextjs-server && next start -p 3000"
+        "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
     },
     "dependencies": {
         "@typescript-eslint/types": "^8.27.0",

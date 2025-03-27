@@ -207,22 +207,35 @@ export abstract class UIFlowBase<
      * Build schema from components
      * @returns Component schema structure or null if no schemas
      */
-    public async buildComponentSchemas( components = this.getComponents() ): Promise<ComponentSchemaResult[] | null> {
+    public async buildComponentSchemas( components = this.getComponents() ): Promise<ComponentSchemaResult[]> {
         const schemas: ComponentSchemaResult[] = [];
 
         for ( const Component of components ) {
-            const component = new Component();
+            try {
+                // Create component instance
+                const component = new Component();
 
-            if ( component ) {
-                await component.waitUntilInitialized();
+                // Use the component's serialization method and convert to flow schema format
+                const serializedSchema = await component.toSchema();
+
+                // Convert to local schema format (they're compatible but TypeScript doesn't know that)
+                const schema: ComponentSchemaResult = {
+                    name: serializedSchema.name,
+                    type: serializedSchema.type,
+                    entities: serializedSchema.entities,
+                    components: serializedSchema.components as ComponentSchemaResult[]
+                };
+
+                if ( schema ) {
+                    schemas.push( schema );
+                }
+            } catch ( error ) {
+                // Log error and continue with next component
+                console.error( "Error serializing component:", error );
             }
-
-            const result = await component.build( {} ) as ComponentSchemaResult;
-
-            schemas.push( result );
         }
 
-        return schemas.length > 0 ? schemas : null;
+        return schemas.length ? schemas : [];
     }
 
     /**

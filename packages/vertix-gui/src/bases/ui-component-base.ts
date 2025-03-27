@@ -12,6 +12,8 @@ import type {
     UIEntityTypesConstructor
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { ComponentSerializer, ComponentSchemaResult, SerializationContext } from "@vertix.gg/gui/src/bases/ui-serialization";
+
 interface UIGetEntitiesArgs {
     elements?: boolean;
     embeds?: boolean;
@@ -19,7 +21,7 @@ interface UIGetEntitiesArgs {
     markdowns?: boolean;
 }
 
-export abstract class UIComponentBase extends UIComponentInfraBase {
+export abstract class UIComponentBase extends UIComponentInfraBase implements ComponentSerializer {
     private uiElements: UIElementBase<any>[][] = [];
     private uiEmbeds: UIEmbedBase[] = [];
     private uiMarkdowns: UIMarkdownBase[] = [];
@@ -239,7 +241,59 @@ export abstract class UIComponentBase extends UIComponentInfraBase {
         await this.buildEntities( this.uiMarkdowns, markdowns as UIEntityTypes, onlyStatic, args );
     }
 
-    private getStaticThis(): typeof UIComponentBase {
+    protected getStaticThis(): typeof UIComponentBase {
         return this.constructor as typeof UIComponentBase;
+    }
+
+    /**
+     * Create a complete schema representation of this component
+     * @param _context Optional serialization context (unused in base implementation)
+     * @returns Component schema with all elements and embeds
+     */
+    public async toSchema( _context?: SerializationContext ): Promise<ComponentSchemaResult> {
+        await this.waitUntilInitialized();
+
+        // Build basic schema
+        const schema = await this.build( {} ) as ComponentSchemaResult;
+
+        // // Process element groups if any
+        // const elementGroups = this.getStaticThis().getElementsGroups();
+        // if ( elementGroups && elementGroups.length ) {
+        //     if ( !schema.entities ) {
+        //         schema.entities = { elements: [], embeds: [] };
+        //     }
+        //
+        //     if ( !schema.entities.elements ) {
+        //         schema.entities.elements = [];
+        //     }
+        //
+        //     // Add elements from each group
+        //     for ( const ElementsGroup of elementGroups ) {
+        //         try {
+        //             // Get items from the elements group - these are arrays or entities
+        //             const groupItems = ElementsGroup.getItems( {} );
+        //
+        //             // Skip if no items
+        //             if ( !groupItems || !groupItems.length ) continue;
+        //
+        //             // Handle different item structures
+        //             if ( Array.isArray( groupItems[ 0 ] ) ) {
+        //                 // Multi-row elements - each item is already an array
+        //                 groupItems.forEach( row => {
+        //                     if ( row && Array.isArray( row ) && row.length ) {
+        //                         schema.entities!.elements!.push( row );
+        //                     }
+        //                 } );
+        //             } else {
+        //                 // Single row of elements
+        //                 schema.entities.elements.push( groupItems as any[] );
+        //             }
+        //         } catch {
+        //             // Continue if there's an error
+        //         }
+        //     }
+        // }
+
+        return schema;
     }
 }

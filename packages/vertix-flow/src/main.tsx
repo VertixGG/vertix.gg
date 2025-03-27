@@ -69,10 +69,10 @@ if ( rootElement ) {
     const root = ReactDOM.createRoot( rootElement );
 
     root.render(
-        <React.StrictMode>
+        // <React.StrictMode>
             <ErrorBoundary>
                 <FlowEditor/>
             </ErrorBoundary>
-        </React.StrictMode>
+        // </React.StrictMode>
     );
 }

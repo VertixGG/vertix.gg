@@ -1,8 +1,7 @@
-import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { UIWizardFlowBase, WizardFlowState, WizardFlowTransition } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup/setup-max-master-channels-embed";
@@ -15,38 +14,43 @@ import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/s
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
+import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
+
 import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 /**
  * Represents the possible states in the Setup Wizard flow
  */
 export enum SetupWizardFlowState {
-    INITIAL = "initial",
+    INITIAL = WizardFlowState.INITIAL,
     STEP_1_NAME_TEMPLATE = "step_1_name_template",
     STEP_2_BUTTONS = "step_2_buttons",
     STEP_3_ROLES = "step_3_roles",
-    COMPLETED = "completed",
-    ERROR = "error",
+    COMPLETED = WizardFlowState.COMPLETED,
+    ERROR = WizardFlowState.ERROR,
 }
 
 /**
  * Represents the possible transitions in the Setup Wizard flow
  */
 export enum SetupWizardFlowTransition {
-    START_SETUP = "start_setup",
+    START_SETUP = WizardFlowTransition.START,
     SUBMIT_NAME_TEMPLATE = "submit_name_template",
     SELECT_BUTTONS = "select_buttons",
     SELECT_ROLES = "select_roles",
-    FINISH_SETUP = "finish_setup",
-    ERROR_OCCURRED = "error_occurred",
+    FINISH_SETUP = WizardFlowTransition.FINISH,
+    ERROR_OCCURRED = WizardFlowTransition.ERROR,
+    BACK = WizardFlowTransition.BACK,
+    NEXT = WizardFlowTransition.NEXT,
 }
 
 /**
  * Interface for Setup Wizard flow data
  */
-export interface SetupWizardFlowData {
+export interface SetupWizardFlowData extends WizardFlowData {
     // Step 1 data
     dynamicChannelNameTemplate?: string;
 
@@ -58,25 +62,14 @@ export interface SetupWizardFlowData {
     // Step 3 data
     dynamicChannelVerifiedRoles?: string[];
 
-    // Error data
-    errorCode?: string;
-    errorMessage?: string;
-
     // Cross-flow context data
-    originFlow?: string;
-    originState?: string;
-    originTransition?: string;
-    sourceButton?: string;
     wizardType?: string;
-
-    // Index signature for UIFlowData compatibility
-    [key: string]: unknown;
 }
 
 /**
  * Setup wizard flow implementation
  */
-export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizardFlowTransition, SetupWizardFlowData> {
+export class SetupWizardFlow extends UIWizardFlowBase<SetupWizardFlowState, SetupWizardFlowTransition, SetupWizardFlowData> {
     /**
      * Get the name of this flow
      */
@@ -85,28 +78,13 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
     }
 
     /**
-     * Get the component associated with this flow
+     * Get embed groups for this flow
      */
-    public static getComponents() {
-        return [ class SetupNewWizardComponent extends UIWizardComponentBase {
-            public static getName() {
-                return "Vertix/UI-V3/SetupNewWizardComponent";
-            }
-
-            public static getComponents() {
-                return [ SetupStep1Component, SetupStep2Component, SetupStep3Component ];
-            }
-
-            public static getEmbedsGroups() {
-                return [
-                    // TODO: Find better way to do this.
-                    ...super.getEmbedsGroups(),
-
-                    UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
-                    UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed ),
-                ];
-            }
-        } ];
+    public static getEmbedsGroups() {
+        return [
+            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed ),
+        ];
     }
 
     /**
@@ -117,15 +95,19 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
             [ SetupWizardFlowState.INITIAL ]: [ SetupWizardFlowTransition.START_SETUP ],
             [ SetupWizardFlowState.STEP_1_NAME_TEMPLATE ]: [
                 SetupWizardFlowTransition.SUBMIT_NAME_TEMPLATE,
+                SetupWizardFlowTransition.NEXT,
                 SetupWizardFlowTransition.ERROR_OCCURRED,
             ],
             [ SetupWizardFlowState.STEP_2_BUTTONS ]: [
                 SetupWizardFlowTransition.SELECT_BUTTONS,
+                SetupWizardFlowTransition.NEXT,
+                SetupWizardFlowTransition.BACK,
                 SetupWizardFlowTransition.ERROR_OCCURRED,
             ],
             [ SetupWizardFlowState.STEP_3_ROLES ]: [
                 SetupWizardFlowTransition.SELECT_ROLES,
                 SetupWizardFlowTransition.FINISH_SETUP,
+                SetupWizardFlowTransition.BACK,
                 SetupWizardFlowTransition.ERROR_OCCURRED,
             ],
             [ SetupWizardFlowState.COMPLETED ]: [],
@@ -144,6 +126,8 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
             [ SetupWizardFlowTransition.SELECT_ROLES ]: SetupWizardFlowState.STEP_3_ROLES,
             [ SetupWizardFlowTransition.FINISH_SETUP ]: SetupWizardFlowState.COMPLETED,
             [ SetupWizardFlowTransition.ERROR_OCCURRED ]: SetupWizardFlowState.ERROR,
+            [ SetupWizardFlowTransition.NEXT ]: SetupWizardFlowState.STEP_2_BUTTONS, // Will be overridden by step-specific logic
+            [ SetupWizardFlowTransition.BACK ]: SetupWizardFlowState.STEP_1_NAME_TEMPLATE, // Will be overridden by step-specific logic
         };
     }
 
@@ -162,6 +146,8 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
                 "dynamicChannelVerifiedRoles",
             ],
             [ SetupWizardFlowTransition.ERROR_OCCURRED ]: [ "errorCode", "errorMessage" ],
+            [ SetupWizardFlowTransition.NEXT ]: [],
+            [ SetupWizardFlowTransition.BACK ]: [],
         };
     }
 
@@ -196,6 +182,13 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
         super( options );
     }
 
+    /**
+     * Implementation of getStepComponents for UIWizardFlowBase
+     */
+    public getStepComponents(): UIComponentConstructor[] {
+        return [ SetupStep1Component, SetupStep2Component, SetupStep3Component ];
+    }
+
     public getPermissions(): PermissionsBitField {
         return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
     }
@@ -209,7 +202,11 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
     }
 
     protected getInitialData(): SetupWizardFlowData {
-        return {};
+        return {
+            currentStep: 0,
+            totalSteps: this.getStepComponents().length,
+            stepHistory: []
+        };
     }
 
     protected initializeTransitions(): void {
@@ -232,11 +229,42 @@ export class SetupWizardFlow extends UIFlowBase<SetupWizardFlowState, SetupWizar
         }
     }
 
-    public getAvailableTransitions(): SetupWizardFlowTransition[] {
-        return SetupWizardFlow.getFlowTransitions()[ this.getCurrentState() ];
-    }
-
+    /**
+     * Override to handle step-specific transitions
+     */
     public getNextState( transition: SetupWizardFlowTransition ): SetupWizardFlowState {
+        const data = this.getData();
+
+        // Handle standard wizard navigation
+        if ( transition === SetupWizardFlowTransition.NEXT ) {
+            const currentStep = data.currentStep || 0;
+
+            // Map steps to states
+            const stepStates = [
+                SetupWizardFlowState.STEP_1_NAME_TEMPLATE,
+                SetupWizardFlowState.STEP_2_BUTTONS,
+                SetupWizardFlowState.STEP_3_ROLES,
+            ];
+
+            // Get next state based on current step
+            return stepStates[ Math.min( currentStep + 1, stepStates.length - 1 ) ];
+        }
+
+        if ( transition === SetupWizardFlowTransition.BACK ) {
+            const currentStep = data.currentStep || 0;
+
+            // Map steps to states
+            const stepStates = [
+                SetupWizardFlowState.STEP_1_NAME_TEMPLATE,
+                SetupWizardFlowState.STEP_2_BUTTONS,
+                SetupWizardFlowState.STEP_3_ROLES,
+            ];
+
+            // Get previous state based on current step
+            return stepStates[ Math.max( currentStep - 1, 0 ) ];
+        }
+
+        // Use static mapping for other transitions
         return SetupWizardFlow.getNextStates()[ transition ];
     }
 

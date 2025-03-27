@@ -1,27 +1,69 @@
 import React from "react";
 
-import { CustomNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/custom-node";
+import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/group-node";
 
-import type { ExtendedNodeData } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/custom-node";
+import type { ExtendedNodeData } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 
-interface ChildNode {
+// Base node interface
+interface BaseNode {
   id: string;
   label: string;
   type: string;
-  attributes?: Record<string, unknown>;
-  elements?: Array<Array<any>>;
-  groupType?: string;
+}
+
+// Component specific node
+interface ComponentNode extends BaseNode {
+  type: "component";
+  elements?: Array<Array<{
+    attributes: {
+      type: number;
+      style: number;
+      label: string;
+      emoji?: { name: string };
+      isDisabled?: boolean;
+    };
+  }>>;
   childNodes?: Array<ChildNode>;
 }
 
-export interface CompoundNodeData {
-  id?: string;
-  label: string;
+// Embed specific node
+interface EmbedNode extends BaseNode {
+  type: "embed";
+  attributes: {
+    title?: string;
+    description?: string;
+    thumbnail?: { url: string };
+    image?: { url: string };
+    [key: string]: unknown;
+  };
+}
+
+// Group specific node
+interface GroupNode extends BaseNode {
+  type: "group";
+  groupType: string;
+  childNodes?: Array<ChildNode>;
+}
+
+// Element specific node
+interface ElementNode extends BaseNode {
+  type: "element";
+  attributes: {
+    type: number;
+    style: number;
+    label: string;
+    emoji?: { name: string };
+    isDisabled?: boolean;
+  };
+}
+
+// Union type for all possible child nodes
+type ChildNode = ComponentNode | EmbedNode | GroupNode | ElementNode;
+
+export interface CompoundNodeData extends BaseNode {
   type: string;
   groupType?: string;
-  attributes?: Record<string, unknown>;
-  elements?: Array<Array<any>>;
   childNodes?: Array<ChildNode>;
 }
 
@@ -33,21 +75,24 @@ export interface CompoundNodeProps {
  * CompoundNode component that can handle nesting of elements in DOM
  */
 export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
-  const { label, type = "compound", groupType, childNodes, attributes, elements } = data;
+  const { label, type = "compound", groupType, childNodes } = data;
   const isElementsGroup = groupType === "Elements";
   const isComponentsGroup = groupType === "Components";
 
   // Render a standard node if not a group
   if ( type !== "group" && type !== "compound" ) {
-    return <CustomNode data={{ label, type, attributes, elements } as ExtendedNodeData} />;
+    // Convert the data to the appropriate ExtendedNodeData type
+    const nodeData: ExtendedNodeData = {
+      id: data.id,
+      label,
+      type,
+      ...( data as ChildNode ) // This will include the correct attributes/elements based on type
+    };
+debugger
+    return <DiscordNode data={nodeData} />;
   }
 
   // For groups, render a container with child nodes nested inside
-
-  // Special case for flow-group with Components childNodes
-  if ( data.id === "flow-group" ) {
-  }
-
   return (
     <GroupNode data={{
       label,
@@ -76,17 +121,10 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
           <div key={child.id} className={className}>
             {child.type === "group" ? (
               // Recursively render nested groups
-              <CompoundNode data={{
-                label: child.label,
-                type: child.type,
-                groupType: child.groupType,
-                childNodes: child.childNodes,
-                attributes: child.attributes,
-                elements: child.elements
-              }} />
+              <CompoundNode data={child} />
             ) : (
-              // Render regular nodes
-              <CustomNode data={child as ExtendedNodeData} />
+              // Render regular nodes with proper typing
+              <DiscordNode data={child as ExtendedNodeData} />
             )}
           </div>
         );

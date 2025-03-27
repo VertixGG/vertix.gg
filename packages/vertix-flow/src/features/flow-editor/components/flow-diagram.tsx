@@ -12,9 +12,9 @@ import {
     ReactFlowProvider
 } from "@xyflow/react";
 
-import { CustomNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/custom-node";
 import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/group-node";
 import { CompoundNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/compound-node";
+import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 
 import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
@@ -29,7 +29,7 @@ import type {
 
 // Mapping for custom node types
 const nodeTypes = {
-    custom: CustomNode,
+    discord: DiscordNode,
     group: GroupNode,
     compound: CompoundNode
 };

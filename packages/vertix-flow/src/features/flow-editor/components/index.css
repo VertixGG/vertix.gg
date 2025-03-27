@@ -5,3 +5,107 @@
         @apply border-1 border-blue-500;
     }
 }
+
+/* Discord theme variables and styling */
+:root {
+    --discord-primary-bg: #36393f;
+    --discord-secondary-bg: #2f3136;
+    --discord-primary-text: #ffffff;
+    --discord-secondary-text: #b9bbbe;
+    --discord-description-text: #dcddde;
+    --discord-embed-accent: #5865f2;
+}
+
+/* Discord node wrapper */
+.discord-node-wrapper {
+    @apply overflow-hidden rounded-lg shadow-lg;
+}
+
+/* Discord component styling */
+.discord-component {
+    background-color: var(--discord-secondary-bg);
+    color: var(--discord-primary-text);
+    @apply p-4;
+}
+
+.discord-component-title {
+    @apply font-semibold text-base;
+}
+
+.discord-component-type {
+    color: var(--discord-secondary-text);
+    @apply text-xs mt-1;
+}
+
+/* Discord embed styling */
+.discord-embed {
+    background-color: var(--discord-primary-bg);
+    @apply min-w-[400px] max-w-[600px];
+}
+
+.discord-embed-content {
+    border-left: 4px solid var(--discord-embed-accent);
+    @apply p-4;
+}
+
+.discord-embed-title {
+    color: var(--discord-primary-text);
+    @apply font-medium text-lg mb-2;
+}
+
+.discord-embed-description {
+    color: var(--discord-description-text);
+    @apply text-sm whitespace-pre-wrap mb-3;
+}
+
+.discord-embed-thumbnail {
+    @apply float-right ml-4 mb-2;
+}
+
+.discord-embed-thumbnail img {
+    @apply max-w-[80px] rounded;
+}
+
+.discord-embed-image {
+    @apply mt-3;
+}
+
+.discord-embed-image img {
+    @apply max-w-full rounded;
+}
+
+/* Discord button rows */
+.discord-button-row {
+    @apply flex gap-2 mt-4;
+}
+
+.discord-element-button-row {
+    @apply flex gap-2 mt-2;
+}
+
+/* Discord element styling */
+.discord-element {
+    background-color: var(--discord-primary-bg);
+    @apply p-4;
+}
+
+.discord-element-title {
+    color: var(--discord-primary-text);
+    @apply font-medium text-sm mb-2;
+}
+
+/* Discord fallback styling */
+.discord-fallback {
+    background-color: var(--discord-secondary-bg);
+    color: var(--discord-primary-text);
+    @apply p-3;
+}
+
+.discord-fallback-title {
+    @apply font-medium text-sm text-center;
+}
+
+.discord-fallback-type {
+    color: var(--discord-secondary-text);
+    @apply text-[10px] mt-1 text-center;
+}

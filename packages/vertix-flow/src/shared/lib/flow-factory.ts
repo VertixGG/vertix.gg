@@ -32,6 +32,7 @@ interface ComponentNode {
     childNodes?: ComponentNode[];
     attributes?: Record<string, unknown>;
     elements?: Array<unknown>;
+    embeds?: Array<unknown>;
 }
 
 // Default implementation of the factory
@@ -103,71 +104,34 @@ export class DefaultFlowFactory implements FlowFactory {
             const componentId = `component-${ componentIndex }`;
             const componentLabel = component.name?.split( "/" ).pop() || `Component ${ componentIndex + 1 }`;
 
-            // Create child nodes for each component
-            const childNodes: ComponentNode[] = [];
-
-            // Add root component node
-            childNodes.push( {
-                id: `${ componentId }-root`,
+            // Create a single node structure for the component
+            const result: ComponentNode = {
+                id: componentId,
                 label: componentLabel,
-                type: "component"
-            } );
-
-            // Add embeds if they exist
-            if ( component.entities?.embeds?.length ) {
-                component.entities.embeds.forEach( ( embed, embedIndex ) => {
-                    // Check if elements exist to add them to the embed
-                    const elements = component.entities?.elements?.length ?
-                        component.entities.elements : undefined;
-
-                    childNodes.push( {
-                        id: `${ componentId }-embed-${ embedIndex }`,
-                        label: embed.name.split( "/" ).pop() || `Embed ${ embedIndex + 1 }`,
-                        type: "embed",
-                        attributes: embed.attributes || {},
-                        elements: elements // Pass the elements array to the embed node
-                    } );
-                } );
-            }
-
-            // Add elements group if elements exist
-            if ( component.entities?.elements?.length ) {
-                childNodes.push( {
-                    id: `${ componentId }-elements-group`,
-                    label: "Elements",
-                    type: "group",
-                    groupType: "Elements",
-                    childNodes: component.entities.elements.flat().map( ( element, elementIndex ) => ( {
-                        id: `${ componentId }-element-${ elementIndex }`,
+                type: "component",
+                // Add embeds directly to the component data
+                embeds: component.entities?.embeds?.map( ( embed, embedIndex ) => ( {
+                    id: `${ componentId }-embed-${ embedIndex }`,
+                    label: embed.name.split( "/" ).pop() || `Embed ${ embedIndex + 1 }`,
+                    attributes: embed.attributes || {}
+                } ) ) || [],
+                // Add elements directly to the component data
+                elements: component.entities?.elements?.map( ( row, rowIndex ) => ( {
+                    id: `${ componentId }-row-${ rowIndex }`,
+                    label: `Row ${ rowIndex + 1 }`,
+                    elements: row.map( ( element, elementIndex ) => ( {
+                        id: `${ componentId }-element-${ rowIndex }-${ elementIndex }`,
                         label: element.name.split( "/" ).pop() || `Element ${ elementIndex + 1 }`,
                         type: element.type || "element",
                         attributes: element.attributes
                     } ) )
-                } );
-            }
+                } ) ) || []
+            };
 
             // Recursively process child components if they exist
             if ( component.components?.length ) {
-                const childComponentsGroup: ComponentNode = {
-                    id: `${ componentId }-child-components-group`,
-                    label: "Child Components",
-                    type: "group",
-                    groupType: "ChildComponents",
-                    childNodes: this.createComponentNodes( component.components )
-                };
-
-                childNodes.push( childComponentsGroup );
-
-                // Add edges from root to child components group in the createComponentEdges method
+                result.childNodes = this.createComponentNodes( component.components );
             }
-
-            const result: ComponentNode = {
-                id: componentId,
-                label: componentLabel,
-                type: "group",
-                groupType: "Component",
-                childNodes
-            };
 
             return result;
         } );

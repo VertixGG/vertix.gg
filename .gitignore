@@ -8,3 +8,7 @@ packages/vertix-base/src/encryption/key.ts
 
 vertix_backup*
 .qodo
+
+packages/vertix-flow/src/nextjs-server/.next/
+
+src/nextjs-server/.next/

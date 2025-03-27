@@ -1,7 +1,5 @@
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
-import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
-
 import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
@@ -220,17 +218,6 @@ export abstract class UIFlowBase<
             }
 
             const result = await component.build( {} ) as ComponentSchemaResult;
-
-            if ( component instanceof UIWizardComponentBase ) {
-                // Get child component constructors
-                const wizardComponent = Component as typeof UIWizardComponentBase;
-
-                const childSchemas = await this.buildComponentSchemas( wizardComponent.getComponents() );
-
-                if ( childSchemas ) {
-                    result.components = childSchemas;
-                }
-            }
 
             schemas.push( result );
         }

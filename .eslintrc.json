@@ -1,18 +1,77 @@
-
 {
     "extends": [
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended"
     ],
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
+    "plugins": [ "@typescript-eslint", "react" ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
     "rules": {
         "@typescript-eslint/no-explicit-any": "off",
-        "space-in-parens": ["error", "always"],
-        "space-before-function-paren": ["error", "never"],
-        "space-before-blocks": ["error", "always"],
-        "template-curly-spacing": ["error", "always"],
-        "array-bracket-spacing": ["error", "always"],
-        "object-curly-spacing": ["error", "always"],
-        "computed-property-spacing": ["error", "always"]
+        "indent": [ "error", 4, {
+            "SwitchCase": 1,
+            "VariableDeclarator": 1,
+            "outerIIFEBody": 1,
+            "MemberExpression": 1,
+            "FunctionDeclaration": { "parameters": 2, "body": 1 },
+            "FunctionExpression": { "parameters": 2, "body": 1 },
+            "CallExpression": { "arguments": 2 },
+            "ArrayExpression": 1,
+            "ObjectExpression": 1,
+            "ImportDeclaration": 1,
+            "flatTernaryExpressions": false,
+            "ignoreComments": false,
+            "ignoredNodes": [ "TSTypeParameterInstantiation" ]
+        } ],
+        "@typescript-eslint/indent": [ "error", 4, {
+            "SwitchCase": 1,
+            "VariableDeclarator": 1,
+            "outerIIFEBody": 1,
+            "MemberExpression": 1,
+            "FunctionDeclaration": { "parameters": 2, "body": 1 },
+            "FunctionExpression": { "parameters": 2, "body": 1 },
+            "CallExpression": { "arguments": 2 },
+            "ArrayExpression": 1,
+            "ObjectExpression": 1,
+            "ImportDeclaration": 1,
+            "flatTernaryExpressions": false,
+            "ignoreComments": false,
+            "offsetTernaryExpressions": true
+        } ],
+        "space-in-parens": [ "error", "always" ],
+        "space-before-function-paren": [ "error", "always" ],
+        "space-before-blocks": [ "error", "always" ],
+        "template-curly-spacing": [ "error", "always" ],
+        "array-bracket-spacing": [ "error", "always" ],
+        "object-curly-spacing": [ "error", "always" ],
+        "computed-property-spacing": [ "error", "always" ],
+        "jsx-quotes": [ "error", "prefer-double" ],
+        "react/jsx-curly-spacing": [ "error", {
+            "when": "always",
+            "children": true
+        } ],
+        "key-spacing": [ "error", {
+            "beforeColon": false,
+            "afterColon": true,
+            "mode": "strict"
+        } ],
+        "comma-spacing": [ "error", {
+            "before": false,
+            "after": true
+        } ],
+        "@typescript-eslint/type-annotation-spacing": [ "error", {
+            "before": false,
+            "after": true,
+            "overrides": {
+                "arrow": {
+                    "before": true,
+                    "after": true
+                }
+            }
+        } ]
     }
 }

@@ -14,10 +14,6 @@
         "vertix-flow:preview": "vite preview"
     },
     "dependencies": {
-        "@vertix.gg/bot": "workspace:*",
-        "@vertix.gg/gui": "workspace:*",
-        "@vertix.gg/base": "workspace:*",
-        "@vertix.gg/prisma": "workspace:*",
         "@fastify/cors": "^11.0.0",
         "@fastify/middie": "^9.0.3",
         "@fastify/type-provider-typebox": "^5.1.0",

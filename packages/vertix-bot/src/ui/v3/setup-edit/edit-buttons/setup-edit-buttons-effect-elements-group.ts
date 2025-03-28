@@ -7,7 +7,7 @@ import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setu
 
 export class SetupEditButtonsEffectElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V3/SetupEditButtonsEffectElementsGroup";
+        return "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup";
     }
 
     public static getItems() {

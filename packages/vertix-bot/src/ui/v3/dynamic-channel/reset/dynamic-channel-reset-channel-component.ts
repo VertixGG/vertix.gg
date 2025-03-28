@@ -11,7 +11,7 @@ import { DynamicChannelResetChannelEmbed } from "@vertix.gg/bot/src/ui/v3/dynami
 
 export class DynamicChannelResetChannelComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelResetChannelComponent";
+        return "VertixBot/UI-V3/DynamicChannelResetChannelComponent";
     }
 
     public static getInstanceType() {

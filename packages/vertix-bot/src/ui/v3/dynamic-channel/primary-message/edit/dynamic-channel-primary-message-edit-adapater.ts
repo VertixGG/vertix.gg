@@ -32,7 +32,7 @@ interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteracti
 
 export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapterWizardWithInitiatorElementBase<DefaultInteraction> {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter";
     }
 
     public static getComponent() {
@@ -116,7 +116,7 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
     protected async onAfterFinish( interaction: DefaultInteraction ): Promise<void> {
         await this.deleteRelatedEphemeralInteractionsInternal(
             interaction,
-            "Vertix/UI-V3/DynamicChannelAdapter:Vertix/UI-V3/DynamicChannelPrimaryMessageEditButton",
+            "VertixBot/UI-V3/DynamicChannelAdapter:VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
             1
         );
     }
@@ -133,35 +133,35 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
         );
 
         this.bindModalWithButton(
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
             this.onEditTitleModalSubmit
         );
 
         this.bindModalWithButton(
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
             this.onEditDescriptionModalSubmit
         );
     }
 
     private async onNoButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.deleteRelatedEphemeralInteractionsInternal( interaction, "Vertix/UI-V3/DynamicChannelAdapter", 1 );
+        await this.deleteRelatedEphemeralInteractionsInternal( interaction, "VertixBot/UI-V3/DynamicChannelAdapter", 1 );
     }
 
     private async onYesButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent" );
     }
 
     private async onEditTitleModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
         const inputId =
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter" +
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter" +
             UI_CUSTOM_ID_SEPARATOR +
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditModalTitle";
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalTitle";
 
         const title = interaction.fields.getTextInputValue( this.customIdStrategy.generateId( inputId ) );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent", {
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent", {
             title
         } );
 
@@ -179,13 +179,13 @@ export class DynamicChannelPrimaryMessageEditAdapter extends DynamicChannelAdapt
 
     private async onEditDescriptionModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
         const inputId =
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditAdapter" +
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter" +
             UI_CUSTOM_ID_SEPARATOR +
-            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditModalDescription";
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalDescription";
 
         const description = interaction.fields.getTextInputValue( this.customIdStrategy.generateId( inputId ) );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent", {
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent", {
             description
         } );
 

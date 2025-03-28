@@ -108,7 +108,7 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
     public static getHandoffPoints(): FlowIntegrationPoint[] {
         return [
             {
-                flowName: "Vertix/UI-V3/SetupNewWizardFlow",
+                flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
                 description: "Hands off to Setup Wizard when setup button is clicked",
                 sourceState: WelcomeFlowState.SETUP_CLICKED,
                 transition: WelcomeFlowTransition.CLICK_SETUP,
@@ -122,8 +122,8 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
      */
     public static getExternalReferences(): Record<string, string> {
         return {
-            setupWizardFlow: "Vertix/UI-V3/SetupNewWizardFlow",
-            setupWizardAdapter: "Vertix/UI-V3/SetupNewWizardAdapter",
+            setupWizardFlow: "VertixBot/UI-V3/SetupNewWizardFlow",
+            setupWizardAdapter: "VertixBot/UI-V3/SetupNewWizardAdapter",
             setupWizardEntryTransition: "START_SETUP"
         };
     }

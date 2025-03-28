@@ -9,7 +9,7 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class SetupEditVerifiedRolesElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V3/SetupEditVerifiedRolesElementsGroup";
+        return "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup";
     }
 
     public static getItems() {

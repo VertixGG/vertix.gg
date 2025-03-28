@@ -6,7 +6,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton";
+        return "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton";
     }
 
     public getId() {
@@ -42,7 +42,7 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
             return true;
         }
 
-        return !DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" ).isChannelClaimable(
+        return !DynamicChannelClaimManager.get( "VertixBot/UI-V2/DynamicChannelClaimManager" ).isChannelClaimable(
             this.uiArgs?.channelId
         );
     }

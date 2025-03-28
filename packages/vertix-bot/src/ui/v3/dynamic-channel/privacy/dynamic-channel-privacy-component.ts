@@ -8,7 +8,7 @@ import { DynamicChannelPrivacySelectMenu } from "@vertix.gg/bot/src/ui/v3/dynami
 
 export class DynamicChannelPrivacyComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrivacyComponent";
+        return "VertixBot/UI-V3/DynamicChannelPrivacyComponent";
     }
 
     public static getInstanceType() {
@@ -24,11 +24,11 @@ export class DynamicChannelPrivacyComponent extends UIComponentBase {
     }
 
     public static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V3/DynamicChannelPrivacyEmbedGroup";
+        return "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup";
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/DynamicChannelPrivacyMenuGroup";
+        return "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup";
     }
 
     public static getDefaultMarkdownsGroup() {

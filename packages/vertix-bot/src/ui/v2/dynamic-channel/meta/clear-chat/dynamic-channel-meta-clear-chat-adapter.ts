@@ -10,7 +10,7 @@ import type { VoiceChannel } from "discord.js";
 
 export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaClearChatAdapter";
+        return "VertixBot/UI-V2/DynamicChannelMetaClearChatAdapter";
     }
 
     public static getComponent() {
@@ -29,7 +29,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
     }
 
     protected onEntityMap() {
-        this.bindButton( "Vertix/UI-V2/DynamicChannelMetaClearChatButton", this.onClearChatButtonClicked );
+        this.bindButton( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", this.onClearChatButtonClicked );
     }
 
     private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
@@ -37,7 +37,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
 
         switch ( result?.code ) {
             case "success":
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup" );
 
                 // Search embeds with "🧹" in title and delete them.
                 const messages = await interaction.channel.messages.fetch();
@@ -64,7 +64,7 @@ export class DynamicChannelMetaClearChatAdapter extends DynamicChannelAdapterBas
 
             case "nothing-to-delete":
                 this.getComponent().switchEmbedsGroup(
-                    "Vertix/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup"
+                    "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup"
                 );
                 break;
 

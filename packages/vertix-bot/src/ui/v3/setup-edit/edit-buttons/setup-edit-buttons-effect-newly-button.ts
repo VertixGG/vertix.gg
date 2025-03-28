@@ -6,7 +6,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class SetupEditButtonsEffectNewlyButton extends UIElementButtonBase {
     public static getName() {
-        return "Vertix/UI-V3/SetupEditButtonsEffectNewlyButton";
+        return "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton";
     }
 
     public static getInstanceType() {

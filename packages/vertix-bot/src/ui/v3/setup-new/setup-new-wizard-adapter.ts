@@ -45,13 +45,13 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     private masterChannelService: MasterChannelService;
 
     public static getName() {
-        return "Vertix/UI-V3/SetupNewWizardAdapter";
+        return "VertixBot/UI-V3/SetupNewWizardAdapter";
     }
 
     public static getComponent() {
         return class SetupNewWizardComponent extends UIWizardComponentBase {
             public static getName() {
-                return "Vertix/UI-V3//SetupNewWizardComponent";
+                return "VertixBot/UI-V3//SetupNewWizardComponent";
             }
 
             public static getComponents() {
@@ -117,7 +117,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
         // Select buttons menu.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V3/ChannelButtonsTemplateSelectMenu",
+            "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
             this.onButtonsSelected
         );
 
@@ -246,7 +246,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
     private async onTemplateNameModalSubmit( interaction: UIDefaultModalChannelTextInteraction ) {
         const channelNameInputId = this.customIdStrategy.generateId(
-            "Vertix/UI-V3/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
+            "VertixBot/UI-V3/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
         );
 
         const value = interaction.fields.getTextInputValue( channelNameInputId );

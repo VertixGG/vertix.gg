@@ -23,7 +23,7 @@ import { SetupEditVerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v3/setup-edit
  */
 export class SetupEditComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/ConfigComponent";
+        return "VertixBot/UI-V3/ConfigComponent";
     }
 
     public static getInstanceType() {
@@ -53,11 +53,11 @@ export class SetupEditComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/SetupEditElementsGroup";
+        return "VertixBot/UI-V3/SetupEditElementsGroup";
     }
 
     public static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V3/SetupEditEmbedGroup";
+        return "VertixBot/UI-V3/SetupEditEmbedGroup";
     }
 
     protected static getModals() {

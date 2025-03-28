@@ -21,7 +21,7 @@ export abstract class DynamicChannelAdapterWizardBase<
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelAdapterWizardBase";
+        return "VertixBot/UI-V3/DynamicChannelAdapterWizardBase";
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

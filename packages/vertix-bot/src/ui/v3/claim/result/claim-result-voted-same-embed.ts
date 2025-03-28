@@ -16,7 +16,7 @@ export class ClaimResultVotedSameEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/ClaimResultVotedSameEmbed";
+        return "VertixBot/UI-V3/ClaimResultVotedSameEmbed";
     }
 
     public static getInstanceType() {

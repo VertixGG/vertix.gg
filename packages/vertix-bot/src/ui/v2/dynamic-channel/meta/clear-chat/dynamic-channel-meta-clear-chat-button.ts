@@ -2,7 +2,7 @@ import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v2/dynamic-chann
 
 export class DynamicChannelMetaClearChatButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaClearChatButton";
+        return "VertixBot/UI-V2/DynamicChannelMetaClearChatButton";
     }
 
     public getId() {

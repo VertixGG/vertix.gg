@@ -10,7 +10,7 @@ import type { VoiceChannel } from "discord.js";
 
 export class DynamicChannelClearChatAdapter extends DynamicChannelAdapterBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelClearChatAdapter";
+        return "VertixBot/UI-V3/DynamicChannelClearChatAdapter";
     }
 
     public static getComponent() {
@@ -29,7 +29,7 @@ export class DynamicChannelClearChatAdapter extends DynamicChannelAdapterBase {
     }
 
     protected onEntityMap() {
-        this.bindButton( "Vertix/UI-V3/DynamicChannelClearChatButton", this.onClearChatButtonClicked );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelClearChatButton", this.onClearChatButtonClicked );
     }
 
     private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
@@ -37,7 +37,7 @@ export class DynamicChannelClearChatAdapter extends DynamicChannelAdapterBase {
 
         switch ( result?.code ) {
             case "success":
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V3/DynamicChannelClearChatSuccessEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup" );
 
                 // Search embeds with "🧹" in title and delete them.
                 const messages = await interaction.channel.messages.fetch();
@@ -63,7 +63,7 @@ export class DynamicChannelClearChatAdapter extends DynamicChannelAdapterBase {
                 return; // # NOTE: return is required here, otherwise the code below will be executed.
 
             case "nothing-to-delete":
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup" );
                 break;
 
             default:

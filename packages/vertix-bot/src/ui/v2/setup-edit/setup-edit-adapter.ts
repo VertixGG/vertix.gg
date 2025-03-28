@@ -44,7 +44,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
     private appService: AppService;
 
     public static getName() {
-        return "Vertix/UI-V2/SetupEditAdapter";
+        return "VertixBot/UI-V2/SetupEditAdapter";
     }
 
     public static getComponent() {
@@ -59,23 +59,23 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         return {
             default: {},
 
-            "Vertix/UI-V2/SetupEditMaster": {
-                elementsGroup: "Vertix/UI-V2/SetupEditElementsGroup",
-                embedsGroup: "Vertix/UI-V2/SetupEditEmbedGroup"
+            "VertixBot/UI-V2/SetupEditMaster": {
+                elementsGroup: "VertixBot/UI-V2/SetupEditElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditEmbedGroup"
             },
 
-            "Vertix/UI-V2/SetupEditButtons": {
-                elementsGroup: "Vertix/UI-V2/SetupEditButtonsElementsGroup",
-                embedsGroup: "Vertix/UI-V2/SetupEditButtonsEmbedGroup"
+            "VertixBot/UI-V2/SetupEditButtons": {
+                elementsGroup: "VertixBot/UI-V2/SetupEditButtonsElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditButtonsEmbedGroup"
             },
-            "Vertix/UI-V2/SetupEditButtonsEffect": {
-                elementsGroup: "Vertix/UI-V2/SetupEditButtonsEffectElementsGroup",
-                embedsGroup: "Vertix/UI-V2/SetupEditButtonsEffectEmbedGroup"
+            "VertixBot/UI-V2/SetupEditButtonsEffect": {
+                elementsGroup: "VertixBot/UI-V2/SetupEditButtonsEffectElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup"
             },
 
-            "Vertix/UI-V2/SetupEditVerifiedRoles": {
-                elementsGroup: "Vertix/UI-V2/SetupEditVerifiedRolesElementsGroup",
-                embedsGroup: "Vertix/UI-V2/SetupEditVerifiedRolesEmbedGroup"
+            "VertixBot/UI-V2/SetupEditVerifiedRoles": {
+                elementsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
             }
         };
     }
@@ -146,7 +146,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Select edit option.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/SetupEditSelectEditOptionMenu",
+            "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
             this.onSelectEditOptionSelected
         );
 
@@ -158,18 +158,18 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Buttons template.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/ChannelButtonsTemplateSelectMenu",
+            "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
             this.onButtonsSelected
         );
 
         // Effect buttons.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+            "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
             this.onButtonsEffectImmediatelyButtonsClicked
         );
 
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/SetupEditButtonsEffectNewlyButton",
+            "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
             this.onButtonsEffectNewlyButtonClicked
         );
 
@@ -181,7 +181,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         // Log channel.
         this.bindSelectMenu<UIDefaultChannelSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/LogChannelSelectMenu",
+            "VertixBot/UI-V2/LogChannelSelectMenu",
             this.onLogChannelSelected
         );
 
@@ -246,7 +246,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         this.getArgsManager().setArgs( this, interaction, args );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onSelectEditOptionSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -277,18 +277,18 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                 this.getArgsManager().setArgs( this, interaction, currentArgs );
 
                 // Now transition to the buttons edit step
-                await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditButtons" );
+                await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditButtons" );
                 break;
 
             case "edit-dynamic-channel-verified-roles":
-                await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditVerifiedRoles" );
+                await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVerifiedRoles" );
                 break;
         }
     }
 
     private async onTemplateEditModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
         const channelNameInputId = this.customIdStrategy.generateId(
-            "Vertix/UI-V2/SetupEditAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
+            "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
         );
 
         const value = interaction.fields.getTextInputValue( channelNameInputId ),
@@ -310,7 +310,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         };
         await MasterChannelDataManager.$.setChannelNameTemplate( masterChannelDB, value );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -320,7 +320,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             ) )
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditButtonsEffect" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditButtonsEffect" );
     }
 
     private async onButtonsEffectImmediatelyButtonsClicked(
@@ -340,7 +340,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
         );
 
         const claimChannelButtonId = DynamicChannelElementsGroup.getByName(
-            "Vertix/UI-V2/DynamicChannelPremiumClaimChannelButton"
+            "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton"
         )?.getId();
 
         if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
@@ -358,7 +358,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                     this.dynamicChannelService.editPrimaryMessageDebounce( channel );
                 }
 
-                DynamicChannelClaimManager.get( "Vertix/UI-V2/DynamicChannelClaimManager" )
+                DynamicChannelClaimManager.get( "VertixBot/UI-V2/DynamicChannelClaimManager" )
                     .handleAbandonedChannels( this.appService.getClient(), [], channels )
                     .catch( ( e ) => {
                         throw e;
@@ -366,7 +366,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             } );
         }
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onButtonsEffectNewlyButtonClicked( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -383,16 +383,16 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             buttons.map( ( b ) => b.toString() )
         );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onDoneButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
         switch ( this.getCurrentExecutionStep( interaction )?.name ) {
-            case "Vertix/UI-V2/SetupEditButtons":
-                await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+            case "VertixBot/UI-V2/SetupEditButtons":
+                await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
                 break;
 
-            case "Vertix/UI-V2/SetupEditMaster":
+            case "VertixBot/UI-V2/SetupEditMaster":
                 this.deleteArgs( interaction );
 
                 this.uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
@@ -444,7 +444,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         this.getArgsManager().setArgs( this, interaction, args );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onLogChannelSelected( interaction: UIDefaultChannelSelectMenuChannelTextInteraction ) {
@@ -463,7 +463,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         this.getArgsManager().setArgs( this, interaction, args );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onVerifiedRolesSelected( interaction: UIDefaultStringSelectRolesChannelTextInteraction ) {
@@ -479,7 +479,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             _wizardIsFinishButtonDisabled: !roles.length
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditVerifiedRoles" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVerifiedRoles" );
     }
 
     private async onVerifiedRolesEveryoneSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -515,7 +515,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         this.getArgsManager().setArgs( this, interaction, args );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditVerifiedRoles" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVerifiedRoles" );
     }
 
     private async onBackButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
@@ -542,7 +542,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
 
         this.getArgsManager().setArgs( this, interaction, args );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 
     private async onFinishButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
@@ -560,6 +560,6 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
             args.dynamicChannelVerifiedRoles
         );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupEditMaster" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
     }
 }

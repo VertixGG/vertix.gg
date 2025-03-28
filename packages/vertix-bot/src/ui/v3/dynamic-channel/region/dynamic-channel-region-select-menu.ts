@@ -6,7 +6,7 @@ import type { APISelectMenuOption } from "discord.js";
 
 export class DynamicChannelRegionSelectMenu extends DynamicChannelStringMenuBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRegionSelectMenu";
+        return "VertixBot/UI-V3/DynamicChannelRegionSelectMenu";
     }
 
     public getId(): string {

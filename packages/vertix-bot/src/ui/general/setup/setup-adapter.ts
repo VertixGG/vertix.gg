@@ -187,7 +187,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         ).data;
 
         const adapterName =
-            version === VERSION_UI_V3 ? "Vertix/UI-V3/SetupNewWizardAdapter" : "Vertix/UI-V2/SetupNewWizardAdapter";
+            version === VERSION_UI_V3 ? "VertixBot/UI-V3/SetupNewWizardAdapter" : "VertixBot/UI-V2/SetupNewWizardAdapter";
 
         this.uiService.get( adapterName )?.runInitial( interaction, {
             dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,

@@ -16,7 +16,7 @@ class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBas
     );
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditModalDescription";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalDescription";
     }
 
     public static getInstanceType() {
@@ -46,7 +46,7 @@ class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBas
 
 export class DynamicChannelPrimaryMessageEditDescriptionModal extends UIModalBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal";
     }
 
     public static getInstanceType() {

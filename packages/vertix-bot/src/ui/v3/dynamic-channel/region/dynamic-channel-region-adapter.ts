@@ -17,7 +17,7 @@ type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDef
 
 export class DynamicChannelRegionAdapter extends DynamicChannelAdapterExuWithInitiatorElementBase<DefaultInteraction> {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRegionAdapter";
+        return "VertixBot/UI-V3/DynamicChannelRegionAdapter";
     }
 
     public static getComponent() {
@@ -41,7 +41,7 @@ export class DynamicChannelRegionAdapter extends DynamicChannelAdapterExuWithIni
     }
 
     protected onEntityMap() {
-        this.bindSelectMenu( "Vertix/UI-V3/DynamicChannelRegionSelectMenu", this.onRegionSelected );
+        this.bindSelectMenu( "VertixBot/UI-V3/DynamicChannelRegionSelectMenu", this.onRegionSelected );
     }
 
     private async onRegionSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {

@@ -7,7 +7,7 @@ import { ClaimStartEmbed } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-star
 
 export class ClaimStartComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/ClaimStartComponent";
+        return "VertixBot/UI-V3/ClaimStartComponent";
     }
 
     public static getInstanceType() {

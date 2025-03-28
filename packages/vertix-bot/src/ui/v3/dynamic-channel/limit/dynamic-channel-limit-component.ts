@@ -13,7 +13,7 @@ import { DynamicChannelLimitModal } from "@vertix.gg/bot/src/ui/v3/dynamic-chann
 
 export class DynamicChannelLimitComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelLimitComponent";
+        return "VertixBot/UI-V3/DynamicChannelLimitComponent";
     }
 
     public static getInstanceType() {

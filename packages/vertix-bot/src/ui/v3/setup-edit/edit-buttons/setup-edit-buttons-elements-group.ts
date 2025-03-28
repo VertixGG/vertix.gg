@@ -6,7 +6,7 @@ import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v3/chann
 
 export class SetupEditButtonsElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V3/SetupEditButtonsElementsGroup";
+        return "VertixBot/UI-V3/SetupEditButtonsElementsGroup";
     }
 
     public static getItems() {

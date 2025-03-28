@@ -32,7 +32,7 @@ export class DynamicChannelPrivacyEmbed extends DynamicChannelEmbedBaseWithVars 
     private readonly accessVars;
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrivacyEmbed";
+        return "VertixBot/UI-V3/DynamicChannelPrivacyEmbed";
     }
 
     public constructor() {

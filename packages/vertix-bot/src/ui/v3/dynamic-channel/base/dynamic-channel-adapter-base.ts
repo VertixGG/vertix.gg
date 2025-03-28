@@ -23,7 +23,7 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelAdapterBase";
+        return "VertixBot/UI-V3/DynamicChannelAdapterBase";
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

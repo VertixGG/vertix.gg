@@ -18,7 +18,7 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 
 export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultInteraction> {
     public static getName() {
-        return "Vertix/UI-V3/ClaimStartAdapter";
+        return "VertixBot/UI-V3/ClaimStartAdapter";
     }
 
     public static getComponent() {
@@ -46,16 +46,16 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
             channelId: channel.id,
             ownerDisplayName: await guildGetMemberDisplayName( channel.guild, channelDB.userOwnerId ),
             absentInterval: DynamicChannelClaimManager.get(
-                "Vertix/UI-V3/DynamicChannelClaimManager"
+                "VertixBot/UI-V3/DynamicChannelClaimManager"
             ).getChannelOwnershipTimeout()
         };
     }
 
     protected onEntityMap() {
-        this.bindButton<DefaultInteraction>( "Vertix/UI-V3/ClaimStartButton", this.onClaimStartButtonClicked );
+        this.bindButton<DefaultInteraction>( "VertixBot/UI-V3/ClaimStartButton", this.onClaimStartButtonClicked );
     }
 
     private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
-        await DynamicChannelClaimManager.get( "Vertix/UI-V3/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
+        await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
     }
 }

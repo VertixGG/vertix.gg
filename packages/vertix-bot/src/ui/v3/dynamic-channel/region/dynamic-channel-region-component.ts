@@ -9,7 +9,7 @@ import { DynamicChannelRegionEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-chan
 
 export class DynamicChannelRegionComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRegionComponent";
+        return "VertixBot/UI-V3/DynamicChannelRegionComponent";
     }
 
     public static getInstanceType() {
@@ -25,11 +25,11 @@ export class DynamicChannelRegionComponent extends UIComponentBase {
     }
 
     public static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V3/DynamicChannelRegionEmbedGroup";
+        return "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup";
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/DynamicChannelRegionSelectMenuGroup";
+        return "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup";
     }
 
     public static getDefaultMarkdownsGroup() {

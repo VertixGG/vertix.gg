@@ -47,7 +47,7 @@ describe( "VertixGUI/UIMarkdownTemplateBase", () => {
             Class.ensure();
 
             // Assert.
-            expect( Class[ "content" ] ).toContain( "// Path: test/vertix/ui-v2/_base/ui-markdown-base.spec.ts" );
+            expect( Class[ "content" ] ).toContain( "// Path: test/VertixBot/UI-v2/_base/ui-markdown-base.spec.ts" );
         } );
     } );
 } );

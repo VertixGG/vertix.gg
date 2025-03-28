@@ -31,7 +31,7 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/SetupStep2Embed";
+        return "VertixBot/UI-V2/SetupStep2Embed";
     }
 
     public static getInstanceType() {

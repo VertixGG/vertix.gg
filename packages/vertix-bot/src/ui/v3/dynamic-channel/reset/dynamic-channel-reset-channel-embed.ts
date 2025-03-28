@@ -56,7 +56,7 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelResetChannelEmbed";
+        return "VertixBot/UI-V3/DynamicChannelResetChannelEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

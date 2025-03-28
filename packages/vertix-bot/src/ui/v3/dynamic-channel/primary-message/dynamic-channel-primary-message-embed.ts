@@ -46,7 +46,7 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
     private readonly privacyVars;
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEmbed";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed";
     }
 
     public static getInstanceType() {

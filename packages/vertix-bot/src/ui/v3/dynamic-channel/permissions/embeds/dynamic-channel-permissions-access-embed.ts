@@ -26,7 +26,7 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
 
 export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBaseWithVars {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPermissionsAccessEmbed";
+        return "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed";
     }
 
     protected getImage(): string {

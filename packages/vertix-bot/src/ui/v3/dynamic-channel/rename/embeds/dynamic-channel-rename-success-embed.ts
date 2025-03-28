@@ -12,7 +12,7 @@ export class DynamicChannelRenameSuccessEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRenameSuccessEmbed";
+        return "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed";
     }
 
     protected getColor(): number {

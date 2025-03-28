@@ -9,7 +9,7 @@ import {
 
 export class DynamicChannelLimitInput extends UIElementInputBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelLimitInput";
+        return "VertixBot/UI-V3/DynamicChannelLimitInput";
     }
 
     public static getInstanceType() {

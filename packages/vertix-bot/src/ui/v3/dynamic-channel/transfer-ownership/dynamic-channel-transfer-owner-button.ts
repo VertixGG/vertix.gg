@@ -4,7 +4,7 @@ import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-chann
 
 export class DynamicChannelTransferOwnerButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelTransferOwnerButton";
+        return "VertixBot/UI-V3/DynamicChannelTransferOwnerButton";
     }
 
     public static getBaseName() {

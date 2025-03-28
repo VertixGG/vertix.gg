@@ -13,7 +13,7 @@ import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, ButtonInteraction<"cached">> {
     public static getName() {
-        return "Vertix/UI-V3/ClaimResultAdapter";
+        return "VertixBot/UI-V3/ClaimResultAdapter";
     }
 
     public static getComponent() {
@@ -22,28 +22,28 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
 
     protected static getExecutionSteps() {
         return {
-            "Vertix/UI-V3/ClaimResultOwnerStop": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultOwnerStopEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultOwnerStop": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
             },
 
-            "Vertix/UI-V3/ClaimResultAddedSuccessfully": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultStepInEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultAddedSuccessfully": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultStepInEmbedGroup"
             },
-            "Vertix/UI-V3/ClaimResultAlreadyAdded": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultAlreadyAdded": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
             },
 
-            "Vertix/UI-V3/ClaimResultVoteAlreadySelfVoted": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultVoteSelfEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup"
             },
-            "Vertix/UI-V3/ClaimResultVotedSuccessfully": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultVotedEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultVotedSuccessfully": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVotedEmbedGroup"
             },
-            "Vertix/UI-V3/ClaimResultVoteAlreadyVotedSame": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultVotedSameEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup"
             },
-            "Vertix/UI-V3/ClaimResultVoteUpdatedSuccessfully": {
-                embedsGroup: "Vertix/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
+            "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully": {
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
             }
         };
     }
@@ -64,19 +64,19 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep().name ) {
-            case "Vertix/UI-V3/ClaimResultOwnerStop":
+            case "VertixBot/UI-V3/ClaimResultOwnerStop":
                 args.absentInterval = DynamicChannelClaimManager.get(
-                    "Vertix/UI-V3/DynamicChannelClaimManager"
+                    "VertixBot/UI-V3/DynamicChannelClaimManager"
                 ).getChannelOwnershipTimeout();
                 break;
 
-            case "Vertix/UI-V3/ClaimResultVotedSuccessfully":
-            case "Vertix/UI-V3/ClaimResultVoteAlreadyVotedSame":
+            case "VertixBot/UI-V3/ClaimResultVotedSuccessfully":
+            case "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame":
                 args.userDisplayName = await guildGetMemberDisplayName( interaction.guild, argsFromManager.targetId );
                 args.userId = argsFromManager.targetId;
                 break;
 
-            case "Vertix/UI-V3/ClaimResultVoteUpdatedSuccessfully":
+            case "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully":
                 args.prevUserId = argsFromManager.prevUserId;
                 args.currentUserId = argsFromManager.currentUserId;
 

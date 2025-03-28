@@ -9,7 +9,7 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 
 export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelResetChannelAdapter";
+        return "VertixBot/UI-V3/DynamicChannelResetChannelAdapter";
     }
 
     public static getComponent() {
@@ -30,7 +30,7 @@ export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase
 
     protected onEntityMap() {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "Vertix/UI-V3/DynamicChannelResetChannelButton",
+            "VertixBot/UI-V3/DynamicChannelResetChannelButton",
             this.onResetChannelButtonClicked
         );
     }
@@ -44,7 +44,7 @@ export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase
         switch ( result?.code ) {
             case "success-rename-rate-limit":
             case "success":
-                this.getComponent().switchEmbedsGroup( "Vertix/UI-V3/DynamicChannelResetChannelEmbedGroup" );
+                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup" );
 
                 await this.ephemeral( interaction, { result } );
                 break;

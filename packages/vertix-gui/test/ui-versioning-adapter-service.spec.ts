@@ -50,10 +50,10 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         // Arrange
         const adapters = [
             UIMockGeneratorUtil.createAdapter()
-                .withName( "Vertix/UI-V1/RenameAdapter" )
+                .withName( "VertixBot/UI-V1/RenameAdapter" )
                 .withComponent(
                     UIMockGeneratorUtil.createComponent()
-                        .withName( "Vertix/UI-V1/RenameComponent" )
+                        .withName( "VertixBot/UI-V1/RenameComponent" )
                         .withElements( [
                             UIMockGeneratorUtil.createElement().withName( "Vertix/RenameElement" ).build()
                         ] )
@@ -73,17 +73,17 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
             versioningService.get( "Vertix/RenameAdapter", {} as Base, {} );
 
         // Assert
-        expect( adapter!.getName() ).toBe( "Vertix/UI-V1/RenameAdapter" );
+        expect( adapter!.getName() ).toBe( "VertixBot/UI-V1/RenameAdapter" );
     } );
 
     it( "should return the correct adapter name with version for deep adapter names", async() => {
         // Arrange
         const adapters = [
             UIMockGeneratorUtil.createAdapter()
-                .withName( "Vertix/UI-V1/CoolEntities/RenameAdapter" )
+                .withName( "VertixBot/UI-V1/CoolEntities/RenameAdapter" )
                 .withComponent(
                     UIMockGeneratorUtil.createComponent()
-                        .withName( "Vertix/UI-V1/CoolEntities/RenameComponent" )
+                        .withName( "VertixBot/UI-V1/CoolEntities/RenameComponent" )
                         .withElements( [
                             UIMockGeneratorUtil.createElement().withName( "Vertix/CoolEntities/RenameElement" ).build()
                         ] )
@@ -103,7 +103,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
             versioningService.get( "Vertix/CoolEntities/RenameAdapter", {} as Base, {} );
 
         // Assert
-        expect( adapter!.getName() ).toBe( "Vertix/UI-V1/CoolEntities/RenameAdapter" );
+        expect( adapter!.getName() ).toBe( "VertixBot/UI-V1/CoolEntities/RenameAdapter" );
     } );
 
     it( "should throw an error if no version is determined", async() => {

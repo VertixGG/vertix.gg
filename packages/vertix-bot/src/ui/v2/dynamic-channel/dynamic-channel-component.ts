@@ -14,7 +14,7 @@ import { DynamicChannelEmbed } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/pr
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannel";
+        return "VertixBot/UI-V2/DynamicChannel";
     }
 
     public static getInstanceType() {
@@ -30,7 +30,7 @@ export class DynamicChannelComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V2/DynamicChannelElementsGroup";
+        return "VertixBot/UI-V2/DynamicChannelElementsGroup";
     }
 
     protected async getSchemaInternal() {

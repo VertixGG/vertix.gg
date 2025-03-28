@@ -6,7 +6,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class LogChannelSelectMenu extends UIElementChannelSelectMenu {
     public static getName() {
-        return "Vertix/UI-V3/LogChannelSelectMenu";
+        return "VertixBot/UI-V3/LogChannelSelectMenu";
     }
 
     public static getInstanceType() {

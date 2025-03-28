@@ -17,7 +17,7 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class UIModuleV3 extends UIModuleBase {
     public static getName() {
-        return "Vertix/UI-V3/Module";
+        return "VertixBot/UI-V3/Module";
     }
 
     public static getSourcePath() {
@@ -43,7 +43,7 @@ export class UIModuleV3 extends UIModuleBase {
     protected async initialize() {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
-        DynamicChannelClaimManager.register( "Vertix/UI-V3/DynamicChannelClaimManager", {
+        DynamicChannelClaimManager.register( "VertixBot/UI-V3/DynamicChannelClaimManager", {
             adapters: {
                 claimStartAdapter: () => uiService.get( adapters.ClaimStartAdapter.getName() )!,
                 claimVoteAdapter: () => uiService.get<"execution">( adapters.ClaimVoteAdapter.getName() )!,
@@ -51,22 +51,22 @@ export class UIModuleV3 extends UIModuleBase {
             },
 
             dynamicChannelClaimButtonId: DynamicChannelPrimaryMessageElementsGroup.getByName(
-                "Vertix/UI-V3/DynamicChannelClaimChannelButton"
+                "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
             )!.getId(),
 
             steps: {
-                claimResultAddedSuccessfully: "Vertix/UI-V3/ClaimResultAddedSuccessfully",
-                claimResultAlreadyAdded: "Vertix/UI-V3/ClaimResultAlreadyAdded",
-                claimResultOwnerStop: "Vertix/UI-V3/ClaimResultOwnerStop",
-                claimResultVoteAlreadySelfVoted: "Vertix/UI-V3/ClaimResultVoteAlreadySelfVoted",
-                claimResultVoteAlreadyVotedSame: "Vertix/UI-V3/ClaimResultVoteAlreadyVotedSame",
-                claimResultVoteUpdatedSuccessfully: "Vertix/UI-V3/ClaimResultVoteUpdatedSuccessfully",
-                claimResultVotedSuccessfully: "Vertix/UI-V3/ClaimResultVotedSuccessfully"
+                claimResultAddedSuccessfully: "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
+                claimResultAlreadyAdded: "VertixBot/UI-V3/ClaimResultAlreadyAdded",
+                claimResultOwnerStop: "VertixBot/UI-V3/ClaimResultOwnerStop",
+                claimResultVoteAlreadySelfVoted: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
+                claimResultVoteAlreadyVotedSame: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame",
+                claimResultVoteUpdatedSuccessfully: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully",
+                claimResultVotedSuccessfully: "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
             },
 
             entities: {
-                claimVoteAddButton: "Vertix/UI-V3/ClaimVoteAddButton",
-                claimVoteStepInButton: "Vertix/UI-V3/ClaimVoteStepInButton"
+                claimVoteAddButton: "VertixBot/UI-V3/ClaimVoteAddButton",
+                claimVoteStepInButton: "VertixBot/UI-V3/ClaimVoteStepInButton"
             }
         } );
     }

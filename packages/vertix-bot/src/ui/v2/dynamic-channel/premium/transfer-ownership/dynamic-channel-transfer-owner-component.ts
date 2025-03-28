@@ -19,7 +19,7 @@ import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/some
 
 export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelTransferOwnerComponent";
+        return "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent";
     }
 
     public static getInstanceType() {

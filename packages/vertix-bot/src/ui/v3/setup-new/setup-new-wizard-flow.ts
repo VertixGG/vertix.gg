@@ -74,7 +74,7 @@ export class SetupWizardFlow extends UIWizardFlowBase<SetupWizardFlowState, Setu
      * Get the name of this flow
      */
     public static getName() {
-        return "Vertix/UI-V3/SetupNewWizardFlow";
+        return "VertixBot/UI-V3/SetupNewWizardFlow";
     }
 
     /**

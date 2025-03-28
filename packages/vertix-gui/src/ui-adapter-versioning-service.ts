@@ -120,8 +120,8 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
      * TODO: This should be fully configurable.
      * Version should stand after the first part of the adapter name
      * Example:
-     * `Vertix/RenameAdapter` -> `Vertix/UI-V1/RenameAdapter`
-     * `Vertix/CoolEntities/RenameAdapter` -> `Vertix/UI-V1/CoolEntities/RenameAdapter`
+     * `Vertix/RenameAdapter` -> `VertixBot/UI-V1/RenameAdapter`
+     * `Vertix/CoolEntities/RenameAdapter` -> `VertixBot/UI-V1/CoolEntities/RenameAdapter`
      */
     private formAdapterNameWithVersion( adapterName: string, version: number, prefix: string, separator: string ) {
         const [ firstPart, ...restParts ] = adapterName.split( separator );

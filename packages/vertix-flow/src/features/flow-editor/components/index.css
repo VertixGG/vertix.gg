@@ -109,3 +109,110 @@
     color: var(--discord-secondary-text);
     @apply text-[10px] mt-1 text-center;
 }
+
+/* Discord Elements Container */
+.discord-elements-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Button Row */
+.discord-button-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Select Menu Styles */
+.discord-select-menu {
+    background-color: #2D3136;
+    border: 1px solid #4F545C;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.discord-select-menu-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #B9BBBE;
+    font-size: 14px;
+}
+
+.discord-select-menu-emoji {
+    display: inline-flex;
+    margin-right: 4px;
+}
+
+.discord-select-menu-arrow {
+    margin-left: auto;
+    font-size: 10px;
+}
+
+.discord-select-menu-options-preview {
+    font-size: 12px;
+    color: #8E9297;
+    margin-top: 4px;
+}
+
+/* Role Menu Styles */
+.discord-role-menu {
+    background-color: #2D3136;
+    border: 1px solid #4F545C;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.discord-role-menu-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #B9BBBE;
+    font-size: 14px;
+}
+
+.discord-role-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: #5865F2;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+}
+
+.discord-role-menu-arrow {
+    margin-left: auto;
+    font-size: 10px;
+}
+
+.discord-role-menu-options-preview {
+    font-size: 12px;
+    color: #8E9297;
+    margin-top: 4px;
+}
+
+.discord-unknown-element {
+    background-color: #36393F;
+    border: 1px dashed #FF0000;
+    border-radius: 4px;
+    padding: 8px;
+    color: #FF0000;
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+}

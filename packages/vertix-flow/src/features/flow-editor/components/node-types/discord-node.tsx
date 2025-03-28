@@ -11,51 +11,41 @@ interface DiscordEmbed {
   [key: string]: unknown;
 }
 
-// Interface for element attributes (base)
-interface BaseElementAttributes {
-  type: number;
-  custom_id?: string;
-}
-
-// Button element attributes
-interface ButtonElementAttributes extends BaseElementAttributes {
-  type: 2;
-  style: number;
-  label: string;
-  emoji?: { name: string; animated?: boolean };
-  disabled?: boolean;
-}
-
-// Select menu option
-interface SelectMenuOption {
-  label: string;
-  value: string;
-  emoji?: string;
-  default?: boolean;
-}
-
-// Select menu element attributes
-interface SelectMenuElementAttributes extends BaseElementAttributes {
-  type: 3;
-  placeholder?: string;
-  options: SelectMenuOption[];
-  min_values?: number;
-  max_values?: number;
-}
-
-// Role selector element attributes
-interface RoleSelectorElementAttributes extends BaseElementAttributes {
-  type: 6;
-  placeholder?: string;
-  min_values?: number;
-  max_values?: number;
-}
-
-// Union type for all element attributes
-type ElementAttributes = ButtonElementAttributes | SelectMenuElementAttributes | RoleSelectorElementAttributes;
-
-// Interface for element
+// Interface for button element attributes
 interface ButtonElement {
+  attributes: {
+    type: number;
+    style: number;
+    label: string;
+    emoji?: { name: string };
+    disabled?: boolean;
+    isDisabled?: boolean; // Support both formats
+  };
+}
+
+// Extended interface to include all element types
+interface ElementAttributes {
+  type: number; // 2 for button, 3 for select menu, 6 for role menu
+  style?: number; // For buttons
+  label?: string; // For buttons
+  emoji?: { name: string }; // For buttons
+  disabled?: boolean;
+  isDisabled?: boolean;
+  custom_id?: string;
+  placeholder?: string; // For select menus
+  min_values?: number; // For select menus
+  max_values?: number;
+  options?: Array<{ // For select menus
+    label: string;
+    value: string;
+    emoji?: string;
+    default?: boolean;
+  }>;
+  [key: string]: unknown; // Allow other properties
+}
+
+// Generic element interface
+interface GenericElement {
   attributes: ElementAttributes;
 }
 
@@ -91,7 +81,13 @@ interface EmbedNodeData extends BaseNodeData {
 // Element specific node data
 interface ElementNodeData extends BaseNodeData {
   type: "element";
-  attributes: ElementAttributes;
+  attributes: {
+    type: number;
+    style: number;
+    label: string;
+    emoji?: { name: string };
+    isDisabled?: boolean;
+  };
 }
 
 // Row of elements
@@ -188,99 +184,82 @@ const DiscordEmbed: React.FC<{
 };
 
 /**
- * Renders a Discord select menu
+ * DiscordSelectMenu component renders a Discord select menu
  */
 const DiscordSelectMenu: React.FC<{
-  attributes: SelectMenuElementAttributes;
+  attributes: ElementAttributes;
 }> = ( { attributes } ) => {
   return (
     <div className="discord-select-menu">
-      <div className="discord-select-placeholder">
-        {attributes.placeholder || "Select an option"}
-        <span className="discord-select-chevron">▼</span>
+      <div className="discord-select-menu-placeholder">
+        {attributes.emoji && <span className="discord-select-menu-emoji">{attributes.emoji.name}</span>}
+        <span>{attributes.placeholder || "Select an option"}</span>
+        <span className="discord-select-menu-arrow">▼</span>
       </div>
-      <div className="discord-select-tooltip">
-        <div className="discord-select-options">
-          {attributes.options?.map( ( option, index ) => (
-            <div key={index} className={`discord-select-option ${ option.default ? "selected" : "" }`}>
-              {option.emoji && <span className="discord-select-option-emoji">{option.emoji}</span>}
-              <span className="discord-select-option-label">{option.label}</span>
-            </div>
-          ) )}
+      {attributes.options && attributes.options.length > 0 && (
+        <div className="discord-select-menu-options-preview">
+          <span className="discord-select-menu-options-count">
+            {attributes.min_values || 0}-{attributes.max_values || 1} options
+          </span>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
 /**
- * Renders a Discord role selector
+ * DiscordRoleMenu component renders a Discord role select menu
  */
-const DiscordRoleSelector: React.FC<{
-  attributes: RoleSelectorElementAttributes;
+const DiscordRoleMenu: React.FC<{
+  attributes: ElementAttributes;
 }> = ( { attributes } ) => {
   return (
-    <div className="discord-role-selector">
-      <div className="discord-select-placeholder">
-        {attributes.placeholder || "Select roles"}
-        <span className="discord-select-chevron">▼</span>
+    <div className="discord-role-menu">
+      <div className="discord-role-menu-placeholder">
+        <span className="discord-role-menu-icon">@</span>
+        <span>{attributes.placeholder || "Select roles"}</span>
+        <span className="discord-role-menu-arrow">▼</span>
+      </div>
+      <div className="discord-role-menu-options-preview">
+        <span className="discord-role-menu-options-count">
+          {attributes.min_values || 0}-{attributes.max_values || 1} roles
+        </span>
       </div>
     </div>
   );
 };
 
 /**
- * Renders the appropriate element based on its type
+ * Render an element based on its type
  */
-const renderElement = ( element: ButtonElement, key: string ) => {
-  const attributes = element.attributes;
-  if ( !attributes ) {
-    return null;
+const renderElement = ( element: GenericElement, key: string ) => {
+  const { attributes } = element;
+
+  // Render different element types based on the 'type' attribute
+  switch ( attributes.type ) {
+    case 2: // Button
+      return (
+        <DiscordButton
+          key={key}
+          buttonStyle={attributes.style || ButtonStyle.Secondary}
+          disabled={attributes.disabled || attributes.isDisabled}
+        >
+          {attributes.emoji && (
+            <span>{attributes.emoji.name}</span>
+          )}
+          {attributes.label}
+        </DiscordButton>
+      );
+
+    case 3: // Select Menu
+      return <DiscordSelectMenu key={key} attributes={attributes} />;
+
+    case 6: // Role Menu
+      return <DiscordRoleMenu key={key} attributes={attributes} />;
+
+    default:
+      return <div key={key} className="discord-unknown-element">Unknown element type: {attributes.type}</div>;
   }
-
-  // Check the type property and render accordingly
-  if ( "type" in attributes ) {
-    switch ( attributes.type ) {
-      case 2: // Button
-        if ( "style" in attributes && "label" in attributes ) {
-          return (
-            <DiscordButton
-              key={key}
-              buttonStyle={attributes.style || ButtonStyle.Secondary}
-              disabled={!!attributes.disabled}
-            >
-              {attributes.emoji && (
-                <span>{attributes.emoji.name}</span>
-              )}
-              {attributes.label}
-            </DiscordButton>
-          );
-        }
-        break;
-
-      case 3: // Select Menu
-        if ( "options" in attributes ) {
-          return (
-            <DiscordSelectMenu
-              key={key}
-              attributes={attributes as SelectMenuElementAttributes}
-            />
-          );
-        }
-        break;
-
-      case 6: // Role Selector
-        return (
-          <DiscordRoleSelector
-            key={key}
-            attributes={attributes as RoleSelectorElementAttributes}
-          />
-        );
-    }
-  }
-
-  // Fallback for unsupported types
-  return <div key={key}>Unsupported element</div>;
 };
 
 /**
@@ -329,10 +308,16 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
   }
 
   if ( isElementNode( data ) ) {
-    // Use the renderElement function to handle element based on its type
-    return renderElement(
-      { attributes: data.attributes },
-      data.id || "element"
+    return (
+      <DiscordButton
+        buttonStyle={data.attributes.style || ButtonStyle.Secondary}
+        disabled={!!data.attributes.isDisabled}
+      >
+        {data.attributes.emoji && (
+          <span>{data.attributes.emoji.name}</span>
+        )}
+        {data.attributes.label}
+      </DiscordButton>
     );
   }
 

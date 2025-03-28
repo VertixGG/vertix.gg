@@ -18,7 +18,7 @@ export enum ButtonStyle {
 
 // Button variants based on Discord's button styles
 const discordButtonVariants = cva(
-  "discord-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 min-w-[96px] min-h-[32px]",
+  "discord-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 min-w-[96px]",
   {
     variants: {
       variant: {
@@ -26,24 +26,24 @@ const discordButtonVariants = cva(
         primary: "bg-[#5865f2] text-white hover:bg-[#4752c4]",
 
         // Secondary (grey) button
-        secondary: "bg-[#4f545c] text-white hover:bg-[#686d73]",
+        secondary: "bg-[#4f545c] text-white hover:bg-[#5d636b]",
 
         // Success (green) button
-        success: "bg-[#3ba55c] text-white hover:bg-[#359853]",
+        success: "bg-[#2DC770] text-white hover:bg-[#27b063]",
 
         // Danger (red) button
-        danger: "bg-[#ed4245] text-white hover:bg-[#c73a3d]",
+        danger: "bg-[#F23F43] text-white hover:bg-[#da373b]",
 
         // Link button (text only)
-        link: "bg-transparent text-white underline hover:no-underline p-0",
+        link: "bg-transparent text-link hover:underline p-0 h-auto min-w-0 focus-visible:outline focus-visible:outline-1 focus-visible:outline-link",
 
         // Premium (gradient) button
-        premium: "bg-gradient-to-r from-[#9b59b6] to-[#3498db] text-white hover:brightness-110"
+        premium: "bg-gradient-to-r from-[#7F00FF] to-[#E100FF] text-white hover:opacity-90 transition-opacity"
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md gap-1.5 px-3",
-        lg: "h-10 rounded-md px-6"
+        default: "h-8 px-3 py-2",
+        sm: "h-7 rounded px-2",
+        lg: "h-9 rounded px-4"
       },
     },
     defaultVariants: {

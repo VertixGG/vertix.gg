@@ -9,17 +9,17 @@ import type { VariantProps } from "class-variance-authority";
 
 // Define variants for role menu styling
 const discordRoleMenuVariants = cva(
-  "discord-role-menu relative flex w-full min-w-[150px] cursor-pointer rounded-md border border-[#4F545C] bg-[#2D3136] px-3 py-2 text-sm transition-all disabled:pointer-events-none disabled:opacity-50",
+  "discord-role-menu relative flex w-full flex-1 min-w-[150px] cursor-pointer flex-col rounded border border-[#202225] bg-[#2B2D31] px-2.5 py-1.5 transition-all disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "text-white",
-        active: "border-[#5865F2] shadow-[0_0_0_2px_rgba(88,101,242,0.3)]"
+        default: "text-dc-input-placeholder hover:border-[#0000004d] hover:text-dc-text-normal",
+        active: "border-[#0000004d] shadow-[0_0_0_1px_var(--blurple)] text-dc-text-normal"
       },
       size: {
-        default: "min-h-[40px]",
-        sm: "min-h-[32px] py-1 text-xs",
-        lg: "min-h-[48px] py-3"
+        default: "min-h-[36px] text-sm",
+        sm: "min-h-[28px] py-1 px-1.5 text-xs",
+        lg: "min-h-[44px] py-2.5 px-3.5 text-base"
       }
     },
     defaultVariants: {
@@ -30,7 +30,7 @@ const discordRoleMenuVariants = cva(
 );
 
 export interface DiscordRoleMenuProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children">,
   Omit<VariantProps<typeof discordRoleMenuVariants>, "variant"> {
   placeholder?: string;
   minValues?: number;
@@ -43,7 +43,7 @@ export interface DiscordRoleMenuProps
 /**
  * Discord-styled role select menu component
  */
-export function DiscordRoleMenu({
+export function DiscordRoleMenu( {
   placeholder = "Select roles",
   minValues = 0,
   maxValues = 1,
@@ -52,38 +52,36 @@ export function DiscordRoleMenu({
   size,
   active = false,
   asChild = false,
-  children,
   ...props
-}: DiscordRoleMenuProps) {
+}: DiscordRoleMenuProps ) {
   const Comp = asChild ? Slot : "div";
   const variant = active ? "active" : "default";
 
   return (
     <Comp
       className={cn(
-        discordRoleMenuVariants({ variant, size, className })
+        discordRoleMenuVariants( { variant, size, className } )
       )}
       data-disabled={disabled}
       data-state={active ? "active" : "inactive"}
       {...props}
     >
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <span className="discord-role-menu-icon flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#5865F2] text-[11px] font-bold text-white flex-shrink-0">
+        <div className="flex items-center gap-1.5 overflow-hidden">
+          <span className="discord-role-menu-icon flex items-center justify-center text-base font-semibold text-dc-text-muted flex-shrink-0">
             @
           </span>
-          <span className="truncate text-[#B9BBBE]">{placeholder}</span>
+          <span className="truncate">{placeholder}</span>
         </div>
-        <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#B9BBBE] opacity-70" />
+        <ChevronDown className="h-5 w-5 flex-shrink-0 text-dc-text-muted opacity-80" />
       </div>
-      {(minValues !== undefined || maxValues !== undefined) && (
-        <div className="mt-1 text-xs text-[#8E9297]">
+      {( minValues !== undefined || maxValues !== undefined ) && (
+        <div className="mt-0.5 text-xs text-dc-text-muted">
           <span className="discord-role-menu-options-count">
-            {minValues}-{maxValues} roles
+            Select {minValues === maxValues ? minValues : `${ minValues }-${ maxValues }`} role{maxValues !== 1 ? "s" : ""}
           </span>
         </div>
       )}
-      {children}
     </Comp>
   );
 }

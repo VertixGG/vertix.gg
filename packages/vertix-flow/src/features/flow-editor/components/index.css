@@ -9,11 +9,12 @@
 /* Discord theme variables and styling */
 :root {
     --discord-primary-bg: #36393f;
-    --discord-secondary-bg: #2f3136;
+    --discord-secondary-bg: #202133;
     --discord-primary-text: #ffffff;
     --discord-secondary-text: #b9bbbe;
     --discord-description-text: #dcddde;
     --discord-embed-accent: #5865f2;
+    --blurple: #5865F2;
 }
 
 /* Discord node wrapper */
@@ -74,11 +75,6 @@
     @apply max-w-full rounded;
 }
 
-/* Discord button rows */
-.discord-button-row {
-    @apply flex gap-2 mt-4;
-}
-
 .discord-element-button-row {
     @apply flex gap-2 mt-2;
 }
@@ -118,8 +114,8 @@
     margin-top: 8px;
 }
 
-/* Button Row */
-.discord-button-row {
+/* Elements Row */
+.discord-elements-row {
     display: flex;
     flex-direction: row;
     gap: 8px;

@@ -1,6 +1,9 @@
 import React from "react";
 
 import { DiscordButton, ButtonStyle } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-button";
+import { DiscordSelectMenu } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-select-menu";
+import { DiscordRoleMenu } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-role-menu";
+import { DiscordEmbed } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-embed";
 
 // Interface for Discord embed attributes
 interface DiscordEmbed {
@@ -9,18 +12,6 @@ interface DiscordEmbed {
   thumbnail?: { url: string };
   image?: { url: string };
   [key: string]: unknown;
-}
-
-// Interface for button element attributes
-interface ButtonElement {
-  attributes: {
-    type: number;
-    style: number;
-    label: string;
-    emoji?: { name: string };
-    disabled?: boolean;
-    isDisabled?: boolean; // Support both formats
-  };
 }
 
 // Extended interface to include all element types
@@ -34,7 +25,7 @@ interface ElementAttributes {
   custom_id?: string;
   placeholder?: string; // For select menus
   min_values?: number; // For select menus
-  max_values?: number;
+  max_values?: number; // For select menus
   options?: Array<{ // For select menus
     label: string;
     value: string;
@@ -62,7 +53,7 @@ interface ComponentNodeData extends BaseNodeData {
   elements?: Array<{
     id: string;
     label: string;
-    elements: Array<ButtonElement>;
+    elements: Array<GenericElement>;
   }>;
   embeds?: Array<{
     id: string;
@@ -101,7 +92,7 @@ interface GroupNodeData extends BaseNodeData {
   type: "group";
   groupType: string;
   childNodes?: Array<ExtendedNodeData>;
-  elements?: Array<Array<ButtonElement>>; // For elements groups
+  elements?: Array<Array<GenericElement>>; // For elements groups
 }
 
 // Union type for all possible node types
@@ -140,96 +131,6 @@ const DiscordNodeWrapper: React.FC<{ children: React.ReactNode }> = ( { children
 };
 
 /**
- * DiscordEmbed component renders a Discord embed without buttons
- */
-const DiscordEmbed: React.FC<{
-  attributes: DiscordEmbed;
-}> = ( { attributes } ) => {
-  return (
-    <div className="discord-embed">
-      {/* Main embed content */}
-      <div className="discord-embed-content">
-        {/* Embed Header */}
-        <div className="discord-embed-title">{attributes?.title}</div>
-
-        {/* Embed Description */}
-        {attributes?.description && (
-          <div className="discord-embed-description">
-            {attributes.description}
-          </div>
-        )}
-
-        {/* Embed Thumbnail */}
-        {attributes?.thumbnail?.url && (
-          <div className="discord-embed-thumbnail">
-            <img
-              src={attributes.thumbnail.url}
-              alt="Thumbnail"
-            />
-          </div>
-        )}
-
-        {/* Embed Image */}
-        {attributes?.image?.url && (
-          <div className="discord-embed-image">
-            <img
-              src={attributes.image.url}
-              alt="Embed"
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-/**
- * DiscordSelectMenu component renders a Discord select menu
- */
-const DiscordSelectMenu: React.FC<{
-  attributes: ElementAttributes;
-}> = ( { attributes } ) => {
-  return (
-    <div className="discord-select-menu">
-      <div className="discord-select-menu-placeholder">
-        {attributes.emoji && <span className="discord-select-menu-emoji">{attributes.emoji.name}</span>}
-        <span>{attributes.placeholder || "Select an option"}</span>
-        <span className="discord-select-menu-arrow">▼</span>
-      </div>
-      {attributes.options && attributes.options.length > 0 && (
-        <div className="discord-select-menu-options-preview">
-          <span className="discord-select-menu-options-count">
-            {attributes.min_values || 0}-{attributes.max_values || 1} options
-          </span>
-        </div>
-      )}
-    </div>
-  );
-};
-
-/**
- * DiscordRoleMenu component renders a Discord role select menu
- */
-const DiscordRoleMenu: React.FC<{
-  attributes: ElementAttributes;
-}> = ( { attributes } ) => {
-  return (
-    <div className="discord-role-menu">
-      <div className="discord-role-menu-placeholder">
-        <span className="discord-role-menu-icon">@</span>
-        <span>{attributes.placeholder || "Select roles"}</span>
-        <span className="discord-role-menu-arrow">▼</span>
-      </div>
-      <div className="discord-role-menu-options-preview">
-        <span className="discord-role-menu-options-count">
-          {attributes.min_values || 0}-{attributes.max_values || 1} roles
-        </span>
-      </div>
-    </div>
-  );
-};
-
-/**
  * Render an element based on its type
  */
 const renderElement = ( element: GenericElement, key: string ) => {
@@ -252,10 +153,28 @@ const renderElement = ( element: GenericElement, key: string ) => {
       );
 
     case 3: // Select Menu
-      return <DiscordSelectMenu key={key} attributes={attributes} />;
+      return (
+        <DiscordSelectMenu
+          key={key}
+          placeholder={attributes.placeholder}
+          options={attributes.options}
+          minValues={attributes.min_values}
+          maxValues={attributes.max_values}
+          emoji={attributes.emoji}
+          disabled={attributes.disabled || attributes.isDisabled}
+        />
+      );
 
     case 6: // Role Menu
-      return <DiscordRoleMenu key={key} attributes={attributes} />;
+      return (
+        <DiscordRoleMenu
+          key={key}
+          placeholder={attributes.placeholder}
+          minValues={attributes.min_values}
+          maxValues={attributes.max_values}
+          disabled={attributes.disabled || attributes.isDisabled}
+        />
+      );
 
     default:
       return <div key={key} className="discord-unknown-element">Unknown element type: {attributes.type}</div>;
@@ -280,13 +199,16 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
 
           {/* Render Embeds */}
           {data.embeds?.map( ( embed ) => (
-            <DiscordEmbed key={embed.id} attributes={embed.attributes} />
+            <DiscordEmbed
+              key={embed.id}
+              {...embed.attributes}
+            />
           ) )}
 
           {/* Render Elements in rows */}
           <div className="discord-elements-container">
             {data.elements?.map( ( row ) => (
-              <div key={row.id} className="discord-button-row">
+              <div key={row.id} className="discord-elements-row">
                 {row.elements.map( ( element, elementIndex ) => (
                   renderElement( element, `${ row.id }-element-${ elementIndex }` )
                 ) )}
@@ -302,7 +224,7 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
   if ( isEmbedNode( data ) ) {
     return (
       <DiscordNodeWrapper>
-        <DiscordEmbed attributes={data.attributes} />
+        <DiscordEmbed {...data.attributes} />
       </DiscordNodeWrapper>
     );
   }

@@ -11,15 +11,52 @@ interface DiscordEmbed {
   [key: string]: unknown;
 }
 
-// Interface for button element attributes
+// Interface for element attributes (base)
+interface BaseElementAttributes {
+  type: number;
+  custom_id?: string;
+}
+
+// Button element attributes
+interface ButtonElementAttributes extends BaseElementAttributes {
+  type: 2;
+  style: number;
+  label: string;
+  emoji?: { name: string; animated?: boolean };
+  disabled?: boolean;
+}
+
+// Select menu option
+interface SelectMenuOption {
+  label: string;
+  value: string;
+  emoji?: string;
+  default?: boolean;
+}
+
+// Select menu element attributes
+interface SelectMenuElementAttributes extends BaseElementAttributes {
+  type: 3;
+  placeholder?: string;
+  options: SelectMenuOption[];
+  min_values?: number;
+  max_values?: number;
+}
+
+// Role selector element attributes
+interface RoleSelectorElementAttributes extends BaseElementAttributes {
+  type: 6;
+  placeholder?: string;
+  min_values?: number;
+  max_values?: number;
+}
+
+// Union type for all element attributes
+type ElementAttributes = ButtonElementAttributes | SelectMenuElementAttributes | RoleSelectorElementAttributes;
+
+// Interface for element
 interface ButtonElement {
-  attributes: {
-    type: number;
-    style: number;
-    label: string;
-    emoji?: { name: string };
-    isDisabled?: boolean;
-  };
+  attributes: ElementAttributes;
 }
 
 // Base node data interface
@@ -54,13 +91,7 @@ interface EmbedNodeData extends BaseNodeData {
 // Element specific node data
 interface ElementNodeData extends BaseNodeData {
   type: "element";
-  attributes: {
-    type: number;
-    style: number;
-    label: string;
-    emoji?: { name: string };
-    isDisabled?: boolean;
-  };
+  attributes: ElementAttributes;
 }
 
 // Row of elements
@@ -157,6 +188,102 @@ const DiscordEmbed: React.FC<{
 };
 
 /**
+ * Renders a Discord select menu
+ */
+const DiscordSelectMenu: React.FC<{
+  attributes: SelectMenuElementAttributes;
+}> = ( { attributes } ) => {
+  return (
+    <div className="discord-select-menu">
+      <div className="discord-select-placeholder">
+        {attributes.placeholder || "Select an option"}
+        <span className="discord-select-chevron">▼</span>
+      </div>
+      <div className="discord-select-tooltip">
+        <div className="discord-select-options">
+          {attributes.options?.map( ( option, index ) => (
+            <div key={index} className={`discord-select-option ${ option.default ? "selected" : "" }`}>
+              {option.emoji && <span className="discord-select-option-emoji">{option.emoji}</span>}
+              <span className="discord-select-option-label">{option.label}</span>
+            </div>
+          ) )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renders a Discord role selector
+ */
+const DiscordRoleSelector: React.FC<{
+  attributes: RoleSelectorElementAttributes;
+}> = ( { attributes } ) => {
+  return (
+    <div className="discord-role-selector">
+      <div className="discord-select-placeholder">
+        {attributes.placeholder || "Select roles"}
+        <span className="discord-select-chevron">▼</span>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renders the appropriate element based on its type
+ */
+const renderElement = ( element: ButtonElement, key: string ) => {
+  const attributes = element.attributes;
+  if ( !attributes ) {
+    return null;
+  }
+
+  // Check the type property and render accordingly
+  if ( "type" in attributes ) {
+    switch ( attributes.type ) {
+      case 2: // Button
+        if ( "style" in attributes && "label" in attributes ) {
+          return (
+            <DiscordButton
+              key={key}
+              buttonStyle={attributes.style || ButtonStyle.Secondary}
+              disabled={!!attributes.disabled}
+            >
+              {attributes.emoji && (
+                <span>{attributes.emoji.name}</span>
+              )}
+              {attributes.label}
+            </DiscordButton>
+          );
+        }
+        break;
+
+      case 3: // Select Menu
+        if ( "options" in attributes ) {
+          return (
+            <DiscordSelectMenu
+              key={key}
+              attributes={attributes as SelectMenuElementAttributes}
+            />
+          );
+        }
+        break;
+
+      case 6: // Role Selector
+        return (
+          <DiscordRoleSelector
+            key={key}
+            attributes={attributes as RoleSelectorElementAttributes}
+          />
+        );
+    }
+  }
+
+  // Fallback for unsupported types
+  return <div key={key}>Unsupported element</div>;
+};
+
+/**
  * DiscordNode component renders different types of Discord UI nodes based on their type
  */
 export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => {
@@ -177,23 +304,16 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
             <DiscordEmbed key={embed.id} attributes={embed.attributes} />
           ) )}
 
-          {/* Render Elements */}
-          {data.elements?.map( ( row ) => (
-            <div key={row.id} className="discord-button-row">
-              {row.elements.map( ( element, elementIndex ) => (
-                <DiscordButton
-                  key={`${ row.id }-element-${ elementIndex }`}
-                  buttonStyle={element.attributes.style || ButtonStyle.Secondary}
-                  disabled={!!element.attributes.isDisabled}
-                >
-                  {element.attributes.emoji && (
-                    <span>{element.attributes.emoji.name}</span>
-                  )}
-                  {element.attributes.label}
-                </DiscordButton>
-              ) )}
-            </div>
-          ) )}
+          {/* Render Elements in rows */}
+          <div className="discord-elements-container">
+            {data.elements?.map( ( row ) => (
+              <div key={row.id} className="discord-button-row">
+                {row.elements.map( ( element, elementIndex ) => (
+                  renderElement( element, `${ row.id }-element-${ elementIndex }` )
+                ) )}
+              </div>
+            ) )}
+          </div>
         </div>
       </DiscordNodeWrapper>
     );
@@ -209,16 +329,10 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
   }
 
   if ( isElementNode( data ) ) {
-    return (
-      <DiscordButton
-        buttonStyle={data.attributes.style || ButtonStyle.Secondary}
-        disabled={!!data.attributes.isDisabled}
-      >
-        {data.attributes.emoji && (
-          <span>{data.attributes.emoji.name}</span>
-        )}
-        {data.attributes.label}
-      </DiscordButton>
+    // Use the renderElement function to handle element based on its type
+    return renderElement(
+      { attributes: data.attributes },
+      data.id || "element"
     );
   }
 

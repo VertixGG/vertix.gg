@@ -16,23 +16,6 @@ export interface DiscordSelectOption {
   default?: boolean;
 }
 
-// Base variants for all Discord select components
-const discordSelectBaseVariants = cva(
-  "text-white",
-  {
-    variants: {
-      size: {
-        default: "text-sm",
-        sm: "text-xs",
-        lg: "text-base"
-      }
-    },
-    defaultVariants: {
-      size: "default"
-    }
-  }
-);
-
 // Define variants for select menu trigger styling
 const discordSelectTriggerVariants = cva(
   "discord-select-trigger relative flex w-full min-w-[150px] cursor-pointer rounded-md border border-[#4F545C] bg-[#2D3136] px-3 py-2 transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -43,7 +26,7 @@ const discordSelectTriggerVariants = cva(
         active: "border-[#5865F2] shadow-[0_0_0_2px_rgba(88,101,242,0.3)]"
       },
       size: {
-        default: "min-h-[40px]",
+        default: "min-h-[40px] text-sm",
         sm: "min-h-[32px] py-1 px-2 text-xs",
         lg: "min-h-[48px] py-3 px-4 text-base"
       }
@@ -280,6 +263,18 @@ function DiscordSelectScrollDownButton( {
 }
 
 // Main component for backward compatibility
+export interface DiscordSelectMenuProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
+  placeholder?: string;
+  options?: DiscordSelectOption[];
+  minValues?: number;
+  maxValues?: number;
+  emoji?: { name: string; id?: string; animated?: boolean };
+  disabled?: boolean;
+  asChild?: boolean;
+  active?: boolean;
+  size?: VariantProps<typeof discordSelectTriggerVariants>["size"];
+}
+
 export function DiscordSelectMenu( {
   placeholder = "Select an option",
   options = [],
@@ -293,17 +288,7 @@ export function DiscordSelectMenu( {
   asChild = false,
   children,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  placeholder?: string;
-  options?: DiscordSelectOption[];
-  minValues?: number;
-  maxValues?: number;
-  emoji?: { name: string; id?: string; animated?: boolean };
-  disabled?: boolean;
-  asChild?: boolean;
-  active?: boolean;
-  size?: VariantProps<typeof discordSelectTriggerVariants>["size"];
-} ) {
+}: DiscordSelectMenuProps ) {
   return (
     <DiscordSelect disabled={disabled} {...props}>
       <DiscordSelectTrigger

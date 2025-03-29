@@ -1,4 +1,5 @@
 import React from "react";
+import { Handle, Position } from "@xyflow/react";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 
@@ -75,8 +76,11 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
     ( key === "Elements" && label === "Elements" )
   ) || "Default";
 
+  const sourceHandleId = `${ groupType }-handle-source-bottom`;
+  const targetHandleId = `${ groupType }-handle-target-top`;
+
   return (
-    <div className="relative">
+    <div className="relative w-full h-full">
       <GroupLabel label={label} styleKey={styleKey} />
       <div className={cn(
         "w-full h-full rounded-lg border border-dashed",
@@ -89,6 +93,18 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
           {children}
         </div>
       </div>
+      <Handle
+            type="source"
+            position={Position.Bottom}
+            id={sourceHandleId}
+            style={{ background: "transparent", border: "none", width: "1px", height: "1px", bottom: "1px" }}
+      />
+       <Handle
+            type="target"
+            position={Position.Top}
+            id={targetHandleId}
+            style={{ background: "transparent", border: "none", width: "1px", height: "1px", top: "1px" }}
+      />
     </div>
   );
 };

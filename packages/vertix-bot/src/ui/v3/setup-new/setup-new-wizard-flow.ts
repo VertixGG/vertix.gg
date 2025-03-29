@@ -100,7 +100,7 @@ export class SetupWizardFlow extends UIWizardFlowBase<string, string, SetupWizar
         return {
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",

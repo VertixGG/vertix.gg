@@ -44,7 +44,7 @@ export interface SetupWizardFlowData extends WizardFlowData {
 /**
  * Setup wizard flow implementation using string identifiers
  */
-export class SetupWizardFlow extends UIWizardFlowBase<string, string, SetupWizardFlowData> {
+export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWizardFlowData> {
     /**
      * Get the name of this flow
      */
@@ -194,7 +194,7 @@ export class SetupWizardFlow extends UIWizardFlowBase<string, string, SetupWizar
     }
 
     protected initializeTransitions(): void {
-        Object.entries( SetupWizardFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( SetupNewWizardFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.addTransitions( state, transitions );
         } );
     }
@@ -239,11 +239,11 @@ export class SetupWizardFlow extends UIWizardFlowBase<string, string, SetupWizar
             return stepStates[ Math.max( currentStep - 1, 0 ) ];
         }
 
-        return SetupWizardFlow.getNextStates()[ transition ];
+        return SetupNewWizardFlow.getNextStates()[ transition ];
     }
 
     public getRequiredData( transition: string ): ( keyof SetupWizardFlowData )[] {
-        return SetupWizardFlow.getRequiredData()[ transition ];
+        return SetupNewWizardFlow.getRequiredData()[ transition ];
     }
 
     protected showModal(): Promise<void> {

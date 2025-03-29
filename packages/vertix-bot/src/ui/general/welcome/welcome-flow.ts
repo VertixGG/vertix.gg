@@ -5,6 +5,7 @@ import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-
 
 import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { VisualConnection } from "@vertix.gg/flow/src/shared/types/flow";
 
 /**
  * Interface for Welcome flow data
@@ -91,6 +92,20 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 requiredData: []
+            }
+        ];
+    }
+
+    /**
+     * NEW: Defines visual connections for the editor.
+     */
+    public static getVisualConnections(): VisualConnection[] {
+        return [
+            {
+                // This ID needs to match how the button is identified in the component schema/diagram generator
+                triggeringElementId: "VertixBot/UI-General/WelcomeSetupButton",
+                transitionName: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                targetFlowName: "VertixBot/UI-V3/SetupNewWizardFlow"
             }
         ];
     }

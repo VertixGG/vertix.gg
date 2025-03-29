@@ -6,6 +6,7 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 import type { PermissionsBitField, ChannelType } from "discord.js";
 
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, VisualConnection } from "@vertix.gg/flow/src/shared/types/flow"; // Use shared types
 
 /**
  * Base interface for flow states
@@ -109,6 +110,14 @@ export abstract class UIFlowBase<
      */
     public static getExternalReferences?(): Record<string, string> {
         return {};
+    }
+
+    /**
+     * Returns the type of flow (e.g., 'ui', 'system').
+     * Defaults to 'ui'. Can be overridden by subclasses.
+     */
+    public static getFlowType(): "ui" | "system" | string { // Allow string for custom types
+        return "ui";
     }
 
     /**
@@ -239,10 +248,21 @@ export abstract class UIFlowBase<
     }
 
     /**
+     * Returns the next state for a given transition
+     * Need to define this method as static if not already
+     */
+    public static getNextStates?(): Record<string, string>; // Define as optional static method
+
+    /**
+     * Define getVisualConnections as optional static method
+     */
+    public static getVisualConnections?(): VisualConnection[];
+
+    /**
      * Convert flow to JSON representation
      * Includes integration points and external references
      */
-    public async toJSON() {
+    public async toJSON(): Promise<SharedFlowData> { // Use SharedFlowData type
         const transactions = this.getAvailableTransitions();
         const requiredDataMap: Record<string, ( keyof TData )[]> = {};
 
@@ -250,22 +270,52 @@ export abstract class UIFlowBase<
             requiredDataMap[ transaction as string ] = this.getRequiredData( transaction );
         }
 
-        // Include integration points if defined
-        const entryPoints = ( this.constructor as typeof UIFlowBase ).getEntryPoints?.() || [];
-        const handoffPoints = ( this.constructor as typeof UIFlowBase ).getHandoffPoints?.() || [];
-        const externalRefs = ( this.constructor as typeof UIFlowBase ).getExternalReferences?.() || {};
+        const constructor = ( this.constructor as typeof UIFlowBase );
+        const entryPoints = constructor.getEntryPoints?.() || [];
+        const handoffPoints = constructor.getHandoffPoints?.() || [];
+        const externalRefs = constructor.getExternalReferences?.() || {};
+        // Safely get nextStates map using optional chaining
+        const nextStatesMap = constructor.getNextStates ? constructor.getNextStates() : {};
+        const builtComponents = await this.buildComponentSchemas(); // Get components
+        const visualConnections = constructor.getVisualConnections?.() || []; // Get visual connections
 
-        return {
-            name: ( this.constructor as typeof UIFlowBase ).getName(),
-            currentState: this.currentState,
-            transactions,
-            requiredData: requiredDataMap,
+        // Construct the FlowData object directly
+        const flowDataResult: SharedFlowData = {
+            name: constructor.getName(),                 // Static
+            type: constructor.getFlowType(),             // Static
+            // currentState: this.currentState,          // Instance property - remove if frontend doesn't need it
+            transactions,                                // From instance method
+            requiredData: requiredDataMap as Record<string, string[]>, // Cast keyof TData[] to string[]
+            nextStates: nextStatesMap,                   // Static
             integrations: {
                 entryPoints,
                 handoffPoints,
                 externalReferences: externalRefs
             },
-            components: await this.buildComponentSchemas()
+            components: builtComponents as SharedFlowComponent[], // Cast ComponentSchemaResult[] to SharedFlowComponent[]
+            visualConnections: visualConnections // Add visual connections
         };
+
+        // Clean up optional fields if they are empty objects/arrays
+        if ( !flowDataResult.nextStates || Object.keys( flowDataResult.nextStates ).length === 0 ) {
+            delete flowDataResult.nextStates;
+        }
+        if ( !flowDataResult.integrations?.entryPoints?.length ) {
+             if ( flowDataResult.integrations ) delete flowDataResult.integrations.entryPoints;
+        }
+        if ( !flowDataResult.integrations?.handoffPoints?.length ) {
+             if ( flowDataResult.integrations ) delete flowDataResult.integrations.handoffPoints;
+        }
+        if ( !flowDataResult.integrations?.externalReferences || Object.keys( flowDataResult.integrations.externalReferences ).length === 0 ) {
+             if ( flowDataResult.integrations ) delete flowDataResult.integrations.externalReferences;
+        }
+        if ( flowDataResult.integrations && Object.keys( flowDataResult.integrations ).length === 0 ) {
+             delete flowDataResult.integrations;
+        }
+        if ( !flowDataResult.visualConnections?.length ) { // Clean up visual connections too
+            delete flowDataResult.visualConnections;
+        }
+
+        return flowDataResult;
     }
 }

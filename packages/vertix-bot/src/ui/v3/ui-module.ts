@@ -11,7 +11,7 @@ import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
-import { SetupWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
+import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
@@ -29,7 +29,7 @@ export class UIModuleV3 extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [ SetupWizardFlow ];
+        return [ SetupNewWizardFlow ];
     }
 
     public get $$() {

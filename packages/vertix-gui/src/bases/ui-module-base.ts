@@ -24,11 +24,17 @@ export abstract class UIModuleBase extends UIBase {
         throw new ForceMethodImplementation( this, this.getFlows.name );
     }
 
+    public static getSystemFlows(): TFlowClassType[] {
+        return [];
+    }
+
     public static validate() {
         const adapters = this.getAdapters();
-        const flows = this.getFlows();
+        const uiFlows = this.getFlows();
+        const systemFlows = this.getSystemFlows();
 
-        // Ensure all adapters and flows start with the same 2 parts of the name
+        const allFlows = [ ...uiFlows, ...systemFlows ];
+
         const prefix = this.getName()
             .split( DEFAULT_UI_NAMESPACE_SEPARATOR )
             .slice( 0, 2 )
@@ -36,13 +42,13 @@ export abstract class UIModuleBase extends UIBase {
 
         for ( const adapter of adapters ) {
             if ( !adapter.getName().startsWith( prefix ) ) {
-                throw new Error( `Adapter: '${ adapter.getName() }' does not start with require prefix: '${ prefix }'` );
+                throw new Error( `Adapter: '${ adapter.getName() }' does not start with required prefix: '${ prefix }'` );
             }
         }
 
-        for ( const flow of flows ) {
+        for ( const flow of allFlows ) {
             if ( !flow.getName().startsWith( prefix ) ) {
-                throw new Error( `Flow: '${ flow.getName() }' does not start with required prefix: '${ prefix }'` );
+                throw new Error( `Flow (UI or System): '${ flow.getName() }' does not start with required prefix: '${ prefix }'` );
             }
         }
     }

@@ -1,4 +1,4 @@
-import type { Edge, Node } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 
 export interface FlowComponent {
     name: string;
@@ -65,5 +65,4 @@ export interface NodeData {
 
 export interface FlowDiagram {
     nodes: Node[];
-    edges: Edge[];
 }

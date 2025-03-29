@@ -5,8 +5,7 @@ import { FlowLayoutTopBar, FlowLayoutEditor } from "@vertix.gg/flow/src/shared/c
 
 import "@vertix.gg/flow/src/features/flow-editor/components/index.css";
 
-import type { Node, Edge, NodeChange, EdgeChange, Connection } from "@xyflow/react";
-
+import type { Node, NodeChange } from "@xyflow/react";
 
 export interface FlowEditorMainProps {
     modulePath: string | null;
@@ -15,10 +14,7 @@ export interface FlowEditorMainProps {
     connectedFlowsData: any[];
     isLoadingConnectedFlows: boolean;
     combinedNodes: Node[];
-    combinedEdges: Edge[];
     onNodesChange: ( changes: NodeChange[] ) => void;
-    onEdgesChange: ( changes: EdgeChange[] ) => void;
-    onConnect: ( params: Connection ) => void;
     onZoomChange: ( zoom: number ) => void;
 }
 
@@ -29,10 +25,7 @@ export const FlowEditorMain: React.FC<FlowEditorMainProps> = ( {
     connectedFlowsData,
     isLoadingConnectedFlows,
     combinedNodes,
-    combinedEdges,
     onNodesChange,
-    onEdgesChange,
-    onConnect,
     onZoomChange,
 } ) => {
     if ( !modulePath || !flowName || !moduleName ) {
@@ -67,10 +60,7 @@ export const FlowEditorMain: React.FC<FlowEditorMainProps> = ( {
             <FlowLayoutEditor>
                 <FlowDiagramDisplay
                     nodes={combinedNodes}
-                    edges={combinedEdges}
                     onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
                     onZoomChange={onZoomChange}
                 />
             </FlowLayoutEditor>

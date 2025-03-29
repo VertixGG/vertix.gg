@@ -20,10 +20,7 @@ import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-e
 
 import type {
     NodeChange,
-    EdgeChange,
-    Connection,
     Node,
-    Edge,
     ReactFlowInstance
 } from "@xyflow/react";
 
@@ -36,10 +33,7 @@ const nodeTypes = {
 
 interface FlowDiagramDisplayProps {
     nodes: Node[];
-    edges: Edge[];
     onNodesChange?: ( changes: NodeChange[] ) => void;
-    onEdgesChange?: ( changes: EdgeChange[] ) => void;
-    onConnect?: ( connection: Connection ) => void;
     onZoomChange?: ( zoom: number ) => void;
 }
 
@@ -48,10 +42,7 @@ interface FlowDiagramDisplayProps {
  */
 const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     nodes,
-    edges,
     onNodesChange,
-    onEdgesChange,
-    onConnect,
     onZoomChange
 } ) => {
     const { setError } = useFlowUI();
@@ -99,10 +90,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     return (
         <ReactFlow
             nodes={nodes}
-            edges={edges}
             onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
             nodeTypes={nodeTypes}
             fitView={false}
             defaultViewport={{ x: 0, y: 0, zoom: 0.85 }}
@@ -115,7 +103,6 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             nodesDraggable={true}
             proOptions={{ hideAttribution: true }}
             elementsSelectable={true}
-            elevateEdgesOnSelect={true}
             snapToGrid={true}
             snapGrid={[ 10, 10 ]}
             onInit={onInit}

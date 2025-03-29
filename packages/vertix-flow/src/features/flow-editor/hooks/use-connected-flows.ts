@@ -5,7 +5,7 @@ import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/ut
 import { getConnectedFlows } from "@vertix.gg/flow/src/shared/lib/flow-utils";
 import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
-import type { Node, Edge } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 
 // Helper function to get the correct API base URL
@@ -19,20 +19,17 @@ const getApiBaseUrl = () => {
 export interface UseConnectedFlowsReturn {
     connectedFlowsData: FlowData[];
     combinedNodes: Node[];
-    combinedEdges: Edge[];
     isLoadingConnectedFlows: boolean;
     handleMainFlowDataLoaded: ( flowData: FlowData ) => void;
     setCombinedNodes: React.Dispatch<React.SetStateAction<Node[]>>;
-    setCombinedEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
 }
 
 export const useConnectedFlows = (): UseConnectedFlowsReturn => {
     const [ connectedFlowsData, setConnectedFlowsData ] = useState<FlowData[]>( [] );
     const [ combinedNodes, setCombinedNodes ] = useState<Node[]>( [] );
-    const [ combinedEdges, setCombinedEdges ] = useState<Edge[]>( [] );
     const [ isLoadingConnectedFlows, setIsLoadingConnectedFlows ] = useState<boolean>( false );
 
-    const { nodes, edges, handleSchemaLoaded: handleFlowDataLoaded } = useFlowDiagram();
+    const { nodes, handleFlowDataLoaded } = useFlowDiagram();
     const { setError } = useFlowUI();
 
     const loadConnectedFlows = async( connectedFlowNames: string[] ) => {
@@ -70,17 +67,16 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
         }
     };
 
-    const combineFlowDiagrams = useCallback( ( mainNodes: Node[], mainEdges: Edge[], connectedFlows: FlowData[] ) => {
+    const combineFlowDiagrams = useCallback( ( mainNodes: Node[], connectedFlows: FlowData[] ) => {
         const allNodes = [ ...mainNodes ];
-        const allEdges = [ ...mainEdges ];
         let offsetX = 800;
 
         connectedFlows.forEach( ( flowData, index ) => {
-            const { nodes: flowNodes, edges: flowEdges } = generateFlowDiagram( flowData );
+            const { nodes: flowNodes } = generateFlowDiagram( flowData );
 
             const prefixedNodes = flowNodes.map( node => ( {
                 ...node,
-                id: `flow-${ index }-${ node.id }`,
+                id: `${ flowData.name }-node-${ node.id }`,
                 position: {
                     x: ( node.position?.x || 0 ) + offsetX,
                     y: ( node.position?.y || 0 )
@@ -93,44 +89,16 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 }
             } ) );
 
-            const prefixedEdges = flowEdges.map( edge => ( {
-                ...edge,
-                id: `flow-${ index }-${ edge.id }`,
-                source: `flow-${ index }-${ edge.source }`,
-                target: `flow-${ index }-${ edge.target }`
-            } ) );
-
-            if ( index === 0 && mainNodes.length > 0 ) {
-                const mainFlowGroupId = mainNodes.find( n => n.id === "flow-group" )?.id || mainNodes[ 0 ].id;
-                const connectedFlowGroupId = prefixedNodes.find( n => n.type === "compound" )?.id || prefixedNodes[ 0 ].id;
-
-                allEdges.push( {
-                    id: `connection-to-flow-${ index }`,
-                    source: mainFlowGroupId,
-                    target: connectedFlowGroupId,
-                    type: "smoothstep",
-                    animated: true,
-                    style: {
-                        stroke: "hsl(var(--warning))",
-                        strokeWidth: 2
-                    },
-                    label: "Connected Flow"
-                } );
-            }
-
             allNodes.push( ...prefixedNodes );
-            allEdges.push( ...prefixedEdges );
             offsetX += 800;
         } );
 
         setCombinedNodes( allNodes );
-        setCombinedEdges( allEdges );
     }, [] );
 
     const handleMainFlowDataLoaded = useCallback( ( flowData: FlowData ) => {
         const mainDiagram = generateFlowDiagram( flowData );
         setCombinedNodes( mainDiagram.nodes );
-        setCombinedEdges( mainDiagram.edges );
 
         handleFlowDataLoaded( flowData );
 
@@ -142,17 +110,15 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
 
     useEffect( () => {
         if ( nodes.length > 0 && connectedFlowsData.length > 0 && !isLoadingConnectedFlows ) {
-            combineFlowDiagrams( nodes, edges, connectedFlowsData );
+            combineFlowDiagrams( nodes, connectedFlowsData );
         }
-    }, [ nodes, edges, connectedFlowsData, isLoadingConnectedFlows, combineFlowDiagrams ] );
+    }, [ nodes, connectedFlowsData, isLoadingConnectedFlows, combineFlowDiagrams ] );
 
     return {
         connectedFlowsData,
         combinedNodes,
-        combinedEdges,
         isLoadingConnectedFlows,
         handleMainFlowDataLoaded,
         setCombinedNodes,
-        setCombinedEdges,
     };
 };

@@ -53,22 +53,15 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     const {
         connectedFlowsData,
         combinedNodes,
-        combinedEdges,
         isLoadingConnectedFlows,
         handleMainFlowDataLoaded,
         setCombinedNodes,
-        setCombinedEdges,
     } = useConnectedFlows();
 
     // Flow diagram handlers
     const {
         onNodesChange,
-        onEdgesChange,
-        onConnect,
-    } = useFlowDiagram( {
-        setCombinedNodes,
-        setCombinedEdges,
-    } );
+    } = useFlowDiagram( { setCombinedNodes } );
 
     return (
             <FlowLayout>
@@ -98,10 +91,7 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                                 connectedFlowsData={ connectedFlowsData }
                                 isLoadingConnectedFlows={ isLoadingConnectedFlows }
                                 combinedNodes={ combinedNodes }
-                                combinedEdges={ combinedEdges }
                                 onNodesChange={ onNodesChange }
-                                onEdgesChange={ onEdgesChange }
-                                onConnect={ onConnect }
                                 onZoomChange={ handleZoomChange }
                         />
                     </FlowLayoutMainContent>

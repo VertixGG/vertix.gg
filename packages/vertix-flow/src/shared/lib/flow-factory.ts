@@ -1,6 +1,6 @@
 import { calculateGroupPosition, getViewportDimensions } from "@vertix.gg/flow/src/shared/lib/position-calculator";
 
-import type { Node, Edge } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 
 import type { FlowComponent, FlowDiagram, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 
@@ -39,7 +39,6 @@ interface ComponentNode {
 export class DefaultFlowFactory implements FlowFactory {
     public createFlowDiagram( flowData: FlowData ): FlowDiagram {
         const nodes: Node[] = [];
-        const edges: Edge[] = [];
 
         // Extract flow data components
         const { transactions, requiredData, components, name } = flowData;
@@ -90,12 +89,7 @@ export class DefaultFlowFactory implements FlowFactory {
             draggable: true
         } );
 
-        // Add edges for component connections if components exist
-        if ( components && components.length > 0 ) {
-            this.createComponentEdges( components, edges );
-        }
-
-        return { nodes, edges };
+        return { nodes };
     }
 
     // Helper method to create component nodes from schemas
@@ -134,63 +128,6 @@ export class DefaultFlowFactory implements FlowFactory {
             }
 
             return result;
-        } );
-    }
-
-    // Helper method to create edges between component elements
-    private createComponentEdges( components: FlowComponent[] | FlowComponent, edges: Edge[] ) {
-        const componentsArray = Array.isArray( components ) ? components : [ components ];
-
-        componentsArray.forEach( ( component, componentIndex ) => {
-            const componentId = `component-${ componentIndex }`;
-
-            // Add edges from root to embeds
-            if ( component.entities?.embeds?.length ) {
-                component.entities.embeds.forEach( ( _, embedIndex ) => {
-                    edges.push( {
-                        id: `${ componentId }-root-to-embed-${ embedIndex }`,
-                        source: `${ componentId }-root`,
-                        target: `${ componentId }-embed-${ embedIndex }`,
-                        animated: true,
-                        style: { stroke: "#a78bfa" },
-                        type: "smoothstep"
-                    } );
-                } );
-            }
-
-            // Add edges from root to child components group if components exist
-            if ( component.components?.length ) {
-                edges.push( {
-                    id: `${ componentId }-root-to-child-components`,
-                    source: `${ componentId }-root`,
-                    target: `${ componentId }-child-components-group`,
-                    animated: true,
-                    style: { stroke: "#60a5fa" },
-                    type: "smoothstep"
-                } );
-
-                // Recursively add edges for child components
-                this.createComponentEdges( component.components, edges );
-            }
-
-            // Skip creating edges from embeds to elements group if we're already connecting elements to embeds
-            // This avoids duplicate edges
-            /*
-            // Add edges from embeds to elements group if both exist
-            if ( component.entities?.embeds?.length && component.entities?.elements?.length ) {
-                component.entities.embeds.forEach( ( _, embedIndex ) => {
-                    edges.push( {
-                        id: `${ componentId }-embed-${ embedIndex }-to-elements`,
-                        source: `${ componentId }-embed-${ embedIndex }`,
-                        target: `${ componentId }-elements-group`,
-                        animated: true,
-                        style: { stroke: "#34d399" },
-                        type: "smoothstep",
-                        zIndex: 0
-                    } );
-                } );
-            }
-            */
         } );
     }
 

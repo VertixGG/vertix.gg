@@ -2,7 +2,7 @@ import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/ut
 
 import type { StateCreator } from "zustand";
 
-import type { Node, Edge } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 
 /**
@@ -10,7 +10,6 @@ import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
  */
 export interface DiagramState {
   nodes: Node[];
-  edges: Edge[];
 }
 
 /**
@@ -18,7 +17,6 @@ export interface DiagramState {
  */
 export interface DiagramActions {
   setNodes: ( nodes: Node[] ) => void;
-  setEdges: ( edgesOrFn: Edge[] | ( ( prev: Edge[] ) => Edge[] ) ) => void;
   updateNodePosition: ( nodeId: string, position: { x: number, y: number } ) => void;
   clearDiagram: () => void;
   handleFlowDataLoaded: ( flowData: FlowData ) => void;
@@ -34,7 +32,6 @@ export type DiagramSlice = DiagramState & DiagramActions;
  */
 const initialDiagramState: DiagramState = {
   nodes: [],
-  edges: [],
 };
 
 /**
@@ -51,11 +48,6 @@ export const createDiagramSlice: StateCreator<
   // Direct node updates
   setNodes: ( nodes ) => set( { nodes } ),
 
-  // Edge updates with function support
-  setEdges: ( edgesOrFn ) => set( ( state ) => ( {
-    edges: typeof edgesOrFn === "function" ? edgesOrFn( state.edges ) : edgesOrFn
-  } ) ),
-
   // Update a node's position
   updateNodePosition: ( nodeId, position ) => set( ( state ) => ( {
     nodes: state.nodes.map( ( node ) =>
@@ -64,13 +56,13 @@ export const createDiagramSlice: StateCreator<
   } ) ),
 
   // Clear the diagram data
-  clearDiagram: () => set( initialDiagramState ),
+  clearDiagram: () => set( { nodes: [] } ),
 
   // Generate diagram from flow data
   handleFlowDataLoaded: ( flowData ) => {
     if ( !flowData ) return;
 
-    const { nodes, edges } = generateFlowDiagram( flowData );
-    set( { nodes, edges } );
+    const { nodes } = generateFlowDiagram( flowData );
+    set( { nodes } );
   }
 } );

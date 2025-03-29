@@ -56,12 +56,10 @@ export const useFlowSelection = () => {
 export const useFlowDiagram = () => {
   return useFlowEditorStore( state => ( {
     nodes: state.nodes,
-    edges: state.edges,
     setNodes: state.setNodes,
-    setEdges: state.setEdges,
     updateNodePosition: state.updateNodePosition,
     clearDiagram: state.clearDiagram,
-    handleSchemaLoaded: state.handleFlowDataLoaded,
+    handleFlowDataLoaded: state.handleFlowDataLoaded
   } ) );
 };
 

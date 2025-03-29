@@ -14,6 +14,8 @@ import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/s
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
+import { WelcomeFlowState, WelcomeFlowTransition } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow";
+
 import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 
 import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
@@ -159,9 +161,9 @@ export class SetupWizardFlow extends UIWizardFlowBase<SetupWizardFlowState, Setu
             {
                 flowName: "VertixBot/UI-General/WelcomeFlow",
                 description: "Entry point from Welcome flow when setup button is clicked",
-                sourceState: "SETUP_CLICKED",
+                sourceState: WelcomeFlowState.SETUP_CLICKED,
                 targetState: SetupWizardFlowState.INITIAL,
-                transition: SetupWizardFlowTransition.START_SETUP,
+                transition: WelcomeFlowTransition.CLICK_SETUP,
                 requiredData: [ "originFlow", "originState", "originTransition", "sourceButton" ]
             }
         ];

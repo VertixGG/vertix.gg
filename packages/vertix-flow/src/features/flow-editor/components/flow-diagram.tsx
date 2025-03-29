@@ -17,10 +17,9 @@ import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/n
 import { CompoundNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/compound-node";
 import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 
-import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
-
 import type {
-    ReactFlowInstance,
+    ReactFlowInstance
+,
     Node,
     Edge,
     NodeChange
@@ -51,9 +50,8 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     onNodesChange,
     onZoomChange
 } ) => {
-    const { setError } = useFlowUI();
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
-    const { getNodes, fitView } = useReactFlow();
+    const { getNodes } = useReactFlow();
 
     const onInit = useCallback( ( instance: ReactFlowInstance ) => {
         try {
@@ -68,17 +66,17 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
                 }
             }, 100 );
         } catch  {
-            setError( "Failed to initialize flow diagram" );
+            // Optionally log error here
         }
-    }, [ setError, onZoomChange ] );
+    }, [ onZoomChange ] );
 
     const handleRefresh = useCallback( () => {
         try {
             window.location.reload();
         } catch  {
-            setError( "Failed to refresh flow diagram" );
+            // Optionally log error here
         }
-    }, [ setError ] );
+    }, [] );
 
     const handleMove = useCallback( () => {
         if ( onZoomChange && reactFlowInstanceRef.current ) {
@@ -86,41 +84,61 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
         }
     }, [ onZoomChange ] );
 
+    // --- Layout Effect ---
     useEffect( () => {
-        if ( nodes.length < 2 ) return;
-        console.log( "[Layout Effect] Running layout check..." );
-        const currentNodes = getNodes();
-        const mainFlowGroupNode = currentNodes.find( node => node.id === "flow-group" );
-        const connectedFlowGroupNode = currentNodes.find( node => node.data?.isConnectedFlow && node.id.endsWith( "-node-flow-group" ) );
+        // Only run if we have exactly two nodes (main + one connected)
+        // And ensure getNodes function is available
+        if ( nodes.length === 2 && getNodes ) {
+            console.log( "[Layout Effect - Simplified Trigger] Detected 2 nodes. Scheduling layout check..." );
+            // Use a timeout to give RF time to measure after nodes appear in state
+            const timerId = setTimeout( () => {
+                console.log( "[Layout Effect - Simplified Trigger] Running layout check after delay..." );
+                const currentNodes = getNodes();
+                const mainFlowGroupNode = currentNodes.find( node => node.id === "flow-group" );
+                const connectedFlowGroupNode = currentNodes.find( node => node.data?.isConnectedFlow && node.id.endsWith( "-node-flow-group" ) );
 
-        if ( mainFlowGroupNode?.measured?.height && connectedFlowGroupNode ) {
-            console.log( "[Layout Effect] Nodes found with measured height:", { mainY: mainFlowGroupNode.position.y, mainH: mainFlowGroupNode.measured.height, connectedY: connectedFlowGroupNode.position.y } );
-            const verticalGap = 150;
-            const newY = mainFlowGroupNode.position.y + mainFlowGroupNode.measured.height + verticalGap;
+                if ( mainFlowGroupNode?.measured?.height && connectedFlowGroupNode ) {
+                    console.log( "[Layout Effect - Simplified Trigger] Nodes measured:", { mainY: mainFlowGroupNode.position.y, mainH: mainFlowGroupNode.measured.height, connectedY: connectedFlowGroupNode.position.y } );
+                    const verticalGap = 150;
+                    // Ensure calculations use numbers
+                    const mainY = mainFlowGroupNode.position.y || 0;
+                    const mainH = mainFlowGroupNode.measured.height || 0;
+                    const connectedY = connectedFlowGroupNode.position.y || 0;
 
-            if ( Math.abs( connectedFlowGroupNode.position.y - newY ) > 1 ) {
-                console.log( `[Layout Effect] Repositioning connected node ${ connectedFlowGroupNode.id } to Y: ${ newY }` );
-                setCombinedNodes( ( nds ) =>
-                  nds.map( ( node ) => {
-                    if ( node.id === connectedFlowGroupNode.id ) {
-                      return { ...node, position: { ...node.position, y: newY } };
+                    const newY = mainY + mainH + verticalGap;
+
+                    // Only update if needed
+                    if ( Math.abs( connectedY - newY ) > 1 ) {
+                         console.log( `[Layout Effect - Simplified Trigger] Repositioning ${ connectedFlowGroupNode.id } to Y: ${ newY }` );
+                         setCombinedNodes( ( nds ) =>
+                            nds.map( ( node ) => {
+                                if ( node.id === connectedFlowGroupNode.id ) {
+                                    // Create a new position object
+                                    const newPosition = { ...node.position, y: newY };
+                                    // Return a new node object
+                                    return { ...node, position: newPosition };
+                                }
+                                return node; // Return original node object if no change
+                            } )
+                         );
+                         // Optional: Fit view after layout adjustment
+                         // setTimeout(() => fitView({ duration: 200, padding: 0.2 }), 50);
+                    } else {
+                         console.log( "[Layout Effect - Simplified Trigger] Already positioned." );
                     }
-                    // TODO: Adjust child nodes relative to parent if needed
-                    return node;
-                  } )
-                );
-                // Optional: Fit view after layout adjustment
-                // setTimeout(() => fitView({ duration: 200, padding: 0.2 }), 50);
-            } else {
-                 console.log( "[Layout Effect] Connected node already positioned correctly." );
-            }
-        } else {
-             console.log( "[Layout Effect] Nodes or measured dimensions not ready yet." );
-             if( mainFlowGroupNode && !mainFlowGroupNode.measured?.height ) {
-                 console.log( "[Layout Effect] Main flow group node missing measured height." );
-             }
+                } else {
+                    console.log( "[Layout Effect - Simplified Trigger] Measurement not ready after delay." );
+                    // Log why measurement might be missing
+                     if ( !mainFlowGroupNode ) console.log( "[Layout Effect] Main flow group node not found in getNodes()" );
+                     else if ( !mainFlowGroupNode.measured?.height ) console.log( "[Layout Effect] Main flow group node height not measured" );
+                     if ( !connectedFlowGroupNode ) console.log( "[Layout Effect] Connected flow group node not found in getNodes()" );
+                }
+            }, 150 ); // Increased delay slightly (try 100, 150, 200 if needed)
+
+            return () => clearTimeout( timerId ); // Cleanup timeout
         }
-    }, [ JSON.stringify( nodes.map( n=>( { id: n.id, measured: n.measured } ) ) ), setCombinedNodes, getNodes, fitView ] );
+    // Depend only on node count and function references
+    }, [ nodes.length, setCombinedNodes, getNodes ] ); // Removed fitView dependency for now
 
     return (
         <ReactFlow

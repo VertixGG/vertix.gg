@@ -4,7 +4,6 @@ import { useUIModules } from "@vertix.gg/flow/src/features/module-selector/hooks
 import { ScrollArea } from "@vertix.gg/flow/src/shared/components/scroll-area";
 import { Button } from "@vertix.gg/flow/src/shared/components/button";
 import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
-import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
 
 import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
 
@@ -56,10 +55,15 @@ export const ModuleSelector: React.FC<ModuleSelectorProps> = ( { onSelectModule 
                                                         { module.path }
                                                     </div>
                                                     <div className="flex flex-wrap gap-1">
-                                                        { module.flows.length > 0 && (
+                                                        { module.flows?.length > 0 && (
                                                                 <Badge variant="secondary">
-                                                                    { module.flows.length } flow(s)
+                                                                    { module.flows.length } UI flow(s)
                                                                 </Badge>
+                                                        ) }
+                                                        { module.systemFlows?.length > 0 && (
+                                                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                                { module.systemFlows.length } System flow(s)
+                                                            </Badge>
                                                         ) }
                                                         { module.adapters.length > 0 && (
                                                                 <Badge variant="outline">

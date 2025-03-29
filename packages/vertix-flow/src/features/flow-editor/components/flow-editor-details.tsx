@@ -1,24 +1,19 @@
 import React from "react";
 
+import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
+
 import { Card } from "@vertix.gg/flow/src/shared/components/card";
 import { ScrollArea } from "@vertix.gg/flow/src/shared/components/scroll-area";
 import { FlowDataDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-data-display";
 
-import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
+export const FlowEditorDetails: React.FC = () => {
+    const {
+        modulePath,
+        flowName,
+        moduleName,
+        handleMainFlowDataLoaded,
+    } = useFlowEditorContext();
 
-export interface FlowEditorDetailsProps {
-    modulePath: string | null;
-    flowName: string | null;
-    moduleName: string | null;
-    onFlowDataLoaded: ( flowData: FlowData ) => void;
-}
-
-export const FlowEditorDetails: React.FC<FlowEditorDetailsProps> = ( {
-    modulePath,
-    flowName,
-    moduleName,
-    onFlowDataLoaded,
-} ) => {
     return (
         <>
             <div className="p-4 border-b bg-primary/5">
@@ -30,7 +25,7 @@ export const FlowEditorDetails: React.FC<FlowEditorDetailsProps> = ( {
                         <FlowDataDisplay
                             moduleName={moduleName}
                             flowName={flowName}
-                            onFlowDataLoaded={onFlowDataLoaded}
+                            onFlowDataLoaded={handleMainFlowDataLoaded}
                         />
                     ) : (
                         <Card className="p-4">

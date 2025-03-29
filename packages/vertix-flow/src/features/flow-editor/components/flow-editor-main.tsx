@@ -1,37 +1,26 @@
 import React from "react";
 
+import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
+
 import { FlowDiagramDisplay } from "@vertix.gg/flow/src/features/flow-editor/components/flow-diagram";
 import { FlowLayoutTopBar, FlowLayoutEditor } from "@vertix.gg/flow/src/shared/components/flow-layout";
 
 import "@vertix.gg/flow/src/features/flow-editor/components/index.css";
 
-import type { Node, Edge, NodeChange } from "@xyflow/react";
+export const FlowEditorMain: React.FC = () => {
+    const {
+        modulePath,
+        flowName,
+        moduleName,
+        connectedFlowsData,
+        isLoadingConnectedFlows,
+        combinedNodes,
+        combinedEdges,
+        setCombinedNodes,
+        onNodesChange,
+        handleZoomChange,
+    } = useFlowEditorContext();
 
-export interface FlowEditorMainProps {
-    modulePath: string | null;
-    flowName: string | null;
-    moduleName: string | null;
-    connectedFlowsData: any[];
-    isLoadingConnectedFlows: boolean;
-    combinedNodes: Node[];
-    combinedEdges: Edge[];
-    setCombinedNodes: React.Dispatch<React.SetStateAction<Node[]>>;
-    onNodesChange: ( changes: NodeChange[] ) => void;
-    onZoomChange: ( zoom: number ) => void;
-}
-
-export const FlowEditorMain: React.FC<FlowEditorMainProps> = ( {
-    modulePath,
-    flowName,
-    moduleName,
-    connectedFlowsData,
-    isLoadingConnectedFlows,
-    combinedNodes,
-    combinedEdges,
-    setCombinedNodes,
-    onNodesChange,
-    onZoomChange,
-} ) => {
     if ( !modulePath || !flowName || !moduleName ) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -67,7 +56,7 @@ export const FlowEditorMain: React.FC<FlowEditorMainProps> = ( {
                     edges={combinedEdges}
                     setCombinedNodes={setCombinedNodes}
                     onNodesChange={onNodesChange}
-                    onZoomChange={onZoomChange}
+                    onZoomChange={handleZoomChange}
                 />
             </FlowLayoutEditor>
         </div>

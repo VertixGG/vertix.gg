@@ -1,5 +1,7 @@
 import React from "react";
 
+import { FlowEditorProvider } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-provider";
+
 import { ResizableHandle } from "@vertix.gg/flow/src/shared/components/resizable";
 import {
     FlowLayout,
@@ -16,9 +18,7 @@ import { FlowEditorMain } from "@vertix.gg/flow/src/features/flow-editor/compone
 import { FlowEditorDetails } from "@vertix.gg/flow/src/features/flow-editor/components/flow-editor-details";
 import { FlowEditorActivity } from "@vertix.gg/flow/src/features/flow-editor/components/flow-editor-activity";
 
-import { useModuleFlowSelection } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-module-flow-selection";
-import { useConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-connected-flows";
-import { useFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-diagram";
+// IMPORT Provider
 
 export interface FlowEditorProps {
     initialModulePath?: string;
@@ -33,38 +33,12 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     initialModulePath,
     initialFlowName,
 } ) => {
-    // Module and flow selection state
-    const {
-        modulePath,
-        flowName,
-        moduleName,
-        activeTab,
-        zoomLevel,
-        handleModuleClick,
-        handleFlowClick,
-        handleZoomChange,
-        setActiveTab,
-    } = useModuleFlowSelection( {
-        initialModulePath,
-        initialFlowName,
-    } );
-
-    // Connected flows state and handlers
-    const {
-        connectedFlowsData,
-        combinedNodes,
-        combinedEdges,
-        isLoadingConnectedFlows,
-        handleMainFlowDataLoaded,
-        setCombinedNodes,
-    } = useConnectedFlows();
-
-    // Flow diagram handlers
-    const {
-        onNodesChange,
-    } = useFlowDiagram( { setCombinedNodes } );
-
+    // Pass initial props to Provider
     return (
+        <FlowEditorProvider
+            initialModulePath={initialModulePath}
+            initialFlowName={initialFlowName}
+        >
             <FlowLayout>
                 <LoadingIndicator/>
 
@@ -72,12 +46,12 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                     {/* Left Sidebar */ }
                     <FlowLayoutLeftSidebar defaultSize={ 20 } minSize={ 15 } maxSize={ 25 }>
                         <FlowEditorSidebar
-                                activeTab={ activeTab }
-                                setActiveTab={ setActiveTab }
-                                modulePath={ modulePath }
-                                zoomLevel={ zoomLevel }
-                                handleModuleClick={ handleModuleClick }
-                                handleFlowClick={ handleFlowClick }
+                            // activeTab={ activeTab }
+                            // setActiveTab={ setActiveTab }
+                            // modulePath={ modulePath }
+                            // zoomLevel={ zoomLevel }
+                            // handleModuleClick={ handleModuleClick }
+                            // handleFlowClick={ handleFlowClick }
                         />
                     </FlowLayoutLeftSidebar>
 
@@ -86,16 +60,16 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                     {/* Main content */ }
                     <FlowLayoutMainContent>
                         <FlowEditorMain
-                                modulePath={ modulePath }
-                                flowName={ flowName }
-                                moduleName={ moduleName }
-                                connectedFlowsData={ connectedFlowsData }
-                                isLoadingConnectedFlows={ isLoadingConnectedFlows }
-                                combinedNodes={ combinedNodes }
-                                combinedEdges={ combinedEdges }
-                                setCombinedNodes={ setCombinedNodes }
-                                onNodesChange={ onNodesChange }
-                                onZoomChange={ handleZoomChange }
+                            // modulePath={ modulePath }
+                            // flowName={ flowName }
+                            // moduleName={ moduleName }
+                            // connectedFlowsData={ connectedFlowsData }
+                            // isLoadingConnectedFlows={ isLoadingConnectedFlows }
+                            // combinedNodes={ combinedNodes }
+                            // combinedEdges={ combinedEdges }
+                            // setCombinedNodes={ setCombinedNodes }
+                            // onNodesChange={ onNodesChange }
+                            // onZoomChange={ handleZoomChange }
                         />
                     </FlowLayoutMainContent>
 
@@ -104,10 +78,10 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                     {/* Right Sidebar */ }
                     <FlowLayoutRightSidebar defaultSize={ 25 } minSize={ 15 } maxSize={ 40 }>
                         <FlowEditorDetails
-                                modulePath={ modulePath }
-                                flowName={ flowName }
-                                moduleName={ moduleName }
-                                onFlowDataLoaded={ handleMainFlowDataLoaded }
+                            // modulePath={ modulePath }
+                            // flowName={ flowName }
+                            // moduleName={ moduleName }
+                            // onFlowDataLoaded={ handleMainFlowDataLoaded }
                         />
                     </FlowLayoutRightSidebar>
                 </FlowLayoutContent>
@@ -115,12 +89,13 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
                 {/* Activity Bar */ }
                 <FlowLayoutActivityBar>
                     <FlowEditorActivity
-                            modulePath={ modulePath }
-                            flowName={ flowName }
-                            moduleName={ moduleName }
-                            connectedFlowsCount={ connectedFlowsData.length }
+                        // modulePath={ modulePath }
+                        // flowName={ flowName }
+                        // moduleName={ moduleName }
+                        // connectedFlowsCount={ connectedFlowsData.length }
                     />
                 </FlowLayoutActivityBar>
             </FlowLayout>
+        </FlowEditorProvider>
     );
 };

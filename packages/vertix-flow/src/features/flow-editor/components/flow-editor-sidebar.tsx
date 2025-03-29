@@ -1,30 +1,22 @@
 import React from "react";
 
+import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@vertix.gg/flow/src/shared/components/tabs";
-import { Card } from "@vertix.gg/flow/src/shared/components/card";
 import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 import { FlowList } from "@vertix.gg/flow/src/features/flow-list/components/flow-list";
 import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/components/module-selector";
 
-import type { UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
+export const FlowEditorSidebar: React.FC = () => {
+    const {
+        activeTab,
+        setActiveTab,
+        modulePath,
+        zoomLevel,
+        handleModuleClick,
+        handleFlowClick,
+    } = useFlowEditorContext();
 
-export interface FlowEditorSidebarProps {
-    activeTab: string;
-    setActiveTab: ( tab: string ) => void;
-    modulePath: string | null;
-    zoomLevel: number;
-    handleModuleClick: ( module: UIModuleFile ) => void;
-    handleFlowClick: ( flowName: string ) => void;
-}
-
-export const FlowEditorSidebar: React.FC<FlowEditorSidebarProps> = ( {
-    activeTab,
-    setActiveTab,
-    modulePath,
-    zoomLevel,
-    handleModuleClick,
-    handleFlowClick,
-} ) => {
     return (
         <>
             <div className="p-4 border-b bg-primary/5">

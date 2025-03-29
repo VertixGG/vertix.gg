@@ -5,27 +5,6 @@ import type { UIFlowData, ComponentSchemaResult } from "@vertix.gg/gui/src/bases
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 /**
- * Base enum for wizard flow states
- */
-export enum WizardFlowState {
-    INITIAL = "initial",
-    IN_PROGRESS = "in_progress",
-    COMPLETED = "completed",
-    ERROR = "error",
-}
-
-/**
- * Base enum for wizard flow transitions
- */
-export enum WizardFlowTransition {
-    START = "start",
-    NEXT = "next",
-    BACK = "back",
-    FINISH = "finish",
-    ERROR = "error",
-}
-
-/**
  * Base interface for wizard flow data
  */
 export interface WizardFlowData extends UIFlowData {
@@ -79,25 +58,18 @@ export abstract class UIWizardFlowBase<
         const data = this.getData();
         const availableTransitions: string[] = [];
 
-        // Add BACK if not on first step
+        // Use fully qualified UPPERCASE string literals
         if ( data.currentStep > 0 ) {
-            availableTransitions.push( WizardFlowTransition.BACK );
+            availableTransitions.push( "VertixGUI/UIWizardFlowBase/Transitions/Back" );
         }
-
-        // Add NEXT if not on last step
         if ( data.currentStep < data.totalSteps - 1 ) {
-            availableTransitions.push( WizardFlowTransition.NEXT );
+            availableTransitions.push( "VertixGUI/UIWizardFlowBase/Transitions/Next" );
         }
-
-        // Add FINISH if on last step
         if ( data.currentStep === data.totalSteps - 1 ) {
-            availableTransitions.push( WizardFlowTransition.FINISH );
+            availableTransitions.push( "VertixGUI/UIWizardFlowBase/Transitions/Finish" );
         }
+        availableTransitions.push( "VertixGUI/UIWizardFlowBase/Transitions/Error" );
 
-        // ERROR is always available
-        availableTransitions.push( WizardFlowTransition.ERROR );
-
-        // Extend with custom transitions from child class
         const customTransitions = this.getCustomTransitionsForStep( data.currentStep );
 
         return [ ...availableTransitions, ...customTransitions ] as TTransition[];
@@ -154,7 +126,7 @@ export abstract class UIWizardFlowBase<
     /**
      * Override to build schema from step components
      */
-    public async buildComponentSchemas(): Promise<ComponentSchemaResult[] | null> {
+    public async buildComponentSchemas(): Promise<ComponentSchemaResult[]> {
         const schemas: ComponentSchemaResult[] = [];
 
         for ( const Component of this.stepComponents ) {
@@ -166,7 +138,7 @@ export abstract class UIWizardFlowBase<
             schemas.push( result );
         }
 
-        return schemas.length > 0 ? schemas : null;
+        return schemas;
     }
 
     /**

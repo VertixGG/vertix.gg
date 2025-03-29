@@ -4,29 +4,7 @@ import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.j
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
 
 import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
-
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-
-/**
- * Represents the possible states in the Welcome flow
- */
-export enum WelcomeFlowState {
-    INITIAL = "initial",
-    SETUP_CLICKED = "setup_clicked",
-    SUPPORT_CLICKED = "support_clicked",
-    INVITE_CLICKED = "invite_clicked",
-    LANGUAGE_SELECTED = "language_selected",
-}
-
-/**
- * Represents the possible transitions in the Welcome flow
- */
-export enum WelcomeFlowTransition {
-    CLICK_SETUP = "click_setup",
-    CLICK_SUPPORT = "click_support",
-    CLICK_INVITE = "click_invite",
-    SELECT_LANGUAGE = "select_language",
-}
 
 /**
  * Interface for Welcome flow data
@@ -39,9 +17,9 @@ export interface WelcomeFlowData {
 }
 
 /**
- * Welcome flow implementation
+ * Welcome flow implementation using string identifiers
  */
-export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransition, WelcomeFlowData> {
+export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     /**
      * Get the name of this flow
      */
@@ -57,61 +35,61 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
     }
 
     /**
-     * Returns the valid transitions for each state in the Welcome flow
+     * Returns the valid transitions for each state using string identifiers
      */
-    public static getFlowTransitions(): Record<WelcomeFlowState, WelcomeFlowTransition[]> {
+    public static getFlowTransitions(): Record<string, string[]> {
         return {
-            [ WelcomeFlowState.INITIAL ]: [
-                WelcomeFlowTransition.CLICK_SETUP,
-                WelcomeFlowTransition.CLICK_SUPPORT,
-                WelcomeFlowTransition.CLICK_INVITE,
-                WelcomeFlowTransition.SELECT_LANGUAGE,
+            "VertixBot/UI-General/WelcomeFlow/States/Initial": [
+                "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
+                "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage",
             ],
-            [ WelcomeFlowState.SETUP_CLICKED ]: [], // Terminal state - flow hands over to Setup Wizard
-            [ WelcomeFlowState.SUPPORT_CLICKED ]: [],
-            [ WelcomeFlowState.INVITE_CLICKED ]: [],
-            [ WelcomeFlowState.LANGUAGE_SELECTED ]: [
-                WelcomeFlowTransition.CLICK_SETUP,
-                WelcomeFlowTransition.CLICK_SUPPORT,
-                WelcomeFlowTransition.CLICK_INVITE,
+            "VertixBot/UI-General/WelcomeFlow/States/SetupClicked": [],
+            "VertixBot/UI-General/WelcomeFlow/States/SupportClicked": [],
+            "VertixBot/UI-General/WelcomeFlow/States/InviteClicked": [],
+            "VertixBot/UI-General/WelcomeFlow/States/LanguageSelected": [
+                "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
             ],
         };
     }
 
     /**
-     * Returns the next state for each transition
+     * Returns the next state for each transition using string identifiers
      */
-    public static getNextStates(): Record<WelcomeFlowTransition, WelcomeFlowState> {
+    public static getNextStates(): Record<string, string> {
         return {
-            [ WelcomeFlowTransition.CLICK_SETUP ]: WelcomeFlowState.SETUP_CLICKED,
-            [ WelcomeFlowTransition.CLICK_SUPPORT ]: WelcomeFlowState.SUPPORT_CLICKED,
-            [ WelcomeFlowTransition.CLICK_INVITE ]: WelcomeFlowState.INVITE_CLICKED,
-            [ WelcomeFlowTransition.SELECT_LANGUAGE ]: WelcomeFlowState.LANGUAGE_SELECTED,
+            "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+            "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport": "VertixBot/UI-General/WelcomeFlow/States/SupportClicked",
+            "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite": "VertixBot/UI-General/WelcomeFlow/States/InviteClicked",
+            "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage": "VertixBot/UI-General/WelcomeFlow/States/LanguageSelected",
         };
     }
 
     /**
      * Returns the required data for each transition
      */
-    public static getRequiredData(): Record<WelcomeFlowTransition, ( keyof WelcomeFlowData )[]> {
+    public static getRequiredData(): Record<string, ( keyof WelcomeFlowData )[]> {
         return {
-            [ WelcomeFlowTransition.CLICK_SETUP ]: [],
-            [ WelcomeFlowTransition.CLICK_SUPPORT ]: [],
-            [ WelcomeFlowTransition.CLICK_INVITE ]: [],
-            [ WelcomeFlowTransition.SELECT_LANGUAGE ]: [ "selectedLanguage" ],
+            "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup": [],
+            "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport": [],
+            "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite": [],
+            "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage": [ "selectedLanguage" ],
         };
     }
 
     /**
-     * Returns documentation about handoff points in this flow
+     * Returns documentation about handoff points using string identifiers
      */
     public static getHandoffPoints(): FlowIntegrationPoint[] {
         return [
             {
                 flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
                 description: "Hands off to Setup Wizard when setup button is clicked",
-                sourceState: WelcomeFlowState.SETUP_CLICKED,
-                transition: WelcomeFlowTransition.CLICK_SETUP,
+                sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+                transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 requiredData: []
             }
         ];
@@ -124,7 +102,7 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
         return {
             setupWizardFlow: "VertixBot/UI-V3/SetupNewWizardFlow",
             setupWizardAdapter: "VertixBot/UI-V3/SetupNewWizardAdapter",
-            setupWizardEntryTransition: "START_SETUP"
+            setupWizardEntryTransition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
         };
     }
 
@@ -140,8 +118,8 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    protected getInitialState(): WelcomeFlowState {
-        return WelcomeFlowState.INITIAL;
+    protected getInitialState(): string {
+        return "VertixBot/UI-General/WelcomeFlow/States/Initial";
     }
 
     protected getInitialData(): WelcomeFlowData {
@@ -149,13 +127,12 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
     }
 
     protected initializeTransitions(): void {
-        // Initialize transitions based on static method
         Object.entries( WelcomeFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
-            this.addTransitions( state as WelcomeFlowState, transitions );
+            this.addTransitions( state, transitions );
         } );
     }
 
-    protected addTransitions( state: WelcomeFlowState, transitions: WelcomeFlowTransition[] ): void {
+    protected addTransitions( state: string, transitions: string[] ): void {
         if ( !this.hasTransitions( state ) ) {
             this.setTransitionsForState( state, new Set() );
         }
@@ -168,21 +145,19 @@ export class WelcomeFlow extends UIFlowBase<WelcomeFlowState, WelcomeFlowTransit
         }
     }
 
-    public getAvailableTransitions(): WelcomeFlowTransition[] {
-        return WelcomeFlow.getFlowTransitions()[ this.getCurrentState() ];
+    public getAvailableTransitions(): string[] {
+        return WelcomeFlow.getFlowTransitions()[ this.getCurrentState() ] || [];
     }
 
-    public getNextState( transition: WelcomeFlowTransition ): WelcomeFlowState {
+    public getNextState( transition: string ): string {
         return WelcomeFlow.getNextStates()[ transition ];
     }
 
-    public getRequiredData( transition: WelcomeFlowTransition ): ( keyof WelcomeFlowData )[] {
+    public getRequiredData( transition: string ): ( keyof WelcomeFlowData )[] {
         return WelcomeFlow.getRequiredData()[ transition ];
     }
 
     protected showModal(): Promise<void> {
-        // Implementation will depend on your modal system
-        // For flow definition, just return a resolved promise
         return Promise.resolve();
     }
 }

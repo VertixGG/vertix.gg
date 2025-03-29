@@ -32,11 +32,13 @@
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
     },
     "dependencies": {
+        "@types/dagre": "^0.7.52",
         "@typescript-eslint/types": "^8.27.0",
         "@typescript-eslint/typescript-estree": "^8.27.0",
         "@xyflow/react": "^12.4.4",
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
+        "dagre": "^0.8.5",
         "discord-api-types": "latest",
         "discord.js": "latest",
         "elkjs": "^0.10.0"

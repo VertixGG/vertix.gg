@@ -38,7 +38,8 @@
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
         "discord-api-types": "latest",
-        "discord.js": "latest"
+        "discord.js": "latest",
+        "elkjs": "^0.10.0"
     },
     "devDependencies": {
         "@swc/jest": "latest",

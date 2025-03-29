@@ -17,24 +17,6 @@ export interface DiscordEmoji {
   id?: string;
 }
 
-// Interface for select menu options
-export interface DiscordSelectOption {
-  label: string;
-  value: string;
-  emoji?: string | DiscordEmoji;
-  description?: string;
-  default?: boolean;
-  disabled?: boolean;
-}
-
-// Interface for select menu configuration
-export interface DiscordSelectConfig {
-  placeholder?: string;
-  minValues?: number;
-  maxValues?: number;
-  disabled?: boolean;
-}
-
 // Helper function to parse Discord emoji string
 export function parseDiscordEmoji( emojiString: string ): DiscordEmoji | null {
   const match = emojiString.match( DISCORD_EMOJI_REGEX );

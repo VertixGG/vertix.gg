@@ -50,18 +50,13 @@ export function parseDiscordEmoji( emojiString: string ): DiscordEmoji | null {
 
 // Helper function to render Discord emoji
 export function renderDiscordEmoji( emoji: string | DiscordEmoji ): React.ReactNode {
-  console.log( "Rendering emoji:", emoji );
-
   if ( typeof emoji === "string" ) {
-    console.log( "Emoji is string type" );
     // If it's a Discord emoji string, parse it
     const parsedEmoji = parseDiscordEmoji( emoji );
-    console.log( "Parsed emoji:", parsedEmoji );
 
     if ( parsedEmoji ) {
       if ( parsedEmoji.id ) {
         const url = `https://cdn.discordapp.com/emojis/${ parsedEmoji.id }.${ parsedEmoji.animated ? "gif" : "png" }`;
-        console.log( "Emoji URL:", url );
         return (
           <img
             src={url}
@@ -81,10 +76,8 @@ export function renderDiscordEmoji( emoji: string | DiscordEmoji ): React.ReactN
   }
 
   // If it's already a DiscordEmoji object
-  console.log( "Emoji is object type:", emoji );
   if ( emoji.id ) {
     const url = `https://cdn.discordapp.com/emojis/${ emoji.id }.${ emoji.animated ? "gif" : "png" }`;
-    console.log( "Emoji URL from object:", url );
     return (
       <img
         src={url}

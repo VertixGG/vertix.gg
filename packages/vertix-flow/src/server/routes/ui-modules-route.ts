@@ -19,7 +19,8 @@ interface UIModuleFile {
     name: string;
     path: string;
     adapters: string[];
-    flows: string[];
+    flows: string[]; // UI Flows
+    systemFlows: string[]; // System Flows
 }
 
 /**
@@ -46,14 +47,21 @@ interface FlowComponent {
  */
 interface UIFlowResponse {
     name: string;
+    type?: string;
     transactions: string[];
     requiredData: Record<string, string[]>;
+    nextStates?: Record<string, string>;
     components: FlowComponent[];
     integrations?: {
         entryPoints?: FlowIntegrationPoint[];
         handoffPoints?: FlowIntegrationPoint[];
         externalReferences?: Record<string, string>;
     };
+    visualConnections?: {
+        triggeringElementId: string;
+        transitionName: string;
+        targetFlowName: string;
+    }[];
 }
 
 /**
@@ -92,12 +100,16 @@ export class UIModulesRoute extends InitializeBase {
                     return null;
                 }
 
+                // Ensure getSystemFlows exists (optional chaining for safety, though we added to base)
+                const systemFlows = ModuleClass.getSystemFlows?.()?.map( f => f.getName() ) ?? [];
+
                 return {
                     shortName: key,
                     name: ModuleClass.getName(),
                     path: ModuleClass.getSourcePath().replace( path.resolve( zFindRootPackageJsonPath(), ".." ) + "/", "" ),
                     adapters: ModuleClass.getAdapters().map( a => a.getName() ),
-                    flows: ModuleClass.getFlows().map( f => f.getName() )
+                    flows: ModuleClass.getFlows().map( f => f.getName() ), // UI Flows
+                    systemFlows: systemFlows // System Flows
                 };
             } ).filter( ( module ): module is UIModuleFile => module !== null );
 
@@ -135,35 +147,44 @@ export class UIModulesRoute extends InitializeBase {
                 return;
             }
 
-            const ModuleClass = moduleInstance.constructor as any;
-            const flows = ModuleClass.getFlows();
+            // Get both UI and System flows from the Module class
+            const ModuleClass = moduleInstance.constructor as any; // Consider defining a type for Module class with static methods
+            const uiFlows = ModuleClass.getFlows() ?? [];
+            const systemFlows = ModuleClass.getSystemFlows?.() ?? []; // Use optional chaining for safety
+            const allFlows = [ ...uiFlows, ...systemFlows ];
 
-            // Find the requested flow
-            const FlowClass = flows.find( ( flow: any ) =>
+            // Find the requested flow within all flows
+            const FlowClass = allFlows.find( ( flow: any ) =>
                 flow.getName() === flowName
             );
 
             if ( !FlowClass ) {
                 reply.status( 404 ).send( {
                     error: "Flow not found",
-                    message: `Flow "${ flowName }" not found in module`
+                    message: `Flow "${ flowName }" not found in module ${ moduleName }` // Updated error message
                 } );
                 return;
             }
 
             // Create an instance of the flow
+            // TODO: Consider if adapter/options are needed or how they should be passed for viewing
             const flowInstance = new FlowClass( {
-                adapter: null,
-                options: {}
+                adapter: null, // Placeholder
+                options: {}    // Placeholder
             } );
 
-            // Get the JSON representation
+            // Get the JSON representation from the instance
             const flowData = await flowInstance.toJSON();
 
-            // Check name property or provide default
+            // Name should be included by toJSON now, but keep as fallback?
             if ( !flowData.name ) {
-                flowData.name = ( flowInstance.constructor as any ).getName?.() || flowName;
+                flowData.name = FlowClass.getName?.() || flowName;
             }
+
+            // Log the object right before returning from the API handler
+            this.logger.debug( this.handleFlows, `<<< Returning flowData Name: ${ flowData.name }` );
+            this.logger.debug( this.handleFlows, `<<< Returning flowData Type: ${ flowData.type }` );
+            this.logger.debug( this.handleFlows, `<<< Returning flowData nextStates keys: ${ flowData.nextStates ? Object.keys( flowData.nextStates ).join( ", " ) : "undefined" }` );
 
             return flowData;
         } catch ( err ) {
@@ -172,6 +193,7 @@ export class UIModulesRoute extends InitializeBase {
                 error: "Failed to get flow data",
                 message: err instanceof Error ? err.message : "Unknown error"
             } );
+            // Ensure function exits if error is sent
         }
     };
 
@@ -189,7 +211,8 @@ export class UIModulesRoute extends InitializeBase {
                             name: Type.String(),
                             path: Type.String(),
                             adapters: Type.Array( Type.String() ),
-                            flows: Type.Array( Type.String() )
+                            flows: Type.Array( Type.String() ), // UI Flows
+                            systemFlows: Type.Array( Type.String() ) // System Flows
                         } )
                     )
                 } )
@@ -205,8 +228,10 @@ export class UIModulesRoute extends InitializeBase {
             response: {
                 200: Type.Object( {
                     name: Type.String(),
+                    type: Type.Optional( Type.String() ),
                     transactions: Type.Array( Type.String() ),
                     requiredData: Type.Record( Type.String(), Type.Array( Type.String() ) ),
+                    nextStates: Type.Optional( Type.Record( Type.String(), Type.String() ) ),
                     components: Type.Array(
                         Type.Recursive( ( Self ) =>
                             Type.Object( {
@@ -240,7 +265,14 @@ export class UIModulesRoute extends InitializeBase {
                             requiredData: Type.Optional( Type.Array( Type.String() ) )
                         } ) ) ),
                         externalReferences: Type.Optional( Type.Record( Type.String(), Type.String() ) )
-                    } ) )
+                    } ) ),
+                    visualConnections: Type.Optional( Type.Array(
+                        Type.Object( {
+                            triggeringElementId: Type.String(),
+                            transitionName: Type.String(),
+                            targetFlowName: Type.String()
+                        } )
+                    ) )
                 } )
             }
         };

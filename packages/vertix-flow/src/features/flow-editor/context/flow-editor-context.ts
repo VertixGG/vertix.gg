@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 import type { Node, Edge, NodeChange } from "@xyflow/react";
-import type { FlowData, UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowData, UIModuleFile } from "src/features/flow-editor/types/flow";
 
 // Define the shape of the context state and actions
 export interface FlowEditorContextType {

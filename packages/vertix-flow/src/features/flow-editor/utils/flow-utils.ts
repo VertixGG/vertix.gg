@@ -1,4 +1,4 @@
-import type { FlowData, FlowIntegrationPoint } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowData, FlowIntegrationPoint } from "src/features/flow-editor/types/flow";
 
 /**
  * Get connected flows from a flow data object

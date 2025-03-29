@@ -6,7 +6,7 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 import type { PermissionsBitField, ChannelType } from "discord.js";
 
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, VisualConnection } from "@vertix.gg/flow/src/shared/types/flow"; // Use shared types
+import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, VisualConnection } from "vertix-flow/src/features/flow-editor/types/flow"; // Use shared types
 
 /**
  * Base interface for flow states

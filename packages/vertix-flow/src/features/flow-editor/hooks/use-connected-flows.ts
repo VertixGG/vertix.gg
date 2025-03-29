@@ -1,12 +1,14 @@
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
+import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/utils/flow-utils";
+
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
-import { getConnectedFlows } from "@vertix.gg/flow/src/shared/lib/flow-utils";
 import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
+import type { FlowData } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+
 import type { Node, Edge } from "@xyflow/react";
-import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
 
 // Helper function to get the correct API base URL
 const getApiBaseUrl = () => {
@@ -78,7 +80,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             const { nodes: flowNodes } = generateFlowDiagram( flowData );
             const nodePrefix = flowData.name.replace( /\//g, "-" );
 
-            const prefixedNodes = flowNodes.map( node => ( {
+            const prefixedNodes = flowNodes.map( ( node: { id: any; position: any; data: any; } ) => ( {
                 ...node,
                 id: `${ nodePrefix }-node-${ node.id }`,
                 // --- Use position directly from generateFlowDiagram ---

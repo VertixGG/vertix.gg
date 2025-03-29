@@ -14,7 +14,7 @@ import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
 import { useFlowData } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-data";
 import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
-import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowData } from "src/features/flow-editor/types/flow";
 import type { FlowDataLoaderProps } from "@vertix.gg/flow/src/features/flow-editor/types/flow-components";
 
 export interface FlowDataDisplayProps extends Pick<FlowDataLoaderProps, "moduleName" | "flowName" | "onFlowDataLoaded"> {

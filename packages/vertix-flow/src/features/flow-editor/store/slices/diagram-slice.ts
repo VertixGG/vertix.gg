@@ -3,7 +3,7 @@ import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/ut
 import type { StateCreator } from "zustand";
 
 import type { Node } from "@xyflow/react";
-import type { FlowData } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowData } from "src/features/flow-editor/types/flow";
 
 /**
  * Diagram state for the flow editor

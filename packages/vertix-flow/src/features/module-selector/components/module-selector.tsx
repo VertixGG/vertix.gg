@@ -7,7 +7,7 @@ import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 
 import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
 
-import type { UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
+import type { UIModuleFile } from "src/features/flow-editor/types/flow";
 
 interface ModuleSelectorProps {
     onSelectModule?: ( module: UIModuleFile ) => void;

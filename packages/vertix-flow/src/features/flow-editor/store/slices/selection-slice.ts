@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 
-import type { UIModuleFile } from "@vertix.gg/flow/src/shared/types/flow";
+import type { UIModuleFile } from "src/features/flow-editor/types/flow";
 
 /**
  * Selection state for the flow editor

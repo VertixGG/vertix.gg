@@ -5,7 +5,7 @@ import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-
 
 import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { VisualConnection } from "@vertix.gg/flow/src/shared/types/flow";
+import type { VisualConnection } from "vertix-flow/src/features/flow-editor/types/flow";
 
 /**
  * Interface for Welcome flow data

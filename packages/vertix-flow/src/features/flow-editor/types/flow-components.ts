@@ -2,7 +2,7 @@
  * Shared type definitions for flow editor components
  */
 
-import type { FlowComponent, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowComponent, FlowData } from "src/features/flow-editor/types/flow";
 
 /**
  * Base display props for components that display flow data

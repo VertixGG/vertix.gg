@@ -1,8 +1,8 @@
-import { calculateGroupPosition, getViewportDimensions } from "@vertix.gg/flow/src/shared/lib/position-calculator";
+import { calculateGroupPosition, getViewportDimensions } from "@vertix.gg/flow/src/features/flow-editor/utils/position-calculator";
 
 import type { Node } from "@xyflow/react";
 
-import type { FlowComponent, FlowDiagram, FlowData } from "@vertix.gg/flow/src/shared/types/flow";
+import type { FlowComponent, FlowDiagram, FlowData } from "src/features/flow-editor/types/flow";
 
 // Factory interface for creating flow operations
 export interface FlowFactory {

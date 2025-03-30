@@ -17,6 +17,7 @@ import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/n
 import { CompoundNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/compound-node";
 import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 import { useFlowLayout } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-layout";
+import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 
 import type {
     ReactFlowInstance,
@@ -52,6 +53,8 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
 } ) => {
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
     const reactFlowApi = useReactFlow();
+    const { isLoadingConnectedFlows } = useFlowEditorContext();
+    const initialLayoutAppliedRef = useRef<boolean>( false );
 
     // Use our custom layout hook for positioning logic
     const {
@@ -101,6 +104,26 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
     useEffect( () => {
         return handleNodePositioning();
     }, [ handleNodePositioning ] );
+
+    // Auto-layout effect that runs once when all flows are loaded
+    useEffect( () => {
+        // Only run if:
+        // 1. We have nodes to layout
+        // 2. We're not still loading connected flows
+        if (
+            nodes.length > 0 &&
+            !isLoadingConnectedFlows
+        ) {
+            // Short delay to ensure all nodes are properly measured
+            const timerId = setTimeout( () => {
+                console.log( "[Auto Layout] Applying initial layout to flows" );
+                handleAutoLayout();
+                initialLayoutAppliedRef.current = true;
+            }, 500 );
+
+            return () => clearTimeout( timerId );
+        }
+    }, [ nodes.length, isLoadingConnectedFlows, handleAutoLayout ] );
 
     return (
         <ReactFlow

@@ -6,6 +6,8 @@ import {
     applyVerticalStackLayout
 } from "@vertix.gg/flow/src/features/flow-editor/utils/graph-layout";
 
+import type React from "react";
+
 import type { Node, Edge, NodeChange } from "@xyflow/react";
 
 // Flow diagram configuration
@@ -28,7 +30,7 @@ interface UseFlowLayoutProps {
     };
     setCombinedNodes: React.Dispatch<React.SetStateAction<Node[]>>;
     onNodesChange?: ( changes: NodeChange[] ) => void;
-    _onZoomChange?: ( zoom: number ) => void;
+    onZoomChange?: ( zoom: number ) => void;
 }
 
 interface UseFlowLayoutReturn {
@@ -47,7 +49,6 @@ export function useFlowLayout( {
     edges,
     reactFlowInstance,
     setCombinedNodes,
-    _onZoomChange
 }: UseFlowLayoutProps ): UseFlowLayoutReturn {
     const [ isAutoLayout, setIsAutoLayout ] = useState( false );
     const { getNodes, fitView } = reactFlowInstance;

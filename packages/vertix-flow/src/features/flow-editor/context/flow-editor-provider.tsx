@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 
 import { FlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 
@@ -43,6 +43,22 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
 
   const { onNodesChange } = useFlowDiagram( { setCombinedNodes } );
 
+  // --- State for Initial Layout ---
+  const [ isInitialLayoutApplied, setIsInitialLayoutApplied ] = useState<boolean>( false );
+
+  // --- Effect to Reset Layout Flag on Flow Change ---
+  useEffect( () => {
+    // Reset the flag whenever the selected module or flow changes
+    console.log( "[Context] Flow changed, resetting initial layout flag.", { modulePath, flowName } );
+    setIsInitialLayoutApplied( false );
+  }, [ modulePath, flowName ] );
+
+  // --- Action to Mark Layout as Applied ---
+  const markInitialLayoutApplied = useCallback( () => {
+    console.log( "[Context] Marking initial layout as applied." );
+    setIsInitialLayoutApplied( true );
+  }, [] );
+
   // --- Create Context Value ---
   // Use useMemo to prevent unnecessary re-renders of consumers
   // when the provider itself re-renders but the value hasn't changed.
@@ -66,11 +82,16 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
     setCombinedNodes,
     // Diagram handlers
     onNodesChange,
+    // Initial layout state & action
+    isInitialLayoutApplied,
+    markInitialLayoutApplied,
   } ), [
     modulePath, flowName, moduleName, activeTab, zoomLevel,
     handleModuleClick, handleFlowClick, handleZoomChange, setActiveTab,
     connectedFlowsData, combinedNodes, combinedEdges, isLoadingConnectedFlows,
-    handleMainFlowDataLoaded, setCombinedNodes, onNodesChange
+    handleMainFlowDataLoaded, setCombinedNodes, onNodesChange,
+    // Add new state/action to dependency array
+    isInitialLayoutApplied, markInitialLayoutApplied
   ] );
 
   // --- Provide Context ---

@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 import type { Node, Edge, NodeChange } from "@xyflow/react";
-import type { FlowData, UIModuleFile } from "src/features/flow-editor/types/flow";
+import type { FlowData, UIModuleFile } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Define the shape of the context state and actions
 export interface FlowEditorContextType {
@@ -29,6 +29,10 @@ export interface FlowEditorContextType {
 
   // Handlers from useFlowDiagram
   onNodesChange: ( changes: NodeChange[] ) => void;
+
+  // Initial layout state
+  isInitialLayoutApplied: boolean;
+  markInitialLayoutApplied: () => void;
 
   // Potentially add UI state if needed later (isLoading, error, etc.)
 }

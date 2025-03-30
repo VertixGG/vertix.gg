@@ -53,8 +53,11 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
 } ) => {
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
     const reactFlowApi = useReactFlow();
-    const { isLoadingConnectedFlows } = useFlowEditorContext();
-    const initialLayoutAppliedRef = useRef<boolean>( false );
+    const {
+        isLoadingConnectedFlows,
+        isInitialLayoutApplied,
+        markInitialLayoutApplied,
+    } = useFlowEditorContext();
 
     // Use our custom layout hook for positioning logic
     const {
@@ -66,7 +69,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
         edges,
         reactFlowInstance: reactFlowApi,
         setCombinedNodes,
-        _onZoomChange: onZoomChange
+        onZoomChange
     } );
 
     const onInit = useCallback( ( instance: ReactFlowInstance ) => {
@@ -110,20 +113,33 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
         // Only run if:
         // 1. We have nodes to layout
         // 2. We're not still loading connected flows
+        // 3. Initial layout hasn't been applied *for this flow* (checked via context)
         if (
             nodes.length > 0 &&
-            !isLoadingConnectedFlows
+            !isLoadingConnectedFlows &&
+            !isInitialLayoutApplied
         ) {
             // Short delay to ensure all nodes are properly measured
             const timerId = setTimeout( () => {
-                console.log( "[Auto Layout] Applying initial layout to flows" );
-                handleAutoLayout();
-                initialLayoutAppliedRef.current = true;
+                // Check context state again inside timeout to prevent race conditions
+                // Note: This check might be redundant if the context state updates prevent the effect from re-running
+                // but kept for safety. We need to re-fetch context state here if it could change between effect trigger and timeout.
+                // For simplicity, assuming `isInitialLayoutApplied` read above is sufficient for this short delay.
+                if ( !isInitialLayoutApplied ) {
+                    console.log( "[Auto Layout] Applying initial layout to flows (via context)" );
+                    handleAutoLayout();
+                    markInitialLayoutApplied(); // Call context action
+                } else {
+                    console.log( "[Auto Layout] Layout already applied (checked in timeout), skipping." );
+                }
             }, 500 );
 
             return () => clearTimeout( timerId );
         }
-    }, [ nodes.length, isLoadingConnectedFlows, handleAutoLayout ] );
+
+        // Dependency array includes the context state/action now
+        // to ensure the effect re-evaluates when the layout status changes
+    }, [ nodes.length, isLoadingConnectedFlows, handleAutoLayout, isInitialLayoutApplied, markInitialLayoutApplied ] );
 
     return (
         <ReactFlow

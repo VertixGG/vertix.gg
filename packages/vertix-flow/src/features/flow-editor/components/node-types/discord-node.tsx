@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
+// Remove unused Handle, Position
+// import { Handle, Position } from "@xyflow/react";
 
 // Import directly from discord-api-types
 import {
@@ -10,7 +12,8 @@ import { DiscordButton } from "@vertix.gg/flow/src/features/flow-editor/componen
 import { DiscordSelect } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-select-menu";
 import { DiscordRoleMenu } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-role-menu";
 import { DiscordEmbed } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-embed";
-import { cn } from "@vertix.gg/flow/src/lib/utils";
+// Remove unused cn
+// import { cn } from "@vertix.gg/flow/src/lib/utils";
 
 import type {
   APIButtonComponent,
@@ -41,13 +44,23 @@ interface BaseNodeData {
   type: string;
 }
 
+// Interface for the element data structure created by flow-factory
+// This should match the structure within ComponentNodeData.elements[row].elements
+interface RenderableElementData {
+  id: string; // This is the element.name
+  label: string;
+  type: string;
+  attributes: APIMessageActionRowComponent;
+}
+
 // Component specific node data
 interface ComponentNodeData extends BaseNodeData {
   type: "component";
   elements?: Array<{
-    id: string;
-    label: string;
-    elements: Array<GenericElement>;
+    id: string; // Row ID
+    label: string; // Row Label
+    // Correct the type for the inner elements array
+    elements: Array<RenderableElementData>;
   }>;
   embeds?: Array<{
     id: string;
@@ -97,14 +110,6 @@ function isEmbedNode( node: ExtendedNodeData ): node is EmbedNodeData {
 
 function isGroupNode( node: ExtendedNodeData ): node is GroupNodeData {
   return node.type === "group";
-}
-
-function isElementNode( node: ExtendedNodeData ): node is ElementNodeData {
-  return node.type === "element";
-}
-
-function isElementsRowNode( node: ExtendedNodeData ): node is ElementsRowData {
-  return node.type === "elements-row";
 }
 
 // Type guards for component types
@@ -220,15 +225,18 @@ const DiscordSelectWrapper: React.FC<{
 
 /**
  * Render an element based on its type
+ * Accepts RenderableElementData which includes the ID
  */
-const renderElement = ( element: GenericElement, key: string ) => {
-  const { attributes } = element;
+const renderElement = ( elementData: RenderableElementData, key: string ) => {
+  // Destructure id and attributes from the element data
+  const { id, attributes } = elementData;
 
   if ( isButtonComponent( attributes ) ) {
     return (
       <DiscordButton
         key={key}
-        className="nodrag"
+        elementId={id} // Pass the ID (element name) to the button
+        className="nodrag" // Prevent dragging the node when interacting with button
         buttonStyle={Number( attributes.style ) || ButtonStyle.Secondary}
         disabled={!!attributes.disabled}
       >
@@ -238,6 +246,7 @@ const renderElement = ( element: GenericElement, key: string ) => {
   }
 
   if ( isStringSelectComponent( attributes ) ) {
+    // Select menus likely don't need source handles for flow connections
     return (
       <DiscordSelectWrapper
         key={key}
@@ -252,91 +261,79 @@ const renderElement = ( element: GenericElement, key: string ) => {
   }
 
   if ( isRoleSelectComponent( attributes ) ) {
+     // Select menus likely don't need source handles for flow connections
     return (
       <DiscordRoleMenu
         key={key}
-        className={cn( "flex-1", "nodrag" )}
-        placeholder={attributes.placeholder || ""}
-        minValues={attributes.min_values || 0}
-        maxValues={attributes.max_values || 1}
+        className="nodrag"
+        placeholder={attributes.placeholder || "Select Role..."}
+        minValues={attributes.min_values}
+        maxValues={attributes.max_values}
         disabled={!!attributes.disabled}
+        // default_values might need mapping if required
       />
     );
   }
 
-  // For other component types, show a simple representation with safe type access
-  return (
-    <div key={key} className="discord-unknown-element flex-1">
-      Unknown element type: {attributes ? ComponentType[ attributes.type ] || "unknown" : "unknown"}
-    </div>
-  );
+  // Add other element types if necessary
+
+  return null; // Fallback for unknown element types
 };
 
 /**
  * DiscordNode component renders different types of Discord UI nodes based on their type
  */
 export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => {
-  // Handle the main component structure
-  if ( isComponentNode( data ) ) {
+  if ( isEmbedNode( data ) ) {
+    // Renders only an embed
     return (
       <DiscordNodeWrapper>
-        <div className="discord-component">
-          {/* Component Header */}
-          <div className="discord-component-title">{data.label}</div>
-          <div className="discord-component-type">{data.type}</div>
+        <DiscordEmbed attributes={data.attributes} />
+      </DiscordNodeWrapper>
+    );
+  }
 
-          {/* Render Embeds */}
+  if ( isComponentNode( data ) ) {
+    // Renders a component, which contains embeds and element rows
+    return (
+      <DiscordNodeWrapper>
+        {/* Add back a container div for the component itself */}
+        <div className="discord-component bg-background/50 p-2 rounded"> {/* Example class + basic styling */}
+          {/* Render Embeds first if they exist inside the component container*/}
           {data.embeds?.map( ( embed ) => (
-            <DiscordEmbed
-              key={embed.id}
-              {...embed.attributes}
-            />
+            <DiscordEmbed key={embed.id} {...embed.attributes} />
           ) )}
 
-          {/* Render Elements in rows */}
-          <div className="discord-elements-container">
-            {data.elements?.map( ( row ) => (
-              <div key={row.id} className="discord-elements-row">
-                {row.elements.map( ( element, elementIndex ) => (
-                  renderElement( element, `${ row.id }-element-${ elementIndex }` )
-                ) )}
-              </div>
-            ) )}
-          </div>
+          {/* Render Element Rows inside the component container */}
+          {data.elements?.map( ( row ) => (
+            <div key={row.id} className="discord-action-row my-1 flex flex-wrap gap-2">
+              {row.elements?.map( ( element ) =>
+                renderElement( element, element.id )
+              )}
+            </div>
+          ) )}
         </div>
       </DiscordNodeWrapper>
     );
   }
 
-  // For non-component nodes (when rendered individually)
-  if ( isEmbedNode( data ) ) {
+  if ( isGroupNode( data ) ) {
+    // If it's explicitly a group node (not compound rendered via CompoundNode),
+    // render its label. Handles/connections typically managed by CompoundNode or specific layout.
     return (
-      <DiscordNodeWrapper>
-        <DiscordEmbed {...data.attributes} />
-      </DiscordNodeWrapper>
+       <DiscordNodeWrapper>
+          <div className="p-2 font-semibold text-gray-400">Group: {data.label}</div>
+          {/* We might need to render childNodes here if groups can contain non-group children directly */}
+       </DiscordNodeWrapper>
     );
   }
 
-  if ( isElementNode( data ) ) {
-    if ( isButtonComponent( data.attributes ) ) {
-      return (
-        <DiscordButton
-          buttonStyle={Number( data.attributes.style ) || ButtonStyle.Secondary}
-          disabled={!!data.attributes.disabled}
-        >
-          {getButtonLabel( data.attributes )}
-        </DiscordButton>
-      );
-    }
+  // Handle other potential types if necessary
 
-    // Handle other element types if needed
-    return null;
-  }
-
-  if ( isGroupNode( data ) || isElementsRowNode( data ) ) {
-    return null; // These are handled within the component node
-  }
-
-  // For the exhaustive check, return null for any unsupported types
-  return null;
+  // Fallback or render a simple label
+  return (
+      <DiscordNodeWrapper>
+        <div className="p-1 text-xs text-gray-500">Node: {data.label} ({data.type})</div>
+      </DiscordNodeWrapper>
+  );
 };

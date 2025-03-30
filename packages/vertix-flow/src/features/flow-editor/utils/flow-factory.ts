@@ -2,7 +2,7 @@ import { calculateGroupPosition, getViewportDimensions } from "@vertix.gg/flow/s
 
 import type { Node } from "@xyflow/react";
 
-import type { FlowComponent, FlowDiagram, FlowData } from "src/features/flow-editor/types/flow";
+import type { FlowComponent, FlowDiagram, FlowData, FlowElement, FlowEmbed } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Factory interface for creating flow operations
 export interface FlowFactory {
@@ -104,17 +104,20 @@ export class DefaultFlowFactory implements FlowFactory {
                 label: componentLabel,
                 type: "component",
                 // Add embeds directly to the component data
-                embeds: component.entities?.embeds?.map( ( embed, embedIndex ) => ( {
+                embeds: component.entities?.embeds?.map( ( embed: FlowEmbed, embedIndex: number ) => ( {
                     id: `${ componentId }-embed-${ embedIndex }`,
                     label: embed.name.split( "/" ).pop() || `Embed ${ embedIndex + 1 }`,
                     attributes: embed.attributes || {}
                 } ) ) || [],
                 // Add elements directly to the component data
-                elements: component.entities?.elements?.map( ( row, rowIndex ) => ( {
+                elements: component.entities?.elements?.map( ( row: FlowElement[], rowIndex: number ) => ( {
+                    // Row ID remains based on component and row index
                     id: `${ componentId }-row-${ rowIndex }`,
                     label: `Row ${ rowIndex + 1 }`,
-                    elements: row.map( ( element, elementIndex ) => ( {
-                        id: `${ componentId }-element-${ rowIndex }-${ elementIndex }`,
+                    // Map elements within the row
+                    elements: row.map( ( element: FlowElement, elementIndex: number ) => ( {
+                        // Use the element's actual name as its ID
+                        id: element.name,
                         label: element.name.split( "/" ).pop() || `Element ${ elementIndex + 1 }`,
                         type: element.type || "element",
                         attributes: element.attributes

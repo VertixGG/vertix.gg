@@ -6,7 +6,7 @@ import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/util
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
 import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
-import type { FlowData } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { FlowData, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 import type { Node, Edge } from "@xyflow/react";
 
@@ -114,6 +114,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
         }
 
         const newEdges: Edge[] = [];
+        const mainFlowPrefix = mainFlow.name.replace( /\//g, "-" );
 
         mainFlow.integrations.handoffPoints.forEach( ( handoff, index ) => {
             const targetFlowData = connectedFlows.find( cf => cf.name === handoff.flowName );
@@ -130,29 +131,53 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 return;
             }
 
+            if ( !targetFlowData || !entryPoint ) return; // Early exit if checks fail
+
+            // Default source NODE is the main flow group node
+            let sourceNodeId = "flow-group";
+            // Default source HANDLE for group-to-group
+            let sourceHandle = "Flow-handle-source-bottom";
+
+            // Check for visual connection definition
+            const visualConnection = mainFlow.visualConnections?.find(
+                ( vc: VisualConnection ) => vc.transitionName === handoff.transition
+            );
+
+            if ( visualConnection?.triggeringElementId ) {
+                // If visual connection exists:
+                // SOURCE NODE remains the group containing the element
+                sourceNodeId = "flow-group";
+                // SOURCE HANDLE becomes the specific element's ID (name)
+                sourceHandle = visualConnection.triggeringElementId;
+                console.log( `[Edges] Using visual connection for ${ handoff.transition }: node '${ sourceNodeId }', handle '${ sourceHandle }'` );
+            } else {
+                console.log( `[Edges] No visual connection found for ${ handoff.transition }, using default group node '${ sourceNodeId }' and handle '${ sourceHandle }'` );
+            }
+
             const targetPrefix = targetFlowData.name.replace( /\//g, "-" );
-            const sourceNodeId = "flow-group";
             const targetNodeId = `${ targetPrefix }-node-flow-group`;
+            const targetHandle = "Flow-handle-target-top";
 
-            const sourceExists = allCombinedNodes.some( n => n.id === sourceNodeId );
-            const targetExists = allCombinedNodes.some( n => n.id === targetNodeId );
+            // Check existence of the actual SOURCE and TARGET NODES
+            const sourceNodeExists = allCombinedNodes.some( n => n.id === sourceNodeId ); // Should check for "flow-group"
+            const targetNodeExists = allCombinedNodes.some( n => n.id === targetNodeId );
 
-            if ( sourceExists && targetExists ) {
-                 const edgeId = `handoff-${ mainFlow.name.replace( /\//g, "-" ) }-to-${ targetPrefix }-group-${ index }`;
+            if ( sourceNodeExists && targetNodeExists ) {
+                 const edgeId = `handoff-${ mainFlowPrefix }-to-${ targetPrefix }-viaHandle-${ sourceHandle.replace( /\//g, "-" ) }-${ index }`;
                  const edge = {
                     id: edgeId,
-                    source: sourceNodeId,
+                    source: sourceNodeId,       // The NODE containing the handle
                     target: targetNodeId,
-                    sourceHandle: "Flow-handle-source-bottom",
-                    targetHandle: "Flow-handle-target-top",
+                    sourceHandle: sourceHandle, // The specific handle ID (element name or default)
+                    targetHandle: targetHandle,
                     type: "smoothstep",
                     animated: true,
-                    label: `Handoff: ${ handoff.transition }`,
+                    label: `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`,
                     style: { stroke: "hsl(var(--primary))", strokeWidth: 2 },
                 };
                 newEdges.push( edge );
             } else {
-                console.warn( `Could not create group edge: Source (${ sourceNodeId }, exists: ${ sourceExists }) or Target (${ targetNodeId }, exists: ${ targetExists }) node not found.` );
+                console.warn( `Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found.` );
             }
         } );
 

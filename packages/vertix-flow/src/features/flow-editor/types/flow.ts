@@ -45,16 +45,26 @@ export interface FlowIntegrationPoint {
     requiredData?: string[];
 }
 
+// Define the structure for visual connection hints
+export interface VisualConnection {
+    triggeringElementId: string; // ID of the source element (e.g., button name)
+    transitionName: string;      // The transition this connection corresponds to
+    targetFlowName: string;      // The target flow (redundant with handoffPoints but good for clarity)
+}
+
 export interface FlowData {
     name: string; // name of the flow eg `VertixBot/UI-General/WelcomeFlow`
     transactions: string[];
     requiredData: Record<string, string[]>;
     components: FlowComponent[];
+    type: string; // Added based on dump files (e.g., "ui")
+    nextStates: Record<string, string>; // Added based on dump files
     integrations?: {
         entryPoints?: FlowIntegrationPoint[];
         handoffPoints?: FlowIntegrationPoint[];
         externalReferences?: Record<string, string>;
     };
+    visualConnections?: VisualConnection[]; // Add the optional visual connections array
 }
 
 export interface NodeData {

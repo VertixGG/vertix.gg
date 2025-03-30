@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
+import { Handle, Position } from "@xyflow/react";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 
@@ -57,10 +58,12 @@ export interface DiscordButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   Omit<VariantProps<typeof discordButtonVariants>, "variant"> {
   asChild?: boolean;
   buttonStyle?: ButtonStyle | number; // Discord ButtonStyle enum or direct number
+  elementId?: string; // Add optional elementId prop
 }
 
 /**
  * Discord-styled button component that uses Discord's ButtonStyle enum
+ * Optionally renders a React Flow handle if elementId is provided.
  */
 export function DiscordButton( {
   className,
@@ -68,6 +71,7 @@ export function DiscordButton( {
   size,
   asChild = false,
   children,
+  elementId, // Destructure elementId
   ...props
 }: DiscordButtonProps ) {
   const Comp = asChild ? Slot : "button";
@@ -90,10 +94,20 @@ export function DiscordButton( {
   return (
     <Comp
       data-variant={variant}
-      className={cn( discordButtonVariants( { variant, size, className } ) )}
+      className={cn( discordButtonVariants( { variant, size, className } ), "relative" )} // Add relative positioning for handle
       {...props}
     >
       {children}
+      {/* Add handle if elementId exists (meaning it's part of the flow diagram structure) */}
+      {elementId && (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id={elementId}
+          style={{ background: "hsl(var(--primary))", width: 8, height: 8 }}
+          isConnectable={true} // Or false if only for visual indication
+        />
+      )}
     </Comp>
   );
 }

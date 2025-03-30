@@ -1,14 +1,20 @@
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
+import { Z_INDEXES } from "@vertix.gg/flow/src/features/flow-editor/flow-z-indexes";
+
 import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/utils/flow-utils";
 
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
 import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
+import type React from "react";
+
 import type { FlowData, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 import type { Node, Edge } from "@xyflow/react";
+
+// Assume the constant file will be created here:
 
 // Helper function to get the correct API base URL
 const getApiBaseUrl = () => {
@@ -174,6 +180,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     animated: true,
                     label: `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`,
                     style: { stroke: "hsl(var(--primary))", strokeWidth: 2 },
+                    zIndex: Z_INDEXES.EDGE_INTER_FLOW,
                 };
                 newEdges.push( edge );
             } else {

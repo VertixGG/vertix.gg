@@ -2,7 +2,8 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowData, FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Define state constants for clarity
 const STATE_INITIAL = "VertixBot/CommandsFlow/States/Initial";
@@ -96,6 +97,59 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
 
          return commandTransition ? this.getNextStates()[ commandTransition ] : undefined;
      }
+
+    /**
+     * Defines the handoff points from this command router flow.
+     * Aligned with UIFlowBase structure.
+     */
+    public static getHandoffPoints(): FlowIntegrationPoint[] {
+        const handoffPoints: FlowIntegrationPoint[] = [];
+        const commandTransitions = this.getFlowTransitions()[ STATE_INITIAL ] || [];
+        const nextStates = this.getNextStates();
+
+        commandTransitions.forEach( transition => {
+            const targetState = nextStates[ transition ];
+            if ( targetState ) {
+                const flowNameParts = targetState.split( "/" );
+                if ( flowNameParts.length >= 3 ) {
+                    const targetFlowName = flowNameParts.slice( 0, -2 ).join( "/" );
+                    handoffPoints.push( {
+                        flowName: targetFlowName,
+                        description: `Handoff triggered by ${ transition.split( "/" ).pop() } command`,
+                        transition: transition,
+                        requiredData: []
+                    } );
+                } else {
+                     console.warn( `[CommandsFlow] Could not determine target flow name from state: ${ targetState }` );
+                }
+            }
+        } );
+        return handoffPoints;
+    }
+
+    /**
+     * Defines entry points (none for this router flow).
+     * Added for structural consistency with UIFlowBase.
+     */
+    public static getEntryPoints(): FlowIntegrationPoint[] {
+        return [];
+    }
+
+    /**
+     * Defines visual connections (none for this router flow).
+     * Added for structural consistency with UIFlowBase.
+     */
+    public static getVisualConnections(): VisualConnection[] {
+        return [];
+    }
+
+    /**
+     * Defines external references (none for this router flow).
+     * Added for structural consistency.
+     */
+    public static getExternalReferences(): Record<string, string> {
+        return {};
+    }
 
     // --- Instance Methods ---
     // Implementing required methods from UIFlowBase

@@ -3,14 +3,14 @@ import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.j
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
 
-import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { FlowIntegrationPoint, UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { VisualConnection } from "vertix-flow/src/features/flow-editor/types/flow";
 
 /**
  * Interface for Welcome flow data
  */
-export interface WelcomeFlowData {
+export interface WelcomeFlowData extends UIFlowData {
     selectedLanguage?: string;
 
     // Index signature for UIFlowData compatibility
@@ -119,6 +119,16 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
             setupWizardAdapter: "VertixBot/UI-V3/SetupNewWizardAdapter",
             setupWizardEntryTransition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
         };
+    }
+
+    public static getEntryPoints(): FlowIntegrationPoint[] {
+        return [
+            {
+                flowName: "VertixBot/UI-General/CommandsFlow",
+                transition: "VertixBot/Commands/Welcome",
+                description: "Entry point triggered by CommandsFlow via Welcome transition"
+            }
+        ];
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

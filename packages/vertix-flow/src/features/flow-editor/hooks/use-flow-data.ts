@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { useAsyncResource } from "@vertix.gg/flow/src/shared/utils/use-async-resource";
 
-import type { FlowData } from "src/features/flow-editor/types/flow";
+import type { FlowData } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Create axios instance with default config
 const api = axios.create( {

@@ -1,0 +1,20 @@
+{
+    "name": "VertixBot/UI-General/CommandsFlow",
+    "transactions": [
+        "VertixBot/Commands/Setup",
+        "VertixBot/Commands/Help",
+        "VertixBot/Commands/Welcome"
+    ],
+    "requiredData": {
+        "VertixBot/Commands/Setup": [],
+        "VertixBot/Commands/Help": [],
+        "VertixBot/Commands/Welcome": []
+    },
+    "components": [],
+    "type": "system",
+    "nextStates": {
+        "VertixBot/Commands/Setup": "VertixBot/UI-General/SetupFlow/States/Initial",
+        "VertixBot/Commands/Help": "VertixBot/UI-General/HelpFlow/States/Initial",
+        "VertixBot/Commands/Welcome": "VertixBot/UI-General/WelcomeFlow/States/Initial"
+    }
+}

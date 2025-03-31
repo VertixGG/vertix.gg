@@ -10,7 +10,8 @@ import {
     BackgroundVariant,
     Panel,
     ReactFlowProvider,
-    useReactFlow
+    useReactFlow,
+    MarkerType
 } from "@xyflow/react";
 
 import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/group-node";
@@ -22,8 +23,10 @@ import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/c
 import type {
     ReactFlowInstance,
     Node,
-    Edge,
     NodeChange
+,
+    Connection,
+    Edge
 } from "@xyflow/react";
 
 // Mapping for custom node types
@@ -158,12 +161,76 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             snapToGrid={true}
             snapGrid={config.SNAP_GRID}
             elevateEdgesOnSelect={true}
+            edgesFocusable={false}
+            defaultEdgeOptions={{
+                type: "smoothstep",
+                style: { strokeWidth: 2 },
+                markerEnd: { type: MarkerType.Arrow }
+            }}
+            onConnect={( params: Connection ) => {
+                console.log( "[Edge] New connection:", {
+                    params,
+                    hasValidSource: !!params.source,
+                    hasValidTarget: !!params.target,
+                    sourceHandle: params.sourceHandle,
+                    targetHandle: params.targetHandle
+                } );
+            }}
         >
             <Controls />
             <MiniMap
                 nodeStrokeWidth={3}
                 zoomable
                 pannable
+                // Only show MiniMap when all nodes have measurements
+                style={{
+                    display: nodes.some( node => !node.measured ) ? "none" : "block"
+                }}
+                nodeColor={_node => {
+                    // Default color with fallback for invalid nodes
+                    return "#aaa";
+                }}
+                nodeBorderRadius={0}
+                // Custom node rendering to avoid NaN errors
+                nodeComponent={props => {
+                    // Log node props for debugging
+                    // console.log( "[MiniMap] Rendering node:", {
+                    //     originalProps: {
+                    //         x: props.x,
+                    //         y: props.y,
+                    //         width: props.width,
+                    //         height: props.height,
+                    //         id: props.id
+                    //     },
+                    //     hasValidDimensions: Number.isFinite( props.width ) && Number.isFinite( props.height ),
+                    //     hasValidPosition: Number.isFinite( props.x ) && Number.isFinite( props.y )
+                    // } );
+
+                    // Skip rendering if dimensions are invalid
+                    if ( !Number.isFinite( props.width ) || !Number.isFinite( props.height ) ||
+                        !Number.isFinite( props.x ) || !Number.isFinite( props.y ) ) {
+                        console.log( "[MiniMap] Skipping node render due to invalid dimensions:", {
+                            id: props.id,
+                            dimensions: { width: props.width, height: props.height },
+                            position: { x: props.x, y: props.y }
+                        } );
+                        return null;
+                    }
+
+                    return (
+                        <rect
+                            x={props.x}
+                            y={props.y}
+                            rx={0}
+                            ry={0}
+                            width={props.width}
+                            height={props.height}
+                            fill="#aaa"
+                            stroke="#555"
+                            strokeWidth={props.strokeWidth}
+                        />
+                    );
+                }}
             />
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
             <Panel position="top-right" className="flex flex-col gap-2">

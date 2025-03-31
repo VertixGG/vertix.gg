@@ -1,0 +1,114 @@
+{
+    "name": "VertixBot/UI-General/WelcomeFlow",
+    "transactions": [
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
+        "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage"
+    ],
+    "requiredData": {
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup": [],
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport": [],
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite": [],
+        "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage": [
+            "selectedLanguage"
+        ]
+    },
+    "components": [
+        {
+            "type": "component",
+            "name": "VertixBot/UI-General/WelcomeComponent",
+            "entities": {
+                "elements": [
+                    [
+                        {
+                            "name": "VertixBot/UI-General/WelcomeSupportButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "label": "Community Server",
+                                "style": 5,
+                                "url": "https://discord.gg/dEwKeQefUU"
+                            },
+                            "isAvailable": true
+                        },
+                        {
+                            "name": "VertixBot/UI-General/WelcomeInviteButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "label": "Invite Vertix",
+                                "style": 5,
+                                "url": "https://discord.com/oauth2/authorize?client_id=1111283172378955867&permissions=286354576&scope=bot%20applications.commands"
+                            },
+                            "isAvailable": true
+                        },
+                        {
+                            "name": "VertixBot/UI-General/WelcomeSetupButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 1,
+                                "custom_id": "",
+                                "label": "Setup",
+                                "emoji": {
+                                    "animated": false,
+                                    "name": "🛠"
+                                }
+                            },
+                            "isAvailable": true
+                        }
+                    ]
+                ],
+                "embeds": [
+                    {
+                        "name": "VertixBot/UI-General/WelcomeEmbed",
+                        "type": "embed",
+                        "attributes": {
+                            "color": 3369963,
+                            "title": "༄ Vertix is here, let's get started!",
+                            "description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU",
+                            "thumbnail": {
+                                "url": "https://s11.gifyu.com/images/SuW5n.gif"
+                            },
+                            "image": {
+                                "url": "https://i.imgur.com/x8jMguN.gif"
+                            }
+                        },
+                        "isAvailable": true
+                    }
+                ]
+            }
+        }
+    ],
+    "type": "ui",
+    "nextStates": {
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport": "VertixBot/UI-General/WelcomeFlow/States/SupportClicked",
+        "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite": "VertixBot/UI-General/WelcomeFlow/States/InviteClicked",
+        "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage": "VertixBot/UI-General/WelcomeFlow/States/LanguageSelected"
+    },
+    "integrations": {
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                "description": "Hands off to Setup Wizard when setup button is clicked",
+                "sourceState": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "requiredData": []
+            }
+        ],
+        "externalReferences": {
+            "setupWizardFlow": "VertixBot/UI-V3/SetupNewWizardFlow",
+            "setupWizardAdapter": "VertixBot/UI-V3/SetupNewWizardAdapter",
+            "setupWizardEntryTransition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
+        }
+    },
+    "visualConnections": [
+        {
+            "triggeringElementId": "VertixBot/UI-General/WelcomeSetupButton",
+            "transitionName": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+            "targetFlowName": "VertixBot/UI-V3/SetupNewWizardFlow"
+        }
+    ]
+}

@@ -2,12 +2,12 @@ import dagre from "dagre";
 
 import type { Node, Edge } from "@xyflow/react";
 
-// Layout configuration
+// Layout configuration types
 export interface LayoutConfig {
   nodeWidth?: number;
   nodeHeight?: number;
   rankdir?: "TB" | "BT" | "LR" | "RL"; // Direction: TB (top to bottom), BT (bottom to top), LR (left to right), RL (right to left)
-  alignRank?: string; // Node alignment within a rank: UL, UR, DL, or DR
+  alignRank?: "UL" | "UR" | "DL" | "DR"; // Node alignment within a rank: UL, UR, DL, or DR
   ranksep?: number; // Distance between ranks
   nodesep?: number; // Distance between nodes in the same rank
   edgesep?: number; // Distance between edges
@@ -60,34 +60,64 @@ export function applyDagreLayout(
   // Default to assigning a new object as a label for each edge
   g.setDefaultEdgeLabel( () => ( {} ) );
 
-  // Add nodes to the graph
+  // Add nodes to the graph with validated dimensions
   nodes.forEach( ( node ) => {
-    // Use measured dimensions if available, otherwise use defaults
-    const width = node.measured?.width || layoutConfig.nodeWidth || 200;
-    const height = node.measured?.height || layoutConfig.nodeHeight || 150;
+    // Get measured dimensions or defaults, ensuring they are valid numbers
+    const width = node.measured?.width && Number.isFinite( node.measured.width ) && node.measured.width > 0
+      ? node.measured.width
+      : layoutConfig.nodeWidth || 200;
+
+    const height = node.measured?.height && Number.isFinite( node.measured.height ) && node.measured.height > 0
+      ? node.measured.height
+      : layoutConfig.nodeHeight || 150;
+
+    // Log node dimensions for debugging
+    console.log( "[applyDagreLayout] Setting node dimensions:", {
+      id: node.id,
+      width,
+      height,
+      measured: node.measured,
+      config: { nodeWidth: layoutConfig.nodeWidth, nodeHeight: layoutConfig.nodeHeight }
+    } );
 
     g.setNode( node.id, { width, height } );
   } );
 
   // Add edges to the graph
   edges.forEach( ( edge ) => {
-    g.setEdge( edge.source, edge.target );
+    if ( edge.source && edge.target ) {
+      g.setEdge( edge.source, edge.target );
+    }
   } );
 
   // Run the layout algorithm
   dagre.layout( g );
 
-  // Get the positioned nodes
+  // Get the positioned nodes with validation
   return nodes.map( ( node ) => {
     const dagreNode = g.node( node.id );
 
-    // If the node was processed by dagre
-    if ( dagreNode ) {
-      // Position the node at its center
+    // If the node was processed by dagre and has valid position
+    if ( dagreNode && Number.isFinite( dagreNode.x ) && Number.isFinite( dagreNode.y ) ) {
+      const width = dagreNode.width;
+      const height = dagreNode.height;
+
+      // Calculate node position (centered)
       const position = {
-        x: dagreNode.x - ( dagreNode.width / 2 ),
-        y: dagreNode.y - ( dagreNode.height / 2 ),
+        x: Math.round( dagreNode.x - width / 2 ),
+        y: Math.round( dagreNode.y - height / 2 )
       };
+
+      // Log node position for debugging
+      console.log( "[applyDagreLayout] Node positioned:", {
+        id: node.id,
+        dagreX: dagreNode.x,
+        dagreY: dagreNode.y,
+        finalX: position.x,
+        finalY: position.y,
+        width,
+        height
+      } );
 
       return {
         ...node,
@@ -95,14 +125,22 @@ export function applyDagreLayout(
         // Keep track of the original size used for layout
         data: {
           ...node.data,
-          layoutWidth: dagreNode.width,
-          layoutHeight: dagreNode.height,
-        },
+          layoutWidth: width,
+          layoutHeight: height
+        }
       };
     }
 
-    // Return the original node if not processed by dagre
-    return node;
+    // If dagre failed to position the node, keep its original position or use a default
+    console.warn( "[applyDagreLayout] Node not positioned by Dagre:", {
+      id: node.id,
+      originalPosition: node.position
+    } );
+
+    return {
+      ...node,
+      position: node.position || { x: 0, y: 0 }
+    };
   } );
 }
 

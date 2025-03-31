@@ -1,0 +1,348 @@
+{
+    "name": "VertixBot/UI-V3/SetupNewWizardFlow",
+    "transactions": [
+        "VertixGUI/UIWizardFlowBase/Transitions/Next",
+        "VertixGUI/UIWizardFlowBase/Transitions/Error"
+    ],
+    "requiredData": {
+        "VertixGUI/UIWizardFlowBase/Transitions/Next": [],
+        "VertixGUI/UIWizardFlowBase/Transitions/Error": [
+            "errorCode",
+            "errorMessage"
+        ]
+    },
+    "components": [
+        {
+            "type": "component",
+            "name": "VertixBot/UI-General/SetupStep1Component",
+            "entities": {
+                "elements": [
+                    [
+                        {
+                            "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 2,
+                                "custom_id": "",
+                                "label": "Edit Channel Name",
+                                "emoji": {
+                                    "animated": false,
+                                    "name": "#️⃣"
+                                }
+                            },
+                            "isAvailable": true
+                        }
+                    ],
+                    [
+                        {
+                            "name": "VertixBot/UI-General/WizardBackButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 1,
+                                "custom_id": "",
+                                "label": "◀ Back",
+                                "disabled": true
+                            },
+                            "isAvailable": true
+                        },
+                        {
+                            "name": "VertixBot/UI-General/WizardNextButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 1,
+                                "custom_id": "",
+                                "label": "Next ▶"
+                            },
+                            "isAvailable": false
+                        }
+                    ]
+                ],
+                "embeds": [
+                    {
+                        "name": "VertixBot/UI-General/SetupStep1Embed",
+                        "type": "embed",
+                        "attributes": {
+                            "color": 3369963,
+                            "title": "Step 1 - Set Dynamic Channels Template Name",
+                            "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{user}'s Channel`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
+                        },
+                        "isAvailable": true
+                    }
+                ]
+            }
+        },
+        {
+            "type": "component",
+            "name": "VertixBot/UI-General/SetupStep2Component",
+            "entities": {
+                "elements": [
+                    [
+                        {
+                            "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+                            "type": "element",
+                            "attributes": {
+                                "type": 3,
+                                "custom_id": "",
+                                "options": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "rename",
+                                        "emoji": "<:ChannelRename:1272447740034682952>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "limit",
+                                        "emoji": "<:UserLimit:1269654650206818316>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "access",
+                                        "emoji": "<:ChannelPermissions:1269649241207210125>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Privacy",
+                                        "value": "privacy",
+                                        "emoji": "<:ChannelPrivacy:1269655669984985158>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Region",
+                                        "value": "region",
+                                        "emoji": "<:ChannelRegion:1272451511322017804>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Edit Primary Message",
+                                        "value": "edit-primary-message",
+                                        "emoji": "<:EditChannelMessage:1264200057981243415>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "clear-chat",
+                                        "emoji": "<:ClearChat:1269552009753919550>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "rest-channel",
+                                        "emoji": "<:ResetChannel:1269639351558606959>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "transfer",
+                                        "emoji": "<:TransferChannel:1269643178856939581>",
+                                        "default": false
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": "<:ClaimChannel:1272450707542245386>",
+                                        "default": false
+                                    }
+                                ],
+                                "placeholder": "🎚 Select Buttons",
+                                "min_values": 1,
+                                "max_values": 10
+                            },
+                            "isAvailable": true
+                        }
+                    ],
+                    [
+                        {
+                            "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
+                            "type": "element",
+                            "attributes": {
+                                "type": 3,
+                                "custom_id": "",
+                                "options": [
+                                    {
+                                        "label": "@ ∙ Mention user in primary message ∙🟢 On",
+                                        "value": "dynamicChannelMentionable:1"
+                                    },
+                                    {
+                                        "label": "⫸ ∙ Auto save dynamic channel ∙🟢 On",
+                                        "value": "dynamicChannelAutoSave:1"
+                                    },
+                                    {
+                                        "label": "❯❯ ∙ Send logs to custom channel ∙🔴 Off",
+                                        "value": "dynamicChannelLogsChannel:0"
+                                    }
+                                ],
+                                "placeholder": "⌘ ∙ Configuration",
+                                "min_values": 0
+                            },
+                            "isAvailable": true
+                        }
+                    ],
+                    [
+                        {
+                            "name": "VertixBot/UI-General/WizardBackButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 1,
+                                "custom_id": "",
+                                "label": "◀ Back"
+                            },
+                            "isAvailable": true
+                        },
+                        {
+                            "name": "VertixBot/UI-General/WizardNextButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 1,
+                                "custom_id": "",
+                                "label": "Next ▶"
+                            },
+                            "isAvailable": false
+                        }
+                    ]
+                ],
+                "embeds": [
+                    {
+                        "name": "VertixBot/UI-General/SetupStep2Embed",
+                        "type": "embed",
+                        "attributes": {
+                            "color": 3369963,
+                            "title": "Step 2 - Dynamic Channels Setup",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\nThere are no buttons selected!\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🔴∙Off`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
+                            "footer": {
+                                "text": "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n"
+                            },
+                            "image": {
+                                "url": "https://i.imgur.com/NthLO3W.png"
+                            }
+                        },
+                        "isAvailable": true
+                    }
+                ]
+            }
+        },
+        {
+            "type": "component",
+            "name": "VertixBot/UI-General/SetupStep3Component",
+            "entities": {
+                "elements": [
+                    [
+                        {
+                            "name": "VertixBot/UI-General/VerifiedRolesMenu",
+                            "type": "element",
+                            "attributes": {
+                                "type": 6,
+                                "custom_id": "",
+                                "placeholder": "Select Verified Roles",
+                                "min_values": 0,
+                                "max_values": 3
+                            },
+                            "isAvailable": true
+                        }
+                    ],
+                    [
+                        {
+                            "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+                            "type": "element",
+                            "attributes": {
+                                "type": 3,
+                                "custom_id": "",
+                                "options": [
+                                    {
+                                        "label": "Include everyone role ∙🟢 On",
+                                        "value": "dynamicChannelIncludeEveryoneRole:1",
+                                        "emoji": "🛡️"
+                                    }
+                                ],
+                                "placeholder": "🛡️ ∙ Everyone role",
+                                "min_values": 0
+                            },
+                            "isAvailable": true
+                        }
+                    ],
+                    [
+                        {
+                            "name": "VertixBot/UI-General/WizardBackButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 1,
+                                "custom_id": "",
+                                "label": "◀ Back"
+                            },
+                            "isAvailable": true
+                        },
+                        {
+                            "name": "VertixBot/UI-General/WizardFinishButton",
+                            "type": "element",
+                            "attributes": {
+                                "type": 2,
+                                "style": 3,
+                                "custom_id": "",
+                                "label": "✔ Finish"
+                            },
+                            "isAvailable": false
+                        }
+                    ]
+                ],
+                "embeds": [
+                    {
+                        "name": "VertixBot/UI-General/SetupStep3Embed",
+                        "type": "embed",
+                        "attributes": {
+                            "color": 3369963,
+                            "title": "Step 3 - Select Verified Roles",
+                            "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> **None**\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+                            "image": {
+                                "url": "https://i.imgur.com/NthLO3W.png"
+                            }
+                        },
+                        "isAvailable": true
+                    }
+                ]
+            }
+        }
+    ],
+    "type": "ui",
+    "nextStates": {
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+        "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+        "VertixGUI/UIWizardFlowBase/Transitions/Finish": "VertixGUI/UIWizardFlowBase/States/Completed",
+        "VertixGUI/UIWizardFlowBase/Transitions/Error": "VertixGUI/UIWizardFlowBase/States/Error",
+        "VertixGUI/UIWizardFlowBase/Transitions/Next": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+        "VertixGUI/UIWizardFlowBase/Transitions/Back": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate"
+    },
+    "integrations": {
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/WelcomeFlow",
+                "description": "Entry point from Welcome flow when setup button is clicked",
+                "sourceState": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+                "targetState": "VertixGUI/UIWizardFlowBase/States/Initial",
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "requiredData": [
+                    "originFlow",
+                    "originState",
+                    "originTransition",
+                    "sourceButton"
+                ]
+            }
+        ],
+        "externalReferences": {
+            "welcomeFlow": "VertixBot/UI-General/WelcomeFlow",
+            "welcomeAdapter": "VertixBot/UI-General/WelcomeAdapter",
+            "masterChannelService": "Vertix/Services/MasterChannelService"
+        }
+    }
+}

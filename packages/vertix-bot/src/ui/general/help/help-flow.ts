@@ -1,8 +1,8 @@
 import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
+import type { FlowIntegrationPoint , UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { TAdapterRegisterOptions as _TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 const STATE_INITIAL = "VertixBot/UI-General/HelpFlow/States/Initial";
 
@@ -13,6 +13,17 @@ export class HelpFlow extends UIFlowBase<string, string, HelpFlowData> {
         return "VertixBot/UI-General/HelpFlow";
     }
     public static getComponents() { return []; }
+
+    public static getEntryPoints(): FlowIntegrationPoint[] {
+        return [
+            {
+                flowName: "VertixBot/UI-General/CommandsFlow",
+                transition: "VertixBot/Commands/Help",
+                description: "Entry point triggered by CommandsFlow via Help transition"
+            }
+        ];
+    }
+
     public getPermissions(): PermissionsBitField { return new PermissionsBitField( PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages ); }
     public getChannelTypes(): ChannelType[] { return [ ChannelType.GuildText ]; }
     protected getInitialState(): string { return STATE_INITIAL; }

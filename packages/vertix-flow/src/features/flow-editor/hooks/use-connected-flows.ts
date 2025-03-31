@@ -125,7 +125,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
         mainFlow.integrations.handoffPoints.forEach( ( handoff, index ) => {
             const targetFlowData = connectedFlows.find( cf => cf.name === handoff.flowName );
             if ( !targetFlowData ) {
-                console.warn( `Target flow ${ handoff.flowName } not found in loaded connected flows.` );
+                console.warn( `[createInterFlowEdges] Target flow ${ handoff.flowName } not found in loaded connected flows. Available flows:`, connectedFlows.map( f => f.name ) );
                 return;
             }
 
@@ -133,7 +133,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 ep => ep.flowName === mainFlow.name && ep.transition === handoff.transition
             );
             if ( !entryPoint ) {
-                console.warn( `No matching entry point found in ${ targetFlowData.name } for transition ${ handoff.transition } from ${ mainFlow.name }.` );
+                console.warn( `[createInterFlowEdges] No matching entry point found in ${ targetFlowData.name } for transition ${ handoff.transition } from ${ mainFlow.name }. Available entry points:`, targetFlowData.integrations?.entryPoints );
                 return;
             }
 
@@ -155,9 +155,9 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 sourceNodeId = "flow-group";
                 // SOURCE HANDLE becomes the specific element's ID (name)
                 sourceHandle = visualConnection.triggeringElementId;
-                console.log( `[Edges] Using visual connection for ${ handoff.transition }: node '${ sourceNodeId }', handle '${ sourceHandle }'` );
+                console.log( `[createInterFlowEdges] Using visual connection for ${ handoff.transition }: node '${ sourceNodeId }', handle '${ sourceHandle }'` );
             } else {
-                console.log( `[Edges] No visual connection found for ${ handoff.transition }, using default group node '${ sourceNodeId }' and handle '${ sourceHandle }'` );
+                console.log( `[createInterFlowEdges] No visual connection found for ${ handoff.transition }, using default group node '${ sourceNodeId }' and handle '${ sourceHandle }'` );
             }
 
             const targetPrefix = targetFlowData.name.replace( /\//g, "-" );
@@ -182,9 +182,10 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     style: { stroke: "hsl(var(--primary))", strokeWidth: 2 },
                     zIndex: Z_INDEXES.EDGE_INTER_FLOW,
                 };
+                console.log( "[createInterFlowEdges] Creating edge:", edge );
                 newEdges.push( edge );
             } else {
-                console.warn( `Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found.` );
+                console.warn( `[createInterFlowEdges] Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found. All nodes:`, allCombinedNodes.map( n => ( { id: n.id, type: n.type } ) ) );
             }
         } );
 
@@ -210,10 +211,18 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
 
     useEffect( () => {
         if ( mainFlowData && connectedFlowsData.length > 0 && !isLoadingConnectedFlows ) {
+            console.log( "[useEffect] Combining diagrams with:", {
+                mainFlowData: mainFlowData.name,
+                connectedFlows: connectedFlowsData.map( f => f.name ),
+                nodesCount: nodes.length,
+                isLoading: isLoadingConnectedFlows
+            } );
             const allCombinedNodes = combineFlowDiagrams( nodes, connectedFlowsData );
             const interFlowEdges = createInterFlowEdges( mainFlowData, connectedFlowsData, allCombinedNodes );
+            console.log( "[useEffect] Created edges:", interFlowEdges );
             setCombinedEdges( interFlowEdges );
         } else if ( mainFlowData && connectedFlowsData.length === 0 && !isLoadingConnectedFlows ) {
+            console.log( "[useEffect] No connected flows to process" );
             setCombinedEdges( [] );
         }
     }, [ mainFlowData, nodes, connectedFlowsData, isLoadingConnectedFlows, combineFlowDiagrams, createInterFlowEdges ] );

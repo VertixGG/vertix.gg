@@ -101,36 +101,66 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
 
     const combineFlowDiagrams = useCallback( ( mainNodes: Node[], connectedFlows: FlowData[] ) => {
         // Start with main flow nodes
-        const allNodes = [ ...mainNodes ];
+        const allNodes: Node[] = [];
+        const processedNodeIds = new Set<string>();
 
+        // Add prefixed main flow nodes
+        mainNodes.forEach( node => {
+            const mainFlowName = mainFlowData?.name || "unknown";
+            const nodePrefix = mainFlowName.replace( /\//g, "-" );
+            const newNodeId = node.id === "flow-group" ? `${ nodePrefix }-node-flow-group` : `${ nodePrefix }-node-${ node.id }`;
+
+            // Skip if we've already processed this node ID
+            if (processedNodeIds.has(newNodeId)) {
+                return;
+            }
+            processedNodeIds.add(newNodeId);
+
+            allNodes.push( {
+                ...node,
+                id: newNodeId,
+                position: node.position || { x: 0, y: 0 },
+                data: {
+                    ...node.data,
+                    isMainFlow: true,
+                    flowName: mainFlowName
+                }
+            } );
+        } );
+
+        // Add connected flow nodes
         connectedFlows.forEach( ( flowData, index ) => {
-            // Generate nodes for the connected flow
             const { nodes: flowNodes } = generateFlowDiagram( flowData );
             const nodePrefix = flowData.name.replace( /\//g, "-" );
 
-            const prefixedNodes = flowNodes.map( ( node: { id: any; position: any; data: any; } ) => ( {
-                ...node,
-                id: `${ nodePrefix }-node-${ node.id }`,
-                // --- Use position directly from generateFlowDiagram ---
-                // Position will be relative to (0,0) or whatever generateFlowDiagram uses
-                // They will likely overlap initially - layout happens later
-                position: node.position || { x: 0, y: 0 }, // Ensure position exists
-                data: {
-                    ...node.data,
-                    isConnectedFlow: true,
-                    flowIndex: index,
-                    flowName: flowData.name
-                 }
-            } ) );
+            flowNodes.forEach(node => {
+                const newNodeId = `${ nodePrefix }-node-${ node.id }`;
 
-            allNodes.push( ...prefixedNodes );
+                // Skip if we've already processed this node ID
+                if (processedNodeIds.has(newNodeId)) {
+                    return;
+                }
+                processedNodeIds.add(newNodeId);
+
+                allNodes.push({
+                    ...node,
+                    id: newNodeId,
+                    position: node.position || { x: 0, y: 0 },
+                    data: {
+                        ...node.data,
+                        isConnectedFlow: true,
+                        flowIndex: index,
+                        flowName: flowData.name
+                    }
+                });
+            });
         } );
 
         // Set the potentially overlapping nodes
         setCombinedNodes( allNodes );
         console.log( "[combineFlowDiagrams] Combined nodes (no offset):", allNodes.map( n => ( { id: n.id, x: n.position.x, y: n.position.y } ) ) );
-        return allNodes; // Return for potential immediate use
-    }, [ setCombinedNodes ] ); // Added dependency
+        return allNodes;
+    }, [ setCombinedNodes, mainFlowData ] );
 
     const createInterFlowEdges = useCallback( (
         mainFlow: FlowData | null,
@@ -144,6 +174,8 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             if ( !flow?.integrations?.handoffPoints ) return;
 
             const flowPrefix = flow.name.replace( /\//g, "-" );
+            // For main flow, always use the prefixed node ID to avoid duplicates
+            let sourceNodeId = `${ flowPrefix }-node-flow-group`;
 
             flow.integrations.handoffPoints.forEach( ( handoff, index ) => {
                 const targetFlowData = connectedFlows.find( cf => cf.name === handoff.flowName );
@@ -160,8 +192,6 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     return;
                 }
 
-                // Default source NODE is the flow's group node
-                let sourceNodeId = flow === mainFlow ? "flow-group" : `${ flowPrefix }-node-flow-group`;
                 // Default source HANDLE for group-to-group
                 let sourceHandle = "Flow-handle-source-bottom";
 
@@ -171,9 +201,6 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 );
 
                 if ( visualConnection?.triggeringElementId ) {
-                    // If visual connection exists:
-                    // SOURCE NODE remains the group containing the element
-                    sourceNodeId = flow === mainFlow ? "flow-group" : `${ flowPrefix }-node-flow-group`;
                     // SOURCE HANDLE becomes the specific element's ID (name)
                     sourceHandle = visualConnection.triggeringElementId;
                     console.log( `[createInterFlowEdges] Using visual connection for ${ handoff.transition }: node '${ sourceNodeId }', handle '${ sourceHandle }'` );
@@ -216,9 +243,11 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             createEdgesForFlow( mainFlow );
         }
 
-        // Create edges for all connected flows
+        // Create edges for connected flows, excluding the main flow
         connectedFlows.forEach( flow => {
-            createEdgesForFlow( flow );
+            if ( flow.name !== mainFlow?.name ) {
+                createEdgesForFlow( flow );
+            }
         } );
 
         return newEdges;

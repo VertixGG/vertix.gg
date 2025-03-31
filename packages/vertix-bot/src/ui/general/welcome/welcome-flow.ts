@@ -124,9 +124,9 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     public static getEntryPoints(): FlowIntegrationPoint[] {
         return [
             {
-                flowName: 'VertixBot/UI-General/CommandsFlow',
-                transition: 'VertixBot/Commands/Welcome',
-                description: 'Entry point triggered by CommandsFlow via Welcome transition'
+                flowName: "VertixBot/UI-General/CommandsFlow",
+                transition: "VertixBot/Commands/Welcome",
+                description: "Entry point triggered by CommandsFlow via Welcome transition"
             }
         ];
     }

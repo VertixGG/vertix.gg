@@ -88,7 +88,7 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
       type,
       ...( data as ChildNode ) // This will include the correct attributes/elements based on type
     };
-debugger
+
     return <DiscordNode data={nodeData} />;
   }
 

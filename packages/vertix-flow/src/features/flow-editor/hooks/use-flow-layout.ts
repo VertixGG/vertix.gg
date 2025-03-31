@@ -5,21 +5,11 @@ import {
     applyDagreLayout,
     applyVerticalStackLayout
 } from "@vertix.gg/flow/src/features/flow-editor/utils/graph-layout";
+import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
 
 import type React from "react";
 
 import type { Node, Edge, NodeChange } from "@xyflow/react";
-
-// Flow diagram configuration
-export const FLOW_CONFIG = {
-    DEFAULT_ZOOM: 0.85,
-    MAX_ZOOM: 1.5,
-    MIN_ZOOM: 0.1,
-    INIT_DELAY: 100,
-    LAYOUT_DELAY: 150,
-    POSITION_THRESHOLD: 1,
-    SNAP_GRID: [ 10, 10 ] as [number, number]
-};
 
 interface UseFlowLayoutProps {
     nodes: Node[];
@@ -36,7 +26,7 @@ interface UseFlowLayoutProps {
 interface UseFlowLayoutReturn {
     isAutoLayout: boolean;
     verticalGap: number;
-    config: typeof FLOW_CONFIG;
+    config: typeof FLOW_EDITOR;
     handleAutoLayout: () => void;
     handleNodePositioning: () => void;
 }
@@ -58,7 +48,7 @@ export function useFlowLayout( {
     const verticalGap = useMemo( () => {
         const { height } = getViewportDimensions();
         // Use a percentage of viewport height instead of fixed pixels
-        return Math.max( height * 0.15, 100 ); // Min 100px, default ~15% of viewport height
+        return Math.max( height * 0.15, FLOW_EDITOR.config.position.defaultSpacing * 2 );
     }, [] );
 
     // Apply Dagre automatic layout to the nodes
@@ -69,18 +59,18 @@ export function useFlowLayout( {
         const { width, height } = getViewportDimensions();
 
         // Calculate layout parameters based on viewport
-        const nodeSpacing = Math.max( width * 0.05, 80 ); // Min 80px, default 5% of viewport width
-        const rankSpacing = Math.max( height * 0.15, 120 ); // Min 120px, default 15% of viewport height
+        const nodeSpacing = Math.max( width * 0.05, FLOW_EDITOR.config.layout.nodesep ?? 80 ); // Default to 80px if undefined
+        const rankSpacing = Math.max( height * 0.15, FLOW_EDITOR.config.layout.ranksep ?? 120 ); // Default to 120px if undefined
 
         // Apply dagre layout with dynamic parameters
         const layoutedNodes = applyDagreLayout( nodes, edges, {
-            nodeWidth: 200,  // Default node width
-            nodeHeight: 150, // Default node height
-            rankdir: "TB",   // Top to bottom layout
+            nodeWidth: FLOW_EDITOR.config.node.defaultSize.width,
+            nodeHeight: FLOW_EDITOR.config.node.defaultSize.height,
+            rankdir: FLOW_EDITOR.config.layout.rankdir,
             ranksep: rankSpacing,
             nodesep: nodeSpacing,
-            marginx: 50,
-            marginy: 50,
+            marginx: FLOW_EDITOR.config.layout.marginx,
+            marginy: FLOW_EDITOR.config.layout.marginy,
         } );
 
         // Update the nodes with new positions
@@ -89,7 +79,7 @@ export function useFlowLayout( {
         // Fit view after layout
         setTimeout( () => {
             fitView( { duration: 500, padding: 0.2 } );
-        }, 50 );
+        }, FLOW_EDITOR.config.timing.initDelay );
 
         // Mark initial layout as applied only after the first successful auto-layout
         if ( !initialLayoutApplied ) {
@@ -120,10 +110,10 @@ export function useFlowLayout( {
         // Initialize nodes with default values if needed
         if ( nodesWithIssues.length > 0 ) {
             const defaultValues = {
-                width: 200,
-                height: 150,
-                x: 100,
-                y: 100
+                width: FLOW_EDITOR.config.node.defaultSize.width,
+                height: FLOW_EDITOR.config.node.defaultSize.height,
+                x: FLOW_EDITOR.config.position.margins.x,
+                y: FLOW_EDITOR.config.position.margins.y
             };
 
             const updatedNodes = allNodes.map( node => {
@@ -154,7 +144,7 @@ export function useFlowLayout( {
             // Schedule a retry after measurements are set
             setTimeout( () => {
                 handleNodePositioning();
-            }, FLOW_CONFIG.LAYOUT_DELAY );
+            }, FLOW_EDITOR.config.timing.layoutDelay );
             return;
         }
 
@@ -180,7 +170,7 @@ export function useFlowLayout( {
                 }
 
                 const positionDiff = Math.abs( connectedNode.position.y - newPosition.y );
-                if ( positionDiff <= FLOW_CONFIG.POSITION_THRESHOLD ) {
+                if ( positionDiff <= FLOW_EDITOR.config.position.threshold ) {
                     return null;
                 }
 
@@ -209,7 +199,7 @@ export function useFlowLayout( {
     return {
         isAutoLayout,
         verticalGap,
-        config: FLOW_CONFIG,
+        config: FLOW_EDITOR,
         handleAutoLayout,
         handleNodePositioning,
     };

@@ -52,7 +52,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             const loadedFlows: FlowData[] = [];
             const processedFlows = new Set<string>(); // Track processed flows to avoid cycles
 
-            const loadFlow = async( flowName: string ) => {
+            const loadFlow = async( flowName: string, parentFlow?: FlowData ) => {
                 if ( processedFlows.has( flowName ) ) {
                     return; // Skip if already processed
                 }
@@ -70,14 +70,25 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     } );
 
                     if ( response.data ) {
-                        loadedFlows.push( response.data );
+                        // Only add the flow if it's a target of a handoff point from the parent
+                        const isTargetOfHandoff = !parentFlow || (
+                            parentFlow.integrations?.handoffPoints?.some(
+                                hp => hp.flowName === response.data.name
+                            ) ?? false
+                        );
 
-                        // Get nested connected flows
-                        const nestedFlows = getConnectedFlows( response.data );
+                        if ( isTargetOfHandoff ) {
+                            loadedFlows.push( response.data );
 
-                        // Load each nested flow
-                        for ( const nestedFlow of nestedFlows ) {
-                            await loadFlow( nestedFlow );
+                            // Get nested connected flows that are targets of handoff points
+                            const nestedFlows = response.data.integrations?.handoffPoints?.map(
+                                hp => hp.flowName
+                            ) ?? [];
+
+                            // Load each nested flow, passing current flow as parent
+                            for ( const nestedFlow of nestedFlows ) {
+                                await loadFlow( nestedFlow, response.data );
+                            }
                         }
                     }
                 } catch ( error ) {
@@ -87,7 +98,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
 
             // Load all flows and their nested connections
             for ( const flowName of connectedFlowNames ) {
-                await loadFlow( flowName );
+                await loadFlow( flowName, mainFlowData || undefined );
             }
 
             setConnectedFlowsData( loadedFlows );
@@ -111,10 +122,10 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             const newNodeId = node.id === "flow-group" ? `${ nodePrefix }-node-flow-group` : `${ nodePrefix }-node-${ node.id }`;
 
             // Skip if we've already processed this node ID
-            if (processedNodeIds.has(newNodeId)) {
+            if ( processedNodeIds.has( newNodeId ) ) {
                 return;
             }
-            processedNodeIds.add(newNodeId);
+            processedNodeIds.add( newNodeId );
 
             allNodes.push( {
                 ...node,
@@ -133,16 +144,16 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             const { nodes: flowNodes } = generateFlowDiagram( flowData );
             const nodePrefix = flowData.name.replace( /\//g, "-" );
 
-            flowNodes.forEach(node => {
+            flowNodes.forEach( node => {
                 const newNodeId = `${ nodePrefix }-node-${ node.id }`;
 
                 // Skip if we've already processed this node ID
-                if (processedNodeIds.has(newNodeId)) {
+                if ( processedNodeIds.has( newNodeId ) ) {
                     return;
                 }
-                processedNodeIds.add(newNodeId);
+                processedNodeIds.add( newNodeId );
 
-                allNodes.push({
+                allNodes.push( {
                     ...node,
                     id: newNodeId,
                     position: node.position || { x: 0, y: 0 },
@@ -152,8 +163,8 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         flowIndex: index,
                         flowName: flowData.name
                     }
-                });
-            });
+                } );
+            } );
         } );
 
         // Set the potentially overlapping nodes

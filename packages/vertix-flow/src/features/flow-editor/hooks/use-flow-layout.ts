@@ -52,6 +52,7 @@ export function useFlowLayout( {
 }: UseFlowLayoutProps ): UseFlowLayoutReturn {
     const [ isAutoLayout, setIsAutoLayout ] = useState( false );
     const { getNodes, fitView } = reactFlowInstance;
+    const [ initialLayoutApplied, setInitialLayoutApplied ] = useState( false );
 
     // Calculate appropriate vertical gap based on viewport dimensions
     const verticalGap = useMemo( () => {
@@ -90,59 +91,120 @@ export function useFlowLayout( {
             fitView( { duration: 500, padding: 0.2 } );
         }, 50 );
 
+        // Mark initial layout as applied only after the first successful auto-layout
+        if ( !initialLayoutApplied ) {
+            setInitialLayoutApplied( true );
+        }
+
         setIsAutoLayout( true );
-    }, [ nodes, edges, setCombinedNodes, fitView ] );
+    }, [ nodes, edges, setCombinedNodes, fitView, initialLayoutApplied ] );
 
     // Handle basic node positioning logic for simple cases (2 nodes)
     const handleNodePositioning = useCallback( () => {
-        // Only run if we have exactly two nodes (main + one connected)
-        // And ensure getNodes function is available
-        if ( nodes.length === 2 && getNodes && !isAutoLayout ) {
-            console.log( "[Layout Effect - Simplified Trigger] Detected 2 nodes. Scheduling layout check..." );
-            // Use a timeout to give RF time to measure after nodes appear in state
-            const timerId = setTimeout( () => {
-                console.log( "[Layout Effect - Simplified Trigger] Running layout check after delay..." );
-                const currentNodes = getNodes();
-                const mainFlowGroupNode = currentNodes.find( node => node.id === "flow-group" );
-                const connectedFlowGroupNode = currentNodes.find( node => node.data?.isConnectedFlow && node.id.endsWith( "-node-flow-group" ) );
-
-                if ( mainFlowGroupNode?.measured?.height && connectedFlowGroupNode ) {
-                    console.log( "[Layout Effect - Simplified Trigger] Nodes measured:", { mainY: mainFlowGroupNode.position.y, mainH: mainFlowGroupNode.measured.height, connectedY: connectedFlowGroupNode.position.y } );
-
-                    // Use the specialized vertical stack layout utility
-                    const newPosition = applyVerticalStackLayout(
-                        mainFlowGroupNode,
-                        connectedFlowGroupNode,
-                        verticalGap
-                    );
-
-                    // Only update if needed
-                    if ( Math.abs( connectedFlowGroupNode.position.y - newPosition.y ) > FLOW_CONFIG.POSITION_THRESHOLD ) {
-                        console.log( `[Layout Effect - Simplified Trigger] Repositioning ${ connectedFlowGroupNode.id } to:`, newPosition );
-                        setCombinedNodes( ( nds ) =>
-                            nds.map( ( node: Node ) => {
-                                if ( node.id === connectedFlowGroupNode.id ) {
-                                    // Return a new node object with updated position
-                                    return { ...node, position: newPosition };
-                                }
-                                return node; // Return original node object if no change
-                            } )
-                        );
-                    } else {
-                        console.log( "[Layout Effect - Simplified Trigger] Already positioned." );
-                    }
-                } else {
-                    console.log( "[Layout Effect - Simplified Trigger] Measurement not ready after delay." );
-                    // Log why measurement might be missing
-                    if ( !mainFlowGroupNode ) console.log( "[Layout Effect] Main flow group node not found in getNodes()" );
-                    else if ( !mainFlowGroupNode.measured?.height ) console.log( "[Layout Effect] Main flow group node height not measured" );
-                    if ( !connectedFlowGroupNode ) console.log( "[Layout Effect] Connected flow group node not found in getNodes()" );
-                }
-            }, FLOW_CONFIG.LAYOUT_DELAY );
-
-            return () => clearTimeout( timerId ); // Cleanup timeout
+        if ( !nodes.length ) {
+            return;
         }
-    }, [ nodes.length, getNodes, isAutoLayout, setCombinedNodes, verticalGap ] );
+
+        const allNodes = getNodes();
+
+        // Check if any node is missing measurements or has invalid measurements
+        const nodesWithIssues = allNodes.filter( node =>
+            !node.measured ||
+            !Number.isFinite( node.measured.width ) ||
+            !Number.isFinite( node.measured.height ) ||
+            !node.position ||
+            !Number.isFinite( node.position.x ) ||
+            !Number.isFinite( node.position.y )
+        );
+
+        // Initialize nodes with default values if needed
+        if ( nodesWithIssues.length > 0 ) {
+            const defaultValues = {
+                width: 200,
+                height: 150,
+                x: 100,
+                y: 100
+            };
+
+            const updatedNodes = allNodes.map( node => {
+                if ( nodesWithIssues.some( n => n.id === node.id ) ) {
+                    return {
+                        ...node,
+                        measured: {
+                            width: defaultValues.width,
+                            height: defaultValues.height
+                        },
+                        position: {
+                            x: defaultValues.x,
+                            y: defaultValues.y
+                        },
+                        data: {
+                            ...node.data,
+                            width: defaultValues.width,
+                            height: defaultValues.height
+                        }
+                    };
+                }
+                return node;
+            } );
+
+            // Apply the updates
+            setCombinedNodes( updatedNodes );
+
+            // Schedule a retry after measurements are set
+            setTimeout( () => {
+                handleNodePositioning();
+            }, FLOW_CONFIG.LAYOUT_DELAY );
+            return;
+        }
+
+        // Find main and connected nodes
+        const mainFlowGroupNode = allNodes.find( ( n ) => n.id === "flow-group" );
+        const connectedFlowGroupNodes = allNodes.filter( ( n ) => n.id !== "flow-group" && n.id.endsWith( "-node-flow-group" ) );
+
+        if ( !mainFlowGroupNode || connectedFlowGroupNodes.length === 0 ) {
+            return;
+        }
+
+        // Process connected nodes
+        const updates = connectedFlowGroupNodes
+            .map( ( connectedNode, index ) => {
+                const newPosition = applyVerticalStackLayout(
+                    mainFlowGroupNode,
+                    connectedNode,
+                    verticalGap * ( index + 1 )
+                );
+
+                if ( !Number.isFinite( newPosition.x ) || !Number.isFinite( newPosition.y ) ) {
+                    return null;
+                }
+
+                const positionDiff = Math.abs( connectedNode.position.y - newPosition.y );
+                if ( positionDiff <= FLOW_CONFIG.POSITION_THRESHOLD ) {
+                    return null;
+                }
+
+                return {
+                    id: connectedNode.id,
+                    position: newPosition
+                };
+            } )
+            .filter( Boolean );
+
+        // Apply updates if any
+        if ( updates.length > 0 ) {
+            setCombinedNodes( nds => nds.map( node => {
+                const update = updates.find( u => u?.id === node.id );
+                if ( update && update.position ) {
+                    return {
+                        ...node,
+                        position: update.position
+                    };
+                }
+                return node;
+            } ) );
+        }
+    }, [ nodes.length, getNodes, setCombinedNodes, verticalGap ] );
 
     return {
         isAutoLayout,

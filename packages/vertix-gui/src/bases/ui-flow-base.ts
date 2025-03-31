@@ -318,4 +318,27 @@ export abstract class UIFlowBase<
 
         return flowDataResult;
     }
+
+    /**
+     * Get target flow name for a transition if it exists
+     */
+    public getTargetFlowName( transition: TTransition ): string | undefined {
+        const constructor = this.constructor as typeof UIFlowBase;
+        const handoffPoints = constructor.getHandoffPoints?.() || [];
+        const entryPoints = constructor.getEntryPoints?.() || [];
+
+        // Check handoff points
+        const handoffPoint = handoffPoints.find( point => point.transition === transition );
+        if ( handoffPoint ) {
+            return handoffPoint.flowName;
+        }
+
+        // Check entry points
+        const entryPoint = entryPoints.find( point => point.transition === transition );
+        if ( entryPoint ) {
+            return entryPoint.flowName;
+        }
+
+        return undefined;
+    }
 }

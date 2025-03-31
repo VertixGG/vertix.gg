@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ErrorState, LoadingState } from "@vertix.gg/flow/src/features/flow-editor/components/display";
 
@@ -13,6 +13,7 @@ import {
 } from "@vertix.gg/flow/src/features/flow-editor/components/interaction";
 
 import { useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
+import { useFlowTransition } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-transition";
 
 import type { FlowInteractionController } from "@vertix.gg/flow/src/shared/lib/flow-factory";
 
@@ -20,10 +21,13 @@ import type { FlowInteractionController } from "@vertix.gg/flow/src/shared/lib/f
  * Interface for flow classes that can be controlled
  */
 export interface FlowClass {
-    getInitialState: () => string;
-    getAvailableTransitions: ( state: string ) => string[];
-    getData: () => Record<string, unknown> | null;
-    transition?: ( transitionName: string ) => void;
+    new(): {
+        getInitialState: () => string;
+        getAvailableTransitions: ( state: string ) => string[];
+        getData: () => Record<string, unknown> | null;
+        transition?: ( transitionName: string ) => void;
+        getTargetFlowName?: ( transition: string ) => string | undefined;
+    };
 }
 
 export interface FlowInteractionProps {
@@ -68,27 +72,13 @@ export function FlowInteraction( {
         }
     }, [ FlowClass, setError, setLoading ] );
 
-    const handleTransition = useCallback( ( transition: string ) => {
-        if ( !controller ) return;
-
-        try {
-            setLoading( true );
-            controller.performTransition( transition );
-
-            // Update state after transition
-            const newState = controller.getInitialState();
-            const transitions = controller.getAvailableTransitions( newState );
-
-            setCurrentState( newState );
-            setAvailableTransitions( transitions );
-            setFlowData( controller.getStateData() );
-        } catch ( err ) {
-            console.error( `Error during transition ${ transition }:`, err );
-            setError( `Failed to perform transition: ${ transition }` );
-        } finally {
-            setLoading( false );
-        }
-    }, [ controller, setError, setLoading ] );
+    // Use our new hook for handling transitions
+    const { handleTransition } = useFlowTransition( {
+        controller,
+        setCurrentState,
+        setAvailableTransitions,
+        setFlowData,
+    } );
 
     // Show error state if there's an error
     if ( error ) {

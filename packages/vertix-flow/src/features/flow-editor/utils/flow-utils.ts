@@ -1,47 +1,27 @@
-import type { FlowData, FlowIntegrationPoint } from "src/features/flow-editor/types/flow";
+import type { FlowData, FlowIntegrationPoint } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 /**
  * Get connected flows from a flow data object
  * @param flowData The flow data to extract connected flows from
  * @returns Array of connected flow names
  */
-export function getConnectedFlows( flowData: FlowData ): string[] {
+export const getConnectedFlows = ( flowData: FlowData ): string[] => {
     console.log( "getConnectedFlows called with flowData:", flowData );
 
-    if ( ! flowData || ! flowData.integrations ) {
-        console.log( "No integrations found in flowData" );
-        return [];
-    }
+    const connectedFlows = new Set<string>();
 
-    const connectedFlows: string[] = [];
-
-    // Check handoff points
-    if ( flowData.integrations.handoffPoints ) {
+    // Only get flows from handoff points
+    if ( flowData.integrations?.handoffPoints ) {
         console.log( "handoffPoints found:", flowData.integrations.handoffPoints );
-        flowData.integrations.handoffPoints.forEach( handoff => {
-            if ( ! connectedFlows.includes( handoff.flowName ) ) {
-                connectedFlows.push( handoff.flowName );
-            }
+        flowData.integrations.handoffPoints.forEach( ( handoffPoint: FlowIntegrationPoint ) => {
+            connectedFlows.add( handoffPoint.flowName );
         } );
-    } else {
-        console.log( "No handoffPoints found in flowData.integrations" );
     }
 
-    // Check entry points
-    if ( flowData.integrations.entryPoints ) {
-        console.log( "entryPoints found:", flowData.integrations.entryPoints );
-        flowData.integrations.entryPoints.forEach( entry => {
-            if ( ! connectedFlows.includes( entry.flowName ) ) {
-                connectedFlows.push( entry.flowName );
-            }
-        } );
-    } else {
-        console.log( "No entryPoints found in flowData.integrations" );
-    }
-
-    console.log( "Final connectedFlows:", connectedFlows );
-    return connectedFlows;
-}
+    const result = Array.from( connectedFlows );
+    console.log( "Final connectedFlows:", result );
+    return result;
+};
 
 /**
  * Get connection details between flows

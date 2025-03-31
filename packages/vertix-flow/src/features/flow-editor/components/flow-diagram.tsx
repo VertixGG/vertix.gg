@@ -19,12 +19,12 @@ import { CompoundNode } from "@vertix.gg/flow/src/features/flow-editor/component
 import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 import { useFlowLayout } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-layout";
 import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
+import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
 
 import type {
     ReactFlowInstance,
     Node,
-    NodeChange
-,
+    NodeChange,
     Connection,
     Edge
 } from "@xyflow/react";
@@ -64,7 +64,6 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
 
     // Use our custom layout hook for positioning logic
     const {
-        config,
         handleAutoLayout,
         handleNodePositioning
     } = useFlowLayout( {
@@ -81,16 +80,16 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             setTimeout( () => {
                 window.dispatchEvent( new Event( "resize" ) );
                 if ( reactFlowInstanceRef.current ) {
-                    reactFlowInstanceRef.current.setViewport( { x: 0, y: 0, zoom: config.DEFAULT_ZOOM } );
+                    reactFlowInstanceRef.current.setViewport( { x: 0, y: 0, zoom: FLOW_EDITOR.config.viewport.defaultZoom } );
                     if ( onZoomChange ) {
-                        onZoomChange( config.DEFAULT_ZOOM );
+                        onZoomChange( FLOW_EDITOR.config.viewport.defaultZoom );
                     }
                 }
-            }, config.INIT_DELAY );
+            }, FLOW_EDITOR.config.timing.initDelay );
         } catch {
             // Optionally log error here
         }
-    }, [ onZoomChange, config ] );
+    }, [ onZoomChange ] );
 
     const handleRefresh = useCallback( () => {
         try {
@@ -150,21 +149,24 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             edges={edges}
             onNodesChange={onNodesChange}
             nodeTypes={nodeTypes}
-            defaultViewport={{ x: 0, y: 0, zoom: config.DEFAULT_ZOOM }}
-            maxZoom={config.MAX_ZOOM}
-            minZoom={config.MIN_ZOOM}
+            defaultViewport={{ x: 0, y: 0, zoom: FLOW_EDITOR.config.viewport.defaultZoom }}
+            maxZoom={FLOW_EDITOR.config.viewport.maxZoom}
+            minZoom={FLOW_EDITOR.config.viewport.minZoom}
             onInit={onInit}
             onMove={handleMove}
             nodesDraggable={true}
             proOptions={{ hideAttribution: true }}
             elementsSelectable={true}
             snapToGrid={true}
-            snapGrid={config.SNAP_GRID}
+            snapGrid={FLOW_EDITOR.config.viewport.snapGrid}
             elevateEdgesOnSelect={true}
             edgesFocusable={false}
             defaultEdgeOptions={{
                 type: "smoothstep",
-                style: { strokeWidth: 2 },
+                style: {
+                    strokeWidth: FLOW_EDITOR.theme.components.edge.default.strokeWidth,
+                    stroke: FLOW_EDITOR.theme.components.edge.default.strokeColor
+                },
                 markerEnd: { type: MarkerType.Arrow }
             }}
             onConnect={( params: Connection ) => {
@@ -184,28 +186,16 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
                 pannable
                 // Only show MiniMap when all nodes have measurements
                 style={{
-                    display: nodes.some( node => !node.measured ) ? "none" : "block"
+                    display: nodes.some( node => !node.measured ) ? "none" : "block",
+                    backgroundColor: FLOW_EDITOR.theme.components.minimap.backgroundColor
                 }}
                 nodeColor={_node => {
                     // Default color with fallback for invalid nodes
-                    return "#aaa";
+                    return FLOW_EDITOR.theme.components.minimap.nodeColor;
                 }}
                 nodeBorderRadius={0}
                 // Custom node rendering to avoid NaN errors
                 nodeComponent={props => {
-                    // Log node props for debugging
-                    // console.log( "[MiniMap] Rendering node:", {
-                    //     originalProps: {
-                    //         x: props.x,
-                    //         y: props.y,
-                    //         width: props.width,
-                    //         height: props.height,
-                    //         id: props.id
-                    //     },
-                    //     hasValidDimensions: Number.isFinite( props.width ) && Number.isFinite( props.height ),
-                    //     hasValidPosition: Number.isFinite( props.x ) && Number.isFinite( props.y )
-                    // } );
-
                     // Skip rendering if dimensions are invalid
                     if ( !Number.isFinite( props.width ) || !Number.isFinite( props.height ) ||
                         !Number.isFinite( props.x ) || !Number.isFinite( props.y ) ) {
@@ -225,14 +215,19 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
                             ry={0}
                             width={props.width}
                             height={props.height}
-                            fill="#aaa"
-                            stroke="#555"
+                            fill={FLOW_EDITOR.theme.components.minimap.nodeColor}
+                            stroke={FLOW_EDITOR.theme.components.minimap.maskColor}
                             strokeWidth={props.strokeWidth}
                         />
                     );
                 }}
             />
-            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+            <Background
+                variant={BackgroundVariant.Dots}
+                gap={12}
+                size={1}
+                color={FLOW_EDITOR.theme.components.node.secondaryColor}
+            />
             <Panel position="top-right" className="flex flex-col gap-2">
                 <button
                     className="bg-muted hover:bg-muted/80 text-foreground text-xs px-2 py-1 rounded shadow"

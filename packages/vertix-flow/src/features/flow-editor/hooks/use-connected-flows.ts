@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
-import { Z_INDEXES } from "@vertix.gg/flow/src/features/flow-editor/flow-z-indexes";
-
 import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/utils/flow-utils";
 
 import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
 import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
+
+import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
 
 import type React from "react";
 
@@ -236,10 +236,13 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         sourceHandle: sourceHandle,
                         targetHandle: targetHandle,
                         type: "smoothstep",
-                        animated: true,
+                        animated: FLOW_EDITOR.theme.components.edge.interFlow.animated,
                         label: `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`,
-                        style: { stroke: "hsl(var(--primary))", strokeWidth: 2 },
-                        zIndex: Z_INDEXES.EDGE_INTER_FLOW,
+                        style: {
+                            stroke: FLOW_EDITOR.theme.components.edge.interFlow.strokeColor,
+                            strokeWidth: FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth
+                        },
+                        zIndex: FLOW_EDITOR.theme.zIndex.edgeInterFlow,
                     };
                     console.log( "[createInterFlowEdges] Creating edge:", edge );
                     newEdges.push( edge );

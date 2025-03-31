@@ -3,6 +3,7 @@ import React from "react";
 import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 import { GroupNode } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/group-node";
 
+import type { APIMessageActionRowComponent } from "discord-api-types/v10";
 import type { ExtendedNodeData } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord-node";
 
 // Base node interface
@@ -15,15 +16,27 @@ interface BaseNode {
 // Component specific node
 interface ComponentNode extends BaseNode {
   type: "component";
-  elements?: Array<Array<{
-    attributes: {
-      type: number;
-      style: number;
+  elements?: Array<{
+    id: string;
+    label: string;
+    elements: Array<{
+      id: string;
       label: string;
-      emoji?: { name: string };
-      isDisabled?: boolean;
+      type: string;
+      attributes: APIMessageActionRowComponent;
+    }>;
+  }>;
+  embeds?: Array<{
+    id: string;
+    label: string;
+    attributes: {
+      title?: string;
+      description?: string;
+      thumbnail?: { url: string };
+      image?: { url: string };
+      [key: string]: unknown;
     };
-  }>>;
+  }>;
   childNodes?: Array<ChildNode>;
 }
 
@@ -49,13 +62,7 @@ interface GroupNode extends BaseNode {
 // Element specific node
 interface ElementNode extends BaseNode {
   type: "element";
-  attributes: {
-    type: number;
-    style: number;
-    label: string;
-    emoji?: { name: string };
-    isDisabled?: boolean;
-  };
+  attributes: APIMessageActionRowComponent;
 }
 
 // Union type for all possible child nodes
@@ -82,11 +89,10 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
   // Render a standard node if not a group
   if ( type !== "group" && type !== "compound" ) {
     // Convert the data to the appropriate ExtendedNodeData type
+    const { id, ...restData } = data;
     const nodeData: ExtendedNodeData = {
-      id: data.id,
-      label,
-      type,
-      ...( data as ChildNode ) // This will include the correct attributes/elements based on type
+      ...( restData as ChildNode ),
+      id: id || "default-id" // Fallback ID if not provided
     };
 
     return <DiscordNode data={nodeData} />;

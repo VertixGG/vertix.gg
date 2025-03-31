@@ -20,7 +20,8 @@ import type {
   APIStringSelectComponent,
   APIRoleSelectComponent,
   APIMessageActionRowComponent,
-  APISelectMenuOption
+  APISelectMenuOption,
+  APIMessageComponentEmoji
 } from "discord-api-types/v10";
 
 // Interface for Discord embed attributes
@@ -162,6 +163,25 @@ const DiscordSelectWrapper: React.FC<{
   disabled,
   className
 } ) => {
+  // Convert Discord API emoji type to our component's expected emoji type
+  const convertEmoji = ( emoji: APIMessageComponentEmoji | undefined ) => {
+    if ( !emoji ) return undefined;
+
+    if ( typeof emoji === "string" ) return emoji;
+
+    // If emoji has both name and id, return as custom emoji object
+    if ( emoji.name && emoji.id ) {
+      return {
+        name: emoji.name,
+        id: emoji.id,
+        animated: emoji.animated
+      };
+    }
+
+    // If only name exists, return as string
+    return emoji.name || undefined;
+  };
+
   // Memoize the options conversion to prevent unnecessary recalculations
   const selectOptions = useMemo( () =>
     options.map( option => ( {
@@ -169,7 +189,7 @@ const DiscordSelectWrapper: React.FC<{
       value: option.value,
       description: option.description,
       default: option.default,
-      emoji: option.emoji
+      emoji: convertEmoji( option.emoji )
     } ) )
   , [ options ] );
 

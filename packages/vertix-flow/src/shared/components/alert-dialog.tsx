@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
-import { buttonVariants } from "src/shared/components/button";
+import { buttonVariants } from "@vertix.gg/flow/src/shared/components/button";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 

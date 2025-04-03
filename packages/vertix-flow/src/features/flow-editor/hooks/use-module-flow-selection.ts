@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-import type { UIModuleFile } from "src/features/flow-editor/types/flow";
+import type { UIModuleFile } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 export interface UseModuleFlowSelectionProps {
     initialModulePath?: string;

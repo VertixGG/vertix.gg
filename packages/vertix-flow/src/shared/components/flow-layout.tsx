@@ -1,7 +1,8 @@
 import React from "react";
 
-import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
 import { ResizablePanel, ResizablePanelGroup } from "@vertix.gg/flow/src/shared/components/resizable";
+
+import { cn } from "@vertix.gg/flow/src/shared/lib/utils";
 
 import type { ReactNode } from "react";
 

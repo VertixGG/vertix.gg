@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { UIModuleFile } from "src/features/flow-editor/types/flow";
+import type { UIModuleFile } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 interface ModuleSelectorState {
   // Selected module and flow data

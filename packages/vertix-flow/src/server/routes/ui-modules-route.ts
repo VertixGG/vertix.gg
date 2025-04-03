@@ -8,8 +8,8 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { zFindRootPackageJsonPath } from "@zenflux/utils/src/workspace";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
-import type { FlowIntegrationPoint } from "src/features/flow-editor/types/flow";
 import type UIService from "@vertix.gg/gui/src/ui-service";
+import type { FlowIntegrationPoint } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 /**
  * UI Module file interface

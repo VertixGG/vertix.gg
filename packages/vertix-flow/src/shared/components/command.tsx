@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "src/shared/components/dialog";
+} from "@vertix.gg/flow/src/shared/components/dialog";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 

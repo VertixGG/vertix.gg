@@ -183,9 +183,6 @@ export class UIWizardComponentBase extends UIComponentBase {
         // Find matching element group for this child
         for ( const ElementsGroup of elementGroups ) {
             try {
-                const groupName = ElementsGroup.getName();
-                const childName = childSchema.name;
-
                 // Check if this elements group belongs to this child
                 // if ( groupName.startsWith( childName + "/" ) ) {
                     // Get wizard buttons from the group

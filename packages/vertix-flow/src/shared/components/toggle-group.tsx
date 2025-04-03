@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 
-import { toggleVariants } from "src/shared/components/toggle";
+import { toggleVariants } from "@vertix.gg/flow/src/shared/components/toggle";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 

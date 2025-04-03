@@ -9,7 +9,7 @@ import {
 
 } from "react-hook-form";
 
-import { Label } from "src/shared/components/label";
+import { Label } from "@vertix.gg/flow/src/shared/components/label";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
 

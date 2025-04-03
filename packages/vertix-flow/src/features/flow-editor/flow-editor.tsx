@@ -1,8 +1,5 @@
 import React from "react";
 
-import { FlowEditorProvider } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-provider";
-
-import { ResizableHandle } from "@vertix.gg/flow/src/shared/components/resizable";
 import {
     FlowLayout,
     FlowLayoutContent,
@@ -10,7 +7,11 @@ import {
     FlowLayoutRightSidebar,
     FlowLayoutMainContent,
     FlowLayoutActivityBar
-} from "@vertix.gg/flow/src/shared/components/flow-layout";
+} from "@vertix.gg/flow/src/features/flow-editor/flow-layout";
+
+import { FlowEditorProvider } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-provider";
+
+import { ResizableHandle } from "@vertix.gg/flow/src/shared/components/resizable";
 
 import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 import { FlowEditorSidebar } from "@vertix.gg/flow/src/features/flow-editor/components/flow-editor-sidebar";

@@ -41,7 +41,9 @@
         "dagre": "^0.8.5",
         "discord-api-types": "latest",
         "discord.js": "latest",
-        "elkjs": "^0.10.0"
+        "elkjs": "^0.10.0",
+        "fastmcp": "^1.21.0",
+        "zod": "^3.24.2"
     },
     "devDependencies": {
         "@swc/jest": "latest",

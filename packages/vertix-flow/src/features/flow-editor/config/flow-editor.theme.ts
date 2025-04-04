@@ -27,6 +27,17 @@ export interface FlowEditorTheme {
                 strokeColor: string;
                 animated: boolean;
             };
+            command: {
+                strokeDasharray: string;
+            };
+            label: {
+                fontSize: number;
+                offsetY: number;
+                padding: string;
+                backgroundColor: string;
+                borderRadius: string;
+                textColor: string;
+            };
         };
         minimap: {
             backgroundColor: string;
@@ -66,6 +77,17 @@ export const FLOW_EDITOR_THEME: FlowEditorTheme = {
                 strokeWidth: 2,
                 strokeColor: "hsl(var(--primary))",
                 animated: true
+            },
+            command: {
+                strokeDasharray: "5,5"
+            },
+            label: {
+                fontSize: 10,
+                offsetY: 4,
+                padding: "2px 4px",
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                borderRadius: "3px",
+                textColor: "hsl(var(--foreground))"
             }
         },
         minimap: {

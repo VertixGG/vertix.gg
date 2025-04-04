@@ -17,7 +17,7 @@ export type FlowEditorState = SelectionSlice & DiagramSlice & UISlice;
 /**
  * Create a store with all slices combined and devtools middleware
  */
-const useFlowEditorStore = create<FlowEditorState>()(
+export const useFlowEditorStore = create<FlowEditorState>()(
   devtools(
     ( ...args ) => ( {
       ...createSelectionSlice( ...args ),
@@ -30,38 +30,6 @@ const useFlowEditorStore = create<FlowEditorState>()(
     }
   )
 );
-
-export default useFlowEditorStore;
-
-/**
- * Type-safe selector hooks
- */
-
-/**
- * Selection selectors
- */
-export const useFlowSelection = () => {
-  return useFlowEditorStore( state => ( {
-    selectedModule: state.selectedModule,
-    selectedFlow: state.selectedFlow,
-    setSelectedModule: state.setSelectedModule,
-    setSelectedFlow: state.setSelectedFlow,
-    clearSelection: state.clearSelection,
-  } ) );
-};
-
-/**
- * Diagram selectors
- */
-export const useFlowDiagram = () => {
-  return useFlowEditorStore( state => ( {
-    nodes: state.nodes,
-    setNodes: state.setNodes,
-    updateNodePosition: state.updateNodePosition,
-    clearDiagram: state.clearDiagram,
-    handleFlowDataLoaded: state.handleFlowDataLoaded
-  } ) );
-};
 
 /**
  * UI state selectors

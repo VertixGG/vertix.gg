@@ -6,6 +6,8 @@ import { UIEFlowIntegrationPointType } from "@vertix.gg/gui/src/bases/ui-flow-ba
 // Import the shared type for the data prop
 
 import { CommandLabelBadge } from "@vertix.gg/flow/src/features/flow-editor/components/command-label-badge";
+// Import the new EventLabelBadge
+import { EventLabelBadge } from "@vertix.gg/flow/src/features/flow-editor/components/event-label-badge";
 
 import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config"; // Import main config
 
@@ -55,9 +57,6 @@ export function CustomEdge( {
   // Get label styles from theme
   const labelTheme = FLOW_EDITOR.theme.components.edge.label;
 
-  // Helper function to extract the last part of a namespaced string
-  const getLastPart = ( name: string | undefined ) => name?.split( "/" ).pop() || "";
-
   return (
     <>
       {/* Pass the calculated path and received style/marker */}
@@ -73,19 +72,19 @@ export function CustomEdge( {
           }}
           className="nodrag nopan"
         >
-          {edgeData.type === UIEFlowIntegrationPointType.COMMAND && edgeData.fullName ? (
-            // Render COMMAND: Use fullName for the badge (extract last part?)
+          {edgeData.type === UIEFlowIntegrationPointType.COMMAND && edgeData.transition ? (
+            // Render COMMAND: Use transition for the badge, prepended with /
             <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: labelTheme.textColor }}>
               Command:
-              {/* Prepend with slash and use last part of fullName */}
-              <CommandLabelBadge name={`/${ getLastPart( edgeData.fullName ) }`} />
+              {/* Use CommandLabelBadge */}
+              <CommandLabelBadge name={`/${ edgeData.transition }`} />
             </span>
-          ) : edgeData.type === UIEFlowIntegrationPointType.EVENT && edgeData.fullName ? (
-            // Render EVENT: Use fullName for the badge (extract last part?)
+          ) : edgeData.type === UIEFlowIntegrationPointType.EVENT && edgeData.transition ? (
+            // Render EVENT: Use transition for the badge
             <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: labelTheme.textColor }}>
               Event:
-              {/* Use last part of fullName, maybe success variant */}
-              <CommandLabelBadge name={getLastPart( edgeData.fullName )} variant="success" />
+              {/* Use EventLabelBadge (default variant is success) */}
+              <EventLabelBadge name={edgeData.transition} />
             </span>
           ) : edgeData.type === UIEFlowIntegrationPointType.GENERIC ? (
              // Render GENERIC: Use description or transition as label
@@ -98,8 +97,8 @@ export function CustomEdge( {
                      display: "inline-flex",
                      alignItems: "center"
                  }}>
-                     {/* Show description, fallback to last part of transition */}
-                     {edgeData.description || getLastPart( edgeData.transition )}
+                     {/* Show description, fallback to transition name */}
+                     {edgeData.description || edgeData.transition }
                  </span>
              )
           ) : (

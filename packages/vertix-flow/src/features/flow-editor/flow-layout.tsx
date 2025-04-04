@@ -39,6 +39,18 @@ interface FlowLayoutActivityBarProps {
   children?: ReactNode;
 }
 
+interface FlowLayoutContentProps {
+  className?: string;
+  children?: ReactNode;
+  onLayout?: ( sizes: number[] ) => void;
+}
+
+interface FlowLayoutMainContentProps {
+  className?: string;
+  children?: ReactNode;
+  defaultSize?: number;
+}
+
 export function FlowLayout( { className, children }: FlowLayoutProps ) {
   return (
     <div className={cn( "flex flex-col h-screen bg-background overflow-hidden", className )}>
@@ -47,11 +59,12 @@ export function FlowLayout( { className, children }: FlowLayoutProps ) {
   );
 }
 
-export function FlowLayoutContent( { className, children }: FlowLayoutProps ) {
+export function FlowLayoutContent( { className, children, onLayout }: FlowLayoutContentProps ) {
   return (
     <ResizablePanelGroup
       direction="horizontal"
       className={cn( "flex-grow min-h-0", className )}
+      onLayout={onLayout}
     >
       {children}
     </ResizablePanelGroup>
@@ -63,7 +76,7 @@ export function FlowLayoutLeftSidebar( {
   children,
   defaultSize = 20,
   minSize = 10,
-  maxSize = 30
+  maxSize = 30,
 }: FlowLayoutLeftSidebarProps ) {
   return (
     <ResizablePanel
@@ -84,7 +97,7 @@ export function FlowLayoutRightSidebar( {
   children,
   defaultSize = 20,
   minSize = 10,
-  maxSize = 30
+  maxSize = 40,
 }: FlowLayoutRightSidebarProps ) {
   return (
     <ResizablePanel
@@ -100,9 +113,12 @@ export function FlowLayoutRightSidebar( {
   );
 }
 
-export function FlowLayoutMainContent( { className, children }: FlowLayoutProps ) {
+export function FlowLayoutMainContent( { className, children, defaultSize = 60 }: FlowLayoutMainContentProps ) {
   return (
-    <ResizablePanel defaultSize={60} minSize={30}>
+    <ResizablePanel
+      defaultSize={defaultSize}
+      minSize={30}
+    >
       <div className={cn( "flex flex-col h-full", className )}>
         {children}
       </div>

@@ -1,14 +1,15 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 
+import { useConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-connected-flows";
+
 import { FlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 
 import { useModuleFlowSelection } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-module-flow-selection";
-import { useConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-connected-flows";
 import { useFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-diagram";
 
 import type { FlowEditorContextType } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 
-import type { FlowEditorProps } from "@vertix.gg/flow/src/features/flow-editor/flow-editor"; // Import props for initial values
+import type { FlowEditorProps } from "@vertix.gg/flow/src/features/flow-editor/flow-editor";
 
 interface FlowEditorProviderProps extends FlowEditorProps {
   children: React.ReactNode;

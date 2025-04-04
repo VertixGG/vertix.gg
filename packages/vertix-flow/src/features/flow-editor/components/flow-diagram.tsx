@@ -20,6 +20,7 @@ import { DiscordNode } from "@vertix.gg/flow/src/features/flow-editor/components
 import { useFlowLayout } from "@vertix.gg/flow/src/features/flow-editor/hooks/use-flow-layout";
 import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
+import { CustomEdge } from "@vertix.gg/flow/src/features/flow-editor/components/edge-types/custom-edge";
 
 import type {
     ReactFlowInstance,
@@ -34,6 +35,11 @@ const nodeTypes = {
     discord: DiscordNode,
     group: GroupNode,
     compound: CompoundNode
+};
+
+// Mapping for custom edge types (NEW)
+const edgeTypes = {
+    custom: CustomEdge, // Map 'custom' type to our component
 };
 
 interface FlowDiagramDisplayProps {
@@ -149,6 +155,7 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
             edges={edges}
             onNodesChange={onNodesChange}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             defaultViewport={{ x: 0, y: 0, zoom: FLOW_EDITOR.config.viewport.defaultZoom }}
             maxZoom={FLOW_EDITOR.config.viewport.maxZoom}
             minZoom={FLOW_EDITOR.config.viewport.minZoom}

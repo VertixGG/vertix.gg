@@ -1,18 +1,22 @@
-import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
+
+import { UIEFlowIntegrationPointType } from "@vertix.gg/gui/src/bases/ui-flow-base";
+
+import { useState, useCallback, useEffect } from "react";
+
+import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
 
 import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/utils/flow-utils";
 
-import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/utils/diagram-generator";
-import { useFlowDiagram, useFlowUI } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
+import useFlowEditorStore from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
 
-import type React from "react";
-
-import type { FlowData, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import { CommandLabelBadge } from "@vertix.gg/flow/src/features/flow-editor/components/command-label-badge";
 
 import type { Node, Edge } from "@xyflow/react";
+import type { FlowData, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type React from "react";
 
 // Assume the constant file will be created here:
 
@@ -42,8 +46,8 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
     const [ combinedEdges, setCombinedEdges ] = useState<Edge[]>( [] );
     const [ isLoadingConnectedFlows, setIsLoadingConnectedFlows ] = useState<boolean>( false );
 
-    const { nodes, handleFlowDataLoaded: storeHandleFlowDataLoaded } = useFlowDiagram();
-    const { setError } = useFlowUI();
+    const { handleFlowDataLoaded: storeHandleFlowDataLoaded } = useFlowEditorStore();
+    const { setError } = useFlowEditorStore();
 
     const loadConnectedFlows = async( connectedFlowNames: string[] ) => {
         try {
@@ -198,10 +202,16 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 const entryPoint = targetFlowData.integrations?.entryPoints?.find(
                     ep => ep.flowName === flow.name && ep.transition === handoff.transition
                 );
-                if ( !entryPoint ) {
+                if ( !entryPoint && handoff.integrationType !== "COMMAND" ) { // Allow COMMAND handoffs even without explicit entry points for now
                     console.warn( `[createInterFlowEdges] No matching entry point found in ${ targetFlowData.name } for transition ${ handoff.transition } from ${ flow.name }. Available entry points:`, targetFlowData.integrations?.entryPoints );
-                    return;
+                    // return; // Temporarily disable strict entry point check for non-commands if causing issues
                 }
+
+                // --- Add Logging Here ---
+                console.log( "[createInterFlowEdges] Processing handoff:", JSON.stringify( handoff, null, 2 ) ); // Log the whole object
+                console.log( ">> Handoff integrationType:", handoff.integrationType );
+                console.log( ">> Handoff commandName:", handoff.commandName );
+                // --- End Logging ---
 
                 // Default source HANDLE for group-to-group
                 let sourceHandle = "Flow-handle-source-bottom";
@@ -229,26 +239,60 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
 
                 if ( sourceNodeExists && targetNodeExists ) {
                     const edgeId = `handoff-${ flowPrefix }-to-${ targetPrefix }-viaHandle-${ sourceHandle.replace( /\//g, "-" ) }-${ index }`;
-                    const edge = {
+
+                    // Defaults
+                    let edgeLabel: string | React.ReactNode = "";
+                    let edgeStyle: React.CSSProperties = {
+                        stroke: FLOW_EDITOR.theme.components.edge.interFlow.strokeColor,
+                        strokeWidth: FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth
+                    };
+                    let edgeLabelStyle: React.CSSProperties = {
+                         fill: FLOW_EDITOR.theme.components.edge.interFlow.strokeColor
+                    };
+                    let edgeData: any = {}; // Initialize data object
+
+                    // Check if handoffType is defined and matches COMMAND type
+                    if ( handoff.integrationType === UIEFlowIntegrationPointType.COMMAND && handoff.commandName ) {
+                        // --- Command Handoff ---
+                        const commandLabelString = `/${ handoff.commandName.toLowerCase() }`;
+                        edgeLabel = <CommandLabelBadge name={commandLabelString} />; // Use JSX for label
+                        edgeStyle = {
+                             strokeWidth: FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth + 0.5,
+                             strokeDasharray: "5,5"
+                        };
+                        edgeLabelStyle = {}; // Reset label style, badge handles its own
+                        // Add data for the rendering component
+                        edgeData = {
+                            integrationType: UIEFlowIntegrationPointType.COMMAND,
+                            commandName: commandLabelString
+                        };
+
+                    } else {
+                        // --- Standard Handoff ---
+                        edgeLabel = `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`;
+                        // Keep default edgeStyle and edgeLabelStyle
+                        edgeData = { integrationType: UIEFlowIntegrationPointType.STANDARD }; // Mark as standard
+                    }
+
+                    const edge: Edge = {
                         id: edgeId,
                         source: sourceNodeId,
                         target: targetNodeId,
                         sourceHandle: sourceHandle,
                         targetHandle: targetHandle,
-                        type: "smoothstep",
+                        type: "custom", // Ensure type is set to 'custom'
                         animated: FLOW_EDITOR.theme.components.edge.interFlow.animated,
-                        label: `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`,
-                        style: {
-                            stroke: FLOW_EDITOR.theme.components.edge.interFlow.strokeColor,
-                            strokeWidth: FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth
-                        },
+                        label: edgeLabel, // Pass string or JSX label
+                        style: edgeStyle,
+                        labelStyle: edgeLabelStyle,
                         zIndex: FLOW_EDITOR.theme.zIndex.edgeInterFlow,
+                        data: edgeData // Pass the data object
                     };
                     console.log( "[createInterFlowEdges] Creating edge:", edge );
                     newEdges.push( edge );
                 } else {
-                    console.warn( `[createInterFlowEdges] Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found. All nodes:`, allCombinedNodes.map( n => ( { id: n.id, type: n.type } ) ) );
-                }
+                     console.warn( `[createInterFlowEdges] Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found. All nodes:`, allCombinedNodes.map( n => ( { id: n.id, type: n.type } ) ) );
+                 }
             } );
         };
 
@@ -285,22 +329,27 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
     }, [ storeHandleFlowDataLoaded ] );
 
     useEffect( () => {
-        if ( mainFlowData && connectedFlowsData.length > 0 && !isLoadingConnectedFlows ) {
-            console.log( "[useEffect] Combining diagrams with:", {
-                mainFlowData: mainFlowData.name,
-                connectedFlows: connectedFlowsData.map( f => f.name ),
-                nodesCount: nodes.length,
-                isLoading: isLoadingConnectedFlows
-            } );
-            const allCombinedNodes = combineFlowDiagrams( nodes, connectedFlowsData );
-            const interFlowEdges = createInterFlowEdges( mainFlowData, connectedFlowsData, allCombinedNodes );
-            console.log( "[useEffect] Created edges:", interFlowEdges );
-            setCombinedEdges( interFlowEdges );
-        } else if ( mainFlowData && connectedFlowsData.length === 0 && !isLoadingConnectedFlows ) {
-            console.log( "[useEffect] No connected flows to process" );
+        if ( mainFlowData ) {
+            const mainDiagram = generateFlowDiagram( mainFlowData );
+            const combined = combineFlowDiagrams( mainDiagram.nodes, connectedFlowsData );
+
+            // --- Add Logging Here ---
+            console.log( "[useEffect] Calling createInterFlowEdges. Main flow:", mainFlowData?.name, "Connected flows:", connectedFlowsData.length, "Combined nodes:", combined?.length );
+            // --- End Logging ---
+
+            // Note: Edges are created *after* combined nodes are calculated (important for positioning/layout later)
+            const interFlowEdges = createInterFlowEdges( mainFlowData, connectedFlowsData, combined ); // <-- Called here
+            setCombinedEdges( interFlowEdges ); // Set the created edges
+            console.log( "[useEffect] Combined nodes and edges updated." );
+        } else {
+            // --- Add Logging Here ---
+            console.log( "[useEffect] mainFlowData is null, skipping edge creation." );
+            // --- End Logging ---
+            setCombinedNodes( [] );
             setCombinedEdges( [] );
         }
-    }, [ mainFlowData, nodes, connectedFlowsData, isLoadingConnectedFlows, combineFlowDiagrams, createInterFlowEdges ] );
+        // Ensure dependencies cover all data used to generate nodes/edges
+    }, [ mainFlowData, connectedFlowsData, combineFlowDiagrams, createInterFlowEdges ] ); // Dependency array
 
     return {
         mainFlowData,

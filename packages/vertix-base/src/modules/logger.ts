@@ -2,6 +2,8 @@ import process from "process";
 
 import pc from "picocolors";
 
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
+
 import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
 const DEFAULT_LOG_PREFIX = pc.white( "⚪  - [LOG]" ),
@@ -17,12 +19,18 @@ export type ICaller = string | Function;
 
 const registeredNames: any = {};
 
+interface LoggerOptions {
+    skipEventBusHook?: boolean;
+}
+
 export class Logger extends ObjectBase {
     private static lastLogTime: number = new Date().getTime();
 
     private readonly ownerName: string;
 
     private messagePrefixes: string[] = [];
+
+    private config: LoggerOptions = {};
 
     public static getName(): string {
         return "VertixBase/Modules/Logger";
@@ -57,8 +65,15 @@ export class Logger extends ObjectBase {
         return this.getLogLevel() >= 6;
     }
 
-    public constructor( owner: ObjectBase | typeof ObjectBase | string ) {
+    public constructor(
+        owner: ObjectBase | typeof ObjectBase | string,
+        options?: LoggerOptions
+    ) {
         super();
+
+        if ( options ) {
+            this.config = options;
+        }
 
         if ( "string" === typeof owner ) {
             this.ownerName = owner;
@@ -102,6 +117,10 @@ export class Logger extends ObjectBase {
                 this.log = () => {};
             case 5:
                 this.debug = () => {};
+        }
+
+        if ( !this.config.skipEventBusHook ) {
+            EventBus.$.registerMultiInstances( this, [ this.outputEvent ] );
         }
     }
 
@@ -229,10 +248,16 @@ export class Logger extends ObjectBase {
 
         const timeDiff = ( new Date().getTime() - Logger.lastLogTime ).toString().padStart( 4, "0" );
 
-        const output = `${ prefix }[${ this.getTime() }+${ timeDiff }ms][${ source }]${ messagePrefix + ": " + message }`;
+        this.outputEvent( prefix, timeDiff, source, messagePrefix, message, params );
 
-        console.log( output, params?.length ? params : "" );
+        const output = `${ prefix }[+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`;
+
+        console.log( output, ...params );
 
         Logger.lastLogTime = new Date().getTime();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public outputEvent( prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): void {
     }
 }

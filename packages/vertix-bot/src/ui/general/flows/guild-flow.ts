@@ -1,6 +1,7 @@
 import {
     UIFlowBase,
-    FlowIntegrationPointStandard
+    FlowIntegrationPointGeneric,
+    FlowIntegrationPointEvent
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { PermissionsBitField } from "discord.js";
@@ -11,6 +12,9 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 import type { UIFlowData ,
     FlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
+
+// Import the target flow class to get its static name
+import { WelcomeFlow } from "../welcome/welcome-flow";
 
 // --- Define Constants ---
 const STATE_INITIAL = "VertixBot/UI-General/GuildFlow/States/Initial";
@@ -63,12 +67,11 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
      */
     public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointStandard( {
+            new FlowIntegrationPointGeneric( {
                 flowName: "System/GuildEvents", // Conceptual source
                 description: "Entry point triggered when bot joins a guild.",
-                transition: TRANSITION_ON_JOIN, // The event itself is the transition *into* this flow
+                transition: TRANSITION_ON_JOIN,
                 targetState: STATE_INITIAL
-                // sourceState is not applicable here as it's an external event
             } )
         ];
     }
@@ -78,13 +81,12 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
      */
     public static override getHandoffPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointStandard( {
-                flowName: "VertixBot/UI-General/WelcomeFlow", // Target Flow Name
+            new FlowIntegrationPointEvent( {
+                flowName: WelcomeFlow.getName(), // Use static name of target flow
                 description: "Handoff to WelcomeFlow after bot joins.",
-                sourceState: STATE_INITIAL, // State within THIS flow
-                transition: TRANSITION_ON_JOIN, // Transition within THIS flow
-                targetState: TARGET_WELCOME_INITIAL, // Target state in WelcomeFlow
-                eventName: TRANSITION_ON_JOIN // Use the full namespaced transition string
+                sourceState: STATE_INITIAL,
+                transition: TRANSITION_ON_JOIN,
+                targetState: TARGET_WELCOME_INITIAL
             } )
         ];
     }

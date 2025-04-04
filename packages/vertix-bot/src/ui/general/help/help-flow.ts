@@ -1,6 +1,6 @@
 import {
     UIFlowBase,
-    FlowIntegrationPointStandard
+    FlowIntegrationPointGeneric
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
@@ -21,7 +21,7 @@ export class HelpFlow extends UIFlowBase<string, string, HelpFlowData> {
 
     public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointStandard( {
+            new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
                 transition: "VertixBot/Commands/Help",
                 targetState: STATE_INITIAL,

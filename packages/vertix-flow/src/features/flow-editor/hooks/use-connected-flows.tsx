@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
 import { UIEFlowIntegrationPointType } from "@vertix.gg/gui/src/bases/ui-flow-base";
@@ -11,17 +11,10 @@ import { useFlowEditorStore } from "@vertix.gg/flow/src/features/flow-editor/sto
 
 import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
 
-import { CommandLabelBadge } from "@vertix.gg/flow/src/features/flow-editor/components/command-label-badge";
+import type React from "react";
 
 import type { Node, Edge } from "@xyflow/react";
-import type { FlowData, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
-
-// Define the data structure for edge data locally
-interface CustomEdgeData {
-    integrationType?: UIEFlowIntegrationPointType;
-    commandName?: string;
-    eventName?: string;
-}
+import type { FlowData, VisualConnection, FlowIntegrationPoint } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Helper function to get the correct API base URL
 const getApiBaseUrl = () => {
@@ -188,27 +181,20 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
 
         // Helper function to create edges for a flow
         const createEdgesForFlow = ( flow: FlowData ) => {
+            // Ensure integrations and handoffPoints exist
             if ( !flow?.integrations?.handoffPoints ) return;
 
             const flowPrefix = flow.name.replace( /\//g, "-" );
-            // For main flow, always use the prefixed node ID to avoid duplicates
-            let sourceNodeId = `${ flowPrefix }-node-flow-group`;
 
-            flow.integrations.handoffPoints.forEach( ( handoff, index ) => {
+            flow.integrations.handoffPoints.forEach( ( handoff: FlowIntegrationPoint, index ) => { // Use imported type
                 const targetFlowData = connectedFlows.find( cf => cf.name === handoff.flowName );
                 if ( !targetFlowData ) {
-                    console.warn( `[createInterFlowEdges] Target flow ${ handoff.flowName } not found in loaded connected flows. Available flows:`, connectedFlows.map( f => f.name ) );
+                    console.warn( `[createInterFlowEdges] Target flow ${ handoff.flowName } not found in loaded connected flows.` );
                     return;
                 }
 
-                const entryPoint = targetFlowData.integrations?.entryPoints?.find(
-                    ep => ep.flowName === flow.name && ep.transition === handoff.transition
-                );
-                if ( !entryPoint && handoff.integrationType !== UIEFlowIntegrationPointType.COMMAND ) { // Allow COMMAND handoffs even without explicit entry points for now
-                    // Removed commented-out return
-                }
-
-                // Default source HANDLE for group-to-group
+                // Use default group node for source unless visual connection specifies otherwise
+                let sourceNodeId = `${ flowPrefix }-node-flow-group`;
                 let sourceHandle = "Flow-handle-source-bottom";
 
                 // Check for visual connection definition
@@ -217,10 +203,10 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 );
 
                 if ( visualConnection?.triggeringElementId ) {
-                    // SOURCE HANDLE becomes the specific element's ID (name)
+                    // Use the specific element's handle if defined
                     sourceHandle = visualConnection.triggeringElementId;
                 } else {
-                    // console.log( `[createInterFlowEdges] No visual connection found for ${ handoff.transition }, using default group node '${ sourceNodeId }' and handle '${ sourceHandle }'` );
+                    // console.log( `[createInterFlowEdges] No visual connection for ${ handoff.transition }, using default group node '${ sourceNodeId }' and handle '${ sourceHandle }'` );
                 }
 
                 const targetPrefix = targetFlowData.name.replace( /\//g, "-" );
@@ -234,58 +220,33 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 if ( sourceNodeExists && targetNodeExists ) {
                     const edgeId = `handoff-${ flowPrefix }-to-${ targetPrefix }-viaHandle-${ sourceHandle.replace( /\//g, "-" ) }-${ index }`;
 
-                    // Defaults
-                    let edgeLabel: string | React.ReactNode = "";
+                    // Base styles
                     let edgeStyle: React.CSSProperties = {
                         stroke: FLOW_EDITOR.theme.components.edge.interFlow.strokeColor,
                         strokeWidth: FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth
                     };
-                    let edgeLabelStyle: React.CSSProperties = {
+                    const edgeLabelStyle: React.CSSProperties = {
                          fill: FLOW_EDITOR.theme.components.edge.interFlow.strokeColor
                     };
-                    // Use locally defined type
-                    let edgeData: Partial<CustomEdgeData> = {};
 
-                    // Check if handoffType is defined and matches COMMAND type
-                    if ( handoff.integrationType === UIEFlowIntegrationPointType.COMMAND && handoff.commandName ) {
-                        // --- Command Handoff ---
-                        const commandLabelString = `/${ handoff.commandName.toLowerCase() }`;
-                        edgeLabel = <CommandLabelBadge name={commandLabelString} />; // Use JSX for label
-                        // Apply styles individually
-                        edgeStyle = {}; // Start with empty object
-                        edgeStyle.strokeWidth = FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth; // Set width from theme
-                        edgeStyle.strokeDasharray = FLOW_EDITOR.theme.components.edge.command.strokeDasharray; // Set dasharray from theme
-
-                        edgeLabelStyle = {}; // Reset label style, badge handles its own
-                        // Add data for the rendering component
-                        edgeData = {
-                            integrationType: UIEFlowIntegrationPointType.COMMAND,
-                            commandName: commandLabelString
-                        };
-
-                    } else if ( handoff.eventName ) {
-                        // --- Event Handoff ---
-                        const eventLabelString = handoff.eventName; // Use event name directly
-                        edgeLabel = ""; // Label will be handled by custom rendering
-                        // Apply specific styles for events? (e.g., same dotted?)
-                        edgeStyle = {}; // Start with empty object
-                        edgeStyle.strokeWidth = FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth;
-                        edgeStyle.strokeDasharray = FLOW_EDITOR.theme.components.edge.command.strokeDasharray; // Reuse command style for now?
-                        // edgeStyle.stroke = "hsl(var(--success))"; // Optional: Different color?
-
-                        edgeLabelStyle = {}; // Reset label style
-                        // Add data for rendering
-                        edgeData = {
-                            integrationType: UIEFlowIntegrationPointType.STANDARD, // Treat as standard for type, but pass eventName
-                            eventName: eventLabelString
-                        };
-
-                    } else {
-                        // --- Standard Handoff ---
-                        edgeLabel = `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`;
-                        // Keep default edgeStyle defined outside the conditional blocks
-                        edgeData = { integrationType: UIEFlowIntegrationPointType.STANDARD }; // Mark as standard
+                    // Adjust style for specific types if needed
+                    if ( handoff.type === UIEFlowIntegrationPointType.COMMAND || handoff.type === UIEFlowIntegrationPointType.EVENT ) {
+                        edgeStyle.strokeDasharray = FLOW_EDITOR.theme.components.edge.command.strokeDasharray;
                     }
+
+                    // Create the data object for the CustomEdge component
+                    // Use the properties directly from the handoff object which now conforms to the updated FlowIntegrationPoint type
+                    const edgeData: Partial<FlowIntegrationPoint> = {
+                        type: handoff.type,
+                        fullName: handoff.fullName,
+                        // Include other relevant properties from handoff if CustomEdge needs them
+                        flowName: handoff.flowName,
+                        description: handoff.description,
+                        transition: handoff.transition,
+                    };
+
+                    // Label is now handled by CustomEdge based on data, so set to empty string or remove
+                    const edgeLabel = "";
 
                     // Construct the final edge object
                     const edge: Edge = {
@@ -296,15 +257,15 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         targetHandle: targetHandle,
                         type: "custom", // Ensure type is set to 'custom'
                         animated: FLOW_EDITOR.theme.components.edge.interFlow.animated,
-                        label: edgeLabel, // Pass string or JSX label (or empty for event)
-                        style: edgeStyle, // Apply determined style
+                        label: edgeLabel, // Label is empty, CustomEdge handles rendering
+                        style: edgeStyle,
                         labelStyle: edgeLabelStyle,
                         zIndex: FLOW_EDITOR.theme.zIndex.edgeInterFlow,
-                        data: edgeData // Pass the data object
+                        data: edgeData // Pass the structured data object
                     };
                     newEdges.push( edge );
                 } else {
-                     console.warn( `[createInterFlowEdges] Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found. All nodes:`, allCombinedNodes.map( n => ( { id: n.id, type: n.type } ) ) );
+                     console.warn( `[createInterFlowEdges] Could not create edge: Source Node (${ sourceNodeId }, exists: ${ sourceNodeExists }) or Target Node (${ targetNodeId }, exists: ${ targetNodeExists }) not found.` );
                  }
             } );
         };

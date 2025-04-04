@@ -262,25 +262,23 @@ export class UIModulesRoute extends InitializeBase {
                     integrations: Type.Optional( Type.Object( {
                         entryPoints: Type.Optional( Type.Array( Type.Object( {
                             flowName: Type.String(),
+                            fullName: Type.String(),
                             description: Type.String(),
                             sourceState: Type.Optional( Type.String() ),
                             targetState: Type.Optional( Type.String() ),
                             transition: Type.Optional( Type.String() ),
                             requiredData: Type.Optional( Type.Array( Type.String() ) ),
-                            integrationType: Type.Optional( Type.String() ),
-                            commandName: Type.Optional( Type.String() ),
-                            eventName: Type.Optional( Type.String() )
+                            type: Type.String(),
                         } ) ) ),
                         handoffPoints: Type.Optional( Type.Array( Type.Object( {
                             flowName: Type.String(),
+                            fullName: Type.String(),
                             description: Type.String(),
                             sourceState: Type.Optional( Type.String() ),
                             targetState: Type.Optional( Type.String() ),
                             transition: Type.Optional( Type.String() ),
                             requiredData: Type.Optional( Type.Array( Type.String() ) ),
-                            integrationType: Type.Optional( Type.String() ),
-                            commandName: Type.Optional( Type.String() ),
-                            eventName: Type.Optional( Type.String() )
+                            type: Type.String(),
                         } ) ) ),
                         externalReferences: Type.Optional( Type.Record( Type.String(), Type.String() ) )
                     } ) ),

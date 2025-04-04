@@ -1,3 +1,5 @@
+import type { UIEFlowIntegrationPointType } from "@vertix.gg/gui/src/bases/ui-flow-base";
+
 import type { Node } from "@xyflow/react";
 
 export interface FlowComponent {
@@ -41,14 +43,13 @@ export interface UIModulesResponse {
  */
 export interface FlowIntegrationPoint {
     flowName: string;
+    fullName: string;
     description: string;
     sourceState?: string;
     targetState?: string;
     transition?: string;
     requiredData?: string[];
-    integrationType?: string; // e.g., 'STANDARD', 'COMMAND'
-    commandName?: string; // Only for command integrations
-    eventName?: string; // ADDED: Only for event integrations
+    type: UIEFlowIntegrationPointType;
 }
 
 // Define the structure for visual connection hints

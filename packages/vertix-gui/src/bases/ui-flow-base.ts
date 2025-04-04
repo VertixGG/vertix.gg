@@ -7,15 +7,16 @@ import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-ba
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { PermissionsBitField, ChannelType } from "discord.js";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, FlowIntegrationPoint as SharedFlowIntegrationPoint, VisualConnection } from "vertix-flow/src/features/flow-editor/types/flow";
+import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, FlowIntegrationPoint as SharedFlowIntegrationPoint, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Define enum for integration point types with a corrected name
 export enum UIEFlowIntegrationPointType {
-    STANDARD = "STANDARD",
+    GENERIC = "GENERIC",
     COMMAND = "COMMAND",
+    EVENT = "EVENT",
 }
 
-// Define interface for constructor options (kept for clarity in constructors)
+// Define interface for constructor options
 interface FlowIntegrationPointBaseOptions {
     flowName: string;
     description: string;
@@ -23,12 +24,6 @@ interface FlowIntegrationPointBaseOptions {
     targetState?: string;
     transition?: string;
     requiredData?: string[];
-    eventName?: string;
-}
-
-// Define interface for command constructor options (kept for clarity)
-interface FlowIntegrationPointCommandOptions extends FlowIntegrationPointBaseOptions {
-    commandName: string;
 }
 
 /**
@@ -64,7 +59,6 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
     public readonly targetState?: string;
     public readonly transition?: string;
     public readonly requiredData?: string[];
-    public readonly eventName?: string;
 
     protected constructor( options: FlowIntegrationPointBaseOptions ) {
         super();
@@ -74,7 +68,6 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
         this.targetState = options.targetState;
         this.transition = options.transition;
         this.requiredData = options.requiredData;
-        this.eventName = options.eventName;
     }
 
     public static override getName(): string {
@@ -87,41 +80,29 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
 }
 
 /**
- * NEW Abstract base class for command-specific integration points
- */
-export abstract class FlowIntegrationPointCommandBase extends FlowIntegrationPointBase {
-    public readonly commandName: string;
-
-    protected constructor( options: FlowIntegrationPointCommandOptions ) {
-        super( options );
-        this.commandName = options.commandName;
-    }
-}
-
-/**
- * Represents a standard integration point (entry/handoff)
+ * Represents a generic integration point (entry/handoff)
  * Extends FlowIntegrationPointBase directly
  */
-export class FlowIntegrationPointStandard extends FlowIntegrationPointBase {
+export class FlowIntegrationPointGeneric extends FlowIntegrationPointBase {
     public constructor( options: FlowIntegrationPointBaseOptions ) {
         super( options );
     }
 
     public static override getName(): string {
-        return "VertixGUI/FlowIntegrationPointStandard";
+        return "VertixGUI/FlowIntegrationPointGeneric";
     }
 
     public static override getType(): UIEFlowIntegrationPointType {
-        return UIEFlowIntegrationPointType.STANDARD;
+        return UIEFlowIntegrationPointType.GENERIC;
     }
 }
 
 /**
  * Represents a command-specific integration point (handoff from CommandsFlow)
- * Extends FlowIntegrationPointCommandBase
+ * Extends FlowIntegrationPointBase directly now
  */
-export class FlowIntegrationPointCommand extends FlowIntegrationPointCommandBase {
-    public constructor( options: FlowIntegrationPointCommandOptions ) {
+export class FlowIntegrationPointCommand extends FlowIntegrationPointBase {
+    public constructor( options: FlowIntegrationPointBaseOptions ) {
         super( options );
     }
 
@@ -131,6 +112,24 @@ export class FlowIntegrationPointCommand extends FlowIntegrationPointCommandBase
 
     public static override getType(): UIEFlowIntegrationPointType {
         return UIEFlowIntegrationPointType.COMMAND;
+    }
+}
+
+/**
+ * Represents an event-specific integration point (e.g., Guild Join -> Welcome Flow)
+ * Extends FlowIntegrationPointBase
+ */
+export class FlowIntegrationPointEvent extends FlowIntegrationPointBase {
+    public constructor( options: FlowIntegrationPointBaseOptions ) {
+        super( options );
+    }
+
+    public static override getName(): string {
+        return "VertixGUI/FlowIntegrationPointEvent";
+    }
+
+    public static override getType(): UIEFlowIntegrationPointType {
+        return UIEFlowIntegrationPointType.EVENT;
     }
 }
 
@@ -404,25 +403,15 @@ export abstract class UIFlowBase<
 
         // Base serialization matching SharedFlowIntegrationPoint
         const serializedPoint: SharedFlowIntegrationPoint = {
+            fullName: point.flowName,
             flowName: point.flowName,
             description: point.description,
             sourceState: point.sourceState,
             targetState: point.targetState,
             transition: point.transition,
             requiredData: point.requiredData,
-            integrationType: integrationType // Add the type (STANDARD or COMMAND)
-            // eventName will be added conditionally below
+            type: integrationType,
         };
-
-        // If it's a command type, add the commandName
-        if ( integrationType === UIEFlowIntegrationPointType.COMMAND && point instanceof FlowIntegrationPointCommand ) {
-             serializedPoint.commandName = point.commandName;
-        }
-
-        // ADDED: If point has an eventName property, add it
-        if ( "eventName" in point && typeof point.eventName === "string" ) {
-            serializedPoint.eventName = point.eventName;
-        }
 
         return serializedPoint;
     }

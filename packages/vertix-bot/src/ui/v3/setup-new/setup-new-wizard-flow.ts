@@ -4,8 +4,7 @@ import {
 
 // Import the integration point classes from their correct location
 import {
-    FlowIntegrationPointBase,
-    FlowIntegrationPointStandard
+    FlowIntegrationPointGeneric
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
@@ -21,6 +20,9 @@ import { SetupStep2Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-2/s
 import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/setup-step-3-component";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+
+import type {
+    FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 
@@ -146,9 +148,9 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
      */
     public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            // Instantiate FlowIntegrationPointStandard
-            new FlowIntegrationPointStandard( {
-                flowName: "VertixBot/UI-General/WelcomeFlow",
+            // Changed class name
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-General/WelcomeFlow", // Refers to source flow
                 description: "Entry point from Welcome flow when setup button is clicked",
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 targetState: "VertixGUI/UIWizardFlowBase/States/Initial",

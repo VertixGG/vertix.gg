@@ -1,10 +1,11 @@
 import {
     UIFlowBase,
-    FlowIntegrationPointStandard
+    FlowIntegrationPointGeneric
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
+import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
 
 import type { UIFlowData ,
     FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
@@ -90,8 +91,8 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
      */
     public static override getHandoffPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointStandard( {
-                flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+            new FlowIntegrationPointGeneric( {
+                flowName: SetupNewWizardFlow.getName(),
                 description: "Hands off to Setup Wizard when setup button is clicked",
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
@@ -129,7 +130,7 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
      */
     public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointStandard( {
+            new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
                 transition: "VertixBot/Commands/Welcome",
                 targetState: "VertixBot/UI-General/WelcomeFlow/States/Initial",

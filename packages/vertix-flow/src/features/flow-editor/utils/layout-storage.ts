@@ -1,34 +1,36 @@
-const FLOW_EDITOR_LAYOUT_KEY = "vertix.gg.flowEditorLayoutSizes";
+import { STORAGE_KEYS } from "@vertix.gg/flow/src/features/flow-editor/utils/constants";
+
+const isValidLayoutSizes = ( sizes: unknown ): sizes is number[] => {
+    return (
+        Array.isArray( sizes )
+        && sizes.length === 3
+        && sizes.every( ( s ) => typeof s === "number" && s > 0 && s < 100 )
+        && sizes.reduce( ( sum, s ) => sum + s, 0 ) === 100
+    );
+};
 
 // Function to save layout sizes to local storage
 export const saveLayoutToLocalStorage = ( sizes: number[] ): void => {
-  try {
-    localStorage.setItem( FLOW_EDITOR_LAYOUT_KEY, JSON.stringify( sizes ) );
-  } catch ( error ) {
-    console.error( "[Layout] Error saving layout to local storage:", error );
-  }
+    try {
+        localStorage.setItem( STORAGE_KEYS.FLOW_EDITOR_LAYOUT, JSON.stringify( sizes ) );
+    } catch ( error ) {
+        console.error( "[Layout] Error saving layout to local storage:", error );
+    }
 };
 
 // Function to load layout sizes from local storage
 export const loadLayoutFromLocalStorage = (): number[] | null => {
-  try {
-    const savedLayout = localStorage.getItem( FLOW_EDITOR_LAYOUT_KEY );
-    if ( savedLayout ) {
-      const parsedSizes = JSON.parse( savedLayout );
-      // Basic validation
-      if (
-        Array.isArray( parsedSizes )
-        && parsedSizes.length === 3
-        && parsedSizes.every( ( s ) => typeof s === "number" && s > 0 && s < 100 )
-        && parsedSizes.reduce( ( sum, s ) => sum + s, 0 ) === 100
-      ) {
-        return parsedSizes;
-      }
-      console.warn( "[Layout] Invalid layout data found in local storage.", parsedSizes );
-      localStorage.removeItem( FLOW_EDITOR_LAYOUT_KEY ); // Clear invalid data
+    try {
+        const savedLayout = localStorage.getItem( STORAGE_KEYS.FLOW_EDITOR_LAYOUT );
+        if ( savedLayout ) {
+            const parsedSizes = JSON.parse( savedLayout );
+            if ( isValidLayoutSizes( parsedSizes ) ) {
+                return parsedSizes;
+            }
+            localStorage.removeItem( STORAGE_KEYS.FLOW_EDITOR_LAYOUT ); // Clear invalid data
+        }
+    } catch ( error ) {
+        console.error( "[Layout] Error loading layout from local storage:", error );
     }
-  } catch ( error ) {
-    console.error( "[Layout] Error loading layout from local storage:", error );
-  }
-  return null;
+    return null;
 };

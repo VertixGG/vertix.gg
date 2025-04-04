@@ -1,4 +1,3 @@
-import React from "react";
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
 
 import { UIEFlowIntegrationPointType } from "@vertix.gg/gui/src/bases/ui-flow-base"; // Import enum
@@ -13,6 +12,7 @@ import type { EdgeProps } from "@xyflow/react";
 interface CustomEdgeData {
   integrationType?: UIEFlowIntegrationPointType;
   commandName?: string;
+  fullName?: string;
   eventName?: string;
 }
 
@@ -72,7 +72,7 @@ export function CustomEdge( {
             // Render "Command Handoff: " text + badge
             <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: labelTheme.textColor }}>
               Command Handoff:
-              <CommandLabelBadge name={commandName} />
+              <CommandLabelBadge name={edgeData.fullName!} />
             </span>
           ) : edgeData.eventName ? (
             // Render "Event Handoff: " text + GREEN badge

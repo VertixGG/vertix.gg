@@ -84,7 +84,7 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
                 sourceState: STATE_INITIAL, // State within THIS flow
                 transition: TRANSITION_ON_JOIN, // Transition within THIS flow
                 targetState: TARGET_WELCOME_INITIAL, // Target state in WelcomeFlow
-                eventName: TRANSITION_ON_JOIN.split( "/" ).pop() || "GuildJoin" // Extract event name
+                eventName: TRANSITION_ON_JOIN // Use the full namespaced transition string
             } )
         ];
     }

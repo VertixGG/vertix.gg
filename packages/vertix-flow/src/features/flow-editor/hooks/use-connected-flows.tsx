@@ -7,7 +7,7 @@ import { generateFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/ut
 
 import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/utils/flow-utils";
 
-import useFlowEditorStore from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
+import { useFlowEditorStore } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
 

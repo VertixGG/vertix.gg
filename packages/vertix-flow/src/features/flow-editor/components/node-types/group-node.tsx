@@ -48,7 +48,7 @@ const GROUP_STYLES: Record<string, GroupStyles> = {
 const GroupLabel: React.FC<{ label: string; styleKey: string }> = ( { label, styleKey } ) => (
   <div className="absolute -top-6 left-0 right-0 text-center">
     <span className={cn(
-      "text-[10px] font-medium px-2 py-1 rounded-md shadow-sm",
+      "text-[10px] font-medium px-2 py-1 rounded-md shadow-sm whitespace-nowrap",
       GROUP_STYLES[ styleKey ]?.label
     )}>
       {label}

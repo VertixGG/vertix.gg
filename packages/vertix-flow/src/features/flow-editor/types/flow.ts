@@ -36,6 +36,9 @@ export interface UIModulesResponse {
     uiModules: UIModuleFile[];
 }
 
+/**
+ * Represents an integration point (entry or handoff) between flows.
+ */
 export interface FlowIntegrationPoint {
     flowName: string;
     description: string;
@@ -43,8 +46,9 @@ export interface FlowIntegrationPoint {
     targetState?: string;
     transition?: string;
     requiredData?: string[];
-    integrationType?: "STANDARD" | "COMMAND";
-    commandName?: string;
+    integrationType?: string; // e.g., 'STANDARD', 'COMMAND'
+    commandName?: string; // Only for command integrations
+    eventName?: string; // ADDED: Only for event integrations
 }
 
 // Define the structure for visual connection hints

@@ -20,6 +20,7 @@ import type { FlowData, VisualConnection } from "@vertix.gg/flow/src/features/fl
 interface CustomEdgeData {
     integrationType?: UIEFlowIntegrationPointType;
     commandName?: string;
+    eventName?: string;
 }
 
 // Helper function to get the correct API base URL
@@ -262,13 +263,31 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                             commandName: commandLabelString
                         };
 
+                    } else if ( handoff.eventName ) {
+                        // --- Event Handoff ---
+                        const eventLabelString = handoff.eventName; // Use event name directly
+                        edgeLabel = ""; // Label will be handled by custom rendering
+                        // Apply specific styles for events? (e.g., same dotted?)
+                        edgeStyle = {}; // Start with empty object
+                        edgeStyle.strokeWidth = FLOW_EDITOR.theme.components.edge.interFlow.strokeWidth;
+                        edgeStyle.strokeDasharray = FLOW_EDITOR.theme.components.edge.command.strokeDasharray; // Reuse command style for now?
+                        // edgeStyle.stroke = "hsl(var(--success))"; // Optional: Different color?
+
+                        edgeLabelStyle = {}; // Reset label style
+                        // Add data for rendering
+                        edgeData = {
+                            integrationType: UIEFlowIntegrationPointType.STANDARD, // Treat as standard for type, but pass eventName
+                            eventName: eventLabelString
+                        };
+
                     } else {
                         // --- Standard Handoff ---
                         edgeLabel = `Handoff: ${ handoff.transition?.replace( /.*\//, "" ) }`;
-                        // Keep default edgeStyle and edgeLabelStyle
+                        // Keep default edgeStyle defined outside the conditional blocks
                         edgeData = { integrationType: UIEFlowIntegrationPointType.STANDARD }; // Mark as standard
                     }
 
+                    // Construct the final edge object
                     const edge: Edge = {
                         id: edgeId,
                         source: sourceNodeId,
@@ -277,8 +296,8 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         targetHandle: targetHandle,
                         type: "custom", // Ensure type is set to 'custom'
                         animated: FLOW_EDITOR.theme.components.edge.interFlow.animated,
-                        label: edgeLabel, // Pass string or JSX label
-                        style: edgeStyle,
+                        label: edgeLabel, // Pass string or JSX label (or empty for event)
+                        style: edgeStyle, // Apply determined style
                         labelStyle: edgeLabelStyle,
                         zIndex: FLOW_EDITOR.theme.zIndex.edgeInterFlow,
                         data: edgeData // Pass the data object

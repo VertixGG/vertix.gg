@@ -13,6 +13,7 @@ import type { EdgeProps } from "@xyflow/react";
 interface CustomEdgeData {
   integrationType?: UIEFlowIntegrationPointType;
   commandName?: string;
+  eventName?: string;
 }
 
 export function CustomEdge( {
@@ -72,6 +73,12 @@ export function CustomEdge( {
             <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: labelTheme.textColor }}>
               Command Handoff:
               <CommandLabelBadge name={commandName} />
+            </span>
+          ) : edgeData.eventName ? (
+            // Render "Event Handoff: " text + GREEN badge
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: labelTheme.textColor }}>
+              Event Handoff:
+              <CommandLabelBadge name={edgeData.eventName} variant="success" />
             </span>
           ) : (
             // Render standard label (if provided)

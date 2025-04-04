@@ -23,6 +23,7 @@ interface FlowIntegrationPointBaseOptions {
     targetState?: string;
     transition?: string;
     requiredData?: string[];
+    eventName?: string;
 }
 
 // Define interface for command constructor options (kept for clarity)
@@ -63,6 +64,7 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
     public readonly targetState?: string;
     public readonly transition?: string;
     public readonly requiredData?: string[];
+    public readonly eventName?: string;
 
     protected constructor( options: FlowIntegrationPointBaseOptions ) {
         super();
@@ -72,6 +74,7 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
         this.targetState = options.targetState;
         this.transition = options.transition;
         this.requiredData = options.requiredData;
+        this.eventName = options.eventName;
     }
 
     public static override getName(): string {
@@ -408,11 +411,17 @@ export abstract class UIFlowBase<
             transition: point.transition,
             requiredData: point.requiredData,
             integrationType: integrationType // Add the type (STANDARD or COMMAND)
+            // eventName will be added conditionally below
         };
 
         // If it's a command type, add the commandName
         if ( integrationType === UIEFlowIntegrationPointType.COMMAND && point instanceof FlowIntegrationPointCommand ) {
              serializedPoint.commandName = point.commandName;
+        }
+
+        // ADDED: If point has an eventName property, add it
+        if ( "eventName" in point && typeof point.eventName === "string" ) {
+            serializedPoint.eventName = point.eventName;
         }
 
         return serializedPoint;

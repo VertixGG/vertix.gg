@@ -268,7 +268,8 @@ export class UIModulesRoute extends InitializeBase {
                             transition: Type.Optional( Type.String() ),
                             requiredData: Type.Optional( Type.Array( Type.String() ) ),
                             integrationType: Type.Optional( Type.String() ),
-                            commandName: Type.Optional( Type.String() )
+                            commandName: Type.Optional( Type.String() ),
+                            eventName: Type.Optional( Type.String() )
                         } ) ) ),
                         handoffPoints: Type.Optional( Type.Array( Type.Object( {
                             flowName: Type.String(),
@@ -278,7 +279,8 @@ export class UIModulesRoute extends InitializeBase {
                             transition: Type.Optional( Type.String() ),
                             requiredData: Type.Optional( Type.Array( Type.String() ) ),
                             integrationType: Type.Optional( Type.String() ),
-                            commandName: Type.Optional( Type.String() )
+                            commandName: Type.Optional( Type.String() ),
+                            eventName: Type.Optional( Type.String() )
                         } ) ) ),
                         externalReferences: Type.Optional( Type.Record( Type.String(), Type.String() ) )
                     } ) ),

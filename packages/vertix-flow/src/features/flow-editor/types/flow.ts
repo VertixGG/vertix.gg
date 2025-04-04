@@ -43,6 +43,8 @@ export interface FlowIntegrationPoint {
     targetState?: string;
     transition?: string;
     requiredData?: string[];
+    integrationType?: "STANDARD" | "COMMAND";
+    commandName?: string;
 }
 
 // Define the structure for visual connection hints

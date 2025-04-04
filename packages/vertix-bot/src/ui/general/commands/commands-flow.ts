@@ -1,8 +1,12 @@
-import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import {
+    UIFlowBase,
+    FlowIntegrationPointCommand,
+} from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIFlowData, FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowData ,
+    FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Define state constants for clarity
@@ -19,13 +23,13 @@ export interface CommandsFlowData extends UIFlowData {}
  */
 export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
 
-    public static getName(): string {
+    public static override getName(): string {
         // Using a more descriptive name for the flow itself
         return "VertixBot/UI-General/CommandsFlow";
     }
 
     // No UI components are directly associated with this dispatcher flow
-    public static getComponents() {
+    public static override getComponents() {
         return [];
     }
 
@@ -100,10 +104,10 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
 
     /**
      * Defines the handoff points from this command router flow.
-     * Aligned with UIFlowBase structure.
+     * Aligned with UIFlowBase structure. Uses FlowIntegrationPointCommand.
      */
-    public static getHandoffPoints(): FlowIntegrationPoint[] {
-        const handoffPoints: FlowIntegrationPoint[] = [];
+    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
+        const handoffPoints: FlowIntegrationPointBase[] = [];
         const commandTransitions = this.getFlowTransitions()[ STATE_INITIAL ] || [];
         const nextStates = this.getNextStates();
 
@@ -111,17 +115,22 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
             const targetState = nextStates[ transition ];
             if ( targetState ) {
                 const flowNameParts = targetState.split( "/" );
-                if ( flowNameParts.length >= 3 ) {
-                    const targetFlowName = flowNameParts.slice( 0, -2 ).join( "/" );
-                    handoffPoints.push( {
-                        flowName: targetFlowName,
-                        description: `Handoff triggered by ${ transition.split( "/" ).pop() } command`,
-                        transition: transition,
-                        requiredData: []
-                    } );
-                } else {
-                     console.warn( `[CommandsFlow] Could not determine target flow name from state: ${ targetState }` );
-                }
+                 const commandName = transition.split( "/" ).pop();
+
+                 if ( flowNameParts.length >= 3 && commandName ) {
+                     const targetFlowName = flowNameParts.slice( 0, -2 ).join( "/" );
+                     handoffPoints.push( new FlowIntegrationPointCommand( {
+                         flowName: targetFlowName,
+                         description: `Handoff: ${ commandName }`,
+                         transition: transition,
+                         sourceState: STATE_INITIAL,
+                         targetState: targetState,
+                         commandName: commandName,
+                         requiredData: []
+                     } ) );
+                 } else {
+                     console.warn( `[CommandsFlow] Could not determine target flow name or command name from state: ${ targetState } for transition ${ transition }` );
+                 }
             }
         } );
         return handoffPoints;
@@ -131,7 +140,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
      * Defines entry points (none for this router flow).
      * Added for structural consistency with UIFlowBase.
      */
-    public static getEntryPoints(): FlowIntegrationPoint[] {
+    public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [];
     }
 
@@ -139,7 +148,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
      * Defines visual connections (none for this router flow).
      * Added for structural consistency with UIFlowBase.
      */
-    public static getVisualConnections(): VisualConnection[] {
+    public static override getVisualConnections(): VisualConnection[] {
         return [];
     }
 
@@ -147,7 +156,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
      * Defines external references (none for this router flow).
      * Added for structural consistency.
      */
-    public static getExternalReferences(): Record<string, string> {
+    public static override getExternalReferences(): Record<string, string> {
         return {};
     }
 
@@ -160,31 +169,31 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
     }
 
     // Provide default permissions (minimal needed for most interactions)
-    public getPermissions(): PermissionsBitField {
+    public override getPermissions(): PermissionsBitField {
         return new PermissionsBitField( PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages );
     }
 
     // Provide default channel types
-    public getChannelTypes(): ChannelType[] {
+    public override getChannelTypes(): ChannelType[] {
         return [ ChannelType.GuildText ];
     }
 
     // Get available transitions based on the current state (usually just the commands from Initial)
-    public getAvailableTransitions(): string[] {
+    public override getAvailableTransitions(): string[] {
         return CommandsFlow.getFlowTransitions()[ this.getCurrentState() ] || [];
     }
 
-    protected getInitialState(): string {
+    protected override getInitialState(): string {
         // Defines the single logical state for this router flow
         return STATE_INITIAL;
     }
 
-    protected getInitialData(): CommandsFlowData {
+    protected override getInitialData(): CommandsFlowData {
         return {}; // No initial data needed for dispatch logic
     }
 
     // Standard implementation to load transitions from static definition
-    protected initializeTransitions(): void {
+    protected override initializeTransitions(): void {
         Object.entries( CommandsFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
              this.addTransitions( state, transitions );
         } );
@@ -206,17 +215,17 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
 
     // Required by base class, uses static definition
     // Returns a defined error state if the transition is not found
-    public getNextState( transition: string ): string {
+    public override getNextState( transition: string ): string {
          return CommandsFlow.getNextStates()[ transition ] ?? STATE_UNKNOWN_COMMAND;
     }
 
     // Required by base class, uses static definition
-    public getRequiredData( transition: string ): ( keyof CommandsFlowData )[] {
+    public override getRequiredData( transition: string ): ( keyof CommandsFlowData )[] {
         return CommandsFlow.getRequiredData()[ transition ] || [];
     }
 
     // No modal associated with this flow type
-    protected showModal(): Promise<void> {
-        return Promise.resolve();
-    }
+    // protected showModal(): Promise<void> { // Base class doesn't define this
+    //     return Promise.resolve();
+    // }
 }

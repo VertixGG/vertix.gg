@@ -1,9 +1,13 @@
-import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import {
+    UIFlowBase,
+    FlowIntegrationPointStandard
+} from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
 
-import type { FlowIntegrationPoint, UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowData ,
+    FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { VisualConnection } from "vertix-flow/src/features/flow-editor/types/flow";
 
@@ -82,27 +86,26 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     }
 
     /**
-     * Returns documentation about handoff points using string identifiers
+     * Returns documentation about handoff points using the new class structure
      */
-    public static getHandoffPoints(): FlowIntegrationPoint[] {
+    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
         return [
-            {
+            new FlowIntegrationPointStandard( {
                 flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
                 description: "Hands off to Setup Wizard when setup button is clicked",
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 requiredData: []
-            }
+            } )
         ];
     }
 
     /**
      * NEW: Defines visual connections for the editor.
      */
-    public static getVisualConnections(): VisualConnection[] {
+    public static override getVisualConnections(): VisualConnection[] {
         return [
             {
-                // This ID needs to match how the button is identified in the component schema/diagram generator
                 triggeringElementId: "VertixBot/UI-General/WelcomeSetupButton",
                 transitionName: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 targetFlowName: "VertixBot/UI-V3/SetupNewWizardFlow"
@@ -113,7 +116,7 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     /**
      * Returns external component references needed by this flow
      */
-    public static getExternalReferences(): Record<string, string> {
+    public static override getExternalReferences(): Record<string, string> {
         return {
             setupWizardFlow: "VertixBot/UI-V3/SetupNewWizardFlow",
             setupWizardAdapter: "VertixBot/UI-V3/SetupNewWizardAdapter",
@@ -121,13 +124,17 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
         };
     }
 
-    public static getEntryPoints(): FlowIntegrationPoint[] {
+    /**
+     * Returns entry points using the new class structure
+     */
+    public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            {
+            new FlowIntegrationPointStandard( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
                 transition: "VertixBot/Commands/Welcome",
-                description: "Entry point triggered by CommandsFlow via Welcome transition"
-            }
+                targetState: "VertixBot/UI-General/WelcomeFlow/States/Initial",
+                description: "Entry point triggered by CommandsFlow via Welcome command"
+            } )
         ];
     }
 
@@ -135,23 +142,23 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
         super( options );
     }
 
-    public getPermissions(): PermissionsBitField {
+    public override getPermissions(): PermissionsBitField {
         return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
     }
 
-    public getChannelTypes(): ChannelType[] {
+    public override getChannelTypes(): ChannelType[] {
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    protected getInitialState(): string {
+    protected override getInitialState(): string {
         return "VertixBot/UI-General/WelcomeFlow/States/Initial";
     }
 
-    protected getInitialData(): WelcomeFlowData {
+    protected override getInitialData(): WelcomeFlowData {
         return {};
     }
 
-    protected initializeTransitions(): void {
+    protected override initializeTransitions(): void {
         Object.entries( WelcomeFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.addTransitions( state, transitions );
         } );
@@ -170,19 +177,20 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
         }
     }
 
-    public getAvailableTransitions(): string[] {
+    public override getAvailableTransitions(): string[] {
         return WelcomeFlow.getFlowTransitions()[ this.getCurrentState() ] || [];
     }
 
-    public getNextState( transition: string ): string {
+    public override getNextState( transition: string ): string {
         return WelcomeFlow.getNextStates()[ transition ];
     }
 
-    public getRequiredData( transition: string ): ( keyof WelcomeFlowData )[] {
+    public override getRequiredData( transition: string ): ( keyof WelcomeFlowData )[] {
         return WelcomeFlow.getRequiredData()[ transition ];
     }
 
-    protected showModal(): Promise<void> {
-        return Promise.resolve();
-    }
+    // showModal might not exist in the base or might not need override
+    // protected showModal(): Promise<void> {
+    //     return Promise.resolve();
+    // }
 }

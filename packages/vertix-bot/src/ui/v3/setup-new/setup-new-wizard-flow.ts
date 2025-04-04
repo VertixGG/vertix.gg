@@ -1,4 +1,12 @@
-import { UIWizardFlowBase } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
+import {
+    UIWizardFlowBase,
+} from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
+
+// Import the integration point classes from their correct location
+import {
+    FlowIntegrationPointBase,
+    FlowIntegrationPointStandard
+} from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
 
@@ -15,8 +23,6 @@ import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/s
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
-
-import type { FlowIntegrationPoint } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -136,25 +142,26 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
     }
 
     /**
-     * Returns entry point documentation using string identifiers
+     * Returns entry point documentation using the new class structure
      */
-    public static getEntryPoints(): FlowIntegrationPoint[] {
+    public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            {
+            // Instantiate FlowIntegrationPointStandard
+            new FlowIntegrationPointStandard( {
                 flowName: "VertixBot/UI-General/WelcomeFlow",
                 description: "Entry point from Welcome flow when setup button is clicked",
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 targetState: "VertixGUI/UIWizardFlowBase/States/Initial",
                 transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 requiredData: [ "originFlow", "originState", "originTransition", "sourceButton" ]
-            }
+            } )
         ];
     }
 
     /**
      * Returns external component references (already strings)
      */
-    public static getExternalReferences(): Record<string, string> {
+    public static override getExternalReferences(): Record<string, string> {
         return {
             welcomeFlow: "VertixBot/UI-General/WelcomeFlow",
             welcomeAdapter: "VertixBot/UI-General/WelcomeAdapter",
@@ -169,23 +176,23 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
     /**
      * Implementation of getStepComponents for UIWizardFlowBase
      */
-    public getStepComponents(): UIComponentConstructor[] {
+    public override getStepComponents(): UIComponentConstructor[] {
         return [ SetupStep1Component, SetupStep2Component, SetupStep3Component ];
     }
 
-    public getPermissions(): PermissionsBitField {
+    public override getPermissions(): PermissionsBitField {
         return new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS );
     }
 
-    public getChannelTypes() {
+    public override getChannelTypes() {
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    protected getInitialState(): string {
+    protected override getInitialState(): string {
         return "VertixGUI/UIWizardFlowBase/States/Initial";
     }
 
-    protected getInitialData(): SetupWizardFlowData {
+    protected override getInitialData(): SetupWizardFlowData {
         return {
             currentStep: 0,
             totalSteps: this.getStepComponents().length,
@@ -193,7 +200,7 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
         };
     }
 
-    protected initializeTransitions(): void {
+    protected override initializeTransitions(): void {
         Object.entries( SetupNewWizardFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.addTransitions( state, transitions );
         } );
@@ -215,7 +222,7 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
     /**
      * Override to handle step-specific transitions using string identifiers
      */
-    public getNextState( transition: string ): string {
+    public override getNextState( transition: string ): string {
         const data = this.getData();
 
         // Use full string literals for comparison
@@ -242,13 +249,12 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
         return SetupNewWizardFlow.getNextStates()[ transition ];
     }
 
-    public getRequiredData( transition: string ): ( keyof SetupWizardFlowData )[] {
+    public override getRequiredData( transition: string ): ( keyof SetupWizardFlowData )[] {
         return SetupNewWizardFlow.getRequiredData()[ transition ];
     }
 
-    protected showModal(): Promise<void> {
-        // Implementation will depend on your modal system
-        // For flow definition, just return a resolved promise
-        return Promise.resolve();
-    }
+    // protected override showModal(): Promise<void> { // Base class may not define this, or it might not need override
+    //     // Implementation will depend on your modal system
+    //     return Promise.resolve();
+    // }
 }

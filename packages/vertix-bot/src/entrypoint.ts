@@ -31,6 +31,8 @@ import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
+import globalLogger from "@vertix.gg/bot/src/global-logger";
+
 import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 
 import type { Client } from "discord.js";
@@ -197,6 +199,17 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
 }
 
+async function registerMCPService() {
+    globalLogger.$.info( registerMCPService, "Registering MCP service ..." );
+
+    const { MCPService } = await import( "@vertix.gg/base/src/modules/mcp-server/mcp-service" );
+
+    ServiceLocator.$.register( MCPService );
+
+    globalLogger.$.info( registerMCPService, "MCP service is registered" );
+
+}
+
 async function createCleanupWorker() {
     try {
         const thread = await initWorker();
@@ -281,6 +294,8 @@ export async function entryPoint( options: {
 
     GlobalLogger.$.log( entryPoint,"ENV PATH:", envPath );
     GlobalLogger.$.log( entryPoint, "CWD:", process.cwd() );
+
+    await registerMCPService();
 
     const envOutput = config( {
         path: envPath,

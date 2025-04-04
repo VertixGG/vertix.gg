@@ -166,29 +166,41 @@ export class UIModulesRoute extends InitializeBase {
                 return;
             }
 
-            // Create an instance of the flow
-            // TODO: Consider if adapter/options are needed or how they should be passed for viewing
-            const flowInstance = new FlowClass( {
-                adapter: null, // Placeholder
-                options: {}    // Placeholder
-            } );
+            // --- Start Added Logging ---
+            this.logger.debug( this.handleFlows, `Attempting to instantiate FlowClass: ${ FlowClass.getName() }` );
+            let flowInstance;
+            try {
+                flowInstance = new FlowClass( {
+                    adapter: null, // Placeholder
+                    options: {}    // Placeholder
+                } );
+                this.logger.debug( this.handleFlows, `Successfully instantiated FlowClass: ${ FlowClass.getName() }` );
+            } catch ( instantiationError ) {
+                this.logger.error( this.handleFlows, `Error INSTANTIATING flow ${ FlowClass.getName() }:`, instantiationError );
+                throw instantiationError; // Re-throw to be caught by outer catch
+            }
 
-            // Get the JSON representation from the instance
-            const flowData = await flowInstance.toJSON();
+            this.logger.debug( this.handleFlows, `Attempting to serialize flow instance: ${ FlowClass.getName() }` );
+            let flowData;
+            try {
+                flowData = await flowInstance.toJSON();
+                this.logger.debug( this.handleFlows, `Successfully serialized flow instance: ${ FlowClass.getName() }` );
+            } catch ( serializationError ) {
+                this.logger.error( this.handleFlows, `Error SERIALIZING flow ${ FlowClass.getName() }:`, serializationError );
+                throw serializationError; // Re-throw to be caught by outer catch
+            }
+            // --- End Added Logging ---
 
             // Name should be included by toJSON now, but keep as fallback?
             if ( !flowData.name ) {
                 flowData.name = FlowClass.getName?.() || flowName;
             }
 
-            // Log the object right before returning from the API handler
-            this.logger.debug( this.handleFlows, `<<< Returning flowData Name: ${ flowData.name }` );
-            this.logger.debug( this.handleFlows, `<<< Returning flowData Type: ${ flowData.type }` );
-            this.logger.debug( this.handleFlows, `<<< Returning flowData nextStates keys: ${ flowData.nextStates ? Object.keys( flowData.nextStates ).join( ", " ) : "undefined" }` );
+            this.logger.debug( this.handleFlows, `<<< Returning flowData for ${ flowData.name } (Type: ${ flowData.type })` ); // Simplified final log
 
             return flowData;
         } catch ( err ) {
-            this.logger.error( this.handleFlows, "Error getting flow data:", err );
+            this.logger.error( this.handleFlows, `Error processing flow ${ flowName }:`, err ); // Enhanced outer log
             reply.status( 500 ).send( {
                 error: "Failed to get flow data",
                 message: err instanceof Error ? err.message : "Unknown error"
@@ -254,7 +266,9 @@ export class UIModulesRoute extends InitializeBase {
                             sourceState: Type.Optional( Type.String() ),
                             targetState: Type.Optional( Type.String() ),
                             transition: Type.Optional( Type.String() ),
-                            requiredData: Type.Optional( Type.Array( Type.String() ) )
+                            requiredData: Type.Optional( Type.Array( Type.String() ) ),
+                            integrationType: Type.Optional( Type.String() ),
+                            commandName: Type.Optional( Type.String() )
                         } ) ) ),
                         handoffPoints: Type.Optional( Type.Array( Type.Object( {
                             flowName: Type.String(),
@@ -262,7 +276,9 @@ export class UIModulesRoute extends InitializeBase {
                             sourceState: Type.Optional( Type.String() ),
                             targetState: Type.Optional( Type.String() ),
                             transition: Type.Optional( Type.String() ),
-                            requiredData: Type.Optional( Type.Array( Type.String() ) )
+                            requiredData: Type.Optional( Type.Array( Type.String() ) ),
+                            integrationType: Type.Optional( Type.String() ),
+                            commandName: Type.Optional( Type.String() )
                         } ) ) ),
                         externalReferences: Type.Optional( Type.Record( Type.String(), Type.String() ) )
                     } ) ),

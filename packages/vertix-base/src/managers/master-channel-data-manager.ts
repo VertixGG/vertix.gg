@@ -90,12 +90,12 @@ export class MasterChannelDataManager extends InitializeBase {
             ?.dynamicChannelAutoSave;
     }
 
-    public async getChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ) {
+    public async getChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ): Promise<string[]> {
         return (
             await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( result ) =>
-                result?.length ? result : [ guildId ]
+                result?.dynamicChannelVerifiedRoles.length ? result : { dynamicChannelVerifiedRoles: undefined }
             )
-        )?.dynamicChannelVerifiedRoles;
+        )?.dynamicChannelVerifiedRoles ?? [ guildId ];
     }
 
     public async getChannelLogsChannelId( masterChannelDB: ChannelExtended ) {

@@ -1,6 +1,5 @@
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
-
-import { ObjectBase } from "@vertix.gg/base/src/bases/object-base"; // Import ObjectBase
+import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
 import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
 
@@ -9,14 +8,12 @@ import type { PermissionsBitField, ChannelType } from "discord.js";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, FlowIntegrationPoint as SharedFlowIntegrationPoint, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
-// Define enum for integration point types with a corrected name
 export enum UIEFlowIntegrationPointType {
     GENERIC = "GENERIC",
     COMMAND = "COMMAND",
     EVENT = "EVENT",
 }
 
-// Define interface for constructor options
 interface FlowIntegrationPointBaseOptions {
     flowName: string;
     description: string;
@@ -26,32 +23,17 @@ interface FlowIntegrationPointBaseOptions {
     requiredData?: string[];
 }
 
-/**
- * Base interface for flow states
- */
 export type UIFlowState = string;
-
-/**
- * Base interface for flow transitions
- */
 export type UIFlowTransition = string;
 
-/**
- * Base interface for flow data
- */
 export interface UIFlowData {
-    // Common fields for cross-flow communication
     originFlow?: string;
     originState?: string;
     originTransition?: string;
     interactionId?: string;
-
     [key: string]: unknown;
 }
 
-/**
- * Abstract base class for flow integration points, extending ObjectBase
- */
 export abstract class FlowIntegrationPointBase extends ObjectBase {
     public readonly flowName: string;
     public readonly description: string;
@@ -79,10 +61,6 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
     }
 }
 
-/**
- * Represents a generic integration point (entry/handoff)
- * Extends FlowIntegrationPointBase directly
- */
 export class FlowIntegrationPointGeneric extends FlowIntegrationPointBase {
     public constructor( options: FlowIntegrationPointBaseOptions ) {
         super( options );
@@ -97,10 +75,6 @@ export class FlowIntegrationPointGeneric extends FlowIntegrationPointBase {
     }
 }
 
-/**
- * Represents a command-specific integration point (handoff from CommandsFlow)
- * Extends FlowIntegrationPointBase directly now
- */
 export class FlowIntegrationPointCommand extends FlowIntegrationPointBase {
     public constructor( options: FlowIntegrationPointBaseOptions ) {
         super( options );
@@ -115,10 +89,6 @@ export class FlowIntegrationPointCommand extends FlowIntegrationPointBase {
     }
 }
 
-/**
- * Represents an event-specific integration point (e.g., Guild Join -> Welcome Flow)
- * Extends FlowIntegrationPointBase
- */
 export class FlowIntegrationPointEvent extends FlowIntegrationPointBase {
     public constructor( options: FlowIntegrationPointBaseOptions ) {
         super( options );
@@ -133,9 +103,6 @@ export class FlowIntegrationPointEvent extends FlowIntegrationPointBase {
     }
 }
 
-/**
- * Interface for component schema result
- */
 export interface ComponentSchemaResult {
     name?: string;
     type?: string;
@@ -147,11 +114,6 @@ export interface ComponentSchemaResult {
     [key: string]: unknown;
 }
 
-/**
- * Base class for UI flows
- * Extends UIInstanceTypeBase directly to focus on state machine functionality
- * without requiring interaction handling capabilities
- */
 export abstract class UIFlowBase<
     TState extends string,
     TTransition extends string,
@@ -178,46 +140,24 @@ export abstract class UIFlowBase<
         throw new ForceMethodImplementation( "UIFlowBase", "getComponents" );
     }
 
-    /**
-     * Get entry points for this flow from other flows
-     * Should be implemented by derived classes to document integration points
-     */
     public static getEntryPoints?(): FlowIntegrationPointBase[] {
         return [];
     }
 
-    /**
-     * Get handoff points from this flow to other flows
-     * Should be implemented by derived classes to document integration points
-     */
     public static getHandoffPoints?(): FlowIntegrationPointBase[] {
         return [];
     }
 
-    /**
-     * Get external services or components this flow depends on
-     * Should be implemented by derived classes to document dependencies
-     */
     public static getExternalReferences?(): Record<string, string> {
         return {};
     }
 
-    /**
-     * Returns the type of flow (e.g., 'ui', 'system').
-     * Defaults to 'ui'. Can be overridden by subclasses.
-     */
     public static getFlowType(): "ui" | "system" | string {
         return "ui";
     }
 
-    /**
-     * Returns the permissions required to use this flow
-     */
     public abstract getPermissions(): PermissionsBitField;
 
-    /**
-     * Returns the channel types this flow supports
-     */
     public abstract getChannelTypes(): ChannelType[];
 
     protected abstract getInitialState(): TState;
@@ -236,75 +176,41 @@ export abstract class UIFlowBase<
         this.transitions.set( state, transitions );
     }
 
-    /**
-     * Get available transitions from current state
-     */
     public abstract getAvailableTransitions(): TTransition[];
 
-    /**
-     * Get the next state for a given transition
-     */
     public abstract getNextState( transition: TTransition ): TState;
 
-    /**
-     * Get required data for a transition
-     */
     public abstract getRequiredData( transition: TTransition ): ( keyof TData )[];
 
-    /**
-     * Check if a transition is valid from the current state
-     */
     public isTransitionValid( transition: TTransition ): boolean {
         return this.getAvailableTransitions().includes( transition );
     }
 
-    /**
-     * Check if required data is available for a transition
-     */
     public isDataValid( transition: TTransition ): boolean {
         const requiredData = this.getRequiredData( transition );
         return requiredData.every( ( key ) => key in this.data );
     }
 
-    /**
-     * Execute a transition - simplified version for flow definition
-     */
     public transition( transition: TTransition ): void {
         this.currentState = this.getNextState( transition );
     }
 
-    /**
-     * Update flow data
-     */
     public updateData( data: Partial<TData> ): void {
         this.data = { ...this.data, ...data };
     }
 
-    /**
-     * Get current state
-     */
     public getCurrentState(): TState {
         return this.currentState;
     }
 
-    /**
-     * Get current flow data
-     */
     public getData(): TData {
         return this.data;
     }
 
-    /**
-     * Get the component instances for this flow
-     */
     public getComponents() {
         return ( this.constructor as typeof UIFlowBase ).getComponents();
     }
 
-    /**
-     * Build schema from components
-     * @returns Component schema structure or null if no schemas
-     */
     public async buildComponentSchemas( components = this.getComponents() ): Promise<ComponentSchemaResult[]> {
         const schemas: ComponentSchemaResult[] = [];
 
@@ -332,20 +238,10 @@ export abstract class UIFlowBase<
         return schemas.length ? schemas : [];
     }
 
-    /**
-     * Returns the next state for a given transition
-     * Need to define this method as static if not already
-     */
     public static getNextStates?(): Record<string, string>;
 
-    /**
-     * Define getVisualConnections as optional static method
-     */
     public static getVisualConnections?(): VisualConnection[];
 
-    /**
-     * Convert flow to JSON representation compatible with SharedFlowData
-     */
     public async toJSON(): Promise<SharedFlowData> {
         const transactions = this.getAvailableTransitions();
         const requiredDataMap: Record<string, ( keyof TData )[]> = {};
@@ -396,12 +292,9 @@ export abstract class UIFlowBase<
         return flowDataResult;
     }
 
-    // Helper to serialize integration points specifically for the Flow Editor's expected format
     private serializeIntegrationPointForEditor( point: FlowIntegrationPointBase ): SharedFlowIntegrationPoint {
-        // Get the type using the static method
         const integrationType = ( point.constructor as typeof FlowIntegrationPointBase ).getType();
 
-        // Base serialization matching SharedFlowIntegrationPoint
         const serializedPoint: SharedFlowIntegrationPoint = {
             fullName: point.flowName,
             flowName: point.flowName,

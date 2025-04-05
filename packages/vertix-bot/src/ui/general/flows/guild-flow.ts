@@ -6,15 +6,11 @@ import {
 
 import { PermissionsBitField } from "discord.js";
 
+import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow";
+
 import type { ChannelType } from "discord.js";
-
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIFlowData ,
-    FlowIntegrationPointBase
-} from "@vertix.gg/gui/src/bases/ui-flow-base";
-
-// Import the target flow class to get its static name
-import { WelcomeFlow } from "../welcome/welcome-flow";
+import type { UIFlowData, FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 // --- Define Constants ---
 const STATE_INITIAL = "VertixBot/UI-General/GuildFlow/States/Initial";
@@ -95,7 +91,6 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
 
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
-        // Removed transition initialization from constructor
     }
 
     // Add the required initializeTransitions method

@@ -5,16 +5,13 @@ import { useGuilds } from "@vertix.gg/flow/src/features/guild-selector/hooks/use
 import { ItemSelectorList } from "@vertix.gg/flow/src/shared/components/item-selector-list";
 import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 
-// Interface matching the hook's response item
-interface GuildResponseItem {
-    guildId: string;
-    name: string;
-    // icon?: string | null;
-}
+// Import from the shared types file
+import type { GuildResponseItem } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Renamed inner component for clarity
 const GuildSelectorInner: React.FC = () => {
-    const { selectedGuildId, setSelectedGuildId } = useFlowEditorContext();
+    // Use the new context state names
+    const { selectedGuild, setSelectedGuild } = useFlowEditorContext();
     const guildsResource = useGuilds();
     const guilds: GuildResponseItem[] = guildsResource.read().data || [];
 
@@ -33,15 +30,22 @@ const GuildSelectorInner: React.FC = () => {
 
     // Function to handle selection (using the generic component's callback)
     const handleSelectItem = ( guild: GuildResponseItem ) => {
-        setSelectedGuildId( guild.guildId );
+        // console.log("Setting selected guild:", guild); // Log selection attempt
+        setSelectedGuild( guild ); // Pass the whole guild object
     };
+
+    // --- Remove console log for debugging ---
+    // console.log("Rendering GuildSelectorInner - Selected Guild:", selectedGuild);
+    // console.log("Passing selectedItemId:", selectedGuild?.guildId ?? null);
+    // --- End console log ---
 
     // --- Render using ItemSelectorList ---
     return (
         <ItemSelectorList<GuildResponseItem>
             title="Select a Server"
             items={guilds}
-            selectedItemId={selectedGuildId}
+            // Use selectedGuild?.guildId for comparison
+            selectedItemId={selectedGuild?.guildId ?? null}
             getItemId={getItemId}
             renderItemContent={renderItemContent}
             onSelectItem={handleSelectItem}

@@ -10,6 +10,7 @@ import { useFlowDiagram } from "@vertix.gg/flow/src/features/flow-editor/hooks/u
 import type { FlowEditorContextType } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 
 import type { FlowEditorProps } from "@vertix.gg/flow/src/features/flow-editor/flow-editor";
+import type { GuildResponseItem } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 interface FlowEditorProviderProps extends FlowEditorProps {
   children: React.ReactNode;
@@ -20,7 +21,8 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
   initialModulePath,
   initialFlowName,
 } ) => {
-  const [ selectedGuildId, setSelectedGuildId ] = useState<string | null>( null );
+  // --- Update Guild Selection State ---
+  const [ selectedGuild, setSelectedGuild ] = useState<GuildResponseItem | null>( null );
 
   // --- Initialize Hooks ---
   const {
@@ -66,9 +68,9 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
   // Use useMemo to prevent unnecessary re-renders of consumers
   // when the provider itself re-renders but the value hasn't changed.
   const contextValue = useMemo<FlowEditorContextType>( () => ( {
-    // Guild selection
-    selectedGuildId,
-    setSelectedGuildId,
+    // Guild selection (Updated names)
+    selectedGuild,
+    setSelectedGuild,
     // Selection state & handlers
     modulePath,
     flowName,
@@ -92,7 +94,8 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
     isInitialLayoutApplied,
     markInitialLayoutApplied,
   } ), [
-    selectedGuildId, setSelectedGuildId,
+    // Add guild state to dependencies (Updated names)
+    selectedGuild, setSelectedGuild,
     modulePath, flowName, moduleName, activeTab, zoomLevel,
     handleModuleClick, handleFlowClick, handleZoomChange, setActiveTab,
     connectedFlowsData, combinedNodes, combinedEdges, isLoadingConnectedFlows,

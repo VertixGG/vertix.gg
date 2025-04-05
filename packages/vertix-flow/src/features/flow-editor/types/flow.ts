@@ -84,3 +84,10 @@ export interface NodeData {
 export interface FlowDiagram {
     nodes: Node[];
 }
+
+// Add and export the Guild response type
+export interface GuildResponseItem {
+    guildId: string;
+    name: string;
+    // icon?: string | null; // Optional icon
+}

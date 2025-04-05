@@ -11,7 +11,8 @@ import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/com
 
 export const FlowEditorSidebar: React.FC = () => {
     const {
-        selectedGuildId,
+        selectedGuild,
+        setSelectedGuild,
         activeTab,
         setActiveTab,
         modulePath,
@@ -20,13 +21,15 @@ export const FlowEditorSidebar: React.FC = () => {
         handleFlowClick,
     } = useFlowEditorContext();
 
+    // console.log( "Rendering FlowEditorSidebar - Selected Guild:", selectedGuild );
+
     return (
         <>
             <div className="p-4 border-b bg-primary/5">
                 <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>
             </div>
 
-            {!selectedGuildId ? (
+            {!selectedGuild ? (
                 <React.Suspense fallback={
                     <div className="flex items-center justify-center h-full p-4">
                          <LoadingIndicator />

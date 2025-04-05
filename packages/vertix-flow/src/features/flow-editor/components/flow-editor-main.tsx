@@ -9,7 +9,7 @@ import { FlowLayoutTopBar, FlowLayoutEditor } from "@vertix.gg/flow/src/features
 
 export const FlowEditorMain: React.FC = () => {
     const {
-        selectedGuildId,
+        selectedGuild,
         modulePath,
         flowName,
         moduleName,
@@ -22,7 +22,11 @@ export const FlowEditorMain: React.FC = () => {
         handleZoomChange,
     } = useFlowEditorContext();
 
-    if ( !selectedGuildId ) {
+    // --- Add console log for debugging ---
+    console.log( "Rendering FlowEditorMain - Selected Guild:", selectedGuild );
+    // --- End console log ---
+
+    if ( !selectedGuild ) {
         return (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">

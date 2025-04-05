@@ -1,13 +1,13 @@
 import { createContext, useContext } from "react";
 
 import type { Node, Edge, NodeChange } from "@xyflow/react";
-import type { FlowData, UIModuleFile } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { FlowData, UIModuleFile, GuildResponseItem } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Define the shape of the context state and actions
 export interface FlowEditorContextType {
-  // Guild selection state
-  selectedGuildId: string | null;
-  setSelectedGuildId: ( guildId: string | null ) => void;
+  // Guild selection state (Changed from ID to object)
+  selectedGuild: GuildResponseItem | null;
+  setSelectedGuild: ( guild: GuildResponseItem | null ) => void;
 
   // State from useModuleFlowSelection
   modulePath: string | null;

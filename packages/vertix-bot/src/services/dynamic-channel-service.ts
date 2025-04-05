@@ -672,8 +672,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }' version: '${ masterChannelDB.version }'`
         );
 
+        const defaultPropertiesMerged = { ... defaultProperties };
+
+        // Extend from auto saved data.
+        Object.assign( defaultPropertiesMerged.permissionOverwrites, permissionOverwrites );
+
         // Create a channel for the user.
         const dynamic = await this.services.channelService.create( {
+            ...defaultProperties,
+            // ---
             guild,
             // ---
             name: dynamicChannelName,
@@ -687,10 +694,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL,
             // ---
             version: masterChannelDB.version,
-            // ---
-            ...defaultProperties,
-            // --- Overwrite by saved data ---
-            permissionOverwrites,
         } );
 
         if ( !dynamic ) {

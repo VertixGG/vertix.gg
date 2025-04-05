@@ -52,7 +52,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             const loadedFlows: FlowData[] = [];
             const processedFlows = new Set<string>(); // Track processed flows to avoid cycles
 
-            const loadFlow = async( flowName: string, parentFlow?: FlowData ) => {
+            const loadFlow = async( flowName: string, _parentFlow?: FlowData ) => {
                 if ( processedFlows.has( flowName ) ) {
                     return; // Skip if already processed
                 }
@@ -70,25 +70,17 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     } );
 
                     if ( response.data ) {
-                        // Only add the flow if it's a target of a handoff point from the parent
-                        const isTargetOfHandoff = !parentFlow || (
-                            parentFlow.integrations?.handoffPoints?.some(
-                                hp => hp.flowName === response.data.name
-                            ) ?? false
-                        );
+                        // Always add the loaded flow, regardless of direct handoff from parent
+                        loadedFlows.push( response.data );
 
-                        if ( isTargetOfHandoff ) {
-                            loadedFlows.push( response.data );
+                        // Get nested connected flows that are targets of handoff points
+                        const nestedFlows = response.data.integrations?.handoffPoints?.map(
+                            hp => hp.flowName
+                        ) ?? [];
 
-                            // Get nested connected flows that are targets of handoff points
-                            const nestedFlows = response.data.integrations?.handoffPoints?.map(
-                                hp => hp.flowName
-                            ) ?? [];
-
-                            // Load each nested flow, passing current flow as parent
-                            for ( const nestedFlow of nestedFlows ) {
-                                await loadFlow( nestedFlow, response.data );
-                            }
+                        // Load each nested flow, passing current flow as parent
+                        for ( const nestedFlow of nestedFlows ) {
+                            await loadFlow( nestedFlow, response.data );
                         }
                     }
                 } catch ( error ) {
@@ -235,17 +227,15 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                     }
 
                     // Create the data object for the CustomEdge component
-                    // Use the properties directly from the handoff object which now conforms to the updated FlowIntegrationPoint type
-                    const edgeData: Partial<FlowIntegrationPoint> = {
+                    const edgeData: Partial<FlowIntegrationPoint> & { connectionType?: "trigger" | "handoff" } = {
                         type: handoff.type,
                         fullName: handoff.fullName,
-                        // Include other relevant properties from handoff if CustomEdge needs them
                         flowName: handoff.flowName,
                         description: handoff.description,
                         transition: handoff.transition,
+                        connectionType: visualConnection ? "trigger" : "handoff"
                     };
 
-                    // Label is now handled by CustomEdge based on data, so set to empty string or remove
                     const edgeLabel = "";
 
                     // Construct the final edge object
@@ -255,13 +245,13 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         target: targetNodeId,
                         sourceHandle: sourceHandle,
                         targetHandle: targetHandle,
-                        type: "custom", // Ensure type is set to 'custom'
+                        type: "custom",
                         animated: FLOW_EDITOR.theme.components.edge.interFlow.animated,
-                        label: edgeLabel, // Label is empty, CustomEdge handles rendering
+                        label: edgeLabel,
                         style: edgeStyle,
                         labelStyle: edgeLabelStyle,
                         zIndex: FLOW_EDITOR.theme.zIndex.edgeInterFlow,
-                        data: edgeData // Pass the structured data object
+                        data: edgeData
                     };
                     newEdges.push( edge );
                 } else {

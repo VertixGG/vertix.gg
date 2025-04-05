@@ -30,6 +30,9 @@ export interface FlowEditorTheme {
             command: {
                 strokeDasharray: string;
             };
+            trigger: {
+                strokeDasharray: string;
+            };
             label: {
                 fontSize: number;
                 offsetY: number;
@@ -37,6 +40,20 @@ export interface FlowEditorTheme {
                 backgroundColor: string;
                 borderRadius: string;
                 textColor: string;
+            };
+            handle: {
+                default: {
+                    size: number;
+                    backgroundColor: string;
+                    borderColor: string;
+                    borderWidth: number;
+                };
+                connected: {
+                    backgroundColor: string;
+                };
+                error: {
+                    backgroundColor: string;
+                };
             };
         };
         minimap: {
@@ -81,6 +98,9 @@ export const FLOW_EDITOR_THEME: FlowEditorTheme = {
             command: {
                 strokeDasharray: "5,5"
             },
+            trigger: {
+                strokeDasharray: "5,5"
+            },
             label: {
                 fontSize: 10,
                 offsetY: 4,
@@ -88,6 +108,20 @@ export const FLOW_EDITOR_THEME: FlowEditorTheme = {
                 backgroundColor: "rgba(255, 255, 255, 0.7)",
                 borderRadius: "3px",
                 textColor: "hsl(var(--foreground))"
+            },
+            handle: {
+                default: {
+                    size: 8,
+                    backgroundColor: "#cccccc",
+                    borderColor: "#888888",
+                    borderWidth: 1
+                },
+                connected: {
+                    backgroundColor: "#88ff88"
+                },
+                error: {
+                    backgroundColor: "#ff8888"
+                }
             }
         },
         minimap: {

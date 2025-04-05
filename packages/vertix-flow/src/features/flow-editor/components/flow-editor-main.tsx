@@ -9,6 +9,7 @@ import { FlowLayoutTopBar, FlowLayoutEditor } from "@vertix.gg/flow/src/features
 
 export const FlowEditorMain: React.FC = () => {
     const {
+        selectedGuildId,
         modulePath,
         flowName,
         moduleName,
@@ -20,6 +21,19 @@ export const FlowEditorMain: React.FC = () => {
         onNodesChange,
         handleZoomChange,
     } = useFlowEditorContext();
+
+    if ( !selectedGuildId ) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                    <h2 className="text-xl font-bold">Select a Server</h2>
+                    <p className="text-muted-foreground">
+                        Please select a server from the sidebar to begin.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     if ( !modulePath || !flowName || !moduleName ) {
         return (

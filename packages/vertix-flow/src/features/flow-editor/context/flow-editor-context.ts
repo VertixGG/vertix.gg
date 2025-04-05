@@ -5,6 +5,10 @@ import type { FlowData, UIModuleFile } from "@vertix.gg/flow/src/features/flow-e
 
 // Define the shape of the context state and actions
 export interface FlowEditorContextType {
+  // Guild selection state
+  selectedGuildId: string | null;
+  setSelectedGuildId: ( guildId: string | null ) => void;
+
   // State from useModuleFlowSelection
   modulePath: string | null;
   flowName: string | null;

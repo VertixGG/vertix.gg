@@ -32,6 +32,7 @@ export interface UIModuleFile {
     path: string;
     adapters: string[];
     flows: string[];
+    systemFlows?: string[];
 }
 
 export interface UIModulesResponse {

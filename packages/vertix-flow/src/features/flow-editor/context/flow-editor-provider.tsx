@@ -20,6 +20,8 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
   initialModulePath,
   initialFlowName,
 } ) => {
+  const [ selectedGuildId, setSelectedGuildId ] = useState<string | null>( null );
+
   // --- Initialize Hooks ---
   const {
     modulePath,
@@ -64,6 +66,9 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
   // Use useMemo to prevent unnecessary re-renders of consumers
   // when the provider itself re-renders but the value hasn't changed.
   const contextValue = useMemo<FlowEditorContextType>( () => ( {
+    // Guild selection
+    selectedGuildId,
+    setSelectedGuildId,
     // Selection state & handlers
     modulePath,
     flowName,
@@ -87,11 +92,11 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( {
     isInitialLayoutApplied,
     markInitialLayoutApplied,
   } ), [
+    selectedGuildId, setSelectedGuildId,
     modulePath, flowName, moduleName, activeTab, zoomLevel,
     handleModuleClick, handleFlowClick, handleZoomChange, setActiveTab,
     connectedFlowsData, combinedNodes, combinedEdges, isLoadingConnectedFlows,
     handleMainFlowDataLoaded, setCombinedNodes, onNodesChange,
-    // Add new state/action to dependency array
     isInitialLayoutApplied, markInitialLayoutApplied
   ] );
 

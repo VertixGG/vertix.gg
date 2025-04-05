@@ -552,7 +552,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
 
         // Check if autosave is enabled.
-        const autoSave = await MasterChannelDataManager.$.getChannelAutosave( masterChannelDB, true );
+        const autoSave = await MasterChannelDataManager.$.getChannelAutosave( masterChannelDB, false );
 
         let savedData: MasterChannelUserDataInterface | null = null,
             dynamicChannelName = "",
@@ -582,16 +582,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
 
             const verifiedRoles =
-                    ( await MasterChannelDataManager.$.getChannelVerifiedRoles(
+                    await MasterChannelDataManager.$.getChannelVerifiedRoles(
                         masterChannelDB,
                         masterChannel.guildId
-                    ) ) || [],
+                     ),
                 verifiedFlagsSet: bigint[] = [];
-
-            // TODO: Find the root cause of this issue, above function expect to return at least guild id in this case.
-            if ( !verifiedRoles.length ) {
-                verifiedRoles.push( guild.id );
-            }
 
             const {
                 dynamicChannelState,

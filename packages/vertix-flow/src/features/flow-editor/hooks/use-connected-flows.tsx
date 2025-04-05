@@ -73,14 +73,24 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         // Always add the loaded flow, regardless of direct handoff from parent
                         loadedFlows.push( response.data );
 
-                        // Get nested connected flows that are targets of handoff points
-                        const nestedFlows = response.data.integrations?.handoffPoints?.map(
+                        // --- Combine flows from both handoffs and visual connections ---
+                        const flowsToLoadNext = new Set<string>();
+
+                        // Get nested connected flows from handoff points
+                        const handoffTargets = response.data.integrations?.handoffPoints?.map(
                             hp => hp.flowName
                         ) ?? [];
+                        handoffTargets.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
 
-                        // Load each nested flow, passing current flow as parent
-                        for ( const nestedFlow of nestedFlows ) {
-                            await loadFlow( nestedFlow, response.data );
+                        // Get nested connected flows from visual connections
+                        const visualTargets = response.data.visualConnections?.map(
+                            vc => vc.targetFlowName
+                        ) ?? [];
+                        visualTargets.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
+
+                        // Load each unique nested flow
+                        for ( const nextFlowName of flowsToLoadNext ) {
+                            await loadFlow( nextFlowName, response.data );
                         }
                     }
                 } catch ( error ) {
@@ -293,19 +303,41 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
     }, [ storeHandleFlowDataLoaded ] );
 
     useEffect( () => {
-        if ( mainFlowData ) {
-            const mainDiagram = generateFlowDiagram( mainFlowData );
-            const combined = combineFlowDiagrams( mainDiagram.nodes, connectedFlowsData );
-
-            // Note: Edges are created *after* combined nodes are calculated (important for positioning/layout later)
-            const interFlowEdges = createInterFlowEdges( mainFlowData, connectedFlowsData, combined ); // <-- Called here
-            setCombinedEdges( interFlowEdges ); // Set the created edges
-        } else {
+        // If no main flow, clear everything
+        if ( !mainFlowData ) {
             setCombinedNodes( [] );
             setCombinedEdges( [] );
+            return;
         }
-        // Ensure dependencies cover all data used to generate nodes/edges
-    }, [ mainFlowData, connectedFlowsData, combineFlowDiagrams, createInterFlowEdges ] ); // Dependency array
+
+        // Always generate the main diagram nodes first
+        const mainDiagramNodes = generateFlowDiagram( mainFlowData ).nodes; // Use .nodes directly
+        const expectedConnectedCount = getConnectedFlows( mainFlowData ).length;
+
+        // Condition to check if we are still loading or connected data isn't ready
+        const isLoadingOrNotReady = isLoadingConnectedFlows ||
+                                    ( expectedConnectedCount > 0 && connectedFlowsData.length === 0 );
+
+        if ( isLoadingOrNotReady ) {
+            // While loading connected flows (or if they haven't arrived yet),
+            // just show the main flow's nodes. Clear any existing inter-flow edges.
+            setCombinedNodes( mainDiagramNodes.map( node => ( {
+                ...node,
+                data: { ...node.data, isMainFlow: true, flowName: mainFlowData.name } // Ensure main flow data is marked
+            } ) ) );
+            setCombinedEdges( [] ); // Set empty edges, NO mainDiagram.edges
+        } else {
+            // Once loading is complete and connectedFlowsData is populated (if expected)
+            const allCombinedNodes = combineFlowDiagrams( mainDiagramNodes, connectedFlowsData );
+            const interFlowEdges = createInterFlowEdges( mainFlowData, connectedFlowsData, allCombinedNodes );
+
+            // Set the final combined nodes and ONLY the calculated inter-flow edges
+            setCombinedNodes( allCombinedNodes );
+            setCombinedEdges( interFlowEdges ); // Set only interFlowEdges, NO mainDiagram.edges
+        }
+
+    // Dependencies: run when main flow changes, connected data changes, or loading state changes
+    }, [ mainFlowData, connectedFlowsData, isLoadingConnectedFlows, combineFlowDiagrams, createInterFlowEdges ] );
 
     return {
         mainFlowData,

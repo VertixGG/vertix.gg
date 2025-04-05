@@ -4,6 +4,8 @@ import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 
 import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
 
+import { LanguageFlow } from "@vertix.gg/bot/src/ui/general/language/language-flow";
+
 import { SetupFlow } from "@vertix.gg/bot/src/ui/general/setup/setup-flow";
 
 import { SetupAdapter } from "@vertix.gg/bot/src/ui/general/setup/setup-adapter";
@@ -30,7 +32,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [ WelcomeFlow, SetupFlow, HelpFlow ];
+        return [ WelcomeFlow, SetupFlow, HelpFlow, LanguageFlow ];
     }
 
     public static getSystemFlows() {

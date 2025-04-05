@@ -1,27 +1,39 @@
 import type { FlowData, FlowIntegrationPoint } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 /**
- * Get connected flows from a flow data object
- * @param flowData The flow data to extract connected flows from
- * @returns Array of connected flow names
+ * Extracts a unique list of connected flow names from a flow's handoff points AND visual connections.
  */
-export const getConnectedFlows = ( flowData: FlowData ): string[] => {
+export function getConnectedFlows( flowData: FlowData ): string[] {
     console.log( "getConnectedFlows called with flowData:", flowData );
 
     const connectedFlows = new Set<string>();
 
-    // Only get flows from handoff points
-    if ( flowData.integrations?.handoffPoints ) {
-        console.log( "handoffPoints found:", flowData.integrations.handoffPoints );
-        flowData.integrations.handoffPoints.forEach( ( handoffPoint: FlowIntegrationPoint ) => {
-            connectedFlows.add( handoffPoint.flowName );
+    // Extract from handoff points
+    const handoffPoints = flowData.integrations?.handoffPoints;
+    if ( handoffPoints ) {
+        console.log( "handoffPoints found:", handoffPoints );
+        handoffPoints.forEach( ( point ) => {
+            if ( point.flowName ) {
+                connectedFlows.add( point.flowName );
+            }
         } );
     }
 
-    const result = Array.from( connectedFlows );
-    console.log( "Final connectedFlows:", result );
-    return result;
-};
+    // Extract from visual connections
+    const visualConnections = flowData.visualConnections;
+    if ( visualConnections ) {
+        console.log( "visualConnections found:", visualConnections );
+        visualConnections.forEach( ( connection ) => {
+            if ( connection.targetFlowName ) {
+                connectedFlows.add( connection.targetFlowName );
+            }
+        } );
+    }
+
+    const finalFlows = Array.from( connectedFlows );
+    console.log( "Final connectedFlows:", finalFlows );
+    return finalFlows;
+}
 
 /**
  * Get connection details between flows

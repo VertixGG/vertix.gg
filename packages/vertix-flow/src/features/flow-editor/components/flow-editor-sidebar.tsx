@@ -12,7 +12,7 @@ import { ModuleSelector } from "@vertix.gg/flow/src/features/module-selector/com
 export const FlowEditorSidebar: React.FC = () => {
     const {
         selectedGuild,
-        setSelectedGuild,
+        setSelectedGuild: _setSelectedGuild,
         activeTab,
         setActiveTab,
         modulePath,
@@ -20,8 +20,6 @@ export const FlowEditorSidebar: React.FC = () => {
         handleModuleClick,
         handleFlowClick,
     } = useFlowEditorContext();
-
-    // console.log( "Rendering FlowEditorSidebar - Selected Guild:", selectedGuild );
 
     return (
         <>

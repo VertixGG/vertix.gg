@@ -22,10 +22,6 @@ export const FlowEditorMain: React.FC = () => {
         handleZoomChange,
     } = useFlowEditorContext();
 
-    // --- Add console log for debugging ---
-    console.log( "Rendering FlowEditorMain - Selected Guild:", selectedGuild );
-    // --- End console log ---
-
     if ( !selectedGuild ) {
         return (
             <div className="flex items-center justify-center h-full">

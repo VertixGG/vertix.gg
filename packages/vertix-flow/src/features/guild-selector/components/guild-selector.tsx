@@ -30,14 +30,8 @@ const GuildSelectorInner: React.FC = () => {
 
     // Function to handle selection (using the generic component's callback)
     const handleSelectItem = ( guild: GuildResponseItem ) => {
-        // console.log("Setting selected guild:", guild); // Log selection attempt
         setSelectedGuild( guild ); // Pass the whole guild object
     };
-
-    // --- Remove console log for debugging ---
-    // console.log("Rendering GuildSelectorInner - Selected Guild:", selectedGuild);
-    // console.log("Passing selectedItemId:", selectedGuild?.guildId ?? null);
-    // --- End console log ---
 
     // --- Render using ItemSelectorList ---
     return (
@@ -50,7 +44,6 @@ const GuildSelectorInner: React.FC = () => {
             renderItemContent={renderItemContent}
             onSelectItem={handleSelectItem}
             emptyStateMessage="No servers found associated with your account."
-            // Add containerClassName="h-full" maybe if the parent provides height?
         />
     );
 };

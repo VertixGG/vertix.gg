@@ -1,7 +1,34 @@
 # Changelog
-**Version: 0.0.8 ~ 00/00/2024**
-- New
-    - Add display of region in **Dynamic Channel** Interface
+**Version: 0.0.8 2024~2025**
+- New Features / Improvements:
+    - Add display of region (e.g., `Europe`, `US East`) in the **Dynamic Channel** interface.
+    - Revamped the `/setup` command for creating **Master Channels** into a multi-step wizard interface.
+    - Improved the UI for editing existing **Master Channels** (via `/setup`), including clearer options for modifying channel names, buttons, and verified roles.
+    - Added clearer feedback messages when users attempt **Dynamic Channel** actions they don't have permission for (e.g., not owner, bot missing permissions).
+    - Added a more detailed view for **Claim Vote Results**, potentially linked externally.
+    - Added choice when editing **Dynamic Channel Buttons** to apply changes immediately or only for newly created channels.
+    - (Visual) Added emojis to some buttons in the **Dynamic Channel** interface.
+    - Added ability to edit the title and description of the primary message in **Dynamic Channels**.
+    - Added new emoji handling system through an EmojiManager.
+    - Improved welcome messages for new server joins with customized adapter.
+    - Enhanced privacy management with clear visual indicators for different states (public, private, hidden, shown).
+    - Added new channel ownership transfer feature with confirmation workflow.
+    - Added dedicated logs channel selection for server admins.
+    - Added automatic user-limit interface with improved buttons and menu options.
+    - Enhanced auto-save feature for dynamic channel configurations.
+    - Improved channel setup wizard with better separation of options across multiple steps.
+    - Added better error handling with specific adapters for invalid channel types and missing permissions.
+    - Introduced UI versioning system to support multiple UI versions simultaneously.
+    - Enhanced variable management in UI components for more dynamic content.
+    - Updated visual assets and icons for a more polished user interface.
+    - Restructured dynamic channel permission management for clearer access controls.
+    - Refined user access controls with granular permission settings (add, edit, remove, kick).
+    - Improved claim button functionality with better owner activity verification.
+    - Enhanced feedback system with dedicated components for user suggestions and reports.
+    - Redesigned user interface components with modular architecture for better maintainability.
+    - Implemented comprehensive status tracking for user actions (success, error, already-granted, etc.).
+    - Added detailed logging for all user interactions with dynamic channels for better troubleshooting.
+    - Added links to additional documentation for specific features in UI components.
 
 ---
 

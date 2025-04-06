@@ -7,6 +7,8 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 import type { PermissionsBitField, ChannelType } from "discord.js";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, FlowIntegrationPoint as SharedFlowIntegrationPoint, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { SerializationContext } from "@vertix.gg/gui/src/bases/ui-serialization";
+import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
 
 export enum UIEFlowIntegrationPointType {
     GENERIC = "GENERIC",
@@ -114,6 +116,9 @@ export interface ComponentSchemaResult {
     [key: string]: unknown;
 }
 
+// Define type for Controller Constructor
+// type ControllerClassConstructor = new (options: any) => UIControllerBase<any>; // Removed
+
 export abstract class UIFlowBase<
     TState extends string,
     TTransition extends string,
@@ -211,30 +216,24 @@ export abstract class UIFlowBase<
         return ( this.constructor as typeof UIFlowBase ).getComponents();
     }
 
-    public async buildComponentSchemas( components = this.getComponents() ): Promise<ComponentSchemaResult[]> {
+    public async buildComponentSchemas( components = this.getComponents(), context?: SerializationContext ): Promise<ComponentSchemaResult[]> {
         const schemas: ComponentSchemaResult[] = [];
 
         for ( const Component of components ) {
             try {
                 const component = new Component();
-
-                const serializedSchema = await component.toSchema();
-
+                const serializedSchema = await component.toSchema( context );
                 const schema: ComponentSchemaResult = {
                     name: serializedSchema.name,
                     type: serializedSchema.type,
                     entities: serializedSchema.entities,
                     components: serializedSchema.components as ComponentSchemaResult[]
                 };
-
-                if ( schema ) {
-                    schemas.push( schema );
-                }
+                if ( schema ) { schemas.push( schema ); }
             } catch ( error ) {
                 console.error( "Error serializing component:", error );
             }
         }
-
         return schemas.length ? schemas : [];
     }
 
@@ -242,7 +241,7 @@ export abstract class UIFlowBase<
 
     public static getVisualConnections?(): VisualConnection[];
 
-    public async toJSON(): Promise<SharedFlowData> {
+    public async toJSON( context?: SerializationContext ): Promise<SharedFlowData> {
         const transactions = this.getAvailableTransitions();
         const requiredDataMap: Record<string, ( keyof TData )[]> = {};
 
@@ -255,7 +254,7 @@ export abstract class UIFlowBase<
         const handoffPoints = constructor.getHandoffPoints?.() || [];
         const externalRefs = constructor.getExternalReferences?.() || {};
         const nextStatesMap = constructor.getNextStates ? constructor.getNextStates() : {};
-        const builtComponents = await this.buildComponentSchemas();
+        const builtComponents = await this.buildComponentSchemas( this.getComponents(), context );
         const visualConnections = constructor.getVisualConnections?.() || [];
 
         const flowDataResult: SharedFlowData = {
@@ -326,4 +325,16 @@ export abstract class UIFlowBase<
 
         return undefined;
     }
+
+    /**
+     * NEW: Returns the string names/keys of the UIDataBase components required by this flow.
+     * Controllers can use this to fetch necessary data components from UIDataService.
+     */
+    public static getRequiredDataComponents(): string[] {
+        return []; // Default to no data components required
+    }
+
+    /**
+     * Returns documentation about handoff points using the new class structure
+     */
 }

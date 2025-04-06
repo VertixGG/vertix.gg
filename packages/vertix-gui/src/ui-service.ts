@@ -51,6 +51,7 @@ import type {
     TPossibleAdapters
 } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
+import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
 
 export type TAdapterMapping = {
     base: UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
@@ -68,6 +69,12 @@ const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER
 const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
     timeout: 0,
     silent: false
+};
+
+// Add type for Concrete Controller Constructor + Statics
+type ConcreteControllerClass = ( new ( options: any ) => UIControllerBase<any> ) & {
+    getName: () => string;
+    // Add other static methods if needed
 };
 
 export class UIService extends ServiceWithDependenciesBase<{
@@ -89,6 +96,9 @@ export class UIService extends ServiceWithDependenciesBase<{
 
     private uiModulesTypes = new Map<string, TModuleConstructor>();
     private uiModulesInstances = new Map<string, UIModuleBase>();
+
+    // Add map for Flow -> Controller
+    private flowNameToControllerClass = new Map<string, ConcreteControllerClass>();
 
     private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>();
     private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>();
@@ -209,15 +219,41 @@ export class UIService extends ServiceWithDependenciesBase<{
         if ( this.uiModulesTypes.has( moduleName ) ) {
             throw new Error( `Module: '${ moduleName }' already exists` );
         }
-        Module.validate();
+        Module.validate?.(); // Use optional chaining for validate
 
         const adapters = Module.getAdapters();
+        const flows = Module.getFlows(); // Get flows
+        const controllers = Module.getControllers() as ConcreteControllerClass[]; // Assert concrete type
+
         const module = new Module();
 
         this.uiModulesTypes.set( moduleName, Module );
         this.uiModulesInstances.set( moduleName, module );
 
+        // Register Adapters
         this.registerAdapters( adapters, { module } );
+
+        // --- Build Flow -> Controller Map ---
+        this.logger.debug( this.registerModule, `Mapping flows to controllers for module ${ moduleName }...` );
+        flows.forEach( flowClass => {
+            const flowName = flowClass.getName();
+            const expectedControllerName = flowName.replace( /Flow$/, "Controller" );
+            // Find controller using the concrete type
+            const controllerClass = controllers.find( c => c.getName() === expectedControllerName );
+
+            if ( controllerClass ) {
+                this.flowNameToControllerClass.set( flowName, controllerClass );
+                this.logger.debug( this.registerModule, `Mapped Flow '${ flowName }' to Controller '${ controllerClass.getName() }'` );
+            } else {
+                 this.logger.warn( this.registerModule, `Could not find matching controller for flow '${ flowName }' based on naming convention.` );
+            }
+        } );
+        this.logger.debug( this.registerModule, `Finished mapping for module ${ moduleName }. Map size: ${ this.flowNameToControllerClass.size }` );
+    }
+
+    // Update return type
+    public getControllerClassForFlowName( flowName: string ): ConcreteControllerClass | undefined {
+        return this.flowNameToControllerClass.get( flowName );
     }
 
     public async registerSystemUIAdapters() {

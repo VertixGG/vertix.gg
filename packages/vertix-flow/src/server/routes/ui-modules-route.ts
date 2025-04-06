@@ -7,9 +7,12 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { zFindRootPackageJsonPath } from "@zenflux/utils/src/workspace";
 
+import type { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+
 import type { FastifyInstance, FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 import type { FlowIntegrationPoint } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { SerializationContext } from "@vertix.gg/gui/src/bases/ui-serialization";
 
 /**
  * UI Module file interface
@@ -63,6 +66,13 @@ interface UIFlowResponse {
         targetFlowName: string;
     }[];
 }
+
+// Define a single type representing a concrete flow class constructor
+// with required static methods. Use <any, any, any> for generics.
+type ConcreteFlowClass = ( new ( ...args: any[] ) => UIFlowBase<any, any, any> ) & {
+    getName: () => string;
+    getRequiredDataComponents?: () => string[];
+};
 
 /**
  * UI Modules route handler
@@ -129,83 +139,101 @@ export class UIModulesRoute extends InitializeBase {
      * Handle UI flows request
      */
     public handleFlows = async( request: FastifyRequest<{
-        Querystring: { moduleName: string; flowName: string }
+        Querystring: { moduleName: string; flowName: string; guildId?: string }
     }>, reply: FastifyReply ): Promise<UIFlowResponse | void> => {
-        const { moduleName, flowName } = request.query;
-
-        this.logger.info( this.handleFlows, `UI flow requested for module ${ moduleName } and flow ${ flowName }` );
+        const { moduleName, flowName, guildId } = request.query;
+        // Log guildId if present
+        const logContext = guildId ? ` (Context: guildId=${ guildId })` : "";
+        this.logger.info( this.handleFlows, `UI flow requested for module ${ moduleName } and flow ${ flowName }${ logContext }` );
 
         try {
             const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+
             const moduleInstance = uiService.getUIModule( moduleName );
 
             if ( !moduleInstance ) {
-                reply.status( 404 ).send( {
-                    error: "Module not found",
-                    message: `Module "${ moduleName }" not found`
-                } );
-                return;
+                 reply.status( 404 ).send( { error: "Module not found", message: `Module "${ moduleName }" not found` } );
+                 return;
             }
 
-            // Get both UI and System flows from the Module class
-            const ModuleClass = moduleInstance.constructor as any; // Consider defining a type for Module class with static methods
+            const ModuleClass = moduleInstance.constructor as any;
             const uiFlows = ModuleClass.getFlows() ?? [];
-            const systemFlows = ModuleClass.getSystemFlows?.() ?? []; // Use optional chaining for safety
+            const systemFlows = ModuleClass.getSystemFlows?.() ?? [];
             const allFlows = [ ...uiFlows, ...systemFlows ];
 
-            // Find the requested flow within all flows
+            // Find the FlowClass and assert the combined type
             const FlowClass = allFlows.find( ( flow: any ) =>
                 flow.getName() === flowName
-            );
+            ) as ConcreteFlowClass | undefined;
 
-            if ( !FlowClass ) {
-                reply.status( 404 ).send( {
-                    error: "Flow not found",
-                    message: `Flow "${ flowName }" not found in module ${ moduleName }` // Updated error message
-                } );
+            if ( !FlowClass ) { // Check the single reference
+                reply.status( 404 ).send( { error: "Flow not found", message: `Flow "${ flowName }" not found in module ${ moduleName }` } );
                 return;
             }
 
-            // --- Start Added Logging ---
-            this.logger.debug( this.handleFlows, `Attempting to instantiate FlowClass: ${ FlowClass.getName() }` );
+            // --- Get Controller and Initial Data ---
+            const context = guildId ? { guildId } : undefined;
+            let initialDataContext: Record<string, any> = {};
+
+            // Get the controller class using the new UIService method
+            const ControllerClass = uiService.getControllerClassForFlowName( flowName );
+
+            if ( ControllerClass && context ) {
+                 this.logger.debug( this.handleFlows, `Found controller ${ ControllerClass.getName() }, fetching initial data for context:`, context );
+                 try {
+                    const controllerInstance = new ControllerClass( { options: { /* Minimal needed? */ } } );
+                    initialDataContext = await controllerInstance.getInitialContextData( context );
+                 } catch ( controllerError ) {
+                     this.logger.error( this.handleFlows, `Error getting initial data from controller ${ ControllerClass.getName() }:`, controllerError );
+                     // Fallback to empty data on controller error
+                     initialDataContext = {};
+                 }
+            } else {
+                 this.logger.debug( this.handleFlows, `Controller for flow ${ flowName } not found or no context provided, using empty initial data.` );
+            }
+
+            // --- Instantiate Flow --- (Done AFTER getting initial data)
             let flowInstance;
             try {
-                flowInstance = new FlowClass( {
-                    adapter: null, // Placeholder
-                    options: {}    // Placeholder
-                } );
+                flowInstance = new FlowClass( { options: {} } );
                 this.logger.debug( this.handleFlows, `Successfully instantiated FlowClass: ${ FlowClass.getName() }` );
             } catch ( instantiationError ) {
                 this.logger.error( this.handleFlows, `Error INSTANTIATING flow ${ FlowClass.getName() }:`, instantiationError );
-                throw instantiationError; // Re-throw to be caught by outer catch
+                throw instantiationError;
             }
 
-            this.logger.debug( this.handleFlows, `Attempting to serialize flow instance: ${ FlowClass.getName() }` );
+            // --- Build Serialization Context ---
+            const serializationCtx: SerializationContext = {
+                properties: {
+                    guildId: context?.guildId,
+                    initialData: initialDataContext
+                }
+            };
+            if( !serializationCtx.properties || Object.keys( serializationCtx.properties ).length === 0 ) {
+                delete serializationCtx.properties;
+            }
+
+            // --- Serialize ---
+            this.logger.debug( this.handleFlows, `Attempting to serialize flow instance: ${ FlowClass.getName() } with context properties:`, serializationCtx.properties ? Object.keys( serializationCtx.properties ) : "None" );
             let flowData;
             try {
-                flowData = await flowInstance.toJSON();
+                flowData = await flowInstance.toJSON( serializationCtx );
                 this.logger.debug( this.handleFlows, `Successfully serialized flow instance: ${ FlowClass.getName() }` );
             } catch ( serializationError ) {
                 this.logger.error( this.handleFlows, `Error SERIALIZING flow ${ FlowClass.getName() }:`, serializationError );
-                throw serializationError; // Re-throw to be caught by outer catch
+                throw serializationError;
             }
-            // --- End Added Logging ---
 
-            // Name should be included by toJSON now, but keep as fallback?
             if ( !flowData.name ) {
                 flowData.name = FlowClass.getName?.() || flowName;
             }
 
-            this.logger.debug( this.handleFlows, `<<< Returning flowData for ${ flowData.name } (Type: ${ flowData.type })` ); // Simplified final log
+            this.logger.debug( this.handleFlows, `<<< Returning flowData for ${ flowData.name } (Type: ${ flowData.type })` );
 
             return flowData;
         } catch ( err ) {
-            this.logger.error( this.handleFlows, `Error processing flow ${ flowName }:`, err ); // Enhanced outer log
-            reply.status( 500 ).send( {
-                error: "Failed to get flow data",
-                message: err instanceof Error ? err.message : "Unknown error"
-            } );
-            // Ensure function exits if error is sent
+            this.logger.error( this.handleFlows, `Error processing flow ${ flowName }:`, err );
+            reply.status( 500 ).send( { error: "Failed to get flow data", message: err instanceof Error ? err.message : "Unknown error" } );
         }
     };
 
@@ -235,7 +263,8 @@ export class UIModulesRoute extends InitializeBase {
         const uiFlowsSchema = {
             querystring: Type.Object( {
                 moduleName: Type.String(),
-                flowName: Type.String()
+                flowName: Type.String(),
+                guildId: Type.Optional( Type.String() )
             } ),
             response: {
                 200: Type.Object( {

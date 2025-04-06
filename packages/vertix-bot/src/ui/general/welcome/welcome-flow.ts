@@ -126,6 +126,17 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     }
 
     /**
+     * NEW: Defines the data components required by this flow.
+     */
+    public static override getRequiredDataComponents(): string[] {
+        return [
+            "Vertix/Data/Guild/BadwordsData",       // From badwords-data.ts
+            "Vertix/Data/MaxMasterChannelsData",    // From max-master-channels-data.ts
+            "Vertix/Data/Guild/MasterChannelsData"  // From master-channels-data.ts
+        ];
+    }
+
+    /**
      * Returns entry points using the new class structure
      */
     public static override getEntryPoints(): FlowIntegrationPointBase[] {

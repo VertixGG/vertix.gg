@@ -1,5 +1,3 @@
-import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/index";
-
 import { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
 
 import { DEFAULT_UI_NAMESPACE_SEPARATOR } from "@vertix.gg/gui/src/definitions/ui-declaration";
@@ -8,6 +6,10 @@ import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-
 
 import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { TFlowClassType } from "@vertix.gg/gui/src/definitions/ui-flow-declaration";
+import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
+
+// Type for Controller Constructor
+type ControllerClassConstructor = new ( options: any ) => UIControllerBase<any>;
 
 export abstract class UIModuleBase extends UIBase {
     public customIdStrategy: UICustomIdStrategyBase;
@@ -17,11 +19,18 @@ export abstract class UIModuleBase extends UIBase {
     }
 
     public static getAdapters(): TAdapterClassType[] {
-        throw new ForceMethodImplementation( this, this.getAdapters.name );
+        return [];
+    }
+
+    /**
+     * NEW: Get the Controller classes associated with this module.
+     */
+    public static getControllers(): ControllerClassConstructor[] {
+        return [];
     }
 
     public static getFlows(): TFlowClassType[] {
-        throw new ForceMethodImplementation( this, this.getFlows.name );
+        return [];
     }
 
     public static getSystemFlows(): TFlowClassType[] {

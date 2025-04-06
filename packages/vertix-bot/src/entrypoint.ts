@@ -27,11 +27,7 @@ import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/s
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
-import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
-
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
-
-import globalLogger from "@vertix.gg/bot/src/global-logger";
 
 import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 
@@ -39,6 +35,7 @@ import type { Client } from "discord.js";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
@@ -200,24 +197,14 @@ async function registerUIVersionStrategies() {
 }
 
 async function registerMCPService() {
-    globalLogger.$.info( registerMCPService, "Registering MCP service ..." );
+    GlobalLogger.$.info( registerMCPService, "Registering MCP service ..." );
 
     const { MCPService } = await import( "@vertix.gg/base/src/modules/mcp-server/mcp-service" );
 
     ServiceLocator.$.register( MCPService );
 
-    globalLogger.$.info( registerMCPService, "MCP service is registered" );
+    GlobalLogger.$.info( registerMCPService, "MCP service is registered" );
 
-}
-
-async function createCleanupWorker() {
-    try {
-        const thread = await initWorker();
-        await thread.run();
-        GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
-    } catch ( error ) {
-        GlobalLogger.$.error( createCleanupWorker, "", error );
-    }
 }
 
 /**
@@ -232,7 +219,7 @@ async function exportLanguages( languageCodes: string[] ) {
     const { LanguageUtils } = await import( "@vertix.gg/bot/src/utils/language" );
 
     const { default: botInitialize } = await import( "./vertix" );
-    const client = await botInitialize();
+    const client = await botInitialize( { enableListeners: false } );
 
     // Register required services
     await registerUIServices( client );
@@ -278,6 +265,40 @@ async function exportLanguages( languageCodes: string[] ) {
     GlobalLogger.$.info( exportLanguages, "Language export completed successfully" );
 
     return languages.size;
+}
+
+// Function to register Data Service and Components
+async function registerDataServicesAndComponents() {
+    GlobalLogger.$.info( registerDataServicesAndComponents, "Registering data services and components..." );
+
+    // Import the service and components
+    const { UIDataService } = await import( "@vertix.gg/gui/src/ui-data-service" );
+    const dataComponents = await Promise.all( [
+        import( "@vertix.gg/bot/src/data/guild/master-channels-data" ),
+        import( "@vertix.gg/bot/src/data/guild/badwords-data" ),
+        import( "@vertix.gg/bot/src/data/guild/max-master-channels-data" ),
+    ] );
+
+    // Register the UIDataService itself
+    GlobalLogger.$.debug( registerDataServicesAndComponents, `Registering service: '${ UIDataService.getName() }'` );
+    ServiceLocator.$.register<UIDataService>( UIDataService );
+    GlobalLogger.$.debug( registerDataServicesAndComponents, `Service registered: '${ UIDataService.getName() }'` );
+
+    // Wait for UIDataService to be ready (if it has async initialization)
+    await ServiceLocator.$.waitFor( UIDataService.getName() );
+
+    // Get the UIDataService instance
+    const uiDataService = ServiceLocator.$.get<UIDataService>( UIDataService.getName() );
+
+    // Register the data components with the service
+    const componentConstructors = dataComponents.map( module => Object.values( module )[ 0 ] ); // Assumes default export or first export is the class
+    uiDataService.registerDataComponents( componentConstructors as any ); // Use 'as any' for now if type inference struggles
+
+    componentConstructors.forEach( comp => {
+        GlobalLogger.$.debug( registerDataServicesAndComponents, `Registered data component: '${ ( comp as any ).getName() }'` );
+    } );
+
+    GlobalLogger.$.info( registerDataServicesAndComponents, "Data services and components registered." );
 }
 
 export async function entryPoint( options: {
@@ -360,6 +381,7 @@ export async function entryPoint( options: {
     await registerUIServices( client );
     await registerConfigs();
     await registerServices();
+    await registerDataServicesAndComponents();
 
     GlobalLogger.$.info( entryPoint, "Services are registered" );
 
@@ -377,8 +399,6 @@ export async function entryPoint( options: {
     await registerUIVersionStrategies();
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
-
-    //await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 }

@@ -72,7 +72,7 @@ export interface FlowData {
         handoffPoints?: FlowIntegrationPoint[];
         externalReferences?: Record<string, string>;
     };
-    visualConnections?: VisualConnection[]; // Add the optional visual connections array
+    edgeSourceMappings?: VisualConnection[]; // Add the optional visual connections array
 }
 
 export interface NodeData {

@@ -132,7 +132,7 @@ flowchart TD
     *   Implement interaction handlers using the Flow state machine and Data components.
 8.  [ ] Register the new `UIController`s (potentially via `UIService` or a new dedicated service if preferred).
 9.  [ ] Update event listeners (e.g., Discord client `interactionCreate`) to route events to the new Controllers instead of the old Adapters.
-10. [ ] Verify interaction with the `vertix-flow` editor (ensure `getVisualConnections` or similar mechanisms still function correctly with the new structure).
+10. [ ] Verify interaction with the `vertix-flow` editor (ensure `getEdgeSourceMappings` or similar mechanisms still function correctly with the new structure).
 11. [ ] Gradually remove or deprecate the old `UIAdapter` implementations (`WelcomeAdapter`, `SetupNewWizardAdapter`) once Controllers are fully functional.
 
 ## 5. Open Questions / Considerations

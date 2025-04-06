@@ -239,7 +239,12 @@ export abstract class UIFlowBase<
 
     public static getNextStates?(): Record<string, string>;
 
-    public static getVisualConnections?(): VisualConnection[];
+    /**
+     * Defines mappings from transitions to specific UI elements that trigger them visually.
+     * Used by the flow editor to determine the source handle for inter-flow edges.
+     * @returns An array of VisualConnection objects (or a compatible structure).
+     */
+    public static getEdgeSourceMappings?(): VisualConnection[];
 
     public async toJSON( context?: SerializationContext ): Promise<SharedFlowData> {
         const transactions = this.getAvailableTransitions();
@@ -255,7 +260,7 @@ export abstract class UIFlowBase<
         const externalRefs = constructor.getExternalReferences?.() || {};
         const nextStatesMap = constructor.getNextStates ? constructor.getNextStates() : {};
         const builtComponents = await this.buildComponentSchemas( this.getComponents(), context );
-        const visualConnections = constructor.getVisualConnections?.() || [];
+        const edgeSourceMappings = constructor.getEdgeSourceMappings?.() || [];
 
         const flowDataResult: SharedFlowData = {
             name: constructor.getName(),
@@ -269,7 +274,7 @@ export abstract class UIFlowBase<
                 externalReferences: externalRefs
             },
             components: builtComponents as SharedFlowComponent[],
-            visualConnections: visualConnections
+            edgeSourceMappings
         };
 
         if ( !flowDataResult.integrations?.entryPoints?.length ) {
@@ -284,8 +289,8 @@ export abstract class UIFlowBase<
         if ( flowDataResult.integrations && Object.keys( flowDataResult.integrations ).length === 0 ) {
              delete flowDataResult.integrations;
         }
-        if ( !flowDataResult.visualConnections?.length ) {
-            delete flowDataResult.visualConnections;
+        if ( !flowDataResult.edgeSourceMappings?.length ) {
+            delete flowDataResult.edgeSourceMappings;
         }
 
         return flowDataResult;

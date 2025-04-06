@@ -20,10 +20,9 @@ export function getConnectedFlows( flowData: FlowData ): string[] {
     }
 
     // Extract from visual connections
-    const visualConnections = flowData.visualConnections;
-    if ( visualConnections ) {
-        console.log( "visualConnections found:", visualConnections );
-        visualConnections.forEach( ( connection ) => {
+    const edgeSourceMappings = flowData.edgeSourceMappings;
+    if ( edgeSourceMappings ) {
+        edgeSourceMappings.forEach( ( connection ) => {
             if ( connection.targetFlowName ) {
                 connectedFlows.add( connection.targetFlowName );
             }

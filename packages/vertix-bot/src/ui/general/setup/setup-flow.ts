@@ -64,7 +64,7 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
     }
 
     // Define Visual Connections (Re-added LanguageFlow)
-    public static override getVisualConnections(): VisualConnection[] {
+    public static override getEdgeSourceMappings(): VisualConnection[] {
         return [
             {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterCreateV3Button",

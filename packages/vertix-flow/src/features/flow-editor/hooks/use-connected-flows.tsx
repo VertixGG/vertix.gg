@@ -83,10 +83,10 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         handoffTargets.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
 
                         // Get nested connected flows from visual connections
-                        const visualTargets = response.data.visualConnections?.map(
+                        const edgeSourceMappings = response.data.getEdgeSourceMappings?.map(
                             vc => vc.targetFlowName
                         ) ?? [];
-                        visualTargets.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
+                        edgeSourceMappings.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
 
                         // Load each unique nested flow
                         for ( const nextFlowName of flowsToLoadNext ) {
@@ -200,7 +200,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 let sourceHandle = "Flow-handle-source-bottom";
 
                 // Check for visual connection definition
-                const visualConnection = flow.visualConnections?.find(
+                const visualConnection = flow.edgeSourceMappings?.find(
                     ( vc: VisualConnection ) => vc.transitionName === handoff.transition
                 );
 

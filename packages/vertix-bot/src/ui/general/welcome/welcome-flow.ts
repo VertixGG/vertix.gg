@@ -100,10 +100,7 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
         ];
     }
 
-    /**
-     * NEW: Defines visual connections for the editor.
-     */
-    public static override getVisualConnections(): VisualConnection[] {
+    public static override getEdgeSourceMappings(): VisualConnection[] {
         return [
             {
                 triggeringElementId: "VertixBot/UI-General/WelcomeSetupButton",

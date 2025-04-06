@@ -144,11 +144,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
         return [];
     }
 
-    /**
-     * Defines visual connections (none for this router flow).
-     * Added for structural consistency with UIFlowBase.
-     */
-    public static override getVisualConnections(): VisualConnection[] {
+    public static override getEdgeSourceMappings(): VisualConnection[] {
         return [];
     }
 

@@ -54,9 +54,6 @@ export class LanguageFlow extends UIFlowBase<string, string, LanguageFlowData> {
         return []; // Default to no handoffs
     }
 
-    // Define visual connections if needed
-    // public static override getVisualConnections(): VisualConnection[] { return []; }
-
     // Define required permissions
     public override getPermissions(): PermissionsBitField { return new PermissionsBitField( PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages ); }
 

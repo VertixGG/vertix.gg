@@ -60,7 +60,7 @@ interface UIFlowResponse {
         handoffPoints?: FlowIntegrationPoint[];
         externalReferences?: Record<string, string>;
     };
-    visualConnections?: {
+    edgeSourceMappings?: {
         triggeringElementId: string;
         transitionName: string;
         targetFlowName: string;
@@ -311,7 +311,7 @@ export class UIModulesRoute extends InitializeBase {
                         } ) ) ),
                         externalReferences: Type.Optional( Type.Record( Type.String(), Type.String() ) )
                     } ) ),
-                    visualConnections: Type.Optional( Type.Array(
+                    edgeSourceMappings: Type.Optional( Type.Array(
                         Type.Object( {
                             triggeringElementId: Type.String(),
                             transitionName: Type.String(),

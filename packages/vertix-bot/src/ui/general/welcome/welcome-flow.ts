@@ -5,7 +5,6 @@ import {
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
-import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
 
 import type { UIFlowData ,
     FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
@@ -92,8 +91,8 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     public static override getHandoffPoints(): FlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
-                flowName: SetupNewWizardFlow.getName(),
-                description: "Hands off to Setup Wizard when setup button is clicked",
+                flowName: "VertixBot/UI-General/SetupFlow",
+                description: "Hands off to Setup Flow when setup button is clicked",
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 requiredData: []
@@ -109,7 +108,7 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
             {
                 triggeringElementId: "VertixBot/UI-General/WelcomeSetupButton",
                 transitionName: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
-                targetFlowName: "VertixBot/UI-V3/SetupNewWizardFlow"
+                targetFlowName: "VertixBot/UI-General/SetupFlow"
             }
         ];
     }

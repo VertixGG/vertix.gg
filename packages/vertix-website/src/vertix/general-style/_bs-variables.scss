@@ -1,0 +1,47 @@
+@import "./vertix-color-variables";
+
+$font-size-base: 1rem;
+
+$h1-font-size: $font-size-base * 2.5;
+$h2-font-size: $font-size-base * 2;
+$h3-font-size: $font-size-base * 1.75;
+$h4-font-size: $font-size-base * 1.5;
+$h5-font-size: $font-size-base * 1.25;
+$h6-font-size: $font-size-base;
+
+$font-sizes: (
+    1: $h1-font-size,
+    2: $h2-font-size,
+    3: $h3-font-size,
+    4: $h4-font-size,
+    5: $h5-font-size,
+    6: $h6-font-size,
+    // Custom
+    7: $font-size-base - 0.1rem,
+);
+
+$body-bg-dark: $vertix-color-dark-jungle-green;
+
+$headings-font-family: var(--vertix-font-component);
+$headings-color-dark: $vertix-color-sandy-beach-lighter;
+
+$link-decoration: none;
+
+$hr-border-color: $vertix-color-true-blue;
+
+$code-color: $vertix-color-skyblue;
+
+$toast-background-color: $vertix-color-eerie-black-lighter;
+$toast-border-width: 4px;
+$toast-border-color: $vertix-color-dark-jungle-green-darker;
+$toast-border-radius: 14px;
+$toast-box-shadow: 2px 13px 14px 4px #0000002b;
+
+$toast-header-color: $vertix-color-skyblue;
+$toast-header-background-color: $vertix-color-eerie-black;
+$toast-header-border-bottom-color: $vertix-color-onyx;
+
+$btn-font-family: var(--vertix-font-component);
+
+$accordion-bg: transparent;
+

@@ -1,0 +1,27 @@
+@import "./vertix-color-variables";
+
+:root {
+    --vertix-color-pale-silver-lighter: #{$vertix-color-pale-silver-lighter};
+
+    --vertix-color-sandy-beach: #{$vertix-color-sandy-beach};
+    --vertix-color-sandy-beach-lighter: #{$vertix-color-sandy-beach-lighter};
+
+    --vertix-color-bisque: #{$vertix-color-bisque};
+
+    --vertix-color-skyblue: #{$vertix-color-skyblue};
+
+    --vertix-color-very-light-azure: #{$vertix-color-very-light-azure};
+
+    --vertix-color-fresh-air: #{$vertix-color-fresh-air};
+
+    --vertix-color-true-blue: #{$vertix-color-true-blue};
+
+    --vertix-color-dark-jungle-green: #{$vertix-color-dark-jungle-green};
+
+    --vertix-color-rich-black: #{$vertix-color-rich-black};
+
+    --vertix-bg-color: #{$vertix-color-dark-jungle-green};
+
+    --vertix-font-brand: 'El Messiri', sans-serif;
+    --vertix-font-component: 'Red Hat Display', 'Tahoma';
+}

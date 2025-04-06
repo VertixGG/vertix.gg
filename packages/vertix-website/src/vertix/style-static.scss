@@ -1,0 +1,73 @@
+@import "./general-style/vertix-variables";
+@import "./general-style/animations";
+
+* {
+    scrollbar-width: none;
+    scrollbar-color: var(--vertix-bg-color) var(--vertix-bg-color);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 16px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--vertix-bg-color);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 10px;
+    border: 1px solid var(--vertix-color-rich-black);
+}
+
+html, body {
+    width: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Initial values */
+body {
+    background-color: var(--vertix-bg-color);
+    color: var(--vertix-color-bisque);
+}
+
+.body-container {
+    background-color: inherit;
+
+    transition: opacity 1s ease-in-out; /* Add a transition for a smooth effect */
+
+    opacity: 0.2;
+
+    &.not-loaded {
+        .header {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .wings {
+            .vertix-logo {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        footer {
+            display: none;
+        }
+    }
+
+    &.loaded {
+        .header {
+            animation: drop-in 1s ease 200ms backwards;
+        }
+
+        .wings {
+            animation: drop-in 1ms ease 200ms backwards;
+        }
+
+        footer {
+            display: inherit;
+        }
+    }
+}

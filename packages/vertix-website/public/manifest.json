@@ -1,0 +1,20 @@
+{
+	"short_name": "Vertix Discord bot",
+	"name": "Vertix Discord bot",
+	"icons": [
+		{
+			"src": "favicon.ico",
+			"sizes": "128x128",
+			"type": "image/x-icon"
+		},
+		{
+			"src": "vertix.png",
+			"type": "image/png",
+			"sizes": "399x400"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#000000",
+	"background_color": "#ffffff"
+}

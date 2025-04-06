@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"@internal/*": [
+				"src/*"
+			],
+			"@vertix/*": [
+				"src/vertix/*"
+			]
+		}
+	}
+}

@@ -1,0 +1,114 @@
+@import 'react-photo-view/dist/react-photo-view.css';
+
+@import "./bootstrap";
+
+@import "./general-style/fonts";
+@import "./general-style/buttons";
+@import "./general-style/background";
+
+@import "./header/header";
+
+@include media-breakpoint-between(xs, sm) {
+    ul {
+        padding-left: 10px;
+    }
+
+    ul > ul {
+        padding-left: 20px;
+    }
+
+    li {
+        font-size: 0.9rem;
+    }
+}
+
+@include media-breakpoint-between(sm, md) {
+    ul {
+        padding: 5px;
+    }
+
+    ul > ul {
+        padding-left: 13px;
+    }
+
+    li {
+        font-size: 1rem;
+    }
+}
+
+hr {
+    box-shadow: -2px 0px 7px 2px #000000;
+}
+
+code {
+    border: 2px solid #34383a;
+    padding: 0 5px;
+    background: #191b1f;
+    font-family: monospace;
+}
+
+.content {
+    padding-top: 100px;
+
+    .box-1 {
+        padding: 40px;
+        border: 3px solid black;
+        border-radius: 35px;
+        background: #00000026;
+        box-shadow: -2px 0px 7px 2px #4d90d8;
+        width: 90%;
+        margin-bottom: 30px;
+
+        @include media-breakpoint-between(xs, sm) {
+            padding: 40px 15px 15px;
+        }
+
+        @include media-breakpoint-between(sm, md) {
+            padding: 35px;
+        }
+    }
+}
+
+.PhotoView__Photo {
+    cursor: pointer;
+    margin: 15px;
+    border: 2px solid #21272e;
+    border-radius: 14px;
+    box-shadow: 2px 13px 14px 4px #0000002b;
+    width: initial !important;
+    height: initial !important;
+
+    @include media-breakpoint-between(xs, sm) {
+        max-width: 90% !important;
+    }
+}
+
+img.normalize {
+    margin: 15px;
+    border: 2px solid #21272e;
+    border-radius: 14px;
+    box-shadow: 2px 13px 14px 4px #0000002b;
+    padding: 2px;
+    width: 100%;
+    max-width: min-content;
+
+    @include media-breakpoint-between(xs, sm) {
+        margin: 15px 0 0;
+
+        max-width: 100%
+    }
+}
+
+footer {
+    color: #d9d9d9;
+    font-family: var(--vertix-font-component);
+    font-size: 1.1rem;
+
+    .text-muted {
+        color: #d9d9d9 !important;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+}

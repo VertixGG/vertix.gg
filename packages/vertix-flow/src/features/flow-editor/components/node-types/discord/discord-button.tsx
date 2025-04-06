@@ -1,9 +1,12 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
-import { Handle, Position } from "@xyflow/react";
+
+import { Handle } from "@xyflow/react";
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
+
+import type { Position } from "@xyflow/react";
 
 import type { VariantProps } from "class-variance-authority";
 
@@ -58,12 +61,13 @@ export interface DiscordButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   Omit<VariantProps<typeof discordButtonVariants>, "variant"> {
   asChild?: boolean;
   buttonStyle?: ButtonStyle | number; // Discord ButtonStyle enum or direct number
-  elementId?: string; // Add optional elementId prop
+  elementId: string; // Keep elementId as it's needed for the Handle id
+  handlePosition?: Position | null; // <-- Add handlePosition prop (can be Position.Right, Position.Bottom, or null)
 }
 
 /**
  * Discord-styled button component that uses Discord's ButtonStyle enum
- * Optionally renders a React Flow handle if elementId is provided.
+ * Renders a React Flow handle based on the provided handlePosition.
  */
 export function DiscordButton( {
   className,
@@ -71,7 +75,8 @@ export function DiscordButton( {
   size,
   asChild = false,
   children,
-  elementId, // Destructure elementId
+  elementId,
+  handlePosition, // <-- Destructure handlePosition prop
   ...props
 }: DiscordButtonProps ) {
   const Comp = asChild ? Slot : "button";
@@ -94,18 +99,26 @@ export function DiscordButton( {
   return (
     <Comp
       data-variant={variant}
-      className={cn( discordButtonVariants( { variant, size, className } ), "relative" )} // Add relative positioning for handle
+      className={cn( discordButtonVariants( { variant, size, className } ), "relative" )}
       {...props}
     >
       {children}
-      {/* Add handle if elementId exists (meaning it's part of the flow diagram structure) */}
-      {elementId && (
+      {/* Only render handle if handlePosition is provided (not null) */}
+      {handlePosition && (
         <Handle
           type="source"
-          position={Position.Bottom}
-          id={elementId}
-          style={{ background: "hsl(var(--primary))", width: 8, height: 8 }}
-          isConnectable={true} // Or false if only for visual indication
+          position={handlePosition} // <-- Use the passed position
+          id={elementId} // Use elementId for the handle ID
+          // Optional: Add specific styles for right vs bottom handles if needed
+          style={{
+            background: "hsl(var(--primary))",
+            width: 8,
+            height: 8,
+            // Example: Adjust position slightly based on handlePosition
+            // right: handlePosition === Position.Right ? -4 : undefined,
+            // bottom: handlePosition === Position.Bottom ? -4 : undefined,
+          }}
+          isConnectable={true}
         />
       )}
     </Comp>

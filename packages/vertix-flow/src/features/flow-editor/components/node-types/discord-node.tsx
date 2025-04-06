@@ -7,11 +7,20 @@ import { DiscordSelect } from "@vertix.gg/flow/src/features/flow-editor/componen
 import { DiscordRoleMenu } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-role-menu";
 import { DiscordEmbed } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-embed";
 
-import { isButtonComponent, isStringSelectComponent, isRoleSelectComponent } from "@vertix.gg/flow/src/features/flow-editor/types";
+import {
+  isButtonComponent,
+  isStringSelectComponent,
+  isRoleSelectComponent
+} from "@vertix.gg/flow/src/features/flow-editor/types";
+
+import { calculateHandlePosition } from "@vertix.gg/flow/src/features/flow-editor/utils/calculate-node-handle-position";
 
 import type { APISelectMenuOption, APIMessageComponentEmoji, APIButtonComponentWithCustomId, APIButtonComponentWithURL } from "discord-api-types/v10";
 
-import type { ExtendedNodeData, RenderableElementData } from "@vertix.gg/flow/src/features/flow-editor/types";
+import type {
+  ExtendedNodeData,
+  RenderableElementData
+} from "@vertix.gg/flow/src/features/flow-editor/types";
 
 /**
  * DiscordNodeWrapper component provides consistent styling and structure for all Discord node types
@@ -108,13 +117,37 @@ const DiscordSelectWrapper: React.FC<{
 };
 
 /**
- * Render an element based on its type
- * Accepts RenderableElementData which includes the ID
+ * Context needed for rendering an element, including its position within the node structure.
  */
-const renderElement = ( elementData: RenderableElementData, key: string ) => {
-  const { id, attributes } = elementData;
+interface RenderElementContext {
+  rowIndex: number;
+  totalRows: number;
+  elementIndex: number;
+  elementsCount: number;
+}
 
-  if ( isButtonComponent( attributes ) ) {
+/**
+ * Render an element based on its type
+ * Accepts RenderableElementData which includes the ID and context for handle positioning.
+ */
+const renderElement = (
+  elementData: RenderableElementData,
+  key: string,
+  context: RenderElementContext
+) => {
+  const { id, attributes } = elementData;
+  const isButton = isButtonComponent( attributes );
+
+  // Calculate handle position using the utility function
+  const handlePosition = calculateHandlePosition( {
+    isButton,
+    rowIndex: context.rowIndex,
+    totalRows: context.totalRows,
+    elementIndex: context.elementIndex,
+    elementsCount: context.elementsCount
+  } );
+
+  if ( isButton ) {
     const buttonLabel = ( () => {
       if ( "custom_id" in attributes ) {
         return ( attributes as APIButtonComponentWithCustomId ).label || "Button";
@@ -132,6 +165,7 @@ const renderElement = ( elementData: RenderableElementData, key: string ) => {
         className="nodrag"
         buttonStyle={Number( attributes.style ) || ButtonStyle.Secondary}
         disabled={!!attributes.disabled}
+        handlePosition={handlePosition}
       >
         {buttonLabel}
       </DiscordButton>
@@ -181,6 +215,15 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
   }
 
   if ( data.type === "component" ) {
+    // Type for a row within ComponentNodeData.elements
+    type ComponentRowData = {
+      id: string;
+      label: string;
+      elements: RenderableElementData[];
+    };
+
+    const totalRows = data.elements?.length || 0;
+
     return (
       <DiscordNodeWrapper>
         <div className="discord-component bg-background/50 p-2 rounded">
@@ -188,13 +231,23 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
             <DiscordEmbed key={embed.id} {...embed.attributes} />
           ) )}
 
-          {data.elements?.map( ( row ) => (
-            <div key={row.id} className="discord-action-row my-1 flex flex-wrap gap-2">
-              {row.elements?.map( ( element ) =>
-                renderElement( element, element.id )
-              )}
-            </div>
-          ) )}
+          {/* Correctly type the row based on ComponentNodeData structure */}
+          {data.elements?.map( ( row: ComponentRowData, rowIndex: number ) => {
+            const elementsCount = row.elements?.length || 0;
+            return (
+              <div key={row.id} className="discord-action-row my-1 flex flex-wrap gap-2">
+                {/* Inner map uses RenderableElementData, which is correct */}
+                {row.elements?.map( ( element: RenderableElementData, elementIndex: number ) =>
+                  renderElement( element, element.id, {
+                    rowIndex,
+                    totalRows,
+                    elementIndex,
+                    elementsCount
+                  } )
+                )}
+              </div>
+            );
+          } )}
         </div>
       </DiscordNodeWrapper>
     );

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
+import { ExternalLink } from "lucide-react";
 
 import { Handle } from "@xyflow/react";
 
@@ -38,8 +39,8 @@ const discordButtonVariants = cva(
         // Danger (red) button
         danger: "bg-[#F23F43] text-white hover:bg-[#da373b]",
 
-        // Link button (text only)
-        link: "bg-transparent text-link hover:underline p-0 h-auto min-w-0 focus-visible:outline focus-visible:outline-1 focus-visible:outline-link",
+        // Link button (modified to look like secondary + icon)
+        link: "bg-[#4f545c] text-white hover:bg-[#5d636b]",
 
         // Premium (gradient) button
         premium: "bg-gradient-to-r from-[#7F00FF] to-[#E100FF] text-white hover:opacity-90 transition-opacity"
@@ -57,33 +58,46 @@ const discordButtonVariants = cva(
   }
 );
 
-export interface DiscordButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  Omit<VariantProps<typeof discordButtonVariants>, "variant"> {
+// Define props more granularly
+interface DiscordButtonBaseProps extends Omit<VariantProps<typeof discordButtonVariants>, "variant"> {
+  children?: React.ReactNode;
+  className?: string;
+  buttonStyle?: ButtonStyle | number;
+  elementId: string; // For Handle
+  handlePosition?: Position | null;
   asChild?: boolean;
-  buttonStyle?: ButtonStyle | number; // Discord ButtonStyle enum or direct number
-  elementId: string; // Keep elementId as it's needed for the Handle id
-  handlePosition?: Position | null; // <-- Add handlePosition prop (can be Position.Right, Position.Bottom, or null)
+  url?: string; // Define URL here as it's a logical prop for link buttons
 }
 
-/**
- * Discord-styled button component that uses Discord's ButtonStyle enum
- * Renders a React Flow handle based on the provided handlePosition.
- */
-export function DiscordButton( {
-  className,
-  buttonStyle = ButtonStyle.Secondary,
-  size,
-  asChild = false,
-  children,
-  elementId,
-  handlePosition, // <-- Destructure handlePosition prop
-  ...props
-}: DiscordButtonProps ) {
-  const Comp = asChild ? Slot : "button";
+// Separate types for Button and Anchor attributes, excluding conflicting ones
+type ButtonSpecificProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "style" | "className" | "children" | "type">; // Use double quotes
+type AnchorSpecificProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "style" | "className" | "children" | "href" | "target" | "rel">; // Use double quotes
 
-  // Map Discord ButtonStyle to variant
-  const getVariant = ( buttonStyle: ButtonStyle | number ) => {
-    switch ( buttonStyle ) {
+// Combine base, button, and anchor attributes. Use intersection for flexibility.
+export type DiscordButtonProps = DiscordButtonBaseProps & ButtonSpecificProps & AnchorSpecificProps;
+
+/**
+ * Discord-styled button component.
+ * Renders as <a> if buttonStyle is Link and url is provided, otherwise <button>.
+ * Includes React Flow Handle.
+ */
+export function DiscordButton( props: DiscordButtonProps ) {
+  // Destructure ALL props
+  const {
+    className,
+    buttonStyle = ButtonStyle.Secondary,
+    size,
+    asChild = false,
+    children,
+    elementId,
+    handlePosition,
+    url,
+    // Rest are potential HTML attributes from ButtonSpecificProps or AnchorSpecificProps
+    ...rest
+  } = props;
+
+  const getVariant = ( style: ButtonStyle | number ): VariantProps<typeof discordButtonVariants>["variant"] => {
+    switch ( style ) {
       case ButtonStyle.Primary: return "primary";
       case ButtonStyle.Secondary: return "secondary";
       case ButtonStyle.Success: return "success";
@@ -95,32 +109,76 @@ export function DiscordButton( {
   };
 
   const variant = getVariant( buttonStyle );
+  const isLinkButton = variant === "link";
+  const commonClasses = cn( discordButtonVariants( { variant, size, className } ), "relative" );
+
+  // Handle needs to be rendered inside the final component
+  const renderHandle = () => (
+    handlePosition && (
+      <Handle
+        type="source"
+        position={handlePosition}
+        id={elementId}
+        style={{ background: "hsl(var(--primary))", width: 8, height: 8 }}
+        isConnectable={true}
+      />
+    )
+  );
+
+  // Handle the asChild case: Pass only basic props to Slot
+  if ( asChild ) {
+    return (
+      // Pass only non-conflicting props to Slot. Child needs rest passed by parent.
+      // Temporarily reverting to spread ...rest to check visual appearance
+      <Slot {...rest} className={commonClasses} data-variant={variant}>
+        {children}
+        {/* Remove explicit styling used for debugging */}
+        {isLinkButton && <ExternalLink className="size-3.5" />}
+        {renderHandle()}
+      </Slot>
+    );
+  }
+
+  // Render as <a> if it's a link button with a URL
+  if ( isLinkButton && url ) {
+    // Cast rest to Anchor props. Type assertion needed for TS.
+    const anchorProps = rest as AnchorSpecificProps;
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-variant={variant}
+        className={commonClasses}
+        {...anchorProps} // Spread compatible props
+      >
+        {children}
+        {/* Remove explicit styling used for debugging */}
+        <ExternalLink className="size-3.5" />
+        {renderHandle()}
+      </a>
+    );
+  }
+
+  // Default to rendering as <button>
+  const buttonProps = rest as ButtonSpecificProps & { type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] }; // Use correct type for type prop
+
+  // Validate the button type
+  const validButtonTypes = [ "button", "submit", "reset" ];
+  const buttonType = buttonProps.type && validButtonTypes.includes( buttonProps.type )
+    ? buttonProps.type
+    : "button"; // Default to "button" if type is missing or invalid
 
   return (
-    <Comp
+    <button
+      type={buttonType} // Use validated type
       data-variant={variant}
-      className={cn( discordButtonVariants( { variant, size, className } ), "relative" )}
-      {...props}
+      className={commonClasses}
+      {...buttonProps} // Spread compatible props (TS should allow this now)
     >
       {children}
-      {/* Only render handle if handlePosition is provided (not null) */}
-      {handlePosition && (
-        <Handle
-          type="source"
-          position={handlePosition} // <-- Use the passed position
-          id={elementId} // Use elementId for the handle ID
-          // Optional: Add specific styles for right vs bottom handles if needed
-          style={{
-            background: "hsl(var(--primary))",
-            width: 8,
-            height: 8,
-            // Example: Adjust position slightly based on handlePosition
-            // right: handlePosition === Position.Right ? -4 : undefined,
-            // bottom: handlePosition === Position.Bottom ? -4 : undefined,
-          }}
-          isConnectable={true}
-        />
-      )}
-    </Comp>
+      {/* No external link icon for non-link buttons */}
+      {renderHandle()}
+    </button>
   );
 }

@@ -158,6 +158,9 @@ const renderElement = (
       return "Button";
     } )();
 
+    // Extract URL if it exists (only link buttons have it)
+    const buttonUrl = ( attributes as APIButtonComponentWithURL ).url;
+
     return (
       <DiscordButton
         key={key}
@@ -166,6 +169,7 @@ const renderElement = (
         buttonStyle={Number( attributes.style ) || ButtonStyle.Secondary}
         disabled={!!attributes.disabled}
         handlePosition={handlePosition}
+        url={buttonUrl}
       >
         {buttonLabel}
       </DiscordButton>

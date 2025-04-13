@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import { useParams } from "react-router-dom";
 
 import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 import { FlowEditorSidebar } from "@vertix.gg/flow/src/features/flow-editor/components/flow-editor-sidebar";
@@ -19,19 +20,20 @@ import { loadLayoutFromLocalStorage, saveLayoutToLocalStorage } from "@vertix.gg
 
 import { ResizableHandle } from "@vertix.gg/flow/src/shared/components/resizable";
 
-export interface FlowEditorProps {
-    initialModulePath?: string;
-    initialFlowName?: string;
-}
-
 /**
  * FlowEditor is the main component for the flow editor
- * It handles module and flow selection, and displays the selected flow
+ * It fetches params from the URL and initializes the provider
  */
-export const FlowEditor: React.FC<FlowEditorProps> = ( {
-    initialModulePath,
-    initialFlowName,
-} ) => {
+export const FlowEditor: React.FC = () => {
+    // Extract parameters from the URL
+    // Make sure the route parameter names match what you define in your routing setup
+    // We'll assume 'guildId', 'modulePath', 'flowName' for now
+    const params = useParams(); // Let useParams infer types
+    const guildIdParam = params.guildId; // Type will be string | undefined
+    // Decode potentially encoded path/name parameters
+    const modulePathParam = params.modulePath ? decodeURIComponent( params.modulePath ) : undefined;
+    const flowNameParam = params.flowName ? decodeURIComponent( params.flowName ) : undefined;
+
     // State to hold layout sizes
     const [ layoutSizes, setLayoutSizes ] = useState<number[] | null>( null );
     // State to manage the key for forcing re-mount
@@ -64,38 +66,65 @@ export const FlowEditor: React.FC<FlowEditorProps> = ( {
     }, [ layoutKey, hasLoadedLayoutApplied ] );
 
     return (
+        // Pass the extracted URL parameters to the provider
         <FlowEditorProvider
-            initialModulePath={initialModulePath}
-            initialFlowName={initialFlowName}
+            guildIdParam={guildIdParam}
+            modulePathParam={modulePathParam}
+            flowNameParam={flowNameParam}
         >
             <FlowLayout>
-                <LoadingIndicator/>
+                {/* Suspense wraps content that depends on potentially suspended data */}
+                <Suspense fallback={
+                    // Render a layout structure within the fallback
+                    <>
+                        <FlowLayoutContent key="loading-layout" onLayout={() => {}}> {/* Dummy key/handler */}
+                            {/* Render sidebar panel structure */}
+                            <FlowLayoutLeftSidebar defaultSize={ layoutSizes ? layoutSizes[ 0 ] : 20 } minSize={ 15 } maxSize={ 25 }>
+                                {/* You could put a minimal sidebar placeholder here if desired */}
+                                <div className="h-full w-full p-4 opacity-50 flex items-center justify-center text-sm">Loading Nav...</div>
+                            </FlowLayoutLeftSidebar>
+                            <ResizableHandle />
+                            {/* Render main panel structure with loader inside */}
+                            <FlowLayoutMainContent defaultSize={ layoutSizes ? layoutSizes[ 1 ] : 60 }>
+                                <div className="h-full w-full flex items-center justify-center">
+                                    <LoadingIndicator />
+                                    <span className="ml-2">Loading Flow...</span>
+                                </div>
+                            </FlowLayoutMainContent>
+                            <ResizableHandle />
+                            {/* Render sidebar panel structure */}
+                            <FlowLayoutRightSidebar defaultSize={ layoutSizes ? layoutSizes[ 2 ] : 20 } minSize={ 15 } maxSize={ 40 }>
+                                {/* You could put a minimal details placeholder here if desired */}
+                                <div className="h-full w-full p-4 opacity-50 flex items-center justify-center text-sm">Loading Details...</div>
+                            </FlowLayoutRightSidebar>
+                        </FlowLayoutContent>
+                        {/* Render activity bar structure */}
+                        <FlowLayoutActivityBar>
+                            {/* You could put a minimal activity placeholder here if desired */}
+                             <div className="h-full w-full p-2 opacity-50 flex items-center justify-center text-sm">Loading Activity...</div>
+                        </FlowLayoutActivityBar>
+                    </>
+                }>
+                    {/* Actual Content (Renders when data is ready) */}
+                    <FlowLayoutContent key={layoutKey} onLayout={handleLayout}>
+                        <FlowLayoutLeftSidebar defaultSize={ layoutSizes ? layoutSizes[ 0 ] : 20 } minSize={ 15 } maxSize={ 25 }>
+                            <FlowEditorSidebar />
+                        </FlowLayoutLeftSidebar>
+                        <ResizableHandle/>
+                        <FlowLayoutMainContent defaultSize={ layoutSizes ? layoutSizes[ 1 ] : 60 }>
+                            <FlowEditorMain />
+                        </FlowLayoutMainContent>
+                        <ResizableHandle/>
+                        <FlowLayoutRightSidebar defaultSize={ layoutSizes ? layoutSizes[ 2 ] : 20 } minSize={ 15 } maxSize={ 40 }>
+                            <FlowEditorDetails />
+                        </FlowLayoutRightSidebar>
+                    </FlowLayoutContent>
 
-                <FlowLayoutContent key={layoutKey} onLayout={handleLayout}>
-                    {/* Left Sidebar - Removed commented out props */ }
-                    <FlowLayoutLeftSidebar defaultSize={ layoutSizes ? layoutSizes[ 0 ] : 20 } minSize={ 15 } maxSize={ 25 }>
-                        <FlowEditorSidebar />
-                    </FlowLayoutLeftSidebar>
+                    <FlowLayoutActivityBar>
+                        <FlowEditorActivity />
+                    </FlowLayoutActivityBar>
+                </Suspense>
 
-                    <ResizableHandle/>
-
-                    {/* Main content - Removed commented out props */ }
-                    <FlowLayoutMainContent defaultSize={ layoutSizes ? layoutSizes[ 1 ] : 60 }>
-                        <FlowEditorMain />
-                    </FlowLayoutMainContent>
-
-                    <ResizableHandle/>
-
-                    {/* Right Sidebar - Removed commented out props */ }
-                    <FlowLayoutRightSidebar defaultSize={ layoutSizes ? layoutSizes[ 2 ] : 20 } minSize={ 15 } maxSize={ 40 }>
-                        <FlowEditorDetails />
-                    </FlowLayoutRightSidebar>
-                </FlowLayoutContent>
-
-                {/* Activity Bar - Removed commented out props */ }
-                <FlowLayoutActivityBar>
-                    <FlowEditorActivity />
-                </FlowLayoutActivityBar>
             </FlowLayout>
         </FlowEditorProvider>
     );

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useFlowEditorContext } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 import { GuildSelector } from "@vertix.gg/flow/src/features/guild-selector/components/guild-selector";
@@ -20,10 +21,18 @@ export const FlowEditorSidebar: React.FC = () => {
         handleModuleClick,
         handleFlowClick,
     } = useFlowEditorContext();
+    const navigate = useNavigate();
+
+    const handleTitleClick = () => {
+        navigate( "/flow" );
+    };
 
     return (
         <>
-            <div className="p-4 border-b bg-primary/5">
+            <div
+                className="p-4 border-b bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors"
+                onClick={handleTitleClick}
+            >
                 <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>
             </div>
 

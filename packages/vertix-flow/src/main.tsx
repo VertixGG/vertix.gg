@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
 import "@vertix.gg/flow/src/index.css";
@@ -69,10 +70,15 @@ if ( rootElement ) {
     const root = ReactDOM.createRoot( rootElement );
 
     root.render(
-        // <React.StrictMode>
-            <ErrorBoundary>
-                <FlowEditor/>
-            </ErrorBoundary>
-        // </React.StrictMode>
+        <ErrorBoundary>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={<FlowEditor />} />
+                    <Route path="/" element={<Navigate to="/flow" replace />} />
+                </Routes>
+            </BrowserRouter>
+        </ErrorBoundary>
     );
+} else {
+    console.error( "Failed to find the root element" );
 }

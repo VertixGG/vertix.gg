@@ -22,6 +22,7 @@
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
         "vertix:bot:jest": "cd packages/vertix-bot && bun run vertix-bot:jest",
         "vertix:bot:eslint": "time bunx --bun eslint packages/vertix-bot",
+        "vertix:bot:backup:prisma": "bun run --bun scripts/backup-bot-prisma.js",
         "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
         "vertix:bot:node:start:dev": "cd packages/vertix-bot && bun run vertix-bot:ts-node:start:dev",
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",

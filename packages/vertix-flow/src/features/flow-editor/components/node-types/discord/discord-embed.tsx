@@ -1,8 +1,13 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
+import ReactMarkdown from "react-markdown";
+
+import remarkGfm from "remark-gfm"; // Plugin for GFM (autolinks, tables, etc.)
 
 import { cn } from "@vertix.gg/flow/src/lib/utils";
+
+import type { Components } from "react-markdown";
 
 import type { VariantProps } from "class-variance-authority";
 
@@ -70,6 +75,16 @@ export interface DiscordEmbedProps
   [key: string]: unknown;
 }
 
+// Type helper for custom component props
+interface CustomComponentProps {
+  node?: any; // The remark AST node, can be typed more strictly if needed
+  children?: React.ReactNode;
+  className?: string;
+  inline?: boolean;
+  // Allow any other HTML attributes
+  [key: string]: any;
+}
+
 /**
  * Discord-styled embed component
  */
@@ -101,6 +116,59 @@ export function DiscordEmbed( {
 
   // If color is provided as a number and no colorVariant, use it for custom color
   const contentVariant = colorVariant || "default";
+
+  // --- Define Custom Renderers for ReactMarkdown (with types) ---
+  const markdownComponents: Components = {
+    // Render links with target=_blank and appropriate styles
+    a: ( { node, children, ...props }: CustomComponentProps ) => (
+      <a
+        {...props}
+        className="text-blue-400 hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    ),
+    // Render inline code with background and padding
+    code: ( { node, inline, className, children, ...props }: CustomComponentProps ) => {
+      // Only style inline code, not code blocks
+      return inline ? (
+        <code
+          className="bg-zinc-700 px-1.5 py-0.5 rounded-sm font-mono text-white"
+          {...props}
+        >
+          {children}
+        </code>
+      ) : (
+        // Basic fallback for block code
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+    // Style unordered lists - Hanging indent and space after
+    ul: ( { node, ...props }: CustomComponentProps ) => (
+      <ul className="list-disc list-outside pl-5 mb-2" {...props} />
+    ),
+    // Style list items - No extra margin needed
+    li: ( { node, children, ...props }: CustomComponentProps ) => (
+      <li {...props}>
+        {children}
+      </li>
+    ),
+    // Ensure strong renders correctly
+    strong: ( { node, children, ...props }: CustomComponentProps ) => (
+      <strong {...props}>{children}</strong>
+    ),
+    // Handle paragraphs - Add margin for spacing between paragraphs
+    p: ( { node, children, ...props }: CustomComponentProps ) => (
+      <p className="mb-2" {...props}>
+        {children}
+      </p>
+    )
+  };
+  // --- END Custom Renderers ---
 
   return (
     <Comp
@@ -136,10 +204,17 @@ export function DiscordEmbed( {
           </div>
         )}
 
-        {/* Embed Description */}
+        {/* Embed Description - Use ReactMarkdown */}
         {description && (
-          <div className="discord-embed-description mb-3 whitespace-pre-wrap text-sm text-[#DCDDDE]">
-            {description}
+          <div
+            className="discord-embed-description text-sm text-[#DCDDDE]"
+          >
+            <ReactMarkdown
+              components={markdownComponents}
+              remarkPlugins={[ remarkGfm ]}
+            >
+              {description}
+            </ReactMarkdown>
           </div>
         )}
 
@@ -167,17 +242,6 @@ export function DiscordEmbed( {
 
         {/* Embed Media Container - For handling thumbnail and image placement */}
         <div className="discord-embed-media relative">
-          {/* Embed Thumbnail */}
-          {thumbnail?.url && (
-            <div className="discord-embed-thumbnail absolute top-0 right-0 ml-4 mt-4">
-              <img
-                src={thumbnail.url}
-                alt="Thumbnail"
-                className="max-h-20 max-w-20 rounded-md object-cover"
-              />
-            </div>
-          )}
-
           {/* Embed Image */}
           {image?.url && (
             <div className="discord-embed-image mt-2 mb-2 overflow-hidden rounded-md">

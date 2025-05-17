@@ -211,9 +211,24 @@ const renderElement = (
  */
 export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) => {
   if ( data.type === "embed" ) {
+    // Extract potential thumbnail URL directly from the embed attributes
+    const thumbnailUrl = data.attributes?.thumbnail?.url;
+
     return (
       <DiscordNodeWrapper>
-        <DiscordEmbed {...data.attributes} />
+        {/* Add a relative container for absolute positioning of the thumbnail */}
+        <div className="relative">
+          {/* Render the embed, passing all attributes EXCEPT the thumbnail */}
+          <DiscordEmbed {...( { ...data.attributes, thumbnail: undefined } )} />
+          {/* Render the thumbnail separately if it exists, positioned top-right */}
+          {thumbnailUrl && (
+            <img
+              src={thumbnailUrl}
+              alt="Thumbnail"
+              className="absolute top-4 right-4 h-16 w-16 rounded-full object-cover"
+            />
+          )}
+        </div>
       </DiscordNodeWrapper>
     );
   }
@@ -231,11 +246,27 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
     return (
       <DiscordNodeWrapper>
         <div className="discord-component bg-background/50 p-2 rounded">
-          {data.embeds?.map( ( embed ) => (
-            <DiscordEmbed key={embed.id} {...embed.attributes} />
-          ) )}
+          {data.embeds?.map( ( embed ) => {
+            // Extract potential thumbnail URL from each embed's attributes
+            const thumbnailUrl = embed.attributes?.thumbnail?.url;
+            return (
+              // Add a relative container for absolute positioning of the thumbnail
+              <div key={embed.id} className="relative mb-2"> {/* Add margin-bottom if multiple embeds */}
+                {/* Render the embed, passing all attributes EXCEPT the thumbnail */}
+                <DiscordEmbed {...( { ...embed.attributes, thumbnail: undefined } )} />
+                {/* Render the thumbnail separately if it exists, positioned top-right */}
+                {thumbnailUrl && (
+                  <img
+                    src={thumbnailUrl}
+                    alt="Thumbnail"
+                    className="absolute top-4 right-4 h-16 w-16 rounded-full object-cover"
+                  />
+                )}
+              </div>
+            );
+          } )}
 
-          {/* Correctly type the row based on ComponentNodeData structure */}
+          {/* Interactive components rendering remains the same */}
           {data.elements?.map( ( row: ComponentRowData, rowIndex: number ) => {
             const elementsCount = row.elements?.length || 0;
             return (

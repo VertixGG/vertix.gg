@@ -40,8 +40,6 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
             },
 
             constants: {
-                dynamicChannelStateVar: uiUtilsWrapAsTemplate( "state" ),
-                dynamicChannelUserVar: uiUtilsWrapAsTemplate( "user" ),
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
 
                 dynamicChannelStatePrivate: "🔴",

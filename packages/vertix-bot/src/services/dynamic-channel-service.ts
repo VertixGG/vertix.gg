@@ -27,6 +27,8 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
+import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE } from "@vertix.gg/base/src/definitions/vars";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
@@ -261,7 +263,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         if ( !masterChannelDB ) {
-            return settings.dynamicChannelNameTemplate.replace( constants.dynamicChannelUserVar, userDisplayName );
+            return settings.dynamicChannelNameTemplate.replace( VAR_DYNAMIC_CHANNEL_USER, userDisplayName );
         }
 
         const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
@@ -297,8 +299,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         const replacements: Record<string, string> = {
-            [ constants.dynamicChannelStateVar ]: state,
-            [ constants.dynamicChannelUserVar ]: userDisplayName
+            [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
+            [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName
         };
 
         return channelNameTemplate.replace(
@@ -1339,7 +1341,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 true
             ),
             defaultDynamicChannelName = defaultDynamicChannelTemplateName!.replace(
-                this.config.defaults.constants.dynamicChannelUserVar,
+                VAR_DYNAMIC_CHANNEL_USER,
                 await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
 

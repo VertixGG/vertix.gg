@@ -10,8 +10,6 @@ export interface MasterChannelSettingsInterface {
 }
 
 export interface MasterChannelConstantsInterface {
-    dynamicChannelStateVar: string;
-    dynamicChannelUserVar: string;
     dynamicChannelsCategoryName: string;
 
     dynamicChannelStatePrivate: string;

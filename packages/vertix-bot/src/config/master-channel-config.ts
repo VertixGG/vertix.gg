@@ -24,8 +24,6 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
         return {
             // Constants will be used globally for the entire bot.
             constants: {
-                dynamicChannelStateVar: uiUtilsWrapAsTemplate( "state" ),
-                dynamicChannelUserVar: uiUtilsWrapAsTemplate( "user" ),
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
 
                 dynamicChannelStatePrivate: "🔴",

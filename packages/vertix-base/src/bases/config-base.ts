@@ -166,6 +166,10 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
             } );
         };
 
+        if ( process.argv.includes( "--config-skip-checksum" ) ) {
+            return;
+        }
+
         const checksum = ( obj: Record<string, any> ) => {
             const entries = extractEntries( obj );
             const data = Buffer.from( entries.map( ( [ key, value ] ) => `${ key }:${ value }` ).join( ";" ) );

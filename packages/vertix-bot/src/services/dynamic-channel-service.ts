@@ -25,9 +25,9 @@ import fetch from "cross-fetch";
 
 import { Routes } from "discord-api-types/v10";
 
-import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
+import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField, ActivityType } from "discord.js";
 
-import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE } from "@vertix.gg/base/src/definitions/vars";
+import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE, VAR_DYNAMIC_CHANNEL_GAME } from "@vertix.gg/base/src/definitions/vars";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -279,13 +279,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         args: {
             userDisplayName: string | null;
             state: ChannelState | null;
+            gameName?: string | null;
         } = {
             state: null,
-            userDisplayName: null
+            userDisplayName: null,
+            gameName: null
         }
     ) {
         let state = "",
-            userDisplayName = "";
+            userDisplayName = "",
+            gameDisplayName = "";
 
         const { constants } = this.config.data;
 
@@ -295,7 +298,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         if ( args.userDisplayName ) {
-            userDisplayName = args.userDisplayName.replace( /[^a-zA-Z0-9]/g, "" );
+            // Allow letters (unicode), numbers, spaces, hyphens, underscores, apostrophes, periods, parentheses
+            userDisplayName = args.userDisplayName.replace(/[^\p{L}\p{N}\s\-_'.()]/gu, "" ).trim() || "User";
+        }
+
+        if ( args.gameName ) {
+            // Allow letters (unicode), numbers, spaces, hyphens, underscores, apostrophes, periods, parentheses
+            gameDisplayName = args.gameName.replace(/[^\p{L}\p{N}\s\-_'.()]/gu, "" ).trim() || "";
         }
 
         const replacements: Record<string, string> = {
@@ -303,10 +312,38 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName
         };
 
-        return channelNameTemplate.replace(
-            new RegExp( Object.keys( replacements ).join( "|" ), "g" ),
-            ( matched: any ) => replacements[ matched ]
-        );
+        // Add game replacement only if gameVar is defined in constants, gameName is available, AND placeholder exists in template
+        if ( VAR_DYNAMIC_CHANNEL_GAME && gameDisplayName && channelNameTemplate.includes(VAR_DYNAMIC_CHANNEL_GAME) ) {
+            replacements[ VAR_DYNAMIC_CHANNEL_GAME ] = gameDisplayName;
+        } else if ( VAR_DYNAMIC_CHANNEL_GAME && channelNameTemplate.includes(VAR_DYNAMIC_CHANNEL_GAME) ) {
+            // If gameVar placeholder exists but no game is being played, replace with empty string.
+            replacements[ VAR_DYNAMIC_CHANNEL_GAME ] = "";
+        }
+
+        let resultName = channelNameTemplate;
+        for (const placeholder in replacements) {
+            // Ensure placeholder actually exists in the object before trying to use it in regex
+            if (Object.prototype.hasOwnProperty.call(replacements, placeholder) && placeholder) {
+                 resultName = resultName.replace(new RegExp(this.escapeRegExp(placeholder), "g"), replacements[placeholder]);
+            }
+        }
+        
+        // Cleanup multiple spaces that might result from empty replacements
+        resultName = resultName.replace(/\s+/g, ' ').trim();
+
+        // B.1: Truncate the name to Discord's limit (conservative 95 chars)
+        const MAX_CHANNEL_NAME_LENGTH = 95;
+        if (resultName.length > MAX_CHANNEL_NAME_LENGTH) {
+            resultName = resultName.substring(0, MAX_CHANNEL_NAME_LENGTH).trim();
+            // Consider adding an ellipsis if desired: e.g., resultName = resultName.substring(0, MAX_CHANNEL_NAME_LENGTH - 3) + "...";
+        }
+
+        return resultName;
+    }
+
+    // Helper function to escape regex special characters
+    private escapeRegExp( string: string ) {
+        return string.replace( /[.*+?^${}()|[\]\\]/g, "\\$&" );
     }
 
     public async getChannelUsersWithPermissionState(
@@ -579,9 +616,29 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             savedData = await UserMasterChannelDataModel.$.getData( user.userId, masterChannelDB.id );
         }
 
-        if ( savedData ) {
+        // Fetch game name early if needed for initial name generation
+        let initialGameName: string | null = null;
+        if (newState.member?.presence) {
+            for (const activity of newState.member.presence.activities) {
+                if (activity.type === ActivityType.Playing) {
+                    initialGameName = activity.name;
+                    break;
+                }
+            }
+        }
+
+        if (savedData) { // If we have saved data, use it
             dynamicChannelName = savedData.dynamicChannelName;
             dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
+
+            // If game is now being played, or if game was part of saved name,
+            // re-assemble with current game status to ensure consistency.
+            // The template here would be the saved name itself.
+            dynamicChannelName = await this.assembleChannelNameTemplate(savedData.dynamicChannelName, {
+                userDisplayName: displayName,
+                state: savedData.dynamicChannelState, // Use saved state
+                gameName: initialGameName // Pass current game name
+            });
 
             const verifiedRoles =
                     await MasterChannelDataManager.$.getChannelVerifiedRoles(
@@ -645,9 +702,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     type: OverwriteType.Member
                 } );
             } );
-        }
-
-        if ( !dynamicChannelName ) {
+        } else { // No saved data, assemble from template
             const dynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB );
 
             if ( !dynamicChannelTemplateName ) {
@@ -658,9 +713,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 return;
             }
 
+            // Assemble with user, state, and game
             dynamicChannelName = await this.assembleChannelNameTemplate( dynamicChannelTemplateName, {
                 userDisplayName: displayName,
-                state: null
+                state: null, // No saved state, so pass null (will default or be set later)
+                gameName: initialGameName // Pass current game name
             } );
         }
 
@@ -1322,7 +1379,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Reset Channel button has been clicked, channel: '${ channel.name }'`
         );
 
-        // Find the “master” channel.
+        // Find the "master" channel.
         const master = await this.services.channelService.getMasterChannelAndDBbyDynamicChannelId( channel.id );
 
         if ( !master ) {

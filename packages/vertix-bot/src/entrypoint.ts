@@ -365,7 +365,8 @@ export async function entryPoint() {
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 
-    await createCleanupWorker();
+    // Disabled for security reasons, proven to be unsafe in long term.
+    // await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 }

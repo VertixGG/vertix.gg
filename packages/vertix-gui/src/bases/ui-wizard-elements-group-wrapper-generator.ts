@@ -39,6 +39,7 @@ interface TUIWizardElementsGroupWrapperGeneratorArgs {
  *   - Provided `args`, determines the button state (enabled/disabled) for wizard control buttons based on their positions.
  *     It also decides whether the next or finish button should be available based on the component's position.
  *     The finish button can be forcibly disabled if `args` includes `_wizardShouldDisableFinishButton`.
+ *     The next button can be forcibly disabled if `args` includes `_wizardShouldDisableNextButton`.
  *
  *   - It finally adds the `wizardControlButtons` to the `currentElements` array and returns it.
  *
@@ -69,12 +70,16 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
             const currentElements: any[][] = [];
 
             // TODO: Fix this, this is code should not be here.
-            if ( Array.isArray( componentElements[ 0 ] ) ) {
-                componentElements.forEach( ( row ) => {
-                    currentElements.push( row as any );
-                } );
-            } else {
-                currentElements.push( [ componentElements ] as any );
+            if ( componentElements && componentElements.length > 0 ) {
+                if ( Array.isArray( componentElements[ 0 ] ) ) {
+                    componentElements.forEach( ( row ) => {
+                        if ( row && row.length > 0 ) {
+                            currentElements.push( row as any );
+                        }
+                    } );
+                } else {
+                    currentElements.push( [ componentElements ] as any );
+                }
             }
 
             if ( args ) {
@@ -99,11 +104,16 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
                     args._wizardIsFinishButtonAvailable = true;
                 }
 
+                if ( args._wizardShouldDisableNextButton ) {
+                    args._wizardIsNextButtonDisabled = true;
+                }
+
                 if ( args._wizardShouldDisableFinishButton ) {
                     args._wizardIsFinishButtonDisabled = true;
                 }
             }
 
+            // Always add control buttons
             currentElements.push( [ ...controlButtons ] );
 
             return currentElements;

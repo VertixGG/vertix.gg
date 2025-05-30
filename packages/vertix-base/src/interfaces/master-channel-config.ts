@@ -7,6 +7,9 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelMentionable: boolean;
     dynamicChannelNameTemplate: string;
     dynamicChannelVerifiedRoles: string[];
+    type?: string;
+    maxMembersPerChannel?: number;
+    categoryId?: string;
 }
 
 export interface MasterChannelConstantsInterface {

@@ -507,19 +507,19 @@ export abstract class UIAdapterBase<
     // TODO: Determine which interaction available showModal, and use it instead of MessageComponentInteraction.
     // TODO: Method does not favor dynamic/static approach.
     public async showModal( modalName: string, interaction: MessageComponentInteraction<"cached"> ) {
-        const args = await this.getArgsInternal( interaction as TInteraction, {} );
+        // Get existing args from ArgsManager to ensure we have the current state
+        const existingArgs = this.getArgsManager().getArgs( this, interaction as TInteraction ) || {};
 
-        // const entity = this.$$.getComponent()
-        //     .getEntities( { modals: true })
-        //     .find( ( entity ) => entity.getName() === modalName );
-        //
-        // if ( ! entity ) {
-        //     throw new Error( `Modal entity: '${ modalName }' not found` );
-        // }
+        // Get any additional args from getArgsInternal
+        const internalArgs = await this.getArgsInternal( interaction as TInteraction, existingArgs );
 
-        // this.buildEntityMap( entity );
+        // Combine existing args with any additional args
+        const combinedArgs = {
+            ...existingArgs,
+            ...internalArgs
+        };
 
-        await this.build( args, "show-modal", interaction as TInteraction );
+        await this.build( combinedArgs, "show-modal", interaction as TInteraction );
 
         const entityMapped = this.getEntityMap( modalName ),
             modalInstance = this.getEntityInstance( entityMapped.entity ) as UIModalBase,

@@ -5,7 +5,7 @@ import { SetupScalingStep1Embed } from "@vertix.gg/bot/src/ui/general/scaling/st
 
 export class SetupScalingStep1Component extends UIComponentBase {
     public static getName() {
-        return "VertixBot/UI-General/Scaling/SetupScalingStep1Component";
+        return "VertixBot/UI-General/SetupScalingStep1Component";
     }
 
     public static getInstanceType() {

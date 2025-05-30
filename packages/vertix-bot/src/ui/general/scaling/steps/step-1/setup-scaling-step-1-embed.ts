@@ -7,7 +7,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupScalingStep1Embed extends UIEmbedBase {
     public static getName() {
-        return "VertixBot/UI-General/Scaling/SetupScalingStep1Embed";
+        return "VertixBot/UI-General/SetupScalingStep1Embed";
     }
 
     public static getInstanceType() {

@@ -4,6 +4,10 @@ import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+
 import { SetupScalingChannelCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-channel-create-button";
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
@@ -12,6 +16,8 @@ import { SetupScalingStep1Component } from "@vertix.gg/bot/src/ui/general/scalin
 import { SetupScalingStep2Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-2/setup-scaling-step-2-component";
 import { SetupScalingStep3Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-3/setup-scaling-step-3-component";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+
+import { MasterChannelType } from "@vertix.gg/bot/src/services/master-channel-service";
 
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
@@ -24,12 +30,18 @@ import type {
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+// Add import for the MasterChannelService
+
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+
 type Interactions =
     | UIDefaultButtonChannelTextInteraction
     | UIDefaultModalChannelTextInteraction
     | UIDefaultStringSelectMenuChannelTextInteraction;
 
 export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
+    private masterChannelService: MasterChannelService;
+
     public static getName() {
         return "VertixBot/UI-General/SetupScalingWizardAdapter";
     }
@@ -71,6 +83,8 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
 
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
+
+        this.masterChannelService = ServiceLocator.$.get( "VertixBot/Services/MasterChannel" );
     }
 
     public getPermissions(): PermissionsBitField {
@@ -190,6 +204,55 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
 
     protected async onBeforeBack( _interaction: UIDefaultButtonChannelTextInteraction ): Promise<void> {
         // No validation needed for going back
+    }
+
+    protected async onBeforeFinish( interaction: UIDefaultButtonChannelTextInteraction ): Promise<void> {
+        // Get the configuration values from the wizard
+        const args = this.getArgsManager().getArgs( this, interaction );
+
+        if ( !args.selectedCategoryId || !args.channelPrefix || !args.maxMembersPerChannel ) {
+            throw new Error( "Missing required configuration for the auto-scaling channel." );
+        }
+
+        try {
+            // Create the Master Scaling Channel with auto-scaling specific parameters
+            const result = await this.masterChannelService.createMasterChannel( {
+                guildId: interaction.guildId,
+                userOwnerId: interaction.user.id,
+                version: VERSION_UI_V3,
+                // Specify that this is an auto-scaling master channel
+                type: MasterChannelType.AUTO_SCALING,
+                // Use the prefix for the name template of auto-scaling channels
+                dynamicChannelNameTemplate: `${ args.channelPrefix }-{index}`, // Use index placeholder for numbering
+                // Auto-scaling specific settings as a separate object
+                autoScalingSettings: {
+                    maxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
+                    categoryId: args.selectedCategoryId
+                }
+                // Note: We intentionally don't pass any dynamic channel specific settings
+            } );
+
+            if ( result.code !== "success" ) {
+                if ( result.code === "limit-reached" ) {
+                    throw new Error( `You have reached the maximum number of master channels (${ result.maxMasterChannels }).` );
+                } else {
+                    throw new Error( "Failed to create the Master Scaling Channel." );
+                }
+            }
+
+            // Store the scaling configuration in channel data
+            // For now, we'll just store success information for the completion message
+            this.getArgsManager().setArgs( this, interaction, {
+                ...args,
+                setupCompleted: true,
+                masterChannelId: result.channel?.id,
+                masterChannelCategory: result.category?.name
+            } );
+
+        } catch ( error ) {
+            console.error( "Error creating Master Scaling Channel:", error );
+            throw new Error( "Failed to create the Master Scaling Channel: " + ( error as Error ).message );
+        }
     }
 
     private async onCreateScalingChannel( interaction: UIDefaultButtonChannelTextInteraction ) {

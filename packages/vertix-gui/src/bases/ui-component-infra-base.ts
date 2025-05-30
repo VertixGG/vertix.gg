@@ -36,25 +36,25 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
             getItems: ( groups: ( typeof UIGroupBase )[] ) => UIEntityTypesConstructor;
         };
     } = {
-        element: {
-            getGroups: ( self: typeof UIComponentInfraBase ) => self.getElementsGroups(),
-            getInitialGroup: ( self: typeof UIComponentInfraBase ) => self.getDefaultElementsGroup(),
-            getItems: ( elementsGroups: ( typeof UIElementsGroupBase )[] ) =>
+            element: {
+                getGroups: ( self: typeof UIComponentInfraBase ) => self.getElementsGroups(),
+                getInitialGroup: ( self: typeof UIComponentInfraBase ) => self.getDefaultElementsGroup(),
+                getItems: ( elementsGroups: ( typeof UIElementsGroupBase )[] ) =>
                 elementsGroups.map( ( elementsGroup ) => elementsGroup.getItems() ) as UIElementsTypes
-        },
-        embed: {
-            getGroups: ( self: typeof UIComponentInfraBase ) => self.getEmbedsGroups(),
-            getInitialGroup: ( self: typeof UIComponentInfraBase ) => self.getDefaultEmbedsGroup(),
-            getItems: ( embedsGroups: ( typeof UIEmbedsGroupBase )[] ) =>
+            },
+            embed: {
+                getGroups: ( self: typeof UIComponentInfraBase ) => self.getEmbedsGroups(),
+                getInitialGroup: ( self: typeof UIComponentInfraBase ) => self.getDefaultEmbedsGroup(),
+                getItems: ( embedsGroups: ( typeof UIEmbedsGroupBase )[] ) =>
                 embedsGroups.map( ( embedsGroup ) => embedsGroup.getItems() ).flat() as UIEmbedTypes
-        },
-        markdown: {
-            getGroups: ( self: typeof UIComponentInfraBase ) => self.getMarkdownsGroups(),
-            getInitialGroup: ( self: typeof UIComponentInfraBase ) => self.getDefaultMarkdownsGroup(),
-            getItems: ( markdownsGroups: ( typeof UIMarkdownsGroupBase )[] ) =>
+            },
+            markdown: {
+                getGroups: ( self: typeof UIComponentInfraBase ) => self.getMarkdownsGroups(),
+                getInitialGroup: ( self: typeof UIComponentInfraBase ) => self.getDefaultMarkdownsGroup(),
+                getItems: ( markdownsGroups: ( typeof UIMarkdownsGroupBase )[] ) =>
                 markdownsGroups.map( ( markdownsGroup ) => markdownsGroup.getItems() ).flat() as UIMarkdownTypes
-        }
-    };
+            }
+        };
 
     // TODO: Those are currentGroup...
     private currentElementsType: typeof UIElementsGroupBase;

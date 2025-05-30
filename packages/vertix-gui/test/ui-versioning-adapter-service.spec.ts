@@ -70,7 +70,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
 
         // Act
         const adapter = await
-            versioningService.get( "Vertix/RenameAdapter", {} as Base, {} );
+        versioningService.get( "Vertix/RenameAdapter", {} as Base, {} );
 
         // Assert
         expect( adapter!.getName() ).toBe( "Vertix/UI-V1/RenameAdapter" );
@@ -100,7 +100,7 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
 
         // Act
         const adapter = await
-            versioningService.get( "Vertix/CoolEntities/RenameAdapter", {} as Base, {} );
+        versioningService.get( "Vertix/CoolEntities/RenameAdapter", {} as Base, {} );
 
         // Assert
         expect( adapter!.getName() ).toBe( "Vertix/UI-V1/CoolEntities/RenameAdapter" );

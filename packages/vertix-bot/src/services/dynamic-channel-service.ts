@@ -596,7 +596,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     await MasterChannelDataManager.$.getChannelVerifiedRoles(
                         masterChannelDB,
                         masterChannel.guildId
-                     ),
+                    ),
                 verifiedFlagsSet: bigint[] = [];
 
             const {
@@ -896,8 +896,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         newState: ChannelState
     ) {
         const result: IDynamicEditChannelStateResult = {
-                code: DynamicEditChannelStateResultCode.Error
-            },
+            code: DynamicEditChannelStateResultCode.Error
+        },
             roles = await this.getVerifiedRoles( channel );
 
         let editStatePromise;

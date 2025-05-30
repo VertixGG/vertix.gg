@@ -251,15 +251,15 @@ describe( "VertixGUI/UIComponentBase", () => {
                 .withName( "test" )
                 .withInstanceType( UIInstancesTypes.Dynamic )
                 .withElements( /* 2 rows */ [
-                        UIMockGeneratorUtil.createElement()
-                            .withName( "entity-element-row-1" )
-                            .withInstanceType( UIInstancesTypes.Dynamic )
-                            .build() ], [
-                        UIMockGeneratorUtil.createElement()
-                            .withName( "entity-element-row-2" )
-                            .withInstanceType( UIInstancesTypes.Dynamic )
-                            .build()
-                    ]
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "entity-element-row-1" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build() ], [
+                    UIMockGeneratorUtil.createElement()
+                        .withName( "entity-element-row-2" )
+                        .withInstanceType( UIInstancesTypes.Dynamic )
+                        .build()
+                ]
                 )
                 .build();
 

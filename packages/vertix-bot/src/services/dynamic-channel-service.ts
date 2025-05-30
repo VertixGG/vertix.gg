@@ -29,6 +29,8 @@ import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "d
 
 import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE, VAR_DYNAMIC_CHANNEL_GAME } from "@vertix.gg/base/src/definitions/vars";
 
+import { DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH } from "@vertix.gg/base/src/definitions/discord";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
@@ -100,6 +102,8 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+
+i;
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
@@ -334,9 +338,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         resultName = resultName.replace( /\s+/g, " " ).trim();
 
         // Respect Discord's channel name length limit (conservative 95 chars)
-        const MAX_CHANNEL_NAME_LENGTH = 95;
-        if ( resultName.length > MAX_CHANNEL_NAME_LENGTH ) {
-            resultName = resultName.substring( 0, MAX_CHANNEL_NAME_LENGTH ).trim();
+        if ( resultName.length > DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH ) {
+            resultName = resultName.substring( 0, DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH ).trim();
         }
 
         return resultName;

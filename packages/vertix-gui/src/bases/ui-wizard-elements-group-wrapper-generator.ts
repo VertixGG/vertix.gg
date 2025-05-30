@@ -69,12 +69,16 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
             const currentElements: any[][] = [];
 
             // TODO: Fix this, this is code should not be here.
-            if ( Array.isArray( componentElements[ 0 ] ) ) {
-                componentElements.forEach( ( row ) => {
-                    currentElements.push( row as any );
-                } );
-            } else {
-                currentElements.push( [ componentElements ] as any );
+            if ( componentElements && componentElements.length > 0 ) {
+                if ( Array.isArray( componentElements[ 0 ] ) ) {
+                    componentElements.forEach( ( row ) => {
+                        if ( row && row.length > 0 ) {
+                            currentElements.push( row as any );
+                        }
+                    } );
+                } else {
+                    currentElements.push( [ componentElements ] as any );
+                }
             }
 
             if ( args ) {
@@ -104,6 +108,7 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
                 }
             }
 
+            // Always add control buttons
             currentElements.push( [ ...controlButtons ] );
 
             return currentElements;

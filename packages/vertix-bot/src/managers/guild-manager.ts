@@ -133,8 +133,8 @@ export class GuildManager extends InitializeBase {
             defaultChannel,
             user
                 ? {
-                      userId: user.id
-                  }
+                    userId: user.id
+                }
                 : undefined
         );
     }

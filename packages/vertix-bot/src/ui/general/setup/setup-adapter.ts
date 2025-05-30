@@ -109,6 +109,11 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             );
 
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupScalingChannelCreateButton",
+                this.onCreateScalingChannelClicked
+            );
+
+            this.bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/SetupBadwordsEditButton",
                 this.onEditBadwordsClicked
             );
@@ -200,6 +205,14 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         } );
 
         // Delete Args since left to another adapter.
+        this.deleteArgs( interaction );
+    }
+
+    private async onCreateScalingChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+        // Run the Auto-Scaling setup wizard
+        this.uiService.get( "VertixBot/UI-General/SetupScalingWizardAdapter" )?.runInitial( interaction, {} );
+
+        // Delete Args since left to another adapter
         this.deleteArgs( interaction );
     }
 

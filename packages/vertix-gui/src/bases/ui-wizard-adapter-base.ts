@@ -60,10 +60,9 @@ export class UIWizardAdapterBase<
                     implementedObject.embedsGroup = component.getName() + "/EmbedsGroup";
                 }
 
-                // Check has elements.
-                if ( entities.some( ( e ) => e.getType() === "element" ) ) {
-                    implementedObject.elementsGroup = component.getName() + "/ElementsGroup";
-                }
+                // Always add elements group for wizard components to ensure wizard control buttons are available
+                // This handles the case where a component doesn't define elements explicitly
+                implementedObject.elementsGroup = component.getName() + "/ElementsGroup";
 
                 result[ component.getName() ] = implementedObject;
             } );

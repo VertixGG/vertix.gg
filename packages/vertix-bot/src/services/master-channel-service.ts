@@ -726,10 +726,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         // Save the settings with additional auto-scaling specific fields
         await MasterChannelDataModelV3.$.setSettings( db.id, {
             ...args,
-            type: MasterChannelType.AUTO_SCALING,
+            scalingChannelType: MasterChannelType.AUTO_SCALING,
             // Store auto-scaling specific settings
-            maxMembersPerChannel,
-            categoryId: parent.id
+            scallingChannelMaxMembersPerChannel: maxMembersPerChannel,
+            scallingChannelCategoryId: parent.id
         }, true );
 
         return result;

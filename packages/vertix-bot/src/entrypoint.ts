@@ -356,10 +356,17 @@ export async function entryPoint() {
         GlobalLogger.$.info( entryPoint,"Emoji manager is initialized" );
     } );
 
-    await registerUILanguageManager( {
-        shouldImport: true,
-        shouldValidate: true
-    } );
+    if ( process.argv.includes( "--lang-bypass-import-validation" ) ) {
+        await registerUILanguageManager( {
+            shouldImport: false,
+            shouldValidate: false
+        } );
+    } else {
+        await registerUILanguageManager( {
+            shouldImport: true,
+            shouldValidate: true
+        } );
+    }
 
     await registerUIVersionStrategies();
 

@@ -103,8 +103,6 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
-i;
-
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     channelService: ChannelService;

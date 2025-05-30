@@ -28,8 +28,25 @@ This document outlines the core concepts and functionality of the Auto-Scaling V
 
 *   Administrators initiate the setup via the `/setup` command.
 *   A new option, "Create Master Scaling Channel," guides the admin through a wizard:
-    *   **Step 1: Select or Create Category:** The admin can choose an existing category to manage or opt to create a new category specifically for auto-scaling.
-    *   **Step 2: Configure Scaling Settings:** The admin defines the `Channel Prefix` and `Max Members per Channel` for the voice channels that will be auto-created in the selected/newly-created category.
+    *   **Step 1: Introduction (New)**
+        *   Before any configuration, the wizard will display an introductory embed message. The message will be similar to the following:
+            *   **Title:** Welcome to Auto-Scaling Channel Setup!
+            *   **Description:** This wizard will help you set up a category of voice channels that automatically scale with demand.
+                *   The bot will create a special "Master Scaling Channel" in a category you choose.
+                *   Based on your settings (channel name prefix and max users per channel), the bot will add new voice channels when needed and can remove them when they are empty.
+            *   **Next Steps:**
+                1.  Choose or create a category for these auto-scaling channels.
+                2.  Set a name prefix for the channels (e.g., "Lobby", "Game Room").
+                3.  Define the maximum number of users per channel.
+            *   Click "Next" or "Continue" to begin.
+        *   This message will briefly explain what the Auto-Scaling Channel feature is, how it works by managing channels within a category based on user demand, and what the subsequent setup steps will involve (choosing a category, setting a prefix, and defining max members).
+        *   This ensures the admin understands the feature's purpose and the setup process before proceeding.
+    *   **Step 2: Select or Create Category:**
+        *   The wizard will first ask the admin to decide if they want to use an existing guild category for the auto-scaling channels or create a new one.
+        *   If choosing an existing category, the admin will select it from a list. All voice channels subsequently created by the auto-scaling feature will reside here, alongside any pre-existing channels in that category.
+        *   If creating a new category, the admin will be prompted to provide a name for it. This new category will then be dedicated to the auto-scaled voice channels and the Master Scaling Channel itself.
+        *   The admin can choose an existing category to manage or opt to create a new category specifically for auto-scaling.
+    *   **Step 3: Configure Scaling Settings:** The admin defines the `Channel Prefix` and `Max Members per Channel` for the voice channels that will be auto-created in the selected/newly-created category.
 *   Upon completion, the bot creates the "Master Scaling Channel" within the designated category and stores the configuration.
 
 ### 2. Auto-Scaling Logic

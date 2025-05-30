@@ -249,16 +249,21 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         userId: string,
         newName?: string,
     ): Promise<string> {
+        // Supported placeholders: {user}, {state}, {game}
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id ),
             userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
-        const { constants } = this.config.data,
-            { settings } = this.config.data;
+        // Get the user's current game name
+        const member = channel.guild.members.cache.get( userId );
+        const gameName = member ? this.getUserCurrentGame( member ) : null;
+
+        const { settings } = this.config.data;
 
         if ( newName?.length ) {
             return this.assembleChannelNameTemplate( newName, {
                 userDisplayName,
-                state: await this.getChannelState( channel )
+                state: await this.getChannelState( channel ),
+                gameName
             } );
         }
 
@@ -270,7 +275,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         return this.assembleChannelNameTemplate( channelNameTemplate!, {
             userDisplayName,
-            state: await this.getChannelState( channel )
+            state: await this.getChannelState( channel ),
+            gameName
         } );
     }
 
@@ -309,7 +315,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const replacements: Record<string, string> = {
             [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
-            [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName
+            [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName,
+            [ VAR_DYNAMIC_CHANNEL_GAME ]: args.gameName ?? ""
         };
 
         // Add game replacement only if gameVar is defined in constants, gameName is available, AND placeholder exists in template
@@ -713,11 +720,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 return;
             }
 
-            // Assemble with user, state, and game
+            // Get the user's current game name
+            const member = guild.members.cache.get( userOwnerId );
+            const gameName = member ? this.getUserCurrentGame( member ) : null;
+
             dynamicChannelName = await this.assembleChannelNameTemplate( dynamicChannelTemplateName, {
                 userDisplayName: displayName,
-                state: null, // No saved state, so pass null (will default or be set later)
-                gameName: initialGameName // Pass current game name
+                state: null,
+                gameName
             } );
         }
 
@@ -2250,6 +2260,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         if ( await ChannelModel.$.isDynamic( oldState.channelId! ) ) {
             await this.onLeaveDynamicChannel( args );
         }
+    }
+
+    private getUserCurrentGame( member: GuildMember ): string | null {
+        const activity = member.presence?.activities.find( a => a.type === 0 && !!a.name ); // type 0 = Playing
+        return activity?.name ?? null;
     }
 }
 

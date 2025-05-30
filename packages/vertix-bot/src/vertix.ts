@@ -145,7 +145,14 @@ export default async function Main() {
     logger.log( Main, "Bot is starting..." );
 
     const client = new Client( {
-        intents: [ "GuildIntegrations", "GuildInvites", "Guilds", "GuildVoiceStates", "DirectMessages" ],
+        intents: [
+            "GuildIntegrations",
+            "GuildInvites",
+            "Guilds",
+            "GuildVoiceStates",
+            "DirectMessages",
+            "GuildPresences"
+        ],
         partials: [ Partials.Channel ],
         shards: "auto"
     } );

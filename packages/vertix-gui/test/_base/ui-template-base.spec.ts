@@ -28,13 +28,13 @@ describe( "VertixGUI/UITemplateBase", () => {
     test( "composeTemplate() :: should handle missing selectOptions gracefully", () => {
         // Arrange.
         const template = {
-            greeting: "Hello, {name}! Your age is {age}.",
-            message: "You have {num} new messages. Your email is {email}.",
-        }, data = {
-            name: "John",
-            age: 30,
-            num: 3,
-        };
+                greeting: "Hello, {name}! Your age is {age}.",
+                message: "You have {num} new messages. Your email is {email}.",
+            }, data = {
+                name: "John",
+                age: 30,
+                num: 3,
+            };
 
         // Act.
         const result = templateBase.compose( template, data, {} );
@@ -49,19 +49,19 @@ describe( "VertixGUI/UITemplateBase", () => {
     test( "composeTemplate() :: should replace template variables with content values and return a new object (with selectOptions)", () => {
         // Arrange.
         const template = {
-            greeting: "Hello, {name}!",
-            message: "You have {num} new messages. {extraMessage}."
-        }, data = {
-            name: "John",
-            num: 3,
-            extraMessage: 1,
-        }, options = {
-            extraMessage: {
-                0: "You're doing great!",
-                1: "Keep it up!",
-                2: "Almost there!"
-            }
-        };
+                greeting: "Hello, {name}!",
+                message: "You have {num} new messages. {extraMessage}."
+            }, data = {
+                name: "John",
+                num: 3,
+                extraMessage: 1,
+            }, options = {
+                extraMessage: {
+                    0: "You're doing great!",
+                    1: "Keep it up!",
+                    2: "Almost there!"
+                }
+            };
 
         // Act.
         const result = templateBase.compose( template, data, options );

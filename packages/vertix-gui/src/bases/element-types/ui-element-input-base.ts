@@ -27,8 +27,8 @@ export abstract class UIElementInputBase extends UIElementBase<APITextInputCompo
 
     public async getTranslatableContent(): Promise<UIElementTextInputLanguageContent> {
         const result: UIElementTextInputLanguageContent = {
-                label: await this.getLabel()
-            },
+            label: await this.getLabel()
+        },
             placeholder = await this.getPlaceholder?.();
 
         if ( placeholder ) {

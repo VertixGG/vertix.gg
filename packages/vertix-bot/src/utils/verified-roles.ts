@@ -29,7 +29,7 @@ export const guildGetBasicRolesIds = async( guildId: string ): Promise<string[]>
 export const guildGetBasicRolesFormatted = async( guild: Guild, roleIds: string[] ): Promise<string> => {
     return roleIds?.length
         ? roleIds
-              .map( ( i: string ) => GUILD_DEFAULT_BASIC_ROLE_PREFIX + i + GUILD_DEFAULT_BASIC_ROLE_SUFFIX )
-              .join( GUILD_DEFAULT_BASIC_ROLE_SEPARATOR )
+            .map( ( i: string ) => GUILD_DEFAULT_BASIC_ROLE_PREFIX + i + GUILD_DEFAULT_BASIC_ROLE_SUFFIX )
+            .join( GUILD_DEFAULT_BASIC_ROLE_SEPARATOR )
         : rolesGetEveryoneRoleMention( guild );
 };

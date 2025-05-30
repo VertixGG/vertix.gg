@@ -31,6 +31,7 @@ const config = [
             "array-bracket-spacing": [ "error", "always" ],
             "object-curly-spacing": [ "error", "always" ],
             "computed-property-spacing": [ "error", "always" ],
+            "indent": ["error", 4, { "SwitchCase": 1 }],
             'no-restricted-imports': [
                 'error',
                 {

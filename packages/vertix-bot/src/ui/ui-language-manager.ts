@@ -468,9 +468,9 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             allModalsElements = allModals.map( ( modal ) => ( modal as any as typeof UIModalBase ).getInputElements() );
 
         const elementsLanguage = await this.extractElementsLanguage( [
-                ...allElements,
-                ...allModalsElements.flat( UI_ELEMENTS_DEPTH )
-            ] as any ),
+            ...allElements,
+            ...allModalsElements.flat( UI_ELEMENTS_DEPTH )
+        ] as any ),
             embedsLanguage = await this.extractEmbedsLanguage( allEmbeds as any ),
             markdownsLanguage = await this.extractMarkdownLanguage( allMarkdowns as any ),
             modalsLanguage = await this.extractModalsLanguage( allModals as any );

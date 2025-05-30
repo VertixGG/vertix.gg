@@ -69,7 +69,7 @@ describe( "VertixGUI/UIHashService", () => {
             const parts = id.split( "-" );
             const expectedHash = parts
                 .map( ( part ) => uiHashService.$$.generateHash( part, 15, shouldSignOnce() ) )
-                    .join( "-" );
+                .join( "-" );
 
             expect( hash ).toBe( expectedHash );
             expect( uiHashService.getId( hash, "-" ) ).toBe( id );

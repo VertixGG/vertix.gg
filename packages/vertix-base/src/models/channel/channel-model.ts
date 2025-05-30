@@ -247,9 +247,9 @@ export class ChannelModel extends ModelWithDataBase<
 
         const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
             ? {
-                  data: true,
-                  key: dataKey
-              }
+                data: true,
+                key: dataKey
+            }
             : undefined;
 
         return this.findMany( { where, include } );
@@ -263,9 +263,9 @@ export class ChannelModel extends ModelWithDataBase<
 
         const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
             ? {
-                  data: true,
-                  key: dataKey
-              }
+                data: true,
+                key: dataKey
+            }
             : undefined;
 
         return this.findMany( { where, include } );

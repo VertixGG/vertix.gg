@@ -195,6 +195,7 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function createCleanupWorker() {
     try {
         const thread = await initWorker();

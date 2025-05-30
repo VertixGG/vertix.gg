@@ -8,8 +8,9 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelNameTemplate: string;
     dynamicChannelVerifiedRoles: string[];
     scalingChannelType?: string;
-    scallingChannelMaxMembersPerChannel?: number;
-    scallingChannelCategoryId?: string;
+    scalingChannelMaxMembersPerChannel?: number;
+    scalingChannelCategoryId?: string;
+    scalingChannelPrefix?: string;
 }
 
 export interface MasterChannelConstantsInterface {

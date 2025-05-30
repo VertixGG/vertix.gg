@@ -69,6 +69,7 @@ interface IMasterChannelCreateCommonArgs extends Partial<MasterChannelSettingsIn
 interface IAutoScalingChannelArgs {
     maxMembersPerChannel: number; // Maximum members per channel before creating a new one
     categoryId: string; // The category ID for auto-scaling channels
+    channelPrefix?: string; // The prefix for auto-scaling channel names
 }
 
 interface IMasterChannelCreateInternalArgs extends IMasterChannelCreateCommonArgs {
@@ -722,14 +723,16 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         // Safely get auto-scaling settings
         const autoScalingSettings = ( args as any ).autoScalingSettings as IAutoScalingChannelArgs | undefined;
         const maxMembersPerChannel = autoScalingSettings?.maxMembersPerChannel || 5; // Default to 5 if not specified
+        const channelPrefix = autoScalingSettings?.channelPrefix || ""; // Get the channel prefix or use empty string
 
         // Save the settings with additional auto-scaling specific fields
         await MasterChannelDataModelV3.$.setSettings( db.id, {
             ...args,
             scalingChannelType: MasterChannelType.AUTO_SCALING,
             // Store auto-scaling specific settings
-            scallingChannelMaxMembersPerChannel: maxMembersPerChannel,
-            scallingChannelCategoryId: parent.id
+            scalingChannelMaxMembersPerChannel: maxMembersPerChannel,
+            scalingChannelCategoryId: parent.id,
+            scalingChannelPrefix: channelPrefix
         }, true );
 
         return result;

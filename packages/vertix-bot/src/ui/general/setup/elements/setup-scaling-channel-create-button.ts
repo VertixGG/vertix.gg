@@ -20,6 +20,10 @@ export class SetupScalingChannelCreateButton extends UIElementButtonBase {
         return Promise.resolve( "secondary" );
     }
 
+    protected isDisabled(): Promise<boolean> {
+        return Promise.resolve( true );
+    }
+
     protected async getEmoji(): Promise<string> {
         return "➕";
     }

@@ -17,6 +17,7 @@
     "scripts": {
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
+        "vertix:type-check": "tsc -b",
         "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:gui:jest )",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
@@ -57,7 +58,7 @@
         "tsx": "^4.19.1",
         "typescript": "latest"
     },
-    "packageManager": "bun@1.1.18",
+    "packageManager": "bun@1.2.25",
     "peerDependencies": {
         "typescript": "^5.0.0"
     }

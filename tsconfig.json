@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "noEmit": true
+    },
+    "files": [],
+    "references": [
+        { "path": "packages/vertix-base/tsconfig.json" },
+        { "path": "packages/vertix-bot/tsconfig.json" },
+        { "path": "packages/vertix-gui/tsconfig.json" },
+        { "path": "packages/vertix-prisma/tsconfig.json" },
+        { "path": "packages/vertix-test-utils/tsconfig.json" },
+        { "path": "packages/vertix-utils/tsconfig.json" }
+    ]
+}

@@ -1,9 +1,28 @@
 {
-  "name": "prisma-client-688a616cfc8c37e634be10f3df0ecd255c5548a5fe011c198ed7a209414e17b4",
+  "name": "prisma-client-40c119853ecd828bbf8d73a308df4f18d52a16efe2c16a1bae4c43cf723792af",
   "main": "index.js",
   "types": "index.d.ts",
   "browser": "index-browser.js",
   "exports": {
+    "./client": {
+      "require": {
+        "node": "./index.js",
+        "edge-light": "./wasm.js",
+        "workerd": "./wasm.js",
+        "worker": "./wasm.js",
+        "browser": "./index-browser.js",
+        "default": "./index.js"
+      },
+      "import": {
+        "node": "./index.js",
+        "edge-light": "./wasm.js",
+        "workerd": "./wasm.js",
+        "worker": "./wasm.js",
+        "browser": "./index-browser.js",
+        "default": "./index.js"
+      },
+      "default": "./index.js"
+    },
     "./package.json": "./package.json",
     ".": {
       "require": {
@@ -57,20 +76,44 @@
     "./wasm": {
       "types": "./wasm.d.ts",
       "require": "./wasm.js",
-      "import": "./wasm.js",
-      "default": "./wasm.js"
+      "import": "./wasm.mjs",
+      "default": "./wasm.mjs"
+    },
+    "./runtime/client": {
+      "types": "./runtime/client.d.ts",
+      "require": "./runtime/client.js",
+      "import": "./runtime/client.mjs",
+      "default": "./runtime/client.mjs"
     },
     "./runtime/library": {
       "types": "./runtime/library.d.ts",
       "require": "./runtime/library.js",
-      "import": "./runtime/library.js",
-      "default": "./runtime/library.js"
+      "import": "./runtime/library.mjs",
+      "default": "./runtime/library.mjs"
     },
     "./runtime/binary": {
       "types": "./runtime/binary.d.ts",
       "require": "./runtime/binary.js",
-      "import": "./runtime/binary.js",
-      "default": "./runtime/binary.js"
+      "import": "./runtime/binary.mjs",
+      "default": "./runtime/binary.mjs"
+    },
+    "./runtime/wasm": {
+      "types": "./runtime/wasm.d.ts",
+      "require": "./runtime/wasm.js",
+      "import": "./runtime/wasm.mjs",
+      "default": "./runtime/wasm.mjs"
+    },
+    "./runtime/edge": {
+      "types": "./runtime/edge.d.ts",
+      "require": "./runtime/edge.js",
+      "import": "./runtime/edge-esm.js",
+      "default": "./runtime/edge-esm.js"
+    },
+    "./runtime/react-native": {
+      "types": "./runtime/react-native.d.ts",
+      "require": "./runtime/react-native.js",
+      "import": "./runtime/react-native.js",
+      "default": "./runtime/react-native.js"
     },
     "./generator-build": {
       "require": "./generator-build/index.js",
@@ -92,6 +135,6 @@
     },
     "./*": "./*"
   },
-  "version": "5.19.1",
+  "version": "6.8.2",
   "sideEffects": false
 }

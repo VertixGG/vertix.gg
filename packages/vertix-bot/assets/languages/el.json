@@ -2287,11 +2287,15 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Εγκατάσταση Vertix",
-        "description": "Ανακάλυψε τις απεριόριστες δυνατότητες που προσφέρει το **Vertix**!\n Διαμόρφωσε και εξατομίκευσε τον διακομιστή σου στο έπακρο.\n\nΓια να δημιουργήσεις ένα νέο Κύριο Κανάλι απλώς πάτα το:\n`(➕ Create Master Channel)` κουμπί.\n\nΤα Κύρια Κανάλια είναι παραγωγοί των δυναμικών καναλιών , με το κάθε ένα από αυτά να έχει τις δικές του ρυθμίσεις.\n\nΗ λειτουργία ύβρεων/αποκλεισμένων λέξεων επιτρέπει την κοινοτοικού επιπέδου επεξεργασία και ελέγει τις ονομασίες των δυναμικών καναλιών.\n\n_**Τρέχοντα Κύρια Κανάλια**_:\n{masterChannelMessage}\n\n_Τρέχουσες Ύβρεις/Αποκλεισμένες Λέξεις_:\n{badwordsMessage}",
+        "description": "Ανακάλυψε τις απεριόριστες δυνατότητες που προσφέρει το **Vertix**!\n Διαμόρφωσε και εξατομίκευσε τον διακομιστή σου στο έπακρο.\n\nΓια να δημιουργήσεις ένα νέο Κύριο Κανάλι απλώς πάτα το:\n`(➕ Create Master Channel)` κουμπί.\n\nΤα Κύρια Κανάλια είναι παραγωγοί των δυναμικών καναλιών , με το κάθε ένα από αυτά να έχει τις δικές του ρυθμίσεις.\n\nΗ λειτουργία ύβρεων/αποκλεισμένων λέξεων επιτρέπει την κοινοτοικού επιπέδου επεξεργασία και ελέγει τις ονομασίες των δυναμικών καναλιών.\n\n_**Τρέχοντα κλιμακούμενα κύρια κανάλια**_:\n{masterScalingChannelMessage}\n\n_**Τρέχοντα δυναμικά κύρια κανάλια**_:\n{masterDynamicChannelMessage}\n\n_Τρέχουσες Ύβρεις/Αποκλεισμένες Λέξεις_:\n{badwordsMessage}",
         "options": {
-          "masterChannelMessage": {
-            "{masterChannels}": "\n{masterChannels}",
-            "{masterChannelMessageDefault}": "**Κανένα**"
+          "masterScalingChannelMessage": {
+            "{masterScalingChannels}": "\n{masterScalingChannels}",
+            "{masterScalingChannelMessageDefault}": "**Κανένα**"
+          },
+          "masterDynamicChannelMessage": {
+            "{masterDynamicChannels}": "\n{masterDynamicChannels}",
+            "{masterDynamicChannelMessageDefault}": "**Κανένα**"
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",

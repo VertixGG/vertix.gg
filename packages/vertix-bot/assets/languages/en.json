@@ -2287,11 +2287,19 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Setup Vertix",
-        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current scaling master channels**_:\n{masterScalingChannelMessage}\n\n_**Current dynamic master channels**_:\n{masterDynamicChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**None**"
+          },
+          "masterDynamicChannelMessage": {
+            "{masterDynamicChannels}": "\n{masterDynamicChannels}",
+            "{masterDynamicChannelMessageDefault}": "**None**"
+          },
+          "masterScalingChannelMessage": {
+            "{masterScalingChannels}": "\n{masterScalingChannels}",
+            "{masterScalingChannelMessageDefault}": "**None**"
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
@@ -2313,6 +2321,38 @@
               "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
               "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
               "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
+              "version": "▹ UI Version: `{version}`"
+            }
+          },
+          "masterDynamicChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n",
+            "options": {
+              "index": "**#{index}**",
+              "name": "▹ Name: <#{id}>",
+              "id": "▹ Channel ID: `{id}`",
+              "type": "▹ Type: `{type}`",
+              "channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
+              "channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
+              "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
+              "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
+              "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
+              "version": "▹ UI Version: `{version}`"
+            }
+          },
+          "masterScalingChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n",
+            "options": {
+              "index": "**#{index}**",
+              "name": "▹ Name: <#{id}>",
+              "id": "▹ Channel ID: `{id}`",
+              "type": "▹ Type: `{type}`",
+              "scalingChannelPrefix": "▹ Scaling Channel Prefix: `{scalingChannelPrefix}`",
+              "scalingChannelMaxMembers": "▹ Max Members Per Channel: `{scalingChannelMaxMembers}`",
+              "scalingChannelCategory": "▹ Category: {scalingChannelCategory}",
               "version": "▹ UI Version: `{version}`"
             }
           },

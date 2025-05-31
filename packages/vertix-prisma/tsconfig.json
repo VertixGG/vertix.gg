@@ -14,13 +14,15 @@
         ],
         "module": "ESNext",
 
+        "rootDir": "./",
+
         "moduleResolution": "bundler",
 
         "strict": true,
 
         "esModuleInterop": true,
 
-        // Skip lib check
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true
     }
 }

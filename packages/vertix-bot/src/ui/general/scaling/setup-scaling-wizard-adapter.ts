@@ -9,6 +9,8 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
+
 import { SetupScalingChannelCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-channel-create-button";
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
@@ -17,8 +19,6 @@ import { SetupScalingStep1Component } from "@vertix.gg/bot/src/ui/general/scalin
 import { SetupScalingStep2Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-2/setup-scaling-step-2-component";
 import { SetupScalingStep3Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-3/setup-scaling-step-3-component";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
-
-import { MasterChannelType } from "@vertix.gg/bot/src/services/master-channel-service";
 
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
@@ -30,8 +30,6 @@ import type {
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-
-// Add import for the MasterChannelService
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
@@ -232,17 +230,10 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
                 guildId: interaction.guildId,
                 userOwnerId: interaction.user.id,
                 version: VERSION_UI_V3,
-                // Specify that this is an auto-scaling master channel
-                type: MasterChannelType.AUTO_SCALING,
-                // Use the prefix for the name template of auto-scaling channels
-                dynamicChannelNameTemplate: `${ args.channelPrefix }-{index}`, // Use index placeholder for numbering
-                // Auto-scaling specific settings as a separate object
-                autoScalingSettings: {
-                    maxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
-                    categoryId: args.selectedCategoryId,
-                    channelPrefix: args.channelPrefix
-                }
-                // Note: We intentionally don't pass any dynamic channel specific settings
+                type: EMasterChannelType.AUTO_SCALING,
+                scalingChannelMaxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
+                scalingChannelCategoryId: args.selectedCategoryId,
+                scalingChannelPrefix: args.channelPrefix
             } );
 
             if ( result.code !== "success" ) {

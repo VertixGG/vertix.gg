@@ -94,7 +94,7 @@ import type {
 
 import type {
     MasterChannelConfigInterface,
-    MasterChannelConfigInterfaceV3
+    MasterChannelConfigInterfaceV3, TMasterChannelDynamicSettings
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
@@ -111,9 +111,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 }> {
     private readonly debugger: Debugger;
 
-    private config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+    private config =
+        ConfigManager.$.get<MasterChannelConfigInterface<TMasterChannelDynamicSettings>>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
-    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3<TMasterChannelDynamicSettings>>(
         "Vertix/Config/MasterChannel",
         VERSION_UI_V3
     );

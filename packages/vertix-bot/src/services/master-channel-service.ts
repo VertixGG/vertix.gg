@@ -1,28 +1,42 @@
 import "@vertix.gg/prisma/bot-client";
-import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
-
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { VERSION_UI_V2, VERSION_UI_V3, VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
+import type { OverwriteResolvable, Guild, GuildChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
+import type {
+    IMasterChannelCreateResult,
+    TMasterChannelScalingCreateInternalArgs,
+    TMasterChannelDynamicCreateInternalArgs,
+    TMasterChannelCreateInternalArgs,
+    TMasterChannelGenricCreateArgs
+} from "@vertix.gg/base/src/definitions/master-channel";
 import {
     EMasterChannelType,
     DEFAULT_MASTER_CHANNEL_MAX_TIMEOUT_PER_CREATE,
     EMasterChannelCreateResultCode
 } from "@vertix.gg/base/src/definitions/master-channel";
+
+import { MasterChannelDynamicDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-dynamic-data-model-v3";
+
+import { MasterChannelScalingDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-scaling-data-model-v3";
+
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
+
+import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -37,21 +51,6 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
-import type { IMasterChannelCreateResult ,
-    TMasterChannelScalingCreateInternalArgs,
-    TMasterChannelDynamicCreateInternalArgs,
-    TMasterChannelCreateInternalArgs,
-    TMasterChannelGenricCreateArgs
-} from "@vertix.gg/base/src/definitions/master-channel";
-
-import type {
-    OverwriteResolvable,
-    Guild,
-    GuildChannel,
-    VoiceBasedChannel,
-    VoiceChannel
-} from "discord.js";
-
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
@@ -61,13 +60,12 @@ import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service
 import type { IChannelEnterGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
 import type {
-    MasterChannelConfigInterface,
-    MasterChannelConfigInterfaceV3,
-    TMasterChannelDynamicSettings,
-    TMasterChannelAutoScalingChannelSettings
+    MasterChannelDynamicConfig,
+    MasterChannelDynamicConfigV3
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+import type MasterChannelScalingConfig from "@vertix.gg/bot/src/config/master-channel-scaling-config";
 
 export class MasterChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
@@ -279,6 +277,42 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             }
         }
 
+        const masterChanelDB = await ChannelModel.$.getByChannelId( newState.channelId );
+
+        if ( !masterChanelDB ) {
+            this.logger.error(
+                this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - Could not find master channel id: '${ newState.channelId }'`
+            );
+            return;
+        }
+
+        const masterChannelDataResult = await clientChannelExtend.channelData.findMany( {
+            where: {
+                ownerId: masterChanelDB.id,
+            }
+        } );
+
+        if ( masterChannelDataResult.length > 1 || !masterChannelDataResult.length ) {
+            this.logger.error(
+                this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - Master Channel, discord id '${ newState.channelId }' data is malformed`
+            );
+            return;
+        }
+
+        const masterChannelData = masterChannelDataResult.at( 0 )!;
+
+        const object = masterChannelData.object as any;
+
+        if ( object.type === EMasterChannelType.AUTO_SCALING ) {
+            this.logger.warn(
+                this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - User '${ displayName }' connected to master channel name: '${ channelName }' 'EMasterChannelType.AUTO_SCALING'`
+            )
+            return;
+        }
+
         try {
             // Create a new dynamic channel for the user.
             const dynamic = await this.services.dynamicChannelService.createDynamicChannel( {
@@ -411,7 +445,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         switch ( type ) {
             case EMasterChannelType.DYNAMIC:
                 // For dynamic channels, create a new category
-                const config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", args.version );
+                const config = ConfigManager.$.get<MasterChannelDynamicConfig>( "Vertix/Config/MasterChannelDynamic", args.version );
 
                 masterCategory = await CategoryManager.$.create( {
                     guild,
@@ -501,8 +535,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async createMasterChannelInternalV3( args: TMasterChannelDynamicCreateInternalArgs ) {
-        const config = ConfigManager.$.get<MasterChannelConfigInterfaceV3<TMasterChannelDynamicSettings>>(
-            "Vertix/Config/MasterChannel",
+        const config = ConfigManager.$.get<MasterChannelDynamicConfigV3>(
+            "Vertix/Config/MasterChannelDynamic",
             VERSION_UI_V3
         );
 
@@ -554,13 +588,13 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const db = await result.db;
 
-        await MasterChannelDataModelV3.$.setSettings( db.id, args, true );
+        await MasterChannelDynamicDataModelV3.$.setSettings( db.id, args, true );
 
         return result;
     }
 
     private async createMasterChannelInternalLegacy( args: TMasterChannelDynamicCreateInternalArgs ) {
-        const config = ConfigManager.$.get<MasterChannelConfigInterface<TMasterChannelDynamicSettings>>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+        const config = ConfigManager.$.get<MasterChannelDynamicConfig>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V2 );
 
         const { guild, parent } = args;
 
@@ -606,7 +640,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const masterChannelDB = await result.db;
 
-        await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
+        await MasterChannelDataDynamicManager.$.setAllSettings( masterChannelDB, {
             type: EMasterChannelType.DYNAMIC,
 
             dynamicChannelAutoSave: newAutoSave,
@@ -642,9 +676,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async createAutoScalingMasterChannelInternal( args: TMasterChannelScalingCreateInternalArgs ) {
-        const config = ConfigManager.$.get<MasterChannelConfigInterfaceV3<TMasterChannelAutoScalingChannelSettings>>(
-            "Vertix/Config/MasterChannel",
-            VERSION_UI_V3
+        const config = ConfigManager.$.get<MasterChannelScalingConfig>(
+            "Vertix/Config/MasterChannelScaling",
+            VERSION_UI_UNSPECIFIED
         );
 
         const { parent, guild } = args;
@@ -669,7 +703,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             }
         } );
         // We use a different name for auto-scaling master channels
-        const channelName = config.get( "constants" ).masterChannelName + " (Auto-Scaling)";
+        const channelName = config.get( "constants" ).masterChannelName;
 
         const result = await this.services.channelService.create( {
             parent,
@@ -697,10 +731,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         const channelPrefix = args.scalingChannelPrefix;
 
         // Save the settings with additional auto-scaling specific fields
-        await MasterChannelDataModelV3.$.setSettings( db.id, {
+        await MasterChannelScalingDataModel.$.setSettings( db.id, {
             ...args,
 
-            type: EMasterChannelType.AUTO_SCALING,
             // Store auto-scaling specific settings
             scalingChannelMaxMembersPerChannel: maxMembersPerChannel,
             scalingChannelCategoryId: parent.id,

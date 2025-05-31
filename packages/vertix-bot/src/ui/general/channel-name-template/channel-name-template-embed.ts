@@ -5,7 +5,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfig } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -14,7 +14,7 @@ export class ChannelNameTemplateEmbed extends UIEmbedBase {
         dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" )
     };
 
-    private config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+    private config = ConfigManager.$.get<MasterChannelDynamicConfig>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V3 );
 
     public static getName() {
         return "VertixBot/UI-General/ChannelNameTemplateEmbed";

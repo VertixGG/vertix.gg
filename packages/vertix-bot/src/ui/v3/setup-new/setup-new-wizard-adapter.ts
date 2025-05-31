@@ -9,6 +9,8 @@ import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
+
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
 
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup/setup-max-master-channels-embed";
@@ -21,6 +23,7 @@ import { SetupStep3Component } from "@vertix.gg/bot/src/ui/v3/setup-new/step-3/s
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
+import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
 import type {
@@ -31,8 +34,6 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
@@ -193,6 +194,8 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             verifiedRoles: string[] = args.dynamicChannelVerifiedRoles;
 
         const result = await this.masterChannelService.createMasterChannel( {
+            type: EMasterChannelType.DYNAMIC,
+
             guildId: interaction.guildId,
 
             userOwnerId: interaction.user.id,
@@ -205,6 +208,8 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelAutoSave: autosave,
 
             dynamicChannelVerifiedRoles: verifiedRoles,
+
+            dynamicChannelLogsChannelId: null,
 
             version: VERSION_UI_V3
         } );

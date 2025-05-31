@@ -1,4 +1,4 @@
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { DynamicChannelAdapterExuWithPermissionsBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-exu-with-permissions-base";
@@ -129,7 +129,7 @@ export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWi
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
 
         if ( masterChannelDB ) {
-            args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate(
+            args.dynamicChannelButtonsTemplate = await MasterChannelDataDynamicManager.$.getChannelButtonsTemplate(
                 masterChannelDB,
                 false
             );

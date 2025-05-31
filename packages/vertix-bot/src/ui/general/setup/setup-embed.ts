@@ -7,7 +7,7 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -15,7 +15,7 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
@@ -138,8 +138,8 @@ export class SetupEmbed extends UIEmbedBase {
     }
 
     protected async getLogicAsync( args: ISetupArgs ) {
-        const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-            "Vertix/Config/MasterChannel",
+        const { settings } = ConfigManager.$.get<MasterChannelDynamicConfigV3>(
+            "Vertix/Config/MasterChannelDynamic",
             VERSION_UI_V3
         ).data;
 
@@ -182,7 +182,7 @@ export class SetupEmbed extends UIEmbedBase {
     }
 
     private async handleChannelData( channel: any ) {
-        const data = await MasterChannelDataManager.$.getAllSettings( {
+        const data = await MasterChannelDataDynamicManager.$.getAllSettings( {
             ... channel,
             isDynamic: false,
             isMaster: true

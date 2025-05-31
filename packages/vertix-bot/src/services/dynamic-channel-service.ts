@@ -11,7 +11,6 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { gToken } from "@vertix.gg/base/src/discord/login";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { UserModel } from "@vertix.gg/base/src/models/user-model";
 
@@ -27,9 +26,15 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
-import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE, VAR_DYNAMIC_CHANNEL_GAME } from "@vertix.gg/base/src/definitions/vars";
+import {
+    VAR_DYNAMIC_CHANNEL_USER,
+    VAR_DYNAMIC_CHANNEL_STATE,
+    VAR_DYNAMIC_CHANNEL_GAME
+} from "@vertix.gg/base/src/definitions/vars";
 
 import { DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH } from "@vertix.gg/base/src/definitions/discord";
+
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -51,12 +56,6 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 import { getUserCurrentGame } from "@vertix.gg/bot/src/utils/member";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-
-import type { MasterChannelUserDataInterface } from "@vertix.gg/base/src/interfaces/master-channel-user-config";
-
-import type { Snowflake } from "discord-api-types/v10";
-
 import type {
     TDynamicChannelConfiguration,
     ChannelPrivacyState,
@@ -73,9 +72,6 @@ import type {
     IDynamicResetChannelResult,
     RemoveStatus
 } from "@vertix.gg/bot/src/definitions/dynamic-channel";
-
-import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
-
 import type {
     Guild,
     APIPartialChannel,
@@ -91,10 +87,17 @@ import type {
     VoiceBasedChannel,
     VoiceChannel
 } from "discord.js";
+import type { Snowflake } from "discord-api-types/v10";
+
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
+import type { MasterChannelUserDataInterface } from "@vertix.gg/base/src/interfaces/master-channel-user-config";
+
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type {
-    MasterChannelConfigInterface,
-    MasterChannelConfigInterfaceV3, TMasterChannelDynamicSettings
+    MasterChannelDynamicConfig,
+    MasterChannelDynamicConfigV3
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
@@ -112,10 +115,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     private readonly debugger: Debugger;
 
     private config =
-        ConfigManager.$.get<MasterChannelConfigInterface<TMasterChannelDynamicSettings>>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+        ConfigManager.$.get<MasterChannelDynamicConfig>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V2 );
 
-    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3<TMasterChannelDynamicSettings>>(
-        "Vertix/Config/MasterChannel",
+    private configV3 = ConfigManager.$.get<MasterChannelDynamicConfigV3>(
+        "Vertix/Config/MasterChannelDynamic",
         VERSION_UI_V3
     );
 
@@ -275,7 +278,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return settings.dynamicChannelNameTemplate.replace( VAR_DYNAMIC_CHANNEL_USER, userDisplayName );
         }
 
-        const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
+        const channelNameTemplate = await MasterChannelDataDynamicManager.$.getChannelNameTemplate( masterChannelDB, true );
 
         return this.assembleChannelNameTemplate( channelNameTemplate!, {
             userDisplayName,
@@ -589,7 +592,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
 
         // Check if autosave is enabled.
-        const autoSave = await MasterChannelDataManager.$.getChannelAutosave( masterChannelDB, false );
+        const autoSave = await MasterChannelDataDynamicManager.$.getChannelAutosave( masterChannelDB, false );
 
         let savedData: MasterChannelUserDataInterface | null = null,
             dynamicChannelName = "",
@@ -628,7 +631,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             } );
 
             const verifiedRoles =
-                    await MasterChannelDataManager.$.getChannelVerifiedRoles(
+                    await MasterChannelDataDynamicManager.$.getChannelVerifiedRoles(
                         masterChannelDB,
                         masterChannel.guildId
                     ),
@@ -690,7 +693,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 } );
             } );
         } else { // Generate new channel name from template
-            const dynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB );
+            const dynamicChannelTemplateName = await MasterChannelDataDynamicManager.$.getChannelNameTemplate( masterChannelDB );
 
             if ( !dynamicChannelTemplateName ) {
                 this.logger.error(
@@ -822,7 +825,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } as any;
 
         if ( masterChannelDB ) {
-            sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable(
+            sendArgs.dynamicChannelMentionable = await MasterChannelDataDynamicManager.$.getChannelMentionable(
                 masterChannelDB,
                 true
             );
@@ -1263,7 +1266,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } as any;
 
         if ( masterChannelDB ) {
-            editMessageArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable(
+            editMessageArgs.dynamicChannelMentionable = await MasterChannelDataDynamicManager.$.getChannelMentionable(
                 masterChannelDB,
                 true
             );
@@ -1379,7 +1382,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const userOwnerId = master.db.userOwnerId;
 
         const previousChannelState = await this.getChannelConfiguration( channel, userOwnerId, master.db.id, options ),
-            defaultDynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate(
+            defaultDynamicChannelTemplateName = await MasterChannelDataDynamicManager.$.getChannelNameTemplate(
                 master.db,
                 true
             ),
@@ -1712,7 +1715,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( masterChannelDB ) {
             const verifiedRoles =
-                ( await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId ) ) ||
+                ( await MasterChannelDataDynamicManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId ) ) ||
                 [];
 
             // If we found verified roles, use them
@@ -2113,7 +2116,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         message: string,
         defaultDebounceDelay = 3000
     ) {
-        const logsChannelId = await MasterChannelDataManager.$.getChannelLogsChannelId( masterChannelDB );
+        const logsChannelId = await MasterChannelDataDynamicManager.$.getChannelLogsChannelId( masterChannelDB );
 
         if ( !logsChannelId ) {
             return;
@@ -2122,7 +2125,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const logsChannel = channel.guild.channels.cache.get( logsChannelId ) as TextChannel;
 
         if ( !logsChannel ) {
-            await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, null, false );
+            await MasterChannelDataDynamicManager.$.setChannelLogsChannel( masterChannelDB, null, false );
 
             this.logger.error(
                 this.log,
@@ -2183,7 +2186,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await logsChannel.send( { embeds } ).catch( async( err ) => {
             this.logger.error( this.log, "", err );
 
-            await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, null, false );
+            await MasterChannelDataDynamicManager.$.setChannelLogsChannel( masterChannelDB, null, false );
         } );
 
         mapItem.embeds = [];

@@ -1,7 +1,7 @@
 import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 import type { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-export type TMasterChannelSettings = {
+export type MasterChannelSettings = {
     type: EMasterChannelType.DYNAMIC;
 
     dynamicChannelAutoSave: boolean;
@@ -18,10 +18,10 @@ export type TMasterChannelSettings = {
     scalingChannelPrefix: string;
 };
 
-export type TMasterChannelDynamicSettings = Extract<TMasterChannelSettings, { type: EMasterChannelType.DYNAMIC }>;
-export type TMasterChannelAutoScalingChannelSettings = Extract<TMasterChannelSettings, { type: EMasterChannelType.AUTO_SCALING }>;
+export type MasterChannelDynamicSettings = Extract<MasterChannelSettings, { type: EMasterChannelType.DYNAMIC }>;
+export type MasterChannelAutoScalingChannelSettings = Extract<MasterChannelSettings, { type: EMasterChannelType.AUTO_SCALING }>;
 
-export interface MasterChannelConstantsInterface {
+export interface MasterChannelDynamicConstants {
     dynamicChannelsCategoryName: string;
 
     dynamicChannelStatePrivate: string;
@@ -31,19 +31,29 @@ export interface MasterChannelConstantsInterface {
     masterChannelName: string;
 }
 
-export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstantsInterface {
+export interface MasterChannelConstantsV3 extends MasterChannelDynamicConstants {
     dynamicChannelPrimaryMessageTitle: string;
     dynamicChannelPrimaryMessageDescription: string;
 }
 
-export interface MasterChannelConfigInterface<T extends TMasterChannelSettings = TMasterChannelSettings>
+export interface MasterChannelScalingConstants {
+    masterChannelName: string
+}
+
+export interface MasterChannelDynamicConfig
     extends ConfigBaseInterface<{
-        constants: MasterChannelConstantsInterface;
-        settings: T;
+        constants: MasterChannelDynamicConstants;
+        settings: MasterChannelDynamicSettings;
     }> {}
 
-export interface MasterChannelConfigInterfaceV3<T extends TMasterChannelSettings = TMasterChannelSettings>
+export interface MasterChannelDynamicConfigV3
     extends ConfigBaseInterface<{
-        constants: MasterChannelConstantsInterfaceV3;
-        settings: T;
+        constants: MasterChannelConstantsV3;
+        settings: MasterChannelDynamicSettings;
+    }> {}
+
+export interface MasterChannelScalingConfig
+    extends ConfigBaseInterface<{
+        constants: MasterChannelScalingConstants;
+        settings: MasterChannelAutoScalingChannelSettings;
     }> {}

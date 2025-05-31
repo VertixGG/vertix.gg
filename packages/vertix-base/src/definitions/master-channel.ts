@@ -1,6 +1,6 @@
 import type {
-    TMasterChannelSettings,
-    TMasterChannelDynamicSettings, TMasterChannelAutoScalingChannelSettings
+    MasterChannelSettings,
+    MasterChannelDynamicSettings, MasterChannelAutoScalingChannelSettings
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { CategoryChannel, Guild, VoiceBasedChannel } from "discord.js";
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
@@ -20,7 +20,7 @@ export enum EMasterChannelType {
     AUTO_SCALING = "auto-scaling"
 }
 
-export  type TMasterChannelGenricCreateArgs = TMasterChannelSettings & {
+export  type TMasterChannelGenricCreateArgs = MasterChannelSettings & {
     guildId: string;
     userOwnerId: string;
     version: TVersionType;
@@ -31,9 +31,9 @@ export type TMasterChannelCreateInternalArgs = TMasterChannelGenricCreateArgs & 
     guild: Guild;
 }
 
-export type TMasterChannelDynamicCreateInternalArgs = TMasterChannelCreateInternalArgs & TMasterChannelDynamicSettings;
+export type TMasterChannelDynamicCreateInternalArgs = TMasterChannelCreateInternalArgs & MasterChannelDynamicSettings;
 
-export type TMasterChannelScalingCreateInternalArgs = TMasterChannelCreateInternalArgs & TMasterChannelAutoScalingChannelSettings;
+export type TMasterChannelScalingCreateInternalArgs = TMasterChannelCreateInternalArgs & MasterChannelAutoScalingChannelSettings;
 
 export interface IMasterChannelCreateResult {
     code: EMasterChannelCreateResultCode;

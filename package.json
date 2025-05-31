@@ -17,7 +17,7 @@
     "scripts": {
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
-        "vertix:type-check": "tsc -b",
+        "vertix:type-check": "tsc --noEmit -p packages/vertix-base/tsconfig.json ; tsc --noEmit -p packages/vertix-bot/tsconfig.json ; tsc --noEmit -p packages/vertix-gui/tsconfig.json ; tsc --noEmit -p packages/vertix-prisma/tsconfig.json ; tsc --noEmit -p packages/vertix-utils/tsconfig.json ;  ",
         "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:gui:jest )",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
@@ -44,19 +44,19 @@
         "@types/jest": "latest",
         "@types/jest-when": "latest",
         "@types/node": "latest",
-        "@typescript-eslint/eslint-plugin": "^8.26.1",
-        "@typescript-eslint/parser": "^8.26.1",
+        "@typescript-eslint/eslint-plugin": "^8.33.0",
+        "@typescript-eslint/parser": "^8.33.0",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
-        "bun-types": "^1.0.25",
+        "bun-types": "^1.2.15",
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",
         "ts-mockito": "latest",
-        "tsx": "^4.19.1",
-        "typescript": "latest"
+        "tsx": "^4.19.4",
+        "typescript": "^5.8.3"
     },
     "packageManager": "bun@1.2.25",
     "peerDependencies": {

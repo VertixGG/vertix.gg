@@ -22,12 +22,10 @@
 
         "strict": true,
 
-        "pretty": true,
-
         "esModuleInterop": true,
 
         "allowSyntheticDefaultImports": true,
-        // Skip lib check
+        "skipDefaultLibCheck": true,
         "skipLibCheck": true
     }
 }

@@ -66,12 +66,14 @@ import type {
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type MasterChannelScalingConfig from "@vertix.gg/bot/src/config/master-channel-scaling-config";
+import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 
 export class MasterChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     uiService: UIService;
     channelService: ChannelService;
     dynamicChannelService: DynamicChannelService;
+    scalingChannelService: ScalingChannelService;
 }> {
     private debugger: Debugger;
 
@@ -107,7 +109,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             appService: "VertixBot/Services/App",
             uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
-            dynamicChannelService: "VertixBot/Services/DynamicChannel"
+            dynamicChannelService: "VertixBot/Services/DynamicChannel",
+            scalingChannelService: "VertixBot/Services/ScalingChannel"
         };
     }
 
@@ -739,6 +742,28 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             scalingChannelCategoryId: parent.id,
             scalingChannelPrefix: channelPrefix
         }, true );
+
+        // Create an initial scaling channel directly
+        try {
+            await this.services.scalingChannelService["createScaledChannel"](
+                guild,
+                parent,
+                db,
+                channelPrefix,
+                maxMembersPerChannel,
+                1
+            );
+
+            this.logger.info(
+                this.createAutoScalingMasterChannelInternal,
+                `Guild id: '${guild.id}' - Initial scaling channel created for auto scaling master channel`
+            );
+        } catch (error) {
+            this.logger.error(
+                this.createAutoScalingMasterChannelInternal,
+                `Guild id: '${guild.id}' - Failed to create initial scaling channel: ${error}`
+            );
+        }
 
         return result;
     }

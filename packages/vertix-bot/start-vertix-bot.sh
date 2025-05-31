@@ -47,3 +47,6 @@ if ! which bun > /dev/null; then
     echo "Bun not found in PATH" >> logs/vertix-bot-error.log
     exit 1
 fi
+
+# Run the bot with output redirection
+exec /usr/local/bin/bun run vertix-bot:bun:start:dev  2>&1 

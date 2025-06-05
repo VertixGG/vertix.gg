@@ -3,38 +3,31 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
 
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfig } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface> {
+export class MasterChannelDynamicConfigV2 extends ConfigBase<MasterChannelDynamicConfig> {
     public static getName() {
-        return "VertixBase/UI-V2/MasterChannelConfig";
+        return "Vertix/Config/MasterChannelDynamicV2";
     }
 
     public getConfigName() {
-        return "Vertix/Config/MasterChannel";
+        return "Vertix/Config/MasterChannelDynamic";
     }
 
     public getVersion() {
         return VERSION_UI_V2;
     }
 
-    protected getDefaults(): MasterChannelConfigInterface["defaults"] {
+    protected getDefaults(): MasterChannelDynamicConfig["defaults"] {
         return {
-            // Constants will be used globally for the entire bot.
-            constants: {
-                dynamicChannelsCategoryName: "༄ Dynamic Channels",
-
-                dynamicChannelStatePrivate: "🔴",
-                dynamicChannelStatePublic: "🟢",
-
-                masterChannelMaximumFreeChannels: 6,
-                masterChannelName: "➕ New Channel"
-            },
-
             // The default values/data structure for a newly created “master” channel will be per MasterChannel.
             settings: {
+                type: EMasterChannelType.DYNAMIC,
+
                 dynamicChannelAutoSave: false,
 
                 dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( ( i ) => i.getId().toString() ),
@@ -46,9 +39,20 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
                 dynamicChannelVerifiedRoles: []
-            }
+            },
+
+            // Constants will be used globally for the entire bot.
+            constants: {
+                dynamicChannelsCategoryName: "༄ Dynamic Channels",
+
+                dynamicChannelStatePrivate: "🔴",
+                dynamicChannelStatePublic: "🟢",
+
+                masterChannelMaximumFreeChannels: 6,
+                masterChannelName: "➕ New Channel"
+            },
         };
     }
 }
 
-export default MasterChannelConfig;
+export default MasterChannelDynamicConfigV2;

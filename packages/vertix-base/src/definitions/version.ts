@@ -8,7 +8,9 @@ export const VERSION_PHASE_4_ARCHIVE_RECORD = "0.0.1",
     VERSION_WITH_AUTOSAVE = "0.0.6", // https://github.com/VertixGG/vertix-bot/pull/58
     VERSION_WITH_GREEK_LANGUAGE = "0.0.7", // https://github.com/VertixGG/vertix-bot/pull/61
     VERSION_WITH_UI_V3 = "0.0.8", // https://github.com/VertixGG/vertix.gg/pull/97
-    CURRENT_VERSION = VERSION_WITH_UI_V3;
+    VERSION_WITH_SCALING_CHANNELS = "0.0.9", // https://github.com/VertixGG/vertix.gg/pull/118/
+    CURRENT_VERSION = VERSION_WITH_SCALING_CHANNELS;
 
-export const VERSION_UI_V2 = "0.0.0.2" as const,
+export const VERSION_UI_UNSPECIFIED = "0.0.0.0" as const,
+    VERSION_UI_V2 = "0.0.0.2" as const,
     VERSION_UI_V3 = "0.0.0.3" as const;

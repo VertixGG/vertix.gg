@@ -1,58 +1,47 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
-
-import { MasterChannelDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model";
+import { MasterChannelDynamicDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-dynamic-data-model-v3";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases";
 
-import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { MasterChannelDynamicDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-dynamic-data-model";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfig } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
-export class MasterChannelDataManager extends InitializeBase {
-    private static instance: MasterChannelDataManager;
-
-    public config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
-
-    public keys = this.config.getKeys( "settings" );
+export class MasterChannelDataDynamicManager extends InitializeBase {
+    private static instance: MasterChannelDataDynamicManager;
 
     public static getName() {
-        return "VertixBase/Managers/MasterChannelData";
+        return "VertixBase/Managers/MasterChannelDynamicData";
     }
 
     public static get $() {
-        if ( !MasterChannelDataManager.instance ) {
-            MasterChannelDataManager.instance = new MasterChannelDataManager();
+        if ( !MasterChannelDataDynamicManager.instance ) {
+            MasterChannelDataDynamicManager.instance = new MasterChannelDataDynamicManager();
         }
 
-        return MasterChannelDataManager.instance;
+        return MasterChannelDataDynamicManager.instance;
     }
 
-    public constructor( shouldDebugCache = isDebugEnabled( "CACHE", MasterChannelDataManager.getName() ) ) {
+    public constructor( shouldDebugCache = isDebugEnabled( "CACHE", MasterChannelDataDynamicManager.getName() ) ) {
         super( shouldDebugCache );
     }
 
     protected getModel( masterChannelDB: ChannelExtended ) {
         switch ( masterChannelDB.version ) {
             case VERSION_UI_V3:
-                return MasterChannelDataModelV3.$;
+                return MasterChannelDynamicDataModelV3.$;
         }
 
-        return MasterChannelDataModel.$;
-    }
-
-    // TODO: Remove
-    public getKeys() {
-        return this.keys;
+        return MasterChannelDynamicDataModel.$;
     }
 
     public async getAllSettings(
         masterChannelDB: ChannelExtended,
-        defaultSettings: Partial<MasterChannelConfigInterface["data"]["settings"]> = {}
+        defaultSettings: Partial<MasterChannelDynamicConfig["data"]["settings"]> = {}
     ) {
         const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, false, false );
 
@@ -65,7 +54,7 @@ export class MasterChannelDataManager extends InitializeBase {
 
     public async setAllSettings(
         masterChannelDB: ChannelExtended,
-        settings: MasterChannelConfigInterface["defaults"]["settings"]
+        settings: MasterChannelDynamicConfig["defaults"]["settings"]
     ) {
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, settings );
     }

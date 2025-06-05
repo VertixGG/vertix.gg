@@ -1,4 +1,4 @@
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-channel-adapter-base";
@@ -159,7 +159,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
         if ( masterChannelDB ) {
             args.dynamicChannelButtonsTemplate =
-                await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB );
+                await MasterChannelDataDynamicManager.$.getChannelButtonsTemplate( masterChannelDB );
         }
 
         return args;

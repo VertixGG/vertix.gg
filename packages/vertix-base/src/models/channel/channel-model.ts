@@ -4,6 +4,11 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ModelWithDataBase } from "@vertix.gg/base/src/bases/model-with-data-base";
 
+import type {
+    ChannelExtended,
+    ChannelFindManyArgsWithDataIncludeKey,
+    ChannelFindUniqueArgsWithDataIncludeKey
+} from "@vertix.gg/base/src/models/channel/channel-client-extend";
 import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 import { ChannelDataModel } from "@vertix.gg/base/src/models/channel/channel-data-model";
@@ -13,12 +18,6 @@ import { ChannelDataModelV3 } from "@vertix.gg/base/src/models/channel/channel-d
 import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 import type { TDataType } from "@vertix.gg/base/src/factory/data-type-factory";
-
-import type {
-    ChannelExtended,
-    ChannelFindManyArgsWithDataIncludeKey,
-    ChannelFindUniqueArgsWithDataIncludeKey
-} from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 type ChannelExtendedResult<T extends TDataType> =
     | ( ChannelExtended & {
@@ -324,6 +323,10 @@ export class ChannelModel extends ModelWithDataBase<
 
     public async isDynamic( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isDynamic;
+    }
+
+    public async isScaling( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isScaling;
     }
 
     public getModelByVersion( version: string ) {

@@ -1,15 +1,27 @@
 import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
+import type { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-export interface MasterChannelSettingsInterface {
+export type MasterChannelSettings = {
+    type: EMasterChannelType.DYNAMIC;
+
     dynamicChannelAutoSave: boolean;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelMentionable: boolean;
     dynamicChannelNameTemplate: string;
     dynamicChannelVerifiedRoles: string[];
-}
+} | {
+    type: EMasterChannelType.AUTO_SCALING;
 
-export interface MasterChannelConstantsInterface {
+    scalingChannelMaxMembersPerChannel: number;
+    scalingChannelCategoryId: string;
+    scalingChannelPrefix: string;
+};
+
+export type MasterChannelDynamicSettings = Extract<MasterChannelSettings, { type: EMasterChannelType.DYNAMIC }>;
+export type MasterChannelAutoScalingChannelSettings = Extract<MasterChannelSettings, { type: EMasterChannelType.AUTO_SCALING }>;
+
+export interface MasterChannelDynamicConstants {
     dynamicChannelsCategoryName: string;
 
     dynamicChannelStatePrivate: string;
@@ -19,19 +31,29 @@ export interface MasterChannelConstantsInterface {
     masterChannelName: string;
 }
 
-export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstantsInterface {
+export interface MasterChannelConstantsV3 extends MasterChannelDynamicConstants {
     dynamicChannelPrimaryMessageTitle: string;
     dynamicChannelPrimaryMessageDescription: string;
 }
 
-export interface MasterChannelConfigInterface
+export interface MasterChannelScalingConstants {
+    masterChannelName: string
+}
+
+export interface MasterChannelDynamicConfig
     extends ConfigBaseInterface<{
-        constants: MasterChannelConstantsInterface;
-        settings: MasterChannelSettingsInterface;
+        constants: MasterChannelDynamicConstants;
+        settings: MasterChannelDynamicSettings;
     }> {}
 
-export interface MasterChannelConfigInterfaceV3
+export interface MasterChannelDynamicConfigV3
     extends ConfigBaseInterface<{
-        constants: MasterChannelConstantsInterfaceV3;
-        settings: MasterChannelSettingsInterface;
+        constants: MasterChannelConstantsV3;
+        settings: MasterChannelDynamicSettings;
+    }> {}
+
+export interface MasterChannelScalingConfig
+    extends ConfigBaseInterface<{
+        constants: MasterChannelScalingConstants;
+        settings: MasterChannelAutoScalingChannelSettings;
     }> {}

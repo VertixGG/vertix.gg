@@ -1,17 +1,18 @@
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
+
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
-
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
 class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBase {
-    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-        "Vertix/Config/MasterChannel",
+    private configV3 = ConfigManager.$.get<MasterChannelDynamicConfigV3>(
+        "Vertix/Config/MasterChannelDynamic",
         VERSION_UI_V3
     );
 

@@ -3,27 +3,31 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
 
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
+
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfigV3 as MasterChannelDynamicConfigV3Interface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 // TODO: Move to `UI-V3` folder + registration to `ui-module`
-export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfaceV3> {
+export class MasterChannelDynamicConfigV3 extends ConfigBase<MasterChannelDynamicConfigV3Interface> {
     public static getName() {
-        return "VertixBase/UI-V2/MasterChannelConfigV3";
+        return "Vertix/Config/MasterChannelDynamicV3";
     }
 
     public getConfigName() {
-        return "Vertix/Config/MasterChannel";
+        return "Vertix/Config/MasterChannelDynamic";
     }
 
     public getVersion() {
         return VERSION_UI_V3;
     }
 
-    protected getDefaults(): MasterChannelConfigInterfaceV3["defaults"] {
+    protected getDefaults(): MasterChannelDynamicConfigV3Interface["defaults"] {
         return {
             settings: {
+                type: EMasterChannelType.DYNAMIC,
+
                 dynamicChannelAutoSave: false,
 
                 dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( i ) =>
@@ -36,7 +40,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
                 dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
-                dynamicChannelVerifiedRoles: []
+                dynamicChannelVerifiedRoles: [],
             },
 
             constants: {
@@ -58,4 +62,4 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
     }
 }
 
-export default MasterChannelConfigV3;
+export default MasterChannelDynamicConfigV3;

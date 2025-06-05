@@ -5,12 +5,12 @@ import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-el
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
-
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
 export class ChannelNameTemplateInput extends UIElementInputBase {
-    private config = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+    private config = ConfigManager.$.get<MasterChannelDynamicConfigV3>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V3 );
 
     public static getName() {
         return "VertixBot/UI-General/ChannelNameTemplateInput";

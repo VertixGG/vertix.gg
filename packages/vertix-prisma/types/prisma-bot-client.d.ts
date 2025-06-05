@@ -1,11 +1,11 @@
 export {};
 
-import * as Prisma from "../src/prisma-bot-client/index";
+import * as PrismaModule from "../src/prisma-bot-client/index";
 
 declare global {
-    namespace globalThis {
-        export import PrismaBot = Prisma;
-    }
+    export import PrismaBot = PrismaModule;
 }
 
-export { PrismaBot }
+export { PrismaModule as PrismaBot };
+
+export { PrismaClient as PrismaBotClient } from "../src/prisma-bot-client/index";

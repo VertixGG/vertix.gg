@@ -21,7 +21,7 @@ import {
 
 import { ManagerDataBase } from "@vertix.gg/base/src/bases/manager-data-base";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfig } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { Guild } from "discord.js";
 
 interface IGuildSettings {
@@ -48,8 +48,8 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             return data.object;
         }
 
-        const { constants } = ConfigManager.$.get<MasterChannelConfigInterface>(
-            "Vertix/Config/MasterChannel",
+        const { constants } = ConfigManager.$.get<MasterChannelDynamicConfig>(
+            "Vertix/Config/MasterChannelDynamic",
             VERSION_UI_V2
         ).data;
 

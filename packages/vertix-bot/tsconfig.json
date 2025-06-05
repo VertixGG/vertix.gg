@@ -11,7 +11,6 @@
         "types": [
             "node",
             "prisma-bot-client.d.ts",
-            "discord.js/typings/index.d.ts"
         ],
 
         // Specifies the ECMAScript version to transpile to (e.g., ESNext)

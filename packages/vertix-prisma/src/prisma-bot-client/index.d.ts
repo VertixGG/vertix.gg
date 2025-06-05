@@ -133,7 +133,17 @@ export type ModalLanguage = $Result.DefaultSelection<Prisma.$ModalLanguagePayloa
  * Enums
  */
 export namespace $Enums {
-  export const E_DATA_TYPES: {
+  export const E_INTERNAL_CHANNEL_TYPES: {
+  DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
+  DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
+  SCALING_CHANNEL: 'SCALING_CHANNEL',
+  MASTER_CREATE_CHANNEL: 'MASTER_CREATE_CHANNEL'
+};
+
+export type E_INTERNAL_CHANNEL_TYPES = (typeof E_INTERNAL_CHANNEL_TYPES)[keyof typeof E_INTERNAL_CHANNEL_TYPES]
+
+
+export const E_DATA_TYPES: {
   string: 'string',
   number: 'number',
   boolean: 'boolean',
@@ -143,28 +153,19 @@ export namespace $Enums {
 
 export type E_DATA_TYPES = (typeof E_DATA_TYPES)[keyof typeof E_DATA_TYPES]
 
-
-export const E_INTERNAL_CHANNEL_TYPES: {
-  DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
-  DYNAMIC_CHANNEL: 'DYNAMIC_CHANNEL',
-  MASTER_CREATE_CHANNEL: 'MASTER_CREATE_CHANNEL'
-};
-
-export type E_INTERNAL_CHANNEL_TYPES = (typeof E_INTERNAL_CHANNEL_TYPES)[keyof typeof E_INTERNAL_CHANNEL_TYPES]
-
 }
-
-export type E_DATA_TYPES = $Enums.E_DATA_TYPES
-
-export const E_DATA_TYPES: typeof $Enums.E_DATA_TYPES
 
 export type E_INTERNAL_CHANNEL_TYPES = $Enums.E_INTERNAL_CHANNEL_TYPES
 
 export const E_INTERNAL_CHANNEL_TYPES: typeof $Enums.E_INTERNAL_CHANNEL_TYPES
 
+export type E_DATA_TYPES = $Enums.E_DATA_TYPES
+
+export const E_DATA_TYPES: typeof $Enums.E_DATA_TYPES
+
 /**
  * ##  Prisma Client ʲˢ
- * 
+ *
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
@@ -173,7 +174,7 @@ export const E_INTERNAL_CHANNEL_TYPES: typeof $Enums.E_INTERNAL_CHANNEL_TYPES
  * const configs = await prisma.config.findMany()
  * ```
  *
- * 
+ *
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
  */
 export class PrismaClient<
@@ -185,7 +186,7 @@ export class PrismaClient<
 
     /**
    * ##  Prisma Client ʲˢ
-   * 
+   *
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
@@ -194,12 +195,12 @@ export class PrismaClient<
    * const configs = await prisma.config.findMany()
    * ```
    *
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
    */
 
   constructor(optionsArg ?: Prisma.Subset<ClientOptions, Prisma.PrismaClientOptions>);
-  $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): void;
+  $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): PrismaClient;
 
   /**
    * Connect with the database
@@ -250,7 +251,9 @@ export class PrismaClient<
    */
   $runCommandRaw(command: Prisma.InputJsonObject): Prisma.PrismaPromise<Prisma.JsonObject>
 
-  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
+  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<ClientOptions>, ExtArgs, $Utils.Call<Prisma.TypeMapCb<ClientOptions>, {
+    extArgs: ExtArgs
+  }>>
 
       /**
    * `prisma.config`: Exposes CRUD operations for the **Config** model.
@@ -260,7 +263,7 @@ export class PrismaClient<
     * const configs = await prisma.config.findMany()
     * ```
     */
-  get config(): Prisma.ConfigDelegate<ExtArgs>;
+  get config(): Prisma.ConfigDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.category`: Exposes CRUD operations for the **Category** model.
@@ -270,7 +273,7 @@ export class PrismaClient<
     * const categories = await prisma.category.findMany()
     * ```
     */
-  get category(): Prisma.CategoryDelegate<ExtArgs>;
+  get category(): Prisma.CategoryDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.guild`: Exposes CRUD operations for the **Guild** model.
@@ -280,7 +283,7 @@ export class PrismaClient<
     * const guilds = await prisma.guild.findMany()
     * ```
     */
-  get guild(): Prisma.GuildDelegate<ExtArgs>;
+  get guild(): Prisma.GuildDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.guildData`: Exposes CRUD operations for the **GuildData** model.
@@ -290,7 +293,7 @@ export class PrismaClient<
     * const guildData = await prisma.guildData.findMany()
     * ```
     */
-  get guildData(): Prisma.GuildDataDelegate<ExtArgs>;
+  get guildData(): Prisma.GuildDataDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.channel`: Exposes CRUD operations for the **Channel** model.
@@ -300,7 +303,7 @@ export class PrismaClient<
     * const channels = await prisma.channel.findMany()
     * ```
     */
-  get channel(): Prisma.ChannelDelegate<ExtArgs>;
+  get channel(): Prisma.ChannelDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.channelData`: Exposes CRUD operations for the **ChannelData** model.
@@ -310,7 +313,7 @@ export class PrismaClient<
     * const channelData = await prisma.channelData.findMany()
     * ```
     */
-  get channelData(): Prisma.ChannelDataDelegate<ExtArgs>;
+  get channelData(): Prisma.ChannelDataDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -320,7 +323,7 @@ export class PrismaClient<
     * const users = await prisma.user.findMany()
     * ```
     */
-  get user(): Prisma.UserDelegate<ExtArgs>;
+  get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.userData`: Exposes CRUD operations for the **UserData** model.
@@ -330,7 +333,7 @@ export class PrismaClient<
     * const userData = await prisma.userData.findMany()
     * ```
     */
-  get userData(): Prisma.UserDataDelegate<ExtArgs>;
+  get userData(): Prisma.UserDataDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.userChannelData`: Exposes CRUD operations for the **UserChannelData** model.
@@ -340,7 +343,7 @@ export class PrismaClient<
     * const userChannelData = await prisma.userChannelData.findMany()
     * ```
     */
-  get userChannelData(): Prisma.UserChannelDataDelegate<ExtArgs>;
+  get userChannelData(): Prisma.UserChannelDataDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.elementButtonLanguage`: Exposes CRUD operations for the **ElementButtonLanguage** model.
@@ -350,7 +353,7 @@ export class PrismaClient<
     * const elementButtonLanguages = await prisma.elementButtonLanguage.findMany()
     * ```
     */
-  get elementButtonLanguage(): Prisma.ElementButtonLanguageDelegate<ExtArgs>;
+  get elementButtonLanguage(): Prisma.ElementButtonLanguageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.elementTextInputLanguage`: Exposes CRUD operations for the **ElementTextInputLanguage** model.
@@ -360,7 +363,7 @@ export class PrismaClient<
     * const elementTextInputLanguages = await prisma.elementTextInputLanguage.findMany()
     * ```
     */
-  get elementTextInputLanguage(): Prisma.ElementTextInputLanguageDelegate<ExtArgs>;
+  get elementTextInputLanguage(): Prisma.ElementTextInputLanguageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.elementSelectMenuLanguage`: Exposes CRUD operations for the **ElementSelectMenuLanguage** model.
@@ -370,7 +373,7 @@ export class PrismaClient<
     * const elementSelectMenuLanguages = await prisma.elementSelectMenuLanguage.findMany()
     * ```
     */
-  get elementSelectMenuLanguage(): Prisma.ElementSelectMenuLanguageDelegate<ExtArgs>;
+  get elementSelectMenuLanguage(): Prisma.ElementSelectMenuLanguageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.embedLanguage`: Exposes CRUD operations for the **EmbedLanguage** model.
@@ -380,7 +383,7 @@ export class PrismaClient<
     * const embedLanguages = await prisma.embedLanguage.findMany()
     * ```
     */
-  get embedLanguage(): Prisma.EmbedLanguageDelegate<ExtArgs>;
+  get embedLanguage(): Prisma.EmbedLanguageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.markdownLanguage`: Exposes CRUD operations for the **MarkdownLanguage** model.
@@ -390,7 +393,7 @@ export class PrismaClient<
     * const markdownLanguages = await prisma.markdownLanguage.findMany()
     * ```
     */
-  get markdownLanguage(): Prisma.MarkdownLanguageDelegate<ExtArgs>;
+  get markdownLanguage(): Prisma.MarkdownLanguageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.modalLanguage`: Exposes CRUD operations for the **ModalLanguage** model.
@@ -400,7 +403,7 @@ export class PrismaClient<
     * const modalLanguages = await prisma.modalLanguage.findMany()
     * ```
     */
-  get modalLanguage(): Prisma.ModalLanguageDelegate<ExtArgs>;
+  get modalLanguage(): Prisma.ModalLanguageDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -421,7 +424,6 @@ export namespace Prisma {
   export import PrismaClientRustPanicError = runtime.PrismaClientRustPanicError
   export import PrismaClientInitializationError = runtime.PrismaClientInitializationError
   export import PrismaClientValidationError = runtime.PrismaClientValidationError
-  export import NotFoundError = runtime.NotFoundError
 
   /**
    * Re-export of sql-template-tag
@@ -432,6 +434,8 @@ export namespace Prisma {
   export import raw = runtime.raw
   export import Sql = runtime.Sql
 
+
+
   /**
    * Decimal.js
    */
@@ -440,7 +444,7 @@ export namespace Prisma {
   export type DecimalJsLike = runtime.DecimalJsLike
 
   /**
-   * Metrics 
+   * Metrics
    */
   export type Metrics = runtime.Metrics
   export type Metric<T> = runtime.Metric<T>
@@ -458,14 +462,14 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 5.19.1
-   * Query Engine version: 69d742ee20b815d88e17e54db4a2a7a3b30324e3
+   * Prisma Client JS version: 6.8.2
+   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
    */
   export type PrismaVersion = {
     client: string
   }
 
-  export const prismaVersion: PrismaVersion 
+  export const prismaVersion: PrismaVersion
 
   /**
    * Utility Types
@@ -481,15 +485,15 @@ export namespace Prisma {
 
   /**
    * Types of the values used to represent different kinds of `null` values when working with JSON fields.
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   namespace NullTypes {
     /**
     * Type of `Prisma.DbNull`.
-    * 
+    *
     * You cannot use other instances of this class. Please use the `Prisma.DbNull` value.
-    * 
+    *
     * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
     */
     class DbNull {
@@ -499,9 +503,9 @@ export namespace Prisma {
 
     /**
     * Type of `Prisma.JsonNull`.
-    * 
+    *
     * You cannot use other instances of this class. Please use the `Prisma.JsonNull` value.
-    * 
+    *
     * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
     */
     class JsonNull {
@@ -511,9 +515,9 @@ export namespace Prisma {
 
     /**
     * Type of `Prisma.AnyNull`.
-    * 
+    *
     * You cannot use other instances of this class. Please use the `Prisma.AnyNull` value.
-    * 
+    *
     * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
     */
     class AnyNull {
@@ -524,21 +528,21 @@ export namespace Prisma {
 
   /**
    * Helper for filtering JSON entries that have `null` on the database (empty on the db)
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   export const DbNull: NullTypes.DbNull
 
   /**
    * Helper for filtering JSON entries that have JSON `null` values (not empty on the db)
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   export const JsonNull: NullTypes.JsonNull
 
   /**
    * Helper for filtering JSON entries that are `Prisma.DbNull` or `Prisma.JsonNull`
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   export const AnyNull: NullTypes.AnyNull
@@ -726,7 +730,7 @@ export namespace Prisma {
   type AtLeast<O extends object, K extends string> = NoExpand<
     O extends unknown
     ? | (K extends keyof O ? { [P in K]: O[P] } & O : O)
-      | {[P in keyof O as P extends K ? K : never]-?: O[P]} & O
+      | {[P in keyof O as P extends K ? P : never]-?: O[P]} & O
     : never>;
 
   type _Strict<U, _U = U> = U extends unknown ? U & OptionalFlat<_Record<Exclude<Keys<_U>, keyof U>, never>> : never;
@@ -864,11 +868,14 @@ export namespace Prisma {
     db?: Datasource
   }
 
-  interface TypeMapCb extends $Utils.Fn<{extArgs: $Extensions.InternalArgs, clientOptions: PrismaClientOptions }, $Utils.Record<string, any>> {
-    returns: Prisma.TypeMap<this['params']['extArgs'], this['params']['clientOptions']>
+  interface TypeMapCb<ClientOptions = {}> extends $Utils.Fn<{extArgs: $Extensions.InternalArgs }, $Utils.Record<string, any>> {
+    returns: Prisma.TypeMap<this['params']['extArgs'], ClientOptions extends { omit: infer OmitOptions } ? OmitOptions : {}>
   }
 
-  export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
+  export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> = {
+    globalOmitOptions: {
+      omit: GlobalOmitOptions
+    }
     meta: {
       modelProps: "config" | "category" | "guild" | "guildData" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "elementButtonLanguage" | "elementTextInputLanguage" | "elementSelectMenuLanguage" | "embedLanguage" | "markdownLanguage" | "modalLanguage"
       txIsolationLevel: never
@@ -2038,8 +2045,39 @@ export namespace Prisma {
       maxWait?: number
       timeout?: number
     }
+    /**
+     * Global configuration for omitting model fields by default.
+     * 
+     * @example
+     * ```
+     * const prisma = new PrismaClient({
+     *   omit: {
+     *     user: {
+     *       password: true
+     *     }
+     *   }
+     * })
+     * ```
+     */
+    omit?: Prisma.GlobalOmitConfig
   }
-
+  export type GlobalOmitConfig = {
+    config?: ConfigOmit
+    category?: CategoryOmit
+    guild?: GuildOmit
+    guildData?: GuildDataOmit
+    channel?: ChannelOmit
+    channelData?: ChannelDataOmit
+    user?: UserOmit
+    userData?: UserDataOmit
+    userChannelData?: UserChannelDataOmit
+    elementButtonLanguage?: ElementButtonLanguageOmit
+    elementTextInputLanguage?: ElementTextInputLanguageOmit
+    elementSelectMenuLanguage?: ElementSelectMenuLanguageOmit
+    embedLanguage?: EmbedLanguageOmit
+    markdownLanguage?: MarkdownLanguageOmit
+    modalLanguage?: ModalLanguageOmit
+  }
 
   /* Types for Logging */
   export type LogLevel = 'info' | 'query' | 'warn' | 'error'
@@ -2080,6 +2118,7 @@ export namespace Prisma {
     | 'createManyAndReturn'
     | 'update'
     | 'updateMany'
+    | 'updateManyAndReturn'
     | 'upsert'
     | 'delete'
     | 'deleteMany'
@@ -2247,11 +2286,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["language"]>
 
 
+
   export type LanguageSelectScalar = {
     name?: boolean
     code?: boolean
   }
 
+  export type LanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"name" | "code", ExtArgs["result"]["language"]>
 
   export type $LanguagePayload = {
     name: "Language"
@@ -2271,7 +2312,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Language model
-   */ 
+   */
   interface LanguageFieldRefs {
     readonly name: FieldRef<"Language", 'String'>
     readonly code: FieldRef<"Language", 'String'>
@@ -2287,6 +2328,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Language
      */
     select?: LanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Language
+     */
+    omit?: LanguageOmit<ExtArgs> | null
   }
 
 
@@ -2304,11 +2349,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementButtonContent"]>
 
 
+
   export type ElementButtonContentSelectScalar = {
     label?: boolean
     options?: boolean
   }
 
+  export type ElementButtonContentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"label" | "options", ExtArgs["result"]["elementButtonContent"]>
 
   export type $ElementButtonContentPayload = {
     name: "ElementButtonContent"
@@ -2328,7 +2375,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementButtonContent model
-   */ 
+   */
   interface ElementButtonContentFieldRefs {
     readonly label: FieldRef<"ElementButtonContent", 'String'>
     readonly options: FieldRef<"ElementButtonContent", 'Json'>
@@ -2344,6 +2391,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementButtonContent
      */
     select?: ElementButtonContentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementButtonContent
+     */
+    omit?: ElementButtonContentOmit<ExtArgs> | null
   }
 
 
@@ -2361,11 +2412,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementTextInputContentLanguage"]>
 
 
+
   export type ElementTextInputContentLanguageSelectScalar = {
     label?: boolean
     placeholder?: boolean
   }
 
+  export type ElementTextInputContentLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"label" | "placeholder", ExtArgs["result"]["elementTextInputContentLanguage"]>
 
   export type $ElementTextInputContentLanguagePayload = {
     name: "ElementTextInputContentLanguage"
@@ -2385,7 +2438,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementTextInputContentLanguage model
-   */ 
+   */
   interface ElementTextInputContentLanguageFieldRefs {
     readonly label: FieldRef<"ElementTextInputContentLanguage", 'String'>
     readonly placeholder: FieldRef<"ElementTextInputContentLanguage", 'String'>
@@ -2401,6 +2454,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementTextInputContentLanguage
      */
     select?: ElementTextInputContentLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementTextInputContentLanguage
+     */
+    omit?: ElementTextInputContentLanguageOmit<ExtArgs> | null
   }
 
 
@@ -2417,10 +2474,12 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementSelectMenuOptionsLanguage"]>
 
 
+
   export type ElementSelectMenuOptionsLanguageSelectScalar = {
     label?: boolean
   }
 
+  export type ElementSelectMenuOptionsLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"label", ExtArgs["result"]["elementSelectMenuOptionsLanguage"]>
 
   export type $ElementSelectMenuOptionsLanguagePayload = {
     name: "ElementSelectMenuOptionsLanguage"
@@ -2439,7 +2498,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementSelectMenuOptionsLanguage model
-   */ 
+   */
   interface ElementSelectMenuOptionsLanguageFieldRefs {
     readonly label: FieldRef<"ElementSelectMenuOptionsLanguage", 'String'>
   }
@@ -2454,6 +2513,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementSelectMenuOptionsLanguage
      */
     select?: ElementSelectMenuOptionsLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementSelectMenuOptionsLanguage
+     */
+    omit?: ElementSelectMenuOptionsLanguageOmit<ExtArgs> | null
   }
 
 
@@ -2472,11 +2535,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementSelectMenuLanguageContent"]>
 
 
+
   export type ElementSelectMenuLanguageContentSelectScalar = {
     placeholder?: boolean
     options?: boolean
   }
 
+  export type ElementSelectMenuLanguageContentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"placeholder" | "selectOptions" | "options", ExtArgs["result"]["elementSelectMenuLanguageContent"]>
   export type ElementSelectMenuLanguageContentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ElementSelectMenuLanguageContentPayload = {
@@ -2499,7 +2564,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementSelectMenuLanguageContent model
-   */ 
+   */
   interface ElementSelectMenuLanguageContentFieldRefs {
     readonly placeholder: FieldRef<"ElementSelectMenuLanguageContent", 'String'>
     readonly options: FieldRef<"ElementSelectMenuLanguageContent", 'Json'>
@@ -2515,6 +2580,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementSelectMenuLanguageContent
      */
     select?: ElementSelectMenuLanguageContentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementSelectMenuLanguageContent
+     */
+    omit?: ElementSelectMenuLanguageContentOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2539,6 +2608,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["embedContentLanguage"]>
 
 
+
   export type EmbedContentLanguageSelectScalar = {
     title?: boolean
     description?: boolean
@@ -2547,6 +2617,7 @@ export namespace Prisma {
     arrayOptions?: boolean
   }
 
+  export type EmbedContentLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"title" | "description" | "footer" | "options" | "arrayOptions", ExtArgs["result"]["embedContentLanguage"]>
 
   export type $EmbedContentLanguagePayload = {
     name: "EmbedContentLanguage"
@@ -2569,7 +2640,7 @@ export namespace Prisma {
 
   /**
    * Fields of the EmbedContentLanguage model
-   */ 
+   */
   interface EmbedContentLanguageFieldRefs {
     readonly title: FieldRef<"EmbedContentLanguage", 'String'>
     readonly description: FieldRef<"EmbedContentLanguage", 'String'>
@@ -2588,6 +2659,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmbedContentLanguage
      */
     select?: EmbedContentLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmbedContentLanguage
+     */
+    omit?: EmbedContentLanguageOmit<ExtArgs> | null
   }
 
 
@@ -2605,11 +2680,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["markdownContentLanguage"]>
 
 
+
   export type MarkdownContentLanguageSelectScalar = {
     content?: boolean
     options?: boolean
   }
 
+  export type MarkdownContentLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"content" | "options", ExtArgs["result"]["markdownContentLanguage"]>
 
   export type $MarkdownContentLanguagePayload = {
     name: "MarkdownContentLanguage"
@@ -2629,7 +2706,7 @@ export namespace Prisma {
 
   /**
    * Fields of the MarkdownContentLanguage model
-   */ 
+   */
   interface MarkdownContentLanguageFieldRefs {
     readonly content: FieldRef<"MarkdownContentLanguage", 'String'>
     readonly options: FieldRef<"MarkdownContentLanguage", 'Json'>
@@ -2645,6 +2722,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MarkdownContentLanguage
      */
     select?: MarkdownContentLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MarkdownContentLanguage
+     */
+    omit?: MarkdownContentLanguageOmit<ExtArgs> | null
   }
 
 
@@ -2661,10 +2742,12 @@ export namespace Prisma {
   }, ExtArgs["result"]["modalContentLanguage"]>
 
 
+
   export type ModalContentLanguageSelectScalar = {
     title?: boolean
   }
 
+  export type ModalContentLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"title", ExtArgs["result"]["modalContentLanguage"]>
 
   export type $ModalContentLanguagePayload = {
     name: "ModalContentLanguage"
@@ -2683,7 +2766,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ModalContentLanguage model
-   */ 
+   */
   interface ModalContentLanguageFieldRefs {
     readonly title: FieldRef<"ModalContentLanguage", 'String'>
   }
@@ -2698,6 +2781,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ModalContentLanguage
      */
     select?: ModalContentLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ModalContentLanguage
+     */
+    omit?: ModalContentLanguageOmit<ExtArgs> | null
   }
 
 
@@ -2892,6 +2979,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["config"]>
 
 
+
   export type ConfigSelectScalar = {
     id?: boolean
     key?: boolean
@@ -2904,6 +2992,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "version" | "type" | "object" | "value" | "values" | "createdAt" | "updatedAt", ExtArgs["result"]["config"]>
 
   export type $ConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Config"
@@ -2924,12 +3013,12 @@ export namespace Prisma {
 
   type ConfigGetPayload<S extends boolean | null | undefined | ConfigDefaultArgs> = $Result.GetResult<Prisma.$ConfigPayload, S>
 
-  type ConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ConfigCountAggregateInputType | true
     }
 
-  export interface ConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Config'], meta: { name: 'Config' } }
     /**
      * Find zero or one Config that matches the filter.
@@ -2942,10 +3031,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ConfigFindUniqueArgs>(args: SelectSubset<T, ConfigFindUniqueArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ConfigFindUniqueArgs>(args: SelectSubset<T, ConfigFindUniqueArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Config that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Config that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ConfigFindUniqueOrThrowArgs} args - Arguments to find a Config
      * @example
@@ -2956,7 +3045,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Config that matches the filter.
@@ -2971,7 +3060,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ConfigFindFirstArgs>(args?: SelectSubset<T, ConfigFindFirstArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ConfigFindFirstArgs>(args?: SelectSubset<T, ConfigFindFirstArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Config that matches the filter or
@@ -2987,7 +3076,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Configs that matches the filter.
@@ -3005,7 +3094,7 @@ export namespace Prisma {
      * const configWithIdOnly = await prisma.config.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ConfigFindManyArgs>(args?: SelectSubset<T, ConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ConfigFindManyArgs>(args?: SelectSubset<T, ConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Config.
@@ -3019,7 +3108,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ConfigCreateArgs>(args: SelectSubset<T, ConfigCreateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ConfigCreateArgs>(args: SelectSubset<T, ConfigCreateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Configs.
@@ -3047,7 +3136,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ConfigDeleteArgs>(args: SelectSubset<T, ConfigDeleteArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ConfigDeleteArgs>(args: SelectSubset<T, ConfigDeleteArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Config.
@@ -3064,7 +3153,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ConfigUpdateArgs>(args: SelectSubset<T, ConfigUpdateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ConfigUpdateArgs>(args: SelectSubset<T, ConfigUpdateArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Configs.
@@ -3116,14 +3205,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ConfigUpsertArgs>(args: SelectSubset<T, ConfigUpsertArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ConfigUpsertArgs>(args: SelectSubset<T, ConfigUpsertArgs<ExtArgs>>): Prisma__ConfigClient<$Result.GetResult<Prisma.$ConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Configs that matches the filter.
      * @param {ConfigFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const config = await prisma.config.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ConfigFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -3279,7 +3368,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3308,7 +3397,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Config model
-   */ 
+   */
   interface ConfigFieldRefs {
     readonly id: FieldRef<"Config", 'String'>
     readonly key: FieldRef<"Config", 'String'>
@@ -3332,6 +3421,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * Filter, which Config to fetch.
      */
     where: ConfigWhereUniqueInput
@@ -3346,6 +3439,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * Filter, which Config to fetch.
      */
     where: ConfigWhereUniqueInput
@@ -3359,6 +3456,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Config
      */
     select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
     /**
      * Filter, which Config to fetch.
      */
@@ -3404,6 +3505,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * Filter, which Config to fetch.
      */
     where?: ConfigWhereInput
@@ -3448,6 +3553,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * Filter, which Configs to fetch.
      */
     where?: ConfigWhereInput
@@ -3487,6 +3596,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * The data needed to create a Config.
      */
     data: XOR<ConfigCreateInput, ConfigUncheckedCreateInput>
@@ -3511,6 +3624,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * The data needed to update a Config.
      */
     data: XOR<ConfigUpdateInput, ConfigUncheckedUpdateInput>
@@ -3532,6 +3649,10 @@ export namespace Prisma {
      * Filter which Configs to update
      */
     where?: ConfigWhereInput
+    /**
+     * Limit how many Configs to update.
+     */
+    limit?: number
   }
 
   /**
@@ -3542,6 +3663,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Config
      */
     select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
     /**
      * The filter to search for the Config to update in case it exists.
      */
@@ -3565,6 +3690,10 @@ export namespace Prisma {
      */
     select?: ConfigSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
+    /**
      * Filter which Config to delete.
      */
     where: ConfigWhereUniqueInput
@@ -3578,6 +3707,10 @@ export namespace Prisma {
      * Filter which Configs to delete
      */
     where?: ConfigWhereInput
+    /**
+     * Limit how many Configs to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -3616,6 +3749,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Config
      */
     select?: ConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Config
+     */
+    omit?: ConfigOmit<ExtArgs> | null
   }
 
 
@@ -3836,6 +3973,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["category"]>
 
 
+
   export type CategorySelectScalar = {
     id?: boolean
     name?: boolean
@@ -3846,6 +3984,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "categoryId" | "guildId" | "createdAtDiscord" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
 
   export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Category"
@@ -3864,12 +4003,12 @@ export namespace Prisma {
 
   type CategoryGetPayload<S extends boolean | null | undefined | CategoryDefaultArgs> = $Result.GetResult<Prisma.$CategoryPayload, S>
 
-  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: CategoryCountAggregateInputType | true
     }
 
-  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Category'], meta: { name: 'Category' } }
     /**
      * Find zero or one Category that matches the filter.
@@ -3882,10 +4021,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends CategoryFindUniqueArgs>(args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends CategoryFindUniqueArgs>(args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Category that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Category that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {CategoryFindUniqueOrThrowArgs} args - Arguments to find a Category
      * @example
@@ -3896,7 +4035,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Category that matches the filter.
@@ -3911,7 +4050,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends CategoryFindFirstArgs>(args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends CategoryFindFirstArgs>(args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Category that matches the filter or
@@ -3927,7 +4066,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Categories that matches the filter.
@@ -3945,7 +4084,7 @@ export namespace Prisma {
      * const categoryWithIdOnly = await prisma.category.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends CategoryFindManyArgs>(args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends CategoryFindManyArgs>(args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Category.
@@ -3959,7 +4098,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends CategoryCreateArgs>(args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends CategoryCreateArgs>(args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Categories.
@@ -3987,7 +4126,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends CategoryDeleteArgs>(args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends CategoryDeleteArgs>(args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Category.
@@ -4004,7 +4143,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends CategoryUpdateArgs>(args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends CategoryUpdateArgs>(args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Categories.
@@ -4056,14 +4195,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Categories that matches the filter.
      * @param {CategoryFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const category = await prisma.category.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: CategoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -4219,7 +4358,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4248,7 +4387,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Category model
-   */ 
+   */
   interface CategoryFieldRefs {
     readonly id: FieldRef<"Category", 'String'>
     readonly name: FieldRef<"Category", 'String'>
@@ -4270,6 +4409,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * Filter, which Category to fetch.
      */
     where: CategoryWhereUniqueInput
@@ -4284,6 +4427,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * Filter, which Category to fetch.
      */
     where: CategoryWhereUniqueInput
@@ -4297,6 +4444,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Category
      */
     select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
     /**
      * Filter, which Category to fetch.
      */
@@ -4342,6 +4493,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * Filter, which Category to fetch.
      */
     where?: CategoryWhereInput
@@ -4386,6 +4541,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * Filter, which Categories to fetch.
      */
     where?: CategoryWhereInput
@@ -4425,6 +4584,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * The data needed to create a Category.
      */
     data: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
@@ -4449,6 +4612,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * The data needed to update a Category.
      */
     data: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
@@ -4470,6 +4637,10 @@ export namespace Prisma {
      * Filter which Categories to update
      */
     where?: CategoryWhereInput
+    /**
+     * Limit how many Categories to update.
+     */
+    limit?: number
   }
 
   /**
@@ -4480,6 +4651,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Category
      */
     select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
     /**
      * The filter to search for the Category to update in case it exists.
      */
@@ -4503,6 +4678,10 @@ export namespace Prisma {
      */
     select?: CategorySelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
      * Filter which Category to delete.
      */
     where: CategoryWhereUniqueInput
@@ -4516,6 +4695,10 @@ export namespace Prisma {
      * Filter which Categories to delete
      */
     where?: CategoryWhereInput
+    /**
+     * Limit how many Categories to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -4554,6 +4737,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Category
      */
     select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
   }
 
 
@@ -4742,6 +4929,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["guild"]>
 
 
+
   export type GuildSelectScalar = {
     id?: boolean
     guildId?: boolean
@@ -4752,6 +4940,7 @@ export namespace Prisma {
     updatedAtInternal?: boolean
   }
 
+  export type GuildOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "name" | "isInGuild" | "createdAt" | "updatedAt" | "updatedAtInternal", ExtArgs["result"]["guild"]>
   export type GuildInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | Guild$dataArgs<ExtArgs>
     _count?: boolean | GuildCountOutputTypeDefaultArgs<ExtArgs>
@@ -4776,12 +4965,12 @@ export namespace Prisma {
 
   type GuildGetPayload<S extends boolean | null | undefined | GuildDefaultArgs> = $Result.GetResult<Prisma.$GuildPayload, S>
 
-  type GuildCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<GuildFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type GuildCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: GuildCountAggregateInputType | true
     }
 
-  export interface GuildDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface GuildDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Guild'], meta: { name: 'Guild' } }
     /**
      * Find zero or one Guild that matches the filter.
@@ -4794,10 +4983,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends GuildFindUniqueArgs>(args: SelectSubset<T, GuildFindUniqueArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends GuildFindUniqueArgs>(args: SelectSubset<T, GuildFindUniqueArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Guild that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Guild that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {GuildFindUniqueOrThrowArgs} args - Arguments to find a Guild
      * @example
@@ -4808,7 +4997,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends GuildFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends GuildFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Guild that matches the filter.
@@ -4823,7 +5012,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends GuildFindFirstArgs>(args?: SelectSubset<T, GuildFindFirstArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends GuildFindFirstArgs>(args?: SelectSubset<T, GuildFindFirstArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Guild that matches the filter or
@@ -4839,7 +5028,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends GuildFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends GuildFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Guilds that matches the filter.
@@ -4857,7 +5046,7 @@ export namespace Prisma {
      * const guildWithIdOnly = await prisma.guild.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends GuildFindManyArgs>(args?: SelectSubset<T, GuildFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends GuildFindManyArgs>(args?: SelectSubset<T, GuildFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Guild.
@@ -4871,7 +5060,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends GuildCreateArgs>(args: SelectSubset<T, GuildCreateArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends GuildCreateArgs>(args: SelectSubset<T, GuildCreateArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Guilds.
@@ -4899,7 +5088,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends GuildDeleteArgs>(args: SelectSubset<T, GuildDeleteArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends GuildDeleteArgs>(args: SelectSubset<T, GuildDeleteArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Guild.
@@ -4916,7 +5105,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends GuildUpdateArgs>(args: SelectSubset<T, GuildUpdateArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends GuildUpdateArgs>(args: SelectSubset<T, GuildUpdateArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Guilds.
@@ -4968,14 +5157,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends GuildUpsertArgs>(args: SelectSubset<T, GuildUpsertArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends GuildUpsertArgs>(args: SelectSubset<T, GuildUpsertArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Guilds that matches the filter.
      * @param {GuildFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const guild = await prisma.guild.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: GuildFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -5131,9 +5320,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__GuildClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__GuildClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    data<T extends Guild$dataArgs<ExtArgs> = {}>(args?: Subset<T, Guild$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findMany"> | Null>
+    data<T extends Guild$dataArgs<ExtArgs> = {}>(args?: Subset<T, Guild$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5161,7 +5350,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Guild model
-   */ 
+   */
   interface GuildFieldRefs {
     readonly id: FieldRef<"Guild", 'String'>
     readonly guildId: FieldRef<"Guild", 'String'>
@@ -5183,6 +5372,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5201,6 +5394,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5218,6 +5415,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Guild
      */
     select?: GuildSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5267,6 +5468,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5315,6 +5520,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5358,6 +5567,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5386,6 +5599,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5411,6 +5628,10 @@ export namespace Prisma {
      * Filter which Guilds to update
      */
     where?: GuildWhereInput
+    /**
+     * Limit how many Guilds to update.
+     */
+    limit?: number
   }
 
   /**
@@ -5421,6 +5642,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Guild
      */
     select?: GuildSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5448,6 +5673,10 @@ export namespace Prisma {
      */
     select?: GuildSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildInclude<ExtArgs> | null
@@ -5465,6 +5694,10 @@ export namespace Prisma {
      * Filter which Guilds to delete
      */
     where?: GuildWhereInput
+    /**
+     * Limit how many Guilds to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -5504,6 +5737,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -5523,6 +5760,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Guild
      */
     select?: GuildSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Guild
+     */
+    omit?: GuildOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5730,6 +5971,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["guildData"]>
 
 
+
   export type GuildDataSelectScalar = {
     id?: boolean
     key?: boolean
@@ -5743,6 +5985,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type GuildDataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "version" | "type" | "object" | "value" | "values" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["guildData"]>
   export type GuildDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     guild?: boolean | GuildDefaultArgs<ExtArgs>
   }
@@ -5769,12 +6012,12 @@ export namespace Prisma {
 
   type GuildDataGetPayload<S extends boolean | null | undefined | GuildDataDefaultArgs> = $Result.GetResult<Prisma.$GuildDataPayload, S>
 
-  type GuildDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<GuildDataFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type GuildDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildDataFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: GuildDataCountAggregateInputType | true
     }
 
-  export interface GuildDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface GuildDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildData'], meta: { name: 'GuildData' } }
     /**
      * Find zero or one GuildData that matches the filter.
@@ -5787,10 +6030,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends GuildDataFindUniqueArgs>(args: SelectSubset<T, GuildDataFindUniqueArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends GuildDataFindUniqueArgs>(args: SelectSubset<T, GuildDataFindUniqueArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one GuildData that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one GuildData that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {GuildDataFindUniqueOrThrowArgs} args - Arguments to find a GuildData
      * @example
@@ -5801,7 +6044,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends GuildDataFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends GuildDataFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first GuildData that matches the filter.
@@ -5816,7 +6059,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends GuildDataFindFirstArgs>(args?: SelectSubset<T, GuildDataFindFirstArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends GuildDataFindFirstArgs>(args?: SelectSubset<T, GuildDataFindFirstArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first GuildData that matches the filter or
@@ -5832,7 +6075,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends GuildDataFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends GuildDataFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more GuildData that matches the filter.
@@ -5850,7 +6093,7 @@ export namespace Prisma {
      * const guildDataWithIdOnly = await prisma.guildData.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends GuildDataFindManyArgs>(args?: SelectSubset<T, GuildDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends GuildDataFindManyArgs>(args?: SelectSubset<T, GuildDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a GuildData.
@@ -5864,7 +6107,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends GuildDataCreateArgs>(args: SelectSubset<T, GuildDataCreateArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends GuildDataCreateArgs>(args: SelectSubset<T, GuildDataCreateArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many GuildData.
@@ -5892,7 +6135,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends GuildDataDeleteArgs>(args: SelectSubset<T, GuildDataDeleteArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends GuildDataDeleteArgs>(args: SelectSubset<T, GuildDataDeleteArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one GuildData.
@@ -5909,7 +6152,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends GuildDataUpdateArgs>(args: SelectSubset<T, GuildDataUpdateArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends GuildDataUpdateArgs>(args: SelectSubset<T, GuildDataUpdateArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more GuildData.
@@ -5961,14 +6204,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends GuildDataUpsertArgs>(args: SelectSubset<T, GuildDataUpsertArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends GuildDataUpsertArgs>(args: SelectSubset<T, GuildDataUpsertArgs<ExtArgs>>): Prisma__GuildDataClient<$Result.GetResult<Prisma.$GuildDataPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more GuildData that matches the filter.
      * @param {GuildDataFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const guildData = await prisma.guildData.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: GuildDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -6124,9 +6367,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__GuildDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__GuildDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    guild<T extends GuildDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GuildDefaultArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    guild<T extends GuildDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GuildDefaultArgs<ExtArgs>>): Prisma__GuildClient<$Result.GetResult<Prisma.$GuildPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6154,7 +6397,7 @@ export namespace Prisma {
 
   /**
    * Fields of the GuildData model
-   */ 
+   */
   interface GuildDataFieldRefs {
     readonly id: FieldRef<"GuildData", 'String'>
     readonly key: FieldRef<"GuildData", 'String'>
@@ -6179,6 +6422,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6197,6 +6444,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6214,6 +6465,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the GuildData
      */
     select?: GuildDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6263,6 +6518,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6311,6 +6570,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6354,6 +6617,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6382,6 +6649,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6407,6 +6678,10 @@ export namespace Prisma {
      * Filter which GuildData to update
      */
     where?: GuildDataWhereInput
+    /**
+     * Limit how many GuildData to update.
+     */
+    limit?: number
   }
 
   /**
@@ -6417,6 +6692,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the GuildData
      */
     select?: GuildDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6444,6 +6723,10 @@ export namespace Prisma {
      */
     select?: GuildDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: GuildDataInclude<ExtArgs> | null
@@ -6461,6 +6744,10 @@ export namespace Prisma {
      * Filter which GuildData to delete
      */
     where?: GuildDataWhereInput
+    /**
+     * Limit how many GuildData to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -6499,6 +6786,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the GuildData
      */
     select?: GuildDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildData
+     */
+    omit?: GuildDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6757,6 +7048,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["channel"]>
 
 
+
   export type ChannelSelectScalar = {
     id?: boolean
     channelId?: boolean
@@ -6771,6 +7063,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "guildId" | "userOwnerId" | "categoryId" | "ownerChannelId" | "version" | "internalType" | "createdAtDiscord" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
   export type ChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | Channel$dataArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
@@ -6799,12 +7092,12 @@ export namespace Prisma {
 
   type ChannelGetPayload<S extends boolean | null | undefined | ChannelDefaultArgs> = $Result.GetResult<Prisma.$ChannelPayload, S>
 
-  type ChannelCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ChannelFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ChannelCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ChannelFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ChannelCountAggregateInputType | true
     }
 
-  export interface ChannelDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ChannelDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Channel'], meta: { name: 'Channel' } }
     /**
      * Find zero or one Channel that matches the filter.
@@ -6817,10 +7110,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ChannelFindUniqueArgs>(args: SelectSubset<T, ChannelFindUniqueArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ChannelFindUniqueArgs>(args: SelectSubset<T, ChannelFindUniqueArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Channel that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Channel that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ChannelFindUniqueOrThrowArgs} args - Arguments to find a Channel
      * @example
@@ -6831,7 +7124,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ChannelFindUniqueOrThrowArgs>(args: SelectSubset<T, ChannelFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ChannelFindUniqueOrThrowArgs>(args: SelectSubset<T, ChannelFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Channel that matches the filter.
@@ -6846,7 +7139,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ChannelFindFirstArgs>(args?: SelectSubset<T, ChannelFindFirstArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ChannelFindFirstArgs>(args?: SelectSubset<T, ChannelFindFirstArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Channel that matches the filter or
@@ -6862,7 +7155,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ChannelFindFirstOrThrowArgs>(args?: SelectSubset<T, ChannelFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ChannelFindFirstOrThrowArgs>(args?: SelectSubset<T, ChannelFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Channels that matches the filter.
@@ -6880,7 +7173,7 @@ export namespace Prisma {
      * const channelWithIdOnly = await prisma.channel.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ChannelFindManyArgs>(args?: SelectSubset<T, ChannelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ChannelFindManyArgs>(args?: SelectSubset<T, ChannelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Channel.
@@ -6894,7 +7187,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ChannelCreateArgs>(args: SelectSubset<T, ChannelCreateArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ChannelCreateArgs>(args: SelectSubset<T, ChannelCreateArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Channels.
@@ -6922,7 +7215,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ChannelDeleteArgs>(args: SelectSubset<T, ChannelDeleteArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ChannelDeleteArgs>(args: SelectSubset<T, ChannelDeleteArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Channel.
@@ -6939,7 +7232,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ChannelUpdateArgs>(args: SelectSubset<T, ChannelUpdateArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ChannelUpdateArgs>(args: SelectSubset<T, ChannelUpdateArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Channels.
@@ -6991,14 +7284,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ChannelUpsertArgs>(args: SelectSubset<T, ChannelUpsertArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ChannelUpsertArgs>(args: SelectSubset<T, ChannelUpsertArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Channels that matches the filter.
      * @param {ChannelFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const channel = await prisma.channel.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ChannelFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -7154,9 +7447,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    data<T extends Channel$dataArgs<ExtArgs> = {}>(args?: Subset<T, Channel$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany"> | Null>
+    data<T extends Channel$dataArgs<ExtArgs> = {}>(args?: Subset<T, Channel$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7184,7 +7477,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Channel model
-   */ 
+   */
   interface ChannelFieldRefs {
     readonly id: FieldRef<"Channel", 'String'>
     readonly channelId: FieldRef<"Channel", 'String'>
@@ -7210,6 +7503,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7228,6 +7525,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7245,6 +7546,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Channel
      */
     select?: ChannelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7294,6 +7599,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7342,6 +7651,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7385,6 +7698,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7413,6 +7730,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7438,6 +7759,10 @@ export namespace Prisma {
      * Filter which Channels to update
      */
     where?: ChannelWhereInput
+    /**
+     * Limit how many Channels to update.
+     */
+    limit?: number
   }
 
   /**
@@ -7448,6 +7773,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Channel
      */
     select?: ChannelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7475,6 +7804,10 @@ export namespace Prisma {
      */
     select?: ChannelSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelInclude<ExtArgs> | null
@@ -7492,6 +7825,10 @@ export namespace Prisma {
      * Filter which Channels to delete
      */
     where?: ChannelWhereInput
+    /**
+     * Limit how many Channels to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -7531,6 +7868,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -7550,6 +7891,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Channel
      */
     select?: ChannelSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Channel
+     */
+    omit?: ChannelOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7757,6 +8102,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["channelData"]>
 
 
+
   export type ChannelDataSelectScalar = {
     id?: boolean
     key?: boolean
@@ -7770,6 +8116,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ChannelDataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "version" | "type" | "object" | "value" | "values" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["channelData"]>
   export type ChannelDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     channel?: boolean | ChannelDefaultArgs<ExtArgs>
   }
@@ -7796,12 +8143,12 @@ export namespace Prisma {
 
   type ChannelDataGetPayload<S extends boolean | null | undefined | ChannelDataDefaultArgs> = $Result.GetResult<Prisma.$ChannelDataPayload, S>
 
-  type ChannelDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ChannelDataFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ChannelDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ChannelDataFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ChannelDataCountAggregateInputType | true
     }
 
-  export interface ChannelDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ChannelDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ChannelData'], meta: { name: 'ChannelData' } }
     /**
      * Find zero or one ChannelData that matches the filter.
@@ -7814,10 +8161,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ChannelDataFindUniqueArgs>(args: SelectSubset<T, ChannelDataFindUniqueArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ChannelDataFindUniqueArgs>(args: SelectSubset<T, ChannelDataFindUniqueArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ChannelData that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ChannelData that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ChannelDataFindUniqueOrThrowArgs} args - Arguments to find a ChannelData
      * @example
@@ -7828,7 +8175,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, ChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, ChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ChannelData that matches the filter.
@@ -7843,7 +8190,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ChannelDataFindFirstArgs>(args?: SelectSubset<T, ChannelDataFindFirstArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ChannelDataFindFirstArgs>(args?: SelectSubset<T, ChannelDataFindFirstArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ChannelData that matches the filter or
@@ -7859,7 +8206,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, ChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, ChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ChannelData that matches the filter.
@@ -7877,7 +8224,7 @@ export namespace Prisma {
      * const channelDataWithIdOnly = await prisma.channelData.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ChannelDataFindManyArgs>(args?: SelectSubset<T, ChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ChannelDataFindManyArgs>(args?: SelectSubset<T, ChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a ChannelData.
@@ -7891,7 +8238,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ChannelDataCreateArgs>(args: SelectSubset<T, ChannelDataCreateArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ChannelDataCreateArgs>(args: SelectSubset<T, ChannelDataCreateArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ChannelData.
@@ -7919,7 +8266,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ChannelDataDeleteArgs>(args: SelectSubset<T, ChannelDataDeleteArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ChannelDataDeleteArgs>(args: SelectSubset<T, ChannelDataDeleteArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one ChannelData.
@@ -7936,7 +8283,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ChannelDataUpdateArgs>(args: SelectSubset<T, ChannelDataUpdateArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ChannelDataUpdateArgs>(args: SelectSubset<T, ChannelDataUpdateArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ChannelData.
@@ -7988,14 +8335,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ChannelDataUpsertArgs>(args: SelectSubset<T, ChannelDataUpsertArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ChannelDataUpsertArgs>(args: SelectSubset<T, ChannelDataUpsertArgs<ExtArgs>>): Prisma__ChannelDataClient<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ChannelData that matches the filter.
      * @param {ChannelDataFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const channelData = await prisma.channelData.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ChannelDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -8151,9 +8498,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8181,7 +8528,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ChannelData model
-   */ 
+   */
   interface ChannelDataFieldRefs {
     readonly id: FieldRef<"ChannelData", 'String'>
     readonly key: FieldRef<"ChannelData", 'String'>
@@ -8206,6 +8553,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8224,6 +8575,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8241,6 +8596,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ChannelData
      */
     select?: ChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8290,6 +8649,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8338,6 +8701,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8381,6 +8748,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8409,6 +8780,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8434,6 +8809,10 @@ export namespace Prisma {
      * Filter which ChannelData to update
      */
     where?: ChannelDataWhereInput
+    /**
+     * Limit how many ChannelData to update.
+     */
+    limit?: number
   }
 
   /**
@@ -8444,6 +8823,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ChannelData
      */
     select?: ChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8471,6 +8854,10 @@ export namespace Prisma {
      */
     select?: ChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ChannelDataInclude<ExtArgs> | null
@@ -8488,6 +8875,10 @@ export namespace Prisma {
      * Filter which ChannelData to delete
      */
     where?: ChannelDataWhereInput
+    /**
+     * Limit how many ChannelData to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -8526,6 +8917,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ChannelData
      */
     select?: ChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChannelData
+     */
+    omit?: ChannelDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8703,6 +9098,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["user"]>
 
 
+
   export type UserSelectScalar = {
     id?: boolean
     userId?: boolean
@@ -8711,6 +9107,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "username" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | User$dataArgs<ExtArgs>
     channelData?: boolean | User$channelDataArgs<ExtArgs>
@@ -8735,12 +9132,12 @@ export namespace Prisma {
 
   type UserGetPayload<S extends boolean | null | undefined | UserDefaultArgs> = $Result.GetResult<Prisma.$UserPayload, S>
 
-  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: UserCountAggregateInputType | true
     }
 
-  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['User'], meta: { name: 'User' } }
     /**
      * Find zero or one User that matches the filter.
@@ -8753,10 +9150,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one User that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one User that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {UserFindUniqueOrThrowArgs} args - Arguments to find a User
      * @example
@@ -8767,7 +9164,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first User that matches the filter.
@@ -8782,7 +9179,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first User that matches the filter or
@@ -8798,7 +9195,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -8816,7 +9213,7 @@ export namespace Prisma {
      * const userWithIdOnly = await prisma.user.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a User.
@@ -8830,7 +9227,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Users.
@@ -8858,7 +9255,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one User.
@@ -8875,7 +9272,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Users.
@@ -8927,14 +9324,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Users that matches the filter.
      * @param {UserFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const user = await prisma.user.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: UserFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -9090,10 +9487,10 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    data<T extends User$dataArgs<ExtArgs> = {}>(args?: Subset<T, User$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany"> | Null>
-    channelData<T extends User$channelDataArgs<ExtArgs> = {}>(args?: Subset<T, User$channelDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany"> | Null>
+    data<T extends User$dataArgs<ExtArgs> = {}>(args?: Subset<T, User$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    channelData<T extends User$channelDataArgs<ExtArgs> = {}>(args?: Subset<T, User$channelDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9121,7 +9518,7 @@ export namespace Prisma {
 
   /**
    * Fields of the User model
-   */ 
+   */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
     readonly userId: FieldRef<"User", 'String'>
@@ -9141,6 +9538,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9159,6 +9560,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9176,6 +9581,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -9225,6 +9634,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9273,6 +9686,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9316,6 +9733,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9344,6 +9765,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9369,6 +9794,10 @@ export namespace Prisma {
      * Filter which Users to update
      */
     where?: UserWhereInput
+    /**
+     * Limit how many Users to update.
+     */
+    limit?: number
   }
 
   /**
@@ -9379,6 +9808,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -9406,6 +9839,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -9423,6 +9860,10 @@ export namespace Prisma {
      * Filter which Users to delete
      */
     where?: UserWhereInput
+    /**
+     * Limit how many Users to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -9462,6 +9903,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -9482,6 +9927,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -9501,6 +9950,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -9708,6 +10161,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["userData"]>
 
 
+
   export type UserDataSelectScalar = {
     id?: boolean
     key?: boolean
@@ -9721,6 +10175,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type UserDataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "version" | "type" | "object" | "value" | "values" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["userData"]>
   export type UserDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -9747,12 +10202,12 @@ export namespace Prisma {
 
   type UserDataGetPayload<S extends boolean | null | undefined | UserDataDefaultArgs> = $Result.GetResult<Prisma.$UserDataPayload, S>
 
-  type UserDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UserDataFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type UserDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserDataFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: UserDataCountAggregateInputType | true
     }
 
-  export interface UserDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface UserDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserData'], meta: { name: 'UserData' } }
     /**
      * Find zero or one UserData that matches the filter.
@@ -9765,10 +10220,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends UserDataFindUniqueArgs>(args: SelectSubset<T, UserDataFindUniqueArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends UserDataFindUniqueArgs>(args: SelectSubset<T, UserDataFindUniqueArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one UserData that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one UserData that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {UserDataFindUniqueOrThrowArgs} args - Arguments to find a UserData
      * @example
@@ -9779,7 +10234,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends UserDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first UserData that matches the filter.
@@ -9794,7 +10249,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends UserDataFindFirstArgs>(args?: SelectSubset<T, UserDataFindFirstArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends UserDataFindFirstArgs>(args?: SelectSubset<T, UserDataFindFirstArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first UserData that matches the filter or
@@ -9810,7 +10265,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends UserDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more UserData that matches the filter.
@@ -9828,7 +10283,7 @@ export namespace Prisma {
      * const userDataWithIdOnly = await prisma.userData.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserDataFindManyArgs>(args?: SelectSubset<T, UserDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends UserDataFindManyArgs>(args?: SelectSubset<T, UserDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a UserData.
@@ -9842,7 +10297,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends UserDataCreateArgs>(args: SelectSubset<T, UserDataCreateArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends UserDataCreateArgs>(args: SelectSubset<T, UserDataCreateArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many UserData.
@@ -9870,7 +10325,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends UserDataDeleteArgs>(args: SelectSubset<T, UserDataDeleteArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends UserDataDeleteArgs>(args: SelectSubset<T, UserDataDeleteArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one UserData.
@@ -9887,7 +10342,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserDataUpdateArgs>(args: SelectSubset<T, UserDataUpdateArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends UserDataUpdateArgs>(args: SelectSubset<T, UserDataUpdateArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more UserData.
@@ -9939,14 +10394,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends UserDataUpsertArgs>(args: SelectSubset<T, UserDataUpsertArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends UserDataUpsertArgs>(args: SelectSubset<T, UserDataUpsertArgs<ExtArgs>>): Prisma__UserDataClient<$Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more UserData that matches the filter.
      * @param {UserDataFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const userData = await prisma.userData.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: UserDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -10102,9 +10557,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__UserDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10132,7 +10587,7 @@ export namespace Prisma {
 
   /**
    * Fields of the UserData model
-   */ 
+   */
   interface UserDataFieldRefs {
     readonly id: FieldRef<"UserData", 'String'>
     readonly key: FieldRef<"UserData", 'String'>
@@ -10157,6 +10612,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10175,6 +10634,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10192,6 +10655,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserData
      */
     select?: UserDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10241,6 +10708,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10289,6 +10760,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10332,6 +10807,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10360,6 +10839,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10385,6 +10868,10 @@ export namespace Prisma {
      * Filter which UserData to update
      */
     where?: UserDataWhereInput
+    /**
+     * Limit how many UserData to update.
+     */
+    limit?: number
   }
 
   /**
@@ -10395,6 +10882,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserData
      */
     select?: UserDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10422,6 +10913,10 @@ export namespace Prisma {
      */
     select?: UserDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserDataInclude<ExtArgs> | null
@@ -10439,6 +10934,10 @@ export namespace Prisma {
      * Filter which UserData to delete
      */
     where?: UserDataWhereInput
+    /**
+     * Limit how many UserData to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -10477,6 +10976,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserData
      */
     select?: UserDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserData
+     */
+    omit?: UserDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10692,6 +11195,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["userChannelData"]>
 
 
+
   export type UserChannelDataSelectScalar = {
     id?: boolean
     channelId?: boolean
@@ -10706,6 +11210,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type UserChannelDataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "key" | "version" | "type" | "object" | "value" | "values" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["userChannelData"]>
   export type UserChannelDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -10733,12 +11238,12 @@ export namespace Prisma {
 
   type UserChannelDataGetPayload<S extends boolean | null | undefined | UserChannelDataDefaultArgs> = $Result.GetResult<Prisma.$UserChannelDataPayload, S>
 
-  type UserChannelDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UserChannelDataFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type UserChannelDataCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserChannelDataFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: UserChannelDataCountAggregateInputType | true
     }
 
-  export interface UserChannelDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface UserChannelDataDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserChannelData'], meta: { name: 'UserChannelData' } }
     /**
      * Find zero or one UserChannelData that matches the filter.
@@ -10751,10 +11256,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends UserChannelDataFindUniqueArgs>(args: SelectSubset<T, UserChannelDataFindUniqueArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends UserChannelDataFindUniqueArgs>(args: SelectSubset<T, UserChannelDataFindUniqueArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one UserChannelData that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one UserChannelData that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {UserChannelDataFindUniqueOrThrowArgs} args - Arguments to find a UserChannelData
      * @example
@@ -10765,7 +11270,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends UserChannelDataFindUniqueOrThrowArgs>(args: SelectSubset<T, UserChannelDataFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first UserChannelData that matches the filter.
@@ -10780,7 +11285,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends UserChannelDataFindFirstArgs>(args?: SelectSubset<T, UserChannelDataFindFirstArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends UserChannelDataFindFirstArgs>(args?: SelectSubset<T, UserChannelDataFindFirstArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first UserChannelData that matches the filter or
@@ -10796,7 +11301,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends UserChannelDataFindFirstOrThrowArgs>(args?: SelectSubset<T, UserChannelDataFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more UserChannelData that matches the filter.
@@ -10814,7 +11319,7 @@ export namespace Prisma {
      * const userChannelDataWithIdOnly = await prisma.userChannelData.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserChannelDataFindManyArgs>(args?: SelectSubset<T, UserChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends UserChannelDataFindManyArgs>(args?: SelectSubset<T, UserChannelDataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a UserChannelData.
@@ -10828,7 +11333,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends UserChannelDataCreateArgs>(args: SelectSubset<T, UserChannelDataCreateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends UserChannelDataCreateArgs>(args: SelectSubset<T, UserChannelDataCreateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many UserChannelData.
@@ -10856,7 +11361,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends UserChannelDataDeleteArgs>(args: SelectSubset<T, UserChannelDataDeleteArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends UserChannelDataDeleteArgs>(args: SelectSubset<T, UserChannelDataDeleteArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one UserChannelData.
@@ -10873,7 +11378,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserChannelDataUpdateArgs>(args: SelectSubset<T, UserChannelDataUpdateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends UserChannelDataUpdateArgs>(args: SelectSubset<T, UserChannelDataUpdateArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more UserChannelData.
@@ -10925,14 +11430,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends UserChannelDataUpsertArgs>(args: SelectSubset<T, UserChannelDataUpsertArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends UserChannelDataUpsertArgs>(args: SelectSubset<T, UserChannelDataUpsertArgs<ExtArgs>>): Prisma__UserChannelDataClient<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more UserChannelData that matches the filter.
      * @param {UserChannelDataFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const userChannelData = await prisma.userChannelData.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: UserChannelDataFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -11088,9 +11593,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__UserChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11118,7 +11623,7 @@ export namespace Prisma {
 
   /**
    * Fields of the UserChannelData model
-   */ 
+   */
   interface UserChannelDataFieldRefs {
     readonly id: FieldRef<"UserChannelData", 'String'>
     readonly channelId: FieldRef<"UserChannelData", 'String'>
@@ -11144,6 +11649,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11162,6 +11671,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11179,6 +11692,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserChannelData
      */
     select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11228,6 +11745,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11276,6 +11797,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11319,6 +11844,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11347,6 +11876,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11372,6 +11905,10 @@ export namespace Prisma {
      * Filter which UserChannelData to update
      */
     where?: UserChannelDataWhereInput
+    /**
+     * Limit how many UserChannelData to update.
+     */
+    limit?: number
   }
 
   /**
@@ -11382,6 +11919,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserChannelData
      */
     select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11409,6 +11950,10 @@ export namespace Prisma {
      */
     select?: UserChannelDataSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserChannelDataInclude<ExtArgs> | null
@@ -11426,6 +11971,10 @@ export namespace Prisma {
      * Filter which UserChannelData to delete
      */
     where?: UserChannelDataWhereInput
+    /**
+     * Limit how many UserChannelData to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -11464,6 +12013,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserChannelData
      */
     select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11632,6 +12185,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementButtonLanguage"]>
 
 
+
   export type ElementButtonLanguageSelectScalar = {
     id?: boolean
     name?: boolean
@@ -11639,6 +12193,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ElementButtonLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "language" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["elementButtonLanguage"]>
   export type ElementButtonLanguageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ElementButtonLanguagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11658,12 +12213,12 @@ export namespace Prisma {
 
   type ElementButtonLanguageGetPayload<S extends boolean | null | undefined | ElementButtonLanguageDefaultArgs> = $Result.GetResult<Prisma.$ElementButtonLanguagePayload, S>
 
-  type ElementButtonLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ElementButtonLanguageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ElementButtonLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ElementButtonLanguageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ElementButtonLanguageCountAggregateInputType | true
     }
 
-  export interface ElementButtonLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ElementButtonLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ElementButtonLanguage'], meta: { name: 'ElementButtonLanguage' } }
     /**
      * Find zero or one ElementButtonLanguage that matches the filter.
@@ -11676,10 +12231,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ElementButtonLanguageFindUniqueArgs>(args: SelectSubset<T, ElementButtonLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ElementButtonLanguageFindUniqueArgs>(args: SelectSubset<T, ElementButtonLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ElementButtonLanguage that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ElementButtonLanguage that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ElementButtonLanguageFindUniqueOrThrowArgs} args - Arguments to find a ElementButtonLanguage
      * @example
@@ -11690,7 +12245,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ElementButtonLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ElementButtonLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementButtonLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ElementButtonLanguage that matches the filter.
@@ -11705,7 +12260,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ElementButtonLanguageFindFirstArgs>(args?: SelectSubset<T, ElementButtonLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ElementButtonLanguageFindFirstArgs>(args?: SelectSubset<T, ElementButtonLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ElementButtonLanguage that matches the filter or
@@ -11721,7 +12276,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ElementButtonLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ElementButtonLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementButtonLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ElementButtonLanguages that matches the filter.
@@ -11739,7 +12294,7 @@ export namespace Prisma {
      * const elementButtonLanguageWithIdOnly = await prisma.elementButtonLanguage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ElementButtonLanguageFindManyArgs>(args?: SelectSubset<T, ElementButtonLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ElementButtonLanguageFindManyArgs>(args?: SelectSubset<T, ElementButtonLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a ElementButtonLanguage.
@@ -11753,7 +12308,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ElementButtonLanguageCreateArgs>(args: SelectSubset<T, ElementButtonLanguageCreateArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ElementButtonLanguageCreateArgs>(args: SelectSubset<T, ElementButtonLanguageCreateArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ElementButtonLanguages.
@@ -11781,7 +12336,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ElementButtonLanguageDeleteArgs>(args: SelectSubset<T, ElementButtonLanguageDeleteArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ElementButtonLanguageDeleteArgs>(args: SelectSubset<T, ElementButtonLanguageDeleteArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one ElementButtonLanguage.
@@ -11798,7 +12353,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ElementButtonLanguageUpdateArgs>(args: SelectSubset<T, ElementButtonLanguageUpdateArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ElementButtonLanguageUpdateArgs>(args: SelectSubset<T, ElementButtonLanguageUpdateArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ElementButtonLanguages.
@@ -11850,14 +12405,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ElementButtonLanguageUpsertArgs>(args: SelectSubset<T, ElementButtonLanguageUpsertArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ElementButtonLanguageUpsertArgs>(args: SelectSubset<T, ElementButtonLanguageUpsertArgs<ExtArgs>>): Prisma__ElementButtonLanguageClient<$Result.GetResult<Prisma.$ElementButtonLanguagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ElementButtonLanguages that matches the filter.
      * @param {ElementButtonLanguageFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const elementButtonLanguage = await prisma.elementButtonLanguage.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ElementButtonLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -12013,7 +12568,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ElementButtonLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ElementButtonLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -12042,7 +12597,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementButtonLanguage model
-   */ 
+   */
   interface ElementButtonLanguageFieldRefs {
     readonly id: FieldRef<"ElementButtonLanguage", 'String'>
     readonly name: FieldRef<"ElementButtonLanguage", 'String'>
@@ -12060,6 +12615,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementButtonLanguage
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12079,6 +12638,10 @@ export namespace Prisma {
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementButtonLanguageInclude<ExtArgs> | null
@@ -12096,6 +12659,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementButtonLanguage
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12145,6 +12712,10 @@ export namespace Prisma {
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementButtonLanguageInclude<ExtArgs> | null
@@ -12193,6 +12764,10 @@ export namespace Prisma {
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementButtonLanguageInclude<ExtArgs> | null
@@ -12236,6 +12811,10 @@ export namespace Prisma {
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementButtonLanguageInclude<ExtArgs> | null
@@ -12264,6 +12843,10 @@ export namespace Prisma {
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementButtonLanguageInclude<ExtArgs> | null
@@ -12289,6 +12872,10 @@ export namespace Prisma {
      * Filter which ElementButtonLanguages to update
      */
     where?: ElementButtonLanguageWhereInput
+    /**
+     * Limit how many ElementButtonLanguages to update.
+     */
+    limit?: number
   }
 
   /**
@@ -12299,6 +12886,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementButtonLanguage
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12326,6 +12917,10 @@ export namespace Prisma {
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementButtonLanguageInclude<ExtArgs> | null
@@ -12343,6 +12938,10 @@ export namespace Prisma {
      * Filter which ElementButtonLanguages to delete
      */
     where?: ElementButtonLanguageWhereInput
+    /**
+     * Limit how many ElementButtonLanguages to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -12381,6 +12980,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementButtonLanguage
      */
     select?: ElementButtonLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementButtonLanguage
+     */
+    omit?: ElementButtonLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12549,6 +13152,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementTextInputLanguage"]>
 
 
+
   export type ElementTextInputLanguageSelectScalar = {
     id?: boolean
     name?: boolean
@@ -12556,6 +13160,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ElementTextInputLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "language" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["elementTextInputLanguage"]>
   export type ElementTextInputLanguageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ElementTextInputLanguagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12575,12 +13180,12 @@ export namespace Prisma {
 
   type ElementTextInputLanguageGetPayload<S extends boolean | null | undefined | ElementTextInputLanguageDefaultArgs> = $Result.GetResult<Prisma.$ElementTextInputLanguagePayload, S>
 
-  type ElementTextInputLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ElementTextInputLanguageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ElementTextInputLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ElementTextInputLanguageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ElementTextInputLanguageCountAggregateInputType | true
     }
 
-  export interface ElementTextInputLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ElementTextInputLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ElementTextInputLanguage'], meta: { name: 'ElementTextInputLanguage' } }
     /**
      * Find zero or one ElementTextInputLanguage that matches the filter.
@@ -12593,10 +13198,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ElementTextInputLanguageFindUniqueArgs>(args: SelectSubset<T, ElementTextInputLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ElementTextInputLanguageFindUniqueArgs>(args: SelectSubset<T, ElementTextInputLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ElementTextInputLanguage that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ElementTextInputLanguage that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ElementTextInputLanguageFindUniqueOrThrowArgs} args - Arguments to find a ElementTextInputLanguage
      * @example
@@ -12607,7 +13212,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ElementTextInputLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ElementTextInputLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementTextInputLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ElementTextInputLanguage that matches the filter.
@@ -12622,7 +13227,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ElementTextInputLanguageFindFirstArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ElementTextInputLanguageFindFirstArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ElementTextInputLanguage that matches the filter or
@@ -12638,7 +13243,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ElementTextInputLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ElementTextInputLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ElementTextInputLanguages that matches the filter.
@@ -12656,7 +13261,7 @@ export namespace Prisma {
      * const elementTextInputLanguageWithIdOnly = await prisma.elementTextInputLanguage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ElementTextInputLanguageFindManyArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ElementTextInputLanguageFindManyArgs>(args?: SelectSubset<T, ElementTextInputLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a ElementTextInputLanguage.
@@ -12670,7 +13275,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ElementTextInputLanguageCreateArgs>(args: SelectSubset<T, ElementTextInputLanguageCreateArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ElementTextInputLanguageCreateArgs>(args: SelectSubset<T, ElementTextInputLanguageCreateArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ElementTextInputLanguages.
@@ -12698,7 +13303,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ElementTextInputLanguageDeleteArgs>(args: SelectSubset<T, ElementTextInputLanguageDeleteArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ElementTextInputLanguageDeleteArgs>(args: SelectSubset<T, ElementTextInputLanguageDeleteArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one ElementTextInputLanguage.
@@ -12715,7 +13320,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ElementTextInputLanguageUpdateArgs>(args: SelectSubset<T, ElementTextInputLanguageUpdateArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ElementTextInputLanguageUpdateArgs>(args: SelectSubset<T, ElementTextInputLanguageUpdateArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ElementTextInputLanguages.
@@ -12767,14 +13372,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ElementTextInputLanguageUpsertArgs>(args: SelectSubset<T, ElementTextInputLanguageUpsertArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ElementTextInputLanguageUpsertArgs>(args: SelectSubset<T, ElementTextInputLanguageUpsertArgs<ExtArgs>>): Prisma__ElementTextInputLanguageClient<$Result.GetResult<Prisma.$ElementTextInputLanguagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ElementTextInputLanguages that matches the filter.
      * @param {ElementTextInputLanguageFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const elementTextInputLanguage = await prisma.elementTextInputLanguage.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ElementTextInputLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -12930,7 +13535,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ElementTextInputLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ElementTextInputLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -12959,7 +13564,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementTextInputLanguage model
-   */ 
+   */
   interface ElementTextInputLanguageFieldRefs {
     readonly id: FieldRef<"ElementTextInputLanguage", 'String'>
     readonly name: FieldRef<"ElementTextInputLanguage", 'String'>
@@ -12977,6 +13582,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementTextInputLanguage
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12996,6 +13605,10 @@ export namespace Prisma {
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementTextInputLanguageInclude<ExtArgs> | null
@@ -13013,6 +13626,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementTextInputLanguage
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -13062,6 +13679,10 @@ export namespace Prisma {
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementTextInputLanguageInclude<ExtArgs> | null
@@ -13110,6 +13731,10 @@ export namespace Prisma {
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementTextInputLanguageInclude<ExtArgs> | null
@@ -13153,6 +13778,10 @@ export namespace Prisma {
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementTextInputLanguageInclude<ExtArgs> | null
@@ -13181,6 +13810,10 @@ export namespace Prisma {
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementTextInputLanguageInclude<ExtArgs> | null
@@ -13206,6 +13839,10 @@ export namespace Prisma {
      * Filter which ElementTextInputLanguages to update
      */
     where?: ElementTextInputLanguageWhereInput
+    /**
+     * Limit how many ElementTextInputLanguages to update.
+     */
+    limit?: number
   }
 
   /**
@@ -13216,6 +13853,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementTextInputLanguage
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -13243,6 +13884,10 @@ export namespace Prisma {
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementTextInputLanguageInclude<ExtArgs> | null
@@ -13260,6 +13905,10 @@ export namespace Prisma {
      * Filter which ElementTextInputLanguages to delete
      */
     where?: ElementTextInputLanguageWhereInput
+    /**
+     * Limit how many ElementTextInputLanguages to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -13298,6 +13947,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementTextInputLanguage
      */
     select?: ElementTextInputLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementTextInputLanguage
+     */
+    omit?: ElementTextInputLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -13466,6 +14119,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["elementSelectMenuLanguage"]>
 
 
+
   export type ElementSelectMenuLanguageSelectScalar = {
     id?: boolean
     name?: boolean
@@ -13473,6 +14127,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ElementSelectMenuLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "language" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["elementSelectMenuLanguage"]>
   export type ElementSelectMenuLanguageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ElementSelectMenuLanguagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13492,12 +14147,12 @@ export namespace Prisma {
 
   type ElementSelectMenuLanguageGetPayload<S extends boolean | null | undefined | ElementSelectMenuLanguageDefaultArgs> = $Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload, S>
 
-  type ElementSelectMenuLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ElementSelectMenuLanguageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ElementSelectMenuLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ElementSelectMenuLanguageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ElementSelectMenuLanguageCountAggregateInputType | true
     }
 
-  export interface ElementSelectMenuLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ElementSelectMenuLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ElementSelectMenuLanguage'], meta: { name: 'ElementSelectMenuLanguage' } }
     /**
      * Find zero or one ElementSelectMenuLanguage that matches the filter.
@@ -13510,10 +14165,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ElementSelectMenuLanguageFindUniqueArgs>(args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ElementSelectMenuLanguageFindUniqueArgs>(args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ElementSelectMenuLanguage that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ElementSelectMenuLanguage that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ElementSelectMenuLanguageFindUniqueOrThrowArgs} args - Arguments to find a ElementSelectMenuLanguage
      * @example
@@ -13524,7 +14179,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ElementSelectMenuLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ElementSelectMenuLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ElementSelectMenuLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ElementSelectMenuLanguage that matches the filter.
@@ -13539,7 +14194,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ElementSelectMenuLanguageFindFirstArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ElementSelectMenuLanguageFindFirstArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ElementSelectMenuLanguage that matches the filter or
@@ -13555,7 +14210,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ElementSelectMenuLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ElementSelectMenuLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ElementSelectMenuLanguages that matches the filter.
@@ -13573,7 +14228,7 @@ export namespace Prisma {
      * const elementSelectMenuLanguageWithIdOnly = await prisma.elementSelectMenuLanguage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ElementSelectMenuLanguageFindManyArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ElementSelectMenuLanguageFindManyArgs>(args?: SelectSubset<T, ElementSelectMenuLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a ElementSelectMenuLanguage.
@@ -13587,7 +14242,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ElementSelectMenuLanguageCreateArgs>(args: SelectSubset<T, ElementSelectMenuLanguageCreateArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ElementSelectMenuLanguageCreateArgs>(args: SelectSubset<T, ElementSelectMenuLanguageCreateArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ElementSelectMenuLanguages.
@@ -13615,7 +14270,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ElementSelectMenuLanguageDeleteArgs>(args: SelectSubset<T, ElementSelectMenuLanguageDeleteArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ElementSelectMenuLanguageDeleteArgs>(args: SelectSubset<T, ElementSelectMenuLanguageDeleteArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one ElementSelectMenuLanguage.
@@ -13632,7 +14287,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ElementSelectMenuLanguageUpdateArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpdateArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ElementSelectMenuLanguageUpdateArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpdateArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ElementSelectMenuLanguages.
@@ -13684,14 +14339,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ElementSelectMenuLanguageUpsertArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpsertArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ElementSelectMenuLanguageUpsertArgs>(args: SelectSubset<T, ElementSelectMenuLanguageUpsertArgs<ExtArgs>>): Prisma__ElementSelectMenuLanguageClient<$Result.GetResult<Prisma.$ElementSelectMenuLanguagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ElementSelectMenuLanguages that matches the filter.
      * @param {ElementSelectMenuLanguageFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const elementSelectMenuLanguage = await prisma.elementSelectMenuLanguage.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ElementSelectMenuLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -13847,7 +14502,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ElementSelectMenuLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ElementSelectMenuLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -13876,7 +14531,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ElementSelectMenuLanguage model
-   */ 
+   */
   interface ElementSelectMenuLanguageFieldRefs {
     readonly id: FieldRef<"ElementSelectMenuLanguage", 'String'>
     readonly name: FieldRef<"ElementSelectMenuLanguage", 'String'>
@@ -13894,6 +14549,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementSelectMenuLanguage
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -13913,6 +14572,10 @@ export namespace Prisma {
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementSelectMenuLanguageInclude<ExtArgs> | null
@@ -13930,6 +14593,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementSelectMenuLanguage
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -13979,6 +14646,10 @@ export namespace Prisma {
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementSelectMenuLanguageInclude<ExtArgs> | null
@@ -14027,6 +14698,10 @@ export namespace Prisma {
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementSelectMenuLanguageInclude<ExtArgs> | null
@@ -14070,6 +14745,10 @@ export namespace Prisma {
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementSelectMenuLanguageInclude<ExtArgs> | null
@@ -14098,6 +14777,10 @@ export namespace Prisma {
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementSelectMenuLanguageInclude<ExtArgs> | null
@@ -14123,6 +14806,10 @@ export namespace Prisma {
      * Filter which ElementSelectMenuLanguages to update
      */
     where?: ElementSelectMenuLanguageWhereInput
+    /**
+     * Limit how many ElementSelectMenuLanguages to update.
+     */
+    limit?: number
   }
 
   /**
@@ -14133,6 +14820,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementSelectMenuLanguage
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -14160,6 +14851,10 @@ export namespace Prisma {
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ElementSelectMenuLanguageInclude<ExtArgs> | null
@@ -14177,6 +14872,10 @@ export namespace Prisma {
      * Filter which ElementSelectMenuLanguages to delete
      */
     where?: ElementSelectMenuLanguageWhereInput
+    /**
+     * Limit how many ElementSelectMenuLanguages to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -14215,6 +14914,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ElementSelectMenuLanguage
      */
     select?: ElementSelectMenuLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ElementSelectMenuLanguage
+     */
+    omit?: ElementSelectMenuLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -14383,6 +15086,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["embedLanguage"]>
 
 
+
   export type EmbedLanguageSelectScalar = {
     id?: boolean
     name?: boolean
@@ -14390,6 +15094,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type EmbedLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "language" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["embedLanguage"]>
   export type EmbedLanguageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $EmbedLanguagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14409,12 +15114,12 @@ export namespace Prisma {
 
   type EmbedLanguageGetPayload<S extends boolean | null | undefined | EmbedLanguageDefaultArgs> = $Result.GetResult<Prisma.$EmbedLanguagePayload, S>
 
-  type EmbedLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<EmbedLanguageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type EmbedLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmbedLanguageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: EmbedLanguageCountAggregateInputType | true
     }
 
-  export interface EmbedLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface EmbedLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmbedLanguage'], meta: { name: 'EmbedLanguage' } }
     /**
      * Find zero or one EmbedLanguage that matches the filter.
@@ -14427,10 +15132,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends EmbedLanguageFindUniqueArgs>(args: SelectSubset<T, EmbedLanguageFindUniqueArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends EmbedLanguageFindUniqueArgs>(args: SelectSubset<T, EmbedLanguageFindUniqueArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one EmbedLanguage that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one EmbedLanguage that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {EmbedLanguageFindUniqueOrThrowArgs} args - Arguments to find a EmbedLanguage
      * @example
@@ -14441,7 +15146,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends EmbedLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends EmbedLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, EmbedLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first EmbedLanguage that matches the filter.
@@ -14456,7 +15161,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends EmbedLanguageFindFirstArgs>(args?: SelectSubset<T, EmbedLanguageFindFirstArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends EmbedLanguageFindFirstArgs>(args?: SelectSubset<T, EmbedLanguageFindFirstArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first EmbedLanguage that matches the filter or
@@ -14472,7 +15177,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends EmbedLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, EmbedLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends EmbedLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, EmbedLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more EmbedLanguages that matches the filter.
@@ -14490,7 +15195,7 @@ export namespace Prisma {
      * const embedLanguageWithIdOnly = await prisma.embedLanguage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends EmbedLanguageFindManyArgs>(args?: SelectSubset<T, EmbedLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends EmbedLanguageFindManyArgs>(args?: SelectSubset<T, EmbedLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a EmbedLanguage.
@@ -14504,7 +15209,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends EmbedLanguageCreateArgs>(args: SelectSubset<T, EmbedLanguageCreateArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends EmbedLanguageCreateArgs>(args: SelectSubset<T, EmbedLanguageCreateArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many EmbedLanguages.
@@ -14532,7 +15237,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends EmbedLanguageDeleteArgs>(args: SelectSubset<T, EmbedLanguageDeleteArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends EmbedLanguageDeleteArgs>(args: SelectSubset<T, EmbedLanguageDeleteArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one EmbedLanguage.
@@ -14549,7 +15254,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends EmbedLanguageUpdateArgs>(args: SelectSubset<T, EmbedLanguageUpdateArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends EmbedLanguageUpdateArgs>(args: SelectSubset<T, EmbedLanguageUpdateArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more EmbedLanguages.
@@ -14601,14 +15306,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends EmbedLanguageUpsertArgs>(args: SelectSubset<T, EmbedLanguageUpsertArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends EmbedLanguageUpsertArgs>(args: SelectSubset<T, EmbedLanguageUpsertArgs<ExtArgs>>): Prisma__EmbedLanguageClient<$Result.GetResult<Prisma.$EmbedLanguagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more EmbedLanguages that matches the filter.
      * @param {EmbedLanguageFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const embedLanguage = await prisma.embedLanguage.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: EmbedLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -14764,7 +15469,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__EmbedLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__EmbedLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14793,7 +15498,7 @@ export namespace Prisma {
 
   /**
    * Fields of the EmbedLanguage model
-   */ 
+   */
   interface EmbedLanguageFieldRefs {
     readonly id: FieldRef<"EmbedLanguage", 'String'>
     readonly name: FieldRef<"EmbedLanguage", 'String'>
@@ -14811,6 +15516,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmbedLanguage
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -14830,6 +15539,10 @@ export namespace Prisma {
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmbedLanguageInclude<ExtArgs> | null
@@ -14847,6 +15560,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmbedLanguage
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -14896,6 +15613,10 @@ export namespace Prisma {
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmbedLanguageInclude<ExtArgs> | null
@@ -14944,6 +15665,10 @@ export namespace Prisma {
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmbedLanguageInclude<ExtArgs> | null
@@ -14987,6 +15712,10 @@ export namespace Prisma {
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmbedLanguageInclude<ExtArgs> | null
@@ -15015,6 +15744,10 @@ export namespace Prisma {
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmbedLanguageInclude<ExtArgs> | null
@@ -15040,6 +15773,10 @@ export namespace Prisma {
      * Filter which EmbedLanguages to update
      */
     where?: EmbedLanguageWhereInput
+    /**
+     * Limit how many EmbedLanguages to update.
+     */
+    limit?: number
   }
 
   /**
@@ -15050,6 +15787,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmbedLanguage
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -15077,6 +15818,10 @@ export namespace Prisma {
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmbedLanguageInclude<ExtArgs> | null
@@ -15094,6 +15839,10 @@ export namespace Prisma {
      * Filter which EmbedLanguages to delete
      */
     where?: EmbedLanguageWhereInput
+    /**
+     * Limit how many EmbedLanguages to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -15132,6 +15881,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmbedLanguage
      */
     select?: EmbedLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmbedLanguage
+     */
+    omit?: EmbedLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -15300,6 +16053,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["markdownLanguage"]>
 
 
+
   export type MarkdownLanguageSelectScalar = {
     id?: boolean
     name?: boolean
@@ -15307,6 +16061,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type MarkdownLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "language" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["markdownLanguage"]>
   export type MarkdownLanguageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $MarkdownLanguagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15326,12 +16081,12 @@ export namespace Prisma {
 
   type MarkdownLanguageGetPayload<S extends boolean | null | undefined | MarkdownLanguageDefaultArgs> = $Result.GetResult<Prisma.$MarkdownLanguagePayload, S>
 
-  type MarkdownLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<MarkdownLanguageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type MarkdownLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MarkdownLanguageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: MarkdownLanguageCountAggregateInputType | true
     }
 
-  export interface MarkdownLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface MarkdownLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MarkdownLanguage'], meta: { name: 'MarkdownLanguage' } }
     /**
      * Find zero or one MarkdownLanguage that matches the filter.
@@ -15344,10 +16099,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends MarkdownLanguageFindUniqueArgs>(args: SelectSubset<T, MarkdownLanguageFindUniqueArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends MarkdownLanguageFindUniqueArgs>(args: SelectSubset<T, MarkdownLanguageFindUniqueArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one MarkdownLanguage that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one MarkdownLanguage that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {MarkdownLanguageFindUniqueOrThrowArgs} args - Arguments to find a MarkdownLanguage
      * @example
@@ -15358,7 +16113,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends MarkdownLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends MarkdownLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, MarkdownLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first MarkdownLanguage that matches the filter.
@@ -15373,7 +16128,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends MarkdownLanguageFindFirstArgs>(args?: SelectSubset<T, MarkdownLanguageFindFirstArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends MarkdownLanguageFindFirstArgs>(args?: SelectSubset<T, MarkdownLanguageFindFirstArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first MarkdownLanguage that matches the filter or
@@ -15389,7 +16144,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends MarkdownLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends MarkdownLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, MarkdownLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more MarkdownLanguages that matches the filter.
@@ -15407,7 +16162,7 @@ export namespace Prisma {
      * const markdownLanguageWithIdOnly = await prisma.markdownLanguage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends MarkdownLanguageFindManyArgs>(args?: SelectSubset<T, MarkdownLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends MarkdownLanguageFindManyArgs>(args?: SelectSubset<T, MarkdownLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a MarkdownLanguage.
@@ -15421,7 +16176,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends MarkdownLanguageCreateArgs>(args: SelectSubset<T, MarkdownLanguageCreateArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends MarkdownLanguageCreateArgs>(args: SelectSubset<T, MarkdownLanguageCreateArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many MarkdownLanguages.
@@ -15449,7 +16204,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends MarkdownLanguageDeleteArgs>(args: SelectSubset<T, MarkdownLanguageDeleteArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends MarkdownLanguageDeleteArgs>(args: SelectSubset<T, MarkdownLanguageDeleteArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one MarkdownLanguage.
@@ -15466,7 +16221,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends MarkdownLanguageUpdateArgs>(args: SelectSubset<T, MarkdownLanguageUpdateArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends MarkdownLanguageUpdateArgs>(args: SelectSubset<T, MarkdownLanguageUpdateArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more MarkdownLanguages.
@@ -15518,14 +16273,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends MarkdownLanguageUpsertArgs>(args: SelectSubset<T, MarkdownLanguageUpsertArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends MarkdownLanguageUpsertArgs>(args: SelectSubset<T, MarkdownLanguageUpsertArgs<ExtArgs>>): Prisma__MarkdownLanguageClient<$Result.GetResult<Prisma.$MarkdownLanguagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more MarkdownLanguages that matches the filter.
      * @param {MarkdownLanguageFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const markdownLanguage = await prisma.markdownLanguage.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: MarkdownLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -15681,7 +16436,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__MarkdownLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__MarkdownLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -15710,7 +16465,7 @@ export namespace Prisma {
 
   /**
    * Fields of the MarkdownLanguage model
-   */ 
+   */
   interface MarkdownLanguageFieldRefs {
     readonly id: FieldRef<"MarkdownLanguage", 'String'>
     readonly name: FieldRef<"MarkdownLanguage", 'String'>
@@ -15728,6 +16483,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MarkdownLanguage
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -15747,6 +16506,10 @@ export namespace Prisma {
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MarkdownLanguageInclude<ExtArgs> | null
@@ -15764,6 +16527,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MarkdownLanguage
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -15813,6 +16580,10 @@ export namespace Prisma {
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MarkdownLanguageInclude<ExtArgs> | null
@@ -15861,6 +16632,10 @@ export namespace Prisma {
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MarkdownLanguageInclude<ExtArgs> | null
@@ -15904,6 +16679,10 @@ export namespace Prisma {
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MarkdownLanguageInclude<ExtArgs> | null
@@ -15932,6 +16711,10 @@ export namespace Prisma {
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MarkdownLanguageInclude<ExtArgs> | null
@@ -15957,6 +16740,10 @@ export namespace Prisma {
      * Filter which MarkdownLanguages to update
      */
     where?: MarkdownLanguageWhereInput
+    /**
+     * Limit how many MarkdownLanguages to update.
+     */
+    limit?: number
   }
 
   /**
@@ -15967,6 +16754,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MarkdownLanguage
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -15994,6 +16785,10 @@ export namespace Prisma {
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MarkdownLanguageInclude<ExtArgs> | null
@@ -16011,6 +16806,10 @@ export namespace Prisma {
      * Filter which MarkdownLanguages to delete
      */
     where?: MarkdownLanguageWhereInput
+    /**
+     * Limit how many MarkdownLanguages to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -16049,6 +16848,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MarkdownLanguage
      */
     select?: MarkdownLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MarkdownLanguage
+     */
+    omit?: MarkdownLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -16217,6 +17020,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["modalLanguage"]>
 
 
+
   export type ModalLanguageSelectScalar = {
     id?: boolean
     name?: boolean
@@ -16224,6 +17028,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ModalLanguageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "language" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["modalLanguage"]>
   export type ModalLanguageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ModalLanguagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16243,12 +17048,12 @@ export namespace Prisma {
 
   type ModalLanguageGetPayload<S extends boolean | null | undefined | ModalLanguageDefaultArgs> = $Result.GetResult<Prisma.$ModalLanguagePayload, S>
 
-  type ModalLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ModalLanguageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ModalLanguageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ModalLanguageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ModalLanguageCountAggregateInputType | true
     }
 
-  export interface ModalLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ModalLanguageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ModalLanguage'], meta: { name: 'ModalLanguage' } }
     /**
      * Find zero or one ModalLanguage that matches the filter.
@@ -16261,10 +17066,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ModalLanguageFindUniqueArgs>(args: SelectSubset<T, ModalLanguageFindUniqueArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ModalLanguageFindUniqueArgs>(args: SelectSubset<T, ModalLanguageFindUniqueArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ModalLanguage that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ModalLanguage that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ModalLanguageFindUniqueOrThrowArgs} args - Arguments to find a ModalLanguage
      * @example
@@ -16275,7 +17080,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ModalLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ModalLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ModalLanguageFindUniqueOrThrowArgs>(args: SelectSubset<T, ModalLanguageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ModalLanguage that matches the filter.
@@ -16290,7 +17095,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ModalLanguageFindFirstArgs>(args?: SelectSubset<T, ModalLanguageFindFirstArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ModalLanguageFindFirstArgs>(args?: SelectSubset<T, ModalLanguageFindFirstArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ModalLanguage that matches the filter or
@@ -16306,7 +17111,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ModalLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ModalLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ModalLanguageFindFirstOrThrowArgs>(args?: SelectSubset<T, ModalLanguageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ModalLanguages that matches the filter.
@@ -16324,7 +17129,7 @@ export namespace Prisma {
      * const modalLanguageWithIdOnly = await prisma.modalLanguage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ModalLanguageFindManyArgs>(args?: SelectSubset<T, ModalLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ModalLanguageFindManyArgs>(args?: SelectSubset<T, ModalLanguageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a ModalLanguage.
@@ -16338,7 +17143,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ModalLanguageCreateArgs>(args: SelectSubset<T, ModalLanguageCreateArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ModalLanguageCreateArgs>(args: SelectSubset<T, ModalLanguageCreateArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ModalLanguages.
@@ -16366,7 +17171,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ModalLanguageDeleteArgs>(args: SelectSubset<T, ModalLanguageDeleteArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ModalLanguageDeleteArgs>(args: SelectSubset<T, ModalLanguageDeleteArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one ModalLanguage.
@@ -16383,7 +17188,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ModalLanguageUpdateArgs>(args: SelectSubset<T, ModalLanguageUpdateArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ModalLanguageUpdateArgs>(args: SelectSubset<T, ModalLanguageUpdateArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ModalLanguages.
@@ -16435,14 +17240,14 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ModalLanguageUpsertArgs>(args: SelectSubset<T, ModalLanguageUpsertArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ModalLanguageUpsertArgs>(args: SelectSubset<T, ModalLanguageUpsertArgs<ExtArgs>>): Prisma__ModalLanguageClient<$Result.GetResult<Prisma.$ModalLanguagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ModalLanguages that matches the filter.
      * @param {ModalLanguageFindRawArgs} args - Select which filters you would like to apply.
      * @example
      * const modalLanguage = await prisma.modalLanguage.findRaw({
-     *   filter: { age: { $gt: 25 } } 
+     *   filter: { age: { $gt: 25 } }
      * })
      */
     findRaw(args?: ModalLanguageFindRawArgs): Prisma.PrismaPromise<JsonObject>
@@ -16598,7 +17403,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ModalLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ModalLanguageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -16627,7 +17432,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ModalLanguage model
-   */ 
+   */
   interface ModalLanguageFieldRefs {
     readonly id: FieldRef<"ModalLanguage", 'String'>
     readonly name: FieldRef<"ModalLanguage", 'String'>
@@ -16645,6 +17450,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ModalLanguage
      */
     select?: ModalLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -16664,6 +17473,10 @@ export namespace Prisma {
      */
     select?: ModalLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ModalLanguageInclude<ExtArgs> | null
@@ -16681,6 +17494,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ModalLanguage
      */
     select?: ModalLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -16730,6 +17547,10 @@ export namespace Prisma {
      */
     select?: ModalLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ModalLanguageInclude<ExtArgs> | null
@@ -16778,6 +17599,10 @@ export namespace Prisma {
      */
     select?: ModalLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ModalLanguageInclude<ExtArgs> | null
@@ -16821,6 +17646,10 @@ export namespace Prisma {
      */
     select?: ModalLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ModalLanguageInclude<ExtArgs> | null
@@ -16849,6 +17678,10 @@ export namespace Prisma {
      */
     select?: ModalLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ModalLanguageInclude<ExtArgs> | null
@@ -16874,6 +17707,10 @@ export namespace Prisma {
      * Filter which ModalLanguages to update
      */
     where?: ModalLanguageWhereInput
+    /**
+     * Limit how many ModalLanguages to update.
+     */
+    limit?: number
   }
 
   /**
@@ -16884,6 +17721,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ModalLanguage
      */
     select?: ModalLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -16911,6 +17752,10 @@ export namespace Prisma {
      */
     select?: ModalLanguageSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ModalLanguageInclude<ExtArgs> | null
@@ -16928,6 +17773,10 @@ export namespace Prisma {
      * Filter which ModalLanguages to delete
      */
     where?: ModalLanguageWhereInput
+    /**
+     * Limit how many ModalLanguages to delete.
+     */
+    limit?: number
   }
 
   /**
@@ -16966,6 +17815,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ModalLanguage
      */
     select?: ModalLanguageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ModalLanguage
+     */
+    omit?: ModalLanguageOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -17188,7 +18041,7 @@ export namespace Prisma {
 
 
   /**
-   * Field references 
+   * Field references
    */
 
 
@@ -17509,7 +18362,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
-    guild?: XOR<GuildRelationFilter, GuildWhereInput>
+    guild?: XOR<GuildScalarRelationFilter, GuildWhereInput>
   }
 
   export type GuildDataOrderByWithRelationInput = {
@@ -17541,7 +18394,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"GuildData"> | string
     createdAt?: DateTimeFilter<"GuildData"> | Date | string
     updatedAt?: DateTimeFilter<"GuildData"> | Date | string
-    guild?: XOR<GuildRelationFilter, GuildWhereInput>
+    guild?: XOR<GuildScalarRelationFilter, GuildWhereInput>
   }, "id" | "ownerId_key_version">
 
   export type GuildDataOrderByWithAggregationInput = {
@@ -17677,7 +18530,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
-    channel?: XOR<ChannelRelationFilter, ChannelWhereInput>
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
   }
 
   export type ChannelDataOrderByWithRelationInput = {
@@ -17709,7 +18562,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"ChannelData"> | string
     createdAt?: DateTimeFilter<"ChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
-    channel?: XOR<ChannelRelationFilter, ChannelWhereInput>
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
   }, "id" | "ownerId_key_version">
 
   export type ChannelDataOrderByWithAggregationInput = {
@@ -17816,7 +18669,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type UserDataOrderByWithRelationInput = {
@@ -17848,7 +18701,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"UserData"> | string
     createdAt?: DateTimeFilter<"UserData"> | Date | string
     updatedAt?: DateTimeFilter<"UserData"> | Date | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "ownerId_key_version">
 
   export type UserDataOrderByWithAggregationInput = {
@@ -17898,7 +18751,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"UserChannelData"> | string
     createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type UserChannelDataOrderByWithRelationInput = {
@@ -17932,7 +18785,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"UserChannelData"> | string
     createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "ownerId_channelId_key_version">
 
   export type UserChannelDataOrderByWithAggregationInput = {
@@ -19387,7 +20240,7 @@ export namespace Prisma {
     notIn?: $Enums.E_DATA_TYPES[] | ListEnumE_DATA_TYPESFieldRefInput<$PrismaModel>
     not?: NestedEnumE_DATA_TYPESFilter<$PrismaModel> | $Enums.E_DATA_TYPES
   }
-  export type JsonNullableFilter<$PrismaModel = never> = 
+  export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
         Required<JsonNullableFilterBase<$PrismaModel>>
@@ -19499,7 +20352,7 @@ export namespace Prisma {
     _min?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
     _max?: NestedEnumE_DATA_TYPESFilter<$PrismaModel>
   }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
         Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
@@ -19693,7 +20546,7 @@ export namespace Prisma {
     isSet?: boolean
   }
 
-  export type GuildRelationFilter = {
+  export type GuildScalarRelationFilter = {
     is?: GuildWhereInput
     isNot?: GuildWhereInput
   }
@@ -19816,7 +20669,7 @@ export namespace Prisma {
     _max?: NestedEnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel>
   }
 
-  export type ChannelRelationFilter = {
+  export type ChannelScalarRelationFilter = {
     is?: ChannelWhereInput
     isNot?: ChannelWhereInput
   }
@@ -19906,7 +20759,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type UserRelationFilter = {
+  export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
   }
@@ -20745,7 +21598,7 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
     isSet?: boolean
   }
-  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
         Required<NestedJsonNullableFilterBase<$PrismaModel>>
@@ -21691,114 +22544,6 @@ export namespace Prisma {
   }
 
 
-
-  /**
-   * Aliases for legacy arg types
-   */
-    /**
-     * @deprecated Use GuildCountOutputTypeDefaultArgs instead
-     */
-    export type GuildCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ChannelCountOutputTypeDefaultArgs instead
-     */
-    export type ChannelCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChannelCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserCountOutputTypeDefaultArgs instead
-     */
-    export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use LanguageDefaultArgs instead
-     */
-    export type LanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementButtonContentDefaultArgs instead
-     */
-    export type ElementButtonContentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementButtonContentDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementTextInputContentLanguageDefaultArgs instead
-     */
-    export type ElementTextInputContentLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementTextInputContentLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementSelectMenuOptionsLanguageDefaultArgs instead
-     */
-    export type ElementSelectMenuOptionsLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementSelectMenuOptionsLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementSelectMenuLanguageContentDefaultArgs instead
-     */
-    export type ElementSelectMenuLanguageContentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementSelectMenuLanguageContentDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use EmbedContentLanguageDefaultArgs instead
-     */
-    export type EmbedContentLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = EmbedContentLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use MarkdownContentLanguageDefaultArgs instead
-     */
-    export type MarkdownContentLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MarkdownContentLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ModalContentLanguageDefaultArgs instead
-     */
-    export type ModalContentLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ModalContentLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ConfigDefaultArgs instead
-     */
-    export type ConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ConfigDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use CategoryDefaultArgs instead
-     */
-    export type CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CategoryDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use GuildDefaultArgs instead
-     */
-    export type GuildArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use GuildDataDefaultArgs instead
-     */
-    export type GuildDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = GuildDataDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ChannelDefaultArgs instead
-     */
-    export type ChannelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChannelDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ChannelDataDefaultArgs instead
-     */
-    export type ChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChannelDataDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserDefaultArgs instead
-     */
-    export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserDataDefaultArgs instead
-     */
-    export type UserDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDataDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserChannelDataDefaultArgs instead
-     */
-    export type UserChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserChannelDataDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementButtonLanguageDefaultArgs instead
-     */
-    export type ElementButtonLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementButtonLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementTextInputLanguageDefaultArgs instead
-     */
-    export type ElementTextInputLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementTextInputLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ElementSelectMenuLanguageDefaultArgs instead
-     */
-    export type ElementSelectMenuLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ElementSelectMenuLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use EmbedLanguageDefaultArgs instead
-     */
-    export type EmbedLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = EmbedLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use MarkdownLanguageDefaultArgs instead
-     */
-    export type MarkdownLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MarkdownLanguageDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ModalLanguageDefaultArgs instead
-     */
-    export type ModalLanguageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ModalLanguageDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

@@ -24,8 +24,8 @@ import type { UIEntitySchemaBase, UIArgs } from "@vertix.gg/gui/src/bases/ui-def
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 import type {
-    MasterChannelConfigInterface,
-    MasterChannelConfigInterfaceV3
+    MasterChannelDynamicConfig,
+    MasterChannelDynamicConfigV3
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
@@ -109,6 +109,11 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             );
 
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupScalingChannelCreateButton",
+                this.onCreateScalingChannelClicked
+            );
+
+            this.bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/SetupBadwordsEditButton",
                 this.onEditBadwordsClicked
             );
@@ -181,8 +186,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             return;
         }
 
-        const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3 | MasterChannelConfigInterface>(
-            "Vertix/Config/MasterChannel",
+        const { settings } = ConfigManager.$.get<MasterChannelDynamicConfigV3 | MasterChannelDynamicConfig>(
+            "Vertix/Config/MasterChannelDynamic",
             version
         ).data;
 
@@ -200,6 +205,14 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         } );
 
         // Delete Args since left to another adapter.
+        this.deleteArgs( interaction );
+    }
+
+    private async onCreateScalingChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+        // Run the Auto-Scaling setup wizard
+        this.uiService.get( "VertixBot/UI-General/SetupScalingWizardAdapter" )?.runInitial( interaction, {} );
+
+        // Delete Args since left to another adapter
         this.deleteArgs( interaction );
     }
 

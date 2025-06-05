@@ -1,0 +1,6 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+Everytime adding new code, in new a class that extends another class you have to check how other classes are extending this class and make sure you following same strict convention, this is very important rule!

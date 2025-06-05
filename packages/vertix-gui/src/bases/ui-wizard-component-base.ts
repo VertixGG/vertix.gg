@@ -44,16 +44,18 @@ export class UIWizardComponentBase extends UIComponentBase {
     public static getElementsGroups() {
         const wizardControlButtons = this.getControlButtons();
 
-        return this.getComponents().map( ( component ) =>
-            UIWizardElementsGroupWrapperGenerator( {
+        return this.getComponents().map( ( component ) => {
+            // Create an elements group for each component, even if they don't have elements
+            // This ensures every component has a group that includes the wizard control buttons
+            return UIWizardElementsGroupWrapperGenerator( {
                 componentName: component.getName(),
-                componentElements: component.getElements(),
+                componentElements: component.getElements ? component.getElements() : [],
                 components: this.getComponents(),
                 controlButtons: wizardControlButtons,
                 UIElementsGroupBaseClass: this.getElementsGroupBaseClass(),
                 UIElementsGroupExtendClass: this.getElementsGroupExtendClass()
-            } )
-        );
+            } );
+        } );
     }
 
     public static validate() {

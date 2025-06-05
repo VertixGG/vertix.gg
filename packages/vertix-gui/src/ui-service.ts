@@ -2,6 +2,8 @@ import EventEmitter from "node:events";
 
 import process from "process";
 
+import * as util from "node:util";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
@@ -220,6 +222,10 @@ export class UIService extends ServiceWithDependenciesBase<{
 
         // To have all hashes generated before the UI is created.
         for ( const entity of entities ) {
+            if ( ! entity?.getName ) {
+                throw new Error( `UIClass: '${ UIClass.getName() }' is missing entity, entities dump:` + util.inspect( entities ) );
+            }
+
             this.services.uiHashService.generateId( UIClass.getName() + UI_CUSTOM_ID_SEPARATOR + entity.getName() );
         }
 

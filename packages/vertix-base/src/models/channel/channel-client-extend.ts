@@ -3,6 +3,7 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 export interface ChannelExtended extends PrismaBot.Channel {
     isMaster: boolean;
     isDynamic: boolean;
+    isScaling: boolean;
 }
 
 export interface ChannelExtendedWithCacheKey extends ChannelExtended {
@@ -46,6 +47,14 @@ const extendedModel = PrismaBot.Prisma.defineExtension( ( client ) => {
                     },
                     compute( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
+                    }
+                },
+                isScaling: {
+                    needs: {
+                        internalType: true
+                    },
+                    compute( model ) {
+                        return model.internalType === E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL;
                     }
                 }
             }

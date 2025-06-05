@@ -6,14 +6,14 @@ import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterChannelConfigInterfaceV3> {
-    private static instance: MasterChannelDataModelV3;
+export class MasterChannelDynamicDataModelV3 extends MasterChannelDataModelBase<MasterChannelDynamicConfigV3> {
+    private static instance: MasterChannelDynamicDataModelV3;
 
     public static get $() {
         if ( !this.instance ) {
-            this.instance = new MasterChannelDataModelV3();
+            this.instance = new MasterChannelDynamicDataModelV3();
         }
 
         return this.instance;
@@ -25,8 +25,8 @@ export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterC
 
     public constructor() {
         super(
-            isDebugEnabled( "CACHE", MasterChannelDataModelV3.getName() ),
-            isDebugEnabled( "MODEL", MasterChannelDataModelV3.getName() )
+            isDebugEnabled( "CACHE", MasterChannelDynamicDataModelV3.getName() ),
+            isDebugEnabled( "MODEL", MasterChannelDynamicDataModelV3.getName() )
         );
     }
 
@@ -35,6 +35,6 @@ export class MasterChannelDataModelV3 extends MasterChannelDataModelBase<MasterC
     }
 
     protected getConfig() {
-        return ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+        return ConfigManager.$.get<MasterChannelDynamicConfigV3>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V3 );
     }
 }

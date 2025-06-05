@@ -4,7 +4,7 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
@@ -18,13 +18,11 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-
-import type { IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
-
 import type { IVoteDefaultComponentInteraction } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
-// import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
+import type { IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel"; // import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 import type { TAdapterMapping, UIService } from "@vertix.gg/gui/src/ui-service";
@@ -703,7 +701,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             return false;
         }
 
-        const enabledButtons = await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, false );
+        const enabledButtons = await MasterChannelDataDynamicManager.$.getChannelButtonsTemplate( masterChannelDB, false );
 
         if ( !enabledButtons?.length ) {
             this.logger.error(

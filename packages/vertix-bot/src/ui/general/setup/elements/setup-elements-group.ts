@@ -1,5 +1,7 @@
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
+import { SetupScalingChannelCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-channel-create-button";
+
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
 
 import { BadwordsEditButton } from "@vertix.gg/bot/src/ui/general/badwords/badwords-edit-button";
@@ -22,6 +24,7 @@ export class SetupElementsGroup extends UIElementsGroupBase {
         return [
             [ SetupMasterEditSelectMenu ],
             [ SetupMasterCreateButton, SetupMasterCreateV3Button ],
+            [ SetupScalingChannelCreateButton ],
             [ LanguageChooseButton, BadwordsEditButton ]
         ];
     }

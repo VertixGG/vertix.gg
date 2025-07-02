@@ -1,8 +1,5 @@
 # Changelog
 
-**Version: 0.0.9 [DATE]**
----
-
 **Version: 0.0.8 2024~2025**
 - New Features / Improvements:
     - Add display of region (e.g., `Europe`, `US East`) in the **Dynamic Channel** interface.

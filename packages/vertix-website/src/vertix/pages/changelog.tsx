@@ -12,7 +12,7 @@ import { wrapPromiseSuspendable } from "@internal/utils/loading";
 } )();
 
 const fetchMarkdown = async () => {
-    const response = await fetch( "https://raw.githubusercontent.com/VertixGG/vertix-bot/main/changelog.md" );
+    const response = await fetch( "https://gist.githubusercontent.com/iNewLegend/5bfa5a9ceb9f11fba67b865cde4b4b05/raw/changelog.md" );
 
     return await response.text();
 };

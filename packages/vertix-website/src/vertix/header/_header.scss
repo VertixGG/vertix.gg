@@ -1,0 +1,154 @@
+@use "../bootstrap" as bootstrap;
+
+#header {
+    .navbar {
+        z-index: 1;
+
+        background: #00000069;
+        box-shadow: 20px 15px 160px 60px #00000078;
+
+        .container-fluid {
+            max-width: 80%;
+
+            @include bootstrap.media-breakpoint-between(xs, sm) {
+                max-width: 100%;
+            }
+        }
+
+        .navbar-brand {
+            @include bootstrap.media-breakpoint-between(xxl, max) {
+                margin-right: 10rem;
+            }
+
+            #vertix-logo {
+                transform: rotate(1140deg);
+
+                &:hover {
+                    animation-name: rotate;
+                    animation-duration: 4s;
+                    animation-iteration-count: 1;
+                    animation-play-state: running;
+                }
+            }
+
+            #vertix-brand-logo {
+                font-size: 1.5rem;
+                font-family: var(--vertix-font-brand);
+
+                color: var(--vertix-color-fresh-air);
+
+                #vertix-first-letter {
+                    font-size: 30px;
+
+                    color: var(--vertix-color-very-light-azure);
+                }
+            }
+        }
+
+        .navbar-collapse {
+            .dropdown-menu {
+                --bs-body-bg: #00000073;
+
+                --bs-dropdown-link-active-bg: transparent;
+                --bs-dropdown-link-active-color: var(--vertix-color-skyblue);
+
+                --bs-dropdown-link-hover-bg: #0000004f;
+                --bs-dropdown-link-hover-color: var(--vertix-color-skyblue);
+            }
+
+            @include bootstrap.media-breakpoint-down(xl) {
+                &.show {
+                    background: rgba(0, 0, 0, 0.31);
+                    border-radius: 60px;
+                    padding: 20px 20px 30px;
+                }
+            }
+
+            .nav-item.dropdown .nav-link:after {
+                content: "▼";
+                position: relative;
+                font-size: 10px;
+                padding-left: 3px;
+                color: var(--vertix-color-skyblue);
+            }
+
+            button {
+                --bs-btn-padding-y: 0.65rem;
+
+                --bs-btn-font-size: 25px;
+                --bs-btn-font-weight: 400;
+
+                @include bootstrap.media-breakpoint-between(xs, sm) {
+                    --bs-btn-font-size: 18px;
+                    --bs-btn-padding-y: 0.50rem;
+                }
+
+                @include bootstrap.media-breakpoint-between(sm, lg) {
+                    --bs-btn-font-size: 23px;
+                    --bs-btn-padding-y: 0.50rem;
+                }
+
+                &#add-to-server {
+                    --bs-btn-color: var(--vertix-color-very-light-azure);
+                    --bs-btn-border-color: var(--vertix-color-very-light-azure);
+                    --bs-btn-hover-color: #fff;
+                    --bs-btn-hover-bg: var(--vertix-color-very-light-azure);
+                    --bs-btn-hover-border-color: var(--vertix-color-very-light-azure);
+                    --bs-btn-focus-shadow-rgb: 13, 110, 253;
+                    --bs-btn-active-color: #fff;
+                    --bs-btn-active-bg: var(--vertix-color-very-light-azure);
+                    --bs-btn-active-border-color: var(--vertix-color-very-light-azure);
+                    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+                    --bs-btn-disabled-color: var(--vertix-color-very-light-azure);
+                    --bs-btn-disabled-bg: transparent;
+                    --bs-btn-disabled-border-color: var(--vertix-color-very-light-azure);
+                    --bs-gradient: none;
+                }
+            }
+        }
+    }
+
+    #vertix-wings {
+        #vertix-wings-heading {
+            position: relative;
+            top: 160px;
+            bottom: 40px;
+
+            font-family: var(--vertix-font-brand);
+            font-size: 4.5rem;
+            font-weight: 600;
+
+            color: var(--vertix-color-skyblue);
+
+            text-shadow: 0px -9px 5px #000000;
+        }
+
+        #vertix-wings-placeholder {
+            position: relative;
+            top: 110px;
+
+            background-image: url(../../../public/wings.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: top center;
+
+            height: 200px;
+            width: 30%;
+
+            min-width: 420px;
+            max-width: 560px;
+
+            #vertix-wings-logo {
+                top: 30px;
+
+                cursor: pointer;
+                position: relative;
+
+                animation-name: rotate;
+                animation-duration: 5s;
+                animation-iteration-count: infinite;
+                animation-play-state: running;
+            }
+        }
+    }
+}

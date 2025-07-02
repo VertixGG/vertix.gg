@@ -5,7 +5,10 @@ packages/vertix-base/src/encryption/key.ts
 .idea/
 
 .env
+.DS_Store
 
 vertix_backup*
 
 _backups/
+
+

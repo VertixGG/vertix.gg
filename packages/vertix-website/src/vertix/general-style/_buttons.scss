@@ -1,0 +1,31 @@
+@use "../bootstrap" as bootstrap;
+
+@each $color, $value in bootstrap.$theme-colors {
+	.btn-outline-#{$color} {
+		background: #0000009e;
+		border-radius: 12px
+	}
+}
+
+.btn-effect {
+	overflow: hidden;
+	position: relative;
+}
+
+.btn-effect::after {
+	background: #fff;
+	content: "";
+	height: 155px;
+	left: -75px;
+	opacity: .2;
+	position: absolute;
+	top: -50px;
+	transform: rotate(35deg);
+	transition: all 1000ms cubic-bezier(0.19, 1, 0.22, 1);
+	width: 50px;
+}
+
+.btn-effect:hover::after {
+	left: 120%;
+	transition: all 1000ms cubic-bezier(0.19, 1, 0.22, 1);
+}

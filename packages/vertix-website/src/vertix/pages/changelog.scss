@@ -1,0 +1,18 @@
+.changelog {
+	h1:first-child {
+		margin-bottom: 15px;
+	}
+
+	ul {
+		li {
+			p {
+				margin-bottom: 5px;
+			}
+
+			&:last-child {
+				margin-bottom: 10px;
+			}
+		}
+
+	}
+}

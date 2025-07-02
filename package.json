@@ -29,7 +29,12 @@
         "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:jest",
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
         "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
-        "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils"
+        "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils",
+        "vertix:website:dev": "cd packages/vertix-website && bun run vertix-website:dev",
+        "vertix:website:build": "cd packages/vertix-website && bun run vertix-website:build",
+        "vertix:website:preview": "cd packages/vertix-website && bun run vertix-website:preview",
+        "vertix:website:release": "cd packages/vertix-website && bun run vertix-website:release",
+        "vertix:website:eslint": "bunx --bun eslint packages/vertix-website"
     },
     "dependencies": {
         "@zenflux/cli": "latest",

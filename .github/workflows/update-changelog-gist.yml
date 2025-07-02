@@ -1,0 +1,27 @@
+name: Update Changelog Gist
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'changelog.md' ]
+  pull_request:
+    types: [ closed ]
+    branches: [ main ]
+    paths: [ 'changelog.md' ]
+
+jobs:
+  update-gist:
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Update Gist
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.UPDATE_VERTIX_GG_GIST_CHANGELOG_TOKEN }}
+        gist_id: ${{ secrets.UPDATE_VERTIX_GG_GIST_CHANGELOG_ID }}
+        file_path: changelog.md
+        file_type: text

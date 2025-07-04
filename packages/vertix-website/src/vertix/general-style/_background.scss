@@ -2,7 +2,6 @@
 
 body {
 	.body-container {
-		background-image: url(../../../public/bg2.webp), url(../../../public/bg1.webp);
 		background-position: right top, left top;
 		background-position-y: -65px;
 		background-repeat: no-repeat, no-repeat;
@@ -22,17 +21,6 @@ body {
 
 		@media screen and (max-width: 1000px) {
 			background-size: 40%, 40%;
-		}
-
-		@include bootstrap.media-breakpoint-between(sm, md) {
-			background-size: 45%, 45%;
-			background-position-y: -40px;
-		}
-
-		@include bootstrap.media-breakpoint-between(xs, sm) {
-			background-image: url(../../../public/bg2.webp);
-			background-size: 100%;
-			background-position-y: -32px;
 		}
 	}
 }

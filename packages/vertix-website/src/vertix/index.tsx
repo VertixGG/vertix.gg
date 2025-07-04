@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from "react-router-dom";
 
 import LoadingContainer from "@vertix/ui/loading-container";
 
@@ -10,7 +10,7 @@ import localRoutes from "@vertix/routes";
 
 import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } from "@internal/utils/loading";
 
-import "./style-static.scss"
+import "@vertix.gg/website/src/vertix/style-static.scss";
 
 ( () => {
     // @ts-ignore
@@ -29,7 +29,7 @@ const RoutesComponent = () => {
                 return <Route key={ route.path } path={ route.path } element={ <route.component/> }/>;
             } ) }
         </Routes>
-    )
+    );
 };
 
 export default function Index() {
@@ -41,7 +41,7 @@ export default function Index() {
     } );
 
     return (
-        <div className="body-container not-loaded">
+        <div className="bg-vertix-main bg-no-repeat bg-[position:right_top,left_top] [background-size:35%] opacity-20 transition-opacity duration-1000 ease-in-out not-loaded sm:[background-size:45%] md:[background-size:40%] lg:[background-size:35%] xl:[background-size:30%] sm:bg-vertix-main-mobile sm:bg-[size:100%]">
             <Header/>
 
             <section className="content">
@@ -50,26 +50,26 @@ export default function Index() {
                 </Suspense>
             </section>
 
-            <div className="container">
-                <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4">
-                    <p className="col-md-4 mb-0 text-muted">© 2023~2024 Vertix.gg</p>
+            <div className="container mx-auto max-w-screen-lg px-4">
+                <footer className="flex flex-wrap justify-between items-center py-3 my-4">
+                    <p className="md:w-1/3 mb-0 text-gray-400">© 2023~2024 Vertix.gg</p>
 
-                    <ul className="nav col-md justify-content-end">
-                        <li className="nav-item"><a href="/privacy-policy" className="nav-link px-2 text-muted">Privacy
+                    <ul className="flex md:justify-end">
+                        <li><a href="/privacy-policy" className="px-2 text-gray-400 hover:underline">Privacy
                             Policy</a></li>
-                        <li className="nav-item"><a href="/terms-of-service" className="nav-link px-2 text-muted">Terms
+                        <li><a href="/terms-of-service" className="px-2 text-gray-400 hover:underline">Terms
                             Of Service</a></li>
-                        <li className="nav-item"><a href="/changelog" className="nav-link px-2 text-muted">Changelog</a>
+                        <li><a href="/changelog" className="px-2 text-gray-400 hover:underline">Changelog</a>
                         </li>
-                        <li className="nav-item"><a href="/credits" className="nav-link px-2 text-muted">Credits</a>
+                        <li><a href="/credits" className="px-2 text-gray-400 hover:underline">Credits</a>
                         </li>
-                        <li className="nav-item">
-                            <a href="mailto:leonid@vertix.gg" className="nav-link px-2 text-muted">Contact</a>
+                        <li>
+                            <a href="mailto:leonid@vertix.gg" className="px-2 text-gray-400 hover:underline">Contact</a>
                         </li>
                     </ul>
                 </footer>
 
-                <div className="d-flex justify-content-center opacity-0 text-white">
+                <div className="flex justify-center opacity-0 text-white">
                     <a href="https://vertix.gg" target="_blank" rel="noreferrer">vertix</a>&nbsp;|&nbsp;
                     <a href="https://vertix.gg" target="_blank" rel="noreferrer">discord</a>&nbsp;|&nbsp;
                     <a href="https://vertix.gg" target="_blank" rel="noreferrer">bot</a>&nbsp;|&nbsp;

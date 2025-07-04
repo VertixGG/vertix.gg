@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import LoadingContainer from "@vertix/ui/loading-container";
 
 import Header from "@vertix/header/header";
+import ShiningStars from "@vertix/ui/shining-stars";
 
 import localRoutes from "@vertix/routes";
 
@@ -41,7 +42,8 @@ export default function Index() {
     } );
 
     return (
-        <div className="bg-vertix-main bg-no-repeat bg-[position:right_top,left_top] [background-size:35%] opacity-20 transition-opacity duration-1000 ease-in-out not-loaded sm:[background-size:45%] md:[background-size:40%] lg:[background-size:35%] xl:[background-size:30%] sm:bg-vertix-main-mobile sm:bg-[size:100%]">
+        <div className="relative bg-vertix-main bg-no-repeat bg-[position:right_top,left_top] [background-size:35%] opacity-20 transition-opacity duration-1000 ease-in-out not-loaded sm:[background-size:45%] md:[background-size:40%] lg:[background-size:35%] xl:[background-size:30%] sm:bg-vertix-main-mobile sm:bg-[size:100%]">
+            <ShiningStars/>
             <Header/>
 
             <section className="content">

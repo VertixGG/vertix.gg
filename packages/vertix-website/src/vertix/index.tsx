@@ -51,32 +51,26 @@ export default function Index() {
             </section>
 
             <div className="container mx-auto max-w-screen-lg px-4">
-                <footer className="flex flex-wrap justify-between items-center py-3 my-4">
-                    <p className="md:w-1/3 mb-0 text-gray-400">© 2023~2024 Vertix.gg</p>
+                <footer className="d-flex justify-content-between py-3 my-4">
+                    <p className="d-flex gap-2 md:w-1/3 mb-0 text-gray-400">
+                        <span>© 2023 ~ {new Date().getFullYear()}</span>
+                        <span>Vertix.gg</span>
+                    </p>
 
-                    <ul className="flex md:justify-end">
-                        <li><a href="/privacy-policy" className="px-2 text-gray-400 hover:underline">Privacy
+                    <ul className="d-flex nav">
+                        <li className="nav-item"><a href="/privacy-policy" className="px-2 text-gray-400 hover:underline">Privacy
                             Policy</a></li>
-                        <li><a href="/terms-of-service" className="px-2 text-gray-400 hover:underline">Terms
+                        <li className="nav-item"><a href="/terms-of-service" className="px-2 text-gray-400 hover:underline">Terms
                             Of Service</a></li>
-                        <li><a href="/changelog" className="px-2 text-gray-400 hover:underline">Changelog</a>
+                        <li className="nav-item"><a href="/changelog" className="px-2 text-gray-400 hover:underline">Changelog</a>
                         </li>
-                        <li><a href="/credits" className="px-2 text-gray-400 hover:underline">Credits</a>
+                        <li className="nav-item"><a href="/credits" className="px-2 text-gray-400 hover:underline">Credits</a>
                         </li>
-                        <li>
+                        <li className="nav-item">
                             <a href="mailto:leonid@vertix.gg" className="px-2 text-gray-400 hover:underline">Contact</a>
                         </li>
                     </ul>
                 </footer>
-
-                <div className="flex justify-center opacity-0 text-white">
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">vertix</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">discord</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">bot</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">temporary</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">voice</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">channels</a>
-                </div>
             </div>
         </div>
     );

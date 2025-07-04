@@ -10,14 +10,7 @@ export default defineConfig({
       '@vertix': resolve(__dirname, './src/vertix'),
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler',
-        silenceDeprecations: ['legacy-js-api'],
-      },
-    },
-  },
+  css: {},
   server: {
     port: 3000,
     open: true,

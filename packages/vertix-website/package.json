@@ -8,7 +8,6 @@
 		"@types/node": "^20.11.5",
 		"@types/react": "^18.2.48",
 		"@types/react-dom": "^18.2.18",
-
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-markdown": "^8.0.7",
@@ -20,12 +19,14 @@
 	},
 	"devDependencies": {
 		"@vitejs/plugin-react": "^4.2.1",
-		"vite": "^5.0.12",
-		"tailwindcss": "^3.4.0"
+		"autoprefixer": "^10.4.21",
+		"postcss": "^8.5.6",
+		"tailwindcss": "^3.4.1",
+		"vite": "^5.0.12"
 	},
 	"scripts": {
-        "vertix-website:css:build": "tailwindcss -i ./src/vertix/styles.css -o ./src/vertix/styles.output.css",
-		"vertix-website:css:watch": "tailwindcss -i ./src/vertix/styles.css -o ./src/vertix/styles.output.css --watch",
+		"vertix-website:css:build": "bunx tailwindcss -c ./tailwind.config.js -i ./src/vertix/styles.css -o ./src/vertix/styles.output.css",
+		"vertix-website:css:watch": "bunx tailwindcss -c ./tailwind.config.js -i ./src/vertix/styles.css -o ./src/vertix/styles.output.css --watch",
 		"vertix-website:dev": "bun run vertix-website:css:build && vite",
 		"vertix-website:build": "bun run vertix-website:css:build && tsc && vite build",
 		"vertix-website:preview": "vite preview",

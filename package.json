@@ -34,7 +34,9 @@
         "vertix:website:build": "cd packages/vertix-website && bun run vertix-website:build",
         "vertix:website:preview": "cd packages/vertix-website && bun run vertix-website:preview",
         "vertix:website:release": "cd packages/vertix-website && bun run vertix-website:release",
-        "vertix:website:eslint": "bunx --bun eslint packages/vertix-website"
+        "vertix:website:eslint": "bunx --bun eslint packages/vertix-website",
+        "tailwind:build": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+        "tailwind:init": "tailwindcss init"
     },
     "dependencies": {
         "@zenflux/cli": "latest",

@@ -12,11 +12,7 @@ import localRoutes from "@vertix/routes";
 import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } from "@internal/utils/loading";
 
 import "@vertix.gg/website/src/vertix/style-static.scss";
-
-( () => {
-    // @ts-ignore
-    import ( "./style-dynamic.scss" );
-} )();
+import "@vertix.gg/website/src/vertix/style-dynamic.scss";
 
 const loadedPromise = windowLoadedPromise(),
     loadedSuspensePromise = wrapPromiseSuspendable( loadedPromise );

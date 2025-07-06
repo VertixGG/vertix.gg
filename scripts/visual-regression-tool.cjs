@@ -29,7 +29,8 @@ class VisualRegressionTool {
             outputDir = './visual-regression-output',
             waitTime = 2000,
             fullPage = false,
-            elementSelector = null
+            elementSelector = null,
+            level = Infinity
         } = options;
 
         // Ensure output directory exists
@@ -85,12 +86,14 @@ class VisualRegressionTool {
             console.log('🔍 Extracting styling information...');
 
             // New: DOM traversal for full page or subtree extraction
-            const styleExtractionScript = (elementSelector) => `
+            const styleExtractionScript = (elementSelector, level) => `
                 (() => {
-                    function getElementStyles(element) {
+                    const maxLevel = ${level};
+                    function getElementStyles(element, currentLevel) {
+                        if (currentLevel > maxLevel) return null;
                         const computed = window.getComputedStyle(element);
                         const rect = element.getBoundingClientRect();
-                        const children = Array.from(element.children).map(getElementStyles);
+                        const children = Array.from(element.children).map(child => getElementStyles(child, currentLevel + 1)).filter(Boolean);
 
                         // Extract all data-* attributes
                         const dataAttrs = {};
@@ -199,13 +202,13 @@ class VisualRegressionTool {
                         root = document.body;
                     }
                     if (!root) return null;
-                    return getElementStyles(root);
+                    return getElementStyles(root, 0);
                 })()
             `;
 
             // Use the new extraction logic for both prod and dev
-            results.analysis.production = await prodPage.evaluate(styleExtractionScript(elementSelector || ''));
-            results.analysis.development = await devPage.evaluate(styleExtractionScript(elementSelector || ''));
+            results.analysis.production = await prodPage.evaluate(styleExtractionScript(elementSelector || '', level));
+            results.analysis.development = await devPage.evaluate(styleExtractionScript(elementSelector || '', level));
 
             // Close pages
             await prodPage.close();
@@ -444,6 +447,7 @@ Options:
   --wait-time <ms>       Wait time after page load (default: 2000)
   --full-page           Take full page screenshots
   --element <selector>   Screenshot specific element only
+  --level <depth>        DOM traversal depth (default: Infinity)
   --help                Show this help
 
 Examples:
@@ -471,6 +475,9 @@ Examples:
                 break;
             case '--element':
                 options.elementSelector = args[++i];
+                break;
+            case '--level':
+                options.level = parseInt(args[++i], 10);
                 break;
         }
     }

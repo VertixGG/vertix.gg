@@ -5,6 +5,14 @@ import "react-photo-view/dist/react-photo-view.css";
 const markdown = `#### Latest Updates
 - **04/07/2025**: face lift for the website, fixed changelog page
 
+We're excited to announce that we're migrating to **V3** of our bot system! This update brings several improvements and new features:
+- **08/03/2025**: \`0.0.8\` ✨ **What's New in V3:**
+    - Enhanced UI and user experience
+    - Improved performance and stability
+    - New customization options for your voice channels
+    - Better role management and permissions
+    - Fixed various bugs from previous versions
+
 - **19/07/2023**: \`0.0.7\` comes with new Greek language support, more details [here](/changelog).
 
 - **11/07/2023**: \`0.0.6\` is now available! with new **Dynamic Channel AutoSave** Feature, Read the [Changelog](/changelog) for further details.

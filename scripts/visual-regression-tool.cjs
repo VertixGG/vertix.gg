@@ -30,6 +30,7 @@ class VisualRegressionTool {
             waitTime = 2000,
             fullPage = false,
             elementSelector = null,
+            waitForSelector = null,
             level = Infinity
         } = options;
 
@@ -71,7 +72,9 @@ class VisualRegressionTool {
             // Development screenshot
             const devPage = await this.context.newPage();
             await devPage.goto(devUrlWithCacheBust, { waitUntil: 'networkidle' });
-            await devPage.reload({ waitUntil: 'networkidle' }); // Force a hard reload
+            if (waitForSelector) {
+                await devPage.waitForSelector(waitForSelector, { timeout: waitTime });
+            }
             await devPage.waitForTimeout(waitTime);
 
             const devScreenshot = path.join(outputDir, `development-${timestamp}.png`);
@@ -247,48 +250,22 @@ class VisualRegressionTool {
     compareElements(prodEl, devEl, path = '') {
         const differences = [];
         if (!prodEl && devEl) {
-            differences.push({
-                type: 'MISSING_ELEMENT',
-                path,
-                message: `Element exists in development but not in production at ${path}`
-            });
+            differences.push({ type: 'MISSING_ELEMENT', path, message: `Element exists in development but not in production at ${path}` });
             return differences;
         }
         if (prodEl && !devEl) {
-            differences.push({
-                type: 'MISSING_ELEMENT',
-                path,
-                message: `Element exists in production but not in development at ${path}`
-            });
+            differences.push({ type: 'MISSING_ELEMENT', path, message: `Element exists in production but not in development at ${path}` });
             return differences;
         }
         // Compare tagName, id, classes
         if (prodEl.tagName !== devEl.tagName) {
-            differences.push({
-                type: 'TAGNAME_DIFFERENCE',
-                path,
-                production: prodEl.tagName,
-                development: devEl.tagName,
-                message: `Tag name mismatch at ${path}: ${prodEl.tagName} vs ${devEl.tagName}`
-            });
+            differences.push({ type: 'TAGNAME_DIFFERENCE', path, production: prodEl.tagName, development: devEl.tagName, message: `Tag name mismatch at ${path}: ${prodEl.tagName} vs ${devEl.tagName}` });
         }
         if (prodEl.id !== devEl.id) {
-            differences.push({
-                type: 'ID_DIFFERENCE',
-                path,
-                production: prodEl.id,
-                development: devEl.id,
-                message: `ID mismatch at ${path}: ${prodEl.id} vs ${devEl.id}`
-            });
+            differences.push({ type: 'ID_DIFFERENCE', path, production: prodEl.id, development: devEl.id, message: `ID mismatch at ${path}: ${prodEl.id} vs ${devEl.id}` });
         }
         if (prodEl.classes !== devEl.classes) {
-            differences.push({
-                type: 'CLASS_DIFFERENCE',
-                path,
-                production: prodEl.classes,
-                development: devEl.classes,
-                message: `Class mismatch at ${path}: ${prodEl.classes} vs ${devEl.classes}`
-            });
+            differences.push({ type: 'CLASS_DIFFERENCE', path, production: prodEl.classes, development: devEl.classes, message: `Class mismatch at ${path}: ${prodEl.classes} vs ${devEl.classes}` });
         }
         // Compare dimensions
         Object.keys(prodEl.dimensions).forEach(prop => {
@@ -447,7 +424,9 @@ Options:
   --wait-time <ms>       Wait time after page load (default: 2000)
   --full-page           Take full page screenshots
   --element <selector>   Screenshot specific element only
+  --wait-for-selector <selector> Wait for selector before screenshot
   --level <depth>        DOM traversal depth (default: Infinity)
+  --debug               Output full computed style objects for debugging
   --help                Show this help
 
 Examples:
@@ -476,8 +455,14 @@ Examples:
             case '--element':
                 options.elementSelector = args[++i];
                 break;
+            case '--wait-for-selector':
+                options.waitForSelector = args[++i];
+                break;
             case '--level':
                 options.level = parseInt(args[++i], 10);
+                break;
+            case '--debug':
+                options.debug = true;
                 break;
         }
     }
@@ -496,6 +481,13 @@ Examples:
         } else {
             console.log(`⚠️  WARNING: ${results.differences.length} differences found`);
             console.log('📋 Check the generated reports for details');
+        }
+
+        if (options.debug) {
+            console.log('\n\n--- DEBUG: PRODUCTION COMPUTED STYLES ---\n');
+            console.log(JSON.stringify(results.analysis.production, null, 2));
+            console.log('\n\n--- DEBUG: DEVELOPMENT COMPUTED STYLES ---\n');
+            console.log(JSON.stringify(results.analysis.development, null, 2));
         }
 
     } catch (error) {

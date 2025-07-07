@@ -2,7 +2,7 @@ import React from "react";
 
 import { useLocation } from "react-router-dom";
 
-import VertixWeb from "../assets/vertix-optimized.webp";
+import VertixWeb from "@vertix.gg/website/src/vertix/assets/vertix-optimized.webp";
 
 const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } ) => {
     const location = useLocation();
@@ -10,9 +10,9 @@ const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } 
     return (
         <li className="nav-item">
             <a className={ `nav-link ${ location.pathname === href ? "active" : "" }` } aria-current="page"
-               href={ href }>{ title }</a>
+                href={ href }>{ title }</a>
         </li>
-    )
+    );
 };
 
 const NavbarDropdown: React.FC<{
@@ -34,14 +34,14 @@ const NavbarDropdown: React.FC<{
     return (
         <li className="nav-item dropdown">
             <span className="nav-link" role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                  onMouseEnter={ () => {
-                      clearTimeout( dropdownTimeout );
-                      setDropdownState( true )
-                  } }
-                  onMouseLeave={ () => dropdownTimeout = setTimeout( () => setDropdownState( false ), 200 ) }
-                  onClick={ toggleDropdown }
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                onMouseEnter={ () => {
+                    clearTimeout( dropdownTimeout );
+                    setDropdownState( true );
+                } }
+                onMouseLeave={ () => dropdownTimeout = setTimeout( () => setDropdownState( false ), 200 ) }
+                onClick={ toggleDropdown }
             >
                 { title }
             </span>
@@ -62,11 +62,11 @@ const NavbarDropdown: React.FC<{
                 }
             </ul>
         </li>
-    )
+    );
 };
 
 export const onAddToServerClick = () => {
-    window.location.href = "/invite-vertix"
+    window.location.href = "/invite-vertix";
 };
 
 export default function Header() {
@@ -79,16 +79,16 @@ export default function Header() {
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
                         <img id="vertix-logo" className="me-1 user-select-none" width="60px" height="60px"
-                             src={ VertixWeb } alt=""></img>
+                            src={ VertixWeb } alt=""></img>
                         <span id="vertix-brand-logo" className="d-inline">
                             <span id="vertix-first-letter">V</span>ertix
                         </span>
                     </a>
 
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation"
-                            onClick={ toggleNavbar }
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation"
+                        onClick={ toggleNavbar }
                     >
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -105,7 +105,6 @@ export default function Header() {
                                 { title: "Video", href: "/features-video" },
                             ] }/>
 
-
                             <NavbarDropdown title="How to" items={ [
                                 { title: "Setup", href: "/posts/how-to-setup" },
                                 { divider: true },
@@ -118,11 +117,11 @@ export default function Header() {
 
                         <div className="buttons d-flex p-sm-2">
                             <button id="add-to-server" onClick={ () => onAddToServerClick() }
-                                    className="btn ps-4 pe-4 btn-outline-primary btn-effect me-4">Invite
+                                className="btn ps-4 pe-4 btn-outline-primary btn-effect me-4">Invite
                                 Vertix
                             </button>
                             <button id="support" onClick={ () => window.open( "https://discord.gg/dEwKeQefUU" ) }
-                                    className="btn btn-outline-success btn-effect ms-auto">Support
+                                className="btn btn-outline-success btn-effect ms-auto">Support
                             </button>
                         </div>
                     </div>

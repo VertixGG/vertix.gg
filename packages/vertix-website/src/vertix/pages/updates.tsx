@@ -1,8 +1,18 @@
 import ReactMarkdown from "react-markdown";
 
-import 'react-photo-view/dist/react-photo-view.css';
+import "react-photo-view/dist/react-photo-view.css";
 
 const markdown = `#### Latest Updates
+- **04/07/2025**: face lift for the website, fixed changelog page
+
+We're excited to announce that we're migrating to **V3** of our bot system! This update brings several improvements and new features:
+- **08/03/2025**: \`0.0.8\` ✨ **What's New in V3:**
+    - Enhanced UI and user experience
+    - Improved performance and stability
+    - New customization options for your voice channels
+    - Better role management and permissions
+    - Fixed various bugs from previous versions
+
 - **19/07/2023**: \`0.0.7\` comes with new Greek language support, more details [here](/changelog).
 
 - **11/07/2023**: \`0.0.6\` is now available! with new **Dynamic Channel AutoSave** Feature, Read the [Changelog](/changelog) for further details.
@@ -10,11 +20,11 @@ const markdown = `#### Latest Updates
 - **24/06/2023**: \`0.0.5\` has been released! We are excited to introduce **Dynamic Channel Logs**, Check out the full [Changelog](/changelog) for more details.
 
     [How to enable dynamic channel logs?](/posts/how-to-setup-logs-channel)
-    
+
 - **21/06/2023**: Since 20/06/2023 we updated **Vertix** to **Version \`0.0.4\`**, we added **Transfer Ownership** button for dynamic channels, and **block/unblock** menus. Check out the [Changelog](/changelog). If you are already an existing **Bot User**, the **Transfer Ownership** button will be disabled by default.
- 
+
     [How to enable it?](/posts/enable-transfer-ownership)
-    
+
 - **19/06/2023**: The negative reviews on [top.gg](https://top.gg/bot/1111283172378955867) are made by our jealous competitor.
 
 - **16/06/2023**: Version \`0.0.3\` has been released! We are excited to introduce a new interface for **Verified Roles**. Check out the [Changelog](/changelog) for more details and explore the accompanying images [here](/features-images).
@@ -37,5 +47,5 @@ export default function Updates() {
                 <ReactMarkdown children={ markdown }/>
             </div>
         </>
-    )
+    );
 }

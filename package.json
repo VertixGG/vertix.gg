@@ -34,7 +34,9 @@
         "vertix:website:build": "cd packages/vertix-website && bun run vertix-website:build",
         "vertix:website:preview": "cd packages/vertix-website && bun run vertix-website:preview",
         "vertix:website:release": "cd packages/vertix-website && bun run vertix-website:release",
-        "vertix:website:eslint": "bunx --bun eslint packages/vertix-website"
+        "vertix:website:eslint": "bunx --bun eslint packages/vertix-website",
+        "tailwind:build": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+        "tailwind:init": "tailwindcss init"
     },
     "dependencies": {
         "@zenflux/cli": "latest",
@@ -48,19 +50,19 @@
         "@types/jest": "latest",
         "@types/jest-when": "latest",
         "@types/node": "latest",
-        "@typescript-eslint/eslint-plugin": "^8.26.1",
-        "@typescript-eslint/parser": "^8.26.1",
+        "@typescript-eslint/eslint-plugin": "^8.35.1",
+        "@typescript-eslint/parser": "^8.35.1",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
-        "bun-types": "^1.0.25",
+        "bun-types": "^1.2.18",
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",
         "ts-mockito": "latest",
-        "tsx": "^4.19.1",
-        "typescript": "latest"
+        "tsx": "^4.20.3",
+        "typescript": "^5.8.3"
     },
     "packageManager": "bun@1.1.18",
     "peerDependencies": {

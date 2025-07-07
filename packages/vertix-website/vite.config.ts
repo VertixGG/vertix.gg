@@ -1,21 +1,16 @@
 import { defineConfig } from 'vite'
+
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
 import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@internal': resolve(__dirname, './src'),
       '@vertix': resolve(__dirname, './src/vertix'),
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler',
-        silenceDeprecations: ['legacy-js-api'],
-      },
     },
   },
   server: {

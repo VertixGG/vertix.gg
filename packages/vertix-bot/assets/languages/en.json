@@ -241,6 +241,24 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupScalingChannelCreateButton",
+        "content": {
+          "label": "Create Master Scaling Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixButton",
+        "content": {
+          "label": "{prefixAction} Channel Prefix{prefixValue}",
+          "options": {
+            "prefixAction": {
+              "edit": "Edit",
+              "set": "Set"
+            }
+          }
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Invite Vertix"
@@ -334,6 +352,20 @@
         "content": {
           "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
           "placeholder": "{user}'s Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingCategoryNameInput",
+        "content": {
+          "label": "Category Name",
+          "placeholder": "e.g., Auto-Scaling Voice Channels"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "Channel Prefix",
+          "placeholder": "e.g., Game, Voice, Team"
         }
       }
     ],
@@ -643,6 +675,52 @@
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
           "placeholder": "❖ ∙ Edit Master Channel(s)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingCategorySelectMenu",
+        "content": {
+          "placeholder": "📁 Select Category or Create New",
+          "selectOptions": [
+            {
+              "label": "➕ Create New Category"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersSelect",
+        "content": {
+          "placeholder": "👥 Select Max Members Per Channel",
+          "selectOptions": [
+            {
+              "label": "2 Members"
+            },
+            {
+              "label": "3 Members"
+            },
+            {
+              "label": "4 Members"
+            },
+            {
+              "label": "5 Members"
+            },
+            {
+              "label": "6 Members"
+            },
+            {
+              "label": "7 Members"
+            },
+            {
+              "label": "8 Members"
+            },
+            {
+              "label": "9 Members"
+            },
+            {
+              "label": "10 Members"
+            }
+          ]
         }
       },
       {
@@ -2253,6 +2331,42 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/SetupScalingStep1Embed",
+      "content": {
+        "title": "Welcome to Auto-Scaling Channel Setup!",
+        "description": "This wizard will help you set up a category of voice channels that automatically scale with demand.\n\n • The bot will create a special `Master Scaling Channel` in a category you choose.\n • Based on your settings (channel name prefix and max users per channel), the bot will add new voice channels when needed and can remove them when they are empty.\n\n **Next Steps:**\n 1. Choose or create a category for these auto-scaling channels.\n 2. Set a name prefix for the channels (e.g., \"Lobby\", \"Game Room\").\n 3. Define the maximum number of users per channel.\n\n Click **( `Next ▶` )** to begin."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingStep2Embed",
+      "content": {
+        "title": "Step 2: Select a Category",
+        "description": "Choose an existing category or create a new one for your auto-scaling voice channels.\n\n The selected category will house your Master Scaling Channel and all auto-created voice channels.\n\n After selecting a category, click **( `Next ▶` )** to continue to the scaling settings configuration."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingStep3Embed",
+      "content": {
+        "title": "Step 3: Configure Scaling Settings",
+        "description": "Now, let's configure the auto-scaling settings for your voice channels.\n\n **Channel Prefix**: This will be used as the name for all auto-created channels followed by a number (e.g., \"Game Room-1\", \"Game Room-2\").\n\n **Max Members per Channel**: The maximum number of users allowed in each voice channel before a new one is created.\n\n **Current Configuration**:\n - Selected Category: **{selectedCategoryDisplay}**\n - Channel Prefix: **{channelPrefixDisplay}**\n - Max Members per Channel: **{maxMembersPerChannelDisplay}**\n\n Use the button to set the channel prefix and the dropdown to select max members per channel, then click **( `Finish` )** to create your Master Scaling Channel.",
+        "footer": "These settings can be changed later through the Master Scaling Channel.",
+        "options": {
+          "channelPrefixDisplay": {
+            "{channelPrefixDefault}": "Not configured",
+            "{channelPrefix}": "{channelPrefix}"
+          },
+          "maxMembersPerChannelDisplay": {
+            "{maxMembersPerChannelDefault}": "Not configured",
+            "{maxMembersPerChannel}": "{maxMembersPerChannel}"
+          },
+          "selectedCategoryDisplay": {
+            "{selectedCategoryDefault}": "Not selected",
+            "{selectedCategory}": "{selectedCategory}"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-General/SetupStep1Embed",
       "content": {
         "title": "Step 1 - Set Dynamic Channels Template Name",
@@ -2400,6 +2514,18 @@
       "name": "VertixBot/UI-General/ChannelNameTemplateModal",
       "content": {
         "title": "Set dynamic channels name"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingCategoryNameModal",
+      "content": {
+        "title": "Create Category for Auto-Scaling Channels"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingPrefixModal",
+      "content": {
+        "title": "Set Channel Prefix"
       }
     }
   ]

@@ -241,6 +241,24 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupScalingChannelCreateButton",
+        "content": {
+          "label": "Δημιουργία Κύριου Καναλιού Κλιμάκωσης"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixButton",
+        "content": {
+          "label": "{prefixAction} Πρόθεμα Καναλιού{prefixValue}",
+          "options": {
+            "prefixAction": {
+              "edit": "Επεξεργασία",
+              "set": "Ορισμός"
+            }
+          }
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Προσκάλεσε το Vertix"
@@ -334,6 +352,20 @@
         "content": {
           "label": "ΟΡΙΣΕ ΤΟ ΠΡΟΕΠΙΛΕΓΜΕΝΟ ΟΝΟΜΑ ΤΩΝ ΔΥΝΑΜΙΚΩΝ ΚΑΝΑΛΙΩΝ",
           "placeholder": "{user}'s Κανάλι"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingCategoryNameInput",
+        "content": {
+          "label": "Όνομα Κατηγορίας",
+          "placeholder": "π.χ., Αυτόματα Κλιμακώσιμα Φωνητικά Κανάλια"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "Πρόθεμα Καναλιού",
+          "placeholder": "π.χ., Παιχνίδι, Φωνή, Ομάδα"
         }
       }
     ],
@@ -643,6 +675,52 @@
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
           "placeholder": "❖ ∙ Edit Master Channel(s)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingCategorySelectMenu",
+        "content": {
+          "placeholder": "📁 Επίλεξε Κατηγορία ή Δημιούργησε Νέα",
+          "selectOptions": [
+            {
+              "label": "➕ Δημιούργησε Νέα Κατηγορία"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersSelect",
+        "content": {
+          "placeholder": "👥 Επίλεξε Μέγιστο Αριθμό Μελών ανά Κανάλι",
+          "selectOptions": [
+            {
+              "label": "2 Μέλη"
+            },
+            {
+              "label": "3 Μέλη"
+            },
+            {
+              "label": "4 Μέλη"
+            },
+            {
+              "label": "5 Μέλη"
+            },
+            {
+              "label": "6 Μέλη"
+            },
+            {
+              "label": "7 Μέλη"
+            },
+            {
+              "label": "8 Μέλη"
+            },
+            {
+              "label": "9 Μέλη"
+            },
+            {
+              "label": "10 Μέλη"
+            }
+          ]
         }
       },
       {
@@ -2253,6 +2331,42 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/SetupScalingStep1Embed",
+      "content": {
+        "title": "Καλώς ήρθατε στην ρύθμιση αυτόματης κλιμάκωσης καναλιών!",
+        "description": "Αυτός ο οδηγός θα σας βοηθήσει να ρυθμίσετε μια κατηγορία φωνητικών καναλιών που κλιμακώνονται αυτόματα ανάλογα με τη ζήτηση.\n\n • Το bot θα δημιουργήσει ένα ειδικό `Κύριο Κανάλι Κλιμάκωσης` σε μια κατηγορία που θα επιλέξετε.\n • Με βάση τις ρυθμίσεις σας (πρόθεμα ονόματος καναλιού και μέγιστος αριθμός χρηστών ανά κανάλι), το bot θα προσθέτει νέα φωνητικά κανάλια όταν χρειάζεται και μπορεί να τα αφαιρέσει όταν είναι άδεια.\n\n **Επόμενα βήματα:**\n 1. Επιλέξτε ή δημιουργήστε μια κατηγορία για αυτά τα αυτόματα κλιμακώσιμα κανάλια.\n 2. Ορίστε ένα πρόθεμα ονόματος για τα κανάλια (π.χ., \"Χώρος αναμονής\", \"Αίθουσα παιχνιδιού\").\n 3. Ορίστε τον μέγιστο αριθμό χρηστών ανά κανάλι.\n\n Κάντε κλικ **( `Next ▶` )** για να ξεκινήσετε."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingStep2Embed",
+      "content": {
+        "title": "Βήμα 2: Επιλέξτε μια κατηγορία",
+        "description": "Επιλέξτε μια υπάρχουσα κατηγορία ή δημιουργήστε μια νέα για τα αυτόματα κλιμακώσιμα φωνητικά κανάλια σας.\n\n Η επιλεγμένη κατηγορία θα φιλοξενήσει το Κύριο Κανάλι Κλιμάκωσης και όλα τα αυτόματα δημιουργημένα φωνητικά κανάλια.\n\n Μετά την επιλογή μιας κατηγορίας, κάντε κλικ **( `Next ▶` )** για να συνεχίσετε στη ρύθμιση παραμέτρων κλιμάκωσης."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingStep3Embed",
+      "content": {
+        "title": "Βήμα 3: Ρύθμιση παραμέτρων κλιμάκωσης",
+        "description": "Τώρα, ας ρυθμίσουμε τις παραμέτρους αυτόματης κλιμάκωσης για τα φωνητικά κανάλια σας.\n\n **Πρόθεμα καναλιού**: Αυτό θα χρησιμοποιηθεί ως όνομα για όλα τα αυτόματα δημιουργημένα κανάλια ακολουθούμενο από έναν αριθμό (π.χ., \"Αίθουσα παιχνιδιού-1\", \"Αίθουσα παιχνιδιού-2\").\n\n **Μέγιστος αριθμός μελών ανά κανάλι**: Ο μέγιστος αριθμός χρηστών που επιτρέπονται σε κάθε φωνητικό κανάλι πριν δημιουργηθεί ένα νέο.\n\n **Τρέχουσα διαμόρφωση**:\n - Επιλεγμένη κατηγορία: **{selectedCategoryDisplay}**\n - Πρόθεμα καναλιού: **{channelPrefixDisplay}**\n - Μέγιστος αριθμός μελών ανά κανάλι: **{maxMembersPerChannelDisplay}**\n\n Χρησιμοποιήστε το κουμπί για να ορίσετε το πρόθεμα καναλιού και το αναδυόμενο μενού για να επιλέξετε μέγιστο αριθμό μελών ανά κανάλι, μετά κάντε κλικ **( `Finish` )** για να δημιουργήσετε το Κύριο Κανάλι Κλιμάκωσης.",
+        "footer": "Αυτές οι ρυθμίσεις μπορούν να αλλάξουν αργότερα μέσω του Κύριου Καναλιού Κλιμάκωσης.",
+        "options": {
+          "channelPrefixDisplay": {
+            "{channelPrefixDefault}": "Δεν έχει ρυθμιστεί",
+            "{channelPrefix}": "{channelPrefix}"
+          },
+          "maxMembersPerChannelDisplay": {
+            "{maxMembersPerChannelDefault}": "Δεν έχει ρυθμιστεί",
+            "{maxMembersPerChannel}": "{maxMembersPerChannel}"
+          },
+          "selectedCategoryDisplay": {
+            "{selectedCategoryDefault}": "Δεν έχει επιλεγεί",
+            "{selectedCategory}": "{selectedCategory}"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-General/SetupStep1Embed",
       "content": {
         "title": "Βήμα 1 - Ορισμός Προτύπου Ονόματος Δυναμικών Καναλιών",
@@ -2400,6 +2514,18 @@
       "name": "VertixBot/UI-General/ChannelNameTemplateModal",
       "content": {
         "title": "Όρισε το όνομα του Δυναμικού Καναλιού"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingCategoryNameModal",
+      "content": {
+        "title": "Δημιουργία Κατηγορίας για Αυτόματα Κλιμακώσιμα Κανάλια"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingPrefixModal",
+      "content": {
+        "title": "Ορισμός Προθέματος Καναλιού"
       }
     }
   ]

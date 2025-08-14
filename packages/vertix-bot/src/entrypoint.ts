@@ -66,7 +66,8 @@ async function registerServices() {
 
         import( "@vertix.gg/bot/src/services/channel-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
-        import( "@vertix.gg/bot/src/services/master-channel-service" )
+        import( "@vertix.gg/bot/src/services/master-channel-service" ),
+        import( "@vertix.gg/bot/src/services/scaling-channel-service" )
     ] );
 
     services.forEach( ( service ) => {
@@ -150,7 +151,8 @@ async function registerConfigs() {
 
     const configs = await Promise.all( [
         import( "@vertix.gg/bot/src/config/master-channel-config" ),
-        import( "@vertix.gg/bot/src/config/master-channel-config-v3" )
+        import( "@vertix.gg/bot/src/config/master-channel-config-v3" ),
+        import( "@vertix.gg/bot/src/config/master-channel-scaling-config" )
     ] );
 
     await Promise.all(

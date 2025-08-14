@@ -10,5 +10,6 @@ export const VERSION_PHASE_4_ARCHIVE_RECORD = "0.0.1",
     VERSION_WITH_UI_V3 = "0.0.8", // https://github.com/VertixGG/vertix.gg/pull/97
     CURRENT_VERSION = VERSION_WITH_UI_V3;
 
-export const VERSION_UI_V2 = "0.0.0.2" as const,
+export const VERSION_UI_V0 = "0.0.0.0" as const,
+    VERSION_UI_V2 = "0.0.0.2" as const,
     VERSION_UI_V3 = "0.0.0.3" as const;

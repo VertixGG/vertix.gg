@@ -1,10 +1,11 @@
 import "@vertix.gg/prisma/bot-client";
-import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V0, VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
+import { MasterChannelScalingDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-scaling-data-model";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -48,6 +49,7 @@ import type {
     MasterChannelConfigInterfaceV3,
     MasterChannelSettingsInterface
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelScalingConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-scaling-config";
 
 import type { CategoryChannel, Guild, GuildChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
@@ -81,6 +83,17 @@ interface IMasterChannelCreateArgs extends IMasterChannelCreateCommonArgs {
     // Use intersection type to make auto-scaling params optional
     autoScalingSettings?: IAutoScalingChannelArgs;
 }
+
+// Union for internal create args to model dynamic vs auto-scaling strictly
+type TMasterChannelCreateInternalArgs =
+    | ( IMasterChannelCreateInternalArgs & {
+        type?: MasterChannelType.DYNAMIC;
+        autoScalingSettings?: undefined;
+    } )
+    | ( IMasterChannelCreateInternalArgs & {
+        type: MasterChannelType.AUTO_SCALING;
+        autoScalingSettings: IAutoScalingChannelArgs;
+    } );
 
 enum MasterChannelCreateResultCode {
     Error = 0,
@@ -490,7 +503,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     /**
      * Function `createMasterChannelInternal()` - Creates a master channel for the guild.
      */
-    private async createMasterChannelInternal( args: IMasterChannelCreateInternalArgs & { autoScalingSettings?: IAutoScalingChannelArgs } ) {
+    private async createMasterChannelInternal( args: TMasterChannelCreateInternalArgs ) {
         let result;
 
         const { parent, guild } = args;
@@ -505,7 +518,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         switch ( args.version ) {
             case VERSION_UI_V3:
                 if ( channelType === MasterChannelType.AUTO_SCALING ) {
-                    result = await this.createAutoScalingMasterChannelInternal( args );
+                    result = await this.createAutoScalingMasterChannelInternal( args as Extract<TMasterChannelCreateInternalArgs, { type: MasterChannelType.AUTO_SCALING }> );
                 } else {
                     result = await this.createMasterChannelInternalV3( args );
                 }
@@ -675,10 +688,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     // Add a new method for creating auto-scaling master channels
-    private async createAutoScalingMasterChannelInternal( args: IMasterChannelCreateInternalArgs ) {
-        const config = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-            "Vertix/Config/MasterChannel",
-            VERSION_UI_V3
+    private async createAutoScalingMasterChannelInternal( args: Extract<TMasterChannelCreateInternalArgs, { type: MasterChannelType.AUTO_SCALING }> ) {
+        const scalingConfig = ConfigManager.$.get<MasterChannelScalingConfigInterface>(
+            "Vertix/Config/MasterChannelScaling",
+            VERSION_UI_V0
         );
 
         const { parent, guild } = args;
@@ -689,15 +702,15 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
         } ];
 
-        // We use a different name for auto-scaling master channels
-        const channelName = config.get( "constants" ).masterChannelName + " (Auto-Scaling)";
+        // Use scaling config constant for master scaling channel name
+        const channelName = scalingConfig.get( "constants" ).masterScalingChannelName;
 
         const result = await this.services.channelService.create( {
             parent,
             guild,
             userOwnerId: args.userOwnerId,
             version: args.version,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
             name: channelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
@@ -709,25 +722,32 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return null;
         }
 
-        // Auto-scaling channels always use the provided name template
-        const usedNameTemplate = args.dynamicChannelNameTemplate || "";
+        const name = args.dynamicChannelNameTemplate?.replace( "{index}", "1" ) ?? "Team - 1";
 
         this.logger.admin(
             this.createAutoScalingMasterChannelInternal,
-            `🛠️  Auto-Scaling Setup has performed - "${ usedNameTemplate }", Using @everyone role (${ guild.name }) (${ guild?.memberCount })`
+            `🛠️  Auto-Scaling Setup has performed - "${ name }", Using @everyone role (${ guild.name }) (${ guild?.memberCount })`
         );
 
         const db = await result.db;
 
-        // Safely get auto-scaling settings
-        const autoScalingSettings = ( args as any ).autoScalingSettings as IAutoScalingChannelArgs | undefined;
-        const maxMembersPerChannel = autoScalingSettings?.maxMembersPerChannel || 5; // Default to 5 if not specified
+        await this.services.channelService.create( {
+            name,
+            parent,
+            guild,
+            userOwnerId: args.userOwnerId,
+            version: args.version,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL,
+            type: ChannelType.GuildVoice,
+            permissionOverwrites: verifiedRolesWithPermissions,
+            rtcRegion: "us-west"
+        } );
 
-        // Save the settings with additional auto-scaling specific fields
-        await MasterChannelDataModelV3.$.setSettings( db.id, {
-            ...args,
+        // Safely get auto-scaling settings
+        const maxMembersPerChannel = args.autoScalingSettings.maxMembersPerChannel || 5;
+
+        await MasterChannelScalingDataModel.$.setSettings( db.id, {
             type: MasterChannelType.AUTO_SCALING,
-            // Store auto-scaling specific settings
             maxMembersPerChannel,
             categoryId: parent.id
         }, true );

@@ -2287,20 +2287,52 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Setup Vertix",
-        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current scaling master channels**_:\n{masterScalingChannelMessage}\n\n_**Current dynamic master channels**_:\n{masterDynamicChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**None**"
           },
+          "masterDynamicChannelMessage": {
+            "{masterDynamicChannels}": "\n{masterDynamicChannels}",
+            "{masterDynamicChannelMessageDefault}": "**None**"
+          },
+          "masterScalingChannelMessage": {
+            "{masterScalingChannels}": "\n{masterScalingChannels}",
+            "{masterScalingChannelMessageDefault}": "**None**"
+          },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**None**"
           },
-          "none": "**None**"
-        },
-        "arrayOptions": {
-          "masterChannels": {
+                              "none": "**None**",
+                    "channelsTemplateName": {
+                        "": ""
+                    },
+                    "channelsTemplateButtons": {
+                        "": ""
+                    },
+                    "channelsVerifiedRoles": {
+                        "": ""
+                    },
+                    "channelsLogsChannelId": {
+                        "": ""
+                    },
+                    "channelsAutoSave": {
+                        "": ""
+                    },
+                    "scalingChannelPrefix": {
+                        "": ""
+                    },
+                    "scalingChannelMaxMembers": {
+                        "": ""
+                    },
+                    "scalingChannelCategory": {
+                        "": ""
+                    }
+                },
+                        "arrayOptions": {
+          "masterDynamicChannels": {
             "format": "{value}{separator}",
             "separator": "\n",
             "multiSeparator": "\n\n",
@@ -2308,11 +2340,27 @@
               "index": "**#{index}**",
               "name": "▹ Name: <#{id}>",
               "id": "▹ Channel ID: `{id}`",
+              "type": "▹ Type: `{type}`",
               "channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
               "channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
               "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
               "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
               "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
+              "version": "▹ UI Version: `{version}`"
+            }
+          },
+          "masterScalingChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n",
+            "options": {
+              "index": "**#{index}**",
+              "name": "▹ Name: <#{id}>",
+              "id": "▹ Channel ID: `{id}`",
+              "type": "▹ Type: `{type}`",
+              "scalingChannelPrefix": "▹ Scaling Channel Prefix: `{scalingChannelPrefix}`",
+              "scalingChannelMaxMembers": "▹ Max Members Per Channel: `{scalingChannelMaxMembers}`",
+              "scalingChannelCategory": "▹ Category: {scalingChannelCategory}",
               "version": "▹ UI Version: `{version}`"
             }
           },
@@ -2334,23 +2382,27 @@
       "name": "VertixBot/UI-General/SetupScalingStep1Embed",
       "content": {
         "title": "Welcome to Auto-Scaling Channel Setup!",
-        "description": "This wizard will help you set up a category of voice channels that automatically scale with demand.\n\n • The bot will create a special `Master Scaling Channel` in a category you choose.\n • Based on your settings (channel name prefix and max users per channel), the bot will add new voice channels when needed and can remove them when they are empty.\n\n **Next Steps:**\n 1. Choose or create a category for these auto-scaling channels.\n 2. Set a name prefix for the channels (e.g., \"Lobby\", \"Game Room\").\n 3. Define the maximum number of users per channel.\n\n Click **( `Next ▶` )** to begin."
+        "description": "This wizard will help you set up a category of voice channels that automatically scale with demand.\n\n• The bot will create a special `Master Scaling Channel` in a category you choose.\n• Based on your settings (channel name prefix and max users per channel), the bot will add new voice channels when needed and can remove them when they are empty.\n\n**Next Steps:**\n1. Choose or create a category for these auto-scaling channels.\n2. Set a name prefix for the channels (e.g., \"Lobby\", \"Game Room\").\n3. Define the maximum number of users per channel.\n\nClick **( `Next ▶` )** to begin."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupScalingStep2Embed",
       "content": {
         "title": "Step 2: Select a Category",
-        "description": "Choose an existing category or create a new one for your auto-scaling voice channels.\n\n The selected category will house your Master Scaling Channel and all auto-created voice channels.\n\n After selecting a category, click **( `Next ▶` )** to continue to the scaling settings configuration."
+        "description": "Choose an existing category or create a new one for your auto-scaling voice channels.\n\nThe selected category will house your Master Scaling Channel and all auto-created voice channels.\n\nAfter selecting a category, click **( `Next ▶` )** to continue to the scaling settings configuration."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupScalingStep3Embed",
       "content": {
         "title": "Step 3: Configure Scaling Settings",
-        "description": "Now, let's configure the auto-scaling settings for your voice channels.\n\n **Channel Prefix**: This will be used as the name for all auto-created channels followed by a number (e.g., \"Game Room-1\", \"Game Room-2\").\n\n **Max Members per Channel**: The maximum number of users allowed in each voice channel before a new one is created.\n\n **Current Configuration**:\n - Selected Category: **{selectedCategoryDisplay}**\n - Channel Prefix: **{channelPrefixDisplay}**\n - Max Members per Channel: **{maxMembersPerChannelDisplay}**\n\n Use the button to set the channel prefix and the dropdown to select max members per channel, then click **( `Finish` )** to create your Master Scaling Channel.",
+        "description": "Now, let's configure the auto-scaling settings for your voice channels.\n\n**Channel Prefix**: This will be used as the name for all auto-created channels followed by a number (e.g., \"Game Room-1\", \"Game Room-2\").\n\n**Max Members per Channel**: The maximum number of users allowed in each voice channel before a new one is created.\n\n**Current Configuration**:\n- Selected Category: **{selectedCategoryDisplay}**\n- Channel Prefix: **{channelPrefixDisplay}**\n- Max Members per Channel: **{maxMembersPerChannelDisplay}**\n\nUse the button to set the channel prefix and the dropdown to select max members per channel, then click **( `Finish` )** to create your Master Scaling Channel.",
         "footer": "These settings can be changed later through the Master Scaling Channel.",
         "options": {
+          "selectedCategoryDisplay": {
+            "{selectedCategoryDefault}": "Not selected",
+            "{selectedCategory}": "{selectedCategory}"
+          },
           "channelPrefixDisplay": {
             "{channelPrefixDefault}": "Not configured",
             "{channelPrefix}": "{channelPrefix}"
@@ -2358,10 +2410,6 @@
           "maxMembersPerChannelDisplay": {
             "{maxMembersPerChannelDefault}": "Not configured",
             "{maxMembersPerChannel}": "{maxMembersPerChannel}"
-          },
-          "selectedCategoryDisplay": {
-            "{selectedCategoryDefault}": "Not selected",
-            "{selectedCategory}": "{selectedCategory}"
           }
         }
       }

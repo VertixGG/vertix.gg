@@ -1,11 +1,14 @@
-import { VERSION_UI_V0 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version";
+
 import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
 
-import type { MasterChannelScalingConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-scaling-config";
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-class MasterChannelScalingConfig extends ConfigBase<MasterChannelScalingConfigInterface> {
+import type { MasterChannelScalingConfig as MasterChannelScalingConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
+export class MasterChannelScalingConfig extends ConfigBase<MasterChannelScalingConfigInterface> {
     public static getName() {
-        return "VertixBase/UI-V3/MasterChannelScalingConfig";
+        return "Vertix/Config/MasterChannelScaling";
     }
 
     public getConfigName() {
@@ -13,23 +16,24 @@ class MasterChannelScalingConfig extends ConfigBase<MasterChannelScalingConfigIn
     }
 
     public getVersion() {
-        return VERSION_UI_V0;
+        return VERSION_UI_UNSPECIFIED;
     }
 
     protected getDefaults(): MasterChannelScalingConfigInterface["defaults"] {
         return {
-            constants: {
-                channelPrefixDefault: "Team",
-                masterScalingChannelName: "➕ Master Scaling"
-            },
             settings: {
-                type: "auto-scaling",
-                maxMembersPerChannel: 5,
-                categoryId: null
+                type: EMasterChannelType.AUTO_SCALING,
+
+                scalingChannelMaxMembersPerChannel: 10,
+                scalingChannelCategoryId: "",
+                scalingChannelPrefix: ""
+            },
+
+            constants: {
+                masterChannelName: "Auto Scaling Master"
             }
         };
     }
 }
 
 export default MasterChannelScalingConfig;
-

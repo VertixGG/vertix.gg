@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createDecipheriv } from "crypto";
 import { readFile } from "fs/promises";
 

@@ -11,7 +11,6 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { gToken } from "@vertix.gg/base/src/discord/login";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { UserModel } from "@vertix.gg/base/src/models/user-model";
 
@@ -27,7 +26,15 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
-import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE, VAR_DYNAMIC_CHANNEL_GAME } from "@vertix.gg/base/src/definitions/vars";
+import {
+    VAR_DYNAMIC_CHANNEL_USER,
+    VAR_DYNAMIC_CHANNEL_STATE,
+    VAR_DYNAMIC_CHANNEL_GAME
+} from "@vertix.gg/base/src/definitions/vars";
+
+import { DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH } from "@vertix.gg/base/src/definitions/discord";
+
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -47,12 +54,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
-
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-
-import type { MasterChannelUserDataInterface } from "@vertix.gg/base/src/interfaces/master-channel-user-config";
-
-import type { Snowflake } from "discord-api-types/v10";
+import { getUserCurrentGame } from "@vertix.gg/bot/src/utils/member";
 
 import type {
     TDynamicChannelConfiguration,
@@ -70,9 +72,6 @@ import type {
     IDynamicResetChannelResult,
     RemoveStatus
 } from "@vertix.gg/bot/src/definitions/dynamic-channel";
-
-import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
-
 import type {
     Guild,
     APIPartialChannel,
@@ -88,10 +87,17 @@ import type {
     VoiceBasedChannel,
     VoiceChannel
 } from "discord.js";
+import type { Snowflake } from "discord-api-types/v10";
+
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
+import type { MasterChannelUserDataInterface } from "@vertix.gg/base/src/interfaces/master-channel-user-config";
+
+import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type {
-    MasterChannelConfigInterface,
-    MasterChannelConfigInterfaceV3
+    MasterChannelDynamicConfig,
+    MasterChannelDynamicConfigV3
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
@@ -108,10 +114,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 }> {
     private readonly debugger: Debugger;
 
-    private config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+    private config =
+        ConfigManager.$.get<MasterChannelDynamicConfig>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V2 );
 
-    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-        "Vertix/Config/MasterChannel",
+    private configV3 = ConfigManager.$.get<MasterChannelDynamicConfigV3>(
+        "Vertix/Config/MasterChannelDynamic",
         VERSION_UI_V3
     );
 
@@ -255,7 +262,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         // Get the user's current game name
         const member = channel.guild.members.cache.get( userId );
-        const gameName = member ? this.getUserCurrentGame( member ) : null;
+        const gameName = member ? getUserCurrentGame( member ) : null;
 
         const { settings } = this.config.data;
 
@@ -271,7 +278,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return settings.dynamicChannelNameTemplate.replace( VAR_DYNAMIC_CHANNEL_USER, userDisplayName );
         }
 
-        const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
+        const channelNameTemplate = await MasterChannelDataDynamicManager.$.getChannelNameTemplate( masterChannelDB, true );
 
         return this.assembleChannelNameTemplate( channelNameTemplate!, {
             userDisplayName,
@@ -292,30 +299,52 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             gameName: null
         }
     ) {
-        let state = "",
-            userDisplayName = "";
-
         const { constants } = this.config.data;
 
-        if ( args.state ) {
-            state =
-                args.state === "private" ? constants.dynamicChannelStatePrivate : constants.dynamicChannelStatePublic;
-        }
+        // Create cleaner variables with proper defaults
+        const state = args.state === "private"
+            ? constants.dynamicChannelStatePrivate
+            : args.state === "public"
+                ? constants.dynamicChannelStatePublic
+                : "";
 
-        if ( args.userDisplayName ) {
-            userDisplayName = args.userDisplayName.replace( /[^a-zA-Z0-9]/g, "" );
-        }
+        // Sanitize user display name - allow common characters but prevent Discord-unsafe ones
+        const userDisplayName = args.userDisplayName
+            ? args.userDisplayName.replace( /[^\p{L}\p{N}\s\-_'.()]/gu, "" ).trim() || "User"
+            : "";
 
+        // Sanitize game name the same way
+        const gameDisplayName = args.gameName
+            ? args.gameName.replace( /[^\p{L}\p{N}\s\-_'.()]/gu, "" ).trim() || ""
+            : "";
+
+        // Create replacement map
         const replacements: Record<string, string> = {
             [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
             [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName,
-            [ VAR_DYNAMIC_CHANNEL_GAME ]: args.gameName ?? ""
+            [ VAR_DYNAMIC_CHANNEL_GAME ]: gameDisplayName
         };
 
-        return channelNameTemplate.replace(
-            new RegExp( Object.keys( replacements ).join( "|" ), "g" ),
-            ( matched: any ) => replacements[ matched ]
-        );
+        // Apply replacements safely
+        let resultName = channelNameTemplate;
+        for ( const placeholder in replacements ) {
+            if ( Object.prototype.hasOwnProperty.call( replacements, placeholder ) && placeholder ) {
+                resultName = resultName.replace(
+                    new RegExp( placeholder.replace( /[.*+?^${}()|[\]\\]/g, "\\$&" ), "g" ),
+                    replacements[ placeholder ]
+                );
+            }
+        }
+
+        // Clean up multiple spaces and trim
+        resultName = resultName.replace( /\s+/g, " " ).trim();
+
+        // Respect Discord's channel name length limit (conservative 95 chars)
+        if ( resultName.length > DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH ) {
+            resultName = resultName.substring( 0, DEFAULT_DISCORD_MAX_CHANNEL_NAME_LENGTH ).trim();
+        }
+
+        return resultName;
     }
 
     public async getChannelUsersWithPermissionState(
@@ -563,7 +592,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
 
         // Check if autosave is enabled.
-        const autoSave = await MasterChannelDataManager.$.getChannelAutosave( masterChannelDB, false );
+        const autoSave = await MasterChannelDataDynamicManager.$.getChannelAutosave( masterChannelDB, false );
 
         let savedData: MasterChannelUserDataInterface | null = null,
             dynamicChannelName = "",
@@ -588,12 +617,21 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             savedData = await UserMasterChannelDataModel.$.getData( user.userId, masterChannelDB.id );
         }
 
-        if ( savedData ) {
-            dynamicChannelName = savedData.dynamicChannelName;
+        // Get the user's current game if they're playing something
+        const initialGameName = newState.member ? getUserCurrentGame( newState.member ) : null;
+
+        if ( savedData ) { // Use saved data if available
             dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
 
+            // Regenerate the channel name from saved template with current context
+            dynamicChannelName = await this.assembleChannelNameTemplate( savedData.dynamicChannelName, {
+                userDisplayName: displayName,
+                state: savedData.dynamicChannelState,
+                gameName: initialGameName
+            } );
+
             const verifiedRoles =
-                    await MasterChannelDataManager.$.getChannelVerifiedRoles(
+                    await MasterChannelDataDynamicManager.$.getChannelVerifiedRoles(
                         masterChannelDB,
                         masterChannel.guildId
                     ),
@@ -654,10 +692,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     type: OverwriteType.Member
                 } );
             } );
-        }
-
-        if ( !dynamicChannelName ) {
-            const dynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB );
+        } else { // Generate new channel name from template
+            const dynamicChannelTemplateName = await MasterChannelDataDynamicManager.$.getChannelNameTemplate( masterChannelDB );
 
             if ( !dynamicChannelTemplateName ) {
                 this.logger.error(
@@ -667,14 +703,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 return;
             }
 
-            // Get the user's current game name
-            const member = guild.members.cache.get( userOwnerId );
-            const gameName = member ? this.getUserCurrentGame( member ) : null;
-
             dynamicChannelName = await this.assembleChannelNameTemplate( dynamicChannelTemplateName, {
                 userDisplayName: displayName,
                 state: null,
-                gameName
+                gameName: initialGameName
             } );
         }
 
@@ -793,7 +825,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } as any;
 
         if ( masterChannelDB ) {
-            sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable(
+            sendArgs.dynamicChannelMentionable = await MasterChannelDataDynamicManager.$.getChannelMentionable(
                 masterChannelDB,
                 true
             );
@@ -1234,7 +1266,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } as any;
 
         if ( masterChannelDB ) {
-            editMessageArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable(
+            editMessageArgs.dynamicChannelMentionable = await MasterChannelDataDynamicManager.$.getChannelMentionable(
                 masterChannelDB,
                 true
             );
@@ -1350,7 +1382,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const userOwnerId = master.db.userOwnerId;
 
         const previousChannelState = await this.getChannelConfiguration( channel, userOwnerId, master.db.id, options ),
-            defaultDynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate(
+            defaultDynamicChannelTemplateName = await MasterChannelDataDynamicManager.$.getChannelNameTemplate(
                 master.db,
                 true
             ),
@@ -1683,7 +1715,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( masterChannelDB ) {
             const verifiedRoles =
-                ( await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId ) ) ||
+                ( await MasterChannelDataDynamicManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId ) ) ||
                 [];
 
             // If we found verified roles, use them
@@ -2084,7 +2116,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         message: string,
         defaultDebounceDelay = 3000
     ) {
-        const logsChannelId = await MasterChannelDataManager.$.getChannelLogsChannelId( masterChannelDB );
+        const logsChannelId = await MasterChannelDataDynamicManager.$.getChannelLogsChannelId( masterChannelDB );
 
         if ( !logsChannelId ) {
             return;
@@ -2093,7 +2125,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const logsChannel = channel.guild.channels.cache.get( logsChannelId ) as TextChannel;
 
         if ( !logsChannel ) {
-            await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, null, false );
+            await MasterChannelDataDynamicManager.$.setChannelLogsChannel( masterChannelDB, null, false );
 
             this.logger.error(
                 this.log,
@@ -2154,7 +2186,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await logsChannel.send( { embeds } ).catch( async( err ) => {
             this.logger.error( this.log, "", err );
 
-            await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, null, false );
+            await MasterChannelDataDynamicManager.$.setChannelLogsChannel( masterChannelDB, null, false );
         } );
 
         mapItem.embeds = [];
@@ -2207,11 +2239,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         if ( await ChannelModel.$.isDynamic( oldState.channelId! ) ) {
             await this.onLeaveDynamicChannel( args );
         }
-    }
-
-    private getUserCurrentGame( member: GuildMember ): string | null {
-        const activity = member.presence?.activities.find( a => a.type === 0 && !!a.name ); // type 0 = Playing
-        return activity?.name ?? null;
     }
 }
 

@@ -44,6 +44,7 @@ export class Debugger extends ObjectBase {
 
     public enableCleanupDebug( handle: ObjectBase, id: string = "" ) {
         if ( !this.finalizationRegistry ) {
+            // @ts-ignore
             this.finalizationRegistry = new FinalizationRegistry( ( id: string ) => {
                 this.log( this.constructor, `FinalizationRegistry: ${ id }` );
             } );
@@ -88,6 +89,7 @@ export class Debugger extends ObjectBase {
     }
 
     public debugPermissions( source: Function, permissionOverwrites: PermissionOverwriteManager ) {
+        // @ts-ignore
         for ( const overwrite of permissionOverwrites.cache.values() ) {
             this.debugPermission( source, overwrite );
         }

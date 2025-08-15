@@ -27,8 +27,6 @@ import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/s
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
-import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
-
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
@@ -150,8 +148,8 @@ async function registerConfigs() {
     const { ConfigManager } = await import( "@vertix.gg/base/src/managers/config-manager" );
 
     const configs = await Promise.all( [
-        import( "@vertix.gg/bot/src/config/master-channel-config" ),
-        import( "@vertix.gg/bot/src/config/master-channel-config-v3" ),
+        import( "@vertix.gg/bot/src/config/master-channel-dynamic-config-v2" ),
+        import( "@vertix.gg/bot/src/config/master-channel-dynamic-config-v3" ),
         import( "@vertix.gg/bot/src/config/master-channel-scaling-config" )
     ] );
 
@@ -197,16 +195,15 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function createCleanupWorker() {
-    try {
-        const thread = await initWorker();
-        await thread.run();
-        GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
-    } catch ( error ) {
-        GlobalLogger.$.error( createCleanupWorker, "", error );
-    }
-}
+// async function createCleanupWorker() {
+//     try {
+//         const thread = await initWorker();
+//         await thread.run();
+//         GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
+//     } catch ( error ) {
+//         GlobalLogger.$.error( createCleanupWorker, "", error );
+//     }
+// }
 
 /**
  * Exports all available language files to the language directory

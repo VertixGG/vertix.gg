@@ -1,8 +1,23 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 export interface ChannelExtended extends PrismaBot.Channel {
+    // Explicitly include Prisma Channel properties for better type inference
+    id: string;
+    channelId: string;
+    guildId: string;
+    userOwnerId: string;
+    categoryId: string | null;
+    ownerChannelId: string | null;
+    version: string;
+    internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES;
+    createdAtDiscord: number;
+    createdAt: Date;
+    updatedAt: Date;
+    
+    // Extended properties
     isMaster: boolean;
     isDynamic: boolean;
+    isScaling: boolean;
 }
 
 export interface ChannelExtendedWithCacheKey extends ChannelExtended {
@@ -46,6 +61,14 @@ const extendedModel = PrismaBot.Prisma.defineExtension( ( client ) => {
                     },
                     compute( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL;
+                    }
+                },
+                isScaling: {
+                    needs: {
+                        internalType: true
+                    },
+                    compute( model ) {
+                        return model.internalType === E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL;
                     }
                 }
             }

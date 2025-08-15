@@ -1,9 +1,16 @@
 import util from "node:util";
 
+import "@vertix.gg/prisma/bot-client";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ModelWithDataBase } from "@vertix.gg/base/src/bases/model-with-data-base";
 
+import type {
+    ChannelExtended,
+    ChannelFindManyArgsWithDataIncludeKey,
+    ChannelFindUniqueArgsWithDataIncludeKey
+} from "@vertix.gg/base/src/models/channel/channel-client-extend";
 import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 import { ChannelDataModel } from "@vertix.gg/base/src/models/channel/channel-data-model";
@@ -13,12 +20,6 @@ import { ChannelDataModelV3 } from "@vertix.gg/base/src/models/channel/channel-d
 import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 import type { TDataType } from "@vertix.gg/base/src/factory/data-type-factory";
-
-import type {
-    ChannelExtended,
-    ChannelFindManyArgsWithDataIncludeKey,
-    ChannelFindUniqueArgsWithDataIncludeKey
-} from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 type ChannelExtendedResult<T extends TDataType> =
     | ( ChannelExtended & {
@@ -281,13 +282,15 @@ export class ChannelModel extends ModelWithDataBase<
         } );
     }
 
-    public async getByChannelId( channelId: string | null, cache = true ) {
+    public async getByChannelId( channelId: string | null, cache = true ): Promise<ChannelExtended | null> {
         // TODO: Remove backwards compatibility.
         if ( !channelId ) {
             return null;
         }
 
-        return this.findUnique( { where: { channelId } }, cache );
+        const result = await this.findUnique( { where: { channelId } }, cache );
+        // Cast to ChannelExtended to ensure proper type inference with all properties
+        return result ? (result as unknown as ChannelExtended) : null;
     }
 
     public async getMasterByDynamicChannelId( dynamicChannelId: string, cache = true ) {
@@ -324,6 +327,10 @@ export class ChannelModel extends ModelWithDataBase<
 
     public async isDynamic( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isDynamic;
+    }
+
+    public async isScaling( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isScaling;
     }
 
     public getModelByVersion( version: string ) {

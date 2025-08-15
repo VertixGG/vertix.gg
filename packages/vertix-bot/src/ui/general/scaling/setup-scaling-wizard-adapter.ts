@@ -5,8 +5,11 @@ import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-compon
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
 import { SetupScalingChannelCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-channel-create-button";
 
@@ -16,8 +19,6 @@ import { SetupScalingStep1Component } from "@vertix.gg/bot/src/ui/general/scalin
 import { SetupScalingStep2Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-2/setup-scaling-step-2-component";
 import { SetupScalingStep3Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-3/setup-scaling-step-3-component";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
-
-import { MasterChannelType } from "@vertix.gg/bot/src/services/master-channel-service";
 
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
@@ -30,8 +31,6 @@ import type {
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-// Add import for the MasterChannelService
-
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
 type Interactions =
@@ -41,6 +40,7 @@ type Interactions =
 
 export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
     private masterChannelService: MasterChannelService;
+    protected static logger = new Logger( this.getName() );
 
     public static getName() {
         return "VertixBot/UI-General/SetupScalingWizardAdapter";
@@ -189,15 +189,21 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
             // Check if a category was selected
             const args = this.getArgsManager().getArgs( this, interaction );
             if ( !args.selectedCategoryId ) {
-                // Prevent proceeding if no category is selected
-                throw new Error( "Please select a category or create a new one before continuing." );
+                // Only log the error, don't interact with the user
+                SetupScalingWizardAdapter.logger.error(
+                    this.onBeforeNext,
+                    `User ${ interaction.user.tag } (${ interaction.user.id }) attempted to proceed without selecting a category`
+                );
             }
         } else if ( currentIndex === 2 ) {
             // Check if scaling settings were configured
             const args = this.getArgsManager().getArgs( this, interaction );
             if ( !args.channelPrefix || !args.maxMembersPerChannel ) {
-                // Prevent proceeding if scaling settings are not configured
-                throw new Error( "Please configure the scaling settings before continuing." );
+                // Only log the error, don't interact with the user
+                SetupScalingWizardAdapter.logger.error(
+                    this.onBeforeNext,
+                    `User ${ interaction.user.tag } (${ interaction.user.id }) attempted to proceed without configuring required scaling settings`
+                );
             }
         }
     }
@@ -211,7 +217,11 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
         const args = this.getArgsManager().getArgs( this, interaction );
 
         if ( !args.selectedCategoryId || !args.channelPrefix || !args.maxMembersPerChannel ) {
-            throw new Error( "Missing required configuration for the auto-scaling channel." );
+            SetupScalingWizardAdapter.logger.error(
+                this.onBeforeFinish,
+                `User ${ interaction.user.tag } (${ interaction.user.id }) attempted to finish setup without required configuration`
+            );
+            return;
         }
 
         try {
@@ -220,24 +230,25 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
                 guildId: interaction.guildId,
                 userOwnerId: interaction.user.id,
                 version: VERSION_UI_V3,
-                // Specify that this is an auto-scaling master channel
-                type: MasterChannelType.AUTO_SCALING,
-                // Use the prefix for the name template of auto-scaling channels
-                dynamicChannelNameTemplate: `${ args.channelPrefix }-{index}`, // Use index placeholder for numbering
-                // Auto-scaling specific settings as a separate object
-                autoScalingSettings: {
-                    maxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
-                    categoryId: args.selectedCategoryId
-                }
-                // Note: We intentionally don't pass any dynamic channel specific settings
+                type: EMasterChannelType.AUTO_SCALING,
+                scalingChannelMaxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
+                scalingChannelCategoryId: args.selectedCategoryId,
+                scalingChannelPrefix: args.channelPrefix
             } );
 
             if ( result.code !== "success" ) {
                 if ( result.code === "limit-reached" ) {
-                    throw new Error( `You have reached the maximum number of master channels (${ result.maxMasterChannels }).` );
+                    SetupScalingWizardAdapter.logger.error(
+                        this.onBeforeFinish,
+                        `User ${ interaction.user.tag } reached max master channels limit (${ result.maxMasterChannels })`
+                    );
                 } else {
-                    throw new Error( "Failed to create the Master Scaling Channel." );
+                    SetupScalingWizardAdapter.logger.error(
+                        this.onBeforeFinish,
+                        `Failed to create Master Scaling Channel for user ${ interaction.user.tag }, code: ${ result.code }`
+                    );
                 }
+                return;
             }
 
             // Store the scaling configuration in channel data
@@ -251,7 +262,10 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
 
         } catch ( error ) {
             console.error( "Error creating Master Scaling Channel:", error );
-            throw new Error( "Failed to create the Master Scaling Channel: " + ( error as Error ).message );
+            SetupScalingWizardAdapter.logger.error(
+                this.onBeforeFinish,
+                `Failed to create Master Scaling Channel: ${ ( error as Error ).message }`
+            );
         }
     }
 

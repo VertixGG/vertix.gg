@@ -9,7 +9,7 @@ import { DynamicChannelEmbedBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channe
 
 import { DynamicChannelPrimaryMessageEditButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-button";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -27,8 +27,8 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
 );
 
 export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicChannelEmbedBaseWithVars {
-    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-        "Vertix/Config/MasterChannel",
+    private configV3 = ConfigManager.$.get<MasterChannelDynamicConfigV3>(
+        "Vertix/Config/MasterChannelDynamic",
         VERSION_UI_V3
     );
 

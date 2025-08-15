@@ -64,7 +64,9 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
     }
 
     protected getDataFor( option: APISelectMenuOption ) {
-        const result = {
+        const result: {
+            state: typeof VerifiedRolesEveryoneSelectMenu.vars.stateOn | typeof VerifiedRolesEveryoneSelectMenu.vars.stateOff;
+            } = {
                 state: VerifiedRolesEveryoneSelectMenu.vars.stateOff
             },
             optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );

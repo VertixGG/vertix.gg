@@ -1,6 +1,6 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/master-channel-data-dynamic-manager";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
@@ -18,7 +18,7 @@ import type {
 
 import type { VoiceChannel } from "discord.js";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelDynamicConfig } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;
 
@@ -69,10 +69,10 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
                 const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
 
                 if ( masterChannelDB ) {
-                    args.defaultChannelName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
+                    args.defaultChannelName = await MasterChannelDataDynamicManager.$.getChannelNameTemplate( masterChannelDB, true );
                 } else {
                     args.defaultChannelName =  ConfigManager.$
-                        .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 )
+                        .get<MasterChannelDynamicConfig>( "Vertix/Config/MasterChannelDynamic", VERSION_UI_V2 )
                         .get( "settings" ).dynamicChannelNameTemplate;
 
                 }

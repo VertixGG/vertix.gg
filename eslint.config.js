@@ -1,4 +1,4 @@
-import { zLintGetDefaultConfig } from "@zenflux/eslint";
+import { zLintGetConfig } from "@zenflux/eslint";
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export const tests = [
@@ -19,9 +19,11 @@ export const tests = [
     },
 ];
 
+const baseConfig = await zLintGetConfig();
+
 /** @type {import("eslint").Linter.FlatConfig[]} */
 const config = [
-    ...zLintGetDefaultConfig(),
+    ... baseConfig,
     {
         rules: {
             "space-in-parens": [ "error", "always" ],

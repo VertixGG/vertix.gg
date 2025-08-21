@@ -757,7 +757,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         // Create an initial scaling channel directly
         try {
-            await this.services.scalingChannelService["createScaledChannel"](
+            await this.services.scalingChannelService.createScaledChannel(
                 guild,
                 parent,
                 db,

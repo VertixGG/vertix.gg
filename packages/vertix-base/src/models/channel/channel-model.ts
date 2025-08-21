@@ -240,10 +240,26 @@ export class ChannelModel extends ModelWithDataBase<
         return count;
     }
 
-    public async getMasters( guildId: string, dataKey?: string ) {
+    public async getDynamicMasters( guildId: string, dataKey?: string ) {
         const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
             guildId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
+        };
+
+        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+            ? {
+                data: true,
+                key: dataKey
+            }
+            : undefined;
+
+        return this.findMany( { where, include } );
+    }
+
+    public async getScalingMasters( guildId: string, dataKey?: string ) {
+        const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
+            guildId,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
         };
 
         const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey

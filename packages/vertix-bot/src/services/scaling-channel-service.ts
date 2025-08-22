@@ -181,7 +181,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                 const db = await ChannelModel.$.getByChannelId( c.id );
                 if ( !db ) continue;
                 
-                if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) {
+                if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL ) {
                     masterChannel = c as VoiceChannel;
                     this.debugger.log( this.handleScaling, `Found master channel: ${c.name} (${c.id})` );
                 } else if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL && db.ownerChannelId === master.id ) {
@@ -195,6 +195,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                 this.debugger.log( this.handleScaling, `No master channel found in category ${categoryId}` );
                 continue;
             }
+
             this.debugger.log( this.handleScaling, `Found ${scaledChannels.length} scaling channels for master ${master.id}` );
             
             let totalAvailableSlots = 0;

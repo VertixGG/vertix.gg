@@ -11,7 +11,8 @@ import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-import { SetupScalingChannelCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-channel-create-button";
+import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
+
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
@@ -66,11 +67,15 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
                     UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
                 ];
             }
+
+            public static getExcludedElements() {
+                return [ SetupMasterCreateSelectMenu ];
+            }
         };
     }
 
     protected static getExcludedElements() {
-        return [ SetupScalingChannelCreateButton ];
+        return [ SetupMasterCreateSelectMenu ];
     }
 
     protected static getExecutionSteps() {
@@ -96,12 +101,10 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
     }
 
     protected onEntityMap() {
-        // Create button binding for the main entry point
-        this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupScalingChannelCreateButton",
-            this.onCreateScalingChannel
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+            this.onCreateMasterSelected
         );
-
         // Category selection and creation
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupScalingCategorySelectMenu",
@@ -136,6 +139,11 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
     }
 
     protected async onBeforeBuild( args: UIArgs, _from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
+        if ( context && !this.getCurrentExecutionStep( context ) ) {
+            await this.editReplyWithStep( context, "VertixBot/UI-General/SetupScalingStep1Component" );
+            return;
+        }
+
         // For Step 2, retrieve guild categories to populate the dropdown
         if ( context && this.getCurrentExecutionStep( context )?.name === "VertixBot/UI-General/SetupScalingStep2Component" ) {
             // Get all categories from the guild
@@ -271,6 +279,10 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
 
     private async onCreateScalingChannel( interaction: UIDefaultButtonChannelTextInteraction ) {
         // Initialize the wizard flow by navigating to the first step
+        await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupScalingStep1Component" );
+    }
+
+    private async onCreateMasterSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupScalingStep1Component" );
     }
 

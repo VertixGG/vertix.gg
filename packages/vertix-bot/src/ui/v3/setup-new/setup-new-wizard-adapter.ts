@@ -11,7 +11,8 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 
 import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
+import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
+
 
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup/setup-max-master-channels-embed";
 
@@ -68,11 +69,15 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
                     UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed )
                 ];
             }
+
+            public static getExcludedElements() {
+                return [ SetupMasterCreateSelectMenu ];
+            }
         };
     }
 
     protected static getExcludedElements() {
-        return [ SetupMasterCreateV3Button ];
+        return [ SetupMasterCreateSelectMenu ];
     }
 
     protected static getExecutionSteps() {
@@ -103,10 +108,9 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     protected onEntityMap() {
-        // Create new master channel.
-        this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateV3Button",
-            this.onCreateMasterChannelClicked
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+            this.onCreateMasterSelected
         );
 
         // Edit template name.
@@ -246,6 +250,10 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+        await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupStep1Component" );
+    }
+
+    private async onCreateMasterSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupStep1Component" );
     }
 

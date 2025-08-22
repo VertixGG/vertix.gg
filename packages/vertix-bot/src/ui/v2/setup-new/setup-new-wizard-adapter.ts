@@ -11,7 +11,8 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 
 import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-button";
+import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
+
 
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup/setup-max-master-channels-embed";
 
@@ -25,7 +26,7 @@ import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/some
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIAdapterBuildSource, UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
 import type {
@@ -38,11 +39,13 @@ import type {
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
+import UIHashService from "@vertix.gg/gui/src/ui-hash-service";
 
 type Interactions =
     | UIDefaultButtonChannelTextInteraction
     | UIDefaultModalChannelTextInteraction
-    | UIDefaultStringSelectMenuChannelTextInteraction;
+    | UIDefaultStringSelectMenuChannelTextInteraction;  
 
 export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
     private masterChannelService: MasterChannelService;
@@ -70,11 +73,15 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
                     UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed )
                 ];
             }
+
+            public static getExcludedElements() {
+                return [ SetupMasterCreateSelectMenu ];
+            }
         };
     }
 
     protected static getExcludedElements() {
-        return [ SetupMasterCreateButton ];
+        return [ SetupMasterCreateSelectMenu ];
     }
 
     protected static getExecutionSteps() {
@@ -102,12 +109,29 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     public getChannelTypes() {
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
+            
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase ) {
+        switch ( entity.name ) {
+            case "VertixBot/UI-General/SetupMasterCreateSelectMenu": {
+                return new UICustomIdHashStrategy().generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name );
+            }
+        }
+
+        return super.generateCustomIdForEntity( entity );
+    }
+
+    protected getCustomIdForEntity( hash: string ) {
+        if ( hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+            return new UICustomIdHashStrategy().getId( hash );
+        }
+
+        return super.getCustomIdForEntity( hash );
+    }
 
     protected onEntityMap() {
-        // Create new master channel.
-        this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateButton",
-            this.onCreateMasterChannelClicked
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+            this.onCreateMasterSelected
         );
 
         // Edit template name.
@@ -242,6 +266,10 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep1Component" );
+    }
+
+    private async onCreateMasterSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep1Component" );
     }
 

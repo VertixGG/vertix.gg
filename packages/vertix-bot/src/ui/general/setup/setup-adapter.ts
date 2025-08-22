@@ -40,7 +40,10 @@ import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versi
 import type { BaseGuildTextChannel } from "discord.js";
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 
-type DefaultInteraction = UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction;
+type DefaultInteraction =
+    | UIDefaultButtonChannelTextInteraction
+    | UIDefaultModalChannelTextInteraction
+    | UIDefaultStringSelectMenuChannelTextInteraction;
 
 export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, DefaultInteraction> {
     private masterChannelService: MasterChannelService;
@@ -79,7 +82,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
     protected generateCustomIdForEntity( entity: UIEntitySchemaBase ) {
         switch ( entity.name ) {
-            case "VertixBot/UI-General/SetupMasterCreateV3Button": {
+            case "VertixBot/UI-General/SetupMasterCreateSelectMenu": {
                 return new UICustomIdHashStrategy().generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name );
             }
         }
@@ -98,19 +101,9 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected async onBeforeBuild( args: UIArgs, from: string, interaction?: DefaultInteraction ) {
         if ( "run" === from ) {
-            this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-General/SetupMasterCreateButton",
-                ( interaction ) => this.onCreateMasterChannelClicked( interaction, VERSION_UI_V2 )
-            );
-
-            this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-General/SetupMasterCreateV3Button",
-                ( interaction ) => this.onCreateMasterChannelClicked( interaction, VERSION_UI_V3 )
-            );
-
-            this.bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-General/SetupScalingChannelCreateButton",
-                this.onCreateScalingChannelClicked
+            this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                this.onCreateMasterChannelSelect
             );
 
             this.bindButton<UIDefaultButtonChannelTextInteraction>(
@@ -133,6 +126,17 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             );
         }
     }
+    
+    private async onCreateMasterChannelSelect( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
+        const selection = interaction.values.at( 0 );
+        if ( selection === "SCALING" ) {
+            await this.onCreateScalingChannelClicked( interaction );
+            return;
+        }
+
+        const version = selection === "V3" ? VERSION_UI_V3 : VERSION_UI_V2;
+        await this.onCreateMasterChannelClicked( interaction, version );
+    }
 
     private async onSelectEditMasterChannel( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const masterChannelValue = interaction.values.at( 0 );
@@ -147,7 +151,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
 
         if ( !masterChannelDB ) {
             // TODO: Error...
-            await this.editReply( interaction as any, {} );
+            await this.editReply( interaction, {} );
             return;
         }
 
@@ -162,11 +166,11 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         } );
 
         // Delete Args since left to another adapter.
-        this.deleteArgs( interaction as any );
+        this.deleteArgs( interaction );
     }
 
     private async onCreateMasterChannelClicked(
-        interaction: UIDefaultButtonChannelTextInteraction,
+        interaction: UIDefaultButtonChannelTextInteraction | UIDefaultStringSelectMenuChannelTextInteraction,
         version: TVersionType = VERSION_UI_V2
     ) {
         const guildId = interaction.guild.id,
@@ -208,11 +212,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         this.deleteArgs( interaction );
     }
 
-    private async onCreateScalingChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        // Run the Auto-Scaling setup wizard
+    private async onCreateScalingChannelClicked( interaction: UIDefaultButtonChannelTextInteraction | UIDefaultStringSelectMenuChannelTextInteraction ) {
         this.uiService.get( "VertixBot/UI-General/SetupScalingWizardAdapter" )?.runInitial( interaction, {} );
-
-        // Delete Args since left to another adapter
         this.deleteArgs( interaction );
     }
 

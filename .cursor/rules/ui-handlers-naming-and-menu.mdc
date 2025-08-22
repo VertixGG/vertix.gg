@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+- Name select handlers with the pattern `on<Action><Entity>Selected`.
+
+- When a select initiates a wizard/flow, bind that select in the adapter and route to the first step.
+
+- Exclude the initiating UI entity from adapters/components via `getExcludedElements` to avoid callback resolution on the origin entity.

@@ -2,7 +2,6 @@ import "@vertix.gg/prisma/bot-client";
 
 import { VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
@@ -15,7 +14,7 @@ import { MasterChannelScalingDataModel } from "@vertix.gg/base/src/models/master
 
 import { ChannelType } from "discord.js";
 
-import type { CategoryChannel, Guild, GuildBasedChannel, VoiceChannel } from "discord.js";
+import type { CategoryChannel, Guild, VoiceChannel } from "discord.js";
 
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
@@ -82,6 +81,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                         this.debugger.log( this.initialize, `Category ${categoryId} not found for master ${master.id}` );
                         continue;
                     }
+
                     const allChannels = guild.channels.cache.filter( ( c ) => c.parentId === categoryId && c.type === ChannelType.GuildVoice );
                     this.debugger.log( this.initialize, `Found ${allChannels.size} voice channels in category ${categoryId}` );
                     
@@ -135,114 +135,69 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             
             this.logger.log( this.createScaledChannel, `Successfully created scaling channel: ${name}` );
             return result;
-        } catch ( error: unknown ) {
+        } catch ( error ) {
             this.logger.error( this.createScaledChannel, `Failed to create scaling channel ${name}: ${error instanceof Error ? error.message : String(error)}` );
             throw error;
         }
     }
 
-    private async handleScaling( guild: Guild ) {
-        this.debugger.log( this.handleScaling, `Starting scaling evaluation for guild ${guild.name} (${guild.id})` );
-        
+    private async evaluateScaling( guild: Guild ) {
+        this.debugger.log( this.evaluateScaling, `Starting scaling evaluation for guild ${guild.name} (${guild.id})` );
+
         const masterChannels = await ChannelModel.$.getScalingMasters( guild.id );
-        this.debugger.log( this.handleScaling, `Found ${masterChannels.length} master channels to evaluate` );
-        
+        this.debugger.log( this.evaluateScaling, `Found ${masterChannels.length} master channels to evaluate` );
+
         for ( const master of masterChannels ) {
-            this.debugger.log( this.handleScaling, `Evaluating scaling for master channel ${master.id}` );
-            
-            const config = await MasterChannelScalingDataModel.$.getSettings( master.id );
-            if ( !config ) {
-                this.debugger.log( this.handleScaling, `No scaling config for master ${master.id}` );
-                continue;
-            }
-            const categoryId = config.scalingChannelCategoryId;
-            const prefix = config.scalingChannelPrefix;
-            const maxMembers = config.scalingChannelMaxMembersPerChannel;
-            
-            this.debugger.log( this.handleScaling, `Config - Category: ${categoryId}, Prefix: ${prefix}, MaxMembers: ${maxMembers}` );
-            
-            if ( !categoryId || !prefix || !maxMembers ) {
-                this.debugger.log( this.handleScaling, `Invalid config for master ${master.id}` );
-                continue;
-            }
-            
-            const category = guild.channels.cache.get( categoryId ) as CategoryChannel | undefined;
-            if ( !category ) {
-                this.debugger.log( this.handleScaling, `Category ${categoryId} not found` );
-                continue;
-            }
-            const allChannels = guild.channels.cache.filter( ( c: GuildBasedChannel ) => c.parentId === categoryId && c.type === ChannelType.GuildVoice );
-            this.debugger.log( this.handleScaling, `Found ${allChannels.size} voice channels in category` );
-            
-            const scaledChannels: VoiceChannel[] = [];
-            let masterChannel: VoiceChannel | null = null;
-            
-            for ( const c of allChannels.values() ) {
-                const db = await ChannelModel.$.getByChannelId( c.id );
-                if ( !db ) continue;
-                
-                if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL ) {
-                    masterChannel = c as VoiceChannel;
-                    this.debugger.log( this.handleScaling, `Found master channel: ${c.name} (${c.id})` );
-                } else if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL && db.ownerChannelId === master.id ) {
-                    const voiceChannel = c as VoiceChannel;
-                    scaledChannels.push( voiceChannel );
-                    this.debugger.log( this.handleScaling, `Found scaling channel: ${c.name} (${c.id}) with ${voiceChannel.members.size} members` );
-                }
-            }
-            
-            if ( !masterChannel ) {
-                this.debugger.log( this.handleScaling, `No master channel found in category ${categoryId}` );
+            this.debugger.log( this.evaluateScaling, `Evaluating scaling for master channel ${master.id}` );
+
+            const cfg = await this.getScalingConfig( master.id );
+            if ( !cfg ) {
+                this.debugger.log( this.evaluateScaling, `No valid scaling config for master ${master.id}` );
                 continue;
             }
 
-            this.debugger.log( this.handleScaling, `Found ${scaledChannels.length} scaling channels for master ${master.id}` );
-            
-            let totalAvailableSlots = 0;
-            for ( const ch of scaledChannels ) {
-                const voiceChannel = ch as VoiceChannel;
-                const availableSlots = Math.max( 0, maxMembers - voiceChannel.members.size );
-                totalAvailableSlots += availableSlots;
-                this.debugger.log( this.handleScaling, `Channel ${ch.name}: ${voiceChannel.members.size}/${maxMembers} members (${availableSlots} slots available)` );
+            const { categoryId, prefix, maxMembers } = cfg;
+
+            const category = this.getCategory( guild, categoryId );
+            if ( !category ) {
+                this.debugger.log( this.evaluateScaling, `Category ${categoryId} not found` );
+                continue;
             }
-            
-            this.debugger.log( this.handleScaling, `Total available slots: ${totalAvailableSlots}` );
-            
+
+            const { masterChannel, scaledChannels } = await this.findScalingChannels( guild, categoryId, master.id );
+            if ( !masterChannel ) {
+                this.debugger.log( this.evaluateScaling, `No master channel found in category ${categoryId}` );
+                continue;
+            }
+
+            this.debugger.log( this.evaluateScaling, `Found ${scaledChannels.length} scaling channels for master ${master.id}` );
+
+            const totalAvailableSlots = this.computeTotalAvailableSlots( scaledChannels, maxMembers );
+            this.debugger.log( this.evaluateScaling, `Total available slots: ${totalAvailableSlots}` );
+
             if ( totalAvailableSlots === 1 ) {
-                this.logger.log( this.handleScaling, `Only 1 slot available, creating new scaling channel` );
+                this.logger.log( this.evaluateScaling, `Only 1 slot available, creating new scaling channel` );
                 await this.createScaledChannel( guild, category, master, prefix, maxMembers, scaledChannels.length + 1 );
             }
-            const emptyChannels = scaledChannels.filter( ( ch: VoiceChannel ) => ch.members.size === 0 );
-            this.debugger.log( this.handleScaling, `Found ${emptyChannels.length} empty scaling channels` );
-            
-            if ( emptyChannels.length > 1 ) {
-                this.logger.log( this.handleScaling, `Cleaning up excess empty channels (keeping 1, removing ${emptyChannels.length - 1})` );
-                emptyChannels.sort( ( a: VoiceChannel, b: VoiceChannel ) => a.createdTimestamp - b.createdTimestamp );
-                
-                for ( let i = 1; i < emptyChannels.length; ++i ) {
-                    this.logger.log( this.handleScaling, `Deleting empty channel: ${emptyChannels[i].name} (${emptyChannels[i].id})` );
-                    await emptyChannels[ i ].guild.channels.delete( emptyChannels[ i ].id ).catch( ( error: unknown ) => {
-                        this.logger.error( this.handleScaling, `Failed to delete channel ${emptyChannels[i].name}: ${error instanceof Error ? error.message : String(error)}` );
-                    } );
-                }
-            }
+
+            await this.cleanupExcessEmptyChannels( scaledChannels );
         }
     }
     
-    private async onJoinScalingChannel( args: IChannelEnterGenericArgs ) {
+    private async handleJoinScaling( args: IChannelEnterGenericArgs ) {
         const { newState, displayName } = args,
             { guild } = newState;
         
-        this.logger.log( this.onJoinScalingChannel, `User ${displayName} joined scaling channel ${newState.channelId} in guild ${guild.name}` );
-        await this.handleScaling( guild );
+        this.logger.log( this.handleJoinScaling, `User ${displayName} joined scaling channel ${newState.channelId} in guild ${guild.name}` );
+        await this.evaluateScaling( guild );
     }
 
-    private async onLeavingScalingChannel( args: IChannelLeaveGenericArgs ) {
+    private async handleLeaveScaling( args: IChannelLeaveGenericArgs ) {
         const { oldState, displayName } = args,
             { guild } = oldState;
         
-        this.logger.log( this.onLeavingScalingChannel, `User ${displayName} left scaling channel ${oldState.channelId} in guild ${guild.name}` );
-        await this.handleScaling( guild );
+        this.logger.log( this.handleLeaveScaling, `User ${displayName} left scaling channel ${oldState.channelId} in guild ${guild.name}` );
+        await this.evaluateScaling( guild );
     }
 
     
@@ -253,7 +208,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         this.debugger.log( this.onJoin, `Channel ${newState.channelId} is scaling: ${isScaling}` );
         
         if ( isScaling ) {
-            await this.onJoinScalingChannel( args );
+            await this.handleJoinScaling( args );
         }
     }
 
@@ -264,7 +219,78 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         this.debugger.log( this.onLeave, `Channel ${oldState.channelId} is scaling: ${isScaling}` );
         
         if ( isScaling ) {
-            await this.onLeavingScalingChannel( args );
+            await this.handleLeaveScaling( args );
+        }
+    }
+
+    private async getScalingConfig( masterId: string ): Promise<{ categoryId: string; prefix: string; maxMembers: number } | null> {
+        const config = await MasterChannelScalingDataModel.$.getSettings( masterId );
+        if ( !config ) return null;
+
+        const categoryId = config.scalingChannelCategoryId;
+        const prefix = config.scalingChannelPrefix;
+        const maxMembers = config.scalingChannelMaxMembersPerChannel;
+
+        this.debugger.log( this.getScalingConfig, `Config - Category: ${categoryId}, Prefix: ${prefix}, MaxMembers: ${maxMembers}` );
+        if ( !categoryId || !prefix || !maxMembers ) return null;
+
+        return { categoryId, prefix, maxMembers };
+    }
+
+    private getCategory( guild: Guild, categoryId: string ): CategoryChannel | null {
+        const category = guild.channels.cache.get( categoryId ) as CategoryChannel | undefined;
+        return category ?? null;
+    }
+
+    private async findScalingChannels( guild: Guild, categoryId: string, ownerChannelId: string ): Promise<{ masterChannel: VoiceChannel | null; scaledChannels: VoiceChannel[] }> {
+        const allChannels = guild.channels.cache.filter( ( c ) => c.parentId === categoryId && c.type === ChannelType.GuildVoice );
+        this.debugger.log( this.findScalingChannels, `Found ${allChannels.size} voice channels in category` );
+
+        const scaledChannels: VoiceChannel[] = [];
+        let masterChannel: VoiceChannel | null = null;
+
+        for ( const c of allChannels.values() ) {
+            const db = await ChannelModel.$.getByChannelId( c.id );
+            if ( !db ) continue;
+            if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL ) {
+                masterChannel = c as VoiceChannel;
+                this.debugger.log( this.findScalingChannels, `Found master channel: ${c.name} (${c.id})` );
+            } else if ( db.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL && db.ownerChannelId === ownerChannelId ) {
+                const voiceChannel = c as VoiceChannel;
+                scaledChannels.push( voiceChannel );
+                this.debugger.log( this.findScalingChannels, `Found scaling channel: ${c.name} (${c.id}) with ${voiceChannel.members.size} members` );
+            }
+        }
+
+        return { masterChannel, scaledChannels };
+    }
+
+    private computeTotalAvailableSlots( scaledChannels: VoiceChannel[], maxMembers: number ): number {
+        let total = 0;
+        for ( const ch of scaledChannels ) {
+            const availableSlots = Math.max( 0, maxMembers - ch.members.size );
+            total += availableSlots;
+            this.debugger.log( this.computeTotalAvailableSlots, `Channel ${ch.name}: ${ch.members.size}/${maxMembers} members (${availableSlots} slots available)` );
+        }
+        return total;
+    }
+
+    private async cleanupExcessEmptyChannels( scaledChannels: VoiceChannel[] ) {
+        const emptyChannels = scaledChannels.filter( ( ch: VoiceChannel ) => ch.members.size === 0 );
+
+        this.debugger.log( this.cleanupExcessEmptyChannels, `Found ${emptyChannels.length} empty scaling channels` );
+
+        if ( emptyChannels.length <= 1 ) return;
+
+        this.logger.log( this.cleanupExcessEmptyChannels, `Cleaning up excess empty channels (keeping 1, removing ${emptyChannels.length - 1})` );
+
+        emptyChannels.sort( ( a: VoiceChannel, b: VoiceChannel ) => a.createdTimestamp - b.createdTimestamp );
+
+        for ( let i = 1; i < emptyChannels.length; ++i ) {
+            this.logger.log( this.cleanupExcessEmptyChannels, `Deleting empty channel: ${emptyChannels[i].name} (${emptyChannels[i].id})` );
+            await emptyChannels[ i ].guild.channels.delete( emptyChannels[ i ].id ).catch( ( error ) => {
+                this.logger.error( this.cleanupExcessEmptyChannels, `Failed to delete channel ${emptyChannels[i].name}: ${error instanceof Error ? error.message : String(error)}` );
+            } );
         }
     }
 

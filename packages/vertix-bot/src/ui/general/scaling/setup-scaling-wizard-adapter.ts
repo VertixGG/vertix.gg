@@ -7,7 +7,7 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version";
 
 import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
@@ -30,9 +30,11 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR, type UIAdapterBuildSource, type UIArgs, type UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
+import UIHashService from "@vertix.gg/gui/src/ui-hash-service";
 
 type Interactions =
     | UIDefaultButtonChannelTextInteraction
@@ -138,6 +140,24 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
         return argsFromManager || {};
     }
 
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase ) {
+        switch ( entity.name ) {
+            case "VertixBot/UI-General/SetupMasterCreateSelectMenu": {
+                return new UICustomIdHashStrategy().generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name );
+            }
+        }
+
+        return super.generateCustomIdForEntity( entity );
+    }
+
+    protected getCustomIdForEntity( hash: string ) {
+        if ( hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+            return new UICustomIdHashStrategy().getId( hash );
+        }
+
+        return super.getCustomIdForEntity( hash );
+    }
+
     protected async onBeforeBuild( args: UIArgs, _from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
         if ( context && !this.getCurrentExecutionStep( context ) ) {
             await this.editReplyWithStep( context, "VertixBot/UI-General/SetupScalingStep1Component" );
@@ -237,7 +257,7 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
             const result = await this.masterChannelService.createMasterChannel( {
                 guildId: interaction.guildId,
                 userOwnerId: interaction.user.id,
-                version: VERSION_UI_V3,
+                version: VERSION_UI_UNSPECIFIED,
                 type: EMasterChannelType.AUTO_SCALING,
                 scalingChannelMaxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
                 scalingChannelCategoryId: args.selectedCategoryId,

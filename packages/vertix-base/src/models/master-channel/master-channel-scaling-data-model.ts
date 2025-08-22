@@ -2,7 +2,7 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-base";
 
-import { VERSION_UI_V0 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
@@ -31,11 +31,11 @@ export class MasterChannelScalingDataModel extends MasterChannelDataModelBase<Ma
     }
 
     protected getDataVersion() {
-        return VERSION_UI_V0;
+        return VERSION_UI_UNSPECIFIED;
     }
 
     protected getConfig() {
-        return ConfigManager.$.get<MasterChannelScalingConfigInterface>( "Vertix/Config/MasterChannelScaling", VERSION_UI_V0 );
+        return ConfigManager.$.get<MasterChannelScalingConfigInterface>( "Vertix/Config/MasterChannelScaling", VERSION_UI_UNSPECIFIED );
     }
 }
 

@@ -70,7 +70,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         const args: any = {},
             badwords = badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) );
 
-        args.masterChannels = await ChannelModel.$.getDynamicMasters( interaction.guild.id, "settings" );
+        args.masterDynamicChannels = await ChannelModel.$.getDynamicMasters( interaction.guild.id, "settings" );
+        args.masterScalingChannels = await ChannelModel.$.getScalingMasters( interaction.guild.id, "settings" );
         args.badwords = badwords;
 
         if ( argsFromManager?.maxMasterChannels ) {

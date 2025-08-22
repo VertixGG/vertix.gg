@@ -341,6 +341,10 @@ export class ChannelModel extends ModelWithDataBase<
         return !!( await this.getByChannelId( channelId, cache ) )?.isMaster;
     }
 
+    public async isDynamicMaster( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isDynamicMaster;
+    }
+
     public async isDynamic( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isDynamic;
     }

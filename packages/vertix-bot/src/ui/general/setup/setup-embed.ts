@@ -226,72 +226,63 @@ export class SetupEmbed extends UIEmbedBase {
             VERSION_UI_V3
         ).data;
 
-        const result: any = {},
-            masterChannelsPromise = ( args?.masterChannels || [] ).map( async( channel, index ) => {
-                const { data, usedEmojis, usedRoles, channelType } = await this.handleChannelData( channel, args );
+        const result: any = {};
 
-                // Base properties for all channel types
-                const channelInfo: any = {
-                    index: index + 1,
-                    id: channel.channelId,
-                    type: channelType || EMasterChannelType.DYNAMIC,
-                    version: channel?.version || "V2"
-                };
+        const dynamicSource = args?.masterDynamicChannels || [];
+        const scalingSource = args?.masterScalingChannels || [];
 
-                // Add properties based on channel type
-                if (channelType === EMasterChannelType.AUTO_SCALING) {
-                    // Only include scaling properties with proper default values if missing
-                    const prefix = data.scalingChannelPrefix || "Default Prefix";
-                    const maxMembers = data.scalingChannelMaxMembersPerChannel || "10";
+        const dynamicInfosPromise = dynamicSource.map( async( channel, index ) => {
+            const { data, usedEmojis, usedRoles } = await this.handleChannelData( channel, args );
+            return {
+                index: index + 1,
+                id: channel.channelId,
+                type: EMasterChannelType.DYNAMIC,
+                version: channel?.version || "V2",
+                channelsTemplateName: data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
+                channelsTemplateButtons: usedEmojis,
+                channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
+                channelsLogsChannelId: data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : SetupEmbed.vars.none,
+                channelsAutoSave: data.dynamicChannelAutoSave ?? "false"
+            };
+        } );
 
-                    // Use Discord's auto-handling syntax for the category
-                    const categoryId = data.scalingChannelCategoryId || "None";
+        const scalingInfosPromise = scalingSource.map( async( channel, index ) => {
+            const { data } = await this.handleChannelData( channel, args );
+            const prefix = data.scalingChannelPrefix || "Default Prefix";
+            const maxMembers = data.scalingChannelMaxMembersPerChannel || "10";
+            const categoryId = data.scalingChannelCategoryId || "None";
+            return {
+                index: index + 1,
+                id: channel.channelId,
+                type: EMasterChannelType.AUTO_SCALING,
+                version: channel?.version || "V3",
+                scalingChannelPrefix: prefix,
+                scalingChannelMaxMembers: maxMembers,
+                scalingChannelCategory: categoryId ? `<#${ categoryId }>` : "None"
+            };
+        } );
 
-                    channelInfo.type = EMasterChannelType.AUTO_SCALING; // Ensure the type is correct
-                    channelInfo.scalingChannelPrefix = prefix;
-                    channelInfo.scalingChannelMaxMembers = maxMembers;
-                    channelInfo.scalingChannelCategory = categoryId ? `<#${categoryId}>` : "None";
-                } else {
-                    // Only include dynamic properties
-                    channelInfo.channelsTemplateName = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
-                    channelInfo.channelsTemplateButtons = usedEmojis;
-                    channelInfo.channelsVerifiedRoles = usedRoles.length ? usedRoles : "@@everyone";
-                    channelInfo.channelsLogsChannelId = data.dynamicChannelLogsChannelId
-                        ? `<#${ data.dynamicChannelLogsChannelId }>`
-                        : SetupEmbed.vars.none;
-                    channelInfo.channelsAutoSave = data.dynamicChannelAutoSave ?? "false";
-                }
+        const masterDynamicChannels = await Promise.all( dynamicInfosPromise );
+        const masterScalingChannels = await Promise.all( scalingInfosPromise );
 
-                return channelInfo;
-            } ),
-            masterChannels = ( await Promise.all( masterChannelsPromise ) ) || [];
-
-        if ( masterChannels?.length ) {
-            // Separate channels by type
-            const dynamicChannels = masterChannels.filter(channel => channel.type !== EMasterChannelType.AUTO_SCALING);
-            const scalingChannels = masterChannels.filter(channel => channel.type === EMasterChannelType.AUTO_SCALING);
-
-            // Set separate arrays for dynamic and scaling channels
-            if (dynamicChannels.length) {
-                result.masterDynamicChannels = dynamicChannels;
-                result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannels;
-            } else {
-                result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannelMessageDefault;
-            }
-
-            if (scalingChannels.length) {
-                result.masterScalingChannels = scalingChannels;
-                result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannels;
-            } else {
-                result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannelMessageDefault;
-            }
-
-            // Keep the masterChannels for backward compatibility
-            result.masterChannels = [...scalingChannels, ...dynamicChannels];
-            result.masterChannelMessage = SetupEmbed.vars.masterChannels;
+        if ( masterDynamicChannels.length ) {
+            result.masterDynamicChannels = masterDynamicChannels;
+            result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannels;
         } else {
             result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannelMessageDefault;
+        }
+
+        if ( masterScalingChannels.length ) {
+            result.masterScalingChannels = masterScalingChannels;
+            result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannels;
+        } else {
             result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannelMessageDefault;
+        }
+
+        if ( masterDynamicChannels.length || masterScalingChannels.length ) {
+            result.masterChannels = [ ...masterScalingChannels, ...masterDynamicChannels ];
+            result.masterChannelMessage = SetupEmbed.vars.masterChannels;
+        } else {
             result.masterChannelMessage = SetupEmbed.vars.masterChannelMessageDefault;
         }
 

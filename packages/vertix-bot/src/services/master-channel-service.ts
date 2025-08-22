@@ -355,14 +355,14 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onDeleteMasterChannel( channel: VoiceBasedChannel ) {
+    public async onDeleteMasterChannelDyanmic( channel: VoiceBasedChannel ) {
         this.logger.info(
-            this.onDeleteMasterChannel,
+            this.onDeleteMasterChannelDyanmic,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Master channel was deleted: '${ channel.name }'`
         );
 
         this.logger.admin(
-            this.onDeleteMasterChannel,
+            this.onDeleteMasterChannelDyanmic,
             `➖  Master channel has been deleted - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
         );
 
@@ -373,7 +373,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
             if ( !dynamicChannel ) {
                 this.logger.error(
-                    this.onDeleteMasterChannel,
+                    this.onDeleteMasterChannelDyanmic,
                     `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Could not find dynamic channel: '${ dynamicChannelDB.channelId }'`
                 );
 
@@ -385,6 +385,19 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 channel: dynamicChannel as GuildChannel
             } );
         }
+
+        const where = {
+            channelId: channel.id
+        };
+
+        await ChannelModel.$.delete( where );
+    }
+
+    public async onDeleteMasterChannelScaling( channel: VoiceBasedChannel ) {
+        this.logger.info(
+            this.onDeleteMasterChannelScaling,
+            `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Master channel was deleted: '${ channel.name }'`
+        );
 
         const where = {
             channelId: channel.id
@@ -783,14 +796,21 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     private async onJoinInternal( args: IChannelEnterGenericArgs ) {
         const { newState } = args;
 
-        if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
+        if ( await ChannelModel.$.isDynamicMaster( newState.channelId! ) ) {
             await this.onJoinMasterChannel( args );
         }
     }
 
     private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
         if ( await ChannelModel.$.isMaster( channel.id ) ) {
-            await this.onDeleteMasterChannel( channel );
+            // Get current master channel type
+            const masterChannel = await ChannelModel.$.getByChannelId( channel.id );
+
+            if ( masterChannel?.internalType === global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL ) {
+                await this.onDeleteMasterChannelScaling( channel );
+            } else if ( masterChannel?.internalType === global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) {
+                await this.onDeleteMasterChannelDyanmic( channel );
+            }
         }
     }
 

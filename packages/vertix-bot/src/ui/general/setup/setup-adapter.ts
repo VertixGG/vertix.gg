@@ -67,11 +67,12 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     }
 
     protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager?: UIArgs ): Promise<ISetupArgs> {
-        const args: any = {},
+        const args: ISetupArgs = {} as ISetupArgs,
             badwords = badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) );
 
-        args.masterDynamicChannels = await ChannelModel.$.getDynamicMasters( interaction.guild.id, "settings" );
-        args.masterScalingChannels = await ChannelModel.$.getScalingMasters( interaction.guild.id, "settings" );
+        args.masterChannels = await ChannelModel.$.getMasters( interaction.guild.id, "settings" ) as any;
+        args.masterDynamicChannels = args.masterChannels.filter( ( channel ) => channel.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL );
+        args.masterScalingChannels = args.masterChannels.filter( ( channel ) => channel.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL );
         args.badwords = badwords;
 
         if ( argsFromManager?.maxMasterChannels ) {
@@ -127,7 +128,7 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             );
         }
     }
-    
+
     private async onCreateMasterChannelSelect( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         const selection = interaction.values.at( 0 );
         if ( selection === "SCALING" ) {

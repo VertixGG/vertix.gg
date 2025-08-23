@@ -21,13 +21,19 @@ export class SetupMasterEditSelectMenu extends UIElementStringSelectMenu<ISetupA
     }
 
     protected async getSelectOptions() {
-        return ( this.uiArgs?.masterChannels || [] ).map( ( channel: { channelId: any }, index: number ) => {
+        return [ ... ( this.uiArgs?.masterScalingChannels || [] ).map( ( channel, index ) => {
             return {
-                label: `Master Channel #${ index + 1 }`,
+                label: `Master Scaling Channel #${ index + 1 }`,
                 value: `${ channel.channelId }:${ index }`,
                 emoji: { name: "🔧" }
             };
-        } );
+        } ), ... ( this.uiArgs?.masterDynamicChannels || [] ).map( ( channel, index ) => {
+            return {
+                label: `Master Dynamic Channel #${ index + 1 }`,
+                value: `${ channel.channelId }:${ index }`,
+                emoji: { name: "🔧" }
+            };
+        } ) ];
     }
 
     protected async isAvailable(): Promise<boolean> {

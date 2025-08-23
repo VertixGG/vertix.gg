@@ -24,11 +24,9 @@ export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
 
     protected async getSelectOptions() {
         return [
-            { label: "Create Master Channel (V2)", value: "V2", emoji: "➕" },
-            { label: "Create Master Channel (V3)", value: "V3", emoji: "➕" },
-            { label: "Create Master Scaling Channel", value: "SCALING", emoji: "➕" }
+            { label: "Create Master Channel (V2)", value: "V2", emoji: { name: "➕" } },
+            { label: "Create Master Channel (V3)", value: "V3", emoji: { name: "➕" } },
+            { label: "Create Master Scaling Channel", value: "SCALING", emoji: { name: "➕" } }
         ];
     }
 }
-
-

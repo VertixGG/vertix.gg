@@ -56,7 +56,7 @@ export type UIMarkdownTypes = ( typeof UIMarkdownBase )[];
 export type UIMarkdownConstructor = { new (): UIMarkdownBase }[];
 export type UIMarkdownLinkConstructor = UIMarkdownTypes | UIMarkdownConstructor;
 
-export type UIEntityTypes = ( typeof UIEntityBase )[];
+export type UIEntityTypes = ( typeof UIEntityBase<any> )[];
 export type UIEntityConstructor = { new (): UIEntityBase }[];
 export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | ( UIEntityTypes | UIEntityConstructor )[];
 

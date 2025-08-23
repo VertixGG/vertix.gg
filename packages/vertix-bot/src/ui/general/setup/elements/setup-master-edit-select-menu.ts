@@ -1,7 +1,9 @@
 import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class SetupMasterEditSelectMenu extends UIElementStringSelectMenu {
+import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
+
+export class SetupMasterEditSelectMenu extends UIElementStringSelectMenu<ISetupArgs> {
     public static getName() {
         return "VertixBot/UI-General/SetupMasterEditSelectMenu";
     }
@@ -23,12 +25,12 @@ export class SetupMasterEditSelectMenu extends UIElementStringSelectMenu {
             return {
                 label: `Master Channel #${ index + 1 }`,
                 value: `${ channel.channelId }:${ index }`,
-                emoji: "🔧"
+                emoji: { name: "🔧" }
             };
         } );
     }
 
     protected async isAvailable(): Promise<boolean> {
-        return this.uiArgs?.masterChannels?.length > 0;
+        return ( this.uiArgs?.masterChannels?.length || 0 ) > 0;
     }
 }

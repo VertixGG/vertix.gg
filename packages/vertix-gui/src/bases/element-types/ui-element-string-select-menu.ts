@@ -6,7 +6,7 @@ import type { UIArgs, UIBaseTemplateOptions } from "@vertix.gg/gui/src/bases/ui-
 import type { APISelectMenuOption, APIStringSelectComponent } from "discord.js";
 import type { UIElementSelectMenuLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringSelectComponent> {
+export abstract class UIElementStringSelectMenu<TArgs extends UIArgs = UIArgs> extends UIElementBase<APIStringSelectComponent, TArgs> {
     private content: UIElementSelectMenuLanguageContent | undefined;
 
     public static getName() {
@@ -17,7 +17,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         return ComponentType.StringSelect;
     }
 
-    public async build( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: TArgs ) {
         // TODO: Find better way to do this.
         this.uiArgs = uiArgs;
 

@@ -1,19 +1,22 @@
 import util from "node:util";
 
+import "@vertix.gg/prisma/bot-client";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ModelWithDataBase } from "@vertix.gg/base/src/bases/model-with-data-base";
+
+import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
+import { ChannelDataModel } from "@vertix.gg/base/src/models/channel/channel-data-model";
+
+import { ChannelDataModelV3 } from "@vertix.gg/base/src/models/channel/channel-data-model-v3";
 
 import type {
     ChannelExtended,
     ChannelFindManyArgsWithDataIncludeKey,
     ChannelFindUniqueArgsWithDataIncludeKey
 } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-
-import { ChannelDataModel } from "@vertix.gg/base/src/models/channel/channel-data-model";
-
-import { ChannelDataModelV3 } from "@vertix.gg/base/src/models/channel/channel-data-model-v3";
 
 import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
@@ -238,10 +241,44 @@ export class ChannelModel extends ModelWithDataBase<
         return count;
     }
 
-    public async getMasters( guildId: string, dataKey?: string ) {
+    public async getDynamicMasters( guildId: string, dataKey?: string ) {
         const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
             guildId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
+        };
+
+        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+            ? {
+                data: true,
+                key: dataKey
+            }
+            : undefined;
+
+        return this.findMany( { where, include } );
+    }
+
+    public async getMasters( guildId: string, dataKey?: string ) {
+        const where : ChannelFindManyArgsWithDataIncludeKey["where"] = {
+            guildId,
+            internalType: {
+                in: [ PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL, PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ]
+            }
+        };
+
+        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+            ? {
+                data: true,
+                key: dataKey
+            }
+            : undefined;
+
+        return this.findMany( { where, include } );
+    }
+
+    public async getScalingMasters( guildId: string, dataKey?: string ) {
+        const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
+            guildId,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
         };
 
         const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
@@ -280,13 +317,15 @@ export class ChannelModel extends ModelWithDataBase<
         } );
     }
 
-    public async getByChannelId( channelId: string | null, cache = true ) {
+    public async getByChannelId( channelId: string | null, cache = true ): Promise<ChannelExtended | null> {
         // TODO: Remove backwards compatibility.
         if ( !channelId ) {
             return null;
         }
 
-        return this.findUnique( { where: { channelId } }, cache );
+        const result = await this.findUnique( { where: { channelId } }, cache );
+        // Cast to ChannelExtended to ensure proper type inference with all properties
+        return result ? ( result as unknown as ChannelExtended ) : null;
     }
 
     public async getMasterByDynamicChannelId( dynamicChannelId: string, cache = true ) {
@@ -319,6 +358,10 @@ export class ChannelModel extends ModelWithDataBase<
 
     public async isMaster( channelId: string, cache = true ) {
         return !!( await this.getByChannelId( channelId, cache ) )?.isMaster;
+    }
+
+    public async isDynamicMaster( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isDynamicMaster;
     }
 
     public async isDynamic( channelId: string, cache = true ) {

@@ -7,10 +7,10 @@ import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-def
  * Child classes can extend this base class and implement the `getAttributes()`
  * method to provide the attribute definitions for their respective UI entities.
  */
-export abstract class UIEntityBase extends UIInstanceTypeBase {
+export abstract class UIEntityBase<TArgs extends UIArgs = UIArgs> extends UIInstanceTypeBase {
     declare protected schema: UIEntitySchemaBase;
 
-    private uiArgsInternal: UIArgs | undefined;
+    private uiArgsInternal: TArgs | undefined;
 
     public static getName() {
         return "VertixGUI/UIEntityBase";
@@ -20,7 +20,7 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
         return this.schema;
     }
 
-    public async build( uiArgs?: UIArgs ) {
+    public async build( uiArgs?: TArgs ) {
         this.uiArgsInternal = uiArgs;
 
         this.schema = await this.getSchemaInternal();
@@ -45,7 +45,7 @@ export abstract class UIEntityBase extends UIInstanceTypeBase {
         return this.uiArgsInternal;
     }
 
-    protected set uiArgs( value: UIArgs | undefined ) {
+    protected set uiArgs( value: TArgs | undefined ) {
         this.uiArgsInternal = value;
     }
 }

@@ -8,6 +8,7 @@ import { FeedbackAdapter } from "@vertix.gg/bot/src/ui/general/feedback/feedback
 import { LanguageAdapter } from "@vertix.gg/bot/src/ui/general/language/language-adapter";
 import { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/general/not-your-channel/not-your-channel-adapter";
 import { SetupScalingWizardAdapter } from "@vertix.gg/bot/src/ui/general/scaling/setup-scaling-wizard-adapter";
+import { SetupScalingEditAdapter } from "@vertix.gg/bot/src/ui/general/scaling/scaling-edit/setup-scaling-edit-adapter";
 
 export class UIModuleGeneral extends UIModuleBase {
     public static getName() {
@@ -15,7 +16,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getAdapters() {
-        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter, SetupScalingWizardAdapter ];
+        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter, SetupScalingWizardAdapter, SetupScalingEditAdapter ];
     }
 
     protected getCustomIdStrategy() {

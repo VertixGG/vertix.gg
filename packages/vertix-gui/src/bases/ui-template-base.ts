@@ -10,7 +10,7 @@ type KeyValue = { [key: string | number]: any };
  * UITemplateBase is an abstract class which provides methods to replace template variables with corresponding
  * content values from objects, as well as extract variables from template selectOptions based on template logic.
  */
-export abstract class UITemplateBase extends UIEntityBase {
+export abstract class UITemplateBase<TArgs extends UIArgs = UIArgs> extends UIEntityBase<TArgs> {
     public static getName(): string {
         return "VertixGUI/UITemplateBase";
     }

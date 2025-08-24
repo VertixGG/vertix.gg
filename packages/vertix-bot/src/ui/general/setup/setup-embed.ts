@@ -11,6 +11,8 @@ import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/ma
 import { MasterChannelScalingDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-scaling-data-model-v3";
 import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
@@ -20,8 +22,6 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
-
-import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
 export class SetupEmbed extends UIEmbedBase {
     private static vars = {
@@ -190,32 +190,6 @@ export class SetupEmbed extends UIEmbedBase {
                 [ badwordsMessageDefault ]: "**None**"
             },
 
-            // Hide empty values by not rendering them
-            channelsTemplateName: {
-                "": ""
-            },
-            channelsTemplateButtons: {
-                "": ""
-            },
-            channelsVerifiedRoles: {
-                "": ""
-            },
-            channelsLogsChannelId: {
-                "": ""
-            },
-            channelsAutoSave: {
-                "": ""
-            },
-            scalingChannelPrefix: {
-                "": ""
-            },
-            scalingChannelMaxMembers: {
-                "": ""
-            },
-            scalingChannelCategory: {
-                "": ""
-            },
-
             none: "**None**"
         };
     }
@@ -226,72 +200,63 @@ export class SetupEmbed extends UIEmbedBase {
             VERSION_UI_V3
         ).data;
 
-        const result: any = {},
-            masterChannelsPromise = ( args?.masterChannels || [] ).map( async( channel, index ) => {
-                const { data, usedEmojis, usedRoles, channelType } = await this.handleChannelData( channel, args );
+        const result: any = {};
 
-                // Base properties for all channel types
-                const channelInfo: any = {
-                    index: index + 1,
-                    id: channel.channelId,
-                    type: channelType || EMasterChannelType.DYNAMIC,
-                    version: channel?.version || "V2"
-                };
+        const dynamicSource = args?.masterDynamicChannels || [];
+        const scalingSource = args?.masterScalingChannels || [];
 
-                // Add properties based on channel type
-                if (channelType === EMasterChannelType.AUTO_SCALING) {
-                    // Only include scaling properties with proper default values if missing
-                    const prefix = data.scalingChannelPrefix || "Default Prefix";
-                    const maxMembers = data.scalingChannelMaxMembersPerChannel || "10";
+        const dynamicInfosPromise = dynamicSource.map( async( channel, index ) => {
+            const { data, usedEmojis, usedRoles } = await this.handleChannelData( channel, args );
+            return {
+                index: index + 1,
+                id: channel.channelId,
+                type: EMasterChannelType.DYNAMIC,
+                version: channel?.version || "V2",
+                channelsTemplateName: data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
+                channelsTemplateButtons: usedEmojis,
+                channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
+                channelsLogsChannelId: data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : SetupEmbed.vars.none,
+                channelsAutoSave: data.dynamicChannelAutoSave ?? "false"
+            };
+        } );
 
-                    // Use Discord's auto-handling syntax for the category
-                    const categoryId = data.scalingChannelCategoryId || "None";
+        const scalingInfosPromise = scalingSource.map( async( channel, index ) => {
+            const { data } = await this.handleChannelData( channel, args );
+            const prefix = data.scalingChannelPrefix || "Default Prefix";
+            const maxMembers = data.scalingChannelMaxMembersPerChannel || "10";
+            const categoryId = data.scalingChannelCategoryId || "None";
+            return {
+                index: index + 1,
+                id: channel.channelId,
+                type: EMasterChannelType.AUTO_SCALING,
+                version: channel?.version || "0.0.0.0",
+                scalingChannelPrefix: prefix,
+                scalingChannelMaxMembers: maxMembers,
+                scalingChannelCategory: categoryId ? `<#${ categoryId }>` : "None"
+            };
+        } );
 
-                    channelInfo.type = EMasterChannelType.AUTO_SCALING; // Ensure the type is correct
-                    channelInfo.scalingChannelPrefix = prefix;
-                    channelInfo.scalingChannelMaxMembers = maxMembers;
-                    channelInfo.scalingChannelCategory = categoryId ? `<#${categoryId}>` : "None";
-                } else {
-                    // Only include dynamic properties
-                    channelInfo.channelsTemplateName = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
-                    channelInfo.channelsTemplateButtons = usedEmojis;
-                    channelInfo.channelsVerifiedRoles = usedRoles.length ? usedRoles : "@@everyone";
-                    channelInfo.channelsLogsChannelId = data.dynamicChannelLogsChannelId
-                        ? `<#${ data.dynamicChannelLogsChannelId }>`
-                        : SetupEmbed.vars.none;
-                    channelInfo.channelsAutoSave = data.dynamicChannelAutoSave ?? "false";
-                }
+        const masterDynamicChannels = await Promise.all( dynamicInfosPromise );
+        const masterScalingChannels = await Promise.all( scalingInfosPromise );
 
-                return channelInfo;
-            } ),
-            masterChannels = ( await Promise.all( masterChannelsPromise ) ) || [];
-
-        if ( masterChannels?.length ) {
-            // Separate channels by type
-            const dynamicChannels = masterChannels.filter(channel => channel.type !== EMasterChannelType.AUTO_SCALING);
-            const scalingChannels = masterChannels.filter(channel => channel.type === EMasterChannelType.AUTO_SCALING);
-
-            // Set separate arrays for dynamic and scaling channels
-            if (dynamicChannels.length) {
-                result.masterDynamicChannels = dynamicChannels;
-                result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannels;
-            } else {
-                result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannelMessageDefault;
-            }
-
-            if (scalingChannels.length) {
-                result.masterScalingChannels = scalingChannels;
-                result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannels;
-            } else {
-                result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannelMessageDefault;
-            }
-
-            // Keep the masterChannels for backward compatibility
-            result.masterChannels = [...scalingChannels, ...dynamicChannels];
-            result.masterChannelMessage = SetupEmbed.vars.masterChannels;
+        if ( masterDynamicChannels.length ) {
+            result.masterDynamicChannels = masterDynamicChannels;
+            result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannels;
         } else {
             result.masterDynamicChannelMessage = SetupEmbed.vars.masterDynamicChannelMessageDefault;
+        }
+
+        if ( masterScalingChannels.length ) {
+            result.masterScalingChannels = masterScalingChannels;
+            result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannels;
+        } else {
             result.masterScalingChannelMessage = SetupEmbed.vars.masterScalingChannelMessageDefault;
+        }
+
+        if ( masterDynamicChannels.length || masterScalingChannels.length ) {
+            result.masterChannels = [ ...masterScalingChannels, ...masterDynamicChannels ];
+            result.masterChannelMessage = SetupEmbed.vars.masterChannels;
+        } else {
             result.masterChannelMessage = SetupEmbed.vars.masterChannelMessageDefault;
         }
 
@@ -314,73 +279,73 @@ export class SetupEmbed extends UIEmbedBase {
 
         try {
             // First, get the channel data from the database
-            const masterChannelDataResult = await clientChannelExtend.channelData.findMany({
+            const masterChannelDataResult = await clientChannelExtend.channelData.findMany( {
                 where: {
                     ownerId: channel.id,
                 }
-            });
+            } );
 
-            if (masterChannelDataResult.length > 0) {
-                const masterChannelData = masterChannelDataResult[0];
+            if ( masterChannelDataResult.length > 0 ) {
+                const masterChannelData = masterChannelDataResult[ 0 ];
                 const object = masterChannelData.object as any;
 
                 // Check the type directly from the channel data object
-                if (object && object.type === EMasterChannelType.AUTO_SCALING) {
+                if ( object && object.type === EMasterChannelType.AUTO_SCALING ) {
                     // It's a scaling channel
                     channelType = EMasterChannelType.AUTO_SCALING;
-                    console.log(`Channel ID: ${channel.channelId} - Identified as AUTO_SCALING type from DB object`);
+                    console.log( `Channel ID: ${ channel.channelId } - Identified as AUTO_SCALING type from DB object` );
 
                     // Get the scaling-specific data
-                    const scalingData = await MasterChannelScalingDataModel.$.getSettings(channel.id);
+                    const scalingData = await MasterChannelScalingDataModel.$.getSettings( channel.id );
                     data = scalingData ?? object;
 
                     // For scaling channels, we don't need to process emojis or buttons
                     return { data, usedEmojis: "", usedRoles: [], channelType };
                 }
             }
-        } catch (error) {
-            console.log(`Channel ID: ${channel.channelId} - Error getting channel data type: ${error}`);
+        } catch ( error ) {
+            console.log( `Channel ID: ${ channel.channelId } - Error getting channel data type: ${ error }` );
             // Continue with other checks if this fails
         }
 
         // Check if the name contains "Auto Scaling Master" as a clue
-        if (channel.name && channel.name.includes("Auto Scaling Master")) {
+        if ( channel.name && channel.name.includes( "Auto Scaling Master" ) ) {
             channelType = EMasterChannelType.AUTO_SCALING;
-            console.log(`Channel ID: ${channel.channelId} - Identified as AUTO_SCALING type by name`);
+            console.log( `Channel ID: ${ channel.channelId } - Identified as AUTO_SCALING type by name` );
 
             // Try to get the scaling data
             try {
-                const scalingData = await MasterChannelScalingDataModel.$.getSettings(channel.channelId);
-                if (scalingData) {
+                const scalingData = await MasterChannelScalingDataModel.$.getSettings( channel.channelId );
+                if ( scalingData ) {
                     data = scalingData;
                     return { data, usedEmojis: "", usedRoles: [], channelType };
                 }
-            } catch (error) {
-                console.log(`Channel ID: ${channel.channelId} - Error getting scaling data: ${error}`);
+            } catch ( error ) {
+                console.log( `Channel ID: ${ channel.channelId } - Error getting scaling data: ${ error }` );
             }
         }
 
         // Try getting scaling data directly
         try {
-            const scalingData = await MasterChannelScalingDataModel.$.getSettings(channel.channelId);
-            if (scalingData && scalingData.type === EMasterChannelType.AUTO_SCALING) {
+            const scalingData = await MasterChannelScalingDataModel.$.getSettings( channel.channelId );
+            if ( scalingData && scalingData.type === EMasterChannelType.AUTO_SCALING ) {
                 channelType = EMasterChannelType.AUTO_SCALING;
                 data = scalingData;
                 return { data, usedEmojis: "", usedRoles: [], channelType };
             }
-        } catch (error) {
+        } catch ( error ) {
             // Not a scaling channel from that model, continue checking
         }
 
         // Process as dynamic channel
-        data = await MasterChannelDataDynamicManager.$.getAllSettings({
+        data = await MasterChannelDataDynamicManager.$.getAllSettings( {
             ...channel,
             isDynamic: false,
             isMaster: true
-        });
+        } );
 
         // Additional check - see if the data indicates it's an auto-scaling channel
-        if (data && data.type === EMasterChannelType.AUTO_SCALING) {
+        if ( data && data.type === EMasterChannelType.AUTO_SCALING ) {
             channelType = EMasterChannelType.AUTO_SCALING;
             return { data, usedEmojis: "", usedRoles: [], channelType };
         }

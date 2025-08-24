@@ -7,11 +7,19 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version";
 
 import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
-import { SetupScalingChannelCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-channel-create-button";
+import { UI_CUSTOM_ID_SEPARATOR    } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
+
+import UIHashService from "@vertix.gg/gui/src/ui-hash-service";
+
+import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
+
+import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
@@ -19,6 +27,8 @@ import { SetupScalingStep1Component } from "@vertix.gg/bot/src/ui/general/scalin
 import { SetupScalingStep2Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-2/setup-scaling-step-2-component";
 import { SetupScalingStep3Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-3/setup-scaling-step-3-component";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+
+import type { UIAdapterBuildSource, UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
@@ -29,7 +39,6 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
@@ -66,11 +75,15 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
                     UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
                 ];
             }
+
+            public static getExcludedElements() {
+                return [ SetupMasterCreateSelectMenu, SetupMasterEditSelectMenu ];
+            }
         };
     }
 
     protected static getExcludedElements() {
-        return [ SetupScalingChannelCreateButton ];
+        return [ SetupMasterCreateSelectMenu, SetupMasterEditSelectMenu ];
     }
 
     protected static getExecutionSteps() {
@@ -96,12 +109,10 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
     }
 
     protected onEntityMap() {
-        // Create button binding for the main entry point
-        this.bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupScalingChannelCreateButton",
-            this.onCreateScalingChannel
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+            this.onCreateMasterSelected
         );
-
         // Category selection and creation
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupScalingCategorySelectMenu",
@@ -135,7 +146,30 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
         return argsFromManager || {};
     }
 
+    protected generateCustomIdForEntity( entity: UIEntitySchemaBase ) {
+        switch ( entity.name ) {
+            case "VertixBot/UI-General/SetupMasterCreateSelectMenu": {
+                return new UICustomIdHashStrategy().generateId( this.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name );
+            }
+        }
+
+        return super.generateCustomIdForEntity( entity );
+    }
+
+    protected getCustomIdForEntity( hash: string ) {
+        if ( hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+            return new UICustomIdHashStrategy().getId( hash );
+        }
+
+        return super.getCustomIdForEntity( hash );
+    }
+
     protected async onBeforeBuild( args: UIArgs, _from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
+        if ( context && !this.getCurrentExecutionStep( context ) ) {
+            await this.editReplyWithStep( context, "VertixBot/UI-General/SetupScalingStep1Component" );
+            return;
+        }
+
         // For Step 2, retrieve guild categories to populate the dropdown
         if ( context && this.getCurrentExecutionStep( context )?.name === "VertixBot/UI-General/SetupScalingStep2Component" ) {
             // Get all categories from the guild
@@ -229,7 +263,7 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
             const result = await this.masterChannelService.createMasterChannel( {
                 guildId: interaction.guildId,
                 userOwnerId: interaction.user.id,
-                version: VERSION_UI_V3,
+                version: VERSION_UI_UNSPECIFIED,
                 type: EMasterChannelType.AUTO_SCALING,
                 scalingChannelMaxMembersPerChannel: parseInt( args.maxMembersPerChannel, 10 ),
                 scalingChannelCategoryId: args.selectedCategoryId,
@@ -271,6 +305,10 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
 
     private async onCreateScalingChannel( interaction: UIDefaultButtonChannelTextInteraction ) {
         // Initialize the wizard flow by navigating to the first step
+        await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupScalingStep1Component" );
+    }
+
+    private async onCreateMasterSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
         await this.editReplyWithStep( interaction, "VertixBot/UI-General/SetupScalingStep1Component" );
     }
 

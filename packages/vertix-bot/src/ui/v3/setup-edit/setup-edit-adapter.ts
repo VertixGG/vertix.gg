@@ -131,7 +131,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interact
                 args[ key ] = masterChannelSettings[ key ];
             } );
         } else {
-            args.masterChannels = await ChannelModel.$.getMasters( interaction.guild?.id || "", "settings" );
+            args.masterChannels = await ChannelModel.$.getDynamicMasters( interaction.guild?.id || "", "settings" );
         }
 
         return args;

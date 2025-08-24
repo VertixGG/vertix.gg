@@ -8,7 +8,7 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import type { OverwriteResolvable, Guild, GuildChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
+import type { OverwriteResolvable } from "discord.js";
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
@@ -18,16 +18,18 @@ import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manage
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import type {
-    IMasterChannelCreateResult,
     TMasterChannelScalingCreateInternalArgs,
     TMasterChannelDynamicCreateInternalArgs,
-    TMasterChannelCreateInternalArgs,
     TMasterChannelGenricCreateArgs
 } from "@vertix.gg/base/src/definitions/master-channel";
 import {
     EMasterChannelType,
     DEFAULT_MASTER_CHANNEL_MAX_TIMEOUT_PER_CREATE,
     EMasterChannelCreateResultCode
+} from "@vertix.gg/base/src/definitions/master-channel";
+import type {
+    IMasterChannelCreateResult,
+    TMasterChannelCreateInternalArgs
 } from "@vertix.gg/base/src/definitions/master-channel";
 
 import { MasterChannelDynamicDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-dynamic-data-model-v3";
@@ -63,8 +65,18 @@ import type {
     MasterChannelDynamicConfig,
     MasterChannelDynamicConfigV3
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelScalingConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-scaling-config";
+
+import type { CategoryChannel, Guild, GuildChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+
+// Import required types from base definitions
+import type { MasterChannelSettings } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
+
 import type MasterChannelScalingConfig from "@vertix.gg/bot/src/config/master-channel-scaling-config";
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 
@@ -101,7 +113,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             this.onChannelGuildVoiceDelete.bind( this )
         );
 
-        EventBus.$.on( "VertixBot/Services/Channel", "onJoin", this.onJoin.bind( this ) );
+        EventBus.$.on( "VertixBot/Services/Channel", "onJoin", this.onJoinInternal.bind( this ) );
     }
 
     public getDependencies() {
@@ -343,14 +355,14 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async onDeleteMasterChannel( channel: VoiceBasedChannel ) {
+    public async onDeleteMasterChannelDyanmic( channel: VoiceBasedChannel ) {
         this.logger.info(
-            this.onDeleteMasterChannel,
+            this.onDeleteMasterChannelDyanmic,
             `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Master channel was deleted: '${ channel.name }'`
         );
 
         this.logger.admin(
-            this.onDeleteMasterChannel,
+            this.onDeleteMasterChannelDyanmic,
             `➖  Master channel has been deleted - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
         );
 
@@ -361,7 +373,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
             if ( !dynamicChannel ) {
                 this.logger.error(
-                    this.onDeleteMasterChannel,
+                    this.onDeleteMasterChannelDyanmic,
                     `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Could not find dynamic channel: '${ dynamicChannelDB.channelId }'`
                 );
 
@@ -373,6 +385,19 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 channel: dynamicChannel as GuildChannel
             } );
         }
+
+        const where = {
+            channelId: channel.id
+        };
+
+        await ChannelModel.$.delete( where );
+    }
+
+    public async onDeleteMasterChannelScaling( channel: VoiceBasedChannel ) {
+        this.logger.info(
+            this.onDeleteMasterChannelScaling,
+            `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Master channel was deleted: '${ channel.name }'`
+        );
 
         const where = {
             channelId: channel.id
@@ -557,7 +582,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             guild,
             userOwnerId: args.userOwnerId,
             version: args.version,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            internalType: global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: config.get( "constants" ).masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
@@ -629,7 +654,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             guild,
             version: args.version,
             userOwnerId: args.userOwnerId,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            internalType: global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: constants.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
@@ -705,7 +730,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 } );
             }
         } );
-        // We use a different name for auto-scaling master channels
+        
+        // Use scaling config constant for master scaling channel name
         const channelName = config.get( "constants" ).masterChannelName;
 
         const result = await this.services.channelService.create( {
@@ -713,7 +739,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             guild,
             userOwnerId: args.userOwnerId,
             version: args.version,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            internalType: global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
             name: channelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites,
@@ -736,8 +762,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         // Save the settings with additional auto-scaling specific fields
         await MasterChannelScalingDataModel.$.setSettings( db.id, {
             ...args,
-
-            // Store auto-scaling specific settings
+            type: EMasterChannelType.AUTO_SCALING,
             scalingChannelMaxMembersPerChannel: maxMembersPerChannel,
             scalingChannelCategoryId: parent.id,
             scalingChannelPrefix: channelPrefix
@@ -745,7 +770,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         // Create an initial scaling channel directly
         try {
-            await this.services.scalingChannelService["createScaledChannel"](
+            await this.services.scalingChannelService.createScaledChannel(
                 guild,
                 parent,
                 db,
@@ -758,7 +783,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 this.createAutoScalingMasterChannelInternal,
                 `Guild id: '${guild.id}' - Initial scaling channel created for auto scaling master channel`
             );
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(
                 this.createAutoScalingMasterChannelInternal,
                 `Guild id: '${guild.id}' - Failed to create initial scaling channel: ${error}`
@@ -768,17 +793,24 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private async onJoin( args: IChannelEnterGenericArgs ) {
+    private async onJoinInternal( args: IChannelEnterGenericArgs ) {
         const { newState } = args;
 
-        if ( await ChannelModel.$.isMaster( newState.channelId! ) ) {
+        if ( await ChannelModel.$.isDynamicMaster( newState.channelId! ) ) {
             await this.onJoinMasterChannel( args );
         }
     }
 
     private async onChannelGuildVoiceDelete( channel: VoiceBasedChannel ) {
         if ( await ChannelModel.$.isMaster( channel.id ) ) {
-            await this.onDeleteMasterChannel( channel );
+            // Get current master channel type
+            const masterChannel = await ChannelModel.$.getByChannelId( channel.id );
+
+            if ( masterChannel?.internalType === global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL ) {
+                await this.onDeleteMasterChannelScaling( channel );
+            } else if ( masterChannel?.internalType === global.PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL ) {
+                await this.onDeleteMasterChannelDyanmic( channel );
+            }
         }
     }
 

@@ -11,8 +11,15 @@ import { VERSION_UI_UNSPECIFIED } from "@vertix.gg/base/src/definitions/version"
 
 import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
+import { UI_CUSTOM_ID_SEPARATOR    } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
+
+import UIHashService from "@vertix.gg/gui/src/ui-hash-service";
+
 import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
 
+import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
@@ -20,6 +27,8 @@ import { SetupScalingStep1Component } from "@vertix.gg/bot/src/ui/general/scalin
 import { SetupScalingStep2Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-2/setup-scaling-step-2-component";
 import { SetupScalingStep3Component } from "@vertix.gg/bot/src/ui/general/scaling/steps/step-3/setup-scaling-step-3-component";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+
+import type { UIAdapterBuildSource, UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
 
@@ -30,11 +39,8 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import { UI_CUSTOM_ID_SEPARATOR, type UIAdapterBuildSource, type UIArgs, type UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
-import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
-import UIHashService from "@vertix.gg/gui/src/ui-hash-service";
 
 type Interactions =
     | UIDefaultButtonChannelTextInteraction
@@ -71,13 +77,13 @@ export class SetupScalingWizardAdapter extends UIWizardAdapterBase<BaseGuildText
             }
 
             public static getExcludedElements() {
-                return [ SetupMasterCreateSelectMenu ];
+                return [ SetupMasterCreateSelectMenu, SetupMasterEditSelectMenu ];
             }
         };
     }
 
     protected static getExcludedElements() {
-        return [ SetupMasterCreateSelectMenu ];
+        return [ SetupMasterCreateSelectMenu, SetupMasterEditSelectMenu ];
     }
 
     protected static getExecutionSteps() {

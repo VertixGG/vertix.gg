@@ -157,15 +157,25 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
             return;
         }
 
-        const uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
-            "VertixGUI/UIVersioningAdapterService"
-        ),
-            setupEditAdapter = await uiVersioningAdapterService.get( "Vertix/SetupEditAdapter", masterChannelDB.id );
+        // Check if this is a scaling channel
+        if ( masterChannelDB.internalType === PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL ) {
+            // Route to scaling edit adapter
+            this.uiService.get( "VertixBot/UI-General/SetupScalingEditAdapter" )?.runInitial( interaction, {
+                masterChannelIndex,
+                masterChannelDB
+            } );
+        } else {
+            // Route to dynamic edit adapter
+            const uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
+                "VertixGUI/UIVersioningAdapterService"
+            ),
+                setupEditAdapter = await uiVersioningAdapterService.get( "Vertix/SetupEditAdapter", masterChannelDB.id );
 
-        await setupEditAdapter?.runInitial( interaction, {
-            masterChannelIndex,
-            masterChannelDB
-        } );
+            await setupEditAdapter?.runInitial( interaction, {
+                masterChannelIndex,
+                masterChannelDB
+            } );
+        }
 
         // Delete Args since left to another adapter.
         this.deleteArgs( interaction );
@@ -247,4 +257,5 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
     private async onLanguageChooseClicked( interaction: DefaultInteraction ) {
         this.uiService.get( "VertixBot/UI-General/LanguageAdapter" )?.editReply( interaction, {} );
     }
+
 }

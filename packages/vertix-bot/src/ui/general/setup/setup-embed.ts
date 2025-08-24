@@ -11,6 +11,8 @@ import { MasterChannelDataDynamicManager } from "@vertix.gg/base/src/managers/ma
 import { MasterChannelScalingDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-scaling-data-model-v3";
 import { clientChannelExtend } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
+import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
@@ -20,8 +22,6 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import type { MasterChannelDynamicConfigV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
-
-import { EMasterChannelType } from "@vertix.gg/base/src/definitions/master-channel";
 
 export class SetupEmbed extends UIEmbedBase {
     private static vars = {
@@ -255,7 +255,7 @@ export class SetupEmbed extends UIEmbedBase {
                 index: index + 1,
                 id: channel.channelId,
                 type: EMasterChannelType.AUTO_SCALING,
-                version: channel?.version || "V3",
+                version: channel?.version || "0.0.0.0",
                 scalingChannelPrefix: prefix,
                 scalingChannelMaxMembers: maxMembers,
                 scalingChannelCategory: categoryId ? `<#${ categoryId }>` : "None"
@@ -305,73 +305,73 @@ export class SetupEmbed extends UIEmbedBase {
 
         try {
             // First, get the channel data from the database
-            const masterChannelDataResult = await clientChannelExtend.channelData.findMany({
+            const masterChannelDataResult = await clientChannelExtend.channelData.findMany( {
                 where: {
                     ownerId: channel.id,
                 }
-            });
+            } );
 
-            if (masterChannelDataResult.length > 0) {
-                const masterChannelData = masterChannelDataResult[0];
+            if ( masterChannelDataResult.length > 0 ) {
+                const masterChannelData = masterChannelDataResult[ 0 ];
                 const object = masterChannelData.object as any;
 
                 // Check the type directly from the channel data object
-                if (object && object.type === EMasterChannelType.AUTO_SCALING) {
+                if ( object && object.type === EMasterChannelType.AUTO_SCALING ) {
                     // It's a scaling channel
                     channelType = EMasterChannelType.AUTO_SCALING;
-                    console.log(`Channel ID: ${channel.channelId} - Identified as AUTO_SCALING type from DB object`);
+                    console.log( `Channel ID: ${ channel.channelId } - Identified as AUTO_SCALING type from DB object` );
 
                     // Get the scaling-specific data
-                    const scalingData = await MasterChannelScalingDataModel.$.getSettings(channel.id);
+                    const scalingData = await MasterChannelScalingDataModel.$.getSettings( channel.id );
                     data = scalingData ?? object;
 
                     // For scaling channels, we don't need to process emojis or buttons
                     return { data, usedEmojis: "", usedRoles: [], channelType };
                 }
             }
-        } catch (error) {
-            console.log(`Channel ID: ${channel.channelId} - Error getting channel data type: ${error}`);
+        } catch ( error ) {
+            console.log( `Channel ID: ${ channel.channelId } - Error getting channel data type: ${ error }` );
             // Continue with other checks if this fails
         }
 
         // Check if the name contains "Auto Scaling Master" as a clue
-        if (channel.name && channel.name.includes("Auto Scaling Master")) {
+        if ( channel.name && channel.name.includes( "Auto Scaling Master" ) ) {
             channelType = EMasterChannelType.AUTO_SCALING;
-            console.log(`Channel ID: ${channel.channelId} - Identified as AUTO_SCALING type by name`);
+            console.log( `Channel ID: ${ channel.channelId } - Identified as AUTO_SCALING type by name` );
 
             // Try to get the scaling data
             try {
-                const scalingData = await MasterChannelScalingDataModel.$.getSettings(channel.channelId);
-                if (scalingData) {
+                const scalingData = await MasterChannelScalingDataModel.$.getSettings( channel.channelId );
+                if ( scalingData ) {
                     data = scalingData;
                     return { data, usedEmojis: "", usedRoles: [], channelType };
                 }
-            } catch (error) {
-                console.log(`Channel ID: ${channel.channelId} - Error getting scaling data: ${error}`);
+            } catch ( error ) {
+                console.log( `Channel ID: ${ channel.channelId } - Error getting scaling data: ${ error }` );
             }
         }
 
         // Try getting scaling data directly
         try {
-            const scalingData = await MasterChannelScalingDataModel.$.getSettings(channel.channelId);
-            if (scalingData && scalingData.type === EMasterChannelType.AUTO_SCALING) {
+            const scalingData = await MasterChannelScalingDataModel.$.getSettings( channel.channelId );
+            if ( scalingData && scalingData.type === EMasterChannelType.AUTO_SCALING ) {
                 channelType = EMasterChannelType.AUTO_SCALING;
                 data = scalingData;
                 return { data, usedEmojis: "", usedRoles: [], channelType };
             }
-        } catch (error) {
+        } catch ( error ) {
             // Not a scaling channel from that model, continue checking
         }
 
         // Process as dynamic channel
-        data = await MasterChannelDataDynamicManager.$.getAllSettings({
+        data = await MasterChannelDataDynamicManager.$.getAllSettings( {
             ...channel,
             isDynamic: false,
             isMaster: true
-        });
+        } );
 
         // Additional check - see if the data indicates it's an auto-scaling channel
-        if (data && data.type === EMasterChannelType.AUTO_SCALING) {
+        if ( data && data.type === EMasterChannelType.AUTO_SCALING ) {
             channelType = EMasterChannelType.AUTO_SCALING;
             return { data, usedEmojis: "", usedRoles: [], channelType };
         }

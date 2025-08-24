@@ -229,24 +229,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupMasterCreateButton",
-        "content": {
-          "label": "Создать мастер-канал"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
-        "content": {
-          "label": "Создать мастер-канал (V3)"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupScalingChannelCreateButton",
-        "content": {
-          "label": "Создать масштабируемый мастер-канал"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupScalingPrefixButton",
         "content": {
           "label": "{prefixAction} префикс канала{prefixValue}",
@@ -667,6 +649,23 @@
             },
             {
               "label": "🇷🇺 Русский"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+        "content": {
+          "placeholder": "➕ ∙ Создать мастер-канал",
+          "selectOptions": [
+            {
+              "label": "Создать мастер-канал (V2)"
+            },
+            {
+              "label": "Создать мастер-канал (V3)"
+            },
+            {
+              "label": "Создать масштабируемый мастер-канал"
             }
           ]
         }
@@ -2305,31 +2304,7 @@
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**Отсутствуют**"
           },
-          "none": "**Нет**",
-          "channelsTemplateName": {
-            "": ""
-          },
-          "channelsTemplateButtons": {
-            "": ""
-          },
-          "channelsVerifiedRoles": {
-            "": ""
-          },
-          "channelsLogsChannelId": {
-            "": ""
-          },
-          "channelsAutoSave": {
-            "": ""
-          },
-          "scalingChannelPrefix": {
-            "": ""
-          },
-          "scalingChannelMaxMembers": {
-            "": ""
-          },
-          "scalingChannelCategory": {
-            "": ""
-          }
+          "none": "**Нет**"
         },
         "arrayOptions": {
           "masterDynamicChannels": {
@@ -2376,6 +2351,13 @@
       "content": {
         "title": "🤷  Вы достигли лимита мастер каналов",
         "description": "Вы можете создать не более **{maxMasterChannels}** мастер каналов в общей сложности."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingEditEmbed",
+      "content": {
+        "title": "🔧  Настройка мастер-канала масштабирования",
+        "description": "Настройте мастер-канал масштабирования в соответствии с вашими предпочтениями.\n\n• Категория: **{selectedCategoryName}**\n• Префикс канала: **{channelPrefix}**\n• Макс. участников/канал: **{maxMembersPerChannel}**\n\n-# 💡 Изменение категории или префикса не повлияет на уже созданные каналы масштабирования.\n"
       }
     },
     {

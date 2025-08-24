@@ -229,24 +229,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupMasterCreateButton",
-        "content": {
-          "label": "Create Master Channel"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
-        "content": {
-          "label": "Create Master Channel (V3)"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupScalingChannelCreateButton",
-        "content": {
-          "label": "Create Master Scaling Channel"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupScalingPrefixButton",
         "content": {
           "label": "{prefixAction} Channel Prefix{prefixValue}",
@@ -667,6 +649,23 @@
             },
             {
               "label": "🇬🇷 Greek"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+        "content": {
+          "placeholder": "➕ ∙ Create Master Channel",
+          "selectOptions": [
+            {
+              "label": "Create Master Channel (V2)"
+            },
+            {
+              "label": "Create Master Channel (V3)"
+            },
+            {
+              "label": "Create Master Scaling Channel"
             }
           ]
         }
@@ -2305,33 +2304,9 @@
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**None**"
           },
-                              "none": "**None**",
-                    "channelsTemplateName": {
-                        "": ""
-                    },
-                    "channelsTemplateButtons": {
-                        "": ""
-                    },
-                    "channelsVerifiedRoles": {
-                        "": ""
-                    },
-                    "channelsLogsChannelId": {
-                        "": ""
-                    },
-                    "channelsAutoSave": {
-                        "": ""
-                    },
-                    "scalingChannelPrefix": {
-                        "": ""
-                    },
-                    "scalingChannelMaxMembers": {
-                        "": ""
-                    },
-                    "scalingChannelCategory": {
-                        "": ""
-                    }
-                },
-                        "arrayOptions": {
+          "none": "**None**"
+        },
+        "arrayOptions": {
           "masterDynamicChannels": {
             "format": "{value}{separator}",
             "separator": "\n",
@@ -2376,6 +2351,13 @@
       "content": {
         "title": "🤷  You have reached your master channels limit",
         "description": "You can create up to **{maxMasterChannels}** Master Channels in total."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingEditEmbed",
+      "content": {
+        "title": "🔧  Configure Master Scaling Channel",
+        "description": "Configure master scaling channel according to your preferences.\n\n• Category: **{selectedCategoryName}**\n• Channel Prefix: **{channelPrefix}**\n• Max Members/Channel: **{maxMembersPerChannel}**\n\n-# 💡 Changing category or prefix will not affect already created scaling channels.\n"
       }
     },
     {

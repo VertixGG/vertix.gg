@@ -190,32 +190,6 @@ export class SetupEmbed extends UIEmbedBase {
                 [ badwordsMessageDefault ]: "**None**"
             },
 
-            // Hide empty values by not rendering them
-            channelsTemplateName: {
-                "": ""
-            },
-            channelsTemplateButtons: {
-                "": ""
-            },
-            channelsVerifiedRoles: {
-                "": ""
-            },
-            channelsLogsChannelId: {
-                "": ""
-            },
-            channelsAutoSave: {
-                "": ""
-            },
-            scalingChannelPrefix: {
-                "": ""
-            },
-            scalingChannelMaxMembers: {
-                "": ""
-            },
-            scalingChannelCategory: {
-                "": ""
-            },
-
             none: "**None**"
         };
     }

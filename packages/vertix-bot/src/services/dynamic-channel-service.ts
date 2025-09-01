@@ -896,8 +896,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         newState: ChannelState
     ) {
         const result: IDynamicEditChannelStateResult = {
-            code: DynamicEditChannelStateResultCode.Error
-        },
+                code: DynamicEditChannelStateResultCode.Error
+            },
             roles = await this.getVerifiedRoles( channel );
 
         let editStatePromise;

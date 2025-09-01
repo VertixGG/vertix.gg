@@ -146,15 +146,15 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
     private async getAllArgs( channel: VoiceChannel, argsFromManager: UIArgs = {} ) {
         const args: UIArgs = {
-            channelName: channel.name,
-            userLimit: ( channel as VoiceChannel ).userLimit,
+                channelName: channel.name,
+                userLimit: ( channel as VoiceChannel ).userLimit,
 
-            state: await this.dynamicChannelService.getChannelPrivacyState( channel ),
+                state: await this.dynamicChannelService.getChannelPrivacyState( channel ),
 
-            channelId: channel.id,
+                channelId: channel.id,
 
-            region: channel.rtcRegion
-        },
+                region: channel.rtcRegion
+            },
             masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {

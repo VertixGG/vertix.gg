@@ -22,8 +22,8 @@ import type {
 
 type ChannelExtendedResult<T extends TDataType> =
     | ( ChannelExtended & {
-          data?: T;
-      } )
+        data?: T;
+    } )
     | undefined
     | null;
 

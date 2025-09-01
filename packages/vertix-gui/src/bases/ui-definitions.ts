@@ -119,8 +119,8 @@ export interface UIBaseTemplateOptions {
     [key: string]:
         | string
         | {
-              [key: string]: string;
-          };
+            [key: string]: string;
+        };
 }
 
 export interface UIEmbedArrayOptions {

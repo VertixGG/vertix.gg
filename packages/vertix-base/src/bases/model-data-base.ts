@@ -15,10 +15,10 @@ import type {
 } from "@vertix.gg/base/src/interfaces/data";
 
 export abstract class ModelDataBase<
-        TOwnerModel extends IOwnerInnerModel,
-        TDataModel extends IDataInnerModel,
-        TCacheResult = undefined
-    >
+    TOwnerModel extends IOwnerInnerModel,
+    TDataModel extends IDataInnerModel,
+    TCacheResult = undefined
+>
     extends ModelBaseCachedWithClient<PrismaBot.PrismaClient, TCacheResult>
     implements IDataModel
 {

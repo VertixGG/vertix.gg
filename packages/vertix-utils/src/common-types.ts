@@ -18,13 +18,13 @@ export type TRecursiveStringMapper<T extends readonly string[], U extends readon
         // This conditional type checks if tuple T can be separated into a first element 'K' and rest of the elements 'KT'
         T extends readonly [infer K extends string, ...infer KT extends readonly string[]]
             ? // If the condition above holds, we further check if tuple U can be separated into a first element 'V' and rest of the elements 'UV'. If U is single element tuple or empty, this condition fails
-              U extends readonly [infer V, ...infer UV extends readonly string[]]
+            U extends readonly [infer V, ...infer UV extends readonly string[]]
                 ? // If the above condition holds, it means both T and U can be separated into 'first' and 'rest'. Then we combine the first elements into a key-value pair, and recursively process the rest of the elements
                   { [P in K]: V } & TRecursiveStringMapper<KT, UV>
                 : // When U doesn't have multiple elements, there is no corresponding value for the keys inferred from T (except the first one), the condition fails and returns never
-                  never
+                never
             : // When T doesn't have multiple elements, i.e., it only has a single element or is empty. The condition fails and returns never
-              never
+            never
     >,
     // Exclude 'never' from the union-to-intersection result, as 'never' is not a valid key-value pair and doesn't contribute to the final mapped object
     never

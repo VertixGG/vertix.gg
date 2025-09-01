@@ -145,16 +145,16 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
     private async getAllArgs( channel: VoiceChannel ) {
         const args: UIArgs = {
-            channelName: channel.name,
-            userLimit: ( channel as VoiceChannel ).userLimit,
+                channelName: channel.name,
+                userLimit: ( channel as VoiceChannel ).userLimit,
 
-            isPrivate: ( await this.dynamicChannelService.getChannelState( channel ) ) === "private",
-            isHidden: ( await this.dynamicChannelService.getChannelVisibilityState( channel ) ) === "hidden",
+                isPrivate: ( await this.dynamicChannelService.getChannelState( channel ) ) === "private",
+                isHidden: ( await this.dynamicChannelService.getChannelVisibilityState( channel ) ) === "hidden",
 
-            channelId: channel.id,
+                channelId: channel.id,
 
-            region: channel.rtcRegion
-        },
+                region: channel.rtcRegion
+            },
             masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
         if ( masterChannelDB ) {

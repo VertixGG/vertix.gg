@@ -147,8 +147,8 @@ export class SetupAdapter extends AdminAdapterBase<BaseGuildTextChannel, Default
         }
 
         const uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
-            "VertixGUI/UIVersioningAdapterService"
-        ),
+                "VertixGUI/UIVersioningAdapterService"
+            ),
             setupEditAdapter = await uiVersioningAdapterService.get( "Vertix/SetupEditAdapter", masterChannelDB.id );
 
         await setupEditAdapter?.runInitial( interaction, {

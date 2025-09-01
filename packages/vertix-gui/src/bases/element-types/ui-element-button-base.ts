@@ -26,8 +26,8 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
 
     public async getTranslatableContent(): Promise<UIElementButtonLanguageContent> {
         const result: UIElementButtonLanguageContent = {
-            label: await this.getLabel()
-        },
+                label: await this.getLabel()
+            },
             options = this.getOptions();
 
         if ( Object.keys( options ).length ) {

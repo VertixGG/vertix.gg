@@ -19,12 +19,12 @@ export abstract class ModelDataOwnerConfigBase<
     TDataConfigSlice extends keyof TDataConfig["data"],
     TDataSlice extends TDataConfig["data"][TDataConfigSlice] = TDataConfig["data"][TDataConfigSlice]
 > extends ModelDataOwnerStrictDataBase<
-    TModel,
-    TDataModel,
-    TDataModelResult,
-    TDataModelUniqueKeys,
-    TDataConfig["data"][TDataConfigSlice]
-> {
+        TModel,
+        TDataModel,
+        TDataModelResult,
+        TDataModelUniqueKeys,
+        TDataConfig["data"][TDataConfigSlice]
+    > {
     public static getName() {
         return "VertixBase/Bases/ModelDataOwnerConfigBase";
     }

@@ -24,17 +24,10 @@
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": "./",
-		"paths": {
-			"@internal/*": [
-				"src/*"
-			],
-			"@vertix/*": [
-				"src/vertix/*"
-			]
-		}
 	},
 	"include": [
-		"src"
+		"src",
+		"src/types/assets.d.ts"
 	],
 	"references": [
 		{

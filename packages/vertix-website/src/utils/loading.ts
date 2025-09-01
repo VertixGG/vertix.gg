@@ -52,7 +52,7 @@ export const allImagesLoadedPromise = () => {
                 resolve( true );
             }
 
-            return
+            return;
         }
 
         resolve( true );

@@ -1,9 +1,9 @@
 export const onAddToServerClick = ( type: "recommended" | "optimal" ) => {
     // @ts-ignore
-    window.gtag( 'event', 'conversion', { 'send_to': 'AW-993508183' } );
+    window.gtag( "event", "conversion", { "send_to": "AW-993508183" } );
 
     // @ts-ignore
-    window.gtag( 'event', 'add_to_server', { type, 'send_to': 'G-B87MBQLL99' } );
+    window.gtag( "event", "add_to_server", { type, "send_to": "G-B87MBQLL99" } );
 
     switch ( type ) {
         case "recommended":
@@ -40,5 +40,5 @@ export default function InviteVertix() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

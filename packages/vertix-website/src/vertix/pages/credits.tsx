@@ -8,5 +8,5 @@ export default function Credits() {
                 </li>
             </ul>
         </div>
-    )
+    );
 }

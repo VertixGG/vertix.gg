@@ -1,16 +1,16 @@
 import { Suspense } from "react";
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from "react-router-dom";
 
-import LoadingContainer from "@vertix/ui/loading-container";
+import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } from "@vertix.gg/website/src/utils/loading";
 
-import Header from "@vertix/header/header";
+import LoadingContainer from "@vertix.gg/website/src/vertix//ui/loading-container";
 
-import localRoutes from "@vertix/routes";
+import Header from "@vertix.gg/website/src/vertix//header/header";
 
-import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } from "@internal/utils/loading";
+import localRoutes from "@vertix.gg/website/src/vertix//routes";
 
-import "./style-static.scss"
+import "@vertix.gg/website/src/vertix/style-static.scss";
 
 ( () => {
     // @ts-ignore
@@ -29,7 +29,7 @@ const RoutesComponent = () => {
                 return <Route key={ route.path } path={ route.path } element={ <route.component/> }/>;
             } ) }
         </Routes>
-    )
+    );
 };
 
 export default function Index() {

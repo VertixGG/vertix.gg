@@ -1,6 +1,6 @@
-import HowToSetupStep1 from "@vertix/posts/steps/how-to-setup-step-1";
-import HowToSetupStep2 from "@vertix/posts/steps/how-to-setup-step-2";
-import HowToSetupStep3 from "@vertix/posts/steps/how-to-setup-step-3";
+import HowToSetupStep1 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-1";
+import HowToSetupStep2 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-2";
+import HowToSetupStep3 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-3";
 
 export default function HowToSetup() {
     return (
@@ -25,7 +25,7 @@ export default function HowToSetup() {
                     <br/>
                     <hr/>
                     <br/>
-                   <HowToSetupStep3 displayStep={true} />
+                    <HowToSetupStep3 displayStep={true} />
                 </ul>
 
                 <hr/>
@@ -57,13 +57,13 @@ export default function HowToSetup() {
                 <div className="container">
                     <br/>
                     <div aria-live="polite" aria-atomic="true"
-                         className="d-flex justify-content-center align-items-center">
+                        className="d-flex justify-content-center align-items-center">
                         <div className="toast show w-100" role="alert" aria-live="assertive" aria-atomic="true"
-                             data-bs-theme="dark">
+                            data-bs-theme="dark">
                             <div className="toast-header">
                                 <img src="https://simgbb.com/avatar/PGKBv5T3fZLJ.png" width="30"
-                                     className="rounded-4 me-2"
-                                     alt="..."/>
+                                    className="rounded-4 me-2"
+                                    alt="..."/>
                                 <strong className="me-auto">leonid@vertix.gg</strong>
                                 <small className="d-flex justify-content-end"><span className="d-none d-sm-block">Updated at&nbsp;</span>21/06/2023</small>
                             </div>
@@ -86,7 +86,6 @@ export default function HowToSetup() {
                 <br/>
             </div>
 
-
         </>
-    )
+    );
 }

@@ -54,5 +54,5 @@ export default function HowToSetupLogsChannel() {
             <br />
             <p>Updated at: 24/06/2023</p>
         </div>
-    )
+    );
 }

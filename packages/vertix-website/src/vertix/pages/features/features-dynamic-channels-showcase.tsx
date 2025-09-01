@@ -62,7 +62,7 @@ export const AccordionItem = ( props: IAccordionProps ) => {
             <div className="accordion-item">
                 <div className="accordion-header" onClick={ props.onClick }>
                     <button className={ `accordion-button pt-2 pb-3 ps-3 ${ props.isOpen ? "collapsed" : "" }` }
-                            type="button">
+                        type="button">
                         <span className="fs-5"><span className="icon fs-2">{ props.icon }</span>{ props.title }</span>
                     </button>
                 </div>
@@ -75,7 +75,7 @@ export const AccordionItem = ( props: IAccordionProps ) => {
                 </div>
             </div>
         </>
-    )
+    );
 };
 
 export default function FeaturesDynamicChannelsShowcase() {
@@ -573,5 +573,4 @@ export default function FeaturesDynamicChannelsShowcase() {
         </div>
     );
 }
-
 

@@ -36,7 +36,7 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
             <li>
                 <h4 id="set-default-channels-name-template">Set default channel's name template</h4>
                 Edit by pressing <div className="btn btn-sm btn-secondary pe-none">#️⃣ Edit Channel
-                Name</div> button or
+                    Name</div> button or
                 continue with <code>default = { "{user}" }'s channel</code>
                 by pressing <a href={`${ props.displayStep ? "#step-2" : "2" }`} className="btn btn-sm btn-primary">Next ▶</a>
                 <br/>
@@ -77,5 +77,5 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 </li>
             </ul>
         </>
-    )
+    );
 }

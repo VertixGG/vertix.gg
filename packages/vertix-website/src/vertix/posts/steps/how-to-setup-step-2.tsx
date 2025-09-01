@@ -1,4 +1,4 @@
-import { ArrowDown } from "@vertix/ui/arrows";
+import { ArrowDown } from "@vertix.gg/website/src/vertix//ui/arrows";
 
 interface IHowToSetupStep2Props {
     displayStep?: boolean
@@ -22,7 +22,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 pressing <a href={`${ props.displayStep ? "#step-3" : "3" }`} className="btn btn-sm btn-primary">Next ▶</a>
                 <br/>
                 <img className="normalize" src="https://i.ibb.co/ZGCGwP1/setup-step-2-buttons-set-arrow-red.png"
-                     alt="s5"/>
+                    alt="s5"/>
             </li>
             <br/>
             <p>
@@ -69,7 +69,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                     <li><b>( 🔃 ∙ Reset Channel ) - Restore channel's default state</b> -
                         ( <code>Name</code>, <code>User
                             limit</code>, <code>State</code>, <code>Visibility</code>, <code>Granted
-                            users</code> ).
+                                users</code> ).
                     </li>
                     <li><b>( 🔀 ∙ Transfer ownership ) - Allow the channel owner transform ownership over the
                         channel to someone else.</b></li>
@@ -81,11 +81,11 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
 
                 <br/>
                 Select the option that suits you the most, then click <a href={`${ props.displayStep ? "#step-3" : "3" }`}
-                                                                         className="btn btn-sm btn-primary">Next
-                ▶</a> to continue.
+                    className="btn btn-sm btn-primary">Next
+                    ▶</a> to continue.
                 <br/>
                 <img className="normalize" src="https://i.ibb.co/tBtNfKF/004.png" alt="s7"/>
             </p>
         </>
-    )
+    );
 }

@@ -1,17 +1,17 @@
 import { Suspense } from "react";
 
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from "react-markdown";
 
-import LoadingContainer, { LoadingContainerType } from "@vertix/ui/loading-container";
+import { wrapPromiseSuspendable } from "@vertix.gg/website/src/utils/loading";
 
-import { wrapPromiseSuspendable } from "@internal/utils/loading";
+import LoadingContainer, { LoadingContainerType } from "@vertix.gg/website/src/vertix//ui/loading-container";
 
 ( () => {
     // @ts-ignore
     import ( "./changelog.scss" );
 } )();
 
-const fetchMarkdown = async () => {
+const fetchMarkdown = async() => {
     const response = await fetch( "https://gist.githubusercontent.com/iNewLegend/5bfa5a9ceb9f11fba67b865cde4b4b05/raw/changelog.md" );
 
     return await response.text();
@@ -32,7 +32,7 @@ const ChangelogMarkdown = () => {
 
 export default function Changelog() {
     return (
-        <Suspense fallback={ LoadingContainer( { type: LoadingContainerType.WARNING }) }>
+        <Suspense fallback={ LoadingContainer( { type: LoadingContainerType.WARNING } ) }>
             <ChangelogMarkdown/>
         </Suspense>
     );

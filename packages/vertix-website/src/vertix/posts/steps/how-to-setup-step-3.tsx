@@ -6,11 +6,11 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
     return (
         <>
             <li>
-            {
-                props.displayStep ? (
-                    <h4 id="step-3">Step 3</h4>
-                ) : <h4>Set verified roles</h4>
-            }
+                {
+                    props.displayStep ? (
+                        <h4 id="step-3">Step 3</h4>
+                    ) : <h4>Set verified roles</h4>
+                }
                 <br/>
                 {
                     props.displayStep ? (
@@ -20,13 +20,13 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 Or continue with <b>( <code>default = @everyone</code> recommended! )</b>
                 <br/>
                 <img className="normalize"
-                     src="https://i.ibb.co/DCvxSvG/setup-step-3-verfied-roles-arrow-red-on-select-roles.png"
-                     alt="s8"/>
+                    src="https://i.ibb.co/DCvxSvG/setup-step-3-verfied-roles-arrow-red-on-select-roles.png"
+                    alt="s8"/>
                 <br/>
                 <br/>
                 <p>Select <b>Verified Roles</b></p>
                 <img className="normalize" src="https://i.ibb.co/cY7NFgS/setup-step-3-trusted-members.png"
-                     alt="s8"/>
+                    alt="s8"/>
 
                 <ul>
                     <p>Do I need to set <b>Verified Roles</b>?</p>
@@ -60,5 +60,5 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 <br/>
             </li>
         </>
-    )
+    );
 }

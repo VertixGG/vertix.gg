@@ -1,14 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from "react-router-dom";
 
-import Vertix from './vertix/index';
+import Vertix from "@vertix.gg/website/src/vertix/index";
 
 // import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
-    document.getElementById( 'root' ) as HTMLElement
+    document.getElementById( "root" ) as HTMLElement
 );
 
 root.render(

@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 
-import HowToSetupStep1 from "@vertix/posts/steps/how-to-setup-step-1";
-import HowToSetupStep2 from "@vertix/posts/steps/how-to-setup-step-2";
-import HowToSetupStep3 from "@vertix/posts/steps/how-to-setup-step-3";
+import HowToSetupStep1 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-1";
+import HowToSetupStep2 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-2";
+import HowToSetupStep3 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-3";
 
 export default function HowToSetupDisplayStepStandalone() {
     const getStep = ( step: number ) => {

@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 
-import 'react-photo-view/dist/react-photo-view.css';
+import "react-photo-view/dist/react-photo-view.css";
 
 const markdown = `#### Latest Updates
 - **19/07/2023**: \`0.0.7\` comes with new Greek language support, more details [here](/changelog).
@@ -37,5 +37,5 @@ export default function Updates() {
                 <ReactMarkdown children={ markdown }/>
             </div>
         </>
-    )
+    );
 }

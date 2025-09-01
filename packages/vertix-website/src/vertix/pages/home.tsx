@@ -5,7 +5,7 @@ export default function Home() {
                 <div className="row text-center pt-2 user-select-none">
                     <div className="col-lg-4">
                         <span className="text-primary-emphasis fw-bold"
-                              style={ { fontSize: "100px", textShadow: "rgb(0 0 0) -8px 8px 1px" } }>
+                            style={ { fontSize: "100px", textShadow: "rgb(0 0 0) -8px 8px 1px" } }>
                             ⫸
                         </span>
 
@@ -16,7 +16,7 @@ export default function Home() {
 
                     <div className="col-lg-4">
                         <span className="text-primary-emphasis fw-bold"
-                              style={ { fontSize: "100px", textShadow: "rgb(0 0 0) -8px 8px 1px" } }>
+                            style={ { fontSize: "100px", textShadow: "rgb(0 0 0) -8px 8px 1px" } }>
                             ❯❯
                         </span>
 
@@ -27,7 +27,7 @@ export default function Home() {
 
                     <div className="col-lg-4">
                         <span className="text-primary-emphasis fw-bold"
-                              style={ { fontSize: "100px", textShadow: "rgb(0 0 0) -8px 8px 1px" } }>
+                            style={ { fontSize: "100px", textShadow: "rgb(0 0 0) -8px 8px 1px" } }>
                             ⌘
                         </span>
 
@@ -55,8 +55,8 @@ export default function Home() {
 
                 <div className="d-none d-xl-block mb-5">
                     <a href="/features/dynamic-channels-showcase">
-                    <img src="https://i.ibb.co/rxzmMhY/discord-com-channels-1110248409761316944-1122539897060855838.png"
-                         alt="Voice channel managment" className="normalize"/>
+                        <img src="https://i.ibb.co/rxzmMhY/discord-com-channels-1110248409761316944-1122539897060855838.png"
+                            alt="Voice channel managment" className="normalize"/>
                     </a>
                 </div>
 
@@ -94,13 +94,12 @@ export default function Home() {
 
                 <div className="d-none d-xl-block mb-5">
                     <a href="/posts/how-to-setup">
-                    <img
-                        src="https://i.ibb.co/mNcTWQK/000.png"
-                        alt="Setup" className="normalize"/>
+                        <img
+                            src="https://i.ibb.co/mNcTWQK/000.png"
+                            alt="Setup" className="normalize"/>
                     </a>
                     <br/>
                 </div>
-
 
                 <p className="fs-5">Thank you for considering <b>Vertix</b>, and we look forward to enhancing your
                     Discord

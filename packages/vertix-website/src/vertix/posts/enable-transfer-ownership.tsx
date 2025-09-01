@@ -53,5 +53,5 @@ export default function EnableTransferOwnership() {
             <br />
             <p>Updated at: 25/06/2023</p>
         </div>
-    )
+    );
 }

@@ -1,3 +1,0 @@
-# Ignore encryption-related files
-packages/vertix-base/src/encryption/decrypt.ts
-packages/vertix-base/src/encryption/encrypt.ts

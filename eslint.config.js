@@ -1,5 +1,5 @@
-import { zLintGetDefaultConfig } from "@zenflux/eslint";
-
+import { zLintGetConfig } from "@zenflux/eslint";
+import util from "node:util";
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export const tests = [
     {
@@ -19,9 +19,11 @@ export const tests = [
     },
 ];
 
+const baseConfig = await zLintGetConfig();
+
 /** @type {import("eslint").Linter.FlatConfig[]} */
 const config = [
-    ...zLintGetDefaultConfig(),
+    ... baseConfig,
     {
         rules: {
             "space-in-parens": [ "error", "always" ],
@@ -31,7 +33,6 @@ const config = [
             "array-bracket-spacing": [ "error", "always" ],
             "object-curly-spacing": [ "error", "always" ],
             "computed-property-spacing": [ "error", "always" ],
-            "indent": ["error", 4, { "SwitchCase": 1 }],
             'no-restricted-imports': [
                 'error',
                 {

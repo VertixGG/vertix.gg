@@ -39,8 +39,8 @@
     "dependencies": {
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
-        "discord.js": "latest",
-        "discord-api-types": "latest"
+        "discord-api-types": "latest",
+        "discord.js": "latest"
     },
     "devDependencies": {
         "@swc/jest": "latest",
@@ -48,19 +48,19 @@
         "@types/jest": "latest",
         "@types/jest-when": "latest",
         "@types/node": "latest",
-        "@typescript-eslint/eslint-plugin": "^8.26.1",
-        "@typescript-eslint/parser": "^8.26.1",
+        "@typescript-eslint/eslint-plugin": "^8.41.0",
+        "@typescript-eslint/parser": "^8.41.0",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
-        "bun-types": "^1.0.25",
+        "bun-types": "^1.2.21",
         "eslint": "latest",
         "jest": "latest",
         "jest-when": "latest",
         "ts-mockito": "latest",
-        "tsx": "^4.19.1",
-        "typescript": "latest"
+        "tsx": "^4.20.5",
+        "typescript": "^5.9.2"
     },
     "packageManager": "bun@1.1.18",
     "peerDependencies": {

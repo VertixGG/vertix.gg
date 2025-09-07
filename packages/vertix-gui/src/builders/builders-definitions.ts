@@ -57,5 +57,3 @@ export interface IBinder<TArgs extends UIArgs = UIArgs> {
 export type BeforeBuildRunHandler<TArgs extends UIArgs = UIArgs> = (
     binder: IBinder<TArgs>
 ) => Promise<void>;
-
-

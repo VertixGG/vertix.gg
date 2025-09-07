@@ -18,7 +18,7 @@ export class ButtonBuilder {
     private options: any | ( ( args?: UIArgs ) => Promise<any> );
     private logic: any | ( ( args?: UIArgs ) => Promise<any> );
 
-    constructor( name: string ) {
+    public constructor( name: string ) {
         this.name = name;
     }
 

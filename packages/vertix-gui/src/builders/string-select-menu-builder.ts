@@ -1,24 +1,27 @@
 import {
     UIElementStringSelectMenu
 } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
-import {
-    UIArgs,
+
+import  {
     UIInstancesTypes
 } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { APISelectMenuOption } from "discord.js";
+
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import type { APISelectMenuOption } from "discord.js";
 
 type OptionsFactory = ( args?: UIArgs ) => Promise<APISelectMenuOption[]>;
 
 export class StringSelectMenuBuilder {
     private name: string;
     private instanceType: UIInstancesTypes = UIInstancesTypes.Dynamic;
-    private placeholder: string | ( ( args?: UIArgs ) => Promise<string> );
+    private placeholder: string | ( ( args?: UIArgs ) => Promise<string> ) = "";
     private minValues: number | ( ( args?: UIArgs ) => Promise<number> ) = 1;
     private maxValues: number | ( ( args?: UIArgs ) => Promise<number> ) = 1;
     private options: OptionsFactory = () => Promise.resolve( [] );
     private isAvailable: boolean | ( ( args?: UIArgs ) => Promise<boolean> | boolean ) = true;
 
-    constructor( name: string ) {
+    public  constructor( name: string ) {
         this.name = name;
     }
 

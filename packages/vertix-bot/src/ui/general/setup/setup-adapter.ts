@@ -22,7 +22,7 @@ import {
 import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
 import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
-import { setVertixDefaultColorBrand } from "@vertix.gg/gui/src/builders/embed-builder.utils";
+import { EmbedBuilderUtils } from "@vertix.gg/gui/src/builders/embed-builder.utils";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
@@ -290,7 +290,7 @@ async function handleEmbedLogic( args: ISetupArgs, vars: typeof SETUP_EMBED_VARS
     return result;
 }
 
-const SetupEmbed = setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
+const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
     .setImage( "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png" )
     .setTitle( "🛠  Setup Vertix" )
     .setDescription( ( vars ) =>

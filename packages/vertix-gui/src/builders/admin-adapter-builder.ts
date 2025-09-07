@@ -10,57 +10,19 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
-
-import type { Logger } from "@vertix.gg/base/src/modules/logger";
-import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 import type {
     UIArgs,
     UIComponentTypeConstructor,
     UIAdapterBuildSource,
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export interface IAdapterContext<TArgs extends UIArgs = UIArgs> {
-    readonly logger: Logger;
-    readonly customIdStrategy: UICustomIdStrategyBase;
-    getComponent: () => UIComponentBase;
-    deleteArgs: ( interaction: any ) => void;
-    ephemeral: ( interaction: any, args?: TArgs ) => Promise<any>;
-    editReply: ( interaction: any, args?: TArgs ) => Promise<any>;
-    showModal: ( name: string, interaction: any ) => Promise<void>;
-}
-
-type GetReplyArgsHandler<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs> = (
-    context: IAdapterContext<TArgs>,
-    interaction?: TInteraction,
-    argsFromManager?: TArgs
-) => Promise<TArgs>;
-
-type BeforeBuildHandler<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs> = (
-    context: IAdapterContext<TArgs>,
-    args: TArgs,
-    from: UIAdapterBuildSource,
-    interaction?: TInteraction
-) => Promise<void>;
-
-interface IBinder<TArgs extends UIArgs = UIArgs> {
-    bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
-        name: string,
-        callback: ( context: IAdapterContext<TArgs>, interaction: T ) => Promise<void>
-    ) => void;
-    bindModal: <T extends UIDefaultModalChannelTextInteraction>(
-        name: string,
-        callback: ( context: IAdapterContext<TArgs>, interaction: T ) => Promise<void>
-    ) => void;
-    bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
-        name: string,
-        callback: ( context: IAdapterContext<TArgs>, interaction: T ) => Promise<void>
-    ) => void;
-}
-
-type BeforeBuildRunHandler<TArgs extends UIArgs = UIArgs> = (
-    binder: IBinder<TArgs>
-) => Promise<void>;
+import type {
+    IAdapterContext,
+    GetReplyArgsHandler,
+    BeforeBuildHandler,
+    IBinder,
+    BeforeBuildRunHandler
+} from "@vertix.gg/gui/src/builders/builders-definitions";
 
 export class AdminAdapterBuilder<
     TChannel extends UIAdapterStartContext,

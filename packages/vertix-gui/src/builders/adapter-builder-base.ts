@@ -1,5 +1,7 @@
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui/general/admin/admin-adapter-base";
 
+import { Logger } from "@vertix.gg/base/src/modules/logger";
+
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type {
@@ -23,24 +25,30 @@ import type {
     IBinder,
     BeforeBuildRunHandler
 } from "@vertix.gg/gui/src/builders/builders-definitions";
-import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
-export class AdminAdapterBuilder<
+import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+
+export class AdapterBuilderBase<
+    TAdapterBase extends UIAdapterBase<TChannel, TInteraction>,
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
-    TArgs extends UIArgs = UIArgs,
+    TArgs extends UIArgs = UIArgs
 > {
-    private adapterBase: typeof AdminAdapterBase<TChannel, TInteraction> = AdminAdapterBase<TChannel, TInteraction>;
-
-    private component: typeof UIComponentBase | undefined;
+    private component: UIComponentTypeConstructor | undefined;
     private replyArgsHandler: GetReplyArgsHandler<TInteraction, TArgs> | undefined;
     private beforeBuildHandler: BeforeBuildHandler<TInteraction, TArgs> | undefined;
     private beforeBuildRunHandler: BeforeBuildRunHandler<TArgs> | undefined;
 
-    public constructor( private name: string ) {
+    protected static dedicatedLogger = new Logger( this.getName() );
+
+    public static getName(): string {
+        return "VertixGUI/Builders/AdapterBuilderBase";
     }
 
-    public setComponent( component: typeof UIComponentBase ): this {
+    public constructor( private adapterBase: TAdapterBase, private name: string ) {
+    }
+
+    public setComponent( component: UIComponentTypeConstructor ): this {
         this.component = component;
         return this;
     }
@@ -67,9 +75,7 @@ export class AdminAdapterBuilder<
             throw new Error( `A component must be set for adapter "${ builder.name }" before building.` );
         }
 
-        const BaseAdapter = this.adapterBase;
-
-        return class GeneratedAdapter extends BaseAdapter {
+        return class GeneratedAdapter extends AdminAdapterBase<TChannel, TInteraction> {
             public static getName() {
                 return builder.name;
             }
@@ -117,20 +123,13 @@ export class AdminAdapterBuilder<
             }
 
             private getContext(): IAdapterContext<TArgs> {
-                const self = this;
                 return {
-                    logger: AdminAdapterBase.dedicatedLogger,
+                    logger: AdapterBuilderBase.dedicatedLogger,
                     customIdStrategy: this.customIdStrategy,
                     getComponent: this.getComponent.bind( this ),
-                    deleteArgs: <T extends UIAdapterReplyContext>( interaction: T ) => {
-                        self.deleteArgs( interaction as UIAdapterReplyContext as TInteraction );
-                    },
-                    ephemeral: <T extends UIAdapterReplyContext>( interaction: T, args?: TArgs, deletePrevious?: boolean ) => {
-                        return self.ephemeral( interaction as UIAdapterReplyContext as TInteraction, args, deletePrevious );
-                    },
-                    editReply: <T extends UIAdapterReplyContext>( interaction: T, args?: TArgs ) => {
-                        return self.editReply( interaction as UIAdapterReplyContext as TInteraction, args );
-                    },
+                    deleteArgs: this.deleteArgs.bind( this ),
+                    ephemeral: this.ephemeral.bind( this ),
+                    editReply: this.editReply.bind( this ),
                     showModal: this.showModal.bind( this )
                 };
             }

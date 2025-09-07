@@ -5,27 +5,31 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
-type ItemsDefinition = ( typeof UIElementBase )[][];
-type ItemsFactory = ( args?: UIArgs ) => ItemsDefinition;
-
-export class ElementsGroupBuilder {
+export class ElementsGroupBuilder<
+    TItemsDefinition extends typeof UIElementBase<any>[],
+    TItemsFactory extends ( args?: UIArgs ) => TItemsDefinition
+> {
     private name: string;
-    private items: ItemsDefinition | ItemsFactory = [];
+    private items: TItemsDefinition | TItemsFactory | undefined;
 
     public constructor( name: string ) {
         this.name = name;
     }
 
-    public setItems( items: ItemsDefinition | ItemsFactory ): this {
+    public setItems( items: TItemsFactory  ): this {
         this.items = items;
         return this;
     }
 
-    public addRow( elements: ( typeof UIElementBase )[] ): this {
+    public addRow( elements: TItemsDefinition ): this {
         if ( typeof this.items === "function" ) {
             throw new Error( "Cannot use addRow with a dynamic items factory. Use setItems instead." );
         }
-        this.items.push( elements );
+        if ( "undefined" === typeof this.items ) {
+            this.items = [ ...elements ] as TItemsDefinition;
+            return this;
+        }
+        this.items.push( ...elements );
         return this;
     }
 
@@ -40,7 +44,7 @@ export class ElementsGroupBuilder {
                 if ( typeof builder.items === "function" ) {
                     return builder.items( args );
                 }
-                return builder.items;
+                return builder.items || [];
             }
         };
     }

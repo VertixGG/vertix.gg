@@ -17,6 +17,7 @@ import {
 
 import {
     AdminAdapterBuilder
+
 } from "@vertix.gg/gui/src/builders/admin-adapter-builder";
 
 import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
@@ -46,10 +47,6 @@ import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/e
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
-import type {
-    IAdapterContext
-} from "@vertix.gg/gui/src/builders/admin-adapter-builder";
-
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type {
@@ -66,6 +63,8 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
+import type { BaseGuildTextChannel } from "discord.js";
+import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 async function onSelectEditMasterChannel(
     context: IAdapterContext<ISetupArgs>,
@@ -241,7 +240,7 @@ async function handleEmbedLogic( args: ISetupArgs, vars: typeof SETUP_EMBED_VARS
             data,
             usedEmojis,
             usedRoles
-        };
+        };args;
     }
 
     const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
@@ -359,7 +358,7 @@ const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponen
     .setDefaultEmbedsGroup( "VertixBot/UI-General/SetupEmbedGroup" )
     .build();
 
-const SetupAdapter = new AdminAdapterBuilder<ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
+const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
     .setComponent( SetupComponent )
     .onBeforeBuildRun( async( {
         bindButton,
@@ -397,6 +396,10 @@ const SetupAdapter = new AdminAdapterBuilder<ISetupArgs>( "VertixBot/UI-General/
         );
     } )
     .onGetReplyArgs( async( _context, interaction, argsFromManager ) => {
+        if ( ! interaction ) {
+            return {};
+        }
+
         const args: ISetupArgs = {
             masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
             badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) )

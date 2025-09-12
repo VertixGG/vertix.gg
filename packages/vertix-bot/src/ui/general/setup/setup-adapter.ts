@@ -12,7 +12,8 @@ import {
 } from "@vertix.gg/base/src/utils/badwords-utils";
 
 import {
-    UI_CUSTOM_ID_SEPARATOR
+    UI_CUSTOM_ID_SEPARATOR,
+    UIInstancesTypes
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import {
@@ -25,6 +26,12 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { EmbedBuilderUtils } from "@vertix.gg/gui/src/builders/embed-builder.utils";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
+
+import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+
+import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/general/language/language-select-menu";
 
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
@@ -67,7 +74,7 @@ import type { BaseGuildTextChannel } from "discord.js";
 import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 async function onSelectEditMasterChannel(
-    context: IAdapterContext<ISetupArgs>,
+    context: IAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
     const masterChannelValue = interaction.values.at( 0 );
@@ -104,7 +111,7 @@ async function onSelectEditMasterChannel(
 }
 
 async function onCreateMasterChannelClicked(
-    context: IAdapterContext<ISetupArgs>,
+    context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction,
     version: TVersionType = VERSION_UI_V2
 ) {
@@ -132,7 +139,7 @@ async function onCreateMasterChannelClicked(
     ).data;
 
     const adapterName =
-        version === VERSION_UI_V3 ? "VertixBot/UI-V3/SetupNewWizardAdapter" : "VertixBot/UI-V2/SetupNewWizardAdapter";
+        version === VERSION_UI_V3 ? "Vertix/UI-V3/SetupNewWizardAdapter" : "VertixBot/UI-V2/SetupNewWizardAdapter";
 
     ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).get( adapterName )?.runInitial( interaction, {
         dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
@@ -149,14 +156,14 @@ async function onCreateMasterChannelClicked(
 }
 
 async function onEditBadwordsClicked(
-    context: IAdapterContext<ISetupArgs>,
+    context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
     await context.showModal( "VertixBot/UI-General/BadwordsModal", interaction );
 }
 
 async function onBadwordsModalSubmitted(
-    context: IAdapterContext<ISetupArgs>,
+    context: IAdapterContext<UIDefaultModalChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultModalChannelTextInteraction
 ) {
     const badwordsInputId = context.customIdStrategy.generateId(
@@ -180,7 +187,7 @@ async function onBadwordsModalSubmitted(
 }
 
 async function onLanguageChooseClicked(
-    _context: IAdapterContext<ISetupArgs>,
+    _context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
     ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
@@ -240,7 +247,7 @@ async function handleEmbedLogic( args: ISetupArgs, vars: typeof SETUP_EMBED_VARS
             data,
             usedEmojis,
             usedRoles
-        };args;
+        };
     }
 
     const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
@@ -341,6 +348,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         none: "**None**"
     } ) )
     .setLogic( handleEmbedLogic )
+    .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
 const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
@@ -356,10 +364,41 @@ const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponen
     .addModal( BadwordsModal )
     .setDefaultElementsGroup( "VertixBot/UI-General/SetupElementsGroup" )
     .setDefaultEmbedsGroup( "VertixBot/UI-General/SetupEmbedGroup" )
+    .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
+const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction | UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
     .setComponent( SetupComponent )
+    .setExcludedElements( [ LanguageSelectMenu ] )
+    .generateCustomIdForEntity( ( context, entity ) => {
+        switch ( entity.name ) {
+            case "VertixBot/UI-General/SetupMasterCreateV3Button":
+                return new UICustomIdHashStrategy().generateId(
+                    context.getInstance().getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
+                );
+        }
+    } )
+    .getCustomIdForEntity( ( _context, hash ) => {
+        if ( hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+            return new UICustomIdHashStrategy().getId( hash );
+        }
+    } )
+    .getReplyArgs( async( _context, interaction, argsFromManager ) => {
+        if ( ! interaction ) {
+            return {};
+        }
+
+        const args: ISetupArgs = {
+            masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
+            badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) )
+        };
+
+        if ( argsFromManager?.maxMasterChannels ) {
+            args.maxMasterChannels = argsFromManager.maxMasterChannels;
+        }
+
+        return args;
+    } )
     .onBeforeBuildRun( async( {
         bindButton,
         bindModal,
@@ -394,22 +433,6 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButt
             "VertixBot/UI-General/SetupMasterEditSelectMenu",
             onSelectEditMasterChannel
         );
-    } )
-    .onGetReplyArgs( async( _context, interaction, argsFromManager ) => {
-        if ( ! interaction ) {
-            return {};
-        }
-
-        const args: ISetupArgs = {
-            masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
-            badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) )
-        };
-
-        if ( argsFromManager?.maxMasterChannels ) {
-            args.maxMasterChannels = argsFromManager.maxMasterChannels;
-        }
-
-        return args;
     } )
     .build();
 

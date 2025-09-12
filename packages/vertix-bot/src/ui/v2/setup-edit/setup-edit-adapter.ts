@@ -34,13 +34,9 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
-type Interactions =
-    | UIDefaultButtonChannelTextInteraction
-    | UIDefaultStringSelectMenuChannelTextInteraction
-    | UIDefaultChannelSelectMenuChannelTextInteraction
-    | UIDefaultModalChannelTextInteraction;
+import type { SetupEditInteractions } from "@vertix.gg/gui/src/builders/builders-definitions";
 
-export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, Interactions> {
+export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEditInteractions> {
     private appService: AppService;
 
     public static getName() {

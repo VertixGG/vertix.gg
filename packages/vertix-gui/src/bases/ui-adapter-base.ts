@@ -666,7 +666,7 @@ export abstract class UIAdapterBase<
 
     // TODO: In reply context there are always interaction, ( ensure ).
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getReplyArgs( interaction?: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
+    protected getReplyArgs( interaction: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> | {} {
         throw new ForceMethodImplementation( this, "getReplyArgs" );
     }
 

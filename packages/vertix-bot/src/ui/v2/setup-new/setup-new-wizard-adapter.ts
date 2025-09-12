@@ -38,12 +38,9 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
-type Interactions =
-    | UIDefaultButtonChannelTextInteraction
-    | UIDefaultModalChannelTextInteraction
-    | UIDefaultStringSelectMenuChannelTextInteraction;
+import type { WizardInteractions } from "@vertix.gg/gui/src/builders/builders-definitions";
 
-export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
+export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, WizardInteractions> {
     private masterChannelService: MasterChannelService;
 
     public static getName() {
@@ -172,7 +169,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         return result;
     }
 
-    protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
+    protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, context: WizardInteractions ): Promise<void> {
         // TODO: Create convenient solution.
         switch ( this.getCurrentExecutionStep( context )?.name ) {
             case "Vertix/UI-V2/SetupStep2Component":

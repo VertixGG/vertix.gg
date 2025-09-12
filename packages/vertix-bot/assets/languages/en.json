@@ -2253,14 +2253,14 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/SetupStep1Embed",
+      "name": "VertixBot/UI-V3/SetupNewStep1Embed",
       "content": {
         "title": "Step 1 - Set Dynamic Channels Template Name",
         "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
       }
     },
     {
-      "name": "VertixBot/UI-General/SetupStep2Embed",
+      "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "Step 2 - Dynamic Channels Setup",
         "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
@@ -2306,7 +2306,7 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/SetupStep3Embed",
+      "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "Step 3 - Select Verified Roles",
         "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",

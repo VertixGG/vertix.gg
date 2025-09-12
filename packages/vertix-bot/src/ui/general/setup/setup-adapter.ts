@@ -194,108 +194,6 @@ async function onLanguageChooseClicked(
         .get( "VertixBot/UI-General/LanguageAdapter" )?.editReply( interaction, {} );
 }
 
-async function handleEmbedLogic( args: ISetupArgs, vars: typeof SETUP_EMBED_VARS ) {
-    async function handleEmbedChannelData( channel: any ) {
-        const data = await MasterChannelDataManager.$.getAllSettings( {
-            ...channel,
-            isDynamic: false,
-            isMaster: true
-        } );
-        const getChannelVersion = () => {
-            return channel?.version || channel?.data?.[ 0 ]?.version;
-        };
-        const getUsedButtons = () => {
-            const version = getChannelVersion();
-            switch ( version ) {
-                case VERSION_UI_V3:
-                    return DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( btn ) => btn.getId() );
-                default:
-                    return DynamicChannelElementsGroup.getAll().map( ( btn ) => btn.getId() );
-            }
-        };
-        const getEmojis = ( buttons: string[] | number[] ) => {
-            const version = getChannelVersion();
-            if ( !buttons || !buttons.length ) {
-                return [ "⚠️ No buttons" ];
-            }
-            let result: string[] = [];
-            switch ( version ) {
-                case VERSION_UI_V3:
-                    const stringButtons = buttons.map( ( b ) => String( b ) );
-                    result = DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis( stringButtons );
-                    break;
-                default:
-                    const numberedButtons = buttons.map( ( b ) => typeof b === "number" ? b : Number( b ) );
-                    result = DynamicChannelElementsGroup.getEmbedEmojis( numberedButtons );
-                    break;
-            }
-            if ( !result.length ) {
-                return [ "⚠️ No emojis found" ];
-            }
-            return result;
-        };
-        const usedButtons = data.dynamicChannelButtonsTemplate || getUsedButtons(),
-            usedEmojis = getEmojis( usedButtons ).join( ", " ),
-            usedRoles = (
-                data.dynamicChannelVerifiedRoles || []
-            )
-                .map( ( roleId: string ) => {
-                    return "<@&" + roleId + ">";
-                } )
-                .join( ", " );
-        return {
-            data,
-            usedEmojis,
-            usedRoles
-        };
-    }
-
-    const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-        "Vertix/Config/MasterChannel",
-        VERSION_UI_V3
-    ).data;
-
-    const result: any = {},
-        masterChannelsPromise = (
-            args?.masterChannels || []
-        ).map( async( channel, index ) => {
-            const {
-                data,
-                usedEmojis,
-                usedRoles
-            } = await handleEmbedChannelData( channel );
-            return {
-                index: index + 1,
-                id: channel.channelId,
-                channelsTemplateName: data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
-                channelsTemplateButtons: usedEmojis,
-                channelsVerifiedRoles: usedRoles.length ? usedRoles : "@@everyone",
-                channelsLogsChannelId: data.dynamicChannelLogsChannelId ?
-                    `<#${ data.dynamicChannelLogsChannelId }>` :
-                    vars.none,
-                channelsAutoSave: data.dynamicChannelAutoSave ?? "false",
-                version: channel?.version || "V2"
-            };
-        } ),
-        masterChannels = (
-            await Promise.all( masterChannelsPromise )
-        ) || [];
-    if ( masterChannels?.length ) {
-        result.masterChannels = masterChannels;
-        result.masterChannelMessage = vars.masterChannels;
-    } else {
-        result.masterChannelMessage = vars.masterChannelMessageDefault;
-    }
-    if ( args?.badwords?.length ) {
-        result.badwords = args.badwords;
-        result.badwordsMessage = vars.badwords;
-    } else {
-        result.badwordsMessage = vars.badwordsMessageDefault;
-    }
-
-    return result;
-}
-
 const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
     .setImage( "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png" )
     .setTitle( "🛠  Setup Vertix" )
@@ -347,7 +245,69 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         },
         none: "**None**"
     } ) )
-    .setLogic( handleEmbedLogic )
+    .setLogic( async( args, vars ) => {
+        const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+            "Vertix/Config/MasterChannel",
+            VERSION_UI_V3
+        ).data;
+
+        const channels = args?.masterChannels || [];
+
+        const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
+            const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
+
+            const data = await MasterChannelDataManager.$.getAllSettings( {
+                ...channel,
+                isDynamic: false,
+                isMaster: true
+            } );
+
+            const defaultButtons = version === VERSION_UI_V3
+                ? DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( btn ) => btn.getId() )
+                : DynamicChannelElementsGroup.getAll().map( ( btn ) => btn.getId() );
+
+            const usedButtons: string[] | number[] = data.dynamicChannelButtonsTemplate || defaultButtons;
+
+            const emojis = version === VERSION_UI_V3
+                ? DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis( usedButtons.map( ( b ) => String( b ) ) )
+                : DynamicChannelElementsGroup.getEmbedEmojis( usedButtons.map( ( b ) => typeof b === "number" ? b : Number( b ) ) );
+
+            const buttonsDisplay = ( emojis.length ? emojis : [ "⚠️ No emojis found" ] ).join( ", " );
+
+            const rolesDisplay = ( data.dynamicChannelVerifiedRoles || [] )
+                .map( ( roleId: string ) => `<@&${ roleId }>` )
+                .join( ", " ) || "@@everyone";
+
+            return {
+                index: index + 1,
+                id: channel.channelId,
+                channelsTemplateName: data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
+                channelsTemplateButtons: buttonsDisplay,
+                channelsVerifiedRoles: rolesDisplay,
+                channelsLogsChannelId: data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none,
+                channelsAutoSave: String( data.dynamicChannelAutoSave ?? "false" ),
+                version
+            };
+        } ) );
+
+        const result: Record<string, unknown> = {};
+
+        if ( masterChannels.length ) {
+            result.masterChannels = masterChannels;
+            result.masterChannelMessage = vars.masterChannels;
+        } else {
+            result.masterChannelMessage = vars.masterChannelMessageDefault;
+        }
+
+        if ( args?.badwords?.length ) {
+            result.badwords = args.badwords;
+            result.badwordsMessage = vars.badwords;
+        } else {
+            result.badwordsMessage = vars.badwordsMessageDefault;
+        }
+
+        return result;
+    } )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 

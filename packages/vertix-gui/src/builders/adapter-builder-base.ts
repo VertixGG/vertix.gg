@@ -75,6 +75,13 @@ export class AdapterBuilderBase<
     protected beforeFinishHandler: BeforeFinishHandler<TInteraction, TArgs, TContext> | undefined;
     protected entityMapHandler: EntityMapHandler<TInteraction, TArgs, TContext> | undefined;
 
+    protected contextFactory:
+        | ( (
+            base: IAdapterContext<TInteraction, TArgs>,
+            adapter: InstanceType<TAdapter>
+        ) => TContext )
+        | undefined;
+
     protected static dedicatedLogger = new Logger( this.getName() );
 
     public static getName(): string {
@@ -138,6 +145,16 @@ export class AdapterBuilderBase<
 
     public onBeforeBuildRun( handler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> ): this {
         this.beforeBuildRunHandler = handler;
+        return this;
+    }
+
+    public useContextFactory(
+        factory: (
+            base: IAdapterContext<TInteraction, TArgs>,
+            adapter: InstanceType<TAdapter>
+        ) => TContext
+    ): this {
+        this.contextFactory = factory;
         return this;
     }
 
@@ -228,65 +245,61 @@ export class AdapterBuilderBase<
                     }
 
                     if ( from === "run" && builder.beforeBuildRunHandler ) {
-                        const binder: IBinder<TInteraction, TArgs, TContext> = {
-                            bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
-                                name: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindButton( name, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                            bindModal: <T extends UIDefaultModalChannelTextInteraction>(
-                                name: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindModal( name, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                            bindModalWithButton: <T extends UIDefaultModalChannelTextInteraction>(
-                                buttonName: string,
-                                modalName: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                            bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
-                                name: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindSelectMenu( name, ( interaction ) => callback( this.getContext(), interaction as T ) )
-                        };
-                        await builder.beforeBuildRunHandler( binder );
+                        await builder.beforeBuildRunHandler( this.createBinder() );
                     }
                 }
 
                 protected async onEntityMap() {
                     if ( builder.entityMapHandler ) {
-                        const binder: IBinder<TInteraction, TArgs, TContext> = {
-                            bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
-                                name: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindButton( name, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                            bindModal: <T extends UIDefaultModalChannelTextInteraction>(
-                                name: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindModal( name, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                            bindModalWithButton: <T extends UIDefaultModalChannelTextInteraction>(
-                                buttonName: string,
-                                modalName: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                            bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
-                                name: string,
-                                callback: ( context: TContext, interaction: T ) => Promise<void>
-                            ) => this.bindSelectMenu( name, ( interaction ) => callback( this.getContext(), interaction as T ) )
-                        };
-                        await builder.entityMapHandler( binder );
+                        await builder.entityMapHandler( this.createBinder() );
                     }
                 }
 
-                protected getContext(): TContext {
+                protected createBinder(): IBinder<TInteraction, TArgs, TContext> {
+                    const getContext = this.getContext.bind( this );
+                    return {
+                        bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
+                            name: string,
+                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                        ) => this.bindButton( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        bindModal: <T extends UIDefaultModalChannelTextInteraction>(
+                            name: string,
+                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                        ) => this.bindModal( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        bindModalWithButton: <T extends UIDefaultModalChannelTextInteraction>(
+                            buttonName: string,
+                            modalName: string,
+                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                        ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
+                            name: string,
+                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                        ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
+                    };
+                }
+
+                protected getBaseContext() {
                     return {
                         getInstance: () => this,
                         logger: AdapterBuilderBase.dedicatedLogger,
                         customIdStrategy: this.customIdStrategy,
+                        getArgsManager: () => this.getArgsManager(),
+                        getArgs: ( self, context ) => this.getArgsManager().getArgs( self, context ),
+                        setArgs: ( self, interaction, args ) => this.getArgsManager().setArgs( self, interaction, args ),
                         getComponent: this.getComponent.bind( this ),
                         deleteArgs: this.deleteArgs.bind( this ),
                         ephemeral: this.ephemeral.bind( this ),
                         editReply: this.editReply.bind( this ),
                         showModal: this.showModal.bind( this )
-                    } as unknown as TContext;
+                    } satisfies IAdapterContext<TInteraction, TArgs>;
+                }
+
+                protected getContext() {
+                    const base = this.getBaseContext();
+                    if ( builder.contextFactory ) {
+                        return builder.contextFactory( base, this as unknown as InstanceType<TAdapter> );
+                    }
+                    return base as unknown as TContext;
                 }
             };
 

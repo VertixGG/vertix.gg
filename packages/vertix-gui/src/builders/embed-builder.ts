@@ -19,6 +19,7 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
     private color: NumberHandler<TVars> | undefined;
     private image: StringHandler<TVars> | undefined;
     private options: OptionsHandler<TVars> | undefined;
+    private footer: StringHandler<TVars> | undefined;
     private arrayOptions: OptionsHandler<TVars> | undefined;
     private logic: LogicHandler<TArgs, TVars> | undefined;
     private vars: TVars | undefined;
@@ -55,6 +56,11 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
 
     public setOptions( options: OptionsHandler<TVars> ): this {
         this.options = options;
+        return this;
+    }
+
+    public setFooterText( footer: StringHandler<TVars> ): this {
+        this.footer = footer;
         return this;
     }
 
@@ -127,6 +133,15 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
                     )( builder.vars as TVars );
                 }
                 return builder.options || {};
+            }
+
+            protected getFooter() {
+                if ( typeof builder.footer === "function" ) {
+                    return (
+                        builder.footer as Function
+                    )( builder.vars as TVars );
+                }
+                return builder.footer || "";
             }
 
             protected getArrayOptions() {

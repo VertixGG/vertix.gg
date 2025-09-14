@@ -4,7 +4,7 @@ import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 
-import type { UIArgs, UIComponentTypeConstructor, UIExecutionSteps, UIAdapterBuildSource } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIExecutionSteps } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
@@ -16,6 +16,7 @@ import type {
 import type {
     IWizardAdapterContext,
     BeforeFinishHandler,
+    IAdapterContext,
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 export interface IWizardComponentConfig {
@@ -103,13 +104,12 @@ export class WizardAdapterBuilder<
             }
 
             protected getContext(): IWizardAdapterContext<TInteraction, TArgs> {
-                const baseContext = super.getContext();
+                const baseContext = super.getContext() as IAdapterContext<TInteraction, TArgs>;
                 return {
                     ...baseContext,
                     editReplyWithStep: this.editReplyWithStep.bind( this ),
                     ephemeralWithStep: this.ephemeralWithStep.bind( this ),
                     getCurrentExecutionStep: this.getCurrentExecutionStep.bind( this ),
-                    getArgsManager: () => this.getArgsManager(),
                     getName: () => this.getName()
                 };
             }

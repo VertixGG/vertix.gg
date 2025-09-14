@@ -21,11 +21,15 @@ export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TAr
     readonly logger: Logger;
     readonly customIdStrategy: UICustomIdStrategyBase;
     getInstance: () => UIAdapterBase<any, any>;
+    getArgsManager: () => UIArgsManager;
     getComponent: () => UIComponentBase;
     deleteArgs: ( interaction: TInteraction ) => void;
     ephemeral: ( interaction: TInteraction, args?: TArgs, deletePrevious?: boolean ) => Promise<void>;
     editReply: ( interaction: TInteraction, args?: TArgs ) => Promise<void | {}>;
     showModal: ( name: string, interaction: MessageComponentInteraction<"cached"> ) => Promise<void>;
+
+    getArgs: UIArgsManager["getArgs"];
+    setArgs: UIArgsManager["setArgs"];
 }
 
 export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
@@ -38,7 +42,14 @@ export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContex
         deletePrevious?: boolean
     ) => Promise<void>;
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
-    getArgsManager: () => UIArgsManager;
+    getName: () => string;
+}
+
+export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
+    extends IAdapterContext<TInteraction, TArgs> {
+    editReplyWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
+    ephemeralWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs, deletePrevious?: boolean ) => Promise<void>;
+    getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
     getName: () => string;
 }
 

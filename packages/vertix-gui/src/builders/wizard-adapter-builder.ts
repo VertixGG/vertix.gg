@@ -19,9 +19,11 @@ import type {
     IAdapterContext,
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 
+import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 export interface IWizardComponentConfig {
     name: string;
-    components: ( typeof UIComponentBase )[];
+    components: UIComponentTypeConstructor[];
 }
 
 export class WizardAdapterBuilder<

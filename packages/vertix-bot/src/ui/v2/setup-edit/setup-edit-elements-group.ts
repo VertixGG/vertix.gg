@@ -10,7 +10,7 @@ import { LogChannelSelectMenu } from "@vertix.gg/bot/src/ui/v2/logs-channel/log-
 
 export class SetupEditElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V2/SetupEditElementsGroup";
+        return "VertixBot/UI-V2/SetupEditElementsGroup";
     }
 
     public static getItems() {

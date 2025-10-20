@@ -35,7 +35,7 @@ export class DynamicChannelEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelEmbed";
+        return "VertixBot/UI-V2/DynamicChannelEmbed";
     }
 
     public static getInstanceType() {

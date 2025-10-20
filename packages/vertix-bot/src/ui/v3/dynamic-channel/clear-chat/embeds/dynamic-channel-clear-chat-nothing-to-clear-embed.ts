@@ -13,7 +13,7 @@ const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmb
 
 export class DynamicChannelClearChatNothingToClearEmbed extends DynamicChannelEmbedBaseWithVars {
     public static getName(): string {
-        return "Vertix/UI-V3/DynamicChannelClearChatNothingToClearEmbed";
+        return "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed";
     }
 
     public static getInstanceType() {

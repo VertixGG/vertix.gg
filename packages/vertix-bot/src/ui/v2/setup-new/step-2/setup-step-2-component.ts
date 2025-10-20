@@ -9,7 +9,7 @@ import { SetupStep2Embed } from "@vertix.gg/bot/src/ui/v2/setup-new/step-2/setup
 
 export class SetupStep2Component extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/SetupStep2Component";
+        return "VertixBot/UI-V2/SetupStep2Component";
     }
 
     public static getInstanceType() {

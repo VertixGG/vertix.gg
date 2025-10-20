@@ -22,7 +22,7 @@ export abstract class DynamicChannelAdapterExuBase<
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelAdapterExuBase";
+        return "VertixBot/UI-V2/DynamicChannelAdapterExuBase";
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

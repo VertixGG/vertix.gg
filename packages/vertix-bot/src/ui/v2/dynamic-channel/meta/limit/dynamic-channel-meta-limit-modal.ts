@@ -5,7 +5,7 @@ import { DynamicChannelMetaLimitInput } from "@vertix.gg/bot/src/ui/v2/dynamic-c
 
 export class DynamicChannelMetaLimitModal extends UIModalBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaLimitModal";
+        return "VertixBot/UI-V2/DynamicChannelMetaLimitModal";
     }
 
     public static getInstanceType() {

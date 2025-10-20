@@ -9,7 +9,7 @@ import { DynamicChannelPrimaryMessageEditTitleEmbed } from "@vertix.gg/bot/src/u
 
 export class DynamicChannelPrimaryMessageEditTitleComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent";
     }
 
     public static getInstanceType() {

@@ -16,7 +16,7 @@ import { DynamicChannelClearChatButton } from "@vertix.gg/bot/src/ui/v3/dynamic-
 
 export class DynamicChannelClearChatComponent extends UIComponentBase {
     public static getName(): string {
-        return "Vertix/UI-V3/DynamicChannelClearChatComponent";
+        return "VertixBot/UI-V3/DynamicChannelClearChatComponent";
     }
 
     public static getInstanceType() {

@@ -11,7 +11,7 @@ const MAX_BUTTONS_PER_ROW = 3;
 
 export class ClaimVoteElementsGroup extends UIElementsGroupBase {
     public static getName() {
-        return "Vertix/UI-V3/ClaimVoteElementsGroup";
+        return "VertixBot/UI-V3/ClaimVoteElementsGroup";
     }
 
     public static getItems( args?: UIArgs ) {

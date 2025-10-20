@@ -2,6 +2,6 @@ import { DynamicChannelPrimaryMessageEditTitleButton } from "@vertix.gg/bot/src/
 
 export class DynamicChannelPrimaryMessageEditDescriptionEditButton extends DynamicChannelPrimaryMessageEditTitleButton {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton";
     }
 }

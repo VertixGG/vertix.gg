@@ -5,7 +5,7 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 export class DynamicChannelTransferOwnerTransferredEmbed extends UIEmbedBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelTransferOwnerTransferredEmbed";
+        return "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

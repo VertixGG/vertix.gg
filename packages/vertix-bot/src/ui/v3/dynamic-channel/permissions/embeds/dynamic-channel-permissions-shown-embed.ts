@@ -5,7 +5,7 @@ export class DynamicChannelPermissionsShownEmbed extends UIEmbedBase {
     private static vars = {};
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPermissionsShownEmbed";
+        return "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

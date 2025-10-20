@@ -5,7 +5,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class DynamicChannelPrimaryMessageEditTitleButton extends UIElementButtonBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton";
     }
 
     public static getInstanceType() {

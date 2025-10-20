@@ -6,7 +6,7 @@ import type { IRequireId } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/r
 
 export abstract class DynamicChannelStringMenuBase extends UIElementStringSelectMenu implements IRequireId {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelStringMenuBase";
+        return "VertixBot/UI-V3/DynamicChannelStringMenuBase";
     }
 
     public static getInstanceType() {

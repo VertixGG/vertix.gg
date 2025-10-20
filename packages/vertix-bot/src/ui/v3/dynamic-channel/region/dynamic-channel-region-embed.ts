@@ -23,7 +23,7 @@ const vars = new UIEmbedVars( "region", "regionOptions", "regionEmoji", ...utcRe
 
 export class DynamicChannelRegionEmbed extends UIEmbedWithVarsExtend( DynamicChannelEmbedBase, vars ) {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRegionEmbed";
+        return "VertixBot/UI-V3/DynamicChannelRegionEmbed";
     }
 
     protected getImage(): string {

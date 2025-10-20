@@ -12,7 +12,7 @@ import {
 
 export class DynamicChannelMetaRenameComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaRenameComponent";
+        return "VertixBot/UI-V2/DynamicChannelMetaRenameComponent";
     }
 
     public static getInstanceType() {

@@ -98,7 +98,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     private uiInitialLanguage!: UILanguageJSON;
 
     public static getName() {
-        return "Vertix/UI-V2/LanguageManager";
+        return "VertixBot/UI-V2/LanguageManager";
     }
 
     public static getInstance() {

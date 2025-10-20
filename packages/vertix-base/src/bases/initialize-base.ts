@@ -10,7 +10,9 @@ export abstract class InitializeBase extends ObjectBase {
 
         this.logger = new Logger( this );
 
-        this.initialize && shouldInitialize && this.initialize();
+        if ( this.initialize && shouldInitialize ) {
+            this.initialize();
+        }
     }
 
     protected initialize?(): void;

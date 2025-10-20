@@ -10,6 +10,11 @@ import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
 import type { PermissionOverwriteManager, PermissionOverwrites } from "discord.js";
 
+// Define options interface for Debugger
+interface DebuggerOptions {
+    skipEventBusHook?: boolean;
+}
+
 export class Debugger extends ObjectBase {
     private logger!: Logger;
 
@@ -22,12 +27,15 @@ export class Debugger extends ObjectBase {
     public constructor(
         owner: ObjectBase | typeof ObjectBase | string,
         prefix?: string,
-        private shouldDebug = Logger.isDebugEnabled()
+        private shouldDebug = Logger.isDebugEnabled(),
+        options?: DebuggerOptions // Add options parameter
     ) {
         super();
 
         if ( shouldDebug ) {
-            this.logger = new Logger( owner );
+            // Pass logger options down if skipEventBusHook is set
+            const loggerOptions = options?.skipEventBusHook ? { skipEventBusHook: true } : undefined;
+            this.logger = new Logger( owner, loggerOptions );
 
             if ( prefix ) {
                 this.logger.addMessagePrefix( prefix );

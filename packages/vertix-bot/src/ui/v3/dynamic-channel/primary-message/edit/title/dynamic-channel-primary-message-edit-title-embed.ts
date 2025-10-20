@@ -33,7 +33,7 @@ export class DynamicChannelPrimaryMessageEditTitleEmbed extends DynamicChannelEm
     );
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed";
     }
 
     protected getImage(): string {

@@ -14,7 +14,7 @@ import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui/v3/claim/vote/cl
 
 export class ClaimVoteComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/ClaimVoteComponent";
+        return "VertixBot/UI-V3/ClaimVoteComponent";
     }
 
     public static getInstanceType() {

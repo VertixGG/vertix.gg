@@ -9,7 +9,7 @@ import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/
  */
 export class ClaimResultVoteSelfEmbed extends UIEmbedBase {
     public static getName() {
-        return "Vertix/UI-V3/ClaimResultVoteSelfEmbed";
+        return "VertixBot/UI-V3/ClaimResultVoteSelfEmbed";
     }
 
     public static getInstanceType() {

@@ -18,6 +18,10 @@ export abstract class ObjectBase {
         throw new ForceMethodBase( this.name, "getName" );
     }
 
+    public static getSourcePath(): string {
+        throw new ForceMethodBase( this.name, "getSourcePath" );
+    }
+
     public getName(): string {
         return ( this.constructor as typeof ObjectBase ).getName();
     }
@@ -31,7 +35,7 @@ export abstract class ObjectBase {
     }
 
     public getHierarchyNames(): string[] {
-        let classNames = [];
+        const classNames = [];
         let obj = Object.getPrototypeOf( this );
         let className: string;
 
@@ -49,6 +53,7 @@ export abstract class ObjectBase {
 }
 
 export abstract class TObjectMixinBase extends ObjectBase {
+
     protected constructor( ..._args: any[] ) {
         super();
     }

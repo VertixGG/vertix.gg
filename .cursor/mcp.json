@@ -1,0 +1,25 @@
+{
+    "mcpServers": {
+      "browser-tools-mcp-server": {
+        "id": "browser-tools-mcp",
+        "name": "Browser Tools MCP",
+        "command": "npx",
+        "args": ["@agentdeskai/browser-tools-mcp@latest"],
+        "enabled": true
+      },
+      "Vertix Backend Logger MCP": {
+        "name": "Vertix Backend Logger",
+        "type": "sse",
+        "url": "http://localhost:3090/mcp",
+        "enabled": true
+      },
+      "MCP Installer": {
+        "command": "npx",
+        "type": "stdio",
+        "args": [
+          "cursor-mcp-installer-free@0.1.3",
+          "index.mjs"
+        ]
+      }
+    }
+  }

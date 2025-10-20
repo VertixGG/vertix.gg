@@ -65,7 +65,7 @@ type Interactions =
     | UIDefaultChannelSelectMenuChannelTextInteraction
     | UIDefaultModalChannelTextInteraction;
 
-const SetupEditButtonsEffectEmbed = new EmbedBuilder( "Vertix/UI-V3/SetupEditButtonsEffectEmbed", SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS )
+const SetupEditButtonsEffectEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditButtonsEffectEmbed", SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🎚  Edit Buttons Of Master Channel #${ v.index }` )
@@ -80,7 +80,7 @@ const SetupEditButtonsEffectEmbed = new EmbedBuilder( "Vertix/UI-V3/SetupEditBut
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupEditButtonsEmbed = new EmbedBuilder( "Vertix/UI-V3/SetupEditButtonsEmbed", SETUP_EDIT_BUTTONS_EMBED_VARS )
+const SetupEditButtonsEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditButtonsEmbed", SETUP_EDIT_BUTTONS_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🎚  Edit Buttons Of Master Channel #${ v.index }` )
@@ -116,7 +116,7 @@ const SetupEditButtonsEmbed = new EmbedBuilder( "Vertix/UI-V3/SetupEditButtonsEm
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "Vertix/UI-V3/SetupEditVerifiedRolesEmbed", SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS )
+const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed", SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🛡️  Edit Verified Roles Of Master Channel #${ v.index }` )
@@ -140,7 +140,7 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "Vertix/UI-V3/SetupEditVer
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "Vertix/UI-V3/SetupEditEmbed", SETUP_EDIT_EMBED_VARS )
+const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "VertixBot/UI-V3/SetupEditEmbed", SETUP_EDIT_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🔧  Configure Master Channel #${ v.index }` )
@@ -222,24 +222,24 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupEditElementsGroup = new ElementsGroupBuilder( "Vertix/UI-V3/SetupEditElementsGroup" )
+const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditElementsGroup" )
     .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )
     .addRow( [ LogChannelSelectMenu ] )
     .addRow( [ DoneButton ] )
     .build();
 
-const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "Vertix/UI-V3/SetupEditButtonsElementsGroup" )
+const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsElementsGroup" )
     .addRow( [ ChannelButtonsTemplateSelectMenu ] )
     .addRow( [ DoneButton ] )
     .build();
 
-const SetupEditButtonsEffectElementsGroup = new ElementsGroupBuilder( "Vertix/UI-V3/SetupEditButtonsEffectElementsGroup" )
+const SetupEditButtonsEffectElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup" )
     .addRow( [ ChannelButtonsTemplateSelectMenu ] )
     .addRow( [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ] )
     .build();
 
-const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "Vertix/UI-V3/SetupEditVerifiedRolesElementsGroup" )
+const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup" )
     .setItems( () => {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
         const { WizardBackButton, WizardFinishButton } = uiService.$$.getSystemElements();
@@ -247,7 +247,7 @@ const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "Vertix/UI
     } )
     .build();
 
-const SetupEditComponent = new ComponentBuilder( "Vertix/UI-V3/ConfigComponent" )
+const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponent" )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
     .addElementsGroup( SetupEditButtonsEffectElementsGroup )
@@ -257,8 +257,8 @@ const SetupEditComponent = new ComponentBuilder( "Vertix/UI-V3/ConfigComponent" 
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
     .addModal( ChannelNameTemplateModal )
-    .setDefaultElementsGroup( "Vertix/UI-V3/SetupEditElementsGroup" )
-    .setDefaultEmbedsGroup( "Vertix/UI-V3/SetupEditEmbedGroup" )
+    .setDefaultElementsGroup( "VertixBot/UI-V3/SetupEditElementsGroup" )
+    .setDefaultEmbedsGroup( "VertixBot/UI-V3/SetupEditEmbedGroup" )
     .setInstanceType( UIInstancesTypes.Static )
     .build();
 
@@ -289,7 +289,7 @@ async function onSetupMasterEditSelected(
 
     context.setArgs( interaction, args );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onSelectEditOptionSelected(
@@ -303,11 +303,11 @@ async function onSelectEditOptionSelected(
             break;
 
         case "edit-dynamic-channel-buttons":
-            await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditButtons" );
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
             break;
 
         case "edit-dynamic-channel-verified-roles":
-            await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditVerifiedRoles" );
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
             break;
     }
 }
@@ -317,7 +317,7 @@ async function onTemplateEditModalSubmitted(
     interaction: UIDefaultModalChannelTextInteraction
 ) {
     const channelNameInputId = context.customIdStrategy.generateId(
-        "Vertix/UI-V3/SetupEditAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
+        "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
     );
 
     const value = interaction.fields.getTextInputValue( channelNameInputId ),
@@ -339,7 +339,7 @@ async function onTemplateEditModalSubmitted(
 
     await MasterChannelDataManager.$.setChannelNameTemplate( masterChannelDB, value );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onButtonsSelected(
@@ -350,7 +350,7 @@ async function onButtonsSelected(
         dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( interaction.values )
     } );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditButtonsEffect" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtonsEffect" );
 }
 
 async function onButtonsEffectImmediatelyButtonsClicked(
@@ -368,7 +368,7 @@ async function onButtonsEffectImmediatelyButtonsClicked(
     await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
 
     const claimChannelButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
-        "Vertix/UI-V3/DynamicChannelClaimChannelButton"
+        "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
     )?.getId();
 
     if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
@@ -389,7 +389,7 @@ async function onButtonsEffectImmediatelyButtonsClicked(
                 dynamicChannelService.editPrimaryMessageDebounce( channel );
             }
 
-            DynamicChannelClaimManager.get( "Vertix/UI-V3/DynamicChannelClaimManager" )
+            DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" )
                 .handleAbandonedChannels( appService.getClient(), [], channels )
                 .catch( ( e ) => {
                     throw e;
@@ -397,7 +397,7 @@ async function onButtonsEffectImmediatelyButtonsClicked(
         } );
     }
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onButtonsEffectNewlyButtonClicked(
@@ -413,7 +413,7 @@ async function onButtonsEffectNewlyButtonClicked(
     };
     await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onDoneButtonClicked(
@@ -429,11 +429,11 @@ async function onDoneButtonClicked(
     }
 
     switch ( context.getCurrentExecutionStep( interaction )?.name ) {
-        case "Vertix/UI-V3/SetupEditButtons":
-            await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+        case "VertixBot/UI-V3/SetupEditButtons":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
             break;
 
-        case "Vertix/UI-V3/SetupEditMaster":
+        case "VertixBot/UI-V3/SetupEditMaster":
             context.deleteArgs( interaction );
             ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
                 .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, {} );
@@ -478,7 +478,7 @@ async function onConfigExtrasSelected(
 
     context.setArgs( interaction, args );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onLogChannelSelected(
@@ -499,7 +499,7 @@ async function onLogChannelSelected(
 
     context.setArgs( interaction, args );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onVerifiedRolesSelected(
@@ -518,7 +518,7 @@ async function onVerifiedRolesSelected(
         _wizardIsFinishButtonDisabled: !roles.length
     } );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditVerifiedRoles" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
 }
 
 async function onVerifiedRolesEveryoneSelected(
@@ -553,7 +553,7 @@ async function onVerifiedRolesEveryoneSelected(
 
     context.setArgs( interaction, args );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditVerifiedRoles" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
 }
 
 async function onBackButtonClicked(
@@ -586,7 +586,7 @@ async function onBackButtonClicked(
 
     context.setArgs( interaction, args );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onFinishButtonClicked(
@@ -608,32 +608,32 @@ async function onFinishButtonClicked(
 
     await MasterChannelDataManager.$.setChannelVerifiedRoles( masterChannelDB, interaction.guildId, args.dynamicChannelVerifiedRoles );
 
-    await context.editReplyWithStep( interaction, "Vertix/UI-V3/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
-const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interactions>( "Vertix/UI-V3/SetupEditAdapter" )
+const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interactions>( "VertixBot/UI-V3/SetupEditAdapter" )
     .setComponent( SetupEditComponent )
     .setExcludedElements( [ SetupMasterEditSelectMenu ] )
     .setExecutionSteps( {
         default: {},
 
-        "Vertix/UI-V3/SetupEditMaster": {
-            elementsGroup: "Vertix/UI-V3/SetupEditElementsGroup",
-            embedsGroup: "Vertix/UI-V3/SetupEditEmbedGroup"
+        "VertixBot/UI-V3/SetupEditMaster": {
+            elementsGroup: "VertixBot/UI-V3/SetupEditElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/SetupEditEmbedGroup"
         },
 
-        "Vertix/UI-V3/SetupEditButtons": {
-            elementsGroup: "Vertix/UI-V3/SetupEditButtonsElementsGroup",
-            embedsGroup: "Vertix/UI-V3/SetupEditButtonsEmbedGroup"
+        "VertixBot/UI-V3/SetupEditButtons": {
+            elementsGroup: "VertixBot/UI-V3/SetupEditButtonsElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEmbedGroup"
         },
-        "Vertix/UI-V3/SetupEditButtonsEffect": {
-            elementsGroup: "Vertix/UI-V3/SetupEditButtonsEffectElementsGroup",
-            embedsGroup: "Vertix/UI-V3/SetupEditButtonsEffectEmbedGroup"
+        "VertixBot/UI-V3/SetupEditButtonsEffect": {
+            elementsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup"
         },
 
-        "Vertix/UI-V3/SetupEditVerifiedRoles": {
-            elementsGroup: "Vertix/UI-V3/SetupEditVerifiedRolesElementsGroup",
-            embedsGroup: "Vertix/UI-V3/SetupEditVerifiedRolesEmbedGroup"
+        "VertixBot/UI-V3/SetupEditVerifiedRoles": {
+            elementsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup"
         }
     } )
     .getStartArgs( async() => ( {} ) )
@@ -685,7 +685,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V3/SetupEditSelectEditOptionMenu",
+            "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
             onSelectEditOptionSelected
         );
 
@@ -695,17 +695,17 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V3/ChannelButtonsTemplateSelectMenu",
+            "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
             onButtonsSelected
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
-            "Vertix/UI-V3/SetupEditButtonsEffectImmediatelyButton",
+            "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
             onButtonsEffectImmediatelyButtonsClicked
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
-            "Vertix/UI-V3/SetupEditButtonsEffectNewlyButton",
+            "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
             onButtonsEffectNewlyButtonClicked
         );
 
@@ -715,7 +715,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V3/LogChannelSelectMenu",
+            "VertixBot/UI-V3/LogChannelSelectMenu",
             onLogChannelSelected
         );
 

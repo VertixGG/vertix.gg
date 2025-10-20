@@ -1,0 +1,78 @@
+{
+    "folders": [
+        {
+            "name": "Root",
+            "path": "."
+        },
+        {
+            "name": "Base",
+            "path": "./packages/vertix-base"
+        },
+        {
+            "name": "Bot",
+            "path": "./packages/vertix-bot"
+        },
+        {
+            "name": "GUI",
+            "path": "./packages/vertix-gui"
+        },
+        {
+            "name": "Flow",
+            "path": "./packages/vertix-flow"
+        },
+        {
+            "name": "Website",
+            "path": "./packages/vertix-website"
+        },
+        {
+            "name": "Utils",
+            "path": "./packages/vertix-utils"
+        },
+        {
+            "name": "Prisma",
+            "path": "./packages/vertix-prisma"
+        },
+        {
+            "name": "Test-Utils",
+            "path": "./packages/vertix-test-utils"
+        }
+    ],
+    "settings": {
+        "prettier.enable": false,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/dist": true,
+            "**/.git": true
+        },
+        "files.exclude": {
+            "**/.git": true,
+            "**/node_modules": true,
+            "**/dist": true,
+            "**/.next": true,
+            "**/packages/**": true
+        },
+        "tailwindCSS.includeLanguages": {
+            "typescript": "javascript",
+            "typescriptreact": "javascript"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "eslint.workingDirectories": [{ "mode": "auto" }],
+        "eslint.useFlatConfig": true,
+        "typescript.tsserver.maxTsServerMemory": 8072
+    },
+    "extensions": {
+        "recommendations": [
+            "dbaeumer.vscode-eslint",
+            "bradlc.vscode-tailwindcss",
+            "ms-vscode.vscode-typescript-next",
+            "streetsidesoftware.code-spell-checker",
+            "oven.bun-vscode",
+            "Prisma.prisma"
+        ]
+    }
+}

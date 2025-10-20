@@ -69,7 +69,7 @@ async function onTemplateNameModalSubmit(
     interaction: UIDefaultModalChannelTextInteraction
 ) {
     const channelNameInputId = context.customIdStrategy.generateId(
-        "Vertix/UI-V3/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
+        "VertixBot/UI-V3/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
     );
 
     const value = interaction.fields.getTextInputValue( channelNameInputId );
@@ -106,7 +106,7 @@ async function onConfigExtrasSelected(
     values.forEach( ( value ) => {
         const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
-        switch ( parted[ 0 ] ) {
+        switch( parted[ 0 ] ) {
             case "dynamicChannelMentionable":
                 args.dynamicChannelMentionable = !!parseInt( parted[ 1 ] );
                 break;
@@ -129,7 +129,7 @@ async function onVerifiedRolesSelected(
     const args = { ...context.getArgs( interaction ) };
     const roles = interaction.values;
 
-    if ( args.dynamicChannelIncludeEveryoneRole ) {
+    if( args.dynamicChannelIncludeEveryoneRole ) {
         roles.push( interaction.guildId );
     }
 
@@ -151,17 +151,17 @@ async function onVerifiedRolesEveryoneSelected(
     values.forEach( ( value ) => {
         const parted = value.split( UI_CUSTOM_ID_SEPARATOR );
 
-        switch ( parted[ 0 ] ) {
+        switch( parted[ 0 ] ) {
             case "dynamicChannelIncludeEveryoneRole":
                 const state = !!parseInt( parted[ 1 ] );
                 const isEveryoneExist = args.dynamicChannelVerifiedRoles?.includes( interaction.guildId );
 
                 args.dynamicChannelIncludeEveryoneRole = state;
 
-                if ( state && !isEveryoneExist ) {
+                if( state && !isEveryoneExist ) {
                     args.dynamicChannelVerifiedRoles = args.dynamicChannelVerifiedRoles || [];
                     args.dynamicChannelVerifiedRoles.push( interaction.guildId );
-                } else if ( !state && isEveryoneExist ) {
+                } else if( !state && isEveryoneExist ) {
                     args.dynamicChannelVerifiedRoles.splice(
                         args.dynamicChannelVerifiedRoles.indexOf( interaction.guildId ),
                         1
@@ -216,7 +216,7 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         on: "`🟢∙On`",
         off: "`🔴∙Off`",
         message: {
-            [ vars.defaultMessage ]: `${ vars.dynamicChannelButtonsTemplate }\n`,
+            [ vars.defaultMessage ]: `${vars.dynamicChannelButtonsTemplate}\n`,
             [ vars.noButtonsMessage ]: "There are no buttons selected!\n"
         },
         configUserMention: {
@@ -279,7 +279,7 @@ const SetupStep3Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep3Embed", 
         "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
         "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
         "**_🛡️ Verified Roles_**\n\n" +
-        `> ${ vars.verifiedRolesDisplay }\n\n` +
+        `> ${vars.verifiedRolesDisplay}\n\n` +
         "You can keep the default settings by pressing **( `✓ Finish` )** button."
     )
     .setOptions( ( vars ) => ( {
@@ -318,7 +318,7 @@ const SetupStep3Component = new ComponentBuilder( "VertixBot/UI-V3/SetupStep3Com
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, WizardInteractions>( "Vertix/UI-V3/SetupNewWizardAdapter" )
+const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, WizardInteractions>( "VertixBot/UI-V3/SetupNewWizardAdapter" )
     .setComponents( {
         name: "VertixBot/UI-V3/SetupNewWizardComponent",
         components: [ SetupStep1Component, SetupStep2Component, SetupStep3Component ]
@@ -341,7 +341,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const result: UIArgs = {};
 
-        switch ( context.getCurrentExecutionStep( interaction )?.name ) {
+        switch( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-General/SetupNewWizardMaxMasterChannels":
                 result.maxMasterChannels = argsFromManager.maxMasterChannels;
                 break;
@@ -366,7 +366,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V3/ChannelButtonsTemplateSelectMenu",
+            "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
             onButtonsSelected
         );
 
@@ -386,7 +386,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         );
     } )
     .onBeforeBuildPrototype( async( context, args, _from, interaction ) => {
-        switch ( context.getCurrentExecutionStep( interaction )?.name ) {
+        switch( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-General/SetupStep2Component":
                 args._configExtraMenuDisableLogsChannelOption = true;
                 break;
@@ -420,7 +420,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             version: VERSION_UI_V3
         } );
 
-        switch ( result.code ) {
+        switch( result.code ) {
             case "success":
                 // TODO: Need access to regenerate method
                 ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
@@ -449,5 +449,5 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     // } )
     .build();
 
-export { SetupNewWizardAdapter };
+export { SetupNewWizardAdapter, SetupStep1Component, SetupStep2Component, SetupStep3Component };
 

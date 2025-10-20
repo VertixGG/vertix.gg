@@ -5,5 +5,6 @@
     },
     "prettier.enable": false,
     "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-    "npm.packageManager": "bun"
+    "npm.packageManager": "bun",
+    "eslint.useFlatConfig": true
 }

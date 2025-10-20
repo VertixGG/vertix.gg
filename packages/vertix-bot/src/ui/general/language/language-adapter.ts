@@ -41,15 +41,6 @@ export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDe
     }
 
     private async onDoneClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-                return;
-            }
-        }
-
         this.uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
     }
 }

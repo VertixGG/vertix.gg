@@ -10,17 +10,19 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
+import { zFindRootPackageJsonPath } from "@zenflux/utils/workspace";
+
 import type { Client } from "discord.js";
 
 interface PackageJson {
     version: string;
 
-    [ key: string ]: any;
+    [key: string]: any;
 }
 
-const packageJsonPath = path.resolve( "./package.json" );
-const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
-const packageJson: PackageJson = JSON.parse( packageJsonString );
+const packageJsonPath = path.resolve(path.dirname(zFindRootPackageJsonPath()), "packages/vertix-bot/package.json");
+const packageJsonString = fs.readFileSync(packageJsonPath, { encoding: "utf8" });
+const packageJson: PackageJson = JSON.parse(packageJsonString);
 
 export class AppService extends ServiceBase {
     private client: Client<true>;
@@ -44,7 +46,7 @@ export class AppService extends ServiceBase {
     public constructor() {
         super();
 
-        EventBus.$.register( this, [ this.onReady ] );
+        EventBus.$.register(this, [this.onReady]);
 
         this.printVersion();
     }
@@ -53,35 +55,35 @@ export class AppService extends ServiceBase {
         return this.client;
     }
 
-    public onceReady( onceReady: () => Promise<void> ) {
-        if ( this.isActive ) {
+    public onceReady(onceReady: () => Promise<void>) {
+        if (this.isActive) {
             onceReady();
             return;
         }
 
-        this.onceReadyCallbacks.push( onceReady );
+        this.onceReadyCallbacks.push(onceReady);
     }
 
-    public async onReady( client: Client<true> ) {
-        if ( this.client ) {
-            this.logger.error( this.onReady, "Client is already set" );
+    public async onReady(client: Client<true>) {
+        if (this.client) {
+            this.logger.error(this.onReady, "Client is already set");
 
-            process.exit( 1 );
+            process.exit(1);
         }
 
         this.client = client;
 
-        if ( ! client.user || ! client.application ) {
-            this.logger.error( this.onReady, "Client is not ready" );
+        if (!client.user || !client.application) {
+            this.logger.error(this.onReady, "Client is not ready");
 
-            process.exit( 1 );
+            process.exit(1);
         }
 
-        const { Commands } = await import( "@vertix.gg/bot/src/commands" );
+        const { Commands } = await import("@vertix.gg/bot/src/commands");
 
-        await client.application.commands.set( Commands );
+        await client.application.commands.set(Commands);
 
-        this.logger.info( this.onReady, "Abandoned channels are handled." );
+        this.logger.info(this.onReady, "Abandoned channels are handled.");
 
         await this.ensureBackwardCompatibility();
 
@@ -90,14 +92,14 @@ export class AppService extends ServiceBase {
 
         this.logger.log(
             this.onReady,
-            `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.`
+            `Ready handle is set, bot: '${username}', id: '${id}' is online, commands is set.`
         );
 
         this.pingInterval();
 
         this.isActive = true;
 
-        await Promise.all( this.onceReadyCallbacks.map( callback => callback() ) );
+        await Promise.all(this.onceReadyCallbacks.map(callback => callback()));
     }
 
     private async ensureBackwardCompatibility() {
@@ -146,15 +148,15 @@ export class AppService extends ServiceBase {
     }
 
     private pingInterval() {
-        setInterval( () => {
-            this.logger.log( this.pingInterval, `Ping: ${ this.client.ws.ping }ms` );
-        }, 30000 );
+        setInterval(() => {
+            this.logger.log(this.pingInterval, `Ping: ${this.client.ws.ping}ms`);
+        }, 30000);
     }
 
     private printVersion() {
         this.logger.info(
             this.printVersion,
-            `Version: '${ AppService.getVersion() }' Build version: ${ AppService.getBuildVersion() }'`
+            `Version: '${AppService.getVersion()}' Build version: ${AppService.getBuildVersion()}'`
         );
     }
 }

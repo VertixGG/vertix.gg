@@ -4,13 +4,13 @@ import { convertTsConfig, readTsConfig } from "@zenflux/tsconfig-to-swc";
 
 import { fileURLToPath } from "node:url";
 
-import type { Config } from "@jest/types";
+import type { Config } from "jest";
 
 const currentDir = path.dirname( fileURLToPath( import.meta.url ) );
 
 const tsConfig = readTsConfig( path.join( currentDir, "test", "tsconfig.json" ) ),
     swcOptions = convertTsConfig( tsConfig );
-const config: Config.InitialProjectOptions = {
+const config: Config = {
     testRegex: "(/test/.*\\.spec\\.ts)$",
 
     setupFilesAfterEnv: [ "<rootDir>/test/__setup__.ts" ],

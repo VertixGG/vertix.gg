@@ -94,7 +94,7 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
         return {};
     }
 
-    protected async getReplyArgs( interaction: Interactions, argsFromManager?: UIArgs ) {
+    protected async getReplyArgs( interaction: SetupEditInteractions, argsFromManager?: UIArgs ) {
         let args: UIArgs = {};
 
         if ( argsFromManager?.dynamicChannelButtonsTemplate ) {

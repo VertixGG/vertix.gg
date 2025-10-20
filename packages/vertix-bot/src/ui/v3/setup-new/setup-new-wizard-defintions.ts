@@ -16,7 +16,12 @@ export const
         configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
         footer: uiUtilsWrapAsTemplate( "footer" ),
         defaultFooter: uiUtilsWrapAsTemplate( "defaultFooter" ),
-        noButtonsFooter: uiUtilsWrapAsTemplate( "noButtonsFooter" )
+        noButtonsFooter: uiUtilsWrapAsTemplate( "noButtonsFooter" ),
+        dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
     },
-    STEP_3_EMBED_VARS = {};
+    STEP_3_EMBED_VARS = {
+        verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
+        verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+        verifiedRolesDefault: uiUtilsWrapAsTemplate( "verifiedRolesDefault" )
+    };
 

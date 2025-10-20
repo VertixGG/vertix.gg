@@ -15,7 +15,7 @@ export abstract class UIModuleBase extends UIBase {
         return "VertixGUI/UIModuleBase";
     }
 
-    public static getAdapters(): TAdapterClassType[] {
+    public static getAdapters(): ReadonlyArray<TAdapterClassType> {
         throw new ForceMethodImplementation( this, this.getAdapters.name );
     }
 

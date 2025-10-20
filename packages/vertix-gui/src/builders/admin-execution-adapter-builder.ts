@@ -51,11 +51,26 @@ export class AdminExecutionAdapterBuilder<
                 const baseContext = super.getContext() as IAdapterContext<TInteraction, TArgs>;
                 return {
                     ...baseContext,
-                    editReplyWithStep: this.editReplyWithStep.bind( this ),
-                    ephemeralWithStep: this.ephemeralWithStep.bind( this ),
-                    getCurrentExecutionStep: this.getCurrentExecutionStep.bind( this ),
+                    editReplyWithStep: this.editReplyWithStepWrapper.bind( this ),
+                    ephemeralWithStep: this.ephemeralWithStepWrapper.bind( this ),
+                    getCurrentExecutionStep: this.getCurrentExecutionStepWrapper.bind( this ),
                     getName: () => this.getName()
                 } satisfies IExecutionAdapterContext<TInteraction, TArgs>;
+            }
+
+            private editReplyWithStepWrapper( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) {
+                const method = Reflect.get( this, "editReplyWithStep" ) as Function;
+                return method.call( this, interaction, stepName, sendArgs );
+            }
+
+            private ephemeralWithStepWrapper( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) {
+                const method = Reflect.get( this, "ephemeralWithStep" ) as Function;
+                return method.call( this, interaction, stepName, sendArgs );
+            }
+
+            private getCurrentExecutionStepWrapper( context?: TInteraction ) {
+                const method = Reflect.get( this, "getCurrentExecutionStep" ) as Function;
+                return method.call( this, context );
             }
         };
 

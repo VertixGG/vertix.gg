@@ -1,12 +1,9 @@
 import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
-import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
-
 import type { Logger } from "@vertix.gg/base/src/modules/logger";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import type { UIArgs, UIAdapterBuildSource, UIExecutionStepItem, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { UIArgsManager } from "@vertix.gg/gui/src/bases/ui-args-manager";
 import type {
     UIAdapterReplyContext,
     UIAdapterStartContext,
@@ -15,21 +12,24 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultChannelSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { MessageComponentInteraction } from "discord.js";
+import type { Message, MessageComponentInteraction } from "discord.js";
 
 export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs> {
     readonly logger: Logger;
     readonly customIdStrategy: UICustomIdStrategyBase;
-    getInstance: () => UIAdapterBase<any, any>;
-    getArgsManager: () => UIArgsManager;
+
+    getName: () => string;
     getComponent: () => UIComponentBase;
-    deleteArgs: ( interaction: TInteraction ) => void;
+
     ephemeral: ( interaction: TInteraction, args?: TArgs, deletePrevious?: boolean ) => Promise<void>;
     editReply: ( interaction: TInteraction, args?: TArgs ) => Promise<void | {}>;
-    showModal: ( name: string, interaction: MessageComponentInteraction<"cached"> ) => Promise<void>;
+    showModal: ( interaction: MessageComponentInteraction<"cached">, name: string ) => Promise<void>;
 
-    getArgs: UIArgsManager["getArgs"];
-    setArgs: UIArgsManager["setArgs"];
+    // Existing in base, part of args manager
+    deleteArgs: ( interaction: TInteraction ) => void;
+
+    getArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext ) => UIArgs;
+    setArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext, args: UIArgs ) => void;
 }
 
 export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
@@ -42,7 +42,6 @@ export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContex
         deletePrevious?: boolean
     ) => Promise<void>;
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
-    getName: () => string;
 }
 
 export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
@@ -50,7 +49,6 @@ export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyCon
     editReplyWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
     ephemeralWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs, deletePrevious?: boolean ) => Promise<void>;
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
-    getName: () => string;
 }
 
 export type GetStartArgsHandler<

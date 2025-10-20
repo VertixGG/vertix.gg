@@ -5,8 +5,6 @@ import { PermissionsBitField  } from "discord.js";
 
 import type { ChannelType } from "discord.js";
 
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
@@ -40,6 +38,7 @@ import type {
     IBinder,
     BeforeFinishHandler
 } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 type StartArgsHandler<TContext, TChannel, TArgs> = ( context: TContext, channel: TChannel ) => Promise<TArgs>;
 type ReplyArgsHandler<TContext, TInteraction, TArgs> = (
@@ -138,7 +137,7 @@ export class AdapterBuilderBase<
         return this;
     }
 
-    public onBeforeBuild( handler: BeforeBuildHandler<TInteraction, TArgs, TContext> ): this {
+    public onBeforeBuildPrototype( handler: BeforeBuildHandler<TInteraction, TArgs, TContext> ): this {
         this.beforeBuildHandler = handler;
         return this;
     }
@@ -280,32 +279,31 @@ export class AdapterBuilderBase<
 
                 protected getBaseContext() {
                     return {
-                        getInstance: () => this,
                         logger: AdapterBuilderBase.dedicatedLogger,
                         customIdStrategy: this.customIdStrategy,
-                        getArgsManager: () => this.getArgsManager(),
-                        getArgs: ( self, context ) => this.getArgsManager().getArgs( self, context ),
-                        setArgs: ( self, interaction, args ) => this.getArgsManager().setArgs( self, interaction, args ),
+                        getName: this.getName.bind( this ),
                         getComponent: this.getComponent.bind( this ),
+                        getArgs: (  context ) => this.getArgsManager().getArgs( this, context ),
+                        setArgs: ( interaction, args ) => this.getArgsManager().setArgs( this, interaction, args ),
                         deleteArgs: this.deleteArgs.bind( this ),
                         ephemeral: this.ephemeral.bind( this ),
                         editReply: this.editReply.bind( this ),
-                        showModal: this.showModal.bind( this )
+                        showModal: ( interaction, name ) => this.showModal( name, interaction )
                     } satisfies IAdapterContext<TInteraction, TArgs>;
                 }
 
                 protected getContext() {
                     const base = this.getBaseContext();
                     if ( builder.contextFactory ) {
-                        return builder.contextFactory( base, this as unknown as InstanceType<TAdapter> );
+                        return builder.contextFactory( base, this as InstanceType<TAdapter> );
                     }
-                    return base as unknown as TContext;
+                    return base as TContext;
                 }
             };
 
-            return AdapterBuilderGenerated as unknown as  {
-                new ( options: TAdapterRegisterOptions ): InstanceType<TAdapter> & InstanceType<typeof AdapterBuilderGenerated>;
-            };
+            return AdapterBuilderGenerated as TAdapterStaticContract & (
+                new ( options: TRegisterOptionsContract ) => InstanceType<typeof AdapterBuilderGenerated>
+            );
         }
 
         const AdapterClass = createAdapterClass();

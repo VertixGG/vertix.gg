@@ -187,7 +187,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     public registerModule<T extends TModuleConstructor>( Module: T ) {
         Module.validate();
 
-        const adapters = Module.getAdapters();
+        const adapters = Module.getAdapters() as ReadonlyArray<TAdapterClassType>;
 
         this.registerAdapters( adapters, { module: new Module() } );
     }
@@ -200,8 +200,8 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.$$.emitter.emit( "internal-adapters-registered" );
     }
 
-    public registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
-        adapters.forEach( ( adapter ) => {
+    public registerAdapters( adapters: ReadonlyArray<TAdapterClassType>, options: TAdapterRegisterOptions = {} ) {
+        adapters.forEach( ( adapter: TAdapterClassType ) => {
             this.registerAdapter( adapter, options );
         } );
     }
@@ -216,7 +216,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         // Each entity must be validated before it is registered.
         UIClass.validate();
 
-        const entities = UIClass.getComponent().getEntities();
+        const entities = ( UIClass.getComponent() as UIComponentTypeConstructor ).getEntities();
 
         // To have all hashes generated before the UI is created.
         for ( const entity of entities ) {

@@ -18,7 +18,7 @@ import type { ChannelService as ChannelServiceType } from "@vertix.gg/bot/src/se
 
 import type { PrismaBotClient as PrismaBotClientType } from "@vertix.gg/prisma/bot-client";
 
-import type { ThreadHost } from "@zenflux/worker/definitions";
+import type { DThreadHostInterface } from "@zenflux/worker/definitions";
 
 import type { VoiceChannel } from "discord.js";
 
@@ -460,7 +460,7 @@ class CleanupWorker extends InitializeBase {
     }
 }
 
-export function inWorker( threadHost: ThreadHost ) {
+export function inWorker( threadHost: DThreadHostInterface ) {
     ensureInWorker();
 
     return CleanupWorker.$.handle().catch( ( e ) => {

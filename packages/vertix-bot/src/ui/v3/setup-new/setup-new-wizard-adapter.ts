@@ -37,7 +37,7 @@ import {
     STEP_3_EMBED_VARS
 } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-defintions";
 
-import type { BaseGuildTextChannel, MessageComponentInteraction } from "discord.js";
+import type { BaseGuildTextChannel } from "discord.js";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -74,7 +74,7 @@ async function onTemplateNameModalSubmit(
 
     const value = interaction.fields.getTextInputValue( channelNameInputId );
 
-    context.getArgsManager().setArgs( context.getInstance(), interaction, {
+    context.setArgs( interaction, {
         dynamicChannelNameTemplate: value
     } );
 
@@ -85,11 +85,11 @@ async function onButtonsSelected(
     context: IWizardAdapterContext<WizardInteractions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const existingArgs = context.getArgsManager().getArgs( context.getInstance(), interaction );
+    const args = { ...context.getArgs( interaction ) };
     const buttonValues = interaction.values;
 
-    context.getArgsManager().setArgs( context.getInstance(), interaction, {
-        ...existingArgs,
+    context.setArgs( interaction, {
+        ...args,
         dynamicChannelButtonsTemplate: buttonValues
     } );
 
@@ -100,8 +100,7 @@ async function onConfigExtrasSelected(
     context: IWizardAdapterContext<WizardInteractions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const existingArgs = context.getArgsManager().getArgs( context.getInstance(), interaction );
-    const argsToSet: UIArgs = { ...existingArgs };
+    const args = { ...context.getArgs( interaction ) };
     const values = interaction.values;
 
     values.forEach( ( value ) => {
@@ -109,16 +108,16 @@ async function onConfigExtrasSelected(
 
         switch ( parted[ 0 ] ) {
             case "dynamicChannelMentionable":
-                argsToSet.dynamicChannelMentionable = !!parseInt( parted[ 1 ] );
+                args.dynamicChannelMentionable = !!parseInt( parted[ 1 ] );
                 break;
 
             case "dynamicChannelAutoSave":
-                argsToSet.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
+                args.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
                 break;
         }
     } );
 
-    context.getArgsManager().setArgs( context.getInstance(), interaction, argsToSet );
+    context.setArgs( interaction, args );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupStep2Component" );
 }
@@ -127,14 +126,14 @@ async function onVerifiedRolesSelected(
     context: IWizardAdapterContext<WizardInteractions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
-    const args: UIArgs = context.getArgsManager().getArgs( context.getInstance(), interaction );
+    const args = { ...context.getArgs( interaction ) };
     const roles = interaction.values;
 
     if ( args.dynamicChannelIncludeEveryoneRole ) {
         roles.push( interaction.guildId );
     }
 
-    context.getArgsManager().setArgs( context.getInstance(), interaction, {
+    context.setArgs( interaction, {
         ...args,
         dynamicChannelVerifiedRoles: roles.sort()
     } );
@@ -146,7 +145,7 @@ async function onVerifiedRolesEveryoneSelected(
     context: IWizardAdapterContext<WizardInteractions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const args: UIArgs = context.getArgsManager().getArgs( context.getInstance(), interaction );
+    const args: UIArgs = context.getArgs( interaction );
     const values = interaction.values;
 
     values.forEach( ( value ) => {
@@ -174,7 +173,7 @@ async function onVerifiedRolesEveryoneSelected(
         }
     } );
 
-    context.getArgsManager().setArgs( context.getInstance(), interaction, args );
+    context.setArgs( interaction, args );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupStep3Component" );
 }
@@ -196,7 +195,7 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( () => "Step 2 - Dynamic Channels Setup" )
-    .setDescription( ( vars: typeof STEP_2_EMBED_VARS ) =>
+    .setDescription( ( vars ) =>
         "Setup dynamic channel management interface.\n\n" +
         "**_🎚 Buttons Interface_**\n\n" +
         vars.message +
@@ -213,11 +212,11 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         "\n\n" +
         "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase)."
     )
-    .setOptions( ( vars: typeof STEP_2_EMBED_VARS ) => ( {
+    .setOptions( ( vars ) => ( {
         on: "`🟢∙On`",
         off: "`🔴∙Off`",
         message: {
-            [ vars.defaultMessage ]: "{dynamicChannelButtonsTemplate}\n",
+            [ vars.defaultMessage ]: `${ vars.dynamicChannelButtonsTemplate }\n`,
             [ vars.noButtonsMessage ]: "There are no buttons selected!\n"
         },
         configUserMention: {
@@ -251,19 +250,20 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
             }
         }
     } )
-    .setLogic( async( args: UIArgs ) => {
+    .setLogic( async( args ) => {
+        const vars = STEP_2_EMBED_VARS;
         const buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;
         return {
             configUserMention: args.dynamicChannelMentionable ?
-                STEP_2_EMBED_VARS.configUserMentionEnabled : STEP_2_EMBED_VARS.configUserMentionDisabled,
+                vars.configUserMentionEnabled : vars.configUserMentionDisabled,
 
             configAutoSave: args.dynamicChannelAutoSave ?
-                STEP_2_EMBED_VARS.configAutoSaveEnabled : STEP_2_EMBED_VARS.configAutoSaveDisabled,
+                vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,
 
             message: buttonsLength ?
-                STEP_2_EMBED_VARS.defaultMessage : STEP_2_EMBED_VARS.noButtonsMessage,
+                vars.defaultMessage : vars.noButtonsMessage,
             footer: buttonsLength ?
-                STEP_2_EMBED_VARS.defaultFooter : STEP_2_EMBED_VARS.noButtonsFooter,
+                vars.defaultFooter : vars.noButtonsFooter,
 
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
         };
@@ -274,20 +274,20 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
 const SetupStep3Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep3Embed", STEP_3_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setTitle( () => "Step 3 - Select Verified Roles" )
-    .setDescription( () =>
+    .setDescription( ( vars ) =>
         "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
         "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
         "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
         "**_🛡️ Verified Roles_**\n\n" +
-        "> {verifiedRolesDisplay}\n\n" +
+        `> ${ vars.verifiedRolesDisplay }\n\n` +
         "You can keep the default settings by pressing **( `✓ Finish` )** button."
     )
-    .setOptions( {
+    .setOptions( ( vars ) => ( {
         verifiedRolesDisplay: {
-            "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**None**"
+            [ vars.verifiedRoles ]: vars.verifiedRoles,
+            [ vars.verifiedRolesDefault ]: "**None**"
         }
-    } )
+    } ) )
     .setArrayOptions( {
         verifiedRoles: {
             format: "<@&{value}>{separator}",
@@ -385,7 +385,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             onVerifiedRolesEveryoneSelected
         );
     } )
-    .onBeforeBuild( async( context, args, _from, interaction ) => {
+    .onBeforeBuildPrototype( async( context, args, _from, interaction ) => {
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-General/SetupStep2Component":
                 args._configExtraMenuDisableLogsChannelOption = true;
@@ -402,7 +402,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     ) => {
         const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
 
-        const args = context.getArgsManager().getArgs( context.getInstance(), interaction );
+        const args = context.getArgs( interaction );
         const templateName: string = args.dynamicChannelNameTemplate || "{{username}}'s Channel";
         const templateButtons: string[] = args.dynamicChannelButtonsTemplate || [];
         const mentionable: boolean = args.dynamicChannelMentionable || false;
@@ -425,22 +425,22 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                 // TODO: Need access to regenerate method
                 ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
                     .get( "VertixBot/UI-V3/SetupAdapter" )
-                    ?.editReply( interaction as MessageComponentInteraction<"cached">, {
+                    ?.editReply( interaction, {
                         newMasterChannelV3: result.db
                     } );
                 break;
 
             case "limit-reached":
-                await context.ephemeral( interaction as any, {
+                await context.ephemeral( interaction, {
                     maxMasterChannels: result.maxMasterChannels
                 } );
                 break;
 
             default:
-                await context.ephemeral( interaction as any, {} );
+                await context.ephemeral( interaction, {} );
         }
 
-        context.deleteArgs( interaction as any );
+        context.deleteArgs( interaction );
     } )
     // .shouldRequireArgs( () => true )
     // .onRegenerate( async( context, interaction, args ) => {

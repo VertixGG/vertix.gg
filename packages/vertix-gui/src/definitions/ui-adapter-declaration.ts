@@ -9,7 +9,17 @@ export type TPossibleAdapters =
     | UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext>
     | UIWizardAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
 
-export type TAdapterClassType = typeof UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
+export type TAdapterStaticContract = {
+    getName: () => string;
+    getComponent: () => unknown;
+    getInstanceType: () => unknown;
+    validate: ( validateDefaultGroups?: boolean ) => void;
+    isDynamic: () => boolean;
+    isStatic: () => boolean;
+    isMultiLanguage?: () => boolean;
+};
+
+export type TAdapterClassType = TAdapterStaticContract & { new ( options: TAdapterRegisterOptions ): TPossibleAdapters };
 export type TAdapterConstructor = { new ( options: TAdapterRegisterOptions ): TPossibleAdapters };
 
 export type TAdapterRegisterOptions = {

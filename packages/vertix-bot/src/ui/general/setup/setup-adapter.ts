@@ -159,7 +159,7 @@ async function onEditBadwordsClicked(
     context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    await context.showModal( "VertixBot/UI-General/BadwordsModal", interaction );
+    await context.showModal( interaction, "VertixBot/UI-General/BadwordsModal" );
 }
 
 async function onBadwordsModalSubmitted(
@@ -334,7 +334,7 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButt
         switch ( entity.name ) {
             case "VertixBot/UI-General/SetupMasterCreateV3Button":
                 return new UICustomIdHashStrategy().generateId(
-                    context.getInstance().getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
+                    context.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
                 );
         }
     } )

@@ -4,3 +4,4 @@ export { channelHandler } from "./channel-handler";
 export { guildHandler } from "./guild-handler";
 export { interactionHandler } from "./interaction-handler";
 export { messageHandler } from "./message-handler";
+export { agentChannelHandler } from "./agent-channel-handler";

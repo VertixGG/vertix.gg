@@ -13,7 +13,7 @@ import { DynamicChannelPrimaryMessageEmbed } from "@vertix.gg/bot/src/ui/v3/dyna
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannel";
+        return "VertixBot/UI-V3/DynamicChannel";
     }
 
     public static getInstanceType() {
@@ -25,7 +25,7 @@ export class DynamicChannelComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
     }
 
     protected static getEmbeds() {

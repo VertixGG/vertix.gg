@@ -12,7 +12,7 @@ export class DynamicChannelPermissionsKickEmbed extends DynamicChannelPermission
     };
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPermissionsKickEmbed";
+        return "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

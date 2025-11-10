@@ -50,6 +50,8 @@ import type {
     TAdapterRegisterOptions,
     TPossibleAdapters
 } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
+import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
 
 export type TAdapterMapping = {
     base: UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
@@ -69,6 +71,12 @@ const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
     silent: false
 };
 
+// Add type for Concrete Controller Constructor + Statics
+type ConcreteControllerClass = ( new ( options: any ) => UIControllerBase<any> ) & {
+    getName: () => string;
+    // Add other static methods if needed
+};
+
 export class UIService extends ServiceWithDependenciesBase<{
     uiHashService: UIHashService;
 }> {
@@ -85,6 +93,12 @@ export class UIService extends ServiceWithDependenciesBase<{
         InvalidChannelTypeComponent?: UIComponentTypeConstructor;
         MissingPermissionsComponent?: UIComponentTypeConstructor;
     } = {};
+
+    private uiModulesTypes = new Map<string, TModuleConstructor>();
+    private uiModulesInstances = new Map<string, UIModuleBase>();
+
+    // Add map for Flow -> Controller
+    private flowNameToControllerClass = new Map<string, ConcreteControllerClass>();
 
     private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>();
     private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>();
@@ -161,6 +175,11 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.client;
     }
 
+    public getUIModules() {
+        return this.uiModulesTypes;
+    }
+
+    // TODO: Rename to getUIAdapter
     public get<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         silent = false
@@ -184,15 +203,60 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
     }
 
-    public registerModule<T extends TModuleConstructor>( Module: T ) {
-        Module.validate();
+    public getUIModule<T extends UIModuleBase>( name: string, silent = false ): T | undefined {
+        const module = this.uiModulesInstances.get( name ) as T | undefined;
 
-        const adapters = Module.getAdapters();
+        if ( !module && !silent ) {
+            throw new Error( `Module: '${ name }' does not exist` );
+        }
 
-        this.registerAdapters( adapters, { module: new Module() } );
+        return module;
     }
 
-    public async registerInternalAdapters() {
+    public registerModule<T extends TModuleConstructor>( Module: T ) {
+        const moduleName = Module.getName();
+
+        if ( this.uiModulesTypes.has( moduleName ) ) {
+            throw new Error( `Module: '${ moduleName }' already exists` );
+        }
+        Module.validate?.(); // Use optional chaining for validate
+
+        const adapters = Module.getAdapters();
+        const flows = Module.getFlows(); // Get flows
+        const controllers = Module.getControllers() as ConcreteControllerClass[]; // Assert concrete type
+
+        const module = new Module();
+
+        this.uiModulesTypes.set( moduleName, Module );
+        this.uiModulesInstances.set( moduleName, module );
+
+        // Register Adapters
+        this.registerAdapters( adapters, { module } );
+
+        // --- Build Flow -> Controller Map ---
+        this.logger.debug( this.registerModule, `Mapping flows to controllers for module ${ moduleName }...` );
+        flows.forEach( flowClass => {
+            const flowName = flowClass.getName();
+            const expectedControllerName = flowName.replace( /Flow$/, "Controller" );
+            // Find controller using the concrete type
+            const controllerClass = controllers.find( c => c.getName() === expectedControllerName );
+
+            if ( controllerClass ) {
+                this.flowNameToControllerClass.set( flowName, controllerClass );
+                this.logger.debug( this.registerModule, `Mapped Flow '${ flowName }' to Controller '${ controllerClass.getName() }'` );
+            } else {
+                this.logger.warn( this.registerModule, `Could not find matching controller for flow '${ flowName }' based on naming convention.` );
+            }
+        } );
+        this.logger.debug( this.registerModule, `Finished mapping for module ${ moduleName }. Map size: ${ this.flowNameToControllerClass.size }` );
+    }
+
+    // Update return type
+    public getControllerClassForFlowName( flowName: string ): ConcreteControllerClass | undefined {
+        return this.flowNameToControllerClass.get( flowName );
+    }
+
+    public async registerSystemUIAdapters() {
         const internalAdapters = await import( "@vertix.gg/gui/src/internal-adapters/index" );
 
         this.registerAdapters( Object.values( internalAdapters ) );
@@ -200,8 +264,8 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.$$.emitter.emit( "internal-adapters-registered" );
     }
 
-    public registerAdapters( adapters: TAdapterClassType[], options: TAdapterRegisterOptions = {} ) {
-        adapters.forEach( ( adapter ) => {
+    public registerAdapters( adapters: ReadonlyArray<TAdapterClassType>, options: TAdapterRegisterOptions = {} ) {
+        adapters.forEach( ( adapter: TAdapterClassType ) => {
             this.registerAdapter( adapter, options );
         } );
     }
@@ -216,7 +280,7 @@ export class UIService extends ServiceWithDependenciesBase<{
         // Each entity must be validated before it is registered.
         UIClass.validate();
 
-        const entities = UIClass.getComponent().getEntities();
+        const entities = ( UIClass.getComponent() as UIComponentTypeConstructor ).getEntities();
 
         // To have all hashes generated before the UI is created.
         for ( const entity of entities ) {
@@ -398,3 +462,4 @@ export class UIService extends ServiceWithDependenciesBase<{
 }
 
 export default UIService;
+ 

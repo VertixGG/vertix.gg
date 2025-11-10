@@ -58,3 +58,4 @@ export abstract class ModelBase<TPrismaClient extends TPossibleClients> extends 
 
     protected abstract getClient(): TPrismaClient;
 }
+

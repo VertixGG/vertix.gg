@@ -6,7 +6,7 @@ import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-chann
 
 export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRegionButton";
+        return "VertixBot/UI-V3/DynamicChannelRegionButton";
     }
 
     public static getBaseName() {

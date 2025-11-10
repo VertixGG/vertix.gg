@@ -1,9 +1,8 @@
-import {
-    UIInstancesTypes
-} from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 
 import type {
+    UIInstancesTypes
+    ,
     UIArgs
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -14,12 +13,13 @@ type LogicHandler<TArgs extends UIArgs, TVars> = ( args: TArgs, vars: TVars ) =>
 
 export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
     private name: string;
-    private instanceType: UIInstancesTypes = UIInstancesTypes.Dynamic;
+    private instanceType: UIInstancesTypes | null = null;
     private title: StringHandler<TVars> | undefined;
     private description: StringHandler<TVars> | undefined;
     private color: NumberHandler<TVars> | undefined;
     private image: StringHandler<TVars> | undefined;
     private options: OptionsHandler<TVars> | undefined;
+    private footer: StringHandler<TVars> | undefined;
     private arrayOptions: OptionsHandler<TVars> | undefined;
     private logic: LogicHandler<TArgs, TVars> | undefined;
     private vars: TVars | undefined;
@@ -59,6 +59,11 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
         return this;
     }
 
+    public setFooterText( footer: StringHandler<TVars> ): this {
+        this.footer = footer;
+        return this;
+    }
+
     public setArrayOptions( arrayOptions: OptionsHandler<TVars> ): this {
         this.arrayOptions = arrayOptions;
         return this;
@@ -78,6 +83,9 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
             }
 
             public static getInstanceType() {
+                if ( builder.instanceType === null ) {
+                    throw new Error( `Instance type is not defined for '${ builder.name }'` );
+                }
                 return builder.instanceType;
             }
 
@@ -87,7 +95,7 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
                         builder.title as Function
                     )( builder.vars as TVars );
                 }
-                return builder.title;
+                return builder.title || "";
             }
 
             protected getDescription() {
@@ -96,7 +104,7 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
                         builder.description as Function
                     )( builder.vars as TVars );
                 }
-                return builder.description;
+                return builder.description || "";
             }
 
             protected getColor() {
@@ -110,11 +118,12 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
 
             protected getImage() {
                 if ( typeof builder.image === "function" ) {
-                    return (
+                    const value = (
                         builder.image as Function
                     )( builder.vars as TVars );
+                    return value || "";
                 }
-                return builder.image;
+                return builder.image || "";
             }
 
             protected getOptions() {
@@ -123,7 +132,16 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
                         builder.options as Function
                     )( builder.vars as TVars );
                 }
-                return builder.options;
+                return builder.options || {};
+            }
+
+            protected getFooter() {
+                if ( typeof builder.footer === "function" ) {
+                    return (
+                        builder.footer as Function
+                    )( builder.vars as TVars );
+                }
+                return builder.footer || "";
             }
 
             protected getArrayOptions() {
@@ -132,7 +150,7 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
                         builder.arrayOptions as Function
                     )( builder.vars as TVars );
                 }
-                return builder.arrayOptions;
+                return builder.arrayOptions || {};
             }
 
             protected getLogicAsync( args: TArgs ): Promise<any> {

@@ -1,15 +1,15 @@
-node_modules
-
-packages/vertix-base/src/encryption/key.ts
-
-.idea/
-
-.env
+# folders
+.idea
 .DS_Store
+.next
 
 vertix_backup*
-
 _backups/
+node_modules
 
-bun.lockb
+# files
+.env
+packages/vertix-base/src/encryption/key.ts
+
+
 

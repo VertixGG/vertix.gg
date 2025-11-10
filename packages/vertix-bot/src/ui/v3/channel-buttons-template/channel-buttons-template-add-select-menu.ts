@@ -4,7 +4,7 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 
 export class ChannelButtonsTemplateAddSelectMenu extends ChannelButtonsTemplateSelectMenuBase {
     public static getName() {
-        return "Vertix/UI-V3/ButtonsAddSelectMenu";
+        return "VertixBot/UI-V3/ButtonsAddSelectMenu";
     }
 
     protected async getPlaceholder(): Promise<string> {

@@ -1,0 +1,4 @@
+./packages/vertix-prisma/*
+Root/**
+**/.next/**
+

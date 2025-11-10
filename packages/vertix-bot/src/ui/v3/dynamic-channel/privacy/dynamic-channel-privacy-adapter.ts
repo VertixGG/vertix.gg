@@ -17,7 +17,7 @@ type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDef
 
 export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrivacyAdapter";
+        return "VertixBot/UI-V3/DynamicChannelPrivacyAdapter";
     }
 
     public static getComponent() {
@@ -41,18 +41,10 @@ export class DynamicChannelPrivacyAdapter extends DynamicChannelAdapterExuWithPe
     }
 
     protected onEntityMap() {
-        this.bindSelectMenu( "Vertix/UI-V3/DynamicChannelPrivacyMenu", this.onPrivacyMenuSelected );
+        this.bindSelectMenu( "VertixBot/UI-V3/DynamicChannelPrivacyMenu", this.onPrivacyMenuSelected );
     }
 
     protected async onPrivacyMenuSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        // Defer the interaction immediately unless it's already deferred
-        if ( !interaction.deferred && !interaction.replied ) {
-            try {
-                await interaction.deferUpdate();
-            } catch {
-            }
-        }
-
         const state = interaction.values[ 0 ];
 
         await this.dynamicChannelService.editChannelPrivacyState(

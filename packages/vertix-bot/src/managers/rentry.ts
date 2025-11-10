@@ -54,7 +54,7 @@ export class RentryManager extends InitializeBase {
 
         const csrftoken = new CookieJar().setCookieSync( setCookieHeader, RENTRY_BASE_URL ),
             payload = {
-                csrfmiddlewaretoken: csrftoken.value,
+                csrfmiddlewaretoken: csrftoken?.value || "",
                 url: url,
                 edit_code: editCode,
                 text: text
@@ -65,7 +65,7 @@ export class RentryManager extends InitializeBase {
         return postResponse.json().then( ( json ) => {
             this.logger.debug(
                 this.new,
-                `URL: '${ url }', Edit Code: '${ editCode }', CSRFToken: '${ csrftoken.value } - response:`,
+                `URL: '${ url }', Edit Code: '${ editCode }', CSRFToken: '${ csrftoken?.value || "" } - response:`,
                 json
             );
 
@@ -91,7 +91,7 @@ export class RentryManager extends InitializeBase {
 
         const csrftoken = new CookieJar().setCookieSync( setCookieHeader, RENTRY_BASE_URL ),
             payload = {
-                csrfmiddlewaretoken: csrftoken.value,
+                csrfmiddlewaretoken: csrftoken?.value || "",
                 edit_code: editCode,
                 text: text
             },
@@ -102,7 +102,7 @@ export class RentryManager extends InitializeBase {
         return postResponse.json().then( ( json ) => {
             this.logger.debug(
                 this.edit,
-                `URL: '${ url }', Edit Code: '${ editCode }', CSRFToken: '${ csrftoken.value } - response:`,
+                `URL: '${ url }', Edit Code: '${ editCode }', CSRFToken: '${ csrftoken?.value || "" } - response:`,
                 json
             );
 

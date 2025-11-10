@@ -14,7 +14,7 @@ export class DynamicChannelRenameBadwordEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelRenameBadwordEmbed";
+        return "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbed";
     }
 
     public static getInstanceType() {

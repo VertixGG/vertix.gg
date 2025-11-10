@@ -15,7 +15,7 @@ import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types
 
 export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditComponent";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent";
     }
 
     public static getInstanceType() {
@@ -29,18 +29,18 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
                 let result = super.getItems( args );
 
                 switch ( this.getName() ) {
-                    case "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/ElementsGroup": {
+                    case "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/ElementsGroup": {
                         result = this.findAndReorderYesButton(
                             result,
-                            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
+                            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
                             "center"
                         );
                         break;
                     }
-                    case "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/ElementsGroup": {
+                    case "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/ElementsGroup": {
                         result = this.findAndReorderYesButton(
                             result,
-                            "Vertix/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
+                            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
                             "center"
                         );
                         break;
@@ -98,7 +98,7 @@ export class DynamicChannelPrimaryMessageEditComponent extends UIWizardComponent
     }
 
     public static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup";
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup";
     }
 
     public static getDefaultElementsGroup() {

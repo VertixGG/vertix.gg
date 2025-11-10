@@ -2,7 +2,7 @@ import { ChannelButtonsTemplateSelectMenuBase } from "@vertix.gg/bot/src/ui/v3/c
 
 export class ChannelButtonsTemplateRemoveSelectMenu extends ChannelButtonsTemplateSelectMenuBase {
     public static getName() {
-        return "Vertix/UI-V3/ButtonsRemoveSelectMenu";
+        return "VertixBot/UI-V3/ButtonsRemoveSelectMenu";
     }
 
     protected async getPlaceholder(): Promise<string> {

@@ -4,7 +4,7 @@
     "author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
     "license": "proprietary",
     "type": "module",
-    "version": "0.0.8",
+    "version": "0.0.0",
     "description": "Vertix - Discord Bot",
     "private": true,
     "repository": {
@@ -25,6 +25,7 @@
         "vertix:bot:backup:prisma": "bun run --bun scripts/backup-bot-prisma.js",
         "vertix:bot:bun:start:dev": "cd packages/vertix-bot && bun run vertix-bot:bun:start:dev",
         "vertix:bot:node:start:dev": "cd packages/vertix-bot && bun run vertix-bot:ts-node:start:dev",
+        "vertix:flow:dev": "cd packages/vertix-flow && bun run vertix-flow:dev",
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",
         "vertix:base:jest": "cd packages/vertix-base ; bun run vertix-base:jest",
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
@@ -37,33 +38,53 @@
         "vertix:website:eslint": "bunx --bun eslint packages/vertix-website"
     },
     "dependencies": {
+        "@discordjs/rest": "^2.6.0",
+        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/bot": "workspace:*",
+        "@vertix.gg/gui": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
+        "@vertix.gg/test-utils": "workspace:*",
+        "@vertix.gg/utils": "workspace:*",
+        "@vertix.gg/website": "workspace:*",
+        "@vertix.gg/flow": "workspace:*",
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
         "discord-api-types": "latest",
-        "discord.js": "latest"
+        "discord.js": "latest",
+        "picocolors": "^1.1.1",
+        "@types/dagre": "^0.7.53",
+        "@typescript-eslint/types": "^8.46.1",
+        "@typescript-eslint/typescript-estree": "^8.46.1",
+        "@xyflow/react": "^12.8.6",
+        "dagre": "^0.8.5",
+        "elkjs": "^0.10.2",
+        "fastmcp": "^1.27.7",
+        "zod": "^3.25.76"
     },
     "devDependencies": {
+        "@jest/globals": "^30.2.0",
+        "@stylistic/eslint-plugin": "^5.5.0",
         "@swc/jest": "latest",
         "@types/bun": "latest",
         "@types/jest": "latest",
         "@types/jest-when": "latest",
         "@types/node": "latest",
-        "@typescript-eslint/eslint-plugin": "^8.41.0",
-        "@typescript-eslint/parser": "^8.41.0",
+        "@typescript-eslint/eslint-plugin": "^8.46.1",
+        "@typescript-eslint/parser": "^8.46.1",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
         "bun": "latest",
-        "bun-types": "^1.2.21",
+        "bun-types": "latest",
+        "cross-env": "^7.0.3",
         "eslint": "latest",
+        "eslint-plugin-react": "^7.37.5",
         "jest": "latest",
+        "jest-diff": "^30.2.0",
         "jest-when": "latest",
         "ts-mockito": "latest",
-        "tsx": "^4.20.5",
-        "typescript": "^5.9.2"
+        "tsx": "^4.20.6",
+        "typescript": "latest"
     },
-    "packageManager": "bun@1.1.18",
-    "peerDependencies": {
-        "typescript": "^5.0.0"
-    }
+    "packageManager": "bun@1.3.0"
 }

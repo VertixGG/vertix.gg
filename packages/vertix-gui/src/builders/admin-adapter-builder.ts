@@ -1,139 +1,21 @@
 import { AdminAdapterBase } from "@vertix.gg/bot/src/ui/general/admin/admin-adapter-base";
 
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
+
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIAdapterReplyContext,
     UIAdapterStartContext,
-    UIDefaultButtonChannelTextInteraction,
-    UIDefaultModalChannelTextInteraction,
-    UIDefaultStringSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-
-import type {
-    UIArgs,
-    UIComponentTypeConstructor,
-    UIAdapterBuildSource,
-} from "@vertix.gg/gui/src/bases/ui-definitions";
-
-import type {
-    IAdapterContext,
-    GetReplyArgsHandler,
-    BeforeBuildHandler,
-    IBinder,
-    BeforeBuildRunHandler
-} from "@vertix.gg/gui/src/builders/builders-definitions";
-import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 export class AdminAdapterBuilder<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
     TArgs extends UIArgs = UIArgs,
-> {
-    private adapterBase: typeof AdminAdapterBase<TChannel, TInteraction> = AdminAdapterBase<TChannel, TInteraction>;
-
-    private component: typeof UIComponentBase | undefined;
-    private replyArgsHandler: GetReplyArgsHandler<TInteraction, TArgs> | undefined;
-    private beforeBuildHandler: BeforeBuildHandler<TInteraction, TArgs> | undefined;
-    private beforeBuildRunHandler: BeforeBuildRunHandler<TArgs> | undefined;
-
-    public constructor( private name: string ) {
-    }
-
-    public setComponent( component: typeof UIComponentBase ): this {
-        this.component = component;
-        return this;
-    }
-
-    public onGetReplyArgs( handler: GetReplyArgsHandler<TInteraction, TArgs> ): this {
-        this.replyArgsHandler = handler;
-        return this;
-    }
-
-    public onBeforeBuild( handler: BeforeBuildHandler<TInteraction, TArgs> ): this {
-        this.beforeBuildHandler = handler;
-        return this;
-    }
-
-    public onBeforeBuildRun( handler: BeforeBuildRunHandler<TArgs> ): this {
-        this.beforeBuildRunHandler = handler;
-        return this;
-    }
-
-    public build(): new ( options: TAdapterRegisterOptions ) => AdminAdapterBase<TChannel, TInteraction> {
-        const builder = this;
-
-        if ( !builder.component ) {
-            throw new Error( `A component must be set for adapter "${ builder.name }" before building.` );
-        }
-
-        const BaseAdapter = this.adapterBase;
-
-        return class GeneratedAdapter extends BaseAdapter {
-            public static getName() {
-                return builder.name;
-            }
-
-            public static getComponent() {
-                return builder.component as UIComponentTypeConstructor;
-            }
-
-            protected async getReplyArgs(
-                interaction?: TInteraction,
-                argsFromManager?: UIArgs
-            ): Promise<UIArgs> {
-                if ( builder.replyArgsHandler ) {
-                    return builder.replyArgsHandler( this.getContext(), interaction, argsFromManager as TArgs );
-                }
-                return super.getReplyArgs( interaction, argsFromManager );
-            }
-
-            protected async onBeforeBuild(
-                args: UIArgs,
-                from: UIAdapterBuildSource,
-                interaction?: TInteraction
-            ) {
-                if ( from === "run" && builder.beforeBuildRunHandler ) {
-                    const binder: IBinder<TArgs> = {
-                        bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
-                            name: string,
-                            callback: ( context: IAdapterContext<TArgs>, interaction: T ) => Promise<void>
-                        ) => this.bindButton( name, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                        bindModal: <T extends UIDefaultModalChannelTextInteraction>(
-                            name: string,
-                            callback: ( context: IAdapterContext<TArgs>, interaction: T ) => Promise<void>
-                        ) => this.bindModal( name, ( interaction ) => callback( this.getContext(), interaction as T ) ),
-                        bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
-                            name: string,
-                            callback: ( context: IAdapterContext<TArgs>, interaction: T ) => Promise<void>
-                        ) => this.bindSelectMenu( name, ( interaction ) => callback( this.getContext(), interaction as T ) )
-                    };
-                    await builder.beforeBuildRunHandler( binder );
-                }
-
-                if ( builder.beforeBuildHandler ) {
-                    await builder.beforeBuildHandler( this.getContext(), args as TArgs, from, interaction );
-                }
-            }
-
-            private getContext(): IAdapterContext<TArgs> {
-                const self = this;
-                return {
-                    logger: AdminAdapterBase.dedicatedLogger,
-                    customIdStrategy: this.customIdStrategy,
-                    getComponent: this.getComponent.bind( this ),
-                    deleteArgs: <T extends UIAdapterReplyContext>( interaction: T ) => {
-                        self.deleteArgs( interaction as UIAdapterReplyContext as TInteraction );
-                    },
-                    ephemeral: <T extends UIAdapterReplyContext>( interaction: T, args?: TArgs, deletePrevious?: boolean ) => {
-                        return self.ephemeral( interaction as UIAdapterReplyContext as TInteraction, args, deletePrevious );
-                    },
-                    editReply: <T extends UIAdapterReplyContext>( interaction: T, args?: TArgs ) => {
-                        return self.editReply( interaction as UIAdapterReplyContext as TInteraction, args );
-                    },
-                    showModal: this.showModal.bind( this )
-                };
-            }
-        };
+> extends AdapterBuilderBase<TChannel, TInteraction, typeof AdminAdapterBase<TChannel, TInteraction>, TArgs, IAdapterContext<TInteraction, TArgs>> {
+    public constructor( name: string ) {
+        super( name, AdminAdapterBase );
     }
 }

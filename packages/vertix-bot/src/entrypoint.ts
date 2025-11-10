@@ -25,9 +25,9 @@ import { config } from "dotenv";
 
 import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
-
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
+
+import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
@@ -37,162 +37,165 @@ import type { Client } from "discord.js";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
-async function registerUIServices( client: Client<true> ) {
-    const uiServices = await Promise.all( [
-        import( "@vertix.gg/gui/src/ui-service" ),
-        import( "@vertix.gg/gui/src/ui-hash-service" ),
-        import( "@vertix.gg/gui/src/ui-adapter-versioning-service" )
-    ] );
+async function registerUIServices(client: Client<true>) {
+    const uiServices = await Promise.all([
+        import("@vertix.gg/gui/src/ui-service"),
+        import("@vertix.gg/gui/src/ui-hash-service"),
+        import("@vertix.gg/gui/src/ui-adapter-versioning-service")
+    ]);
 
-    uiServices.forEach( ( service ) => {
-        GlobalLogger.$.debug( registerUIServices, `Registering service: '${ service.default.getName() }'` );
+    uiServices.forEach((service) => {
+        GlobalLogger.$.debug(registerUIServices, `Registering service: '${service.default.getName()}'`);
 
-        ServiceLocator.$.register<ServiceBase>( service.default, client );
+        ServiceLocator.$.register<ServiceBase>(service.default, client);
 
-        GlobalLogger.$.debug( registerUIServices, `Service registered: '${ service.default.getName() }'` );
-    } );
-
-    await ServiceLocator.$.waitForAll();
-}
-
-async function registerServices() {
-    const services = await Promise.all( [
-        import( "@vertix.gg/bot/src/services/app-service" ),
-
-        import( "@vertix.gg/bot/src/services/direct-message-service" ),
-
-        import( "@vertix.gg/bot/src/services/channel-service" ),
-        import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
-        import( "@vertix.gg/bot/src/services/master-channel-service" )
-    ] );
-
-    services.forEach( ( service ) => {
-        GlobalLogger.$.debug( registerServices, `Registering service: '${ service.default.getName() }'` );
-
-        ServiceLocator.$.register<ServiceBase>( service.default );
-
-        GlobalLogger.$.debug( registerServices, `Service registered: '${ service.default.getName() }'` );
-    } );
+        GlobalLogger.$.debug(registerUIServices, `Service registered: '${service.default.getName()}'`);
+    });
 
     await ServiceLocator.$.waitForAll();
 }
 
-async function registerUIAdapters() {
-    const uiModules = await Promise.all( [
-        import( "@vertix.gg/bot/src/ui/general/ui-module" ),
-        import( "@vertix.gg/bot/src/ui/v2/ui-module" ),
-        import( "@vertix.gg/bot/src/ui/v3/ui-module" )
-    ] );
+export async function registerServices() {
+    const services = await Promise.all([
+        import("@vertix.gg/bot/src/services/app-service"),
 
-    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        import("@vertix.gg/bot/src/services/direct-message-service"),
+
+        import("@vertix.gg/bot/src/services/channel-service"),
+        import("@vertix.gg/bot/src/services/dynamic-channel-service"),
+        import("@vertix.gg/bot/src/services/master-channel-service")
+    ]);
+
+    services.forEach((service) => {
+        GlobalLogger.$.debug(registerServices, `Registering service: '${service.default.getName()}'`);
+
+        ServiceLocator.$.register<ServiceBase>(service.default);
+
+        GlobalLogger.$.debug(registerServices, `Service registered: '${service.default.getName()}'`);
+    });
+
+    await ServiceLocator.$.waitForAll();
+}
+
+async function registerSystemUI() {
+    const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService");
 
     // TODO: Current wizard buttons for V3, are unused, those should become module specific.
-    const { UIRegenerateButton } = await import( "@vertix.gg/bot/src/ui/general/regenerate/ui-regenerate-button" ),
-        { UIWizardBackButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-back-button" ),
-        { UIWizardNextButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-next-button" ),
-        { UIWizardFinishButton } = await import( "@vertix.gg/bot/src/ui/general/wizard/ui-wizard-finish-button" );
+    const { UIRegenerateButton } = await import("@vertix.gg/bot/src/ui/general/regenerate/ui-regenerate-button"),
+        { UIWizardBackButton } = await import("@vertix.gg/bot/src/ui/general/wizard/ui-wizard-back-button"),
+        { UIWizardNextButton } = await import("@vertix.gg/bot/src/ui/general/wizard/ui-wizard-next-button"),
+        { UIWizardFinishButton } = await import("@vertix.gg/bot/src/ui/general/wizard/ui-wizard-finish-button");
 
-    uiService.$$.registerSystemElements( {
+    uiService.$$.registerSystemElements({
         RegenerateButton: UIRegenerateButton,
         WizardBackButton: UIWizardBackButton,
         WizardNextButton: UIWizardNextButton,
         WizardFinishButton: UIWizardFinishButton
-    } );
+    });
 
-    const { InvalidChannelTypeComponent } = await import(
-            "@vertix.gg/bot/src/ui/general/invalid-channel-type/invalid-channel-type-component"
-        ),
-        { MissingPermissionsComponent } = await import(
-            "@vertix.gg/bot/src/ui/general/missing-permissions/missing-permissions-component"
-        );
+    const { InvalidChannelTypeComponent } = await import("@vertix.gg/bot/src/ui/general/invalid-channel-type/invalid-channel-type-component"),
+        { MissingPermissionsComponent } = await import("@vertix.gg/bot/src/ui/general/missing-permissions/missing-permissions-component");
 
-    uiService.$$.registerSystemComponents( {
+    uiService.$$.registerSystemComponents({
         InvalidChannelTypeComponent: InvalidChannelTypeComponent,
         MissingPermissionsComponent: MissingPermissionsComponent
-    } );
+    });
 
-    await uiService.registerInternalAdapters();
-
-    uiModules.forEach( ( module ) => {
-        GlobalLogger.$.debug( registerUIAdapters, `Registering UI module: '${ module.default.getName() }'` );
-
-        uiService.registerModule( module.default );
-
-        GlobalLogger.$.debug( registerUIAdapters, `UI module registered: '${ module.default.getName() }'` );
-    } );
+    await uiService.registerSystemUIAdapters();
 }
 
-async function registerUILanguageManager( options: {
+async function registerUIAdapters() {
+    const uiModules = await Promise.all([
+        import("@vertix.gg/bot/src/ui/general/ui-module"),
+        import("@vertix.gg/bot/src/ui/v2/ui-module"),
+        import("@vertix.gg/bot/src/ui/v3/ui-module")
+    ]);
+
+    const uiService = ServiceLocator.$.get<UIService>("VertixGUI/UIService");
+
+    await registerSystemUI();
+
+    uiModules.forEach((module) => {
+        GlobalLogger.$.debug(registerUIAdapters, `Registering UI module: '${module.default.getName()}'`);
+
+        uiService.registerModule(module.default);
+
+        GlobalLogger.$.debug(registerUIAdapters, `UI module registered: '${module.default.getName()}'`);
+    });
+}
+
+async function registerUILanguageManager(options: {
     shouldImport?: boolean;
     shouldValidate?: boolean;
-} = {} ) {
-    options = Object.assign( {
+} = {}) {
+    options = Object.assign({
         shouldImport: true,
         shouldValidate: true
-    }, options );
+    }, options);
 
-    const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+    const { UILanguageManager } = await import("@vertix.gg/bot/src/ui/ui-language-manager");
 
     // Register UI language manager
-    await UILanguageManager.$.register( options );
+    await UILanguageManager.$.register(options);
 
     // Register UI language manager in UIService
-    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).registerUILanguageManager( UILanguageManager.$ );
+    ServiceLocator.$.get<UIService>("VertixGUI/UIService").registerUILanguageManager(UILanguageManager.$);
 }
 
 async function registerConfigs() {
-    GlobalLogger.$.info( registerConfigs, "Registering configs ..." );
+    GlobalLogger.$.info(registerConfigs, "Registering configs ...");
 
-    const { ConfigManager } = await import( "@vertix.gg/base/src/managers/config-manager" );
+    const { ConfigManager } = await import("@vertix.gg/base/src/managers/config-manager");
 
-    const configs = await Promise.all( [
-        import( "@vertix.gg/bot/src/config/master-channel-config" ),
-        import( "@vertix.gg/bot/src/config/master-channel-config-v3" )
-    ] );
+    const configs = await Promise.all([
+        import("@vertix.gg/bot/src/config/master-channel-config"),
+        import("@vertix.gg/bot/src/config/master-channel-config-v3")
+    ]);
 
     await Promise.all(
-        configs.map( async( config ) => {
-            GlobalLogger.$.debug( registerConfigs, `Registering config: '${ config.default.getName() }'` );
+        configs.map(async (config) => {
+            GlobalLogger.$.debug(registerConfigs, `Registering config: '${config.default.getName()}'`);
 
-            await ConfigManager.$.register<ConfigBase<ConfigBaseInterface>>( config.default );
+            await ConfigManager.$.register<ConfigBase<ConfigBaseInterface>>(config.default);
 
-            GlobalLogger.$.debug( registerConfigs, `Config registered: '${ config.default.getName() }'` );
-        } )
+            GlobalLogger.$.debug(registerConfigs, `Config registered: '${config.default.getName()}'`);
+        })
     );
 
-    GlobalLogger.$.info( registerConfigs, "Configs are registered" );
+    GlobalLogger.$.info(registerConfigs, "Configs are registered");
 }
 
 async function registerUIVersionStrategies() {
-    GlobalLogger.$.info( registerUIVersionStrategies, "Registering version strategies ..." );
+    GlobalLogger.$.info(registerUIVersionStrategies, "Registering version strategies ...");
 
-    const versionStrategies = await Promise.all( [
-            await import( "@vertix.gg/base/src/version-strategies/ui-master-channel-version-strategy" )
-        ] ),
+    const versionStrategies = await Promise.all([
+            await import("@vertix.gg/base/src/version-strategies/ui-master-channel-version-strategy")
+        ]),
         uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
             "VertixGUI/UIVersioningAdapterService"
         );
 
-    uiVersioningAdapterService.registerVersions( [ 2, 3 ] );
+    uiVersioningAdapterService.registerVersions([2, 3]);
 
-    versionStrategies.forEach( ( strategy ) => {
+    versionStrategies.forEach((strategy) => {
         GlobalLogger.$.debug(
             registerUIVersionStrategies,
-            `Registering version strategy: '${ strategy.UIMasterChannelVersionStrategy.getName() }'`
+            `Registering version strategy: '${strategy.UIMasterChannelVersionStrategy.getName()}'`
         );
 
-        uiVersioningAdapterService.registerStrategy( strategy.UIMasterChannelVersionStrategy );
+        uiVersioningAdapterService.registerStrategy(strategy.UIMasterChannelVersionStrategy);
 
         GlobalLogger.$.debug(
             registerUIVersionStrategies,
-            `Version strategy registered: '${ strategy.UIMasterChannelVersionStrategy.getName() }'`
+            `Version strategy registered: '${strategy.UIMasterChannelVersionStrategy.getName()}'`
         );
-    } );
+    });
 
-    GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
+    GlobalLogger.$.info(registerUIVersionStrategies, "Version strategies are registered");
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -200,28 +203,39 @@ async function createCleanupWorker() {
     try {
         const thread = await initWorker();
         await thread.run();
-        GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
-    } catch ( error ) {
-        GlobalLogger.$.error( createCleanupWorker, "", error );
+        GlobalLogger.$.admin(createCleanupWorker, "Cleanup worker finished");
+    } catch (error) {
+        GlobalLogger.$.error(createCleanupWorker, "", error);
     }
+}
+
+async function registerMCPService() {
+    GlobalLogger.$.info(registerMCPService, "Registering MCP service ...");
+
+    const { MCPService } = await import("@vertix.gg/base/src/modules/mcp-server/mcp-service");
+
+    ServiceLocator.$.register(MCPService);
+
+    GlobalLogger.$.info(registerMCPService, "MCP service is registered");
+
 }
 
 /**
  * Exports all available language files to the language directory
  * @param languageCodes Optional array of language codes to export. If not provided, exports all languages.
  */
-async function exportLanguages( languageCodes: string[] ) {
-    GlobalLogger.$.info( exportLanguages, "Exporting languages..." );
+async function exportLanguages(languageCodes: string[]) {
+    GlobalLogger.$.info(exportLanguages, "Exporting languages...");
 
     // Import the language manager and utils
-    const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
-    const { LanguageUtils } = await import( "@vertix.gg/bot/src/utils/language" );
+    const { UILanguageManager } = await import("@vertix.gg/bot/src/ui/ui-language-manager");
+    const { LanguageUtils } = await import("@vertix.gg/bot/src/utils/language");
 
-    const { default: botInitialize } = await import( "./vertix" );
-    const client = await botInitialize();
+    const { default: botInitialize } = await import("./vertix");
+    const client = await botInitialize({ enableListeners: false });
 
     // Register required services
-    await registerUIServices( client );
+    await registerUIServices(client);
 
     await registerConfigs();
     await registerServices();
@@ -229,7 +243,7 @@ async function exportLanguages( languageCodes: string[] ) {
     await EmojiManager.$.promise();
 
     await registerUIAdapters();
-    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUILanguageManager({ shouldImport: false, shouldValidate: false });
     await registerUIVersionStrategies();
 
     const initialLanguage = UILanguageManager.$.getInitialLanguage();
@@ -237,137 +251,170 @@ async function exportLanguages( languageCodes: string[] ) {
     // Get all available languages from the manager
     const availableLanguages = UILanguageManager.$.getAvailableLanguages();
 
-    availableLanguages.set( initialLanguage.code, initialLanguage );
+    availableLanguages.set(initialLanguage.code, initialLanguage);
 
     // If specific languages were requested, validate them
-    if ( languageCodes?.length ) {
-        const invalidCodes = languageCodes.filter( code => !availableLanguages.has( code ) );
-        if ( invalidCodes.length ) {
-            throw new Error( `Invalid language code(s): ${ invalidCodes.join( ", " ) }. Available codes: ${ Array.from( availableLanguages.keys() ).join( ", " ) }` );
+    if (languageCodes?.length) {
+        const invalidCodes = languageCodes.filter(code => !availableLanguages.has(code));
+        if (invalidCodes.length) {
+            throw new Error(`Invalid language code(s): ${invalidCodes.join(", ")}. Available codes: ${Array.from(availableLanguages.keys()).join(", ")}`);
         }
     }
 
     // Filter languages if specific codes were requested
     const languages = languageCodes.length
-        ? new Map( [ ...availableLanguages ].filter( ( [ code ] ) => languageCodes.includes( code ) ) )
+        ? new Map([...availableLanguages].filter(([code]) => languageCodes.includes(code)))
         : availableLanguages;
 
-    GlobalLogger.$.info( exportLanguages, `Found ${ languages.size } languages to export` );
+    GlobalLogger.$.info(exportLanguages, `Found ${languages.size} languages to export`);
 
     // Export each language
-    for ( const [ code, language ] of languages.entries() ) {
-        const exportPath = path.join( UI_LANGUAGES_PATH, `${ code }.export${ UI_LANGUAGES_FILE_EXTENSION }` );
-        await LanguageUtils.$.export( language, exportPath );
-        GlobalLogger.$.info( exportLanguages, `Exported language: '${ code }' to ${ exportPath }` );
+    for (const [code, language] of languages.entries()) {
+        const exportPath = path.join(UI_LANGUAGES_PATH, `${code}.export${UI_LANGUAGES_FILE_EXTENSION}`);
+        await LanguageUtils.$.export(language, exportPath);
+        GlobalLogger.$.info(exportLanguages, `Exported language: '${code}' to ${exportPath}`);
     }
 
-    GlobalLogger.$.info( exportLanguages, "Language export completed successfully" );
+    GlobalLogger.$.info(exportLanguages, "Language export completed successfully");
 
     return languages.size;
 }
 
-export async function entryPoint() {
+// Function to register Data Service and Components
+async function registerDataServicesAndComponents() {
+    GlobalLogger.$.info(registerDataServicesAndComponents, "Registering data services and components...");
+
+    // Import the service and components
+    const { UIDataService } = await import("@vertix.gg/gui/src/ui-data-service");
+    const dataComponents = await Promise.all([
+        import("@vertix.gg/bot/src/data/guild/master-channels-data"),
+        import("@vertix.gg/bot/src/data/guild/badwords-data"),
+        import("@vertix.gg/bot/src/data/guild/max-master-channels-data"),
+    ]);
+
+    // Register the UIDataService itself
+    GlobalLogger.$.debug(registerDataServicesAndComponents, `Registering service: '${UIDataService.getName()}'`);
+    ServiceLocator.$.register<UIDataService>(UIDataService);
+    GlobalLogger.$.debug(registerDataServicesAndComponents, `Service registered: '${UIDataService.getName()}'`);
+
+    // Wait for UIDataService to be ready (if it has async initialization)
+    await ServiceLocator.$.waitFor(UIDataService.getName());
+
+    // Get the UIDataService instance
+    const uiDataService = ServiceLocator.$.get<UIDataService>(UIDataService.getName());
+
+    // Register the data components with the service
+    const componentConstructors = dataComponents.map(module => Object.values(module)[0]); // Assumes default export or first export is the class
+    uiDataService.registerDataComponents(componentConstructors as any); // Use 'as any' for now if type inference struggles
+
+    componentConstructors.forEach(comp => {
+        GlobalLogger.$.debug(registerDataServicesAndComponents, `Registered data component: '${(comp as any).getName()}'`);
+    });
+
+    GlobalLogger.$.info(registerDataServicesAndComponents, "Data services and components registered.");
+}
+
+export async function entryPoint(options: {
+    enableListeners?: boolean;
+}) {
+    options = Object.assign({
+        enableListeners: true
+    }, options);
+
     const envArg =
-        process.argv.find( ( arg ) => arg.startsWith( "--env=" ) ) || `--env=${ process.env.DOTENV_CONFIG_PATH || ".env" }`;
+        process.argv.find((arg) => arg.startsWith("--env=")) || `--env=${process.env.DOTENV_CONFIG_PATH || ".env"}`;
 
-    console.log( "ENV ARG:", envArg );
-    console.log( "PROCESS ENV BEFORE:", {
-        BOT_PRISMA_DATABASE_URL: process.env.BOT_PRISMA_DATABASE_URL,
-        PRISMA_DATABASE_URL: process.env.PRISMA_DATABASE_URL,
-        MONGO_CONNECTION: process.env.MONGO_CONNECTION
-    } );
+    const envPath = path.join(process.cwd(), "../../", envArg.split("=")[1]);
 
-    const envPath = path.join( process.cwd(), "../../", envArg.split( "=" )[ 1 ] );
+    GlobalLogger.$.log(entryPoint, "ENV PATH:", envPath);
+    GlobalLogger.$.log(entryPoint, "CWD:", process.cwd());
 
-    console.log( "ENV PATH:", envPath );
-    console.log( "CWD:", process.cwd() );
+    await registerMCPService();
 
-    const envOutput = config( {
+    const envOutput = config({
         path: envPath,
         override: true
-    } );
+    });
 
-    if ( envOutput.parsed ) {
-        Object.entries( envOutput.parsed ).forEach( ( [ key, value ] ) => {
-            process.env[ key ] = value;
-        } );
+    if (envOutput.parsed) {
+        Object.entries(envOutput.parsed).forEach(([key, value]) => {
+            process.env[key] = value;
+        });
     }
 
-    console.log( "ENV OUTPUT:", {
+    GlobalLogger.$.log(entryPoint, "ENV OUTPUT:", {
         error: envOutput.error,
-        parsed: envOutput.parsed
-    } );
+        parsed: envOutput.parsed,
+        env: process.env
+    });
 
-    console.log( "PROCESS ENV AFTER:", {
-        BOT_PRISMA_DATABASE_URL: process.env.BOT_PRISMA_DATABASE_URL,
-        PRISMA_DATABASE_URL: process.env.PRISMA_DATABASE_URL,
-        MONGO_CONNECTION: process.env.MONGO_CONNECTION
-    } );
-
-    if ( envOutput.error ) {
-        GlobalLogger.$.error( entryPoint, "fail to load environment file:\n" + util.inspect( envOutput.error ) );
-        process.exit( 1 );
+    if (envOutput.error) {
+        GlobalLogger.$.error(entryPoint, "fail to load environment file:\n" + util.inspect(envOutput.error));
+        process.exit(1);
     }
 
-    GlobalLogger.$.info( entryPoint, `Loading environment variables from: 'file://${ envPath }'` );
-    GlobalLogger.$.info( entryPoint, `Current log level: '${ Logger.getLogLevelString() }'` );
+    GlobalLogger.$.info(entryPoint, `Loading environment variables from: 'file://${envPath}'`);
+    GlobalLogger.$.info(entryPoint, `Current log level: '${Logger.getLogLevelString()}'`);
 
-    if ( process.argv.includes( "--dump-env" ) ) {
-        GlobalLogger.$.info( entryPoint, `Environment file variables:\n${ util.inspect( envOutput.parsed ) }` );
-        process.exit( 0 );
+    if (process.argv.includes("--dump-env")) {
+        GlobalLogger.$.info(entryPoint, `Environment file variables:\n${util.inspect(envOutput.parsed)}`);
+        process.exit(0);
     }
 
     // Handle export-languages command
-    const exportArg = process.argv.find( arg => arg.startsWith( "--export-languages" ) );
-    if ( exportArg ) {
-        GlobalLogger.$.info( entryPoint, "Export languages command detected" );
+    const exportArg = process.argv.find(arg => arg.startsWith("--export-languages"));
+    if (exportArg) {
+        GlobalLogger.$.info(entryPoint, "Export languages command detected");
         try {
             // Parse language codes if provided (format: --export-languages=en,ru)
-            const languageCodes = exportArg.includes( "=" )
-                ? exportArg.split( "=" )[ 1 ].split( "," ).map( code => code.trim() )
+            const languageCodes = exportArg.includes("=")
+                ? exportArg.split("=")[1].split(",").map(code => code.trim())
                 : undefined;
 
-            const languageCount = await exportLanguages( languageCodes ?? [ "en" ] );
-            GlobalLogger.$.info( entryPoint, `Successfully exported ${ languageCount } languages` );
-            process.exit( 0 );
-        } catch ( error ) {
-            GlobalLogger.$.error( entryPoint, "Failed to export languages", error );
-            process.exit( 1 );
+            const languageCount = await exportLanguages(languageCodes ?? ["en"]);
+            GlobalLogger.$.info(entryPoint, `Successfully exported ${languageCount} languages`);
+            process.exit(0);
+        } catch (error) {
+            GlobalLogger.$.error(entryPoint, "Failed to export languages", error);
+            process.exit(1);
         }
     }
 
     await PrismaBotClient.$.connect();
 
-    GlobalLogger.$.info( entryPoint, "Database is connected" );
-    GlobalLogger.$.info( entryPoint, "Registering services..." );
-    GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
+    GlobalLogger.$.info(entryPoint, "Database is connected");
+    GlobalLogger.$.info(entryPoint, "Registering services...");
+    GlobalLogger.$.info(entryPoint, "Establishing bot connection ...");
 
-    const { default: botInitialize } = await import( "./vertix" );
-    const client = await botInitialize();
+    const { default: botInitialize } = await import("./vertix");
+    const client = await botInitialize({
+        enableListeners: options.enableListeners
+    });
 
-    await registerUIServices( client );
+    await registerUIServices(client);
     await registerConfigs();
     await registerServices();
+    await registerDataServicesAndComponents();
 
-    GlobalLogger.$.info( entryPoint, "Services are registered" );
+    GlobalLogger.$.info(entryPoint, "Services are registered");
 
     await registerUIAdapters();
 
-    await EmojiManager.$.promise().then( () => {
-        GlobalLogger.$.info( entryPoint,"Emoji manager is initialized" );
-    } );
+    await EmojiManager.$.promise().then(() => {
+        GlobalLogger.$.info(entryPoint, "Emoji manager is initialized");
+    });
 
-    await registerUILanguageManager( {
-        shouldImport: true,
-        shouldValidate: true
-    } );
+    await registerUILanguageManager({
+        shouldImport: false,
+        shouldValidate: false
+    });
 
     await registerUIVersionStrategies();
 
-    process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
+    process.env.Z_RUN_TSCONFIG_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../tsconfig.json");
 
     // Disabled for security reasons, proven to be unsafe in long term.
     // await createCleanupWorker();
 
-    GlobalLogger.$.info( entryPoint, "Bot is initialized" );
+    GlobalLogger.$.info(entryPoint, "Bot is initialized");
 }

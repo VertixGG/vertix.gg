@@ -41,7 +41,7 @@ import { LanguageUtils } from "@vertix.gg/bot/src/utils/language";
 
 import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
 
-import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+import type { TAdapterStaticContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type {
     UIComponentTypeConstructor,
@@ -98,7 +98,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     private uiInitialLanguage!: UILanguageJSON;
 
     public static getName() {
-        return "Vertix/UI-V2/LanguageManager";
+        return "VertixBot/UI-V2/LanguageManager";
     }
 
     public static getInstance() {
@@ -418,9 +418,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         const allComponents: UIComponentTypeConstructor[] = [];
 
         this.uiService.getAll().forEach( ( adapter ) => {
-            const AdapterType = adapter as typeof UIAdapterBase;
+            type AdapterWithStatics = TAdapterStaticContract & { isMultiLanguage?: () => boolean };
+            const AdapterType = adapter as AdapterWithStatics;
 
-            if ( !AdapterType.isMultiLanguage() ) {
+            if ( !AdapterType.isMultiLanguage?.() ) {
                 this.logger.log(
                     this.ensureInitialLanguage,
                     `Adapter with name: '${ AdapterType.getName() }' is not multilanguage, skipping...`
@@ -429,15 +430,16 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             }
 
             // Check if component is already exist.
-            if ( allComponents.find( ( c ) => c.getName() === AdapterType.getComponent().getName() ) ) {
+            const component = AdapterType.getComponent() as UIComponentTypeConstructor;
+            if ( allComponents.find( ( c ) => c.getName() === component.getName() ) ) {
                 this.logger.log(
                     this.ensureInitialLanguage,
-                    `Component with name: '${ AdapterType.getComponent().getName() }' already exists, skipping...`
+                    `Component with name: '${ component.getName() }' already exists, skipping...`
                 );
                 return;
             }
 
-            allComponents.push( AdapterType.getComponent() );
+            allComponents.push( AdapterType.getComponent() as UIComponentTypeConstructor );
         } );
 
         // TODO: Create utils for handling entities, use them where possible.

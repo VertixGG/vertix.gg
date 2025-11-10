@@ -4,7 +4,7 @@ import type { APISelectMenuOption } from "discord.js";
 
 export class DynamicChannelPrivacySelectMenu extends DynamicChannelStringMenuBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPrivacyMenu";
+        return "VertixBot/UI-V3/DynamicChannelPrivacyMenu";
     }
 
     public getId(): string {

@@ -4,7 +4,7 @@ import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v2/dynamic-chann
 
 export class DynamicChannelPermissionsStateButton extends DynamicChannelButtonBase {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPermissionsStateButton";
+        return "VertixBot/UI-V2/DynamicChannelPermissionsStateButton";
     }
 
     public getId() {

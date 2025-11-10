@@ -18,7 +18,7 @@ export class ClaimStartEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V2/ClaimStartEmbed";
+        return "VertixBot/UI-V2/ClaimStartEmbed";
     }
 
     public static getInstanceType() {

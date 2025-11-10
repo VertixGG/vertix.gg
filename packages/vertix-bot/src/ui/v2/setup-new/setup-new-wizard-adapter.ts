@@ -38,22 +38,19 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
-type Interactions =
-    | UIDefaultButtonChannelTextInteraction
-    | UIDefaultModalChannelTextInteraction
-    | UIDefaultStringSelectMenuChannelTextInteraction;
+import type { WizardInteractions } from "@vertix.gg/gui/src/builders/builders-definitions";
 
-export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, Interactions> {
+export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChannel, WizardInteractions> {
     private masterChannelService: MasterChannelService;
 
     public static getName() {
-        return "Vertix/UI-V2/SetupNewWizardAdapter";
+        return "VertixBot/UI-V2/SetupNewWizardAdapter";
     }
 
     public static getComponent() {
         return class SetupNewWizardComponent extends UIWizardComponentBase {
             public static getName() {
-                return "Vertix/UI-V2/SetupNewWizardComponent";
+                return "VertixBot/UI-V2/SetupNewWizardComponent";
             }
 
             public static getComponents() {
@@ -78,11 +75,11 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
     protected static getExecutionSteps() {
         return {
-            "Vertix/UI-V2/SetupNewWizardMaxMasterChannels": {
+            "VertixBot/UI-V2/SetupNewWizardMaxMasterChannels": {
                 embedsGroup: "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup"
             },
 
-            "Vertix/UI-V2/SetupNewWizardError": {
+            "VertixBot/UI-V2/SetupNewWizardError": {
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             }
         };
@@ -118,7 +115,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
         // Select buttons menu.
         this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "Vertix/UI-V2/ChannelButtonsTemplateSelectMenu",
+            "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
             this.onButtonsSelected
         );
 
@@ -129,14 +126,14 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         );
 
         // this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-        //     "Vertix/UI-V2/ButtonsAddSelectMenu",
+        //     "VertixBot/UI-V2/ButtonsAddSelectMenu",
         //     async ( interaction ) => {
         //         await this.onButtonSelected( interaction, "added" );
         //     }
         // );
         //
         // this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-        //     "Vertix/UI-V2/ButtonsRemoveSelectMenu",
+        //     "VertixBot/UI-V2/ButtonsRemoveSelectMenu",
         //     async ( interaction ) => {
         //         await this.onButtonSelected( interaction, "remove" );
         //     }
@@ -164,7 +161,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         const result: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep( interaction )?.name ) {
-            case "Vertix/UI-V2/SetupNewWizardMaxMasterChannels":
+            case "VertixBot/UI-V2/SetupNewWizardMaxMasterChannels":
                 result.maxMasterChannels = argsFromManager.maxMasterChannels;
                 break;
         }
@@ -172,14 +169,14 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         return result;
     }
 
-    protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, context: Interactions ): Promise<void> {
+    protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, context: WizardInteractions ): Promise<void> {
         // TODO: Create convenient solution.
         switch ( this.getCurrentExecutionStep( context )?.name ) {
-            case "Vertix/UI-V2/SetupStep2Component":
+            case "VertixBot/UI-V2/SetupStep2Component":
                 args._configExtraMenuDisableLogsChannelOption = true;
                 break;
 
-            case "Vertix/UI-V2/SetupStep3Component":
+            case "VertixBot/UI-V2/SetupStep3Component":
                 args._wizardShouldDisableFinishButton = !args.dynamicChannelVerifiedRoles?.length;
                 break;
         }
@@ -216,13 +213,13 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
                 break;
 
             case "limit-reached":
-                await this.ephemeralWithStep( interaction, "Vertix/UI-V2/SetupNewWizardMaxMasterChannels", {
+                await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/SetupNewWizardMaxMasterChannels", {
                     maxMasterChannels: result.maxMasterChannels
                 } );
                 break;
 
             default:
-                await this.ephemeralWithStep( interaction, "Vertix/UI-V2/SetupNewWizardError" );
+                await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/SetupNewWizardError" );
         }
 
         this.deleteArgs( interaction );
@@ -237,12 +234,12 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep1Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep1Component" );
     }
 
     private async onTemplateNameModalSubmit( interaction: UIDefaultModalChannelTextInteraction ) {
         const channelNameInputId = this.customIdStrategy.generateId(
-            "Vertix/UI-V2/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
+            "VertixBot/UI-V2/SetupNewWizardAdapter:VertixBot/UI-General/ChannelNameTemplateInput"
         );
 
         const value = interaction.fields.getTextInputValue( channelNameInputId );
@@ -251,7 +248,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelNameTemplate: value
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep1Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep1Component" );
     }
 
     private async onButtonsSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -259,7 +256,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelButtonsTemplate: interaction.values.map( ( i ) => parseInt( i ) )
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep2Component" );
     }
 
     private async onButtonSelected(
@@ -284,7 +281,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelButtonsTemplate: buttons
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep2Component" );
     }
 
     private async onConfigExtrasSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -307,7 +304,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
         this.getArgsManager().setArgs( this, interaction, argsToSet );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep2Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep2Component" );
     }
 
     private async onVerifiedRolesSelected( interaction: UIDefaultStringSelectRolesChannelTextInteraction ) {
@@ -322,7 +319,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             dynamicChannelVerifiedRoles: roles.sort()
         } );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep3Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep3Component" );
     }
 
     private async onVerifiedRolesEveryoneSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
@@ -356,6 +353,6 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
         this.getArgsManager().setArgs( this, interaction, args );
 
-        await this.editReplyWithStep( interaction, "Vertix/UI-V2/SetupStep3Component" );
+        await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep3Component" );
     }
 }

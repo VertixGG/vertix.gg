@@ -5,6 +5,8 @@ export interface ChannelExtended extends PrismaBot.Channel {
     isDynamic: boolean;
 }
 
+export type ChannelExtendedIdVersionOnly = Pick<ChannelExtended, "id" | "version">;
+
 export interface ChannelExtendedWithCacheKey extends ChannelExtended {
     cacheKey: string;
 }

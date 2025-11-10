@@ -19,7 +19,7 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
     UIDefaultButtonChannelVoiceInteraction | ModalSubmitInteractionDefault
 > {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelMetaLimitAdapter";
+        return "VertixBot/UI-V2/DynamicChannelMetaLimitAdapter";
     }
 
     public static getComponent() {
@@ -29,20 +29,20 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
     protected static getExecutionSteps() {
         return {
             default: {},
-            "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInput": {
-                embedsGroup: "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup"
+            "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput": {
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup"
             },
-            "Vertix/UI-V2/DynamicChannelMetaLimitSuccess": {
-                embedsGroup: "Vertix/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup"
+            "VertixBot/UI-V2/DynamicChannelMetaLimitSuccess": {
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup"
             },
-            "Vertix/UI-V2/DynamicChannelMetaLimitError": {
+            "VertixBot/UI-V2/DynamicChannelMetaLimitError": {
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             }
         };
     }
 
     protected onEntityMap() {
-        this.bindModal<ModalSubmitInteractionDefault>( "Vertix/UI-V2/DynamicChannelMetaLimitModal", this.onModalSubmit );
+        this.bindModal<ModalSubmitInteractionDefault>( "VertixBot/UI-V2/DynamicChannelMetaLimitModal", this.onModalSubmit );
     }
 
     protected getStartArgs() {
@@ -53,7 +53,7 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
         const args: UIArgs = {};
 
         switch ( this.getCurrentExecutionStep()?.name ) {
-            case "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInput":
+            case "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput":
                 args.minValue = DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH;
                 args.maxValue = DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH;
                 break;
@@ -71,7 +71,7 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
 
     private async onModalSubmit( interaction: ModalSubmitInteractionDefault ) {
         const input = interaction.fields.getTextInputValue(
-                "Vertix/UI-V2/DynamicChannelMetaLimitAdapter:Vertix/UI-V2/DynamicChannelMetaLimitInput"
+                "VertixBot/UI-V2/DynamicChannelMetaLimitAdapter:VertixBot/UI-V2/DynamicChannelMetaLimitInput"
             ),
             parsedInput = parseInt( input );
 
@@ -80,13 +80,13 @@ export class DynamicChannelMetaLimitAdapter extends DynamicChannelAdapterExuBase
             parsedInput < DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH ||
             parsedInput > DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
         ) {
-            return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelMetaLimitInvalidInput", {} );
+            return await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput", {} );
         }
 
         if ( !( await this.dynamicChannelService.editUserLimit( interaction, interaction.channel, parsedInput ) ) ) {
-            return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelMetaLimitError", {} );
+            return await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaLimitError", {} );
         }
 
-        return await this.ephemeralWithStep( interaction, "Vertix/UI-V2/DynamicChannelMetaLimitSuccess", {} );
+        return await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaLimitSuccess", {} );
     }
 }

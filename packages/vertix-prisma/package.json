@@ -10,8 +10,8 @@
     },
     "dependencies": {
         "@prisma/client": "latest",
-        "prisma": "latest",
-        "@vertix.gg/base": "workspace:*"
+        "@vertix.gg/base": "workspace:*",
+        "prisma": "latest"
     },
     "exports": {
         "./package.json": "./package.json",

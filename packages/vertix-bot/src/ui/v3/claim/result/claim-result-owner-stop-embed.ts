@@ -15,7 +15,7 @@ export class ClaimResultOwnerStopEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/ClaimResultOwnerStopEmbed";
+        return "VertixBot/UI-V3/ClaimResultOwnerStopEmbed";
     }
 
     public static getInstanceType() {

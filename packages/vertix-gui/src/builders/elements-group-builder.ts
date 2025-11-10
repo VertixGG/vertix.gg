@@ -26,10 +26,10 @@ export class ElementsGroupBuilder<
             throw new Error( "Cannot use addRow with a dynamic items factory. Use setItems instead." );
         }
         if ( "undefined" === typeof this.items ) {
-            this.items = [ ...elements ] as TItemsDefinition;
+            this.items = [ elements ] as unknown as TItemsDefinition;
             return this;
         }
-        this.items.push( ...elements );
+        ( this.items as any[] ).push( elements );
         return this;
     }
 

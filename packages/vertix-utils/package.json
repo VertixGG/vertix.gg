@@ -3,6 +3,7 @@
     "type": "module",
     "dependencies": {
         "@vertix.gg/base": "workspace:*",
+        "cross-fetch": "^4.1.0",
         "tough-cookie": "^4.1.2"
     },
     "devDependencies": {

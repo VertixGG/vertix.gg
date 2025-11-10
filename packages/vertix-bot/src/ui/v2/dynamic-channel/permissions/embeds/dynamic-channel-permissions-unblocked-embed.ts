@@ -14,7 +14,7 @@ export class DynamicChannelPermissionsUnblockedEmbed extends DynamicChannelPermi
     };
 
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelPermissionsUnblockedEmbed";
+        return "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

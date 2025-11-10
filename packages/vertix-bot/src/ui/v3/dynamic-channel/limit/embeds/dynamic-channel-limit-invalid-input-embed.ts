@@ -15,7 +15,7 @@ export class DynamicChannelLimitInvalidInputEmbed extends UIEmbedBase {
     };
 
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelLimitInvalidInputEmbed";
+        return "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed";
     }
 
     public static getInstanceType(): UIInstancesTypes {

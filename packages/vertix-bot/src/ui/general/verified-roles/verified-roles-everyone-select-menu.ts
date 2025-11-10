@@ -45,7 +45,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
                     "dynamicChannelIncludeEveryoneRole" +
                     UI_CUSTOM_ID_SEPARATOR +
                     ( this.uiArgs?.dynamicChannelIncludeEveryoneRole ? "0" : "1" ),
-                emoji: "🛡️" as any
+                emoji: { name: "🛡️" }
             }
         ];
     }
@@ -64,7 +64,7 @@ export class VerifiedRolesEveryoneSelectMenu extends UIElementStringSelectMenu {
     }
 
     protected getDataFor( option: APISelectMenuOption ) {
-        const result = {
+        const result: { state: string } = {
                 state: VerifiedRolesEveryoneSelectMenu.vars.stateOff
             },
             optionValue = option.value.split( UI_CUSTOM_ID_SEPARATOR, 2 );

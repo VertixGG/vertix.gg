@@ -22,7 +22,7 @@ import {
 
 export class DynamicChannelPermissionsComponent extends UIComponentBase {
     public static getName() {
-        return "Vertix/UI-V3/DynamicChannelPermissionsComponent";
+        return "VertixBot/UI-V3/DynamicChannelPermissionsComponent";
     }
 
     public static getInstanceType() {
@@ -55,11 +55,11 @@ export class DynamicChannelPermissionsComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return "Vertix/UI-V3/DynamicChannelPermissionsAccessElementsGroup";
+        return "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup";
     }
 
     public static getDefaultEmbedsGroup() {
-        return "Vertix/UI-V3/DynamicChannelPermissionsAccessEmbedGroup";
+        return "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup";
     }
 
     public static getDefaultMarkdownsGroup() {

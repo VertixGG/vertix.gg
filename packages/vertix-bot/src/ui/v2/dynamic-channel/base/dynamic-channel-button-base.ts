@@ -10,7 +10,7 @@ import type { IRequireId } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/r
 
 export abstract class DynamicChannelButtonBase extends UIElementButtonBase implements IRequireId {
     public static getName() {
-        return "Vertix/UI-V2/DynamicChannelButtonBase";
+        return "VertixBot/UI-V2/DynamicChannelButtonBase";
     }
 
     public static getInstanceType() {

@@ -1,24 +1,13 @@
-import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
-
+import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { ClaimStartButton } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-start-button";
 import { ClaimStartEmbed } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-start-embed";
 
-export class ClaimStartComponent extends UIComponentBase {
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimStartComponent";
-    }
+const ClaimStartComponent = new ComponentBuilder( "VertixBot/UI-V3/ClaimStartComponent" )
+    .addElements( [ ClaimStartButton ] )
+    .addEmbed( ClaimStartEmbed )
+    .setInstanceType( UIInstancesTypes.Static )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Static;
-    }
-
-    protected static getElements() {
-        return [ [ ClaimStartButton ] ];
-    }
-
-    protected static getEmbeds() {
-        return [ ClaimStartEmbed ];
-    }
-}
+export { ClaimStartComponent };

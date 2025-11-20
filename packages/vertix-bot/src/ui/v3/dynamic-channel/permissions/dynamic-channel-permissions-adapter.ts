@@ -1,18 +1,15 @@
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { DynamicChannelAdapterExuWithPermissionsBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-exu-with-permissions-base";
-
+import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/definitions/dynamic-channel";
+import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 import { DynamicChannelPermissionsComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-component";
-
 import {
     DynamicChannelPermissionsAccessButton,
     DynamicChannelPermissionsStateButton,
     DynamicChannelPermissionsVisibilityButton
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
-
-import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/definitions/dynamic-channel";
-
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type {
@@ -23,463 +20,304 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
-export class DynamicChannelPermissionsAdapter extends DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction> {
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelPermissionsAdapter";
+const PERMISSIONS_STEPS = {
+    default: {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsAccess": {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsStateShown": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsGranted": {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsDenied": {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsBlocked": {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked": {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsKick": {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsStateError": {
+        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged": {
+        embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
     }
+} as const;
 
-    public static getComponent() {
-        return DynamicChannelPermissionsComponent;
-    }
-
-    protected static getInitiatorElement() {
-        return DynamicChannelPermissionsAccessButton;
-    }
-
-    protected static getExcludedElements() {
-        return [
-            // DynamicChannelPermissionsAccessButton,
-            DynamicChannelPermissionsStateButton,
-            DynamicChannelPermissionsVisibilityButton
-        ];
-    }
-
-    protected static getExecutionSteps() {
-        return {
-            ...super.getExecutionSteps(),
-
-            "VertixBot/UI-V3/DynamicChannelPermissionsAccess": {
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-            },
-
-            "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic": {
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate": {
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbedGroup"
-            },
-
-            "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden": {
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsStateShown": {
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbedGroup"
-            },
-
-            "VertixBot/UI-V3/DynamicChannelPermissionsGranted": {
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsDenied": {
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsBlocked": {
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked": {
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsKick": {
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
-            },
-
-            "VertixBot/UI-V3/DynamicChannelPermissionsStateError": {
-                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged": {
-                embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
-            }
-        };
-    }
-
-    protected getStartArgs() {
-        return {};
-    }
-
-    protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
+const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
+    "VertixBot/UI-V3/DynamicChannelPermissionsAdapter"
+)
+    .setComponent( DynamicChannelPermissionsComponent )
+    .setInitiatorElement( DynamicChannelPermissionsAccessButton )
+    .setExcludedElements( [
+        DynamicChannelPermissionsStateButton,
+        DynamicChannelPermissionsVisibilityButton
+    ] )
+    .setExecutionSteps( PERMISSIONS_STEPS )
+    .getStartArgs( async() => ( {} ) )
+    .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const args: UIArgs = {};
 
-        switch ( this.getCurrentExecutionStep()?.name ) {
+        switch ( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-V3/DynamicChannelPermissionsGranted":
                 args.userGrantedDisplayName = argsFromManager.userGrantedDisplayName;
                 break;
-
             case "VertixBot/UI-V3/DynamicChannelPermissionsDenied":
                 args.userDeniedDisplayName = argsFromManager.userDeniedDisplayName;
                 break;
-
             case "VertixBot/UI-V3/DynamicChannelPermissionsBlocked":
                 args.userBlockedDisplayName = argsFromManager.userBlockedDisplayName;
                 break;
-
             case "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked":
                 args.userUnBlockedDisplayName = argsFromManager.userUnBlockedDisplayName;
                 break;
-
             case "VertixBot/UI-V3/DynamicChannelPermissionsKick":
                 args.userKickedDisplayName = argsFromManager.userKickedDisplayName;
                 break;
         }
 
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
-
         if ( masterChannelDB ) {
             args.dynamicChannelButtonsTemplate = await MasterChannelDataManager.$.getChannelButtonsTemplate(
                 masterChannelDB,
                 false
             );
-
-            // Runs over all dynamic-channel buttons that are configured by the user(Master Channel)
-            // And determine if accessButtonId is enabled , since all other "permissions" buttons are depends on the access button
-            // TODO: This mechanism is broken, and it should be reworked.
-            // Keep in mind that is only for version V2, and consider the effort to rework it.
             const accessButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
                 "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton"
             )?.getId();
-
             args.dynamicChannelButtonsIsAccessButtonAvailable = args.dynamicChannelButtonsTemplate.some(
                 ( buttonId: string ) => buttonId === accessButtonId
             );
         }
 
-        await this.assignUsersWithPermissions( interaction.channel, args );
-
+        Object.assign( args, await getUsersWithPermissions( interaction.channel ) );
         return args;
-    }
-
-    protected onEntityMap() {
-        // TODO: Check if state buttons needed to move out from component, since they are non-visible.
-        // Private/Public.
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
+    } )
+    .onEntityMap( async( { bindButton, bindSelectMenu, bindUserSelectMenu } ) => {
+        bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-            this.onStateButtonClicked
+            async( context, interaction ) => {
+                const state = interaction.customId.split( ":" )[ 2 ];
+                if ( state === "public" || state === "private" ) {
+                    await onStateChanged( context, interaction, state );
+                }
+            }
         );
 
-        // Hidden/Shown.
-        this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
+        bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-            this.onStateVisibilityClicked
+            async( context, interaction ) => {
+                const visibility = interaction.customId.split( ":" )[ 2 ];
+                if ( visibility === "hidden" || visibility === "shown" ) {
+                    await onVisibilityChanged( context, interaction, visibility );
+                }
+            }
         );
 
-        // Grant user access.
-        this.bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-            this.onGrantSelected
+            async( context, interaction ) => {
+                const userId = interaction.values[ 0 ];
+                const result = await ServiceLocator.$
+                    .get( "VertixBot/Services/DynamicChannel" )
+                    .editUserPermissions(
+                        interaction,
+                        interaction.channel,
+                        userId,
+                        DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS
+                    );
+                switch ( result.code ) {
+                    case "success":
+                        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsGranted", {
+                            userGrantedDisplayName: interaction.users.first()?.displayName
+                        } );
+                        break;
+                    case "not-found":
+                        await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError" );
+                        break;
+                }
+            }
         );
 
-        // Deny user access.
-        this.bindSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+        bindSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-            this.onDenySelected
+            async( context, interaction ) => {
+                const result = await ServiceLocator.$
+                    .get( "VertixBot/Services/DynamicChannel" )
+                    .editUserPermissions(
+                        interaction,
+                        interaction.channel,
+                        interaction.values[ 0 ],
+                        []
+                    );
+                switch ( result.code ) {
+                    case "success":
+                        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsDenied", {
+                            userDeniedDisplayName: interaction.users.first()?.displayName
+                        } );
+                        break;
+                    case "not-found":
+                        await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError" );
+                        break;
+                }
+            }
         );
 
-        // Block user.
-        this.bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-            this.onBlockSelected
+            async( context, interaction ) => {
+                await onBlockChanged( context, interaction, true, interaction.values[ 0 ] );
+            }
         );
 
-        // Unblock user.
-        this.bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-            this.onUnBlockSelected
+            async( context, interaction ) => {
+                await onBlockChanged( context, interaction, false, interaction.values[ 0 ] );
+            }
         );
 
-        // Kick user.
-        this.bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-            this.onKickSelected
+            async( context, interaction ) => {
+                const userId = interaction.values[ 0 ];
+                const result = await ServiceLocator.$
+                    .get( "VertixBot/Services/DynamicChannel" )
+                    .kickUser( interaction, interaction.channel, userId );
+                switch ( result.code ) {
+                    case "success":
+                        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsKick", {
+                            userKickedDisplayName: interaction.users.first()?.displayName
+                        } );
+                        break;
+                    case "not-found":
+                        await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError" );
+                        break;
+                }
+            }
         );
-    }
+    } )
+    .build();
 
-    private async onStateButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        switch ( await this.dynamicChannelService.getChannelState( interaction.channel ) ) {
-            case "public":
-                if ( !( await this.dynamicChannelService.editChannelState( interaction, interaction.channel, "private" ) ) ) {
-                    return await this.ephemeralWithStep(
-                        interaction,
-                        "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                        {}
-                    );
-                }
+async function getUsersWithPermissions( channel: import("discord.js").VoiceChannel ) {
+    const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+    const allowed = await dynamicChannelService.getChannelUsersWithPermissionState(
+        channel,
+        DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
+        true
+    );
+    const blocked = await dynamicChannelService.getChannelUsersWithPermissionState(
+        channel,
+        DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
+        false
+    );
 
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate",
-                    {}
-                );
+    return {
+        allowedUsers: allowed.allowedUsers,
+        blockedUsers: blocked.blockedUsers
+    };
+}
 
-            case "private":
-                if ( !( await this.dynamicChannelService.editChannelState( interaction, interaction.channel, "public" ) ) ) {
-                    return await this.ephemeralWithStep(
-                        interaction,
-                        "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                        {}
-                    );
-                }
+async function onStateChanged(
+    context: import("@vertix.gg/gui/src/builders/builders-definitions").IExecutionAdapterContext<any, UIArgs>,
+    interaction: UIDefaultButtonChannelVoiceInteraction,
+    state: "public" | "private"
+) {
+    const result = await ServiceLocator.$
+        .get( "VertixBot/Services/DynamicChannel" )
+        .editChannelPrivacyState( interaction, interaction.channel, state );
 
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
-    }
-
-    private async onStateVisibilityClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        switch ( await this.dynamicChannelService.getChannelVisibilityState( interaction.channel ) ) {
-            case "shown":
-                if (
-                    !( await this.dynamicChannelService.editChannelVisibilityState(
-                        interaction,
-                        interaction.channel,
-                        "hidden"
-                    ) )
-                ) {
-                    return await this.ephemeralWithStep(
-                        interaction,
-                        "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                        {}
-                    );
-                }
-
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden",
-                    {}
-                );
-
-            case "hidden":
-                if (
-                    !( await this.dynamicChannelService.editChannelVisibilityState(
-                        interaction,
-                        interaction.channel,
-                        "shown"
-                    ) )
-                ) {
-                    return await this.ephemeralWithStep(
-                        interaction,
-                        "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                        {}
-                    );
-                }
-
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateShown",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
-    }
-
-    private async onGrantSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        const targetId = interaction.values.at( 0 ) as string,
-            target = interaction.guild.members.cache.get( targetId );
-
-        if ( !target ) {
-            await this.updateInteractionDefer( interaction );
-            return;
-        }
-
-        switch (
-            await this.dynamicChannelService.addUserAccess(
+    switch ( result.code ) {
+        case "success":
+            await context.editReplyWithStep(
                 interaction,
-                interaction.channel,
-                target,
-                DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS
-            )
-        ) {
-            case "success":
-                await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsGranted", {
-                    userGrantedDisplayName: target.displayName
-                } );
-                break;
-
-            case "action-on-bot-user":
-            case "self-grant":
-            case "already-granted":
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
-    }
-
-    private async onDenySelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        const targetId = interaction.values.at( 0 ) as string,
-            target = interaction.guild.members.cache.get( targetId );
-
-        if ( !target ) {
-            await this.updateInteractionDefer( interaction );
-            return;
-        }
-
-        switch ( await this.dynamicChannelService.removeUserAccess( interaction, interaction.channel, target ) ) {
-            case "success":
-                await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsDenied", {
-                    userDeniedDisplayName: target.displayName
-                } );
-                break;
-
-            case "action-on-bot-user":
-            case "self-deny":
-            case "not-in-the-list":
-            case "user-blocked":
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
-    }
-
-    private async onBlockSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        const targetId = interaction.values.at( 0 ) as string,
-            target = interaction.guild.members.cache.get( targetId );
-
-        if ( !target ) {
-            await this.updateInteractionDefer( interaction );
-            return;
-        }
-
-        switch (
-            await this.dynamicChannelService.editUserAccess(
-                interaction,
-                interaction.channel,
-                target,
-                DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
-                false
-            )
-        ) {
-            case "success":
-                // Check if the target is in the channel.
-                if ( interaction.channel.members.has( target.id ) ) {
-                    // Kick it.
-                    await target.voice.setChannel( null ).catch( () => {} );
-                }
-
-                await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsBlocked", {
-                    userBlockedDisplayName: target.displayName
-                } );
-                break;
-
-            case "action-on-bot-user":
-            case "self-edit":
-            case "already-have":
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
-    }
-
-    private async onUnBlockSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        const targetId = interaction.values.at( 0 ) as string,
-            target = interaction.guild.members.cache.get( targetId );
-
-        if ( !target ) {
-            await this.updateInteractionDefer( interaction );
-            return;
-        }
-
-        switch ( await this.dynamicChannelService.removeUserAccess( interaction, interaction.channel, target, true ) ) {
-            case "success":
-                await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked", {
-                    userUnBlockedDisplayName: target.displayName
-                } );
-                break;
-
-            case "action-on-bot-user":
-            case "not-in-the-list":
-            case "self-deny":
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
-    }
-
-    private async onKickSelected( interaction: UIDefaultUserSelectMenuChannelVoiceInteraction ) {
-        const targetId = interaction.values.at( 0 ) as string,
-            target = interaction.guild.members.cache.get( targetId );
-
-        if ( !target ) {
-            await this.updateInteractionDefer( interaction );
-            return;
-        }
-
-        switch ( await this.dynamicChannelService.kickUser( interaction, interaction.channel, target ) ) {
-            case "success":
-                await this.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsKick", {
-                    userKickedDisplayName: target.displayName
-                } );
-                break;
-
-            case "not-in-the-list":
-            case "action-on-bot-user":
-            case "self-action":
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                    {}
-                );
-
-            default:
-                return await this.ephemeralWithStep(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    {}
-                );
-        }
+                "VertixBot/UI-V3/DynamicChannelPermissionsState" + state[ 0 ].toUpperCase() + state.substring( 1 )
+            );
+            break;
+        case "bad-state":
+            await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError" );
+            break;
     }
 }
+
+async function onVisibilityChanged(
+    context: import("@vertix.gg/gui/src/builders/builders-definitions").IExecutionAdapterContext<any, UIArgs>,
+    interaction: UIDefaultButtonChannelVoiceInteraction,
+    visibility: "hidden" | "shown"
+) {
+    const result = await ServiceLocator.$
+        .get( "VertixBot/Services/DynamicChannel" )
+        .editChannelVisibilityState(
+            interaction,
+            interaction.channel,
+            visibility
+        );
+    switch ( result.code ) {
+        case "success":
+            await context.editReplyWithStep(
+                interaction,
+                "VertixBot/UI-V3/DynamicChannelPermissionsState" + visibility[ 0 ].toUpperCase() + visibility.substring( 1 )
+            );
+            break;
+        case "bad-state":
+            await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError" );
+            break;
+    }
+}
+
+async function onBlockChanged(
+    context: import("@vertix.gg/gui/src/builders/builders-definitions").IExecutionAdapterContext<any, UIArgs>,
+    interaction: UIDefaultUserSelectMenuChannelVoiceInteraction,
+    isBlockMode: boolean,
+    userId: string
+) {
+    const result = await ServiceLocator.$
+        .get( "VertixBot/Services/DynamicChannel" )
+        .setUserAccess(
+            interaction,
+            interaction.channel,
+            userId,
+            !isBlockMode
+        );
+
+    switch ( result.code ) {
+        case "success":
+            await context.editReplyWithStep(
+                interaction,
+                isBlockMode
+                    ? "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
+                    : "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
+            );
+            break;
+        case "not-found":
+            await context.ephemeralWithStep( interaction, "VertixBot/UI-General/NothingChangedEmbedGroup" );
+            break;
+    }
+}
+
+export { DynamicChannelPermissionsAdapter };

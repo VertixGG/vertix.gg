@@ -1,6 +1,6 @@
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
+import { ExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/execution-adapter-builder";
 
 import { ClaimResultComponent } from "@vertix.gg/bot/src/ui/v3/claim/result/claim-result-component";
 
@@ -11,59 +11,49 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
-export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel, ButtonInteraction<"cached">> {
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimResultAdapter";
+type Interaction = ButtonInteraction<"cached">;
+
+const CLAIM_RESULT_STEPS = {
+    "VertixBot/UI-V3/ClaimResultOwnerStop": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
+    },
+
+    "VertixBot/UI-V3/ClaimResultAddedSuccessfully": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultStepInEmbedGroup"
+    },
+    "VertixBot/UI-V3/ClaimResultAlreadyAdded": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
+    },
+
+    "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup"
+    },
+    "VertixBot/UI-V3/ClaimResultVotedSuccessfully": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultVotedEmbedGroup"
+    },
+    "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup"
+    },
+    "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully": {
+        embedsGroup: "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
     }
+} as const;
 
-    public static getComponent() {
-        return ClaimResultComponent;
-    }
-
-    protected static getExecutionSteps() {
-        return {
-            "VertixBot/UI-V3/ClaimResultOwnerStop": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
-            },
-
-            "VertixBot/UI-V3/ClaimResultAddedSuccessfully": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultStepInEmbedGroup"
-            },
-            "VertixBot/UI-V3/ClaimResultAlreadyAdded": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
-            },
-
-            "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup"
-            },
-            "VertixBot/UI-V3/ClaimResultVotedSuccessfully": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultVotedEmbedGroup"
-            },
-            "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup"
-            },
-            "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully": {
-                embedsGroup: "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
-            }
-        };
-    }
-
-    public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( 0n );
-    }
-
-    public getChannelTypes() {
-        return [ ChannelType.GuildVoice ];
-    }
-
-    protected async getStartArgs() {
-        return {};
-    }
-
-    protected async getReplyArgs( interaction: ButtonInteraction<"cached">, argsFromManager: UIArgs ) {
+const ClaimResultAdapter = new ExecutionAdapterBuilder<
+        VoiceChannel,
+        Interaction,
+        UIArgs
+    >( "VertixBot/UI-V3/ClaimResultAdapter" )
+    .setComponent( ClaimResultComponent )
+    .setExecutionSteps( CLAIM_RESULT_STEPS )
+    .setPermissions( new PermissionsBitField( 0n ) )
+    .setChannelTypes( [ ChannelType.GuildVoice ] )
+    .getStartArgs( async() => ( {} ) )
+    .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const args: UIArgs = {};
+        const step = context.getCurrentExecutionStep( interaction )?.name;
 
-        switch ( this.getCurrentExecutionStep().name ) {
+        switch ( step ) {
             case "VertixBot/UI-V3/ClaimResultOwnerStop":
                 args.absentInterval = DynamicChannelClaimManager.get(
                     "VertixBot/UI-V3/DynamicChannelClaimManager"
@@ -79,14 +69,12 @@ export class ClaimResultAdapter extends UIAdapterExecutionStepsBase<VoiceChannel
             case "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully":
                 args.prevUserId = argsFromManager.prevUserId;
                 args.currentUserId = argsFromManager.currentUserId;
-
                 break;
         }
 
         return args;
-    }
+    } )
+    .shouldDeletePreviousReply( () => true )
+    .build();
 
-    protected shouldDeletePreviousReply() {
-        return true;
-    }
-}
+export { ClaimResultAdapter };

@@ -1,0 +1,6 @@
+---
+description: use pnpm as default package manger
+globs: *
+alwaysApply: true
+---
+use pnmp as default package manger

@@ -41,6 +41,11 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Create dummy encryption key for CI
+        run: |
+          mkdir -p packages/vertix-base/src/encryption
+          echo 'export const encryptionKey = Buffer.from( "0000000000000000000000000000000000000000000000000000000000000000", "hex" );' > packages/vertix-base/src/encryption/key.ts
+
       - name: Run typecheck
         run: bun run vertix:ci:typecheck
 

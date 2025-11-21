@@ -46,6 +46,17 @@ jobs:
           mkdir -p packages/vertix-base/src/encryption
           echo 'export const encryptionKey = Buffer.from( "0000000000000000000000000000000000000000000000000000000000000000", "hex" );' > packages/vertix-base/src/encryption/key.ts
 
+      - name: Cache TypeScript build info
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/**/*.tsbuildinfo
+            packages/**/dist/*.tsbuildinfo
+            packages/**/test/*.tsbuildinfo
+          key: ${{ runner.os }}-tsbuildinfo-${{ hashFiles('**/tsconfig*.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-tsbuildinfo-
+
       - name: Run typecheck
         run: bun run vertix:ci:typecheck
 

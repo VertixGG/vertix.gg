@@ -12,6 +12,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
@@ -45,11 +46,12 @@ const ClaimStartAdapter = new AdapterBuilderBase<
         };
     } )
     .onEntityMap( async( { bindButton } ) => {
-        bindButton<DefaultInteraction>(
+        bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-V3/ClaimStartButton",
             async( _context, interaction ) => {
+                const voiceInteraction = interaction as unknown as DefaultInteraction;
                 await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" )
-                    .handleVoteRequest( interaction );
+                    .handleVoteRequest( voiceInteraction );
             }
         );
     } )

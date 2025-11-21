@@ -23,12 +23,15 @@ const loadedPromise = windowLoadedPromise(),
 const RoutesComponent = () => {
     loadedSuspensePromise.read();
 
+    const RoutesComponentTyped = Routes as React.ComponentType<{ children?: React.ReactNode }>;
+    const RouteComponentTyped = Route as React.ComponentType<{ key?: string; path?: string; element?: React.ReactElement }>;
+
     return (
-        <Routes>
+        <RoutesComponentTyped>
             { localRoutes.map( ( route ) => {
-                return <Route key={ route.path } path={ route.path } element={ <route.component/> }/>;
+                return <RouteComponentTyped key={ route.path } path={ route.path } element={ <route.component/> }/>;
             } ) }
-        </Routes>
+        </RoutesComponentTyped>
     );
 };
 

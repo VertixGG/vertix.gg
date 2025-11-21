@@ -120,7 +120,7 @@ describe( "VertixGUI/UIHashService", () => {
             const id = "this-is-a-very-long-string-that-should-exceed-the-max-length";
 
             // Act + Assert
-            expect( () => uiHashService.generateId( id, "-", 5 ) ).toThrowError(
+            expect( () => uiHashService.generateId( id, "-", 5 ) ).toThrow(
                 "Generated id is 13 characters long, max length: 5"
             );
         } );

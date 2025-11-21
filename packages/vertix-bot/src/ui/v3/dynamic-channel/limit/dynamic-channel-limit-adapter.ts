@@ -10,8 +10,9 @@ import {
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIDefaultButtonChannelVoiceInteraction, UIDefaultModalChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ModalMessageModalSubmitInteraction, VoiceChannel } from "discord.js";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteraction<"cached"> {
     channel: VoiceChannel;
@@ -52,14 +53,15 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
         return args;
     } )
     .onEntityMap( async( { bindModal } ) => {
-        bindModal<ModalSubmitInteractionDefault>(
+        bindModal<UIDefaultModalChannelTextInteraction>(
             "VertixBot/UI-V3/DynamicChannelLimitModal",
             async( context, interaction ) => {
+                const voiceInteraction = interaction as unknown as ModalSubmitInteractionDefault;
                 const limitButtonId = context.customIdStrategy.generateId(
                     "VertixBot/UI-V3/DynamicChannelLimitAdapter:VertixBot/UI-V3/DynamicChannelLimitInput"
                 );
 
-                const input = interaction.fields.getTextInputValue( limitButtonId ),
+                const input = voiceInteraction.fields.getTextInputValue( limitButtonId ),
                     parsedInput = parseInt( input );
 
                 if (
@@ -68,24 +70,24 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
                     parsedInput > DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
                 ) {
                     return await context.ephemeralWithStep(
-                        interaction,
+                        voiceInteraction,
                         "VertixBot/UI-V3/DynamicChannelLimitInvalidInput",
                         {}
                     );
                 }
 
-                const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
-                if ( !( await dynamicChannelService.editUserLimit( interaction, interaction.channel, parsedInput ) ) ) {
+                if ( !( await dynamicChannelService.editUserLimit( voiceInteraction, voiceInteraction.channel, parsedInput ) ) ) {
                     return await context.ephemeralWithStep(
-                        interaction,
+                        voiceInteraction,
                         "VertixBot/UI-V3/DynamicChannelLimitError",
                         {}
                     );
                 }
 
                 return await context.ephemeralWithStep(
-                    interaction,
+                    voiceInteraction,
                     "VertixBot/UI-V3/DynamicChannelLimitSuccess",
                     {}
                 );

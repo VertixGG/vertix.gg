@@ -15,6 +15,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
@@ -145,14 +146,20 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
     .getReplyArgs( async( context, interaction ) => getAllArgs( context, interaction ) )
     .getEditMessageArgs( async( context, message ) => getAllArgs( context, message as Message<true> ) )
     .onEntityMap( async( { bindButton } ) => {
-        bindButton<DefaultInteraction>(
+        bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-V3/ClaimVoteStepInButton",
-            async( _context, interaction ) => handleVoteRequest( interaction )
+            async( _context, interaction ) => {
+                const voiceInteraction = interaction as unknown as DefaultInteraction;
+                handleVoteRequest( voiceInteraction );
+            }
         );
 
-        bindButton<DefaultInteraction>(
+        bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-V3/ClaimVoteAddButton",
-            async( _context, interaction ) => handleVoteRequest( interaction )
+            async( _context, interaction ) => {
+                const voiceInteraction = interaction as unknown as DefaultInteraction;
+                handleVoteRequest( voiceInteraction );
+            }
         );
     } )
     .onStep( async( context, stepName, interaction ) => {
@@ -177,7 +184,7 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
         const stepName = context.getCurrentExecutionStep( interaction )?.name;
 
         if ( args.results && stepName === "VertixBot/UI-V3/ClaimVoteWon" && Object.keys( args.results ).length > 1 ) {
-            ClaimVoteComponent.switchMarkdownsGroup( "VertixBot/UI-V3/ClaimVoteResultsMarkdownGroup" );
+            context.getComponent().switchMarkdownsGroup( "VertixBot/UI-V3/ClaimVoteResultsMarkdownGroup" );
         }
     } )
     .build();

@@ -7,7 +7,7 @@ describe( "VertixGUI/UIBase", () => {
 
         // Assert.
         expect( () => new Class() )
-            .toThrowError( "UI subclasses should extend 'static getName()' method and not have 'Base' suffix at their name" );
+            .toThrow( "UI subclasses should extend 'static getName()' method and not have 'Base' suffix at their name" );
     } );
 
     test( "getName() :: Name should not include suffix of 'Base'", function() {
@@ -20,6 +20,6 @@ describe( "VertixGUI/UIBase", () => {
 
         // Assert.
         expect( () => new Class() )
-            .toThrowError( "UI subclasses should extend 'static getName()' method and not have 'Base' suffix at their name" );
+            .toThrow( "UI subclasses should extend 'static getName()' method and not have 'Base' suffix at their name" );
     } );
 } );

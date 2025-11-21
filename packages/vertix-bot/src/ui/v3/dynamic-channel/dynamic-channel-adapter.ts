@@ -3,6 +3,7 @@ import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user
 import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
@@ -16,6 +17,7 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { BaseMessageOptions, Message, VoiceChannel } from "discord.js";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 const DYNAMIC_CHANNEL_STEPS = {
     default: {}
@@ -159,7 +161,7 @@ class DynamicChannelAdapter extends DynamicChannelAdapterBase {
                 channelName: channel.name,
                 userLimit: ( channel as VoiceChannel ).userLimit,
 
-                state: await this.dynamicChannelService.getChannelPrivacyState( channel ),
+                state: await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" ).getChannelPrivacyState( channel ),
 
                 channelId: channel.id,
 

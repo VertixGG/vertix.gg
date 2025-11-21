@@ -1,5 +1,3 @@
-export {};
-
 import type * as PrismaTypes from "@vertix.gg/prisma/._bot-client-internal";
 import type * as PrismaLibrary from "@vertix.gg/prisma/._bot-client-library";
 
@@ -31,5 +29,4 @@ declare global {
     var PrismaBot: typeof PrismaTypes;
 }
 
-export type { PrismaTypes as PrismaBot };
-export type { PrismaLibrary as PrismaBotLibrary };
+export {};

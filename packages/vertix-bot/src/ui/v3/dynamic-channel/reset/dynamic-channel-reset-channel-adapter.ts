@@ -1,3 +1,5 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { DynamicChannelResetChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-component";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
@@ -6,6 +8,7 @@ import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 const RESET_CHANNEL_STEPS = {
     default: {}
@@ -19,8 +22,8 @@ const DynamicChannelResetChannelAdapterBase = new DynamicExecutionAdapterBuilder
     .build();
 
 class DynamicChannelResetChannelAdapter extends DynamicChannelResetChannelAdapterBase {
-    protected getStartArgs() {
-        return {};
+    protected getStartArgs(): Promise<UIArgs> {
+        return Promise.resolve( {} );
     }
 
     protected getReplyArgs( _interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
@@ -39,7 +42,8 @@ class DynamicChannelResetChannelAdapter extends DynamicChannelResetChannelAdapte
     }
 
     private async onResetChannelButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        const result = await this.dynamicChannelService.resetChannel( interaction, interaction.channel, {
+        const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+        const result = await dynamicChannelService.resetChannel( interaction, interaction.channel, {
             includeRegion: true,
             includePrimaryMessage: true
         } );
@@ -47,7 +51,7 @@ class DynamicChannelResetChannelAdapter extends DynamicChannelResetChannelAdapte
         switch ( result?.code ) {
             case "success-rename-rate-limit":
             case "success":
-                DynamicChannelResetChannelComponent.switchEmbedsGroup(
+                this.getComponent().switchEmbedsGroup(
                     "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
                 );
 
@@ -59,7 +63,7 @@ class DynamicChannelResetChannelAdapter extends DynamicChannelResetChannelAdapte
                 break;
 
             default:
-                DynamicChannelResetChannelComponent.switchEmbedsGroup(
+                this.getComponent().switchEmbedsGroup(
                     "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 );
                 await this.ephemeral( interaction, {} );

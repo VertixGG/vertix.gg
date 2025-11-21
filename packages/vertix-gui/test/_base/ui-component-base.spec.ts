@@ -23,7 +23,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             const action = () => Class.validate();
 
             // Assert.
-            expect( action ).toThrowError( "Component: 'test' has no entities" );
+            expect( action ).toThrow( "Component: 'test' has no entities" );
         } );
 
         test( "ensureEntities() :: ensure error - dynamic component should not allow static entities", function() {
@@ -69,7 +69,7 @@ describe( "VertixGUI/UIComponentBase", () => {
 
             // Assert.
             for ( const action of actions ) {
-                expect( action ).toThrowError( /Entity: 'entity-(.*)' is static, but component: 'test' is dynamic/ );
+                expect( action ).toThrow( /Entity: 'entity-(.*)' is static, but component: 'test' is dynamic/ );
             }
         } );
     } );
@@ -455,7 +455,7 @@ describe( "VertixGUI/UIComponentBase", () => {
             const action = () => instance.switchElementsGroup( ElementsGroupB );
 
             // Assert.
-            await expect( action ).toThrowError( "Entity: 'element3' is static, but component: 'test-component' is dynamic" );
+            expect( action ).toThrow( "Entity: 'element3' is static, but component: 'test-component' is dynamic" );
         } );
     } );
 

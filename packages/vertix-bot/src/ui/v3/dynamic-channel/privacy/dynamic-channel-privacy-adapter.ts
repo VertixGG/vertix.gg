@@ -11,10 +11,12 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIDefaultButtonChannelVoiceInteraction,
-    UIDefaultUserSelectMenuChannelVoiceInteraction
+    UIDefaultUserSelectMenuChannelVoiceInteraction,
+    UIDefaultStringSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { Message, VoiceChannel } from "discord.js";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
@@ -32,20 +34,20 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
         message ? getArgsWithPermissions( message.channel as VoiceChannel ) : {}
     )
     .onEntityMap( async( { bindSelectMenu } ) => {
-        bindSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
             async( context, interaction ) => {
-                const state = interaction.values[ 0 ];
+                const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
+                const state = voiceInteraction.values[ 0 ];
 
-                await ServiceLocator.$
-                    .get( "VertixBot/Services/DynamicChannel" )
-                    .editChannelPrivacyState(
-                        interaction,
-                        interaction.channel,
-                        state as "public" | "private" | "hidden"
-                    );
+                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+                await dynamicChannelService.editChannelPrivacyState(
+                    voiceInteraction,
+                    voiceInteraction.channel,
+                    state as "public" | "private" | "hidden"
+                );
 
-                await context.editReply( interaction );
+                await context.editReply( voiceInteraction );
             }
         );
     } )
@@ -53,9 +55,9 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
 
 async function getArgsWithPermissions( channel: VoiceChannel ) {
     const args: UIArgs = {};
-    const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
-    const { allowedUsers } = await dynamicChannelService.getChannelUsersWithPermissionState(
+    const allowedUsers = await dynamicChannelService.getChannelUsersWithPermissionState(
         channel,
         DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
         true
@@ -66,7 +68,7 @@ async function getArgsWithPermissions( channel: VoiceChannel ) {
         channel,
         DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
         false
-    ).then( permission => permission.blockedUsers );
+    );
     args.state = await dynamicChannelService.getChannelPrivacyState( channel );
 
     return args;

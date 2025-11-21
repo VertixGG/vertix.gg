@@ -106,7 +106,10 @@ async function onAccessButtonClicked(
     interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-    await uiService.get( "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" )?.runInitial( interaction );
+    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" );
+    if ( adapter ) {
+        await adapter.ephemeral( interaction );
+    }
 }
 
 async function onPrivacyButtonClicked(

@@ -1,6 +1,9 @@
 {
     "name": "@vertix.gg/utils",
     "type": "module",
+    "scripts": {
+        "vertix-utils:typecheck": "bunx --bun tsc --noEmit"
+    },
     "dependencies": {
         "@vertix.gg/base": "workspace:*",
         "cross-fetch": "^4.1.0",

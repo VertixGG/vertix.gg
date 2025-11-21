@@ -16,6 +16,11 @@
 
         "target": "ESNext",
 
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
         "module": "ESNext",
 
         "moduleResolution": "bundler",
@@ -25,7 +30,9 @@
         "esModuleInterop": true,
 
         "allowSyntheticDefaultImports": true,
-        // Skip lib check
+
+        "downlevelIteration": true,
+
         "skipLibCheck": true
     }
 }

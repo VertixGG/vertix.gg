@@ -23,6 +23,7 @@
 		"vite": "^5.0.12"
 	},
 	"scripts": {
+		"vertix-website:typecheck": "bunx --bun tsc --noEmit",
 		"vertix-website:dev": "vite",
 		"vertix-website:build": "tsc && vite build",
 		"vertix-website:preview": "vite preview",

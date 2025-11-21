@@ -3,7 +3,8 @@
     "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
     "type": "module",
     "scripts": {
-        "vertix-base:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects base"
+        "vertix-base:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects base",
+        "vertix-base:typecheck": "bunx --bun tsc --noEmit"
     },
     "dependencies": {
         "@prisma/client": "latest",

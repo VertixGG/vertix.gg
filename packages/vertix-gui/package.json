@@ -3,7 +3,8 @@
     "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
     "type": "module",
     "scripts": {
-        "vertix-gui:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects gui"
+        "vertix-gui:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects gui",
+        "vertix-gui:typecheck": "bunx --bun tsc --noEmit"
     },
     "dependencies": {
         "@vertix.gg/base": "workspace:*"

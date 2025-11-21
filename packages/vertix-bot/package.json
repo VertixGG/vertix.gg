@@ -8,6 +8,7 @@
     "type": "module",
     "scripts": {
         "vertix-bot:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects bot",
+        "vertix-bot:typecheck": "bunx --bun tsc --noEmit",
         "vertix-bot:build": "scripts/build.sh",
         "vertix-bot:release": "scripts/build.sh --update-package-version && bash ./scripts/release.sh",
         "vertix-bot:watch:dev": "bun run @z-cli @watch --dev",

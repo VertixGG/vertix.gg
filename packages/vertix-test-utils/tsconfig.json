@@ -6,11 +6,20 @@
     "compilerOptions": {
         "typeRoots": [
             "../../node_modules/@types",
-            "../../node_modules/"
+            "../../node_modules/",
+            "../vertix-prisma/types"
         ],
         "types": [
             "node",
+            "prisma-bot-client.d.ts"
         ],
+        "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
         "module": "ESNext",
 
         "moduleResolution": "bundler",
@@ -19,7 +28,8 @@
 
         "esModuleInterop": true,
 
-        // Skip lib check
+        "downlevelIteration": true,
+
         "skipLibCheck": true
     }
 }

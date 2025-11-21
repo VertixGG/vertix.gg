@@ -12,6 +12,14 @@
             "node",
             "prisma-bot-client.d.ts"
         ],
+        "rootDir": "./",
+        "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
         "module": "ESNext",
 
         "moduleResolution": "bundler",
@@ -20,7 +28,8 @@
 
         "esModuleInterop": true,
 
-        // Skip lib check
+        "downlevelIteration": true,
+
         "skipLibCheck": true
     }
 }

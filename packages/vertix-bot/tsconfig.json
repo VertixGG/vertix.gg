@@ -17,10 +17,18 @@
 
         // Specifies the ECMAScript version to transpile to (e.g., ESNext)
         "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
         // Specifies the module system used in the code (e.g., ESNext)
         "module": "ESNext",
         // Defines how TypeScript resolves module import paths (Node.js style)
         "moduleResolution": "bundler",
+
+        "downlevelIteration": true,
         // Enables json resolve for imports
         "resolveJsonModule": true,
         // Allows importing modules that don't have default exports

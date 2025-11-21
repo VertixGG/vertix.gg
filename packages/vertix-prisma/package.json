@@ -3,6 +3,7 @@
     "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
     "type": "module",
     "scripts": {
+        "vertix-prisma:typecheck": "bunx --bun tsc --noEmit",
         "prisma-generate-bot": "bunx prisma generate --schema prisma/bot.schema.prisma",
         "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma",
         "prisma-migrate-bot-deploy": "bunx prisma migrate deploy --schema prisma/bot.schema.prisma",

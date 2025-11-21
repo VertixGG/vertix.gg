@@ -1,6 +1,9 @@
 {
     "name": "@vertix.gg/test-utils",
     "type": "module",
+    "scripts": {
+        "vertix-test-utils:typecheck": "bunx --bun tsc --noEmit"
+    },
     "devDependencies": {
         "@vertix.gg/base": "workspace:*"
 

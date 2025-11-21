@@ -47,7 +47,7 @@ jobs:
           echo 'export const encryptionKey = Buffer.from( "0000000000000000000000000000000000000000000000000000000000000000", "hex" );' > packages/vertix-base/src/encryption/key.ts
 
       - name: Cache TypeScript build info
-        uses: actions/cache@v4
+        uses: buildjet/cache@v4
         id: tsbuildinfo-cache
         continue-on-error: true
         with:

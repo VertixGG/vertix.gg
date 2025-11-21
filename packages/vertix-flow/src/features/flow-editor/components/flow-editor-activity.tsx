@@ -42,15 +42,15 @@ export const FlowEditorActivity: React.FC = () => {
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        {selectedGuild.name}
+                        { selectedGuild.name }
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        {moduleName}
+                        { moduleName }
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        {flowName}
+                        { flowName }
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -60,16 +60,16 @@ export const FlowEditorActivity: React.FC = () => {
     return (
         <div className="flex items-center justify-between p-2">
             <div className="flex items-center gap-2">
-                {renderStatus()}
+                { renderStatus() }
             </div>
             <div>
                 <Badge
-                    variant={connectedFlowsCount > 0 ? "default" : "outline"}
+                    variant={ connectedFlowsCount > 0 ? "default" : "outline" }
                     className="text-xs"
                 >
-                    {connectedFlowsCount > 0
+                    { connectedFlowsCount > 0
                         ? `${ connectedFlowsCount } connected flow${ connectedFlowsCount > 1 ? "s" : "" }`
-                        : "No connected flows"}
+                        : "No connected flows" }
                 </Badge>
             </div>
         </div>

@@ -269,7 +269,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
         }
 
         // Data to be inserted into the database.
-        const data: PrismaBot.Prisma.ChannelCreateArgs["data"] = {
+        const data: PrismaBot.Prisma.ChannelCreateArgs[ "data" ] = {
             internalType,
             userOwnerId,
             version: args.version,

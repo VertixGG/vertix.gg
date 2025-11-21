@@ -52,7 +52,7 @@ export class MasterChannelDataManager extends InitializeBase {
 
     public async getAllSettings(
         masterChannelDB: ChannelExtended,
-        defaultSettings: Partial<MasterChannelConfigInterface["data"]["settings"]> = {}
+        defaultSettings: Partial<MasterChannelConfigInterface[ "data" ][ "settings" ]> = {}
     ) {
         const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, false, false );
 
@@ -65,7 +65,7 @@ export class MasterChannelDataManager extends InitializeBase {
 
     public async setAllSettings(
         masterChannelDB: ChannelExtended,
-        settings: MasterChannelConfigInterface["defaults"]["settings"]
+        settings: MasterChannelConfigInterface[ "defaults" ][ "settings" ]
     ) {
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, settings );
     }

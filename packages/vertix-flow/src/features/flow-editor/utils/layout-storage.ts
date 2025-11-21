@@ -13,7 +13,7 @@ const isValidLayoutSizes = ( sizes: unknown ): sizes is number[] => {
 export const saveLayoutToLocalStorage = ( sizes: number[] ): void => {
     try {
         localStorage.setItem( STORAGE_KEYS.FLOW_EDITOR_LAYOUT, JSON.stringify( sizes ) );
-    } catch ( error ) {
+    } catch( error ) {
         console.error( "[Layout] Error saving layout to local storage:", error );
     }
 };
@@ -29,7 +29,7 @@ export const loadLayoutFromLocalStorage = (): number[] | null => {
             }
             localStorage.removeItem( STORAGE_KEYS.FLOW_EDITOR_LAYOUT ); // Clear invalid data
         }
-    } catch ( error ) {
+    } catch( error ) {
         console.error( "[Layout] Error loading layout from local storage:", error );
     }
     return null;

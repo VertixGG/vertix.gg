@@ -2,7 +2,9 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
 import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
-import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-base";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
+
+import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-component";
 
@@ -15,14 +17,19 @@ import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-d
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { BaseMessageOptions, Message, VoiceChannel } from "discord.js";
 
-export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelAdapter";
-    }
+const DYNAMIC_CHANNEL_STEPS = {
+    default: {}
+} as const;
 
-    public static getComponent() {
-        return DynamicChannelComponent;
-    }
+const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
+    "VertixBot/UI-V3/DynamicChannelAdapter"
+)
+    .setComponent( DynamicChannelComponent )
+    .setExecutionSteps( DYNAMIC_CHANNEL_STEPS )
+    .build();
+
+class DynamicChannelAdapter extends DynamicChannelAdapterBase {
+    private static logger = new Logger( DynamicChannelAdapter.getName() );
 
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
@@ -44,18 +51,21 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         return this.getAllArgs( message.channel as VoiceChannel, argsFromManager );
     }
 
-    protected onEntityMap() {
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelRenameButton", this.onRenameButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelLimitMetaButton", this.onLimitButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton", this.onAccessButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelPrivacyButton", this.onPrivacyButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelRegionButton", this.onRegionButtonClicked );
+    protected async onEntityMap() {
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelRenameButton", this.onRenameButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelLimitMetaButton", this.onLimitButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton", this.onAccessButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelPrivacyButton", this.onPrivacyButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelRegionButton", this.onRegionButtonClicked.bind( this ) );
 
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton", this.onPrimaryMessageEditButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelClearChatButton", this.onClearChatButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelResetChannelButton", this.onResetChannelButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelClaimChannelButton", this.onClaimButtonClicked );
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelTransferOwnerButton", this.onTransferOwnerButtonClicked );
+        this.bindButton(
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+            this.onPrimaryMessageEditButtonClicked.bind( this )
+        );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelClearChatButton", this.onClearChatButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelResetChannelButton", this.onResetChannelButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelClaimChannelButton", this.onClaimButtonClicked.bind( this ) );
+        this.bindButton( "VertixBot/UI-V3/DynamicChannelTransferOwnerButton", this.onTransferOwnerButtonClicked.bind( this ) );
     }
 
     protected getMessage(
@@ -63,7 +73,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction,
         argsFromManager: UIArgs
     ): BaseMessageOptions {
-        const result = super.getMessage();
+        const result = super.getMessage( from, context, argsFromManager );
 
         if ( "send" === from || "edit" === from || "edit-message" === from ) {
             if ( argsFromManager.dynamicChannelMentionable ) {
@@ -175,3 +185,5 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         return args;
     }
 }
+
+export { DynamicChannelAdapter };

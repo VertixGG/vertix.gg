@@ -47,19 +47,19 @@ const GROUP_STYLES: Record<string, GroupStyles> = {
 
 const GroupLabel: React.FC<{ label: string; styleKey: string }> = ( { label, styleKey } ) => (
     <div className="absolute -top-6 left-0 right-0 text-center">
-        <span className={cn(
+        <span className={ cn(
             "text-[10px] font-medium px-2 py-1 rounded-md shadow-sm whitespace-nowrap",
             GROUP_STYLES[ styleKey ]?.label
-        )}>
-            {label}
+        ) }>
+            { label }
         </span>
     </div>
 );
 
 const EmptyGroup: React.FC<{ label: string; groupType: string }> = ( { label, groupType } ) => (
-    <div className={`${ groupType.toLowerCase() }-group p-4 rounded-lg shadow-md bg-card border border-border text-card-foreground`}>
-        <div className="text-sm font-medium">{label}</div>
-        <div className="text-xs text-muted-foreground">Empty {groupType}</div>
+    <div className={ `${ groupType.toLowerCase() }-group p-4 rounded-lg shadow-md bg-card border border-border text-card-foreground` }>
+        <div className="text-sm font-medium">{ label }</div>
+        <div className="text-xs text-muted-foreground">Empty { groupType }</div>
     </div>
 );
 
@@ -67,7 +67,7 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
     const { label, groupType = "Group", children } = data;
 
     if ( !children || ( Array.isArray( children ) && children.length === 0 ) ) {
-        return <EmptyGroup label={label} groupType={groupType} />;
+        return <EmptyGroup label={ label } groupType={ groupType } />;
     }
 
     const styleKey = Object.keys( GROUP_STYLES ).find( key =>
@@ -81,29 +81,29 @@ export const GroupNode: React.FC<GroupNodeProps> = ( { data } ) => {
 
     return (
         <div className="relative w-full h-full">
-            <GroupLabel label={label} styleKey={styleKey} />
-            <div className={cn(
+            <GroupLabel label={ label } styleKey={ styleKey } />
+            <div className={ cn(
                 "w-full h-full rounded-lg border border-dashed",
                 GROUP_STYLES[ styleKey ].container
-            )}>
-                <div className={cn(
+            ) }>
+                <div className={ cn(
                     "p-4",
                     GROUP_STYLES[ styleKey ].content
-                )}>
-                    {children}
+                ) }>
+                    { children }
                 </div>
             </div>
             <Handle
                 type="source"
-                position={Position.Bottom}
-                id={sourceHandleId}
-                style={{ background: "transparent", border: "none", width: "1px", height: "1px", bottom: "1px" }}
+                position={ Position.Bottom }
+                id={ sourceHandleId }
+                style={ { background: "transparent", border: "none", width: "1px", height: "1px", bottom: "1px" } }
             />
             <Handle
                 type="target"
-                position={Position.Top}
-                id={targetHandleId}
-                style={{ background: "transparent", border: "none", width: "1px", height: "1px", top: "1px" }}
+                position={ Position.Top }
+                id={ targetHandleId }
+                style={ { background: "transparent", border: "none", width: "1px", height: "1px", top: "1px" } }
             />
         </div>
     );

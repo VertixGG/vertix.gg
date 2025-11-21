@@ -12,7 +12,7 @@ import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-type ValueOf<T> = T[keyof T];
+type ValueOf<T> = T[ keyof T ];
 type RegionKeys = `region-${ ValueOf<typeof DEFAULT_RTC_REGIONS> }`;
 
 const utcRegionVars = Object.values( DEFAULT_RTC_REGIONS ).map( ( region ) => {

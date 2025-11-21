@@ -151,32 +151,32 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
 
     return (
         <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            defaultViewport={{ x: 0, y: 0, zoom: FLOW_EDITOR.config.viewport.defaultZoom }}
-            maxZoom={FLOW_EDITOR.config.viewport.maxZoom}
-            minZoom={FLOW_EDITOR.config.viewport.minZoom}
-            onInit={onInit}
-            onMove={handleMove}
-            nodesDraggable={true}
-            proOptions={{ hideAttribution: true }}
-            elementsSelectable={true}
-            snapToGrid={true}
-            snapGrid={FLOW_EDITOR.config.viewport.snapGrid}
-            elevateEdgesOnSelect={true}
-            edgesFocusable={false}
-            defaultEdgeOptions={{
+            nodes={ nodes }
+            edges={ edges }
+            onNodesChange={ onNodesChange }
+            nodeTypes={ nodeTypes }
+            edgeTypes={ edgeTypes }
+            defaultViewport={ { x: 0, y: 0, zoom: FLOW_EDITOR.config.viewport.defaultZoom } }
+            maxZoom={ FLOW_EDITOR.config.viewport.maxZoom }
+            minZoom={ FLOW_EDITOR.config.viewport.minZoom }
+            onInit={ onInit }
+            onMove={ handleMove }
+            nodesDraggable={ true }
+            proOptions={ { hideAttribution: true } }
+            elementsSelectable={ true }
+            snapToGrid={ true }
+            snapGrid={ FLOW_EDITOR.config.viewport.snapGrid }
+            elevateEdgesOnSelect={ true }
+            edgesFocusable={ false }
+            defaultEdgeOptions={ {
                 type: "smoothstep",
                 style: {
                     strokeWidth: FLOW_EDITOR.theme.components.edge.default.strokeWidth,
                     stroke: FLOW_EDITOR.theme.components.edge.default.strokeColor
                 },
                 markerEnd: { type: MarkerType.Arrow }
-            }}
-            onConnect={( params: Connection ) => {
+            } }
+            onConnect={ ( params: Connection ) => {
                 console.log( "[Edge] New connection:", {
                     params,
                     hasValidSource: !!params.source,
@@ -184,25 +184,25 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
                     sourceHandle: params.sourceHandle,
                     targetHandle: params.targetHandle
                 } );
-            }}
+            } }
         >
             <Controls />
             <MiniMap
-                nodeStrokeWidth={3}
+                nodeStrokeWidth={ 3 }
                 zoomable
                 pannable
                 // Only show MiniMap when all nodes have measurements
-                style={{
+                style={ {
                     display: nodes.some( node => !node.measured ) ? "none" : "block",
                     backgroundColor: FLOW_EDITOR.theme.components.minimap.backgroundColor
-                }}
-                nodeColor={_node => {
+                } }
+                nodeColor={ _node => {
                     // Default color with fallback for invalid nodes
                     return FLOW_EDITOR.theme.components.minimap.nodeColor;
-                }}
-                nodeBorderRadius={0}
+                } }
+                nodeBorderRadius={ 0 }
                 // Custom node rendering to avoid NaN errors
-                nodeComponent={props => {
+                nodeComponent={ props => {
                     // Skip rendering if dimensions are invalid
                     if ( !Number.isFinite( props.width ) || !Number.isFinite( props.height ) ||
                         !Number.isFinite( props.x ) || !Number.isFinite( props.y ) ) {
@@ -216,35 +216,35 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
 
                     return (
                         <rect
-                            x={props.x}
-                            y={props.y}
-                            rx={0}
-                            ry={0}
-                            width={props.width}
-                            height={props.height}
-                            fill={FLOW_EDITOR.theme.components.minimap.nodeColor}
-                            stroke={FLOW_EDITOR.theme.components.minimap.maskColor}
-                            strokeWidth={props.strokeWidth}
+                            x={ props.x }
+                            y={ props.y }
+                            rx={ 0 }
+                            ry={ 0 }
+                            width={ props.width }
+                            height={ props.height }
+                            fill={ FLOW_EDITOR.theme.components.minimap.nodeColor }
+                            stroke={ FLOW_EDITOR.theme.components.minimap.maskColor }
+                            strokeWidth={ props.strokeWidth }
                         />
                     );
-                }}
+                } }
             />
             <Background
-                variant={BackgroundVariant.Dots}
-                gap={12}
-                size={1}
-                color={FLOW_EDITOR.theme.components.node.secondaryColor}
+                variant={ BackgroundVariant.Dots }
+                gap={ 12 }
+                size={ 1 }
+                color={ FLOW_EDITOR.theme.components.node.secondaryColor }
             />
             <Panel position="top-right" className="flex flex-col gap-2">
                 <button
                     className="bg-muted hover:bg-muted/80 text-foreground text-xs px-2 py-1 rounded shadow"
-                    onClick={handleRefresh}
+                    onClick={ handleRefresh }
                 >
                     Refresh
                 </button>
                 <button
                     className="bg-primary hover:bg-primary/80 text-primary-foreground text-xs px-2 py-1 rounded shadow"
-                    onClick={handleAutoLayout}
+                    onClick={ handleAutoLayout }
                 >
                     Auto Layout
                 </button>
@@ -258,9 +258,9 @@ const FlowDiagramInner: React.FC<FlowDiagramDisplayProps> = ( {
  */
 export const FlowDiagramDisplay: React.FC<FlowDiagramDisplayProps> = ( props ) => {
     return (
-        <div style={{ width: "100%", height: "100%" }}>
+        <div style={ { width: "100%", height: "100%" } }>
             <ReactFlowProvider>
-                <FlowDiagramInner {...props} />
+                <FlowDiagramInner { ...props } />
             </ReactFlowProvider>
         </div>
     );

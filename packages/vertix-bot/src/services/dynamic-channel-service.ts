@@ -190,7 +190,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             if ( channel.members.size === 0 ) {
                 try {
                     await this.onLeaveDynamicChannelEmpty( channel, channelDB, guild, args );
-                } catch ( error ) {
+                } catch( error ) {
                     this.logger.error(
                         this.onLeaveDynamicChannelEmpty,
                         `Guild id: '${ guild.id }', channel id: '${ channel.id }' - Failed to handle empty channel`,

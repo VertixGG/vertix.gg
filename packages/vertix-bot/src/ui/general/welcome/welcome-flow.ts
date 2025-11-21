@@ -38,7 +38,7 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
      * Get the component associated with this flow
      */
     public static getComponents() {
-        return [WelcomeComponent];
+        return [ WelcomeComponent ];
     }
 
     /**
@@ -78,12 +78,12 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     /**
      * Returns the required data for each transition
      */
-    public static getRequiredData(): Record<string, (keyof WelcomeFlowData)[]> {
+    public static getRequiredData(): Record<string, ( keyof WelcomeFlowData )[]> {
         return {
             "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup": [],
             "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport": [],
             "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite": [],
-            "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage": ["selectedLanguage"],
+            "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage": [ "selectedLanguage" ],
         };
     }
 
@@ -92,13 +92,13 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
      */
     public static override getHandoffPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointGeneric({
+            new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/SetupFlow",
                 description: "Hands off to Setup Flow when setup button is clicked",
                 sourceState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
                 transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
                 requiredData: []
-            })
+            } )
         ];
     }
 
@@ -139,25 +139,25 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
      */
     public static override getEntryPoints(): FlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointGeneric({
+            new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
                 transition: "VertixBot/Commands/Welcome",
                 targetState: "VertixBot/UI-General/WelcomeFlow/States/Initial",
                 description: "Entry point triggered by CommandsFlow via Welcome command"
-            })
+            } )
         ];
     }
 
-    public constructor(options: TAdapterRegisterOptions) {
-        super(options);
+    public constructor( options: TAdapterRegisterOptions ) {
+        super( options );
     }
 
     public override getPermissions(): PermissionsBitField {
-        return new PermissionsBitField(PermissionFlagsBits.ViewChannel);
+        return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
     }
 
     public override getChannelTypes(): ChannelType[] {
-        return [ChannelType.GuildVoice, ChannelType.GuildText];
+        return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
     protected override getInitialState(): string {
@@ -169,34 +169,34 @@ export class WelcomeFlow extends UIFlowBase<string, string, WelcomeFlowData> {
     }
 
     protected override initializeTransitions(): void {
-        Object.entries(WelcomeFlow.getFlowTransitions()).forEach(([state, transitions]) => {
-            this.addTransitions(state, transitions);
-        });
+        Object.entries( WelcomeFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
+            this.addTransitions( state, transitions );
+        } );
     }
 
-    protected addTransitions(state: string, transitions: string[]): void {
-        if (!this.hasTransitions(state)) {
-            this.setTransitionsForState(state, new Set());
+    protected addTransitions( state: string, transitions: string[] ): void {
+        if ( !this.hasTransitions( state ) ) {
+            this.setTransitionsForState( state, new Set() );
         }
-        const stateTransitions = this.getTransitionsForState(state);
-        if (stateTransitions) {
-            transitions.forEach((transition) => {
-                stateTransitions.add(transition);
-            });
-            this.setTransitionsForState(state, stateTransitions);
+        const stateTransitions = this.getTransitionsForState( state );
+        if ( stateTransitions ) {
+            transitions.forEach( ( transition ) => {
+                stateTransitions.add( transition );
+            } );
+            this.setTransitionsForState( state, stateTransitions );
         }
     }
 
     public override getAvailableTransitions(): string[] {
-        return WelcomeFlow.getFlowTransitions()[this.getCurrentState()] || [];
+        return WelcomeFlow.getFlowTransitions()[ this.getCurrentState() ] || [];
     }
 
-    public override getNextState(transition: string): string {
-        return WelcomeFlow.getNextStates()[transition];
+    public override getNextState( transition: string ): string {
+        return WelcomeFlow.getNextStates()[ transition ];
     }
 
-    public override getRequiredData(transition: string): (keyof WelcomeFlowData)[] {
-        return WelcomeFlow.getRequiredData()[transition];
+    public override getRequiredData( transition: string ): ( keyof WelcomeFlowData )[] {
+        return WelcomeFlow.getRequiredData()[ transition ];
     }
 
     // showModal might not exist in the base or might not need override

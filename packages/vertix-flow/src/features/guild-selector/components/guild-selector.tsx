@@ -23,8 +23,8 @@ const GuildSelectorInner: React.FC = () => {
     // Function to render the content inside each guild button
     const renderItemContent = ( guild: GuildResponseItem ): React.ReactNode => (
         <div className="flex flex-col items-start gap-1 w-full">
-            <div className="font-medium truncate">{guild.name}</div>
-            <div className="text-xs text-muted-foreground">{guild.guildId}</div>
+            <div className="font-medium truncate">{ guild.name }</div>
+            <div className="text-xs text-muted-foreground">{ guild.guildId }</div>
         </div>
     );
 
@@ -37,12 +37,12 @@ const GuildSelectorInner: React.FC = () => {
     return (
         <ItemSelectorList<GuildResponseItem>
             title="Select a Server"
-            items={guilds}
+            items={ guilds }
             // Use selectedGuild?.guildId for comparison
-            selectedItemId={selectedGuild?.guildId ?? null}
-            getItemId={getItemId}
-            renderItemContent={renderItemContent}
-            onSelectItem={handleSelectItem}
+            selectedItemId={ selectedGuild?.guildId ?? null }
+            getItemId={ getItemId }
+            renderItemContent={ renderItemContent }
+            onSelectItem={ handleSelectItem }
             emptyStateMessage="No servers found associated with your account."
         />
     );
@@ -57,7 +57,7 @@ export const GuildSelector: React.FC = () => {
                 <p className="ml-2">Loading servers...</p>
             </div>
         }>
-            <GuildSelectorInner /> {/* Use the renamed inner component */}
+            <GuildSelectorInner /> { /* Use the renamed inner component */ }
         </React.Suspense>
     );
 };

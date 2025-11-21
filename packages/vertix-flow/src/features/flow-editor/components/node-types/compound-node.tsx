@@ -95,12 +95,12 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
             id: id || "default-id" // Fallback ID if not provided
         };
 
-        return <DiscordNode data={nodeData} />;
+        return <DiscordNode data={ nodeData } />;
     }
 
     // For groups, render a container with child nodes nested inside
     return (
-        <GroupNode data={{
+        <GroupNode data={ {
             label,
             groupType,
             children: childNodes?.map( ( child ) => {
@@ -124,17 +124,17 @@ export const CompoundNode: React.FC<CompoundNodeProps> = ( { data } ) => {
                 }
 
                 return (
-                    <div key={child.id} className={className}>
-                        {child.type === "group" ? (
+                    <div key={ child.id } className={ className }>
+                        { child.type === "group" ? (
                         // Recursively render nested groups
-                            <CompoundNode data={child} />
+                            <CompoundNode data={ child } />
                         ) : (
                         // Render regular nodes with proper typing
-                            <DiscordNode data={child as ExtendedNodeData} />
-                        )}
+                            <DiscordNode data={ child as ExtendedNodeData } />
+                        ) }
                     </div>
                 );
             } )
-        }} />
+        } } />
     );
 };

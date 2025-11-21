@@ -28,7 +28,7 @@ export function useFlowData( moduleName: string, flowName: string ) {
 
                 console.log( "Flow data response:", response );
                 return response;
-            } catch ( error ) {
+            } catch( error ) {
                 console.error( "Error fetching flow data:", error );
                 throw error;
             }

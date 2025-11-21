@@ -77,7 +77,7 @@ export abstract class ModelDataBase<
                 },
                 data: this.getInternalNormalizedData( createArgs )
             } );
-        } catch ( e ) {
+        } catch( e ) {
             this.logger.warn( this.setData, `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'` );
 
             return e;

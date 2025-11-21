@@ -140,7 +140,7 @@ export class DefaultFlowFactory implements FlowFactory {
                 try {
                     // Type assertion here since we're expecting a certain interface
                     return ( flowClass as { getInitialState: () => string } ).getInitialState();
-                } catch  {
+                } catch {
                     return "error";
                 }
             },
@@ -152,7 +152,7 @@ export class DefaultFlowFactory implements FlowFactory {
                         getAvailableTransitions: ( state: string ) => string[]
                     } ).getAvailableTransitions( state );
                     return transitions || [];
-                } catch  {
+                } catch {
                     return [];
                 }
             },
@@ -167,7 +167,7 @@ export class DefaultFlowFactory implements FlowFactory {
                     if ( flowClassWithTransition.transition ) {
                         flowClassWithTransition.transition( transition );
                     }
-                } catch  {
+                } catch {
                     // Error handled silently
                 }
             },
@@ -179,7 +179,7 @@ export class DefaultFlowFactory implements FlowFactory {
                         getData: () => Record<string, unknown> | null
                     } ).getData();
                     return data || {};
-                } catch  {
+                } catch {
                     return {};
                 }
             }

@@ -21,8 +21,8 @@ type TDefaultTypesMapping = {
 export type TDataTypeKeys = keyof typeof dataTypes;
 
 export type TDataType = {
-    [Key in TDataTypeKeys]: TDefaultTypesMapping[( typeof dataTypes )[Key]];
-}[TDataTypeKeys];
+    [Key in TDataTypeKeys]: TDefaultTypesMapping[ ( typeof dataTypes )[ Key ] ];
+}[ TDataTypeKeys ];
 
 export interface TDataDefaultResult {
     object: PrismaBot.Prisma.JsonValue | null;

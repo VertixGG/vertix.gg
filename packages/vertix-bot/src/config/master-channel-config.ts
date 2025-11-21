@@ -20,7 +20,7 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
         return VERSION_UI_V2;
     }
 
-    protected getDefaults(): MasterChannelConfigInterface["defaults"] {
+    protected getDefaults(): MasterChannelConfigInterface[ "defaults" ] {
         return {
             // Constants will be used globally for the entire bot.
             constants: {

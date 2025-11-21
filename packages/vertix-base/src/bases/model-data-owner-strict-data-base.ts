@@ -20,7 +20,7 @@ export abstract class ModelDataOwnerStrictDataBase<
     protected abstract getStrictDataFactor(): TDataModelStrictData;
 
     protected async setStrictData(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         data: Partial<TDataModelStrictData>
     ) {
@@ -35,7 +35,7 @@ export abstract class ModelDataOwnerStrictDataBase<
     }
 
     protected async setStrictDataWithDefaults(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         data: Partial<TDataModelStrictData>
     ) {
@@ -49,7 +49,7 @@ export abstract class ModelDataOwnerStrictDataBase<
     }
 
     public async getStrictData(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
     ) {
@@ -77,7 +77,7 @@ export abstract class ModelDataOwnerStrictDataBase<
     }
 
     protected async getStrictDataWithDefaults(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
     ) {

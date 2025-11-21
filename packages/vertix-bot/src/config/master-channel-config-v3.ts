@@ -21,7 +21,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
         return VERSION_UI_V3;
     }
 
-    protected getDefaults(): MasterChannelConfigInterfaceV3["defaults"] {
+    protected getDefaults(): MasterChannelConfigInterfaceV3[ "defaults" ] {
         return {
             settings: {
                 dynamicChannelAutoSave: false,

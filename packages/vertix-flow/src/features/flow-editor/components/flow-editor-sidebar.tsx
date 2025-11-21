@@ -31,12 +31,12 @@ export const FlowEditorSidebar: React.FC = () => {
         <>
             <div
                 className="p-4 border-b bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors"
-                onClick={handleTitleClick}
+                onClick={ handleTitleClick }
             >
                 <h1 className="text-xl font-bold text-center text-primary">Vertix Flow Panel</h1>
             </div>
 
-            {!selectedGuild ? (
+            { !selectedGuild ? (
                 <React.Suspense fallback={
                     <div className="flex items-center justify-center h-full p-4">
                         <LoadingIndicator />
@@ -46,7 +46,7 @@ export const FlowEditorSidebar: React.FC = () => {
                     <GuildSelector />
                 </React.Suspense>
             ) : (
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow flex flex-col min-h-0">
+                <Tabs value={ activeTab } onValueChange={ setActiveTab } className="flex-grow flex flex-col min-h-0">
                     <div className="p-4 border-b">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="modules">Modules</TabsTrigger>
@@ -55,22 +55,22 @@ export const FlowEditorSidebar: React.FC = () => {
                     </div>
 
                     <TabsContent value="modules" className="flex-grow overflow-y-auto pt-1">
-                        <ModuleSelector onSelectModule={handleModuleClick} />
+                        <ModuleSelector onSelectModule={ handleModuleClick } />
                     </TabsContent>
 
                     <TabsContent value="flows" className="flex-grow overflow-y-auto p-4">
-                        {modulePath ? (
-                            <FlowList onSelectFlow={handleFlowClick} />
+                        { modulePath ? (
+                            <FlowList onSelectFlow={ handleFlowClick } />
                         ) : (
                             <p className="text-sm text-center text-muted-foreground">Please select a module first</p>
-                        )}
+                        ) }
                     </TabsContent>
                 </Tabs>
-            )}
+            ) }
 
             <div className="p-2 border-t flex items-center justify-center gap-2 bg-muted/30 mt-auto">
                 <Badge variant="outline" className="text-xs">
-                    Zoom: {Math.round( zoomLevel * 100 )}%
+                    Zoom: { Math.round( zoomLevel * 100 ) }%
                 </Badge>
             </div>
         </>

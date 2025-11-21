@@ -67,7 +67,7 @@ export class UIDataService extends ServiceBase {
             // If they need specific args or dependencies passed, this needs adjustment.
             const instance = new DataComponent() as T;
             return instance;
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.getDataComponent, `Failed to instantiate data component '${ componentName }'`, error );
             if ( silent ) {
                 return undefined;

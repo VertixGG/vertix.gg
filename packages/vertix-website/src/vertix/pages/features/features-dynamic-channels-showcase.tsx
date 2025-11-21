@@ -505,8 +505,8 @@ export default function FeaturesDynamicChannelsShowcase() {
                     </div>
 
                     <div className="image-placeholder">
-                        <PhotoView src={images.claim_about_start_1017}>
-                            <img src={images.claim_about_start_1017} alt="claim-start" />
+                        <PhotoView src={ images.claim_about_start_1017 }>
+                            <img src={ images.claim_about_start_1017 } alt="claim-start" />
                         </PhotoView>
                     </div>
 
@@ -515,8 +515,8 @@ export default function FeaturesDynamicChannelsShowcase() {
                     </div>
 
                     <div className="image-placeholder">
-                        <PhotoView src={images.claim_back_on_charge_1018}>
-                            <img src={images.claim_back_on_charge_1018} alt="back-to-change" />
+                        <PhotoView src={ images.claim_back_on_charge_1018 }>
+                            <img src={ images.claim_back_on_charge_1018 } alt="back-to-change" />
                         </PhotoView>
                     </div>
 
@@ -526,8 +526,8 @@ export default function FeaturesDynamicChannelsShowcase() {
                     </div>
 
                     <div className="image-placeholder">
-                        <PhotoView src={images.claim_2_candidates_wish_to_claim_b}>
-                            <img src={images.claim_2_candidates_wish_to_claim_b} alt="vote-process" />
+                        <PhotoView src={ images.claim_2_candidates_wish_to_claim_b }>
+                            <img src={ images.claim_2_candidates_wish_to_claim_b } alt="vote-process" />
                         </PhotoView>
                     </div>
 
@@ -537,8 +537,8 @@ export default function FeaturesDynamicChannelsShowcase() {
                     </div>
 
                     <div className="image-placeholder">
-                        <PhotoView src={images.claim_results_z}>
-                            <img src={images.claim_results_z} alt="vote-results" />
+                        <PhotoView src={ images.claim_results_z }>
+                            <img src={ images.claim_results_z } alt="vote-results" />
                         </PhotoView>
                     </div>
                 </PhotoProvider>

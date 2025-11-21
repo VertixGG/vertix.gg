@@ -42,12 +42,12 @@ class ErrorBoundary extends React.Component<
                                 <AlertDescription>
                                     An error occurred in the application:
                                     <pre className="mt-2 p-2 bg-destructive/10 rounded text-xs overflow-auto max-h-40">
-                                        {this.state.error?.message || "Unknown error"}
+                                        { this.state.error?.message || "Unknown error" }
                                     </pre>
                                 </AlertDescription>
                             </Alert>
                             <Button
-                                onClick={() => window.location.reload()}
+                                onClick={ () => window.location.reload() }
                                 className="w-full mt-4"
                                 variant="default"
                             >
@@ -73,8 +73,8 @@ if ( rootElement ) {
         <ErrorBoundary>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={<FlowEditor />} />
-                    <Route path="/" element={<Navigate to="/flow" replace />} />
+                    <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={ <FlowEditor /> } />
+                    <Route path="/" element={ <Navigate to="/flow" replace /> } />
                 </Routes>
             </BrowserRouter>
         </ErrorBoundary>

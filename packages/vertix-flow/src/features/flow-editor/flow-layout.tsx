@@ -32,8 +32,8 @@ const LAYOUT_DEFAULTS = {
 
 export function FlowLayout( { className, children }: FlowLayoutProps ) {
     return (
-        <div className={cn( "flex flex-col h-screen bg-background overflow-hidden", className )}>
-            {children}
+        <div className={ cn( "flex flex-col h-screen bg-background overflow-hidden", className ) }>
+            { children }
         </div>
     );
 }
@@ -42,10 +42,10 @@ export function FlowLayoutContent( { className, children, onLayout }: FlowLayout
     return (
         <ResizablePanelGroup
             direction="horizontal"
-            className={cn( "flex-grow min-h-0", className )}
-            onLayout={onLayout}
+            className={ cn( "flex-grow min-h-0", className ) }
+            onLayout={ onLayout }
         >
-            {children}
+            { children }
         </ResizablePanelGroup>
     );
 }
@@ -59,13 +59,13 @@ export function FlowLayoutLeftSidebar( {
 }: FlowLayoutLeftSidebarProps ) {
     return (
         <ResizablePanel
-            defaultSize={defaultSize}
-            minSize={minSize}
-            maxSize={maxSize}
-            className={cn( "border-r", className )}
+            defaultSize={ defaultSize }
+            minSize={ minSize }
+            maxSize={ maxSize }
+            className={ cn( "border-r", className ) }
         >
             <div className="flex flex-col h-full">
-                {children}
+                { children }
             </div>
         </ResizablePanel>
     );
@@ -80,13 +80,13 @@ export function FlowLayoutRightSidebar( {
 }: FlowLayoutRightSidebarProps ) {
     return (
         <ResizablePanel
-            defaultSize={defaultSize}
-            minSize={minSize}
-            maxSize={maxSize}
-            className={cn( "border-l", className )}
+            defaultSize={ defaultSize }
+            minSize={ minSize }
+            maxSize={ maxSize }
+            className={ cn( "border-l", className ) }
         >
             <div className="flex flex-col h-full">
-                {children}
+                { children }
             </div>
         </ResizablePanel>
     );
@@ -99,11 +99,11 @@ export function FlowLayoutMainContent( {
 }: FlowLayoutMainContentProps ) {
     return (
         <ResizablePanel
-            defaultSize={defaultSize}
-            minSize={LAYOUT_DEFAULTS.MAIN_CONTENT.MIN_SIZE}
+            defaultSize={ defaultSize }
+            minSize={ LAYOUT_DEFAULTS.MAIN_CONTENT.MIN_SIZE }
         >
-            <div className={cn( "flex flex-col h-full", className )}>
-                {children}
+            <div className={ cn( "flex flex-col h-full", className ) }>
+                { children }
             </div>
         </ResizablePanel>
     );
@@ -111,24 +111,24 @@ export function FlowLayoutMainContent( {
 
 export function FlowLayoutTopBar( { className, children }: FlowLayoutTopBarProps ) {
     return (
-        <div className={cn( "p-4 border-b bg-muted/20", className )}>
-            {children}
+        <div className={ cn( "p-4 border-b bg-muted/20", className ) }>
+            { children }
         </div>
     );
 }
 
 export function FlowLayoutEditor( { className, children }: FlowLayoutEditorProps ) {
     return (
-        <div className={cn( "flex-grow overflow-hidden", className )}>
-            {children}
+        <div className={ cn( "flex-grow overflow-hidden", className ) }>
+            { children }
         </div>
     );
 }
 
 export function FlowLayoutActivityBar( { className, children }: FlowLayoutActivityBarProps ) {
     return (
-        <div className={cn( "border-t bg-muted/10 p-2", className )}>
-            {children}
+        <div className={ cn( "border-t bg-muted/10 p-2", className ) }>
+            { children }
         </div>
     );
 }

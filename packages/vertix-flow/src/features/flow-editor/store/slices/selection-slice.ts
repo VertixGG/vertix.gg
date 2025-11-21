@@ -1,6 +1,5 @@
 import type { StateCreator } from "zustand";
-
-import type { UIModuleFile } from "src/features/flow-editor/types/flow";
+import type { UIModuleFile } from "../../types/flow";
 
 /**
  * Selection state for the flow editor

@@ -68,23 +68,23 @@ export const FlowEditor: React.FC = () => {
     return (
         // Pass the extracted URL parameters to the provider
         <FlowEditorProvider
-            guildIdParam={guildIdParam}
-            modulePathParam={modulePathParam}
-            flowNameParam={flowNameParam}
+            guildIdParam={ guildIdParam }
+            modulePathParam={ modulePathParam }
+            flowNameParam={ flowNameParam }
         >
             <FlowLayout>
-                {/* Suspense wraps content that depends on potentially suspended data */}
+                { /* Suspense wraps content that depends on potentially suspended data */ }
                 <Suspense fallback={
                     // Render a layout structure within the fallback
                     <>
-                        <FlowLayoutContent key="loading-layout" onLayout={() => {}}> {/* Dummy key/handler */}
-                            {/* Render sidebar panel structure */}
+                        <FlowLayoutContent key="loading-layout" onLayout={ () => {} }> { /* Dummy key/handler */ }
+                            { /* Render sidebar panel structure */ }
                             <FlowLayoutLeftSidebar defaultSize={ layoutSizes ? layoutSizes[ 0 ] : 20 } minSize={ 15 } maxSize={ 25 }>
-                                {/* You could put a minimal sidebar placeholder here if desired */}
+                                { /* You could put a minimal sidebar placeholder here if desired */ }
                                 <div className="h-full w-full p-4 opacity-50 flex items-center justify-center text-sm">Loading Nav...</div>
                             </FlowLayoutLeftSidebar>
                             <ResizableHandle />
-                            {/* Render main panel structure with loader inside */}
+                            { /* Render main panel structure with loader inside */ }
                             <FlowLayoutMainContent defaultSize={ layoutSizes ? layoutSizes[ 1 ] : 60 }>
                                 <div className="h-full w-full flex items-center justify-center">
                                     <LoadingIndicator />
@@ -92,21 +92,21 @@ export const FlowEditor: React.FC = () => {
                                 </div>
                             </FlowLayoutMainContent>
                             <ResizableHandle />
-                            {/* Render sidebar panel structure */}
+                            { /* Render sidebar panel structure */ }
                             <FlowLayoutRightSidebar defaultSize={ layoutSizes ? layoutSizes[ 2 ] : 20 } minSize={ 15 } maxSize={ 40 }>
-                                {/* You could put a minimal details placeholder here if desired */}
+                                { /* You could put a minimal details placeholder here if desired */ }
                                 <div className="h-full w-full p-4 opacity-50 flex items-center justify-center text-sm">Loading Details...</div>
                             </FlowLayoutRightSidebar>
                         </FlowLayoutContent>
-                        {/* Render activity bar structure */}
+                        { /* Render activity bar structure */ }
                         <FlowLayoutActivityBar>
-                            {/* You could put a minimal activity placeholder here if desired */}
+                            { /* You could put a minimal activity placeholder here if desired */ }
                             <div className="h-full w-full p-2 opacity-50 flex items-center justify-center text-sm">Loading Activity...</div>
                         </FlowLayoutActivityBar>
                     </>
                 }>
-                    {/* Actual Content (Renders when data is ready) */}
-                    <FlowLayoutContent key={layoutKey} onLayout={handleLayout}>
+                    { /* Actual Content (Renders when data is ready) */ }
+                    <FlowLayoutContent key={ layoutKey } onLayout={ handleLayout }>
                         <FlowLayoutLeftSidebar defaultSize={ layoutSizes ? layoutSizes[ 0 ] : 20 } minSize={ 15 } maxSize={ 25 }>
                             <FlowEditorSidebar />
                         </FlowLayoutLeftSidebar>

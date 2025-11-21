@@ -198,8 +198,8 @@ const FlowEditorContextInitializer: React.FC<FlowEditorContextInitializerProps> 
 
     // --- Provide Context ---
     return (
-        <FlowEditorContext.Provider value={contextValue}>
-            {children}
+        <FlowEditorContext.Provider value={ contextValue }>
+            { children }
         </FlowEditorContext.Provider>
     );
 };
@@ -219,7 +219,7 @@ export const FlowEditorProvider: React.FC<FlowEditorProviderProps> = ( props ) =
 
     // 2. Render the initializer, passing the resources down.
     //    This initializer will suspend if either resource isn't ready.
-    return <FlowEditorContextInitializer {...props}
-        guildsResource={guildsResource}
-        uiModulesResource={uiModulesResource} />;
+    return <FlowEditorContextInitializer { ...props }
+        guildsResource={ guildsResource }
+        uiModulesResource={ uiModulesResource } />;
 };

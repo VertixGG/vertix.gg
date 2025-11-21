@@ -76,7 +76,7 @@ export class WelcomeController extends UIControllerBase<WelcomeFlow> {
             try {
                 // Bind the handler to the controller instance before calling
                 await handler.bind( this )( interaction );
-            } catch ( error ) {
+            } catch( error ) {
                 this.logger.error( this.handleInteraction, `Error executing handler for ${ customId }:`, error );
                 // Optionally reply to the interaction with a generic error message
                 // if (interaction.replied || interaction.deferred) { await interaction.followUp({ content: 'An error occurred.', ephemeral: true }); }
@@ -176,7 +176,7 @@ export class WelcomeController extends UIControllerBase<WelcomeFlow> {
                 initialData.masterChannels = null; // Or empty list []
             }
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.getInitialContextData, `Error fetching initial context data for guild ${ context.guildId }:`, error );
             // Return potentially partial data or just empty? For editor defaults, returning partial/defaults is likely okay.
         }
@@ -236,7 +236,7 @@ export class WelcomeController extends UIControllerBase<WelcomeFlow> {
                         await interaction.reply( { content: "Could not start setup wizard (Error).", ephemeral: true } );
                     }
                 }
-            } catch ( error ) {
+            } catch( error ) {
                 this.logger.error( this.handleSetupClick, "Error during handoff to Setup Wizard Controller:", error );
                 if ( !interaction.replied && !interaction.deferred ) {
                     await interaction.reply( { content: "An error occurred while starting setup.", ephemeral: true } );
@@ -256,7 +256,7 @@ export class WelcomeController extends UIControllerBase<WelcomeFlow> {
         const flow = this.getFlowInstance( interaction );
         await this.tryTransitionFlow( flow, "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport", interaction );
         // TODO: Implement actual support logic (e.g., send link, modal)
-        if( !interaction.replied && !interaction.deferred ) {
+        if ( !interaction.replied && !interaction.deferred ) {
             await interaction.reply( { content: "Support link/info here (Placeholder)", ephemeral: true } );
         }
     }
@@ -266,7 +266,7 @@ export class WelcomeController extends UIControllerBase<WelcomeFlow> {
         const flow = this.getFlowInstance( interaction );
         await this.tryTransitionFlow( flow, "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite", interaction );
         // TODO: Implement actual invite logic (e.g., send link)
-        if( !interaction.replied && !interaction.deferred ) {
+        if ( !interaction.replied && !interaction.deferred ) {
             await interaction.reply( { content: "Invite link here (Placeholder)", ephemeral: true } );
         }
     }
@@ -291,7 +291,7 @@ export class WelcomeController extends UIControllerBase<WelcomeFlow> {
             // TODO: Update the UI to reflect language change if necessary
             // This might involve re-rendering the components with updated language context
             this.logger.info( this.handleLanguageSelect, `Language selection processed, new state: ${ flow.getCurrentState() }` );
-            if( !interaction.replied && !interaction.deferred ) {
+            if ( !interaction.replied && !interaction.deferred ) {
                 // Example UI update - replace components/embeds as needed
                 await interaction.update( { content: `Language set to: ${ selectedLanguage } (Placeholder UI Update)`, components: [] } );
             }

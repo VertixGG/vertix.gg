@@ -43,7 +43,7 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
             setLoading( true );
             setFlowData( data );
 
-            if( data && onFlowDataLoaded ) {
+            if ( data && onFlowDataLoaded ) {
                 onFlowDataLoaded( data );
             }
         } catch( err ) {
@@ -54,11 +54,11 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
         }
     }, [ data, onFlowDataLoaded, setError, setLoading ] );
 
-    if( error ) {
+    if ( error ) {
         return <ErrorState message={ error }/>;
     }
 
-    if( ! flowData ) {
+    if ( ! flowData ) {
         return <LoadingState message="Loading flow data..."/>;
     }
 
@@ -67,7 +67,7 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
 
     return (
         <div className="space-y-4">
-            <Card className={ `overflow-auto ${className || ""}` }>
+            <Card className={ `overflow-auto ${ className || "" }` }>
                 <CardHeader>
                     <CardTitle>
                         Flow: { flowName }
@@ -83,49 +83,49 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
                         <RequiredDataDisplay requiredData={ requiredData }/>
                     </div>
 
-                    {/* Display flow integrations information */ }
+                    { /* Display flow integrations information */ }
                     { flowData.integrations && (
                         <div className="space-y-4">
                             <Separator/>
                             <h3 className="font-medium mb-2">Connected flows</h3>
 
-                            {/* Entry Points */ }
+                            { /* Entry Points */ }
                             { flowData.integrations.entryPoints && flowData.integrations.entryPoints.length > 0 && (
                                 <div>
                                     <h4 className="font-medium mb-2">Entry Points:</h4>
                                     <ul className="list-disc pl-5 space-y-1">
                                         { flowData.integrations.entryPoints.map( ( entryPoint, idx ) => (
-                                            <li key={ `entry-${idx}` }>
+                                            <li key={ `entry-${ idx }` }>
                                                 <span className="font-mono">{ entryPoint.flowName }</span>
-                                                { entryPoint.description && ` - ${entryPoint.description}` }
+                                                { entryPoint.description && ` - ${ entryPoint.description }` }
                                             </li>
                                         ) ) }
                                     </ul>
                                 </div>
                             ) }
 
-                            {/* Handoff Points */ }
+                            { /* Handoff Points */ }
                             { flowData.integrations.handoffPoints && flowData.integrations.handoffPoints.length > 0 && (
                                 <div>
                                     <h4 className="font-medium mb-2">Handoff Points:</h4>
                                     <ul className="list-disc pl-5 space-y-1">
                                         { flowData.integrations.handoffPoints.map( ( handoffPoint, idx ) => (
-                                            <li key={ `handoff-${idx}` }>
+                                            <li key={ `handoff-${ idx }` }>
                                                 <span className="font-mono">{ handoffPoint.flowName }</span>
-                                                { handoffPoint.description && ` - ${handoffPoint.description}` }
+                                                { handoffPoint.description && ` - ${ handoffPoint.description }` }
                                             </li>
                                         ) ) }
                                     </ul>
                                 </div>
                             ) }
 
-                            {/* External References */ }
+                            { /* External References */ }
                             { flowData.integrations.externalReferences && Object.keys( flowData.integrations.externalReferences ).length > 0 && (
                                 <div>
                                     <h4 className="font-medium mb-2">External References:</h4>
                                     <ul className="list-disc pl-5 space-y-1">
                                         { Object.entries( flowData.integrations.externalReferences ).map( ( [ key, value ], idx ) => (
-                                            <li key={ `ref-${idx}` }>
+                                            <li key={ `ref-${ idx }` }>
                                                 <span className="font-medium">{ key }</span>: <span
                                                     className="font-mono">{ value }</span>
                                             </li>

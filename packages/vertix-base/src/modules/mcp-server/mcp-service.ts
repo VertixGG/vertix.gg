@@ -34,7 +34,7 @@ export class MCPService extends ServiceBase {
             EventBus.$.on( "VertixBase/Modules/Logger", "outputInternal", this.onLoggerOutput.bind( this ) );
 
             this.logger.info( this.initialize, `MCP Server started on http://${ MCP_HOST }:${ MCP_PORT }` );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.initialize, "Failed to start MCP Server", error );
             // Rethrow or handle appropriately - ServiceBase might catch this
             throw error;
@@ -72,7 +72,7 @@ export class MCPService extends ServiceBase {
             // Call the addLog method directly on the static McpServer instance
             try {
                 MCPService.mcpServer.addLog( logEntry );
-            } catch ( error ) {
+            } catch( error ) {
                 console.error( "MCPService.onLoggerOutput: Failed to add log via addLog method:", error );
             }
         }

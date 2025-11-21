@@ -28,7 +28,7 @@ import type {
 const DiscordNodeWrapper: React.FC<{ children: React.ReactNode }> = ( { children } ) => {
     return (
         <div className="discord-node-wrapper">
-            {children}
+            { children }
         </div>
     );
 };
@@ -104,14 +104,14 @@ const DiscordSelectWrapper: React.FC<{
 
     return (
         <DiscordSelect
-            className={className}
-            options={selectOptions}
-            placeholder={placeholder}
-            minValues={minValues}
-            maxValues={maxValues}
-            disabled={disabled}
-            value={selectedValues}
-            onChange={handleChange}
+            className={ className }
+            options={ selectOptions }
+            placeholder={ placeholder }
+            minValues={ minValues }
+            maxValues={ maxValues }
+            disabled={ disabled }
+            value={ selectedValues }
+            onChange={ handleChange }
         />
     );
 };
@@ -163,15 +163,15 @@ const renderElement = (
 
         return (
             <DiscordButton
-                key={key}
-                elementId={id}
+                key={ key }
+                elementId={ id }
                 className="nodrag"
-                buttonStyle={Number( attributes.style ) || ButtonStyle.Secondary}
-                disabled={!!attributes.disabled}
-                handlePosition={handlePosition}
-                url={buttonUrl}
+                buttonStyle={ Number( attributes.style ) || ButtonStyle.Secondary }
+                disabled={ !!attributes.disabled }
+                handlePosition={ handlePosition }
+                url={ buttonUrl }
             >
-                {buttonLabel}
+                { buttonLabel }
             </DiscordButton>
         );
     }
@@ -179,13 +179,13 @@ const renderElement = (
     if ( isStringSelectComponent( attributes ) ) {
         return (
             <DiscordSelectWrapper
-                key={key}
+                key={ key }
                 className="nodrag"
-                options={attributes.options || []}
-                placeholder={attributes.placeholder || "Select..."}
-                minValues={attributes.min_values}
-                maxValues={attributes.max_values}
-                disabled={!!attributes.disabled}
+                options={ attributes.options || [] }
+                placeholder={ attributes.placeholder || "Select..." }
+                minValues={ attributes.min_values }
+                maxValues={ attributes.max_values }
+                disabled={ !!attributes.disabled }
             />
         );
     }
@@ -193,12 +193,12 @@ const renderElement = (
     if ( isRoleSelectComponent( attributes ) ) {
         return (
             <DiscordRoleMenu
-                key={key}
+                key={ key }
                 className="nodrag"
-                placeholder={attributes.placeholder || "Select Role..."}
-                minValues={attributes.min_values}
-                maxValues={attributes.max_values}
-                disabled={!!attributes.disabled}
+                placeholder={ attributes.placeholder || "Select Role..." }
+                minValues={ attributes.min_values }
+                maxValues={ attributes.max_values }
+                disabled={ !!attributes.disabled }
             />
         );
     }
@@ -216,18 +216,18 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
 
         return (
             <DiscordNodeWrapper>
-                {/* Add a relative container for absolute positioning of the thumbnail */}
+                { /* Add a relative container for absolute positioning of the thumbnail */ }
                 <div className="relative">
-                    {/* Render the embed, passing all attributes EXCEPT the thumbnail */}
-                    <DiscordEmbed {...( { ...data.attributes, thumbnail: undefined } )} />
-                    {/* Render the thumbnail separately if it exists, positioned top-right */}
-                    {thumbnailUrl && (
+                    { /* Render the embed, passing all attributes EXCEPT the thumbnail */ }
+                    <DiscordEmbed { ...( { ...data.attributes, thumbnail: undefined } ) } />
+                    { /* Render the thumbnail separately if it exists, positioned top-right */ }
+                    { thumbnailUrl && (
                         <img
-                            src={thumbnailUrl}
+                            src={ thumbnailUrl }
                             alt="Thumbnail"
                             className="absolute top-4 right-4 h-16 w-16 rounded-full object-cover"
                         />
-                    )}
+                    ) }
                 </div>
             </DiscordNodeWrapper>
         );
@@ -246,43 +246,43 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
         return (
             <DiscordNodeWrapper>
                 <div className="discord-component bg-background/50 p-2 rounded">
-                    {data.embeds?.map( ( embed ) => {
+                    { data.embeds?.map( ( embed ) => {
                         // Extract potential thumbnail URL from each embed's attributes
                         const thumbnailUrl = embed.attributes?.thumbnail?.url;
                         return (
                         // Add a relative container for absolute positioning of the thumbnail
-                            <div key={embed.id} className="relative mb-2"> {/* Add margin-bottom if multiple embeds */}
-                                {/* Render the embed, passing all attributes EXCEPT the thumbnail */}
-                                <DiscordEmbed {...( { ...embed.attributes, thumbnail: undefined } )} />
-                                {/* Render the thumbnail separately if it exists, positioned top-right */}
-                                {thumbnailUrl && (
+                            <div key={ embed.id } className="relative mb-2"> { /* Add margin-bottom if multiple embeds */ }
+                                { /* Render the embed, passing all attributes EXCEPT the thumbnail */ }
+                                <DiscordEmbed { ...( { ...embed.attributes, thumbnail: undefined } ) } />
+                                { /* Render the thumbnail separately if it exists, positioned top-right */ }
+                                { thumbnailUrl && (
                                     <img
-                                        src={thumbnailUrl}
+                                        src={ thumbnailUrl }
                                         alt="Thumbnail"
                                         className="absolute top-4 right-4 h-16 w-16 rounded-full object-cover"
                                     />
-                                )}
+                                ) }
                             </div>
                         );
-                    } )}
+                    } ) }
 
-                    {/* Interactive components rendering remains the same */}
-                    {data.elements?.map( ( row: ComponentRowData, rowIndex: number ) => {
+                    { /* Interactive components rendering remains the same */ }
+                    { data.elements?.map( ( row: ComponentRowData, rowIndex: number ) => {
                         const elementsCount = row.elements?.length || 0;
                         return (
-                            <div key={row.id} className="discord-action-row my-1 flex flex-wrap gap-2">
-                                {/* Inner map uses RenderableElementData, which is correct */}
-                                {row.elements?.map( ( element: RenderableElementData, elementIndex: number ) =>
+                            <div key={ row.id } className="discord-action-row my-1 flex flex-wrap gap-2">
+                                { /* Inner map uses RenderableElementData, which is correct */ }
+                                { row.elements?.map( ( element: RenderableElementData, elementIndex: number ) =>
                                     renderElement( element, element.id, {
                                         rowIndex,
                                         totalRows,
                                         elementIndex,
                                         elementsCount
                                     } )
-                                )}
+                                ) }
                             </div>
                         );
-                    } )}
+                    } ) }
                 </div>
             </DiscordNodeWrapper>
         );
@@ -291,14 +291,14 @@ export const DiscordNode: React.FC<{ data: ExtendedNodeData }> = ( { data } ) =>
     if ( data.type === "group" ) {
         return (
             <DiscordNodeWrapper>
-                <div className="p-2 font-semibold text-gray-400">Group: {data.label}</div>
+                <div className="p-2 font-semibold text-gray-400">Group: { data.label }</div>
             </DiscordNodeWrapper>
         );
     }
 
     return (
         <DiscordNodeWrapper>
-            <div className="p-1 text-xs text-gray-500">Node: {data.label} ({data.type})</div>
+            <div className="p-1 text-xs text-gray-500">Node: { data.label } ({ data.type })</div>
         </DiscordNodeWrapper>
     );
 };

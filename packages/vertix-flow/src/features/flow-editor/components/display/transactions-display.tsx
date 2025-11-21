@@ -12,18 +12,18 @@ export const TransactionsDisplay: React.FC<TransactionsDisplayProps> = ( { trans
         <div>
             <h3 className="font-medium mb-2">Transactions</h3>
             <div className="grid grid-cols-1 gap-2">
-                {transactions.length > 0 ? (
+                { transactions.length > 0 ? (
                     transactions.map( ( transaction: string, index: number ) => (
                         <div
-                            key={index}
+                            key={ index }
                             className="p-2 bg-muted rounded text-sm"
                         >
-                            {transaction}
+                            { transaction }
                         </div>
                     ) )
                 ) : (
                     <p className="text-sm text-muted-foreground">No transactions defined</p>
-                )}
+                ) }
             </div>
         </div>
     );

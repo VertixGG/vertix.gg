@@ -51,7 +51,7 @@ class CleanupWorker extends InitializeBase {
     }
 
     private async removeDynamicChannelFromDB(
-        prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]>,
+        prisma: ReturnType<( typeof PrismaBotClient.$ )[ "getClient" ]>,
         channel: any
     ) {
         await prisma.channel.delete( {
@@ -120,7 +120,7 @@ class CleanupWorker extends InitializeBase {
                             channel: channelFetch
                         } );
                     }
-                } catch ( error: any ) {
+                } catch( error: any ) {
                     if ( error instanceof DiscordAPIError && error.code === 10004 ) {
                         // Unknown Guild, remove from db
                         this.logger.info(
@@ -223,7 +223,7 @@ class CleanupWorker extends InitializeBase {
                             `Master channel id: '${ channel.channelId }' is deleted from db.`
                         );
                     }
-                } catch ( error ) {
+                } catch( error ) {
                     this.logger.error( this.removeNonExistMasterChannelsFromDB, "", error );
                 }
             } );
@@ -401,7 +401,7 @@ class CleanupWorker extends InitializeBase {
         );
     }
 
-    private async getGuildsDidntUpdateRecently( prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]> ) {
+    private async getGuildsDidntUpdateRecently( prisma: ReturnType<( typeof PrismaBotClient.$ )[ "getClient" ]> ) {
         return prisma.guild.findMany( {
             where: {
                 updatedAtInternal: {

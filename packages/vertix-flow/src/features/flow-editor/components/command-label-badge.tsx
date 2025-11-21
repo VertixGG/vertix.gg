@@ -8,7 +8,7 @@ import type { VariantProps } from "class-variance-authority";
 
 interface CommandLabelBadgeProps {
     name: string;
-    variant?: VariantProps<typeof badgeVariants>["variant"];
+    variant?: VariantProps<typeof badgeVariants>[ "variant" ];
 }
 
 /**
@@ -18,8 +18,8 @@ export function CommandLabelBadge( { name, variant = "destructive" }: CommandLab
     // Using the received variant
     // Added slight padding adjustment if needed for better fit as label
     return (
-        <Badge variant={variant} className="text-xs px-1.5 py-0.5">
-            {name}
+        <Badge variant={ variant } className="text-xs px-1.5 py-0.5">
+            { name }
         </Badge>
     );
 }

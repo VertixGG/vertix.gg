@@ -56,7 +56,7 @@ export class AppFactory extends InitializeBase {
             this.logger.info( this.create, "Application server created successfully" );
 
             return server;
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.create, "Failed to create application server", error );
             throw error;
         }

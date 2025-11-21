@@ -4,9 +4,8 @@ import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 
-import type { UIArgs, UIExecutionSteps } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
-import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import type {
     UIAdapterReplyContext,
@@ -18,8 +17,6 @@ import type {
     BeforeFinishHandler,
     IAdapterContext,
 } from "@vertix.gg/gui/src/builders/builders-definitions";
-
-import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export interface IWizardComponentConfig {
     name: string;

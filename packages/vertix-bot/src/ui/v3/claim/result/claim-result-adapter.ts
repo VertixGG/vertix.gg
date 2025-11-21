@@ -40,10 +40,10 @@ const CLAIM_RESULT_STEPS = {
 } as const;
 
 const ClaimResultAdapter = new ExecutionAdapterBuilder<
-        VoiceChannel,
-        Interaction,
-        UIArgs
-    >( "VertixBot/UI-V3/ClaimResultAdapter" )
+    VoiceChannel,
+    Interaction,
+    UIArgs
+>( "VertixBot/UI-V3/ClaimResultAdapter" )
     .setComponent( ClaimResultComponent )
     .setExecutionSteps( CLAIM_RESULT_STEPS )
     .setPermissions( new PermissionsBitField( 0n ) )

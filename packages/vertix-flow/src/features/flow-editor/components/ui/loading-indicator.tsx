@@ -11,7 +11,7 @@ import { useFlowEditorStore } from "@vertix.gg/flow/src/features/flow-editor/sto
 export const LoadingIndicator: React.FC = () => {
     const isLoading = useFlowEditorStore( state => state.isLoading );
 
-    if( !isLoading ) return null;
+    if ( !isLoading ) return null;
 
     return (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">

@@ -63,7 +63,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
 
     public abstract getVersion(): TVersionType;
 
-    protected abstract getDefaults(): TConfig["defaults"];
+    protected abstract getDefaults(): TConfig[ "defaults" ];
 
     protected get model() {
         return this.$$.configModel;
@@ -81,7 +81,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
         let currentConfig = await this.model.get<TConfig>( { key, version } );
 
         if ( !currentConfig ) {
-            await this.model.create<TConfig["defaults"]>( { key, version }, defaults );
+            await this.model.create<TConfig[ "defaults" ]>( { key, version }, defaults );
 
             currentConfig = await this.model.get<TConfig>( { key, version } );
 
@@ -101,7 +101,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
         };
     }
 
-    public get<TKey extends keyof TConfig["data"]>( key: TKey ) {
+    public get<TKey extends keyof TConfig[ "data" ]>( key: TKey ) {
         return this.data[ key ];
     }
 
@@ -112,14 +112,14 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      * while `data()` returns the current configuration from the database.
      */
     public get defaults() {
-        return <TConfig["defaults"]>this.config.defaults;
+        return <TConfig[ "defaults" ]> this.config.defaults;
     }
 
     /**
      * Function `meta()` - Retrieves configuration metadata of current configuration
      */
     public get meta() {
-        return <TConfig["meta"]>this.config.meta;
+        return <TConfig[ "meta" ]> this.config.meta;
     }
 
     /**
@@ -128,12 +128,12 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      * both have the same interface.
      */
     public get data() {
-        return <TConfig["data"]>this.config.data;
+        return <TConfig[ "data" ]> this.config.data;
     }
 
     public getKeys<
-        TSectionKey extends keyof TConfig["defaults"],
-        TSectionKeys extends keyof TConfig["defaults"][TSectionKey]
+        TSectionKey extends keyof TConfig[ "defaults" ],
+        TSectionKeys extends keyof TConfig[ "defaults" ][ TSectionKey ]
     >( section: TSectionKey ) {
         return Object.fromEntries( Object.entries( this.defaults[ section ] ).map( ( [ key ] ) => [ key, key ] ) ) as Record<
             TSectionKeys,

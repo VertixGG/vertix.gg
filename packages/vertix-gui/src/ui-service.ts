@@ -183,7 +183,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     public get<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         silent = false
-    ): TAdapterMapping[T] | undefined {
+    ): TAdapterMapping[ T ] | undefined {
         uiName = uiName.split( UI_CUSTOM_ID_SEPARATOR )[ 0 ];
 
         const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterClassType;
@@ -197,10 +197,10 @@ export class UIService extends ServiceWithDependenciesBase<{
         }
 
         if ( UIClass.isDynamic() ) {
-            return this.createInstance( uiName ) as TAdapterMapping[T];
+            return this.createInstance( uiName ) as TAdapterMapping[ T ];
         }
 
-        return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
+        return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[ T ];
     }
 
     public getUIModule<T extends UIModuleBase>( name: string, silent = false ): T | undefined {
@@ -305,7 +305,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     public async waitForAdapter<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         options = ADAPTER_WAITFOR_DEFAULT_OPTIONS
-    ): Promise<TAdapterMapping[T] | undefined> {
+    ): Promise<TAdapterMapping[ T ] | undefined> {
         return new Promise( ( resolve, reject ) => {
             const adapter = this.get<T>( uiName, true );
 
@@ -346,7 +346,7 @@ export class UIService extends ServiceWithDependenciesBase<{
             Boolean
         );
 
-        return result as TAdapterMapping[T][];
+        return result as TAdapterMapping[ T ][];
     }
 
     public registerUILanguageManager( uiLanguageManager: UILanguageManagerInterface ) {
@@ -462,4 +462,3 @@ export class UIService extends ServiceWithDependenciesBase<{
 }
 
 export default UIService;
- 

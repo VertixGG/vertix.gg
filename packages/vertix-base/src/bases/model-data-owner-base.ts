@@ -102,14 +102,14 @@ export abstract class ModelDataOwnerBase<
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version">,
         cache = false
     ) {
-        return await this.dataVersioningModel.getWithOwner<T, Awaited<ReturnType<TModel["findUnique"]>>>(
+        return await this.dataVersioningModel.getWithOwner<T, Awaited<ReturnType<TModel[ "findUnique" ]>>>(
             this.normalizeUniqueKeys( keys ),
             { cache }
         );
     }
 
     protected async create<T extends TDataType>(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
     ) {
@@ -121,7 +121,7 @@ export abstract class ModelDataOwnerBase<
     }
 
     protected async update<T extends TDataType>(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
     ) {
@@ -133,7 +133,7 @@ export abstract class ModelDataOwnerBase<
     }
 
     protected async upsert<T extends TDataType>(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         value: T
     ) {
@@ -145,7 +145,7 @@ export abstract class ModelDataOwnerBase<
     }
 
     protected async delete(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">
     ) {
         const keysWithOwner = await this.getUniqueKeys( keys, args, this.delete );
@@ -156,7 +156,7 @@ export abstract class ModelDataOwnerBase<
     }
 
     protected async get<T extends TDataType>(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
     ) {
@@ -168,7 +168,7 @@ export abstract class ModelDataOwnerBase<
     }
 
     protected async getWithOwner<T extends TDataType>(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = false
     ) {
@@ -180,7 +180,7 @@ export abstract class ModelDataOwnerBase<
     }
 
     protected async getAll<T extends TDataType>(
-        args: Parameters<TModel["findMany"]>[0],
+        args: Parameters<TModel[ "findMany" ]>[ 0 ],
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cacheUnits = true
     ) {
@@ -214,7 +214,7 @@ export abstract class ModelDataOwnerBase<
 
     protected async getUniqueKeys(
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         method: Function
     ) {
         const owner = await this.getModel().findUnique( args );

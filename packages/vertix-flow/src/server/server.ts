@@ -40,7 +40,7 @@ export class Server extends InitializeBase {
             await serverFactory.start();
 
             this.logger.info( this.start, `Server running at http://${ host === "0.0.0.0" ? "localhost" : host }:${ port }` );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.start, "Failed to start server", error );
             process.exit( 1 );
         }

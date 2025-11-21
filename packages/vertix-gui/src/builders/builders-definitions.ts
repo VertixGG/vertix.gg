@@ -58,7 +58,8 @@ export type GetStartArgsHandler<
     TContext extends IAdapterContext<TInteraction, TArgs> = IAdapterContext<TInteraction, TArgs>
 > = (
     context: TContext,
-    channel: TChannel
+    channel: TChannel,
+    argsFromManager?: TArgs
 ) => Promise<TArgs>;
 
 export type GetReplyArgsHandler<

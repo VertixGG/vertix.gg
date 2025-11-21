@@ -35,7 +35,7 @@ export abstract class ModelWithDataBase<
         >( Ctor: T ) {
             abstract class ModelDataOwnerWrapper extends Ctor {
                 public async create<T extends TDataType>(
-                    args: Parameters<TOwnerModel["findUnique"]>[0],
+                    args: Parameters<TOwnerModel[ "findUnique" ]>[ 0 ],
                     keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
                     value: T
                 ) {

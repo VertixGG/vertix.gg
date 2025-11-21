@@ -123,7 +123,7 @@ export abstract class UIControllerBase<TFlow extends UIFlowBase<any, any, any>> 
             // TODO: Trigger UI update based on new state
             // await this.updateUI(interaction, flow);
             return true;
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.tryTransitionFlow, `Error during flow transition '${ transition }':`, error );
             // Optionally reply to interaction with an error
             return false;

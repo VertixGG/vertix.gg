@@ -113,7 +113,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             this.logger.debug( this.handleInteraction, `Found handler for customId: ${ customId }` );
             try {
                 await handler.bind( this )( interaction ); // Bind handler to 'this' context
-            } catch ( error ) {
+            } catch( error ) {
                 this.logger.error( this.handleInteraction, `Error executing handler for ${ customId }:`, error );
                 // Generic error reply
                 if ( interaction.isRepliable() ) {
@@ -218,7 +218,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
                 this.logger.warn( this.updateUI, "Interaction is not repliable.", interaction.type );
             }
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.updateUI, "Failed to build or update interaction UI:", error );
             if ( interaction.isRepliable() ) {
                 const errorReply = { content: "An error occurred while updating the view.", ephemeral: true, components: [], embeds: [] };
@@ -341,7 +341,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
                             };
 
                             // Map the simple type string to the Prisma Enum via PrismaBot.Prisma namespace
-                            switch( item.type ) {
+                            switch ( item.type ) {
                                 case "string": newItem.type = PrismaBot.Prisma.E_DATA_TYPES.string; break;
                                 case "boolean": newItem.type = PrismaBot.Prisma.E_DATA_TYPES.boolean; break;
                                 case "array": newItem.type = PrismaBot.Prisma.E_DATA_TYPES.array; break;
@@ -378,7 +378,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             persistenceSuccess = true;
             this.logger.info( this.handleFinish, "Successfully saved master channel data via Prisma client." );
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleFinish, "Failed to save master channel data:", error );
             persistenceSuccess = false;
             const errorData = { errorCode: "DB_SAVE_ERROR", errorMessage: ( error instanceof Error ? error.message : String( error ) ) }; // Type guard for error message
@@ -433,7 +433,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             }
             // --- End Placeholder ---
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleEditNameClick, "Error preparing or showing modal:", error );
             if ( interaction.isRepliable() && !interaction.replied && !interaction.deferred ) {
                 await interaction.reply( { content: "Could not open the edit dialog.", ephemeral: true } );
@@ -459,7 +459,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
         let name: string | null = null;
         try {
             name = interaction.fields.getTextInputValue( fieldId );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleNameSubmit, `Failed to get text input value for field ID: ${ fieldId }`, error );
             if ( interaction.isRepliable() && !interaction.replied && !interaction.deferred ) {
                 await interaction.reply( { content: "Error reading submitted name.", ephemeral: true } );
@@ -500,7 +500,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             // No specific transition needed here, just update the UI for the current step
             await this.updateUI( interaction, flow );
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleButtonsSelect, "Error processing button selection or updating UI:", error );
             if ( interaction.isRepliable() && !interaction.replied && !interaction.deferred ) {
                 await interaction.reply( { content: "An error occurred while updating button selection.", ephemeral: true } ).catch( e => this.logger.error( this.handleButtonsSelect, "Failed error reply", e ) );
@@ -540,7 +540,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             // No specific transition needed, just update the UI for the current step
             await this.updateUI( interaction, flow );
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleConfigExtrasSelect, "Error processing config extras selection or updating UI:", error );
             if ( interaction.isRepliable() && !interaction.replied && !interaction.deferred ) {
                 await interaction.reply( { content: "An error occurred while updating configuration extras.", ephemeral: true } ).catch( e => this.logger.error( this.handleConfigExtrasSelect, "Failed error reply", e ) );
@@ -562,7 +562,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             // No specific transition needed here, just update the UI for the current step
             await this.updateUI( interaction, flow );
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleRolesSelect, "Error processing role selection or updating UI:", error );
             if ( interaction.isRepliable() && !interaction.replied && !interaction.deferred ) {
                 await interaction.reply( { content: "An error occurred while updating role selection.", ephemeral: true } ).catch( e => this.logger.error( this.handleRolesSelect, "Failed error reply", e ) );
@@ -607,7 +607,7 @@ export class SetupNewWizardController extends UIControllerBase<SetupNewWizardFlo
             // No specific transition needed, just update the UI for the current step
             await this.updateUI( interaction, flow );
 
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleVerifiedEveryoneSelect, "Error processing everyone role selection or updating UI:", error );
             if ( interaction.isRepliable() && !interaction.replied && !interaction.deferred ) {
                 await interaction.reply( { content: "An error occurred while updating the @everyone role setting.", ephemeral: true } ).catch( e => this.logger.error( this.handleVerifiedEveryoneSelect, "Failed error reply", e ) );

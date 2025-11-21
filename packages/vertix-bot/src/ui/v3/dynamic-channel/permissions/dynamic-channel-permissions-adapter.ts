@@ -17,6 +17,8 @@ import type {
     UIDefaultUserSelectMenuChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { VoiceChannel } from "discord.js";
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
@@ -224,7 +226,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
     } )
     .build();
 
-async function getUsersWithPermissions( channel: import("discord.js").VoiceChannel ) {
+async function getUsersWithPermissions( channel: VoiceChannel ) {
     const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
     const allowed = await dynamicChannelService.getChannelUsersWithPermissionState(
         channel,
@@ -244,7 +246,7 @@ async function getUsersWithPermissions( channel: import("discord.js").VoiceChann
 }
 
 async function onStateChanged(
-    context: import("@vertix.gg/gui/src/builders/builders-definitions").IExecutionAdapterContext<any, UIArgs>,
+    context: IExecutionAdapterContext<any, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction,
     state: "public" | "private"
 ) {
@@ -266,7 +268,7 @@ async function onStateChanged(
 }
 
 async function onVisibilityChanged(
-    context: import("@vertix.gg/gui/src/builders/builders-definitions").IExecutionAdapterContext<any, UIArgs>,
+    context: IExecutionAdapterContext<any, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction,
     visibility: "hidden" | "shown"
 ) {
@@ -291,7 +293,7 @@ async function onVisibilityChanged(
 }
 
 async function onBlockChanged(
-    context: import("@vertix.gg/gui/src/builders/builders-definitions").IExecutionAdapterContext<any, UIArgs>,
+    context: IExecutionAdapterContext<any, UIArgs>,
     interaction: UIDefaultUserSelectMenuChannelVoiceInteraction,
     isBlockMode: boolean,
     userId: string

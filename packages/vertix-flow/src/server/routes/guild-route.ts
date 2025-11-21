@@ -50,7 +50,7 @@ export class GuildRoute extends InitializeBase {
             } );
             this.logger.info( this.handleGuilds, `Found ${ guilds.length } guilds.` );
             return guilds;
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleGuilds, "Error fetching guilds:", error );
             reply.status( 500 ).send( {
                 error: "Failed to fetch guilds",

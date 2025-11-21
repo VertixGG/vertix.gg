@@ -41,7 +41,7 @@ export const handler = {
                 status: response.statusCode,
                 headers
             } );
-        } catch ( error ) {
+        } catch( error ) {
             console.error( "Server error:", error );
             return new Response( "Internal Server Error", { status: 500 } );
         }

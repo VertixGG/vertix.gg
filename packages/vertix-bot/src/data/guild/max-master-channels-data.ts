@@ -7,19 +7,19 @@ export class MaxMasterChannelsData extends UIDataBase<TMaxMasterChannelsData> {
         return "Vertix/Data/MaxMasterChannelsData";
     }
 
-    public async create(identifier: any, data: TMaxMasterChannelsData): Promise<TMaxMasterChannelsData> {
-        return Promise.reject(new Error("Method 'create' not implemented."));
+    public async create( _identifier: any, _data: TMaxMasterChannelsData ): Promise<TMaxMasterChannelsData> {
+        return Promise.reject( new Error( "Method 'create' not implemented." ) );
     }
 
-    public async read(identifier: any): Promise<TMaxMasterChannelsData> {
-        return Promise.reject(new Error("Method 'read' not implemented."));
+    public async read( _identifier: any ): Promise<TMaxMasterChannelsData> {
+        return Promise.reject( new Error( "Method 'read' not implemented." ) );
     }
 
-    public async update(identifier: any, data: TMaxMasterChannelsData): Promise<TMaxMasterChannelsData> {
-        return Promise.reject(new Error("Method 'update' not implemented."));
+    public async update( _identifier: any, _data: TMaxMasterChannelsData ): Promise<TMaxMasterChannelsData> {
+        return Promise.reject( new Error( "Method 'update' not implemented." ) );
     }
 
-    public async delete(identifier: any): Promise<TMaxMasterChannelsData> {
-        return Promise.reject(new Error("Method 'delete' not implemented."));
+    public async delete( _identifier: any ): Promise<TMaxMasterChannelsData> {
+        return Promise.reject( new Error( "Method 'delete' not implemented." ) );
     }
 }

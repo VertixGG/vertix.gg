@@ -91,7 +91,7 @@ export class ServerFactory extends InitializeBase {
 
             const displayHost = this.config.host === "0.0.0.0" ? "localhost" : this.config.host;
             this.logger.info( this.start, `Server running at http://${ displayHost }:${ this.config.port }` );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.start, "Failed to start server", error );
             process.exit( 1 );
         }

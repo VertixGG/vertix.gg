@@ -229,7 +229,7 @@ export abstract class UIFlowBase<
                     components: serializedSchema.components as ComponentSchemaResult[]
                 };
                 if ( schema ) { schemas.push( schema ); }
-            } catch ( error ) {
+            } catch( error ) {
                 console.error( "Error serializing component:", error );
             }
         }

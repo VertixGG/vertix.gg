@@ -133,10 +133,10 @@ async function getAllArgs(
 }
 
 const ClaimVoteAdapter = new ExecutionAdapterBuilder<
-        VoiceChannel,
-        DefaultInteraction,
-        UIArgs
-    >( "VertixBot/UI-V3/ClaimVoteAdapter" )
+    VoiceChannel,
+    DefaultInteraction,
+    UIArgs
+>( "VertixBot/UI-V3/ClaimVoteAdapter" )
     .setComponent( ClaimVoteComponent )
     .setExecutionSteps( CLAIM_VOTE_STEPS )
     .setPermissions( new PermissionsBitField( 0n ) )

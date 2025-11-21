@@ -31,20 +31,20 @@ const ModuleSelectorInner: React.FC<ModuleSelectorProps> = ( { onSelectModule } 
 
     const renderItemContent = ( module: UIModuleFile ): React.ReactNode => (
         <div className="flex flex-col items-start gap-2 w-full">
-            <div className="font-medium">{module.name}</div>
-            <div className="text-xs text-muted-foreground">{module.path}</div>
+            <div className="font-medium">{ module.name }</div>
+            <div className="text-xs text-muted-foreground">{ module.path }</div>
             <div className="flex flex-wrap gap-1">
-                {module.flows?.length > 0 && (
-                    <Badge variant="secondary">{module.flows.length} UI flow(s)</Badge>
-                )}
-                {module.systemFlows?.length > 0 && (
+                { module.flows?.length > 0 && (
+                    <Badge variant="secondary">{ module.flows.length } UI flow(s)</Badge>
+                ) }
+                { module.systemFlows?.length > 0 && (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                        {module.systemFlows.length} System flow(s)
+                        { module.systemFlows.length } System flow(s)
                     </Badge>
-                )}
-                {module.adapters.length > 0 && (
-                    <Badge variant="outline">{module.adapters.length} adapter(s)</Badge>
-                )}
+                ) }
+                { module.adapters.length > 0 && (
+                    <Badge variant="outline">{ module.adapters.length } adapter(s)</Badge>
+                ) }
             </div>
         </div>
     );
@@ -59,11 +59,11 @@ const ModuleSelectorInner: React.FC<ModuleSelectorProps> = ( { onSelectModule } 
     return (
         <ItemSelectorList<UIModuleFile>
             title="UI Modules"
-            items={modules}
-            selectedItemId={selectedModule?.path ?? null}
-            getItemId={getItemId}
-            renderItemContent={renderItemContent}
-            onSelectItem={handleSelectItem}
+            items={ modules }
+            selectedItemId={ selectedModule?.path ?? null }
+            getItemId={ getItemId }
+            renderItemContent={ renderItemContent }
+            onSelectItem={ handleSelectItem }
             emptyStateMessage="No UI modules found"
             containerClassName="h-full"
             listClassName="p-2 pt-0"
@@ -79,7 +79,7 @@ export const ModuleSelector: React.FC<ModuleSelectorProps> = ( props ) => {
                 <p className="ml-2">Loading modules...</p>
             </div>
         }>
-            <ModuleSelectorInner {...props} />
+            <ModuleSelectorInner { ...props } />
         </React.Suspense>
     );
 };

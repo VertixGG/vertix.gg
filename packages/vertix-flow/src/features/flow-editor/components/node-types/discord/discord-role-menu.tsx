@@ -59,29 +59,29 @@ export function DiscordRoleMenu( {
 
     return (
         <Comp
-            className={cn(
+            className={ cn(
                 discordRoleMenuVariants( { variant, size, className } )
-            )}
-            data-disabled={disabled}
-            data-state={active ? "active" : "inactive"}
-            {...props}
+            ) }
+            data-disabled={ disabled }
+            data-state={ active ? "active" : "inactive" }
+            { ...props }
         >
             <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 overflow-hidden">
                     <span className="discord-role-menu-icon flex items-center justify-center text-base font-semibold text-dc-text-muted flex-shrink-0">
                         @
                     </span>
-                    <span className="truncate">{placeholder}</span>
+                    <span className="truncate">{ placeholder }</span>
                 </div>
                 <ChevronDown className="h-5 w-5 flex-shrink-0 text-dc-text-muted opacity-80" />
             </div>
-            {( minValues !== undefined || maxValues !== undefined ) && (
+            { ( minValues !== undefined || maxValues !== undefined ) && (
                 <div className="mt-0.5 text-xs text-dc-text-muted">
                     <span className="discord-role-menu-options-count">
-                        Select {minValues === maxValues ? minValues : `${ minValues }-${ maxValues }`} role{maxValues !== 1 ? "s" : ""}
+                        Select { minValues === maxValues ? minValues : `${ minValues }-${ maxValues }` } role{ maxValues !== 1 ? "s" : "" }
                     </span>
                 </div>
-            )}
+            ) }
         </Comp>
     );
 }

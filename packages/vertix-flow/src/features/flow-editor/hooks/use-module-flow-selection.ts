@@ -65,7 +65,7 @@ export const useModuleFlowSelection = ( {
                 if ( currentModule ) {
                     setModuleName( currentModule.shortName );
                 }
-            } catch ( error ) {
+            } catch( error ) {
                 console.error( "[useModuleFlowSelection] Error reading modules resource in effect:", error );
             }
         }

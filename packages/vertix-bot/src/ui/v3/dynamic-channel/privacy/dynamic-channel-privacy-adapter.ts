@@ -1,11 +1,11 @@
-import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/definitions/dynamic-channel";
-import { DynamicChannelAdapterExuWithPermissionsBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-exu-with-permissions-base";
-import { ExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/execution-adapter-builder";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
 
 import { DynamicChannelPrivacyComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-component";
+import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -18,12 +18,9 @@ import type { Message, VoiceChannel } from "discord.js";
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
-const DynamicChannelPrivacyAdapter = new ExecutionAdapterBuilder<
-        VoiceChannel,
-        DefaultInteraction,
-        UIArgs,
-        typeof DynamicChannelAdapterExuWithPermissionsBase<DefaultInteraction>
-    >( "VertixBot/UI-V3/DynamicChannelPrivacyAdapter", DynamicChannelAdapterExuWithPermissionsBase as any )
+const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
+    "VertixBot/UI-V3/DynamicChannelPrivacyAdapter"
+)
     .setComponent( DynamicChannelPrivacyComponent )
     .setInitiatorElement( DynamicChannelPrivacyButton )
     .setExecutionSteps( {
@@ -58,7 +55,7 @@ async function getArgsWithPermissions( channel: VoiceChannel ) {
     const args: UIArgs = {};
     const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
 
-    const { allowedUsers, blockedUsers } = await dynamicChannelService.getChannelUsersWithPermissionState(
+    const { allowedUsers } = await dynamicChannelService.getChannelUsersWithPermissionState(
         channel,
         DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
         true
@@ -69,7 +66,7 @@ async function getArgsWithPermissions( channel: VoiceChannel ) {
         channel,
         DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS,
         false
-    ).then( r => r.blockedUsers );
+    ).then( permission => permission.blockedUsers );
     args.state = await dynamicChannelService.getChannelPrivacyState( channel );
 
     return args;

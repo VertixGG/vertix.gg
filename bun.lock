@@ -7,8 +7,8 @@
       "dependencies": {
         "@discordjs/rest": "^2.6.0",
         "@types/dagre": "^0.7.53",
-        "@typescript-eslint/types": "^8.46.1",
-        "@typescript-eslint/typescript-estree": "^8.46.1",
+        "@typescript-eslint/types": "^8.47.0",
+        "@typescript-eslint/typescript-estree": "^8.47.0",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/bot": "workspace:*",
         "@vertix.gg/flow": "workspace:*",
@@ -17,7 +17,7 @@
         "@vertix.gg/test-utils": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "@vertix.gg/website": "workspace:*",
-        "@xyflow/react": "^12.8.6",
+        "@xyflow/react": "^12.9.3",
         "@zenflux/cli": "latest",
         "@zenflux/utils": "latest",
         "dagre": "^0.8.5",
@@ -30,14 +30,14 @@
       },
       "devDependencies": {
         "@jest/globals": "^30.2.0",
-        "@stylistic/eslint-plugin": "^5.5.0",
+        "@stylistic/eslint-plugin": "^5.6.1",
         "@swc/jest": "latest",
         "@types/bun": "latest",
         "@types/jest": "latest",
         "@types/jest-when": "latest",
         "@types/node": "latest",
-        "@typescript-eslint/eslint-plugin": "^8.46.1",
-        "@typescript-eslint/parser": "^8.46.1",
+        "@typescript-eslint/eslint-plugin": "^8.47.0",
+        "@typescript-eslint/parser": "^8.47.0",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
         "@zenflux/tsconfig-to-swc": "latest",
@@ -1188,21 +1188,21 @@
 
     "@xyflow/system": ["@xyflow/system@0.0.73", "", { "dependencies": { "@types/d3-drag": "^3.0.7", "@types/d3-interpolate": "^3.0.4", "@types/d3-selection": "^3.0.10", "@types/d3-transition": "^3.0.8", "@types/d3-zoom": "^3.0.8", "d3-drag": "^3.0.0", "d3-interpolate": "^3.0.1", "d3-selection": "^3.0.0", "d3-zoom": "^3.0.0" } }, "sha512-C2ymH2V4mYDkdVSiRx0D7R0s3dvfXiupVBcko6tXP5K4tVdSBMo22/e3V9yRNdn+2HQFv44RFKzwOyCcUUDAVQ=="],
 
-    "@zenflux/cli": ["@zenflux/cli@0.1.39", "", { "dependencies": { "@microsoft/api-extractor": "^7.53.2", "@rollup/plugin-commonjs": "latest", "@rollup/plugin-node-resolve": "latest", "@swc/core": "latest", "@verdaccio/config": "next", "@verdaccio/node-api": "next", "@zenflux/tsconfig-to-swc": "0.1.17", "@zenflux/typescript-vm": "0.1.19", "@zenflux/utils": "0.1.21", "@zenflux/worker": "0.0.22", "acorn": "^8.15.0", "blessed": "^0.1.81", "chokidar": "^3.5.3", "libnpmpack": "^9.0.9", "libnpmpublish": "^11.1.2", "magic-string": "^0.30.5", "node-fetch": "^3.3.2", "npm-packlist": "^10.0.3", "pacote": "^21.0.3", "rollup": "^4.9.1", "semver": "^7.6.3", "tslib": "^2.6.2", "typescript": "latest", "verdaccio": "^5.29.2" }, "bin": { "@z-cli": "bin/cli.js" } }, "sha512-AkV+dZOoAq//iNCOFSA5xbjE3zAHCRCfpMGxTGzeaKklCwUytt2Z1sYUdlLL0c0OHg28GGYB6SCrFgKVK99xhw=="],
+    "@zenflux/cli": ["@zenflux/cli@0.1.41", "", { "dependencies": { "@microsoft/api-extractor": "^7.53.2", "@rollup/plugin-commonjs": "latest", "@rollup/plugin-node-resolve": "latest", "@swc/core": "latest", "@verdaccio/config": "next", "@verdaccio/node-api": "next", "@zenflux/tsconfig-to-swc": "0.1.19", "@zenflux/typescript-vm": "0.1.21", "@zenflux/utils": "0.1.23", "@zenflux/worker": "0.0.24", "acorn": "^8.15.0", "blessed": "^0.1.81", "chokidar": "^3.5.3", "libnpmpack": "^9.0.9", "libnpmpublish": "^11.1.2", "magic-string": "^0.30.5", "node-fetch": "^3.3.2", "npm-packlist": "^10.0.3", "pacote": "^21.0.3", "rollup": "^4.9.1", "semver": "^7.6.3", "tslib": "^2.6.2", "typescript": "latest", "verdaccio": "^5.29.2" }, "bin": { "@z-cli": "bin/cli.js" } }, "sha512-a9DXVxUqxhAJDD5Q2hSRK2lFQRfsxGb9BWBHcEqxqnIhM4PpFomTkVXq/UQXFuXLXiYBXXHWYzf6Ge4nj8KXFA=="],
 
-    "@zenflux/eslint": ["@zenflux/eslint@0.1.36", "", { "dependencies": { "@eslint/compat": "latest", "@eslint/eslintrc": "latest", "@stylistic/eslint-plugin": "latest", "@zenflux/utils": "0.1.21", "eslint-import-resolver-typescript": "latest", "eslint-plugin-import": "latest", "eslint-plugin-react": "latest", "eslint-plugin-react-hooks": "latest", "eslint-plugin-react-refresh": "latest", "eslint-plugin-unused-imports": "^4.3.0", "typescript-eslint": "latest" }, "bin": { "@z-lint": "bin/z-lint.js" } }, "sha512-J6I/jn5tJIgSm1Abc2I0r0r2bedZ2qwq2fmQ9KM26+91TwQ69JL1ogSmKFcQC8dS+IgRkut9fjfY5VHjgttQ7g=="],
+    "@zenflux/eslint": ["@zenflux/eslint@0.1.40", "", { "dependencies": { "@eslint/compat": "latest", "@eslint/eslintrc": "latest", "@stylistic/eslint-plugin": "latest", "@zenflux/utils": "0.1.23", "eslint-import-resolver-typescript": "latest", "eslint-plugin-import": "latest", "eslint-plugin-react": "latest", "eslint-plugin-react-hooks": "latest", "eslint-plugin-react-refresh": "latest", "eslint-plugin-unused-imports": "^4.3.0", "typescript-eslint": "latest" }, "bin": { "@z-lint": "bin/z-lint.js" } }, "sha512-VSbUugsYq2FVV4i4gMSkjWUME594tJCjsbOmCxcV2ZtWb4//c0rSK+BmC5dJrqSJO+xGYvWF+ahIuk7xvvzFJA=="],
 
-    "@zenflux/jest": ["@zenflux/jest@0.1.24", "", { "dependencies": { "@jest/core": "^29.7.0", "jest-config": "^29.7.0" }, "bin": { "@z-jest": "bin/cli.js" } }, "sha512-t10tOKrkl0gL9z6ZJXq/Vw9hcigRPExwcUHZIG4E+LRWd1R5raib5OGpN73YwO+2sResH/EEt3YSm1EXcTeguw=="],
+    "@zenflux/jest": ["@zenflux/jest@0.1.26", "", { "dependencies": { "@jest/core": "^29.7.0", "jest-config": "^29.7.0" }, "bin": { "@z-jest": "bin/cli.js" } }, "sha512-WEFmolwRbzXGiMxvQW6/P/0NtAjyQDCuaoSzMVvZf/0E9uLaL9dsQKibhWdlQDcF0SG0A+ydetrkqoWkdVt3iQ=="],
 
-    "@zenflux/runner": ["@zenflux/runner@0.0.16", "", { "dependencies": { "@zenflux/typescript-vm": "0.1.19", "@zenflux/utils": "0.1.21" }, "bin": { "@z-runner": "src/index.js" } }, "sha512-TG5/ebffiI6Vgv1LOI14c1Ao8WubDd+mn6uaVX/VPRTSx6X6b2I3Kd0UclO3bT6zoTFUDJFnx0WWgN0I+LPFhA=="],
+    "@zenflux/runner": ["@zenflux/runner@0.0.18", "", { "dependencies": { "@zenflux/typescript-vm": "0.1.21", "@zenflux/utils": "0.1.23" }, "bin": { "@z-runner": "src/index.js" } }, "sha512-Ec30ECZC5fB47Z9qcDJmVS9XRTJy7dUSO3j40+FcnQTsPPxR7Y06H1Xclz+UuHHC5cj2ZmdcjqZ2BhUo6dFXtw=="],
 
-    "@zenflux/tsconfig-to-swc": ["@zenflux/tsconfig-to-swc@0.1.17", "", { "dependencies": { "typescript": "latest" } }, "sha512-cmMBnI3U1IQ/XCdC8HMEkwQrpJ6MgsfgJdWgBrPZPGEHAEBGk2/7EhacHdCM5AupcTws2BhekJWdBIfNOyUD4Q=="],
+    "@zenflux/tsconfig-to-swc": ["@zenflux/tsconfig-to-swc@0.1.19", "", { "dependencies": { "typescript": "latest" } }, "sha512-Bi5+RLGSimE6CSgYxZimxun9lMj3Nbjhmd8M/p0uINRf0A7t3Q7izPV2+keXfeIdlye0X1EPhboLhVxHuqlhvg=="],
 
-    "@zenflux/typescript-vm": ["@zenflux/typescript-vm@0.1.19", "", { "dependencies": { "@swc/core": "latest", "@zenflux/tsconfig-to-swc": "0.1.17", "@zenflux/utils": "0.1.21", "ajv": "^8.17.1", "libnpmpack": "^6.0.2", "libnpmpublish": "^9.0.1", "npm-packlist": "^8.0.2", "pacote": "^17.0.4", "source-map-support": "^0.5.21", "ts-node": "^10.9.1", "tsconfig-paths": "^4.2.0" } }, "sha512-BfwWr29KJgVhR0KOEFP0I3s/iDJgFIQxnjk2vh2rYBJrn8xjbPhnG9IsECt0+M4daUHgbNNv+vxtl5tR9oT5Cg=="],
+    "@zenflux/typescript-vm": ["@zenflux/typescript-vm@0.1.21", "", { "dependencies": { "@swc/core": "latest", "@zenflux/tsconfig-to-swc": "0.1.19", "@zenflux/utils": "0.1.23", "ajv": "^8.17.1", "libnpmpack": "^6.0.2", "libnpmpublish": "^9.0.1", "npm-packlist": "^8.0.2", "pacote": "^17.0.4", "source-map-support": "^0.5.21", "ts-node": "^10.9.1", "tsconfig-paths": "^4.2.0" } }, "sha512-SPWk+M1EBCZckOpqPWh7kTgcoSVmpKjqIOlDWmzwUEwj1ZhBqdrdHvYPhvyoWQrBPZZtb8RYxVBjajCeBirKaQ=="],
 
-    "@zenflux/utils": ["@zenflux/utils@0.1.21", "", {}, "sha512-88b5b9CeJ1Lxcgc/x1Aym/3++/dRoCwYEbBnXbTWFFMfilFLSEXQ4Jek4jbnF2VQCuzoIGwi50whI5iPTkzr8Q=="],
+    "@zenflux/utils": ["@zenflux/utils@0.1.23", "", {}, "sha512-eZfJcqtK6P6xz2R/+ETUa3Q6oWvhSAWGKt/wiV5e+2elt44BFaObZFcH+bMmBdcskKGExl3/LXZe35oWU6afbQ=="],
 
-    "@zenflux/worker": ["@zenflux/worker@0.0.22", "", { "dependencies": { "@zenflux/cli": "0.1.39", "@zenflux/runner": "0.0.16", "@zenflux/typescript-vm": "0.1.19" } }, "sha512-AYBFu3PcNtcdg5I6jB5gEznItk9s9AAupJ3A3DUuTvBlY4MNPLzzj4K+++DXVmKCFVUPeDfZHgkjoZpWc7XMaQ=="],
+    "@zenflux/worker": ["@zenflux/worker@0.0.24", "", { "dependencies": { "@zenflux/cli": "0.1.41", "@zenflux/runner": "0.0.18", "@zenflux/typescript-vm": "0.1.21" } }, "sha512-VeNAHACC4gc27d/lUnyAcK3nXLpSXjM1elhhhfiSsyqxtJkWnBPi0kdTluqgmjOzfE7gm804IonT+G5SV7EMog=="],
 
     "JSONStream": ["JSONStream@1.3.5", "", { "dependencies": { "jsonparse": "^1.2.0", "through": ">=2.2.7 <3" }, "bin": { "JSONStream": "./bin.js" } }, "sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ=="],
 

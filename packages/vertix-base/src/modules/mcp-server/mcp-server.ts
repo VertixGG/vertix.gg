@@ -127,7 +127,7 @@ export class McpServer extends ObjectBase {
             } );
             // fastmcp logs its start message, e.g.:
             // [FastMCP] My Server v1.0.0 started on http://localhost:8080/sse
-        } catch ( err ) {
+        } catch( err ) {
             console.error( "Error starting fastmcp server:", err );
             process.exit( 1 );
         }

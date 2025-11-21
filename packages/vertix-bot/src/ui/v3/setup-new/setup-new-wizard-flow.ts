@@ -208,11 +208,11 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
     }
 
     protected addTransitions( state: string, transitions: string[] ): void {
-        if( !this.hasTransitions( state ) ) {
+        if ( !this.hasTransitions( state ) ) {
             this.setTransitionsForState( state, new Set() );
         }
         const stateTransitions = this.getTransitionsForState( state );
-        if( stateTransitions ) {
+        if ( stateTransitions ) {
             transitions.forEach( ( transition ) => {
                 stateTransitions.add( transition );
             } );
@@ -227,7 +227,7 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
         const data = this.getData();
 
         // Use full string literals for comparison
-        if( transition === "VertixGUI/UIWizardFlowBase/Transitions/Next" ) {
+        if ( transition === "VertixGUI/UIWizardFlowBase/Transitions/Next" ) {
             const currentStep = data.currentStep || 0;
             const stepStates = [
                 "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
@@ -237,7 +237,7 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
             return stepStates[ Math.min( currentStep + 1, stepStates.length - 1 ) ];
         }
 
-        if( transition === "VertixGUI/UIWizardFlowBase/Transitions/Back" ) {
+        if ( transition === "VertixGUI/UIWizardFlowBase/Transitions/Back" ) {
             const currentStep = data.currentStep || 0;
             const stepStates = [
                 "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",

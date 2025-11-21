@@ -96,7 +96,7 @@ export function DiscordButton( props: DiscordButtonProps ) {
         ...rest
     } = props;
 
-    const getVariant = ( style: ButtonStyle | number ): VariantProps<typeof discordButtonVariants>["variant"] => {
+    const getVariant = ( style: ButtonStyle | number ): VariantProps<typeof discordButtonVariants>[ "variant" ] => {
         switch ( style ) {
             case ButtonStyle.Primary: return "primary";
             case ButtonStyle.Secondary: return "secondary";
@@ -117,10 +117,10 @@ export function DiscordButton( props: DiscordButtonProps ) {
         handlePosition && (
             <Handle
                 type="source"
-                position={handlePosition}
-                id={elementId}
-                style={{ background: "hsl(var(--primary))", width: 8, height: 8 }}
-                isConnectable={true}
+                position={ handlePosition }
+                id={ elementId }
+                style={ { background: "hsl(var(--primary))", width: 8, height: 8 } }
+                isConnectable={ true }
             />
         )
     );
@@ -130,11 +130,11 @@ export function DiscordButton( props: DiscordButtonProps ) {
         return (
         // Pass only non-conflicting props to Slot. Child needs rest passed by parent.
         // Temporarily reverting to spread ...rest to check visual appearance
-            <Slot {...rest} className={commonClasses} data-variant={variant}>
-                {children}
-                {/* Remove explicit styling used for debugging */}
-                {isLinkButton && <ExternalLink className="size-3.5" />}
-                {renderHandle()}
+            <Slot { ...rest } className={ commonClasses } data-variant={ variant }>
+                { children }
+                { /* Remove explicit styling used for debugging */ }
+                { isLinkButton && <ExternalLink className="size-3.5" /> }
+                { renderHandle() }
             </Slot>
         );
     }
@@ -145,23 +145,23 @@ export function DiscordButton( props: DiscordButtonProps ) {
         const anchorProps = rest as AnchorSpecificProps;
         return (
             <a
-                href={url}
+                href={ url }
                 target="_blank"
                 rel="noopener noreferrer"
-                data-variant={variant}
-                className={commonClasses}
-                {...anchorProps} // Spread compatible props
+                data-variant={ variant }
+                className={ commonClasses }
+                { ...anchorProps } // Spread compatible props
             >
-                {children}
-                {/* Remove explicit styling used for debugging */}
+                { children }
+                { /* Remove explicit styling used for debugging */ }
                 <ExternalLink className="size-3.5" />
-                {renderHandle()}
+                { renderHandle() }
             </a>
         );
     }
 
     // Default to rendering as <button>
-    const buttonProps = rest as ButtonSpecificProps & { type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] }; // Use correct type for type prop
+    const buttonProps = rest as ButtonSpecificProps & { type?: React.ButtonHTMLAttributes<HTMLButtonElement>[ "type" ] }; // Use correct type for type prop
 
     // Validate the button type
     const validButtonTypes = [ "button", "submit", "reset" ];
@@ -171,14 +171,14 @@ export function DiscordButton( props: DiscordButtonProps ) {
 
     return (
         <button
-            type={buttonType} // Use validated type
-            data-variant={variant}
-            className={commonClasses}
-            {...buttonProps} // Spread compatible props (TS should allow this now)
+            type={ buttonType } // Use validated type
+            data-variant={ variant }
+            className={ commonClasses }
+            { ...buttonProps } // Spread compatible props (TS should allow this now)
         >
-            {children}
-            {/* No external link icon for non-link buttons */}
-            {renderHandle()}
+            { children }
+            { /* No external link icon for non-link buttons */ }
+            { renderHandle() }
         </button>
     );
 }

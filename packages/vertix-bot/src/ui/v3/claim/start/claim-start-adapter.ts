@@ -19,12 +19,12 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
 }
 
 const ClaimStartAdapter = new AdapterBuilderBase<
-        VoiceChannel,
-        DefaultInteraction,
+    VoiceChannel,
+    DefaultInteraction,
         typeof UIAdapterBase<VoiceChannel, DefaultInteraction>,
         UIArgs,
         IAdapterContext<DefaultInteraction, UIArgs>
-    >( "VertixBot/UI-V3/ClaimStartAdapter", UIAdapterBase )
+>( "VertixBot/UI-V3/ClaimStartAdapter", UIAdapterBase )
     .setComponent( ClaimStartComponent )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )

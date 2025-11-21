@@ -15,22 +15,22 @@ export const RequiredDataDisplay: React.FC<RequiredDataDisplayProps> = ( { requi
     return (
         <div>
             <h3 className="font-medium mb-2">Required Data</h3>
-            {hasData ? (
+            { hasData ? (
                 Object.entries( requiredData ).map( ( [ key, values ] ) => (
-                    <div key={key} className="mb-2">
-                        <h4 className="text-sm font-medium">{key}</h4>
+                    <div key={ key } className="mb-2">
+                        <h4 className="text-sm font-medium">{ key }</h4>
                         <div className="flex flex-wrap gap-1 mt-1">
-                            {values.map( ( value: string, index: number ) => (
-                                <Badge key={index} variant="secondary" className="text-xs">
-                                    {value}
+                            { values.map( ( value: string, index: number ) => (
+                                <Badge key={ index } variant="secondary" className="text-xs">
+                                    { value }
                                 </Badge>
-                            ) )}
+                            ) ) }
                         </div>
                     </div>
                 ) )
             ) : (
                 <p className="text-sm text-muted-foreground">No required data</p>
-            )}
+            ) }
         </div>
     );
 };

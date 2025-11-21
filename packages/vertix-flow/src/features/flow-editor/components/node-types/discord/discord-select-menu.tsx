@@ -41,20 +41,20 @@ export function renderDiscordEmoji( emoji: string | DiscordEmoji ): React.ReactN
                 const url = `https://cdn.discordapp.com/emojis/${ parsedEmoji.id }.${ parsedEmoji.animated ? "gif" : "png" }`;
                 return (
                     <img
-                        src={url}
-                        alt={parsedEmoji.name}
+                        src={ url }
+                        alt={ parsedEmoji.name }
                         className="w-4 h-4 inline-block align-middle"
-                        onError={( e ) => {
+                        onError={ ( e ) => {
                             console.error( "Failed to load emoji:", url );
                             e.currentTarget.style.display = "none";
-                        }}
+                        } }
                     />
                 );
             }
-            return <span className="inline-block align-middle">{parsedEmoji.name}</span>;
+            return <span className="inline-block align-middle">{ parsedEmoji.name }</span>;
         }
         // If it's a regular emoji, just render it
-        return <span className="inline-block align-middle">{emoji}</span>;
+        return <span className="inline-block align-middle">{ emoji }</span>;
     }
 
     // If it's already a DiscordEmoji object
@@ -62,17 +62,17 @@ export function renderDiscordEmoji( emoji: string | DiscordEmoji ): React.ReactN
         const url = `https://cdn.discordapp.com/emojis/${ emoji.id }.${ emoji.animated ? "gif" : "png" }`;
         return (
             <img
-                src={url}
-                alt={emoji.name}
+                src={ url }
+                alt={ emoji.name }
                 className="w-4 h-4 inline-block align-middle"
-                onError={( e ) => {
+                onError={ ( e ) => {
                     console.error( "Failed to load emoji:", url );
                     e.currentTarget.style.display = "none";
-                }}
+                } }
             />
         );
     }
-    return <span className="inline-block align-middle">{emoji.name}</span>;
+    return <span className="inline-block align-middle">{ emoji.name }</span>;
 }
 
 // Define variants for select menu trigger styling
@@ -200,30 +200,30 @@ export const DiscordSelect = React.forwardRef<HTMLButtonElement, DiscordSelectPr
     }, [ options ] );
 
     return (
-        <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+        <Popover.Root open={ isOpen } onOpenChange={ setIsOpen }>
             <Popover.Trigger asChild>
                 <button
-                    ref={ref}
-                    className={cn( discordSelectTriggerVariants( { variant, size, className } ) )}
-                    disabled={disabled}
+                    ref={ ref }
+                    className={ cn( discordSelectTriggerVariants( { variant, size, className } ) ) }
+                    disabled={ disabled }
                 >
                     <div className="flex items-center justify-between gap-2 w-full">
                         <span className="truncate flex items-center gap-2 flex-1">
-                            {selectedOptions.length > 0 ? (
+                            { selectedOptions.length > 0 ? (
                                 <span className="flex items-center flex-wrap gap-1">
-                                    {selectedOptions.map( ( opt ) => (
+                                    { selectedOptions.map( ( opt ) => (
                                         <span
-                                            key={opt.value}
+                                            key={ opt.value }
                                             className="flex items-center gap-1 min-w-0 px-1.5 py-0.5 rounded"
                                         >
-                                            {opt.emoji && renderDiscordEmoji( opt.emoji )}
-                                            <span className="truncate">{opt.label}</span>
+                                            { opt.emoji && renderDiscordEmoji( opt.emoji ) }
+                                            <span className="truncate">{ opt.label }</span>
                                         </span>
-                                    ) )}
+                                    ) ) }
                                 </span>
                             ) : (
                                 placeholder
-                            )}
+                            ) }
                         </span>
                         <ChevronDown className="h-4 w-4 flex-shrink-0 opacity-50 ml-2" />
                     </div>
@@ -232,70 +232,70 @@ export const DiscordSelect = React.forwardRef<HTMLButtonElement, DiscordSelectPr
 
             <Popover.Portal>
                 <Popover.Content
-                    className={cn( discordSelectContentVariants( { variant } ) )}
+                    className={ cn( discordSelectContentVariants( { variant } ) ) }
                     align="start"
-                    sideOffset={4}
+                    sideOffset={ 4 }
                 >
                     <div className="py-0">
-                        {sections.map( ( sectionOptions, index ) => (
+                        { sections.map( ( sectionOptions, index ) => (
                             <div
-                                key={index}
-                                className={cn( discordSectionVariants( { variant } ) )}
+                                key={ index }
+                                className={ cn( discordSectionVariants( { variant } ) ) }
                             >
                                 <div className="grid grid-cols-3">
-                                    {sectionOptions.map( ( option ) => (
+                                    { sectionOptions.map( ( option ) => (
                                         <div
-                                            key={option.value}
-                                            className={cn(
+                                            key={ option.value }
+                                            className={ cn(
                                                 "flex items-center gap-2 px-2 py-1 hover:bg-[#36393f] cursor-pointer",
                                                 disabled && "opacity-50 cursor-not-allowed",
                                                 selectedValues.includes( option.value ) && "bg-[#36393f]"
-                                            )}
-                                            onClick={() => {
+                                            ) }
+                                            onClick={ () => {
                                                 if ( !disabled ) {
                                                     handleValueChange(
                                                         option.value,
                                                         !selectedValues.includes( option.value )
                                                     );
                                                 }
-                                            }}
+                                            } }
                                         >
                                             <Checkbox.Root
                                                 className="h-4 w-4 rounded border border-[#4f545c] bg-transparent data-[state=checked]:bg-[#5865f2] data-[state=checked]:border-[#5865f2] focus:outline-none"
-                                                checked={selectedValues.includes( option.value )}
-                                                disabled={disabled}
-                                                onCheckedChange={( checked ) => {
+                                                checked={ selectedValues.includes( option.value ) }
+                                                disabled={ disabled }
+                                                onCheckedChange={ ( checked ) => {
                                                     if ( !disabled ) {
                                                         handleValueChange( option.value, checked === true );
                                                     }
-                                                }}
+                                                } }
                                             >
                                                 <Checkbox.Indicator>
                                                     <Check className="h-3 w-3 text-white" />
                                                 </Checkbox.Indicator>
                                             </Checkbox.Root>
 
-                                            {option.emoji && (
+                                            { option.emoji && (
                                                 <span className="flex-shrink-0">
-                                                    {renderDiscordEmoji( option.emoji )}
+                                                    { renderDiscordEmoji( option.emoji ) }
                                                 </span>
-                                            )}
+                                            ) }
 
                                             <div className="flex flex-col min-w-0">
                                                 <span className="text-sm text-[#dcddde] truncate">
-                                                    {option.label}
+                                                    { option.label }
                                                 </span>
-                                                {option.description && (
+                                                { option.description && (
                                                     <span className="text-xs text-[#b9bbbe] truncate">
-                                                        {option.description}
+                                                        { option.description }
                                                     </span>
-                                                )}
+                                                ) }
                                             </div>
                                         </div>
-                                    ) )}
+                                    ) ) }
                                 </div>
                             </div>
-                        ) )}
+                        ) ) }
                     </div>
                 </Popover.Content>
             </Popover.Portal>

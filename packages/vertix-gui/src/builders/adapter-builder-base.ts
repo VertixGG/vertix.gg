@@ -40,7 +40,11 @@ import type {
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
-type StartArgsHandler<TContext, TChannel, TArgs> = ( context: TContext, channel: TChannel ) => Promise<TArgs>;
+type StartArgsHandler<TContext, TChannel, TArgs> = (
+    context: TContext,
+    channel: TChannel,
+    argsFromManager?: TArgs
+) => Promise<TArgs>;
 type ReplyArgsHandler<TContext, TInteraction, TArgs> = (
     context: TContext,
     interaction?: TInteraction,
@@ -224,11 +228,11 @@ export class AdapterBuilderBase<
                     return builderResult ?? super.getCustomIdForEntity( hash );
                 }
 
-                protected async getStartArgs( channel: TChannel, _argsFromManager?: UIArgs ): Promise<UIArgs> {
+                protected async getStartArgs( channel: TChannel, argsFromManager?: UIArgs ): Promise<UIArgs> {
                     if ( builder.startArgsHandler ) {
-                        return builder.startArgsHandler( this.getContext(), channel );
+                        return builder.startArgsHandler( this.getContext(), channel, argsFromManager as TArgs );
                     }
-                    return super.getStartArgs( channel, _argsFromManager );
+                    return super.getStartArgs( channel, argsFromManager );
                 }
 
                 protected async getReplyArgs( interaction: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> {
@@ -317,10 +321,11 @@ export class AdapterBuilderBase<
     protected callGetStartArgs(
         handler: StartArgsHandler<TContext, TChannel, TArgs> | undefined,
         context: TContext,
-        channel: TChannel
+        channel: TChannel,
+        argsFromManager?: TArgs
     ): Promise<UIArgs> {
         if ( handler ) {
-            return handler( context, channel );
+            return handler( context, channel, argsFromManager );
         }
         return Promise.resolve( {} );
     }

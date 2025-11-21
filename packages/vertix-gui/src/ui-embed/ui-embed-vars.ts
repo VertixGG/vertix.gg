@@ -4,7 +4,7 @@ type Wrap<T extends string> = ReturnType<typeof UIEmbedVars.wrapAsVar<T>>;
 
 export class UIEmbedVars<
     const TVars extends string[] = string[],
-    const TVarsWrappedObject = TRecursiveStringMapper<TVars, { [K in keyof TVars]: Wrap<TVars[K]> }>
+    const TVarsWrappedObject = TRecursiveStringMapper<TVars, { [K in keyof TVars]: Wrap<TVars[ K ]> }>
 > {
     private static readonly affix = [ "{", "}" ] as const;
 
@@ -25,14 +25,14 @@ export class UIEmbedVars<
     }
 
     public static wrapAsVar<const T extends string>( varName: T ) {
-        return `${ UIEmbedVars.affix[ 0 ] }${ varName }${ UIEmbedVars.affix[ 1 ] }` as `${ ( typeof UIEmbedVars.affix )[0] }${ T }${ ( typeof UIEmbedVars.affix )[1] }`;
+        return `${ UIEmbedVars.affix[ 0 ] }${ varName }${ UIEmbedVars.affix[ 1 ] }` as `${ ( typeof UIEmbedVars.affix )[ 0 ] }${ T }${ ( typeof UIEmbedVars.affix )[ 1 ] }`;
     }
 
     public keys() {
         return this.vars;
     }
 
-    public get( varName: keyof typeof this.varsObject ): ( typeof this.varsObject )[keyof typeof this.varsObject];
+    public get( varName: keyof typeof this.varsObject ): ( typeof this.varsObject )[ keyof typeof this.varsObject ];
     public get(): typeof this.varsObject;
 
     public get( varName?: keyof typeof this.varsObject ) {

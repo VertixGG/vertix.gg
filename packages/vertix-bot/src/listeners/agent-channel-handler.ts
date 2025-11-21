@@ -76,7 +76,7 @@ export function agentChannelHandler( client: Client ) {
             ], 0.65 );
 
             await message.reply( response );
-        } catch ( error ) {
+        } catch( error ) {
             GlobalLogger.$.error( agentChannelHandler, "Failed to process channel AI request", error );
 
             await message.reply( "I couldn't reach the AI service just now. Please try again shortly." );

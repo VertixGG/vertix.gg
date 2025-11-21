@@ -80,20 +80,20 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                         const handoffTargets = response.data.integrations?.handoffPoints?.map(
                             hp => hp.flowName
                         ) ?? [];
-                        handoffTargets.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
+                        handoffTargets.forEach( name => { if ( name ) flowsToLoadNext.add( name ); } );
 
                         // Get nested connected flows from visual connections
                         const edgeSourceMappings = response.data.getEdgeSourceMappings?.map(
                             vc => vc.targetFlowName
                         ) ?? [];
-                        edgeSourceMappings.forEach( name => { if( name ) flowsToLoadNext.add( name ); } );
+                        edgeSourceMappings.forEach( name => { if ( name ) flowsToLoadNext.add( name ); } );
 
                         // Load each unique nested flow
                         for ( const nextFlowName of flowsToLoadNext ) {
                             await loadFlow( nextFlowName, response.data );
                         }
                     }
-                } catch ( error ) {
+                } catch( error ) {
                     console.error( `Failed to load connected flow: ${ flowName }`, error );
                 }
             };
@@ -104,7 +104,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             }
 
             setConnectedFlowsData( loadedFlows );
-        } catch ( error ) {
+        } catch( error ) {
             console.error( "Error loading connected flows:", error );
             setError( "Failed to load connected flows" );
         } finally {

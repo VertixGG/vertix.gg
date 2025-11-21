@@ -1,11 +1,11 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { DynamicChannelLimitComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-component";
 
 import {
     DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH,
     DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-definitions";
-
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
@@ -32,7 +32,7 @@ const LIMIT_STEPS = {
 
 const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
         UIDefaultButtonChannelVoiceInteraction | ModalSubmitInteractionDefault
-    >( "VertixBot/UI-V3/DynamicChannelLimitAdapter" )
+>( "VertixBot/UI-V3/DynamicChannelLimitAdapter" )
     .setComponent( DynamicChannelLimitComponent )
     .setExecutionSteps( LIMIT_STEPS )
     .getStartArgs( async() => ( {} ) )

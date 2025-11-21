@@ -35,9 +35,9 @@ const FALLBACK_OWNERSHIP_TIMER_INTERVAL = 30 * 1000, // Half minute.
     FALLBACK_OWNERSHIP_TIMEOUT = 10 * 60 * 1000; // 10 minutes.
 
 interface TDynamicChannelClaimAdapters {
-    claimStartAdapter(): TAdapterMapping["base"];
-    claimVoteAdapter(): TAdapterMapping["execution"];
-    claimResultAdapter(): TAdapterMapping["execution"];
+    claimStartAdapter(): TAdapterMapping[ "base" ];
+    claimVoteAdapter(): TAdapterMapping[ "execution" ];
+    claimResultAdapter(): TAdapterMapping[ "execution" ];
 }
 
 interface TDynamicChannelClaimAdapterSteps {

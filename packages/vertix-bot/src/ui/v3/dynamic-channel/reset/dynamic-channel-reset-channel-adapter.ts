@@ -1,26 +1,29 @@
 import { DynamicChannelResetChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-component";
 
-import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-base";
+import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase {
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelResetChannelAdapter";
-    }
+const RESET_CHANNEL_STEPS = {
+    default: {}
+} as const;
 
-    public static getComponent() {
-        return DynamicChannelResetChannelComponent;
-    }
+const DynamicChannelResetChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
+    "VertixBot/UI-V3/DynamicChannelResetChannelAdapter"
+)
+    .setComponent( DynamicChannelResetChannelComponent )
+    .setExecutionSteps( RESET_CHANNEL_STEPS )
+    .build();
 
+class DynamicChannelResetChannelAdapter extends DynamicChannelResetChannelAdapterBase {
     protected getStartArgs() {
         return {};
     }
 
-    protected getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
+    protected getReplyArgs( _interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ) {
         if ( argsFromManager?.result ) {
             return argsFromManager.result;
         }
@@ -28,10 +31,10 @@ export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase
         return {};
     }
 
-    protected onEntityMap() {
+    protected async onEntityMap() {
         this.bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-            this.onResetChannelButtonClicked
+            this.onResetChannelButtonClicked.bind( this )
         );
     }
 
@@ -44,7 +47,9 @@ export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase
         switch ( result?.code ) {
             case "success-rename-rate-limit":
             case "success":
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup" );
+                DynamicChannelResetChannelComponent.switchEmbedsGroup(
+                    "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
+                );
 
                 await this.ephemeral( interaction, { result } );
                 break;
@@ -54,8 +59,12 @@ export class DynamicChannelResetChannelAdapter extends DynamicChannelAdapterBase
                 break;
 
             default:
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-General/SomethingWentWrongEmbedGroup" );
+                DynamicChannelResetChannelComponent.switchEmbedsGroup(
+                    "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+                );
                 await this.ephemeral( interaction, {} );
         }
     }
 }
+
+export { DynamicChannelResetChannelAdapter };

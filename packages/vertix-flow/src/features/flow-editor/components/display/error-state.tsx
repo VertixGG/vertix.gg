@@ -17,10 +17,10 @@ export const ErrorState: React.FC<ErrorStateProps> = ( {
     className = "min-h-[200px] flex items-center justify-center"
 } ) => {
     return (
-        <div className={className}>
+        <div className={ className }>
             <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{message}</AlertDescription>
+                <AlertDescription>{ message }</AlertDescription>
             </Alert>
         </div>
     );

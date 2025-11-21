@@ -21,25 +21,25 @@ export const LoadingState: React.FC<LoadingStateProps> = ( {
 } ) => {
     if ( showHeader ) {
         return (
-            <Card className={className}>
+            <Card className={ className }>
                 <CardHeader>
-                    <CardTitle>{title}</CardTitle>
+                    <CardTitle>{ title }</CardTitle>
                 </CardHeader>
                 <CardContent className="w-full space-y-4">
                     <Skeleton className="h-4 w-3/4 mx-auto" />
                     <Skeleton className="h-4 w-1/2 mx-auto" />
-                    <p className="text-muted-foreground text-center text-sm">{message}</p>
+                    <p className="text-muted-foreground text-center text-sm">{ message }</p>
                 </CardContent>
             </Card>
         );
     }
 
     return (
-        <Card className={className}>
+        <Card className={ className }>
             <CardContent className="w-full space-y-4">
                 <Skeleton className="h-4 w-3/4 mx-auto" />
                 <Skeleton className="h-4 w-1/2 mx-auto" />
-                <p className="text-muted-foreground text-center text-sm">{message}</p>
+                <p className="text-muted-foreground text-center text-sm">{ message }</p>
             </CardContent>
         </Card>
     );

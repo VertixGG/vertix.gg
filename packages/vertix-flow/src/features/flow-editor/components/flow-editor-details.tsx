@@ -21,17 +21,17 @@ export const FlowEditorDetails: React.FC = () => {
             </div>
             <ScrollArea className="h-full">
                 <div className="p-4">
-                    {modulePath && flowName && moduleName ? (
+                    { modulePath && flowName && moduleName ? (
                         <FlowDataDisplay
-                            moduleName={moduleName}
-                            flowName={flowName}
-                            onFlowDataLoaded={handleMainFlowDataLoaded}
+                            moduleName={ moduleName }
+                            flowName={ flowName }
+                            onFlowDataLoaded={ handleMainFlowDataLoaded }
                         />
                     ) : (
                         <Card className="p-4">
                             <p className="text-sm text-muted-foreground">Select a flow to view details</p>
                         </Card>
-                    )}
+                    ) }
                 </div>
             </ScrollArea>
         </>

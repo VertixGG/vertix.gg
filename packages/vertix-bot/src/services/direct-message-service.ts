@@ -214,7 +214,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
 
                 return _response.json();
             } );
-        } catch ( e: any ) {
+        } catch( e: any ) {
             await message.reply( e.message as string );
             response = null;
         }

@@ -1,75 +1,71 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { DynamicChannelClearChatComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-component";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-adapter-base";
+import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { VoiceChannel } from "discord.js";
 
-export class DynamicChannelClearChatAdapter extends DynamicChannelAdapterBase {
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelClearChatAdapter";
-    }
+const CLEAR_CHAT_STEPS = {
+    default: {}
+} as const;
 
-    public static getComponent() {
-        return DynamicChannelClearChatComponent;
-    }
+const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
+    "VertixBot/UI-V3/DynamicChannelClearChatAdapter"
+)
+    .setComponent( DynamicChannelClearChatComponent )
+    .setExecutionSteps( CLEAR_CHAT_STEPS )
+    .getStartArgs( async( _context, _channel, argsFromManager ) => ( {
+        ownerDisplayName: argsFromManager.ownerDisplayName,
+        totalMessages: argsFromManager.totalMessages
+    } ) )
+    .getReplyArgs( async() => ( {} ) )
+    .onEntityMap( async( { bindButton } ) => {
+        bindButton<UIDefaultButtonChannelVoiceInteraction>(
+            "VertixBot/UI-V3/DynamicChannelClearChatButton",
+            async( context, interaction ) => {
+                const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+                const result = await dynamicChannelService.clearChat( interaction, interaction.channel );
 
-    protected getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
-        return {
-            ownerDisplayName: argsFromManager.ownerDisplayName,
-            totalMessages: argsFromManager.totalMessages
-        };
-    }
+                switch ( result?.code ) {
+                    case "success":
+                        DynamicChannelClearChatComponent.switchEmbedsGroup(
+                            "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup"
+                        );
 
-    protected getReplyArgs() {
-        return {};
-    }
+                        const messages = await interaction.channel.messages.fetch();
+                        for ( const message of messages.values() ) {
+                            if ( message.embeds.length === 0 ) continue;
+                            const embed = message.embeds[ 0 ];
+                            if ( embed?.title?.includes( "🧹" ) ) {
+                                await message.delete();
+                            }
+                        }
 
-    protected onEntityMap() {
-        this.bindButton( "VertixBot/UI-V3/DynamicChannelClearChatButton", this.onClearChatButtonClicked );
-    }
+                        await context.send( interaction.channel, {
+                            ownerDisplayName: await guildGetMemberDisplayName( interaction.channel.guild, interaction.user.id ),
+                            totalMessages: result.deletedCount
+                        } );
+                        return;
 
-    private async onClearChatButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
-        const result = await this.dynamicChannelService.clearChat( interaction, interaction.channel );
+                    case "nothing-to-delete":
+                        DynamicChannelClearChatComponent.switchEmbedsGroup(
+                            "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup"
+                        );
+                        break;
 
-        switch ( result?.code ) {
-            case "success":
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup" );
-
-                // Search embeds with "🧹" in title and delete them.
-                const messages = await interaction.channel.messages.fetch();
-
-                for ( const message of messages.values() ) {
-                    if ( message.embeds.length === 0 ) {
-                        continue;
-                    }
-
-                    const embed = message.embeds[ 0 ];
-
-                    // TODO: Find a better way to do this.
-                    if ( embed?.title?.includes( "🧹" ) ) {
-                        await message.delete();
-                    }
+                    default:
+                        DynamicChannelClearChatComponent.switchEmbedsGroup(
+                            "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+                        );
                 }
 
-                await this.send( interaction.channel, {
-                    ownerDisplayName: await guildGetMemberDisplayName( interaction.channel.guild, interaction.user.id ),
-                    totalMessages: result.deletedCount
-                } );
+                await context.ephemeral( interaction );
+            }
+        );
+    } )
+    .build();
 
-                return; // # NOTE: return is required here, otherwise the code below will be executed.
-
-            case "nothing-to-delete":
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup" );
-                break;
-
-            default:
-                this.getComponent().switchEmbedsGroup( "VertixBot/UI-General/SomethingWentWrongEmbedGroup" );
-        }
-
-        await this.ephemeral( interaction );
-    }
-}
+export { DynamicChannelClearChatAdapter };

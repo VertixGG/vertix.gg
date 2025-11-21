@@ -9,8 +9,6 @@ import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
-
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-component";
@@ -20,6 +18,8 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -201,7 +201,12 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
     .setExecutionSteps( DYNAMIC_CHANNEL_STEPS )
     .getStartArgs( async( _context, channel, argsFromManager = {} ) => getAllArgs( channel, argsFromManager ) )
     .getReplyArgs( async( _context, interaction, argsFromManager = {} ) => getAllArgs( interaction.channel, argsFromManager ) )
-    .getEditMessageArgs( async( _context, message, argsFromManager = {} ) => getAllArgs( message.channel as VoiceChannel, argsFromManager ) )
+    .getEditMessageArgs( async( _context, message, argsFromManager = {} ) => {
+        if ( !message?.channel ) {
+            return argsFromManager;
+        }
+        return getAllArgs( message.channel as VoiceChannel, argsFromManager );
+    } )
     .onEntityMap( async( { bindButton } ) => {
         bindButton( "VertixBot/UI-V3/DynamicChannelRenameButton", onRenameButtonClicked );
         bindButton( "VertixBot/UI-V3/DynamicChannelLimitMetaButton", onLimitButtonClicked );

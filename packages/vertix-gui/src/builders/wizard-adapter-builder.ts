@@ -6,9 +6,10 @@ import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 
-import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
+import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import type {
     UIAdapterReplyContext,
@@ -129,7 +130,7 @@ export class WizardAdapterBuilder<
                 if ( builder.initiatorElement ) {
                     return builder.initiatorElement;
                 }
-                return super.getInitiatorElement?.();
+                return undefined;
             }
 
             public static getExcludedElements() {
@@ -175,25 +176,19 @@ export class WizardAdapterBuilder<
             protected async onBeforeNext( interaction: TInteraction ) {
                 if ( builder.onBeforeNextHandler ) {
                     await builder.onBeforeNextHandler.call( this, interaction );
-                    return;
                 }
-                return super.onBeforeNext?.( interaction );
             }
 
             protected async onBeforeBack( interaction: TInteraction ) {
                 if ( builder.onBeforeBackHandler ) {
                     await builder.onBeforeBackHandler.call( this, interaction );
-                    return;
                 }
-                return super.onBeforeBack?.( interaction );
             }
 
             protected async onAfterFinish( interaction: TInteraction ) {
                 if ( builder.onAfterFinishHandler ) {
                     await builder.onAfterFinishHandler.call( this, interaction );
-                    return;
                 }
-                return super.onAfterFinish?.( interaction );
             }
 
             protected async onBeforeFinish( interaction: TInteraction ) {
@@ -209,6 +204,8 @@ export class WizardAdapterBuilder<
                     editReplyWithStep: this.editReplyWithStepWrapper.bind( this ),
                     ephemeralWithStep: this.ephemeralWithStepWrapper.bind( this ),
                     getCurrentExecutionStep: this.getCurrentExecutionStepWrapper.bind( this ),
+                    getCurrentStepIndex: this.getCurrentStepIndexWrapper.bind( this ),
+                    generateCustomIdForEntity: this.generateCustomIdForEntityWrapper.bind( this ),
                     getName: () => this.getName()
                 };
             }
@@ -226,6 +223,16 @@ export class WizardAdapterBuilder<
             private getCurrentExecutionStepWrapper( context?: TInteraction ) {
                 const method = Reflect.get( this, "getCurrentExecutionStep" ) as Function;
                 return method.call( this, context );
+            }
+
+            private getCurrentStepIndexWrapper( interaction?: TInteraction ) {
+                const method = Reflect.get( this, "getCurrentStepIndex" ) as Function;
+                return method.call( this, interaction );
+            }
+
+            private generateCustomIdForEntityWrapper( entity: UIEntitySchemaBase | UIModalSchema ) {
+                const method = Reflect.get( this, "generateCustomIdForEntity" ) as Function;
+                return method.call( this, entity );
             }
         };
 

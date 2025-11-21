@@ -12,7 +12,7 @@ import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
     UIDefaultChannelSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { Message, MessageComponentInteraction } from "discord.js";
+import type { ButtonInteraction, Message, MessageComponentInteraction, ModalSubmitInteraction, StringSelectMenuInteraction, UserSelectMenuInteraction } from "discord.js";
 
 export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs> {
     readonly logger: Logger;
@@ -30,6 +30,9 @@ export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TAr
 
     getArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext ) => UIArgs;
     setArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext, args: UIArgs ) => void;
+
+    updateInteractionDefer: ( interaction: TInteraction ) => Promise<void>;
+    deleteRelatedEphemeralInteractionsInternal: ( interaction: TInteraction, customId: string, count: number ) => Promise<number>;
 }
 
 export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
@@ -42,6 +45,8 @@ export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContex
         deletePrevious?: boolean
     ) => Promise<void>;
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
+    getCurrentStepIndex: ( interaction?: TInteraction ) => number;
+    generateCustomIdForEntity: ( entity: UIEntitySchemaBase | UIModalSchema ) => string;
 }
 
 export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
@@ -102,20 +107,24 @@ export type BeforeBuildHandler<
 ) => Promise<void>;
 
 export interface IBinder<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs, TContext extends IAdapterContext<TInteraction, TArgs>> {
-    bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
+    bindButton: <T extends ButtonInteraction<"cached">>(
         name: string,
         callback: ( context: TContext, interaction: T ) => Promise<void>
     ) => void;
-    bindModal: <T extends UIDefaultModalChannelTextInteraction>(
+    bindModal: <T extends ModalSubmitInteraction<"cached">>(
         name: string,
         callback: ( context: TContext, interaction: T ) => Promise<void>
     ) => void;
-    bindModalWithButton: <T extends UIDefaultModalChannelTextInteraction>(
+    bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
         buttonName: string,
         modalName: string,
         callback: ( context: TContext, interaction: T ) => Promise<void>
     ) => void;
-    bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
+    bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
+        name: string,
+        callback: ( context: TContext, interaction: T ) => Promise<void>
+    ) => void;
+    bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
         name: string,
         callback: ( context: TContext, interaction: T ) => Promise<void>
     ) => void;

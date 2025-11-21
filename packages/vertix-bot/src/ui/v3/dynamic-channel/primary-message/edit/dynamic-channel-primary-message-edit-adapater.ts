@@ -129,7 +129,7 @@ const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceCh
 
         const userMasterData = await UserMasterChannelDataModel.$.getData( interaction.user.id, masterChannelDB.id );
 
-        const component = ( context.constructor as typeof WizardAdapterBuilder ).getComponent();
+        const component = context.getComponent();
         const stepIndex = context.getCurrentStepIndex();
 
         return {

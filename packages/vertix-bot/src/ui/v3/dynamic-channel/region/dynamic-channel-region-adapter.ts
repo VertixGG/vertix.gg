@@ -61,8 +61,8 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
     .getEditMessageArgs( async( _context, message ) => {
         return message?.channel && message.channel instanceof VoiceChannel ? await getArgs( message.channel ) : {};
     } )
-    .onEntityMap( async( { bindSelectMenu } ) => {
-        bindSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+    .onEntityMap( async( { bindUserSelectMenu } ) => {
+        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
             onRegionSelected
         );

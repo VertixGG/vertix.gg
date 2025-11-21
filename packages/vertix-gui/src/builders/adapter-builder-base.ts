@@ -14,10 +14,9 @@ import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import type {
     UIAdapterReplyContext,
     UIAdapterStartContext,
-    UIDefaultButtonChannelTextInteraction,
-    UIDefaultModalChannelTextInteraction,
-    UIDefaultStringSelectMenuChannelTextInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+
+import type { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInteraction, UserSelectMenuInteraction } from "discord.js";
 
 import type {
     UIArgs,
@@ -261,27 +260,31 @@ export class AdapterBuilderBase<
                 protected createBinder(): IBinder<TInteraction, TArgs, TContext> {
                     const getContext = this.getContext.bind( this );
                     return {
-                        bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
+                        bindButton: <T extends ButtonInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>
                         ) => this.bindButton( name, ( interaction ) => callback( getContext(), interaction as T ) ),
-                        bindModal: <T extends UIDefaultModalChannelTextInteraction>(
+                        bindModal: <T extends ModalSubmitInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>
                         ) => this.bindModal( name, ( interaction ) => callback( getContext(), interaction as T ) ),
-                        bindModalWithButton: <T extends UIDefaultModalChannelTextInteraction>(
+                        bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
                             buttonName: string,
                             modalName: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>
                         ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( getContext(), interaction as T ) ),
-                        bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
+                        bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>
-                        ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
+                        ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
+                            name: string,
+                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                        ) => this.bindUserSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
                     };
                 }
 
-                protected getBaseContext() {
+                protected getBaseContext(): IAdapterContext<TInteraction, TArgs> {
                     return {
                         logger: AdapterBuilderBase.dedicatedLogger,
                         customIdStrategy: this.customIdStrategy,
@@ -292,8 +295,10 @@ export class AdapterBuilderBase<
                         deleteArgs: this.deleteArgs.bind( this ),
                         ephemeral: this.ephemeral.bind( this ),
                         editReply: this.editReply.bind( this ),
-                        showModal: ( interaction, name ) => this.showModal( name, interaction )
-                    } satisfies IAdapterContext<TInteraction, TArgs>;
+                        showModal: ( interaction, name ) => this.showModal( name, interaction ),
+                        updateInteractionDefer: this.updateInteractionDefer.bind( this ),
+                        deleteRelatedEphemeralInteractionsInternal: this.deleteRelatedEphemeralInteractionsInternal.bind( this )
+                    };
                 }
 
                 protected getContext() {

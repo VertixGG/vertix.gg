@@ -1,5 +1,7 @@
 import util from "node:util";
 
+import "@vertix.gg/prisma/bot-client";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { deepMerge } from "@vertix.gg/utils/src/object";

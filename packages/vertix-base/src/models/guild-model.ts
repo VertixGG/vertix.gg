@@ -55,8 +55,8 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
                 where: { guildId: guild.id },
                 data: { isInGuild }
             } );
-        } catch( e ) {
-            if ( e instanceof PrismaBot.Prisma.PrismaClientKnownRequestError && e.code === "P2025" ) {
+        } catch( e: unknown ) {
+            if ( e && typeof e === "object" && "code" in e && e.code === "P2025" ) {
                 return this.logger.warn( this.update, `Guild id: '${ guild.id }' - Not found in database` );
             }
 

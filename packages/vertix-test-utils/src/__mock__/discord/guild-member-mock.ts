@@ -1,7 +1,7 @@
 import type { RawGuildMemberData } from "discord.js/typings/rawDataTypes";
 import type { GuildMember } from "discord.js";
 
-import type { ClientMock } from "@vertix.gg/bot/test/__mock__/discord/client-mock";
+import type { ClientMock } from "@vertix.gg/test-utils/src/__mock__/discord/client-mock";
 
 export class GuildMemberMock {
     private client: ClientMock;

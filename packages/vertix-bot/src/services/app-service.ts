@@ -25,7 +25,7 @@ const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" }
 const packageJson: PackageJson = JSON.parse( packageJsonString );
 
 export class AppService extends ServiceBase {
-    private client: Client<true>;
+    private client!: Client<true>;
 
     private isActive = false;
 

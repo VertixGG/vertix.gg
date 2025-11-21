@@ -117,7 +117,6 @@ export class ExecutionAdapterBuilder<
                     return builder.getEditMessageArgsHandler( this.getContext(), message, argsFromManager );
                 }
 
-                // @ts-expect-error - base may not implement
                 return super.getEditMessageArgs?.( message, argsFromManager );
             }
 

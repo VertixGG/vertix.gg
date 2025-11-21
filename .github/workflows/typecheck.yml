@@ -48,6 +48,8 @@ jobs:
 
       - name: Cache TypeScript build info
         uses: actions/cache@v4
+        id: tsbuildinfo-cache
+        continue-on-error: true
         with:
           path: |
             packages/**/*.tsbuildinfo

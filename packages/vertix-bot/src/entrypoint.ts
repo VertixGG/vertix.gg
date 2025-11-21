@@ -201,8 +201,7 @@ async function registerUIVersionStrategies() {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function createCleanupWorker() {
     try {
-        const thread = await initWorker();
-        await thread.run();
+        await initWorker();
         GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
     } catch( error ) {
         GlobalLogger.$.error( createCleanupWorker, "", error );

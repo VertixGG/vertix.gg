@@ -39,6 +39,30 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
 
+      - name: Cache dependencies
+        uses: buildjet/cache@v4
+        id: deps-cache
+        continue-on-error: true
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/package.json', '**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Cache ESLint
+        uses: buildjet/cache@v4
+        id: eslint-cache
+        continue-on-error: true
+        with:
+          path: |
+            .eslintcache
+            packages/*/.eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('**/.eslintrc.json', '**/eslint.config.js', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-
+
       - name: Install dependencies
         run: bun install
 

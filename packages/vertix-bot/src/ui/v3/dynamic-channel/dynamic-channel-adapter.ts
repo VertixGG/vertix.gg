@@ -20,7 +20,9 @@ import type { BaseMessageOptions, Message, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 const DYNAMIC_CHANNEL_STEPS = {
-    default: {}
+    default: {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup"
+    }
 } as const;
 
 const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(

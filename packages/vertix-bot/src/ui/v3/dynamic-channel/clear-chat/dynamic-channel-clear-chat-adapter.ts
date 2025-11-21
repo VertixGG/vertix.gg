@@ -10,7 +10,18 @@ import type { UIDefaultButtonChannelVoiceInteraction, UIDefaultButtonChannelText
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 const CLEAR_CHAT_STEPS = {
-    default: {}
+    default: {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelClearChatButtonGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelClearChatSuccess": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelClearChatNothingToClear": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelClearChatError": {
+        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+    }
 } as const;
 
 const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(

@@ -11,7 +11,15 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 const RESET_CHANNEL_STEPS = {
-    default: {}
+    default: {
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelResetChannelButtonGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelResetChannelSuccess": {
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
+    },
+    "VertixBot/UI-V3/DynamicChannelResetChannelError": {
+        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+    }
 } as const;
 
 const DynamicChannelResetChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(

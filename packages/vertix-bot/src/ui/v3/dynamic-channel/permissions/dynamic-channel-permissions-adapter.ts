@@ -27,8 +27,8 @@ type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDef
 
 const PERMISSIONS_STEPS = {
     default: {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsEmbedGroup"
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
     },
     "VertixBot/UI-V3/DynamicChannelPermissionsAccess": {
         elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",

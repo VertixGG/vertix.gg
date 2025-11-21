@@ -26,7 +26,10 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
     .setComponent( DynamicChannelPrivacyComponent )
     .setInitiatorElement( DynamicChannelPrivacyButton )
     .setExecutionSteps( {
-        default: {}
+        default: {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
+        }
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => getArgsWithPermissions( interaction.channel ) )

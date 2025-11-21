@@ -107,8 +107,8 @@ const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceCh
     .setComponents( {
         name: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
         components: [
-            DynamicChannelPrimaryMessageEditTitleComponent,
-            DynamicChannelPrimaryMessageEditDescriptionComponent
+                    DynamicChannelPrimaryMessageEditTitleComponent,
+                    DynamicChannelPrimaryMessageEditDescriptionComponent
         ],
         baseComponent: DynamicChannelPrimaryMessageEditComponent
     } )

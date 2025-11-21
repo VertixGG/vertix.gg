@@ -2,8 +2,14 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
 import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
 
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
+import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
@@ -25,7 +31,8 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 
 const DYNAMIC_CHANNEL_STEPS = {
     default: {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup"
+        elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+        embedsGroup: "VertixBot/UI-V3/DynamicChannel/EmbedsGroup"
     }
 } as const;
 
@@ -59,7 +66,15 @@ async function getAllArgs( channel: VoiceChannel, argsFromManager: UIArgs = {} )
                 masterChannelDB.id
             );
 
-            Object.assign( args, primaryMessage );
+            const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+                "Vertix/Config/MasterChannel",
+                VERSION_UI_V3
+            );
+
+            Object.assign( args, {
+                title: primaryMessage?.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
+                description: primaryMessage?.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription
+            } );
         }
     }
 

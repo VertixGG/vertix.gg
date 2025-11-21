@@ -28,10 +28,10 @@ const REGION_STEPS = {
 } as const;
 
 async function getArgs( channel: VoiceChannel ) {
-    return {
-        region: channel.rtcRegion
-    };
-}
+        return {
+            region: channel.rtcRegion
+        };
+    }
 
 async function onRegionSelected(
     context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,

@@ -2,7 +2,6 @@ import crypto from "node:crypto";
 
 import { diff } from "jest-diff";
 
-import "@vertix.gg/prisma/bot-client";
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";

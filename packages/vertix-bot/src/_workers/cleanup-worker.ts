@@ -1,5 +1,3 @@
-import { fileURLToPath } from "node:url";
-
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ChannelType, Client, DiscordAPIError, GatewayIntentBits } from "discord.js";
@@ -456,7 +454,7 @@ class CleanupWorker extends InitializeBase {
     }
 }
 
-export async function initWorker( args = [] ) {
+export async function initWorker( _args = [] ) {
     return CleanupWorker.$.handle().catch( ( e ) => {
         throw e;
     } );

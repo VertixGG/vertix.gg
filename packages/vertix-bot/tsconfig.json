@@ -1,8 +1,10 @@
 {
     // Extends the configuration from "./tsconfig.paths.json"
     "extends": "./tsconfig.paths.json",
+
     // Compiler options
     "compilerOptions": {
+        "incremental": true,
         "rootDir": "./",
         "typeRoots": [
             "../../node_modules/@types",
@@ -42,8 +44,6 @@
         // Enforces additional constraints on function types
         "strictFunctionTypes": true,
         // Disables strict checking of property initialization in classes
-        "strictPropertyInitialization": false,
-
-        "declaration": false
+        "strictPropertyInitialization": false
     }
 }

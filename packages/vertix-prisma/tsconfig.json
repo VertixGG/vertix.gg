@@ -4,6 +4,7 @@
 
     // Compiler options
     "compilerOptions": {
+        "incremental": true,
         "typeRoots": [
             "../../node_modules/@types",
             "./types"

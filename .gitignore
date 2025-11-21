@@ -11,5 +11,24 @@ node_modules
 .env
 packages/vertix-base/src/encryption/key.ts
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# TypeScript declaration files (generated, not source)
+**/jest.config.d.ts
+**/jest.config.d.ts.map
+packages/**/src/**/*.d.ts
+packages/**/src/**/*.d.ts.map
+packages/**/dist/**/*.d.ts
+packages/**/dist/**/*.d.ts.map
+
+# Generated JavaScript files (from TypeScript compilation)
+**/jest.config.js
+packages/**/src/**/*.js
+packages/**/src/**/*.js.map
+packages/**/dist/**/*.js
+packages/**/dist/**/*.js.map
+
 
 

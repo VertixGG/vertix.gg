@@ -1,0 +1,46 @@
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+name: Type Check
+
+on: [ push, pull_request ]
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  file-diff:
+    runs-on: ubuntu-22.04
+    name: Type Check - File Diff
+    outputs:
+      ts_diff: ${{ steps.ts_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Check TS files diff
+        id: ts_diff_files
+        uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            **/*.+(ts|tsx)
+            **/tsconfig*.json
+            package*.json
+            .github/**/*.yml
+
+  TypeCheck:
+    runs-on: ubuntu-22.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.ts_diff }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run typecheck
+        run: bun run vertix:ci:typecheck
+

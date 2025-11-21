@@ -1,11 +1,14 @@
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
+import { ComponentType } from "discord.js";
+
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 
 import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
 import type {
     UIAdapterReplyContext,
@@ -21,6 +24,7 @@ import type {
 export interface IWizardComponentConfig {
     name: string;
     components: UIComponentTypeConstructor[];
+    baseComponent?: typeof UIWizardComponentBase;
 }
 
 export class WizardAdapterBuilder<
@@ -37,6 +41,10 @@ export class WizardAdapterBuilder<
     private componentConfig: IWizardComponentConfig | undefined;
     private componentEmbedsGroups: ( typeof UIEmbedsGroupBase )[] | undefined;
     private executionSteps: UIExecutionSteps | undefined;
+    private initiatorElement: typeof UIElementBase<any> | undefined;
+    private onBeforeNextHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
+    private onBeforeBackHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
+    private onAfterFinishHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
 
     public constructor( name: string ) {
         super( name, UIWizardAdapterBase );
@@ -54,6 +62,26 @@ export class WizardAdapterBuilder<
 
     public setExecutionSteps( executionSteps: UIExecutionSteps ): this {
         this.executionSteps = executionSteps;
+        return this;
+    }
+
+    public setInitiatorElement( element: typeof UIElementBase<any> ): this {
+        this.initiatorElement = element;
+        return this;
+    }
+
+    public onBeforeNext( handler: ( interaction: TInteraction ) => Promise<void> ): this {
+        this.onBeforeNextHandler = handler;
+        return this;
+    }
+
+    public onBeforeBack( handler: ( interaction: TInteraction ) => Promise<void> ): this {
+        this.onBeforeBackHandler = handler;
+        return this;
+    }
+
+    public onAfterFinish( handler: ( interaction: TInteraction ) => Promise<void> ): this {
+        this.onAfterFinishHandler = handler;
         return this;
     }
 
@@ -75,7 +103,8 @@ export class WizardAdapterBuilder<
             protected static dedicatedLogger = new Logger( builder.name );
 
             public static getComponent() {
-                return class extends UIWizardComponentBase {
+                const BaseComponent = builder.componentConfig!.baseComponent || UIWizardComponentBase;
+                return class extends BaseComponent {
                     public static getName() {
                         return builder.componentConfig!.name;
                     }
@@ -94,6 +123,77 @@ export class WizardAdapterBuilder<
 
             protected static getExecutionSteps() {
                 return builder.executionSteps || {};
+            }
+
+            protected static getInitiatorElement() {
+                if ( builder.initiatorElement ) {
+                    return builder.initiatorElement;
+                }
+                return super.getInitiatorElement?.();
+            }
+
+            public static getExcludedElements() {
+                const baseExcluded = super.getExcludedElements?.() || [];
+                const initiatorElement = this.getInitiatorElement?.();
+
+                if ( !initiatorElement ) {
+                    return baseExcluded;
+                }
+
+                return [ ...baseExcluded, initiatorElement ];
+            }
+
+            protected entitiesMapInternal() {
+                super.entitiesMapInternal();
+
+                const initiatorElement = ( this.constructor as typeof WizardAdapterBuilderGenerated ).getInitiatorElement?.();
+
+                if ( !initiatorElement ) {
+                    return;
+                }
+
+                const initiatorInstance = this.getEntityMap( initiatorElement.getName() );
+
+                if ( initiatorInstance.callback ) {
+                    return;
+                }
+
+                switch ( initiatorElement.getComponentType() ) {
+                    case ComponentType.Button:
+                        this.bindButton( initiatorElement.getName(), this.onInitiatorButtonClicked );
+                        break;
+
+                    default:
+                        throw new Error( `Not implemented initiator element type: ${ initiatorElement.getComponentType() }` );
+                }
+            }
+
+            protected async onInitiatorButtonClicked( interaction: TInteraction ) {
+                await this.ephemeral( interaction );
+            }
+
+            protected async onBeforeNext( interaction: TInteraction ) {
+                if ( builder.onBeforeNextHandler ) {
+                    await builder.onBeforeNextHandler.call( this, interaction );
+                    return;
+                }
+                return super.onBeforeNext?.( interaction );
+            }
+
+            protected async onBeforeBack( interaction: TInteraction ) {
+                if ( builder.onBeforeBackHandler ) {
+                    await builder.onBeforeBackHandler.call( this, interaction );
+                    return;
+                }
+                return super.onBeforeBack?.( interaction );
+            }
+
+            protected async onAfterFinish( interaction: TInteraction ) {
+                if ( builder.onAfterFinishHandler ) {
+                    await builder.onAfterFinishHandler.call( this, interaction );
+                    return;
+                }
+                return super.onAfterFinish?.( interaction );
             }
 
             protected async onBeforeFinish( interaction: TInteraction ) {

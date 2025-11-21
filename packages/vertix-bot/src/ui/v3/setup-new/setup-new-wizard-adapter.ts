@@ -26,6 +26,7 @@ import { ChannelNameTemplateEditButton } from "@vertix.gg/bot/src/ui/general/cha
 // Step 2 component(s)
 import { ConfigExtrasSelectMenu } from "@vertix.gg/bot/src/ui/general/config-extras/config-extras-select-menu";
 import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu";
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 // Step 3 component(s)
 import { VerifiedRolesEveryoneSelectMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-everyone-select-menu";
@@ -402,9 +403,13 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     ) => {
         const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
 
-        const args = context.getArgs( interaction );
+        const args = context.getArgs( interaction ) || {};
         const templateName: string = args.dynamicChannelNameTemplate || "{{username}}'s Channel";
-        const templateButtons: string[] = args.dynamicChannelButtonsTemplate || [];
+        const templateButtons: string[] = args.dynamicChannelButtonsTemplate?.length ?
+            args.dynamicChannelButtonsTemplate :
+            DynamicChannelPrimaryMessageElementsGroup.sortIds(
+                DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() )
+            );
         const mentionable: boolean = args.dynamicChannelMentionable || false;
         const autosave: boolean = args.dynamicChannelAutoSave || false;
         const verifiedRoles: string[] = args.dynamicChannelVerifiedRoles || [ interaction.guildId ];
@@ -424,7 +429,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             case "success":
                 // TODO: Need access to regenerate method
                 ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
-                    .get( "VertixBot/UI-V3/SetupAdapter" )
+                    .get( "VertixBot/UI-General/SetupAdapter" )
                     ?.editReply( interaction, {
                         newMasterChannelV3: result.db
                     } );

@@ -38,7 +38,7 @@
        id="linearGradient28"
        inkscape:collect="always">
       <stop
-         style="stop-color:#05d7f0;stop-opacity:1;"
+         style="stop-color:#d4a5ff;stop-opacity:1;"
          offset="0"
          id="stop28" />
       <stop
@@ -53,19 +53,19 @@
          id="title24">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop24" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop25" />
       <stop
          offset="0.29499999"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop26" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop27" />
     </linearGradient>
     <linearGradient
@@ -75,19 +75,19 @@
          id="title1">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop1" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop2" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop3" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop4" />
     </linearGradient>
     <linearGradient
@@ -147,19 +147,19 @@
          id="title4">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop5" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop6" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop7" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop8" />
     </linearGradient>
     <linearGradient
@@ -252,7 +252,7 @@
          stroke-linejoin="round"
          stroke-miterlimit="10"
          points="56.0253,36.0256 56.2815,56.4716 51.7209,61.0322 46.9553,56.2666 49.8761,53.3458 46.6478,50.1175 50.3373,46.428 47.1258,43.2165 47.1258,40.1873 49.8712,37.4419 48.6019,36.1726"
-         style="stroke-width:2.41505px;stroke:#05d7ff;stroke-opacity:0.85490197"
+         style="stroke-width:2.41505px;stroke:#d4a5ff;stroke-opacity:0.85490197"
          id="polyline14" />
       <circle
          cx="51.5355"
@@ -273,7 +273,7 @@
          stroke-linejoin="round"
          stroke-miterlimit="10"
          d="m 56.017,31.636 c 3.571,-1.769 6.027,-5.59 5.993,-10 C 61.966,15.764 57.35,8.658 51.808,8.413 51.634,8.405 51.458,8.402 51.282,8.403 45.498,8.447 41.019,15.738 41.065,21.795 c 0.037,4.898 3.133,9.022 7.375,10.399"
-         style="stroke-width:2.41505px;stroke:#05d7ff;stroke-opacity:0.85490197"
+         style="stroke-width:2.41505px;stroke:#d4a5ff;stroke-opacity:0.85490197"
          id="path15" />
     </g>
   </g>

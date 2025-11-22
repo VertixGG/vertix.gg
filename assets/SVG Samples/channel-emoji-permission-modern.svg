@@ -41,19 +41,19 @@
          id="title16">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop16" />
       <stop
          offset="0.0001"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop17" />
       <stop
          offset="0.60473353"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop18" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop19" />
     </linearGradient>
     <linearGradient
@@ -63,19 +63,19 @@
          id="title1">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop1" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop2" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop3" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop4" />
     </linearGradient>
     <linearGradient
@@ -137,19 +137,19 @@
          id="title4">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop5" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop6" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop7" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop8" />
     </linearGradient>
     <linearGradient
@@ -176,15 +176,15 @@
          id="title8-2">vertix</title>
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop9" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop10" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop11" />
     </linearGradient>
   </defs>

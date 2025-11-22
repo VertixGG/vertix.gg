@@ -41,19 +41,19 @@
          id="title1">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop1" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop2" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop3" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop4" />
     </linearGradient>
     <radialGradient
@@ -89,19 +89,19 @@
          id="title7-4">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop7" />
       <stop
          offset="0.0001"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop8" />
       <stop
          offset="1"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop9" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop10" />
     </linearGradient>
     <linearGradient
@@ -114,15 +114,15 @@
          id="stop21" />
       <stop
          offset="0.52138245"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop22" />
       <stop
          offset="0.72205383"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop23" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop24" />
     </linearGradient>
   </defs>
@@ -140,35 +140,35 @@
   <g
      transform="matrix(1.2798052,0,0.00326596,1.4104127,-106.58062,36.901505)"
      id="g10"
-     style="stroke:#8dd9ff;stroke-opacity:0.986538">
+     style="stroke:#f5e5ff;stroke-opacity:0.986538">
     <title
        id="title8">Shild</title>
     <g
        id="color"
        transform="translate(72.688492,-32.754955)"
-       style="stroke:#8dd9ff;stroke-opacity:0.986538">
+       style="stroke:#f5e5ff;stroke-opacity:0.986538">
       <path
          d="m 37.099,11.97 4.714,4.634 -4.714,4.633 4.714,4.634 -4.714,4.634 4.714,4.634 -4.714,4.633 4.714,4.634 -4.714,4.634 1.571,6.092 c 0,0 -23.567,-12.742 -25.139,-37.069 0,0 0,-9.268 25.139,-9.268 z"
-         style="fill:url(#gradient-1-1);stroke:#8dd9ff;stroke-width:4px;stroke-opacity:0.986538"
+         style="fill:url(#gradient-1-1);stroke:#f5e5ff;stroke-width:4px;stroke-opacity:0.986538"
          stroke="none"
          id="path8" />
       <path
          d="m 38.67,8.795 -1.571,3.175 4.714,4.634 -4.714,4.633 4.714,4.634 -4.714,4.634 4.714,4.634 -4.714,4.633 4.714,4.634 -4.714,4.634 1.573,5.766 c 0,0 21.752,-10.378 25.111,-37.028 0,0 -1.309,-8.074 -25.113,-8.983 z"
-         style="fill:url(#gradient-1-0);stroke:#8dd9ff;stroke-width:4px;stroke-opacity:0.986538"
+         style="fill:url(#gradient-1-0);stroke:#f5e5ff;stroke-width:4px;stroke-opacity:0.986538"
          stroke="none"
          id="path9" />
     </g>
     <g
        id="g-2"
        transform="matrix(1.598683,0,0,1.173107,53.995716,-42.04496)"
-       style="stroke:#8dd9ff;stroke-opacity:0.986538">
+       style="stroke:#f5e5ff;stroke-opacity:0.986538">
       <path
          fill="none"
          stroke-linecap="round"
          stroke-linejoin="round"
          stroke-miterlimit="10"
          d="M 35.9417,54.854 C 34.9637,54.3582 22.3994,47.536 20.0411,23.1396 L 20.0201,22.92 c 0,-4.4133 7.1553,-7.991 15.9819,-7.991 8.8266,0 16.3938,3.5969 15.9819,7.991 C 49.5866,48.4911 36.002,54.8838 36.002,54.8838 Z"
-         style="stroke:#8dd9ff;stroke-width:2.93084px;stroke-opacity:0.986538"
+         style="stroke:#f5e5ff;stroke-width:2.93084px;stroke-opacity:0.986538"
          stroke="#000000"
          id="path10" />
     </g>
@@ -183,6 +183,6 @@
     <path
        id="path-1"
        d="m 165.055,317.146 c 45.116,0 83.581,-29.685 97.708,-70.964 3.739,-10.928 5.774,-22.667 5.774,-34.885 0,-27.403 -10.234,-52.406 -26.997,-71.222 V 91.643 C 241.54,48.502 206.321,1.11 164.144,1.11 121.973,1.11 88.572,48.502 88.572,91.643 v 48.43 c -16.761,18.818 -26.995,43.821 -26.995,71.224 0,58.363 46.424,105.849 103.478,105.849 z m 13.5,-101.259 v 18.421 c 0,7.627 -6.046,13.805 -13.5,13.805 -7.45,0 -13.495,-6.178 -13.495,-13.805 v -18.421 c -5.46,-4.202 -8.998,-10.882 -8.998,-18.396 0,-12.688 10.093,-23.011 22.493,-23.011 12.408,0 22.499,10.323 22.499,23.011 0,7.514 -3.537,14.194 -8.999,18.396 z M 115.568,91.643 c 0,-27.913 22.2,-50.623 49.487,-50.623 27.29,0 49.49,22.71 49.49,50.623 v 26.719 c -14.706,-8.232 -31.571,-12.912 -49.49,-12.912 -17.915,0 -34.778,4.68 -49.487,12.911 z"
-       style="fill-opacity:1;stroke-width:1.142;stroke:#cbffd5;stroke-opacity:0.55676514;fill:#296685" />
+       style="fill-opacity:1;stroke-width:1.142;stroke:#cbffd5;stroke-opacity:0.55676514;fill:#4b197a" />
   </g>
 </svg>

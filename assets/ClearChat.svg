@@ -25,15 +25,15 @@
          id="stop3" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop4" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop6" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop7" />
     </linearGradient>
     <linearGradient
@@ -61,19 +61,19 @@
          id="title4">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(79, 231, 255, 0.98);"
+         style="stop-color: rgba(245, 229, 255, 0.98);"
          id="stop5" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(41, 189, 251);"
+         style="stop-color: rgb(195, 136, 255);"
          id="stop6-7" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(2, 143, 247);"
+         style="stop-color: rgb(157, 78, 221);"
          id="stop7-5" />
       <stop
          offset="1"
-         style="stop-color: rgb(33, 76, 158);"
+         style="stop-color: rgb(90, 45, 145);"
          id="stop8" />
     </linearGradient>
   </defs>
@@ -109,7 +109,7 @@
      fill="#FFCC4D"
      d="m 22.26426,25.359618 c 2.020305,-1.982938 0.803096,-6.391681 -2.165125,-9.305001 -2.968221,-2.913318 -7.460049,-4.108014 -9.480354,-2.125077 l -11.56050008,11.217453 2.13469038,5.07251 1.8953264,1.860269 1.8699821,1.835394 5.8771342,2.791124 z"
      id="path3"
-     style="fill:#25b8fb;fill-opacity:1;stroke-width:1.18574"
+     style="fill:#c388ff;fill-opacity:1;stroke-width:1.18574"
      sodipodi:nodetypes="csccccccc" />
   <path
      fill="#FFAC33"
@@ -117,12 +117,12 @@
      id="path4"
      style="fill:#ffffff;fill-opacity:1;stroke-width:0.7;stroke-dasharray:none;stroke:#ffffff;stroke-opacity:1" />
   <path
-     fill="#55acee"
+     fill="#c388ff"
      d="m 10.877304,13.716914 c -0.08737,0.06931 -0.178332,0.133918 -0.258523,0.212626 l -2.6319014,2.546804 11.6825814,11.466494 2.593602,-2.58322 c 0.08019,-0.07871 0.147214,-0.167986 0.216632,-0.253741 z"
      id="path5"
-     style="stroke-width:1.18574;fill:#226699;fill-opacity:1" />
+     style="stroke-width:1.18574;fill:#5a2d91;fill-opacity:1" />
   <path
-     fill="#226699"
+     fill="#5a2d91"
      d="M 9.688819,15.820847 9.9700818,15.153603 21.011145,25.98927 20.326539,26.261806 Z"
      id="path6"
      style="stroke-width:1.18574;fill:#ffffff;fill-opacity:1" />

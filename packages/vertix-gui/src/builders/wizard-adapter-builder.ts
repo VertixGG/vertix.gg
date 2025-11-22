@@ -6,7 +6,7 @@ import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 
-import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor, UIEntitySchemaBase, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
@@ -100,6 +100,8 @@ export class WizardAdapterBuilder<
 
         const BaseBuild = super.build( { bypassComponentCheck: true } );
 
+        type AdapterWithExcludedElements = typeof BaseBuild & { getExcludedElements?: () => UIEntityTypes };
+
         const AdapterClass = class WizardAdapterBuilderGenerated extends BaseBuild {
             protected static dedicatedLogger = new Logger( builder.name );
 
@@ -134,7 +136,7 @@ export class WizardAdapterBuilder<
             }
 
             public static getExcludedElements() {
-                const baseExcluded = super.getExcludedElements?.() || [];
+                const baseExcluded = ( BaseBuild as AdapterWithExcludedElements ).getExcludedElements?.() || [];
                 const initiatorElement = this.getInitiatorElement?.();
 
                 if ( !initiatorElement ) {

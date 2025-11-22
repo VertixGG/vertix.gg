@@ -117,7 +117,10 @@ async function onPrivacyButtonClicked(
     interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-    await uiService.get( "VertixBot/UI-V3/DynamicChannelPrivacyAdapter" )?.runInitial( interaction );
+    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPrivacyAdapter" );
+    if ( adapter ) {
+        await adapter.ephemeral( interaction );
+    }
 }
 
 async function onRegionButtonClicked(
@@ -125,7 +128,10 @@ async function onRegionButtonClicked(
     interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-    await uiService.get( "VertixBot/UI-V3/DynamicChannelRegionAdapter" )?.runInitial( interaction );
+    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelRegionAdapter" );
+    if ( adapter ) {
+        await adapter.ephemeral( interaction );
+    }
 }
 
 async function onPrimaryMessageEditButtonClicked(

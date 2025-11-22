@@ -8,8 +8,6 @@ import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 
 import { DynamicChannelRegionComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-component";
 
-import type { Message } from "discord.js";
-
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
@@ -28,10 +26,10 @@ const REGION_STEPS = {
 } as const;
 
 async function getArgs( channel: VoiceChannel ) {
-        return {
-            region: channel.rtcRegion
-        };
-    }
+    return {
+        region: channel.rtcRegion
+    };
+}
 
 async function onRegionSelected(
     context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,

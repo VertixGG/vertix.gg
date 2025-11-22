@@ -11,14 +11,13 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIDefaultButtonChannelVoiceInteraction,
-    UIDefaultUserSelectMenuChannelVoiceInteraction,
-    UIDefaultStringSelectMenuChannelTextInteraction
+    UIDefaultStringSelectMenuChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { Message, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
+type DefaultInteraction = UIDefaultStringSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
 const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelPrivacyAdapter"
@@ -37,20 +36,19 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
         message ? getArgsWithPermissions( message.channel as VoiceChannel ) : {}
     )
     .onEntityMap( async( { bindSelectMenu } ) => {
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
             async( context, interaction ) => {
-                const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
-                const state = voiceInteraction.values[ 0 ];
+                const state = interaction.values[ 0 ];
 
                 const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
                 await dynamicChannelService.editChannelPrivacyState(
-                    voiceInteraction,
-                    voiceInteraction.channel,
+                    interaction,
+                    interaction.channel,
                     state as "public" | "private" | "hidden"
                 );
 
-                await context.editReply( voiceInteraction );
+                await context.editReply( interaction );
             }
         );
     } )

@@ -14,7 +14,8 @@ import { DynamicChannelPrimaryMessageEditComponent } from "@vertix.gg/bot/src/ui
 
 import { DynamicChannelPrimaryMessageEditTitleComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/title/dynamic-channel-primary-message-edit-title-component";
 
-import type { UIArgs, UIEntitySchemaBase } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 
 import type { VoiceChannel, ModalMessageModalSubmitInteraction } from "discord.js";
 
@@ -107,8 +108,8 @@ const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceCh
     .setComponents( {
         name: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
         components: [
-                    DynamicChannelPrimaryMessageEditTitleComponent,
-                    DynamicChannelPrimaryMessageEditDescriptionComponent
+            DynamicChannelPrimaryMessageEditTitleComponent,
+            DynamicChannelPrimaryMessageEditDescriptionComponent
         ],
         baseComponent: DynamicChannelPrimaryMessageEditComponent
     } )
@@ -129,13 +130,13 @@ const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceCh
 
         const userMasterData = await UserMasterChannelDataModel.$.getData( interaction.user.id, masterChannelDB.id );
 
-        const component = context.getComponent();
+        const componentClass = context.getComponent().constructor as typeof UIWizardComponentBase;
         const stepIndex = context.getCurrentStepIndex();
 
         return {
             ...( userMasterData?.dynamicChannelPrimaryMessage || {} ),
             ...argsFromManager,
-            _step: component.getComponents()[ stepIndex ]?.getName()
+            _step: componentClass.getComponents()[ stepIndex ]?.getName()
         };
     } )
     .generateCustomIdForEntity( ( context, entity ) => {

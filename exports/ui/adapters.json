@@ -686,12 +686,11 @@
                         "handlerId": "VertixBot/UI-V3/ClaimStartAdapter/Bindings/Button/VertixBot/UI-V3/ClaimStartButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimStartButton",
                         "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
-                            "executionStep": "default"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimStartFlow",
-                        "transition": "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim"
+                        "transition": "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimStartFlow/States/Default"
+                        }
                     }
                 ]
             }
@@ -753,23 +752,21 @@
                         "handlerId": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteStepInButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimVoteStepInButton",
                         "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess",
-                            "executionStep": "VertixBot/UI-V3/ClaimVoteProcess"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
-                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote"
+                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteStepInButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimVoteStepInButton",
                         "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
-                            "executionStep": "VertixBot/UI-V3/ClaimStepIn"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
-                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate"
+                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn"
+                        }
                     }
                 ]
             },
@@ -782,75 +779,41 @@
                         "handlerId": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteAddButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimVoteAddButton",
                         "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf",
-                            "executionStep": "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
-                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf"
+                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteAddButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimVoteAddButton",
                         "handlerKind": "button",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "targetId"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess",
-                            "executionStep": "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
-                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess"
+                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteAddButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimVoteAddButton",
                         "handlerKind": "button",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "targetId"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice",
-                            "executionStep": "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
-                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame"
+                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteAddButton",
                         "sourceEntity": "VertixBot/UI-V3/ClaimVoteAddButton",
                         "handlerKind": "button",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "prevUserId"
-                                ]
-                            },
-                            {
-                                "type": "set",
-                                "path": [
-                                    "currentUserId"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated",
-                            "executionStep": "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
-                        },
                         "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
-                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated"
+                        "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated"
+                        }
                     }
                 ]
             }
@@ -1002,6 +965,12 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelClearChatAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelClearChatFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearSuccess",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Success",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelClearChatSuccess"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1015,35 +984,29 @@
                                     "totalMessages"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Success",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelClearChatSuccess"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelClearChatFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearSuccess"
+                        ]
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelClearChatAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelClearChatFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearNothing",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/NothingToClear",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClear"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelClearChatFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearNothing"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelClearChatAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelClearChatFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearError",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Error",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelClearChatError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelClearChatFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearError"
+                        }
                     }
                 ]
             }
@@ -1109,6 +1072,12 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelLimitAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelLimitModal",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelLimitModal",
                         "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelLimitFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitInvalid",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/InvalidInput",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelLimitInvalidInput"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1122,18 +1091,18 @@
                                     "maxValue"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/InvalidInput",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelLimitInvalidInput"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelLimitFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitInvalid"
+                        ]
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelLimitAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelLimitModal",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelLimitModal",
                         "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelLimitFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitSuccess",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Success",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelLimitSuccess"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1141,24 +1110,18 @@
                                     "userLimit"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Success",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelLimitSuccess"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelLimitFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitSuccess"
+                        ]
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelLimitAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelLimitModal",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelLimitModal",
                         "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelLimitFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitError",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Error",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelLimitError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelLimitFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitError"
+                        }
                     }
                 ]
             }
@@ -1281,278 +1244,37 @@
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetPublic"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Private",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetPrivate"
-                    }
-                ]
+                "kind": "button"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetHidden"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Shown",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateShown"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetShown"
-                    }
-                ]
+                "kind": "button"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                        "handlerKind": "string-select",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "userGrantedDisplayName"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Granted",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsGranted"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/GrantAccessSuccess"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/GrantAccessError"
-                    }
-                ]
+                "kind": "string-select"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "userDeniedDisplayName"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Denied",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsDenied"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/DenyAccessSuccess"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/DenyAccessNothingChanged"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/DenyAccessError"
-                    }
-                ]
+                "kind": "string-select"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "userBlockedDisplayName"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Blocked",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/BlockUserSuccess"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/BlockUserNothingChanged"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/BlockUserError"
-                    }
-                ]
+                "kind": "string-select"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "userUnBlockedDisplayName"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Unblocked",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockUserSuccess"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockUserNothingChanged"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockUserError"
-                    }
-                ]
+                "kind": "string-select"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                        "handlerKind": "string-select",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "userKickedDisplayName"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Kicked",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsKick"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/KickUserSuccess"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/KickUserError"
-                    }
-                ]
+                "kind": "string-select"
             }
         ],
         "hooks": [
@@ -1605,20 +1327,7 @@
             {
                 "entity": "VertixBot/UI-General/YesButton",
                 "handler": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/Button/VertixBot/UI-General/YesButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/Button/VertixBot/UI-General/YesButton",
-                        "sourceEntity": "VertixBot/UI-General/YesButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing"
-                    }
-                ]
+                "kind": "button"
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
@@ -1627,28 +1336,7 @@
                 "options": {
                     "button": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
                     "modal": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal"
-                },
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
-                        "handlerKind": "modal-button",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "title"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle"
-                    }
-                ]
+                }
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
@@ -1657,28 +1345,7 @@
                 "options": {
                     "button": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
                     "modal": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal"
-                },
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
-                        "handlerKind": "modal-button",
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "description"
-                                ]
-                            }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription"
-                    }
-                ]
+                }
             }
         ],
         "hooks": [
@@ -1715,20 +1382,7 @@
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelPrivacyAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPrivacyMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrivacyAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPrivacyMenu",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
-                        "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default",
-                            "executionStep": "default"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState"
-                    }
-                ]
+                "kind": "string-select"
             }
         ],
         "hooks": [
@@ -1771,6 +1425,12 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelRegionAdapter/Bindings/UserSelect/VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
                         "handlerKind": "user-select",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelRegionFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
+                            "executionStep": "default"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1778,13 +1438,7 @@
                                     "region"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
-                            "executionStep": "default"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelRegionFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion"
+                        ]
                     }
                 ]
             }
@@ -1850,17 +1504,23 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelRenameAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelRenameModal",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelRenameModal",
                         "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelRenameFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameSuccess",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Success",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelRenameSuccess"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelRenameFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameSuccess"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelRenameAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelRenameModal",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelRenameModal",
                         "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelRenameFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameBadword",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Badword",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelRenameBadword"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1868,18 +1528,18 @@
                                     "badword"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Badword",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelRenameBadword"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelRenameFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameBadword"
+                        ]
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelRenameAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelRenameModal",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelRenameModal",
                         "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelRenameFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameRateLimited",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/RateLimited",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelRenameRateLimited"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1893,13 +1553,7 @@
                                     "masterChannelId"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/RateLimited",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelRenameRateLimited"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelRenameFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameRateLimited"
+                        ]
                     }
                 ]
             }
@@ -1958,6 +1612,12 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelResetChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Success",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelResetChannelSuccess"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -1965,35 +1625,29 @@
                                     "result"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Success",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelResetChannelSuccess"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess"
+                        ]
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelResetChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/VoteRequired",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelResetChannelVote"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired"
+                        }
                     },
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelResetChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Error",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelResetChannelError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError"
+                        }
                     }
                 ]
             }
@@ -2073,19 +1727,40 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Open",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Open"
+                        }
                     }
                 ]
             },
             {
                 "entity": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
                 "handler": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/UserSelect/VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
-                "kind": "user-select"
+                "kind": "user-select",
+                "flowTriggers": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/UserSelect/VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
+                        "handlerKind": "user-select",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Confirm",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected"
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "userDisplayName"
+                                ]
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "entity": "VertixBot/UI-General/YesButton",
@@ -2096,12 +1771,12 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-General/YesButton",
                         "sourceEntity": "VertixBot/UI-General/YesButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Success",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferred"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm"
+                        }
                     }
                 ]
             },
@@ -2114,12 +1789,12 @@
                         "handlerId": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-General/NoButton",
                         "sourceEntity": "VertixBot/UI-General/NoButton",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Cancelled",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelTransferError"
-                        },
-                        "flowName": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        "transition": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel"
+                        }
                     }
                 ]
             }
@@ -2326,12 +2001,12 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/Button/VertixBot/UI-General/SetupMasterCreateV3Button",
                         "sourceEntity": "VertixBot/UI-General/SetupMasterCreateV3Button",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
                             "executionStep": "VertixBot/UI-V3/SetupStep1Component"
-                        },
-                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
-                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
+                        }
                     }
                 ]
             },
@@ -2348,6 +2023,12 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/ModalWithButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
                         "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
                         "handlerKind": "modal-button",
+                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+                            "executionStep": "VertixBot/UI-V3/SetupStep1Component"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -2355,13 +2036,7 @@
                                     "dynamicChannelNameTemplate"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
-                            "executionStep": "VertixBot/UI-V3/SetupStep1Component"
-                        },
-                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
-                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal"
+                        ]
                     }
                 ]
             },
@@ -2374,6 +2049,12 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                         "sourceEntity": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                         "handlerKind": "string-select",
+                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                            "executionStep": "VertixBot/UI-V3/SetupStep2Component"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -2381,13 +2062,7 @@
                                     "dynamicChannelButtonsTemplate"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-                            "executionStep": "VertixBot/UI-V3/SetupStep2Component"
-                        },
-                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
-                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons"
+                        ]
                     }
                 ]
             },
@@ -2400,6 +2075,12 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/ConfigExtrasSelectMenu",
                         "sourceEntity": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                         "handlerKind": "string-select",
+                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                            "executionStep": "VertixBot/UI-V3/SetupStep2Component"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -2413,13 +2094,7 @@
                                     "dynamicChannelAutoSave"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-                            "executionStep": "VertixBot/UI-V3/SetupStep2Component"
-                        },
-                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
-                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras"
+                        ]
                     }
                 ]
             },
@@ -2432,6 +2107,12 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
                         "handlerKind": "string-select",
+                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                            "executionStep": "VertixBot/UI-V3/SetupStep3Component"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -2439,13 +2120,7 @@
                                     "dynamicChannelVerifiedRoles"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
-                            "executionStep": "VertixBot/UI-V3/SetupStep3Component"
-                        },
-                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
-                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles"
+                        ]
                     }
                 ]
             },
@@ -2458,6 +2133,12 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                         "handlerKind": "string-select",
+                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                            "executionStep": "VertixBot/UI-V3/SetupStep3Component"
+                        },
                         "mutations": [
                             {
                                 "type": "set",
@@ -2471,13 +2152,7 @@
                                     "dynamicChannelVerifiedRoles"
                                 ]
                             }
-                        ],
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
-                            "executionStep": "VertixBot/UI-V3/SetupStep3Component"
-                        },
-                        "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
-                        "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone"
+                        ]
                     }
                 ]
             }

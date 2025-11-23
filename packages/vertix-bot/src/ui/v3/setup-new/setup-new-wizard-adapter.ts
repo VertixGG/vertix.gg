@@ -357,33 +357,122 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     } ) => {
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateV3Button",
-            onCreateMasterChannelClicked
+            onCreateMasterChannelClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+                            executionStep: "VertixBot/UI-V3/SetupStep1Component"
+                        }
+                    }
+                ]
+            }
         );
 
         bindModalWithButton<UIDefaultModalChannelTextInteraction>(
             "VertixBot/UI-General/ChannelNameTemplateEditButton",
             "VertixBot/UI-General/ChannelNameTemplateModal",
-            onTemplateNameModalSubmit
+            onTemplateNameModalSubmit,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
+                        mutations: [
+                            { type: "set", path: [ "dynamicChannelNameTemplate" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+                            executionStep: "VertixBot/UI-V3/SetupStep1Component"
+                        }
+                    }
+                ]
+            }
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-            onButtonsSelected
+            onButtonsSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+                        mutations: [
+                            { type: "set", path: [ "dynamicChannelButtonsTemplate" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                            executionStep: "VertixBot/UI-V3/SetupStep2Component"
+                        }
+                    }
+                ]
+            }
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/ConfigExtrasSelectMenu",
-            onConfigExtrasSelected
+            onConfigExtrasSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
+                        mutations: [
+                            { type: "set", path: [ "dynamicChannelMentionable" ] },
+                            { type: "set", path: [ "dynamicChannelAutoSave" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                            executionStep: "VertixBot/UI-V3/SetupStep2Component"
+                        }
+                    }
+                ]
+            }
         );
 
         bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
             "VertixBot/UI-General/VerifiedRolesMenu",
-            onVerifiedRolesSelected
+            onVerifiedRolesSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+                        mutations: [
+                            { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                            executionStep: "VertixBot/UI-V3/SetupStep3Component"
+                        }
+                    }
+                ]
+            }
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-            onVerifiedRolesEveryoneSelected
+            onVerifiedRolesEveryoneSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
+                        mutations: [
+                            { type: "set", path: [ "dynamicChannelIncludeEveryoneRole" ] },
+                            { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                            executionStep: "VertixBot/UI-V3/SetupStep3Component"
+                        }
+                    }
+                ]
+            }
         );
     } )
     .onBeforeBuildPrototype( async( context, args, _from, interaction ) => {

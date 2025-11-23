@@ -71,7 +71,38 @@ const DynamicChannelResetChannelAdapter = new DynamicExecutionAdapterBuilder<UID
     .onEntityMap( async( { bindButton } ) => {
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-            onResetChannelButtonClicked
+            onResetChannelButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess",
+                        mutations: [
+                            { type: "set", path: [ "result" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Success",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelSuccess"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/VoteRequired",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelVote"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelResetChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelError"
+                        }
+                    }
+                ]
+            }
         );
     } )
     .build();

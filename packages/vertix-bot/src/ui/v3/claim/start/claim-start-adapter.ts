@@ -52,6 +52,17 @@ const ClaimStartAdapter = new AdapterBuilderBase<
                 const voiceInteraction = interaction as unknown as DefaultInteraction;
                 await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" )
                     .handleVoteRequest( voiceInteraction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/ClaimStartFlow",
+                        transition: "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/ClaimStartFlow/States/Default"
+                        }
+                    }
+                ]
             }
         );
     } )

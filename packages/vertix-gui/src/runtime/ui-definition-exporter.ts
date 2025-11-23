@@ -54,6 +54,10 @@ import type {
     NumberHandler,
     OptionsHandler
 } from "@vertix.gg/gui/src/builders/embed-builder";
+import type {
+    BindingFlowTriggerConfig,
+    BindingRegistrationOptions
+} from "@vertix.gg/gui/src/builders/builders-definitions";
 
 const log = new Logger( "VertixGUI/UIDefinitionExporter" );
 
@@ -79,13 +83,11 @@ type FlowClass = typeof UIFlowBase;
 
 type FlowTriggerCollection = Map<string, FlowTriggerDefinition[]>;
 type FlowTriggersByAdapter = Map<string, FlowTriggerCollection>;
-type BindingFlowTriggerMap = Map<string, BindingFlowTriggerDefinition[]>;
-
-interface AdapterTriggerData {
-    flowName: string;
-    byTransition: FlowTriggerCollection;
-    byHandler: BindingFlowTriggerMap;
-}
+type FlowTriggerRegistrar = (
+    flowName: string,
+    transition: string,
+    trigger: FlowTriggerDefinition
+) => void;
 
 export async function exportUIDefinitions( uiService: UIService, options: ExporterOptions ) {
     const includeComponents = options.includeComponents ?? true;
@@ -347,13 +349,22 @@ async function serializeAdapter(
     }
 
     const executionSteps = serializeExecutionSteps( adapterClass );
-    const bindings = await serializeBindings( adapterName, metadata, handlerMap );
-    const triggerData = captureFlowTriggersForAdapter( adapterName, bindings );
-    if ( triggerData ) {
-        if ( triggerData.byTransition.size ) {
-            flowTriggersByAdapter.set( adapterName, triggerData.byTransition );
+    const triggerCollection: FlowTriggerCollection = new Map();
+    const bindings = await serializeBindings(
+        adapterName,
+        metadata,
+        handlerMap,
+        ( _flowName, transition, trigger ) => {
+            const existing = triggerCollection.get( transition );
+            if ( existing ) {
+                existing.push( trigger );
+            } else {
+                triggerCollection.set( transition, [ trigger ] );
+            }
         }
-        applyBindingFlowTriggers( bindings, triggerData.byHandler );
+    );
+    if ( triggerCollection.size ) {
+        flowTriggersByAdapter.set( adapterName, triggerCollection );
     }
     const hooks = serializeAdapterHooks( adapterName, metadata, handlerMap );
 
@@ -400,7 +411,8 @@ function serializeExecutionSteps( adapterClass: TAdapterClassType ): ExecutionSt
 async function serializeBindings(
     adapterName: string,
     metadata: AdapterBuilderMetadata | undefined,
-    handlerMap: Map<string, HandlerCapture>
+    handlerMap: Map<string, HandlerCapture>,
+    registerFlowTrigger?: FlowTriggerRegistrar
 ): Promise<BindingDefinition[]> {
     const entityMapHandler = metadata?.entityMapHandler as
         | ( ( binder: CaptureBinder ) => Promise<void> | void )
@@ -412,67 +424,141 @@ async function serializeBindings(
 
     const bindings: BindingDefinition[] = [];
 
+    const addFlowTriggersToBinding = (
+        binding: BindingDefinition,
+        options: BindingRegistrationOptions | undefined,
+        handlerKind: FlowTriggerHandlerKind,
+        handlerId: string,
+        sourceEntity: string
+    ) => {
+        if ( !options?.flowTriggers?.length ) {
+            return;
+        }
+
+        const triggers = options.flowTriggers.map<BindingFlowTriggerDefinition>( ( config ) => ( {
+            handlerId,
+            sourceEntity,
+            handlerKind,
+            flowName: config.flowName,
+            transition: config.transition,
+            navigation: config.navigation
+                ? {
+                    targetState: config.navigation.targetState,
+                    executionStep: config.navigation.executionStep
+                }
+                : undefined,
+            mutations: config.mutations?.map( ( mutation ) => ( {
+                type: mutation.type,
+                path: [ ...mutation.path ]
+            } ) )
+        } ) );
+
+        binding.flowTriggers = triggers;
+
+        if ( !registerFlowTrigger ) {
+            return;
+        }
+
+        for ( const trigger of triggers ) {
+            registerFlowTrigger(
+                trigger.flowName,
+                trigger.transition,
+                {
+                    handlerId: trigger.handlerId,
+                    sourceEntity: trigger.sourceEntity,
+                    handlerKind: trigger.handlerKind,
+                    navigation: trigger.navigation
+                        ? {
+                            targetState: trigger.navigation.targetState,
+                            executionStep: trigger.navigation.executionStep
+                        }
+                        : undefined,
+                    mutations: trigger.mutations?.map( ( mutation ) => ( {
+                        type: mutation.type,
+                        path: [ ...mutation.path ]
+                    } ) )
+                }
+            );
+        }
+    };
+
     type CaptureBinder = {
-        bindButton: ( name: string, callback?: unknown ) => void;
-        bindModal: ( name: string, callback?: unknown ) => void;
-        bindModalWithButton: ( button: string, modal: string, callback?: unknown ) => void;
-        bindSelectMenu: ( name: string, callback?: unknown ) => void;
-        bindUserSelectMenu: ( name: string, callback?: unknown ) => void;
+        bindButton: ( name: string, callback?: unknown, options?: BindingRegistrationOptions ) => void;
+        bindModal: ( name: string, callback?: unknown, options?: BindingRegistrationOptions ) => void;
+        bindModalWithButton: (
+            button: string,
+            modal: string,
+            callback?: unknown,
+            options?: BindingRegistrationOptions
+        ) => void;
+        bindSelectMenu: ( name: string, callback?: unknown, options?: BindingRegistrationOptions ) => void;
+        bindUserSelectMenu: ( name: string, callback?: unknown, options?: BindingRegistrationOptions ) => void;
     };
 
     const binder: CaptureBinder = {
-        bindButton: ( name: string ) => {
+        bindButton: ( name: string, _callback?: unknown, options?: BindingRegistrationOptions ) => {
             const handlerId = `${ adapterName }/Bindings/Button/${ name }`;
             handlerMap.set( handlerId, { id: handlerId } );
-            bindings.push( {
+            const binding: BindingDefinition = {
                 entity: name,
                 handler: handlerId,
                 kind: "button",
                 options: undefined
-            } );
+            };
+            addFlowTriggersToBinding( binding, options, "button", handlerId, name );
+            bindings.push( binding );
         },
-        bindModal: ( name: string ) => {
+        bindModal: ( name: string, _callback?: unknown, options?: BindingRegistrationOptions ) => {
             const handlerId = `${ adapterName }/Bindings/Modal/${ name }`;
             handlerMap.set( handlerId, { id: handlerId } );
-            bindings.push( {
+            const binding: BindingDefinition = {
                 entity: name,
                 handler: handlerId,
                 kind: "modal",
                 options: undefined
-            } );
+            };
+            addFlowTriggersToBinding( binding, options, "modal", handlerId, name );
+            bindings.push( binding );
         },
-        bindModalWithButton: ( button: string, modal: string ) => {
+        bindModalWithButton: ( button: string, modal: string, _callback?: unknown, options?: BindingRegistrationOptions ) => {
             const handlerId = `${ adapterName }/Bindings/ModalWithButton/${ button }`;
             handlerMap.set( handlerId, { id: handlerId } );
-            bindings.push( {
-                entity: `${ button }::${ modal }`,
+            const entity = `${ button }::${ modal }`;
+            const binding: BindingDefinition = {
+                entity,
                 handler: handlerId,
                 kind: "modal-button",
                 options: {
                     button,
                     modal
                 }
-            } );
+            };
+            addFlowTriggersToBinding( binding, options, "modal-button", handlerId, entity );
+            bindings.push( binding );
         },
-        bindSelectMenu: ( name: string ) => {
+        bindSelectMenu: ( name: string, _callback?: unknown, options?: BindingRegistrationOptions ) => {
             const handlerId = `${ adapterName }/Bindings/StringSelect/${ name }`;
             handlerMap.set( handlerId, { id: handlerId } );
-            bindings.push( {
+            const binding: BindingDefinition = {
                 entity: name,
                 handler: handlerId,
                 kind: "string-select",
                 options: undefined
-            } );
+            };
+            addFlowTriggersToBinding( binding, options, "string-select", handlerId, name );
+            bindings.push( binding );
         },
-        bindUserSelectMenu: ( name: string ) => {
+        bindUserSelectMenu: ( name: string, _callback?: unknown, options?: BindingRegistrationOptions ) => {
             const handlerId = `${ adapterName }/Bindings/UserSelect/${ name }`;
             handlerMap.set( handlerId, { id: handlerId } );
-            bindings.push( {
+            const binding: BindingDefinition = {
                 entity: name,
                 handler: handlerId,
                 kind: "user-select",
                 options: undefined
-            } );
+            };
+            addFlowTriggersToBinding( binding, options, "user-select", handlerId, name );
+            bindings.push( binding );
         }
     } as const;
 
@@ -510,1611 +596,6 @@ function serializeAdapterHooks(
     pushHook( "onStep", "OnStep", metadata?.onStepHandler );
 
     return hooks;
-}
-
-function captureFlowTriggersForAdapter(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    if ( adapterName === "VertixBot/UI-V3/SetupNewWizardAdapter" ) {
-        return buildSetupNewWizardFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelRenameAdapter" ) {
-        return buildDynamicChannelRenameFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter" ) {
-        return buildDynamicChannelTransferOwnerFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelLimitAdapter" ) {
-        return buildDynamicChannelLimitFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelClearChatAdapter" ) {
-        return buildDynamicChannelClearChatFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelResetChannelAdapter" ) {
-        return buildDynamicChannelResetChannelFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelRegionAdapter" ) {
-        return buildDynamicChannelRegionFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" ) {
-        return buildDynamicChannelPermissionsFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelPrivacyAdapter" ) {
-        return buildDynamicChannelPrivacyFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter" ) {
-        return buildDynamicChannelPrimaryMessageEditFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/ClaimStartAdapter" ) {
-        return buildClaimStartFlowTriggers( adapterName, bindings );
-    }
-    if ( adapterName === "VertixBot/UI-V3/ClaimVoteAdapter" ) {
-        return buildClaimVoteFlowTriggers( adapterName, bindings );
-    }
-
-    return undefined;
-}
-
-function applyBindingFlowTriggers(
-    bindings: BindingDefinition[],
-    handlerTriggers: BindingFlowTriggerMap
-): void {
-    for ( const binding of bindings ) {
-        const triggers = handlerTriggers.get( binding.handler );
-        if ( triggers && triggers.length ) {
-            binding.flowTriggers = triggers;
-        }
-    }
-}
-
-function buildSetupNewWizardFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const flowName = "VertixBot/UI-V3/SetupNewWizardFlow";
-    const stateStep1 = `${ flowName }/States/Step1NameTemplate`;
-    const stateStep2 = `${ flowName }/States/Step2Buttons`;
-    const stateStep3 = `${ flowName }/States/Step3Roles`;
-    const stateToComponent = new Map<string, string>( [
-        [ stateStep1, "VertixBot/UI-V3/SetupStep1Component" ],
-        [ stateStep2, "VertixBot/UI-V3/SetupStep2Component" ],
-        [ stateStep3, "VertixBot/UI-V3/SetupStep3Component" ]
-    ] );
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    const startSetup =
-        `${ adapterName }/Bindings/Button/VertixBot/UI-General/SetupMasterCreateV3Button`;
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        `${ flowName }/Transitions/StartSetup`,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( startSetup ),
-            flowName,
-            `${ flowName }/Transitions/StartSetup`,
-            {
-                navigation: {
-                    targetState: stateStep1,
-                    executionStep: stateToComponent.get( stateStep1 )
-                }
-            }
-        )
-    );
-
-    const submitTemplate =
-        `${ adapterName }/Bindings/ModalWithButton/VertixBot/UI-General/ChannelNameTemplateEditButton`;
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        `${ flowName }/Transitions/UpdateNameTemplateModal`,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( submitTemplate ),
-            flowName,
-            `${ flowName }/Transitions/UpdateNameTemplateModal`,
-            {
-                mutations: [
-                    { type: "set", path: [ "dynamicChannelNameTemplate" ] }
-                ],
-                navigation: {
-                    targetState: stateStep1,
-                    executionStep: stateToComponent.get( stateStep1 )
-                }
-            }
-        )
-    );
-
-    const selectButtonsHandler =
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu`;
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        `${ flowName }/Transitions/SelectButtons`,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( selectButtonsHandler ),
-            flowName,
-            `${ flowName }/Transitions/SelectButtons`,
-            {
-                mutations: [
-                    { type: "set", path: [ "dynamicChannelButtonsTemplate" ] }
-                ],
-                navigation: {
-                    targetState: stateStep2,
-                    executionStep: stateToComponent.get( stateStep2 )
-                }
-            }
-        )
-    );
-
-    const updateConfigHandler =
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-General/ConfigExtrasSelectMenu`;
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        `${ flowName }/Transitions/UpdateConfigExtras`,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( updateConfigHandler ),
-            flowName,
-            `${ flowName }/Transitions/UpdateConfigExtras`,
-            {
-                mutations: [
-                    { type: "set", path: [ "dynamicChannelMentionable" ] },
-                    { type: "set", path: [ "dynamicChannelAutoSave" ] }
-                ],
-                navigation: {
-                    targetState: stateStep2,
-                    executionStep: stateToComponent.get( stateStep2 )
-                }
-            }
-        )
-    );
-
-    const selectRolesHandler =
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesMenu`;
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        `${ flowName }/Transitions/SelectRoles`,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( selectRolesHandler ),
-            flowName,
-            `${ flowName }/Transitions/SelectRoles`,
-            {
-                mutations: [
-                    { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
-                ],
-                navigation: {
-                    targetState: stateStep3,
-                    executionStep: stateToComponent.get( stateStep3 )
-                }
-            }
-        )
-    );
-
-    const everyoneHandler =
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu`;
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        `${ flowName }/Transitions/UpdateVerifiedEveryone`,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( everyoneHandler ),
-            flowName,
-            `${ flowName }/Transitions/UpdateVerifiedEveryone`,
-            {
-                mutations: [
-                    { type: "set", path: [ "dynamicChannelIncludeEveryoneRole" ] },
-                    { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
-                ],
-                navigation: {
-                    targetState: stateStep3,
-                    executionStep: stateToComponent.get( stateStep3 )
-                }
-            }
-        )
-    );
-
-    if ( !collection.size ) {
-        return undefined;
-    }
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelRenameFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelRenameFlow";
-    const stateSuccess = `${ flowName }/States/Success`;
-    const stateBadword = `${ flowName }/States/Badword`;
-    const stateRateLimited = `${ flowName }/States/RateLimited`;
-
-    const transitionSuccess = `${ flowName }/Transitions/SubmitRenameSuccess`;
-    const transitionBadword = `${ flowName }/Transitions/SubmitRenameBadword`;
-    const transitionRateLimited = `${ flowName }/Transitions/SubmitRenameRateLimited`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const modalBinding = bindings.find(
-        ( binding ) => binding.entity === "VertixBot/UI-V3/DynamicChannelRenameModal"
-    );
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    const triggerSuccess = createFlowTriggerFromBinding(
-        modalBinding,
-        flowName,
-        transitionSuccess,
-        {
-            navigation: {
-                targetState: stateSuccess,
-                executionStep: "VertixBot/UI-V3/DynamicChannelRenameSuccess"
-            }
-        }
-    );
-    appendFlowTrigger( collection, handlerMap, flowName, transitionSuccess, triggerSuccess );
-
-    const triggerBadword = createFlowTriggerFromBinding(
-        modalBinding,
-        flowName,
-        transitionBadword,
-        {
-            mutations: [
-                {
-                    type: "set",
-                    path: [ "badword" ]
-                }
-            ],
-            navigation: {
-                targetState: stateBadword,
-                executionStep: "VertixBot/UI-V3/DynamicChannelRenameBadword"
-            }
-        }
-    );
-    appendFlowTrigger( collection, handlerMap, flowName, transitionBadword, triggerBadword );
-
-    const triggerRateLimited = createFlowTriggerFromBinding(
-        modalBinding,
-        flowName,
-        transitionRateLimited,
-        {
-            mutations: [
-                {
-                    type: "set",
-                    path: [ "retryAfter" ]
-                },
-                {
-                    type: "set",
-                    path: [ "masterChannelId" ]
-                }
-            ],
-            navigation: {
-                targetState: stateRateLimited,
-                executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited"
-            }
-        }
-    );
-    appendFlowTrigger( collection, handlerMap, flowName, transitionRateLimited, triggerRateLimited );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelPermissionsFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelPermissionsFlow";
-
-    const statePublic = `${ flowName }/States/Public`;
-    const statePrivate = `${ flowName }/States/Private`;
-    const stateHidden = `${ flowName }/States/Hidden`;
-    const stateShown = `${ flowName }/States/Shown`;
-    const stateGranted = `${ flowName }/States/Granted`;
-    const stateDenied = `${ flowName }/States/Denied`;
-    const stateBlocked = `${ flowName }/States/Blocked`;
-    const stateUnblocked = `${ flowName }/States/Unblocked`;
-    const stateKicked = `${ flowName }/States/Kicked`;
-    const stateError = `${ flowName }/States/Error`;
-    const stateNothingChanged = `${ flowName }/States/NothingChanged`;
-
-    const transitionSetPublic = `${ flowName }/Transitions/SetPublic`;
-    const transitionSetPrivate = `${ flowName }/Transitions/SetPrivate`;
-    const transitionSetHidden = `${ flowName }/Transitions/SetHidden`;
-    const transitionSetShown = `${ flowName }/Transitions/SetShown`;
-    const transitionGrantSuccess = `${ flowName }/Transitions/GrantAccessSuccess`;
-    const transitionGrantError = `${ flowName }/Transitions/GrantAccessError`;
-    const transitionDenySuccess = `${ flowName }/Transitions/DenyAccessSuccess`;
-    const transitionDenyNothing = `${ flowName }/Transitions/DenyAccessNothingChanged`;
-    const transitionDenyError = `${ flowName }/Transitions/DenyAccessError`;
-    const transitionBlockSuccess = `${ flowName }/Transitions/BlockUserSuccess`;
-    const transitionBlockNothing = `${ flowName }/Transitions/BlockUserNothingChanged`;
-    const transitionBlockError = `${ flowName }/Transitions/BlockUserError`;
-    const transitionUnblockSuccess = `${ flowName }/Transitions/UnblockUserSuccess`;
-    const transitionUnblockNothing = `${ flowName }/Transitions/UnblockUserNothingChanged`;
-    const transitionUnblockError = `${ flowName }/Transitions/UnblockUserError`;
-    const transitionKickSuccess = `${ flowName }/Transitions/KickUserSuccess`;
-    const transitionKickError = `${ flowName }/Transitions/KickUserError`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    const stateButtonBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsStateButton`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSetPublic,
-        createFlowTriggerFromBinding(
-            stateButtonBinding,
-            flowName,
-            transitionSetPublic,
-            {
-                navigation: {
-                    targetState: statePublic,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSetPrivate,
-        createFlowTriggerFromBinding(
-            stateButtonBinding,
-            flowName,
-            transitionSetPrivate,
-            {
-                navigation: {
-                    targetState: statePrivate,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate"
-                }
-            }
-        )
-    );
-
-    const visibilityButtonBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSetHidden,
-        createFlowTriggerFromBinding(
-            visibilityButtonBinding,
-            flowName,
-            transitionSetHidden,
-            {
-                navigation: {
-                    targetState: stateHidden,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSetShown,
-        createFlowTriggerFromBinding(
-            visibilityButtonBinding,
-            flowName,
-            transitionSetShown,
-            {
-                navigation: {
-                    targetState: stateShown,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateShown"
-                }
-            }
-        )
-    );
-
-    const grantBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionGrantSuccess,
-        createFlowTriggerFromBinding(
-            grantBinding,
-            flowName,
-            transitionGrantSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userGrantedDisplayName" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateGranted,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionGrantError,
-        createFlowTriggerFromBinding(
-            grantBinding,
-            flowName,
-            transitionGrantError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                }
-            }
-        )
-    );
-
-    const denyBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionDenySuccess,
-        createFlowTriggerFromBinding(
-            denyBinding,
-            flowName,
-            transitionDenySuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userDeniedDisplayName" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateDenied,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionDenyNothing,
-        createFlowTriggerFromBinding(
-            denyBinding,
-            flowName,
-            transitionDenyNothing,
-            {
-                navigation: {
-                    targetState: stateNothingChanged,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionDenyError,
-        createFlowTriggerFromBinding(
-            denyBinding,
-            flowName,
-            transitionDenyError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                }
-            }
-        )
-    );
-
-    const blockBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionBlockSuccess,
-        createFlowTriggerFromBinding(
-            blockBinding,
-            flowName,
-            transitionBlockSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userBlockedDisplayName" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateBlocked,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionBlockNothing,
-        createFlowTriggerFromBinding(
-            blockBinding,
-            flowName,
-            transitionBlockNothing,
-            {
-                navigation: {
-                    targetState: stateNothingChanged,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionBlockError,
-        createFlowTriggerFromBinding(
-            blockBinding,
-            flowName,
-            transitionBlockError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                }
-            }
-        )
-    );
-
-    const unblockBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionUnblockSuccess,
-        createFlowTriggerFromBinding(
-            unblockBinding,
-            flowName,
-            transitionUnblockSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userUnBlockedDisplayName" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateUnblocked,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionUnblockNothing,
-        createFlowTriggerFromBinding(
-            unblockBinding,
-            flowName,
-            transitionUnblockNothing,
-            {
-                navigation: {
-                    targetState: stateNothingChanged,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionUnblockError,
-        createFlowTriggerFromBinding(
-            unblockBinding,
-            flowName,
-            transitionUnblockError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                }
-            }
-        )
-    );
-
-    const kickBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsKickMenu`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionKickSuccess,
-        createFlowTriggerFromBinding(
-            kickBinding,
-            flowName,
-            transitionKickSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userKickedDisplayName" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateKicked,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionKickError,
-        createFlowTriggerFromBinding(
-            kickBinding,
-            flowName,
-            transitionKickError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
-                }
-            }
-        )
-    );
-
-    if ( !collection.size ) {
-        return undefined;
-    }
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelTransferOwnerFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow";
-
-    const stateSelectUser = `${ flowName }/States/SelectUser`;
-    const stateConfirm = `${ flowName }/States/Confirm`;
-    const stateSuccess = `${ flowName }/States/Success`;
-    const stateCancelled = `${ flowName }/States/Cancelled`;
-
-    const transitionOpen = `${ flowName }/Transitions/Open`;
-    const transitionUserSelected = `${ flowName }/Transitions/UserSelected`;
-    const transitionConfirm = `${ flowName }/Transitions/Confirm`;
-    const transitionCancel = `${ flowName }/Transitions/Cancel`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionOpen,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( `${ adapterName }/Bindings/Button/VertixBot/UI-V3/DynamicChannelTransferOwnerButton` ),
-            flowName,
-            transitionOpen,
-            {
-                navigation: {
-                    targetState: stateSelectUser,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionUserSelected,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( `${ adapterName }/Bindings/UserSelectMenu/VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu` ),
-            flowName,
-            transitionUserSelected,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userDisplayName" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateConfirm,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionConfirm,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( `${ adapterName }/Bindings/Button/VertixBot/UI-General/YesButton` ),
-            flowName,
-            transitionConfirm,
-            {
-                navigation: {
-                    targetState: stateSuccess,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferred"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionCancel,
-        createFlowTriggerFromBinding(
-            bindingIndex.get( `${ adapterName }/Bindings/Button/VertixBot/UI-General/NoButton` ),
-            flowName,
-            transitionCancel,
-            {
-                navigation: {
-                    targetState: stateCancelled,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelTransferError"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelLimitFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelLimitFlow";
-    const stateInvalid = `${ flowName }/States/InvalidInput`;
-    const stateSuccess = `${ flowName }/States/Success`;
-    const stateError = `${ flowName }/States/Error`;
-
-    const transitionInvalid = `${ flowName }/Transitions/SubmitInvalid`;
-    const transitionSuccess = `${ flowName }/Transitions/SubmitSuccess`;
-    const transitionError = `${ flowName }/Transitions/SubmitError`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    const modalBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Modal/VertixBot/UI-V3/DynamicChannelLimitModal`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionInvalid,
-        createFlowTriggerFromBinding(
-            modalBinding,
-            flowName,
-            transitionInvalid,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "minValue" ]
-                    },
-                    {
-                        type: "set",
-                        path: [ "maxValue" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateInvalid,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelLimitInvalidInput"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSuccess,
-        createFlowTriggerFromBinding(
-            modalBinding,
-            flowName,
-            transitionSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "userLimit" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateSuccess,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelLimitSuccess"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionError,
-        createFlowTriggerFromBinding(
-            modalBinding,
-            flowName,
-            transitionError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelLimitError"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelClearChatFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelClearChatFlow";
-    const stateSuccess = `${ flowName }/States/Success`;
-    const stateNothing = `${ flowName }/States/NothingToClear`;
-    const stateError = `${ flowName }/States/Error`;
-
-    const transitionSuccess = `${ flowName }/Transitions/ClearSuccess`;
-    const transitionNothing = `${ flowName }/Transitions/ClearNothing`;
-    const transitionError = `${ flowName }/Transitions/ClearError`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const buttonBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton`
-    );
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSuccess,
-        createFlowTriggerFromBinding(
-            buttonBinding,
-            flowName,
-            transitionSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "ownerDisplayName" ]
-                    },
-                    {
-                        type: "set",
-                        path: [ "totalMessages" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateSuccess,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelClearChatSuccess"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionNothing,
-        createFlowTriggerFromBinding(
-            buttonBinding,
-            flowName,
-            transitionNothing,
-            {
-                navigation: {
-                    targetState: stateNothing,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelClearChatNothingToClear"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionError,
-        createFlowTriggerFromBinding(
-            buttonBinding,
-            flowName,
-            transitionError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelClearChatError"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelResetChannelFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelResetChannelFlow";
-    const stateSuccess = `${ flowName }/States/Success`;
-    const stateVoteRequired = `${ flowName }/States/VoteRequired`;
-    const stateError = `${ flowName }/States/Error`;
-
-    const transitionSuccess = `${ flowName }/Transitions/ResetSuccess`;
-    const transitionVoteRequired = `${ flowName }/Transitions/ResetVoteRequired`;
-    const transitionError = `${ flowName }/Transitions/ResetError`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const buttonBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton`
-    );
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSuccess,
-        createFlowTriggerFromBinding(
-            buttonBinding,
-            flowName,
-            transitionSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "result" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateSuccess,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelSuccess"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionVoteRequired,
-        createFlowTriggerFromBinding(
-            buttonBinding,
-            flowName,
-            transitionVoteRequired,
-            {
-                navigation: {
-                    targetState: stateVoteRequired,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelVote"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionError,
-        createFlowTriggerFromBinding(
-            buttonBinding,
-            flowName,
-            transitionError,
-            {
-                navigation: {
-                    targetState: stateError,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelError"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelRegionFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelRegionFlow";
-    const transitionSelect = `${ flowName }/Transitions/SelectRegion`;
-
-    const selectBinding = bindings.find(
-        ( binding ) => binding.entity === "VertixBot/UI-V3/DynamicChannelRegionSelectMenu"
-    );
-
-    if ( !selectBinding ) {
-        return undefined;
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSelect,
-        createFlowTriggerFromBinding(
-            selectBinding,
-            flowName,
-            transitionSelect,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "region" ]
-                    }
-                ],
-                navigation: {
-                    targetState: `${ flowName }/States/Default`,
-                    executionStep: "default"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelPrivacyFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelPrivacyFlow";
-    const transitionUpdate = `${ flowName }/Transitions/UpdatePrivacyState`;
-
-    const selectBinding = bindings.find(
-        ( binding ) => binding.entity === "VertixBot/UI-V3/DynamicChannelPrivacyMenu"
-    );
-
-    if ( !selectBinding ) {
-        return undefined;
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionUpdate,
-        createFlowTriggerFromBinding(
-            selectBinding,
-            flowName,
-            transitionUpdate,
-            {
-                navigation: {
-                    targetState: `${ flowName }/States/Default`,
-                    executionStep: "default"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildDynamicChannelPrimaryMessageEditFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow";
-    const stateTitle = `${ flowName }/States/EditTitle`;
-    const stateDescription = `${ flowName }/States/EditDescription`;
-
-    const transitionBegin = `${ flowName }/Transitions/BeginEditing`;
-    const transitionSubmitTitle = `${ flowName }/Transitions/SubmitTitle`;
-    const transitionSubmitDescription = `${ flowName }/Transitions/SubmitDescription`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    const yesBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-General/YesButton`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionBegin,
-        createFlowTriggerFromBinding(
-            yesBinding,
-            flowName,
-            transitionBegin,
-            {
-                navigation: {
-                    targetState: stateTitle,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
-                }
-            }
-        )
-    );
-
-    const titleBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSubmitTitle,
-        createFlowTriggerFromBinding(
-            titleBinding,
-            flowName,
-            transitionSubmitTitle,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "title" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateTitle,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
-                }
-            }
-        )
-    );
-
-    const descriptionBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton`
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionSubmitDescription,
-        createFlowTriggerFromBinding(
-            descriptionBinding,
-            flowName,
-            transitionSubmitDescription,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "description" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateDescription,
-                    executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent"
-                }
-            }
-        )
-    );
-
-    if ( !collection.size ) {
-        return undefined;
-    }
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildClaimStartFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/ClaimStartFlow";
-    const transitionRequest = `${ flowName }/Transitions/RequestClaim`;
-
-    const startBinding = bindings.find(
-        ( binding ) => binding.entity === "VertixBot/UI-V3/ClaimStartButton"
-    );
-
-    if ( !startBinding ) {
-        return undefined;
-    }
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionRequest,
-        createFlowTriggerFromBinding(
-            startBinding,
-            flowName,
-            transitionRequest,
-            {
-                navigation: {
-                    targetState: `${ flowName }/States/Default`,
-                    executionStep: "default"
-                }
-            }
-        )
-    );
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function buildClaimVoteFlowTriggers(
-    adapterName: string,
-    bindings: BindingDefinition[]
-): AdapterTriggerData | undefined {
-    const flowName = "VertixBot/UI-V3/ClaimVoteFlow";
-
-    const stateStepIn = `${ flowName }/States/StepIn`;
-    const stateVoteProcess = `${ flowName }/States/VoteProcess`;
-    const stateVoteSelf = `${ flowName }/States/VoteAlreadySelf`;
-    const stateVoteSuccess = `${ flowName }/States/VoteSuccess`;
-    const stateVoteSame = `${ flowName }/States/VoteSameChoice`;
-    const stateVoteUpdated = `${ flowName }/States/VoteUpdated`;
-
-    const transitionStart = `${ flowName }/Transitions/StartVote`;
-    const transitionAddCandidate = `${ flowName }/Transitions/AddCandidate`;
-    const transitionVoteSelf = `${ flowName }/Transitions/VoteSelf`;
-    const transitionVoteSuccess = `${ flowName }/Transitions/VoteSuccess`;
-    const transitionVoteSame = `${ flowName }/Transitions/VoteSame`;
-    const transitionVoteUpdated = `${ flowName }/Transitions/VoteUpdated`;
-
-    const bindingIndex = new Map<string, BindingDefinition>();
-    for ( const binding of bindings ) {
-        bindingIndex.set( binding.handler, binding );
-    }
-
-    const stepInBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-V3/ClaimVoteStepInButton`
-    );
-    const voteBinding = bindingIndex.get(
-        `${ adapterName }/Bindings/Button/VertixBot/UI-V3/ClaimVoteAddButton`
-    );
-
-    const collection: FlowTriggerCollection = new Map();
-    const handlerMap: BindingFlowTriggerMap = new Map();
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionStart,
-        createFlowTriggerFromBinding(
-            stepInBinding,
-            flowName,
-            transitionStart,
-            {
-                navigation: {
-                    targetState: stateVoteProcess,
-                    executionStep: "VertixBot/UI-V3/ClaimVoteProcess"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionAddCandidate,
-        createFlowTriggerFromBinding(
-            stepInBinding,
-            flowName,
-            transitionAddCandidate,
-            {
-                navigation: {
-                    targetState: stateStepIn,
-                    executionStep: "VertixBot/UI-V3/ClaimStepIn"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionVoteSelf,
-        createFlowTriggerFromBinding(
-            voteBinding,
-            flowName,
-            transitionVoteSelf,
-            {
-                navigation: {
-                    targetState: stateVoteSelf,
-                    executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionVoteSuccess,
-        createFlowTriggerFromBinding(
-            voteBinding,
-            flowName,
-            transitionVoteSuccess,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "targetId" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateVoteSuccess,
-                    executionStep: "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionVoteSame,
-        createFlowTriggerFromBinding(
-            voteBinding,
-            flowName,
-            transitionVoteSame,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "targetId" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateVoteSame,
-                    executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame"
-                }
-            }
-        )
-    );
-
-    appendFlowTrigger(
-        collection,
-        handlerMap,
-        flowName,
-        transitionVoteUpdated,
-        createFlowTriggerFromBinding(
-            voteBinding,
-            flowName,
-            transitionVoteUpdated,
-            {
-                mutations: [
-                    {
-                        type: "set",
-                        path: [ "prevUserId" ]
-                    },
-                    {
-                        type: "set",
-                        path: [ "currentUserId" ]
-                    }
-                ],
-                navigation: {
-                    targetState: stateVoteUpdated,
-                    executionStep: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
-                }
-            }
-        )
-    );
-
-    if ( !collection.size ) {
-        return undefined;
-    }
-
-    return {
-        flowName,
-        byTransition: collection,
-        byHandler: handlerMap
-    };
-}
-
-function createFlowTriggerFromBinding(
-    binding: BindingDefinition | undefined,
-    flowName: string,
-    transition: string,
-    details: { mutations?: FlowContextMutationDefinition[]; navigation?: FlowNavigationDefinition }
-): BindingFlowTriggerDefinition | undefined {
-    if ( !binding ) {
-        return undefined;
-    }
-
-    return {
-        handlerId: binding.handler,
-        sourceEntity: binding.entity,
-        handlerKind: bindingKindToFlowHandlerKind( binding.kind ),
-        mutations: details.mutations,
-        navigation: details.navigation,
-        flowName,
-        transition
-    };
-}
-
-function appendFlowTrigger(
-    collection: FlowTriggerCollection,
-    handlerMap: BindingFlowTriggerMap,
-    flowName: string,
-    transition: string,
-    trigger: BindingFlowTriggerDefinition | undefined
-): void {
-    if ( !trigger ) {
-        return;
-    }
-    const triggerDefinition: FlowTriggerDefinition = {
-        handlerId: trigger.handlerId,
-        sourceEntity: trigger.sourceEntity,
-        handlerKind: trigger.handlerKind,
-        mutations: trigger.mutations,
-        navigation: trigger.navigation
-    };
-
-    const existing = collection.get( transition );
-    if ( existing ) {
-        existing.push( triggerDefinition );
-    } else {
-        collection.set( transition, [ triggerDefinition ] );
-    }
-
-    const handlerTriggers = handlerMap.get( trigger.handlerId );
-    if ( handlerTriggers ) {
-        handlerTriggers.push( trigger );
-    } else {
-        handlerMap.set( trigger.handlerId, [ trigger ] );
-    }
 }
 
 function bindingKindToFlowHandlerKind( kind: string | undefined ): FlowTriggerHandlerKind {

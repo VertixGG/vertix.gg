@@ -83,6 +83,38 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
                 }
 
                 await context.ephemeral( voiceInteraction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelClearChatFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearSuccess",
+                        mutations: [
+                            { type: "set", path: [ "ownerDisplayName" ] },
+                            { type: "set", path: [ "totalMessages" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Success",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelClearChatSuccess"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelClearChatFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearNothing",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/NothingToClear",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelClearChatNothingToClear"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelClearChatFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelClearChatError"
+                        }
+                    }
+                ]
             }
         );
     } )

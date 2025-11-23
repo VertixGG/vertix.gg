@@ -62,7 +62,22 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
     .onEntityMap( async( { bindUserSelectMenu } ) => {
         bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
-            onRegionSelected
+            onRegionSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelRegionFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion",
+                        mutations: [
+                            { type: "set", path: [ "region" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
         );
     } )
     .build();

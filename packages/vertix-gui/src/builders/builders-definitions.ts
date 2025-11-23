@@ -13,6 +13,10 @@ import type {
     UIDefaultChannelSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ButtonInteraction, Message, MessageComponentInteraction, ModalSubmitInteraction, StringSelectMenuInteraction, UserSelectMenuInteraction } from "discord.js";
+import type {
+    FlowContextMutationDefinition,
+    FlowNavigationDefinition
+} from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs> {
     readonly logger: Logger;
@@ -77,6 +81,17 @@ export type GetReplyArgsHandler<
     argsFromManager: TArgs
 ) => Promise<TArgs>;
 
+export interface BindingFlowTriggerConfig {
+    flowName: string;
+    transition: string;
+    navigation?: FlowNavigationDefinition;
+    mutations?: FlowContextMutationDefinition[];
+}
+
+export interface BindingRegistrationOptions {
+    flowTriggers?: BindingFlowTriggerConfig[];
+}
+
 export type GenerateCustomIdForEntityHandler<
     TInteraction extends UIAdapterReplyContext,
     TArgs extends UIArgs = UIArgs,
@@ -109,24 +124,29 @@ export type BeforeBuildHandler<
 export interface IBinder<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs, TContext extends IAdapterContext<TInteraction, TArgs>> {
     bindButton: <T extends ButtonInteraction<"cached">>(
         name: string,
-        callback: ( context: TContext, interaction: T ) => Promise<void>
+        callback: ( context: TContext, interaction: T ) => Promise<void>,
+        options?: BindingRegistrationOptions
     ) => void;
     bindModal: <T extends ModalSubmitInteraction<"cached">>(
         name: string,
-        callback: ( context: TContext, interaction: T ) => Promise<void>
+        callback: ( context: TContext, interaction: T ) => Promise<void>,
+        options?: BindingRegistrationOptions
     ) => void;
     bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
         buttonName: string,
         modalName: string,
-        callback: ( context: TContext, interaction: T ) => Promise<void>
+        callback: ( context: TContext, interaction: T ) => Promise<void>,
+        options?: BindingRegistrationOptions
     ) => void;
     bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
         name: string,
-        callback: ( context: TContext, interaction: T ) => Promise<void>
+        callback: ( context: TContext, interaction: T ) => Promise<void>,
+        options?: BindingRegistrationOptions
     ) => void;
     bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
         name: string,
-        callback: ( context: TContext, interaction: T ) => Promise<void>
+        callback: ( context: TContext, interaction: T ) => Promise<void>,
+        options?: BindingRegistrationOptions
     ) => void;
 }
 

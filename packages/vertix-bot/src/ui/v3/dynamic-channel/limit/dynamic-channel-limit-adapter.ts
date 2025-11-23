@@ -91,6 +91,41 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
                     "VertixBot/UI-V3/DynamicChannelLimitSuccess",
                     {}
                 );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelLimitFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitInvalid",
+                        mutations: [
+                            { type: "set", path: [ "minValue" ] },
+                            { type: "set", path: [ "maxValue" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelLimitFlow/States/InvalidInput",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelLimitInvalidInput"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelLimitFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitSuccess",
+                        mutations: [
+                            { type: "set", path: [ "userLimit" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Success",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelLimitSuccess"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelLimitFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelLimitError"
+                        }
+                    }
+                ]
             }
         );
     } )

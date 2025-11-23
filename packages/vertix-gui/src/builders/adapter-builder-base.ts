@@ -41,7 +41,8 @@ import type {
     GetCustomIdForEntityHandler,
     GetStartArgsHandler,
     IBinder,
-    BeforeFinishHandler
+    BeforeFinishHandler,
+    BindingRegistrationOptions
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
@@ -269,24 +270,29 @@ export class AdapterBuilderBase<
                     return {
                         bindButton: <T extends ButtonInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindButton( name, ( interaction ) => callback( getContext(), interaction as T ) ),
                         bindModal: <T extends ModalSubmitInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindModal( name, ( interaction ) => callback( getContext(), interaction as T ) ),
                         bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
                             buttonName: string,
                             modalName: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( getContext(), interaction as T ) ),
                         bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) ),
                         bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindUserSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
                     };
                 }

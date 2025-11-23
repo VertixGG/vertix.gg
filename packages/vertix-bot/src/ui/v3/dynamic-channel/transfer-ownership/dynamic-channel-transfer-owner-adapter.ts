@@ -164,22 +164,73 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
     .onEntityMap( async( { bindButton, bindUserSelectMenu } ) => {
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-            onTransferOwnerButtonClicked
+            onTransferOwnerButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Open",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser"
+                        }
+                    }
+                ]
+            }
         );
 
         bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
-            onTransferOwnerUserSelected
+            onTransferOwnerUserSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected",
+                        mutations: [
+                            { type: "set", path: [ "userDisplayName" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Confirm",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/YesButton",
-            onYesButtonClicked
+            onYesButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Success",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferred"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/NoButton",
-            onNoButtonClicked
+            onNoButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Cancelled",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferError"
+                        }
+                    }
+                ]
+            }
         );
     } )
     .build();

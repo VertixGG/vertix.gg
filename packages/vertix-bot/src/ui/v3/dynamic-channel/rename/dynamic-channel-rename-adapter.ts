@@ -120,6 +120,42 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                         break;
                 }
             }
+        ,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelRenameFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameSuccess",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Success",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelRenameSuccess"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelRenameFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameBadword",
+                        mutations: [
+                            { type: "set", path: [ "badword" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Badword",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelRenameBadword"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelRenameFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameRateLimited",
+                        mutations: [
+                            { type: "set", path: [ "retryAfter" ] },
+                            { type: "set", path: [ "masterChannelId" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelRenameFlow/States/RateLimited",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited"
+                        }
+                    }
+                ]
+            }
         );
     } )
     .build();

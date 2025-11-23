@@ -7,11 +7,23 @@ import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategi
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
-
+import { DynamicChannelClearChatFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-flow";
+import { DynamicChannelLimitFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-flow";
+import { DynamicChannelPermissionsFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-flow";
+import { DynamicChannelPrimaryMessageEditFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-flow";
+import { DynamicChannelPrivacyFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-flow";
+import { DynamicChannelRegionFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-flow";
+import { DynamicChannelRenameFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-flow";
+import { DynamicChannelResetChannelFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-flow";
+import { DynamicChannelTransferOwnerFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-flow";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
+import { ClaimResultFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-result-flow";
+import { ClaimStartFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-start-flow";
+import { ClaimVoteFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-vote-flow";
 import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
+
+import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 
 import type UiDefinitionLoaderService from "@vertix.gg/bot/src/services/ui-definition-loader-service";
 
@@ -31,7 +43,21 @@ export class UIModuleV3 extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [ SetupNewWizardFlow ];
+        return [
+            SetupNewWizardFlow,
+            ClaimStartFlow,
+            ClaimVoteFlow,
+            ClaimResultFlow,
+            DynamicChannelRenameFlow,
+            DynamicChannelTransferOwnerFlow,
+            DynamicChannelLimitFlow,
+            DynamicChannelClearChatFlow,
+            DynamicChannelResetChannelFlow,
+            DynamicChannelRegionFlow,
+            DynamicChannelPermissionsFlow,
+            DynamicChannelPrivacyFlow,
+            DynamicChannelPrimaryMessageEditFlow
+        ];
     }
 
     public get $$() {

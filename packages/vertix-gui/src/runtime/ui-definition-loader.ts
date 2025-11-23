@@ -23,7 +23,11 @@ import type {
     FlowRequiredDataDefinition,
     FlowIntegrationPointDefinition,
     FlowEdgeSourceMappingDefinition,
-    FlowIntegrationPointType
+    FlowIntegrationPointType,
+    BindingFlowTriggerDefinition,
+    FlowTriggerDefinition,
+    FlowContextMutationDefinition,
+    FlowNavigationDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 import type {
     HydratedAdapter,
@@ -41,6 +45,7 @@ import type {
     RuntimeFlowTransition,
     RuntimeFlowRequiredData,
     RuntimeFlowIntegrationPoint,
+    RuntimeFlowTrigger,
     RuntimeHandler
 } from "@vertix.gg/gui/src/runtime/ui-definition-runtime";
 
@@ -141,7 +146,8 @@ export class UiDefinitionLoader {
         instance.componentClass = componentClass;
         instance.adapterClass = createExecutionAdapter( {
             hydrated: instance,
-            componentClass: () => componentClass
+            componentClass: () => componentClass,
+            resolveFlowComponent: ( flowName, state ) => this.resolveFlowComponentName( flowName, state )
         } );
 
         this.adapterCache.set( name, { value: instance, updatedAt: Date.now() } );
@@ -198,6 +204,7 @@ export class UiDefinitionLoader {
             name: document.name,
             type: document.type,
             instanceType: document.instanceType,
+            modules: document.modules ? [ ...document.modules ] : undefined,
             elementsGroups: elementsGroups.map( ( group ) => group.definition ),
             embedsGroups: embedsGroups.map( ( group ) => group.definition ),
             modals: modals.map( ( modal ) => modal.name ),
@@ -226,6 +233,7 @@ export class UiDefinitionLoader {
             name: document.name,
             adapterKind: document.adapterKind,
             component: document.component,
+            module: document.module,
             instanceType: document.instanceType,
             channelTypes: document.channelTypes ? [ ...document.channelTypes ] : undefined,
             permissions: document.permissions ?? null,
@@ -265,6 +273,7 @@ export class UiDefinitionLoader {
 
         const definition: FlowDefinition = {
             name: document.name,
+            module: document.module,
             flowKind: document.flowKind,
             initialState: document.initialState,
             states: states.map( ( state ) => state.definition ),
@@ -302,6 +311,27 @@ export class UiDefinitionLoader {
             initialData: initialData ? this.cloneJsonObject( initialData ) : undefined,
             flowType
         };
+    }
+
+    private async resolveFlowComponentName(
+        flowName?: string,
+        state?: string
+    ): Promise<string | undefined> {
+        if ( !flowName || !state ) {
+            return undefined;
+        }
+
+        try {
+            const flow = await this.loadFlow( flowName );
+            const match = flow.definition.states?.find( ( entry ) => entry.key === state );
+
+            return match?.component ?? undefined;
+        } catch( error ) {
+            const message = error instanceof Error ? error.message : String( error );
+            throw new Error(
+                `UiDefinitionLoader: unable to resolve component for flow '${ flowName }' state '${ state }' - ${ message }`
+            );
+        }
     }
 
     private createRuntimeElementsGroup( group: ElementsGroupDefinition ): RuntimeElementsGroup {
@@ -357,11 +387,16 @@ export class UiDefinitionLoader {
     private createRuntimeBinding( binding: BindingDefinition ): RuntimeBinding {
         const callable = this.parseHandlerReference( binding.handler );
 
+        const flowTriggers = binding.flowTriggers
+            ? binding.flowTriggers.map( ( trigger ) => this.cloneBindingFlowTrigger( trigger ) )
+            : undefined;
+
         const definition: BindingDefinition = {
             entity: binding.entity,
             handler: binding.handler,
             kind: binding.kind,
-            options: binding.options ? this.cloneJsonObject( binding.options ) : undefined
+            options: binding.options ? this.cloneJsonObject( binding.options ) : undefined,
+            flowTriggers
         };
 
         return {
@@ -390,14 +425,18 @@ export class UiDefinitionLoader {
     }
 
     private createRuntimeFlowTransition( transition: FlowTransitionDefinition ): RuntimeFlowTransition {
+        const triggers = ( transition.triggeredBy ?? [] ).map( ( trigger ) => this.createRuntimeFlowTrigger( trigger ) );
+
         const definition: FlowTransitionDefinition = {
             from: transition.from,
             to: transition.to,
+            triggeredBy: triggers.map( ( trigger ) => trigger.definition ),
             options: transition.options ? this.cloneJsonObject( transition.options ) : undefined
         };
 
         return {
-            definition
+            definition,
+            triggers
         };
     }
 
@@ -430,6 +469,51 @@ export class UiDefinitionLoader {
         return {
             definition,
             type: integrationType
+        };
+    }
+
+    private createRuntimeFlowTrigger( trigger: FlowTriggerDefinition ): RuntimeFlowTrigger {
+        const callable = trigger.handlerId ? this.parseHandlerReference( trigger.handlerId ) : undefined;
+
+        const definition: FlowTriggerDefinition = {
+            handlerId: trigger.handlerId,
+            sourceEntity: trigger.sourceEntity,
+            handlerKind: trigger.handlerKind,
+            mutations: trigger.mutations ? trigger.mutations.map( ( mutation ) => this.cloneFlowContextMutation( mutation ) ) : undefined,
+            navigation: trigger.navigation ? this.cloneFlowNavigation( trigger.navigation ) : undefined
+        };
+
+        return {
+            definition,
+            callable
+        };
+    }
+
+    private cloneFlowContextMutation( mutation: FlowContextMutationDefinition ): FlowContextMutationDefinition {
+        return {
+            type: mutation.type,
+            path: [ ...( mutation.path ?? [] ) ]
+        };
+    }
+
+    private cloneFlowNavigation( navigation: FlowNavigationDefinition ): FlowNavigationDefinition {
+        return {
+            targetState: navigation.targetState,
+            executionStep: navigation.executionStep
+        };
+    }
+
+    private cloneBindingFlowTrigger( trigger: BindingFlowTriggerDefinition ): BindingFlowTriggerDefinition {
+        return {
+            flowName: trigger.flowName,
+            transition: trigger.transition,
+            handlerId: trigger.handlerId,
+            sourceEntity: trigger.sourceEntity,
+            handlerKind: trigger.handlerKind,
+            mutations: trigger.mutations
+                ? trigger.mutations.map( ( mutation ) => this.cloneFlowContextMutation( mutation ) )
+                : undefined,
+            navigation: trigger.navigation ? this.cloneFlowNavigation( trigger.navigation ) : undefined
         };
     }
 

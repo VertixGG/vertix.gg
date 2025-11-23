@@ -29,6 +29,52 @@ export interface ElementsGroupDefinition {
 export interface EmbedReference {
     embed: string;
     options?: JsonObject;
+    definition?: EmbedContentDefinition;
+}
+
+export interface EmbedContentDefinition {
+    instanceType?: string | null;
+    title?: string;
+    description?: string;
+    color?: JsonValue;
+    image?: string;
+    footer?: string;
+    options?: JsonObject;
+    arrayOptions?: JsonObject;
+    logic?: JsonObject;
+    vars?: JsonValue;
+}
+
+export type FlowTriggerHandlerKind =
+    | "button"
+    | "modal"
+    | "modal-button"
+    | "string-select"
+    | "user-select"
+    | "command"
+    | "unknown";
+
+export interface FlowContextMutationDefinition {
+    type: "set" | "delete";
+    path: string[];
+}
+
+export interface FlowNavigationDefinition {
+    targetState?: string;
+    executionStep?: string;
+}
+
+export interface FlowTriggerDefinition {
+    handlerId: string;
+    sourceEntity: string;
+    handlerKind: FlowTriggerHandlerKind;
+    mutations?: FlowContextMutationDefinition[];
+    navigation?: FlowNavigationDefinition;
+}
+
+export interface BindingFlowTriggerDefinition extends FlowTriggerDefinition {
+    flowName: string;
+    transition: string;
 }
 
 export interface EmbedsGroupDefinition {
@@ -42,6 +88,7 @@ export interface ComponentDefinition {
     name: string;
     type: string;
     instanceType: string;
+    modules?: string[];
     elementsGroups: ElementsGroupDefinition[];
     embedsGroups: EmbedsGroupDefinition[];
     modals: string[];
@@ -66,12 +113,14 @@ export interface BindingDefinition {
     handler: string;
     kind?: string;
     options?: JsonObject;
+    flowTriggers?: BindingFlowTriggerDefinition[];
 }
 
 export interface AdapterDefinition {
     name: string;
     adapterKind: string;
     component: string;
+    module?: string;
     instanceType?: string;
     channelTypes?: string[];
     permissions?: string | number | null;
@@ -93,6 +142,7 @@ export interface FlowStateDefinition {
 export interface FlowTransitionDefinition {
     from: string;
     to: string;
+    triggeredBy?: FlowTriggerDefinition[];
     options?: JsonObject;
 }
 
@@ -124,6 +174,7 @@ export interface FlowEdgeSourceMappingDefinition {
 
 export interface FlowDefinition {
     name: string;
+    module?: string;
     flowKind: string;
     initialState: string;
     states: FlowStateDefinition[];

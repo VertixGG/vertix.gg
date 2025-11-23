@@ -2,25 +2,28 @@ import { PermissionsBitField, ChannelType } from "discord.js";
 
 import {
     UIFlowBase,
-    UIWizardFlowBase,
     FlowIntegrationPointGeneric,
     FlowIntegrationPointCommand,
-    FlowIntegrationPointEvent,
-    FlowIntegrationPointBase
+    FlowIntegrationPointEvent
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { UIWizardFlowBase } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
 
+import type { FlowIntegrationPointBase, UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 import type {
     HydratedFlow,
     RuntimeFlowState,
     RuntimeFlowIntegrationPoint,
+    RuntimeFlowTrigger,
     FlowConstructor
 } from "@vertix.gg/gui/src/runtime/ui-definition-runtime";
 import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
     FlowEdgeSourceMappingDefinition,
+    FlowTriggerDefinition,
     JsonObject,
     JsonValue
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
@@ -49,11 +52,16 @@ const WIZARD_BASE_TRANSITIONS = new Set( [
     "VertixGUI/UIWizardFlowBase/Transitions/Error"
 ] );
 
-function assertComponentConstructor( candidate: RegisterableClass<object>, description: string ): asserts candidate is UIComponentTypeConstructor {
+function ensureComponentConstructor(
+    candidate: RegisterableClass<object>,
+    description: string
+): UIComponentTypeConstructor {
     if ( !( candidate.prototype instanceof UIComponentBase ) ) {
         const candidateName = typeof candidate.getName === "function" ? candidate.getName() : "unknown";
         throw new Error( `DataDrivenFlowFactory: ${ description } does not extend '${ UIComponentBase.getName() }' (received '${ candidateName }')` );
     }
+
+    return candidate as unknown as UIComponentTypeConstructor;
 }
 
 function cloneJsonValue<T extends JsonValue>( value: T ): T {
@@ -112,6 +120,10 @@ function resolveChannelType( entry: string ): ChannelType {
     throw new Error( `DataDrivenFlowFactory: unsupported channel type '${ entry }'` );
 }
 
+function cloneArray<T>( values?: T[] | null ): T[] {
+    return values ? Array.from( values ) : [];
+}
+
 function buildIntegrationPoints( points: RuntimeFlowIntegrationPoint[] ): FlowIntegrationPointBase[] {
     return points.map( ( point ) => {
         const builder = INTEGRATION_POINT_BY_TYPE[ point.type ] ?? FlowIntegrationPointGeneric;
@@ -133,8 +145,8 @@ function collectStateComponents( states: RuntimeFlowState[] ): Map<string, UICom
             continue;
         }
         const candidate = state.componentRef.Class;
-        assertComponentConstructor( candidate, `component '${ state.componentRef.name }'` );
-        components.set( state.componentRef.name, candidate );
+        const constructor = ensureComponentConstructor( candidate, `component '${ state.componentRef.name }'` );
+        components.set( state.componentRef.name, constructor );
     }
     return components;
 }
@@ -147,8 +159,7 @@ function resolveStepComponents(
     if ( definitionComponents?.length ) {
         return definitionComponents.map( ( name ) => {
             const ClassCtor = uiClassRegistry.getClass( name );
-            assertComponentConstructor( ClassCtor, `step component '${ name }'` );
-            return ClassCtor;
+            return ensureComponentConstructor( ClassCtor, `step component '${ name }'` );
         } );
     }
     return stepStates.map( ( state ) => {
@@ -163,12 +174,12 @@ function resolveStepComponents(
 function buildStateTransitions( states: RuntimeFlowState[] ): Map<string, string[]> {
     const transitions = new Map<string, string[]>();
     for ( const state of states ) {
-        transitions.set( state.definition.key, [ ...( state.definition.transitions ?? [] ) ] );
+        transitions.set( state.definition.key, cloneArray( state.definition.transitions ) );
     }
     return transitions;
 }
 
-function buildTransitionTargets( transitions: HydratedFlow["transitions"] ): Map<string, string> {
+function buildTransitionTargets( transitions: HydratedFlow[ "transitions" ] ): Map<string, string> {
     const map = new Map<string, string>();
     for ( const transition of transitions ) {
         map.set( transition.definition.from, transition.definition.to );
@@ -176,11 +187,24 @@ function buildTransitionTargets( transitions: HydratedFlow["transitions"] ): Map
     return map;
 }
 
-function buildRequiredDataMap( requiredData: HydratedFlow["requiredData"] ): Map<string, string[]> {
+function buildRequiredDataMap( requiredData: HydratedFlow[ "requiredData" ] ): Map<string, string[]> {
     const map = new Map<string, string[]>();
     for ( const item of requiredData ) {
-        map.set( item.definition.transition, [ ...( item.definition.fields ?? [] ) ] );
+        map.set( item.definition.transition, cloneArray( item.definition.fields ) );
     }
+    return map;
+}
+
+function buildTransitionTriggersMap(
+    transitions: HydratedFlow[ "transitions" ]
+): Map<string, RuntimeFlowTrigger[]> {
+    const map = new Map<string, RuntimeFlowTrigger[]>();
+
+    for ( const transition of transitions ) {
+        const clonedTriggers = ( transition.triggers ?? [] ).map( ( trigger ) => cloneRuntimeTrigger( trigger ) );
+        map.set( transition.definition.from, clonedTriggers );
+    }
+
     return map;
 }
 
@@ -218,9 +242,54 @@ function buildNextStatesMap( transitions: Map<string, string> ): Record<string, 
 function buildFlowTransitionsMap( stateTransitions: Map<string, string[]> ): Record<string, string[]> {
     const result: Record<string, string[]> = {};
     stateTransitions.forEach( ( value, key ) => {
-        result[ key ] = [ ...value ];
+        result[ key ] = Array.from( value );
     } );
     return result;
+}
+
+function buildTransitionTriggersRecord(
+    triggers: Map<string, RuntimeFlowTrigger[]>
+): Record<string, FlowTriggerDefinition[]> {
+    const result: Record<string, FlowTriggerDefinition[]> = {};
+
+    triggers.forEach( ( triggerList, transition ) => {
+        if ( !triggerList.length ) {
+            return;
+        }
+
+        result[ transition ] = triggerList.map( ( trigger ) => cloneFlowTriggerDefinition( trigger.definition ) );
+    } );
+
+    return result;
+}
+
+function cloneFlowTriggerDefinition(
+    definition: FlowTriggerDefinition
+): FlowTriggerDefinition {
+    return {
+        handlerId: definition.handlerId,
+        sourceEntity: definition.sourceEntity,
+        handlerKind: definition.handlerKind,
+        mutations: definition.mutations
+            ? definition.mutations.map( ( mutation ) => ( {
+                type: mutation.type,
+                path: cloneArray( mutation.path )
+            } ) )
+            : undefined,
+        navigation: definition.navigation
+            ? {
+                targetState: definition.navigation.targetState,
+                executionStep: definition.navigation.executionStep
+            }
+            : undefined
+    };
+}
+
+function cloneRuntimeTrigger( trigger: RuntimeFlowTrigger ): RuntimeFlowTrigger {
+    return {
+        definition: cloneFlowTriggerDefinition( trigger.definition ),
+        callable: trigger.callable
+    };
 }
 
 function cloneInitialData( value: JsonObject | undefined ): JsonObject | undefined {
@@ -236,13 +305,14 @@ function dedupeComponents( components: Iterable<UIComponentTypeConstructor> ): U
     for ( const component of components ) {
         unique.set( component.getName(), component );
     }
-    return [ ...unique.values() ];
+    return Array.from( unique.values() );
 }
 
 export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
     const baseTransitions = buildStateTransitions( hydrated.states );
     const transitionTargets = buildTransitionTargets( hydrated.transitions );
     const requiredDataMap = buildRequiredDataMap( hydrated.requiredData );
+    const transitionTriggerMap = buildTransitionTriggersMap( hydrated.transitions );
     const integrationEntryPoints = buildIntegrationPoints( hydrated.entryPoints );
     const integrationHandoffPoints = buildIntegrationPoints( hydrated.handoffPoints );
     const edgeSourceMappings = buildEdgeSourceMappings( hydrated.edgeSourceMappings );
@@ -256,6 +326,7 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
     const flowComponents = dedupeComponents( stateComponentMap.values() );
     const nextStatesRecord = buildNextStatesMap( transitionTargets );
     const flowTransitionsRecord = buildFlowTransitionsMap( baseTransitions );
+    const flowTransitionTriggersRecord = buildTransitionTriggersRecord( transitionTriggerMap );
 
     if ( isWizardFlow( hydrated.definition.flowKind ) ) {
         const wizardStepStates = hydrated.definition.stepStates
@@ -273,7 +344,9 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
             customTransitionsByState.set( state, custom );
         }
 
-        class DataDrivenWizardFlow extends UIWizardFlowBase<string, string> {
+        class DataDrivenWizardFlow extends UIWizardFlowBase<string, string, WizardFlowData> {
+            protected static readonly transitionTriggers = transitionTriggerMap;
+
             public static override getName() {
                 return hydrated.definition.name;
             }
@@ -295,7 +368,7 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
             }
 
             public static override getExternalReferences() {
-                return externalReferences;
+                return externalReferences ? { ...externalReferences } : {};
             }
 
             public static override getEdgeSourceMappings() {
@@ -310,7 +383,16 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
                 return flowType;
             }
 
-        public constructor( options: TAdapterRegisterOptions ) {
+            public static getTransitionTriggers() {
+                return flowTransitionTriggersRecord;
+            }
+
+            protected getRuntimeTriggers( transition: string ): RuntimeFlowTrigger[] {
+                const triggers = DataDrivenWizardFlow.transitionTriggers.get( transition );
+                return triggers ? triggers.map( ( trigger ) => cloneRuntimeTrigger( trigger ) ) : [];
+            }
+
+            public constructor( options: TAdapterRegisterOptions ) {
                 super( options );
             }
 
@@ -330,8 +412,9 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
                 return hydrated.definition.initialState;
             }
 
-            protected override getInitialData() {
-                return cloneInitialData( initialDataTemplate ) ?? {};
+            protected override getInitialData(): WizardFlowData {
+                const initial = cloneInitialData( initialDataTemplate ) ?? {};
+                return initial as WizardFlowData;
             }
 
             protected override initializeTransitions(): void {
@@ -371,11 +454,12 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
 
         uiClassRegistry.register( DataDrivenWizardFlow as RegisterableClass<object> );
 
-        return DataDrivenWizardFlow;
+        return DataDrivenWizardFlow as unknown as FlowConstructor;
     }
 
-    class DataDrivenFlow extends UIFlowBase<string, string> {
+    class DataDrivenFlow extends UIFlowBase<string, string, UIFlowData> {
         private static readonly components = flowComponents;
+        private static readonly transitionTriggers = transitionTriggerMap;
 
         public static override getName() {
             return hydrated.definition.name;
@@ -402,7 +486,7 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
         }
 
         public static override getExternalReferences() {
-            return externalReferences;
+            return externalReferences ? { ...externalReferences } : {};
         }
 
         public static override getEdgeSourceMappings() {
@@ -415,6 +499,15 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
 
         public static override getFlowType() {
             return flowType;
+        }
+
+        public static getTransitionTriggers() {
+            return flowTransitionTriggersRecord;
+        }
+
+        protected getRuntimeTriggers( transition: string ): RuntimeFlowTrigger[] {
+            const triggers = DataDrivenFlow.transitionTriggers.get( transition );
+            return triggers ? triggers.map( ( trigger ) => cloneRuntimeTrigger( trigger ) ) : [];
         }
 
         public constructor( options: TAdapterRegisterOptions ) {
@@ -433,8 +526,9 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
             return hydrated.definition.initialState;
         }
 
-        protected override getInitialData() {
-            return cloneInitialData( initialDataTemplate ) ?? {};
+        protected override getInitialData(): UIFlowData {
+            const initial = cloneInitialData( initialDataTemplate ) ?? {};
+            return initial as UIFlowData;
         }
 
         protected override initializeTransitions(): void {
@@ -463,7 +557,5 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
 
     uiClassRegistry.register( DataDrivenFlow as RegisterableClass<object> );
 
-    return DataDrivenFlow;
+    return DataDrivenFlow as unknown as FlowConstructor;
 }
-
-

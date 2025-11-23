@@ -13,12 +13,15 @@ import type {
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIArgs, UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { RegisterableClass } from "@vertix.gg/gui/src/runtime/ui-class-registry";
+import type { BindingFlowTriggerDefinition } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 type BindingInvoker = ( context: Record<string, unknown>, interaction: unknown ) => Promise<void>;
+type FlowComponentResolver = ( flowName: string, state: string ) => Promise<string | undefined>;
 
 interface DataDrivenAdapterConfig {
     hydrated: HydratedAdapter;
     componentClass: () => UIComponentTypeConstructor;
+    resolveFlowComponent?: FlowComponentResolver;
 }
 
 const HANDLER_KIND_TO_METHOD: Record<string, string> = {
@@ -30,7 +33,7 @@ const HANDLER_KIND_TO_METHOD: Record<string, string> = {
 };
 
 export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
-    const { hydrated, componentClass } = config;
+    const { hydrated, componentClass, resolveFlowComponent } = config;
     const logger = new Logger( hydrated.definition.name );
 
     class DataDrivenExecutionAdapter extends UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext> {
@@ -202,13 +205,20 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
                 }
 
                 const invoker = createBindingInvoker( binding.callable );
+                const flowTriggers = binding.definition.flowTriggers ?? [];
 
                 const binderFn = binder as ( name: string, handler: ( interaction: unknown ) => Promise<void> ) => void;
 
                 binderFn.call(
                     this,
                     binding.definition.entity,
-                    async( interaction: unknown ) => invoker( this.createContext(), interaction )
+                    async( interaction: unknown ) => {
+                        const context = this.createContext();
+
+                        await invoker( context, interaction );
+
+                        await this.applyFlowTriggers( context, interaction, flowTriggers );
+                    }
                 );
             }
         }
@@ -253,6 +263,50 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
                 updateInteractionDefer: this.updateInteractionDefer.bind( this ),
                 deleteRelatedEphemeralInteractionsInternal: this.deleteRelatedEphemeralInteractionsInternal.bind( this )
             };
+        }
+
+        private async applyFlowTriggers(
+            context: Record<string, unknown>,
+            interaction: unknown,
+            triggers: BindingFlowTriggerDefinition[]
+        ): Promise<void> {
+            if ( !triggers.length ) {
+                return;
+            }
+
+            const editReplyWithStep = context.editReplyWithStep as
+                | ( ( interaction: unknown, stepName: string, args?: UIArgs ) => Promise<unknown> )
+                | undefined;
+
+            const getArgs = context.getArgs as ( ( ctx: unknown ) => UIArgs ) | undefined;
+
+            const args = getArgs ? getArgs( interaction ) : undefined;
+
+            for ( const trigger of triggers ) {
+                const flowName = trigger.flowName;
+                const targetState = trigger.navigation?.targetState;
+                let executionStep = trigger.navigation?.executionStep;
+
+                if ( resolveFlowComponent && flowName && targetState ) {
+                    try {
+                        const resolvedStep = await resolveFlowComponent( flowName, targetState );
+
+                        if ( resolvedStep ) {
+                            executionStep = resolvedStep;
+                        }
+                    } catch( error ) {
+                        logger.warn(
+                            "DataDrivenExecutionAdapter:applyFlowTriggers",
+                            `Failed to resolve execution step for flow '${ flowName }' and state '${ targetState }'`,
+                            error
+                        );
+                    }
+                }
+
+                if ( executionStep && typeof editReplyWithStep === "function" ) {
+                    await editReplyWithStep( interaction, executionStep, args );
+                }
+            }
         }
     }
 

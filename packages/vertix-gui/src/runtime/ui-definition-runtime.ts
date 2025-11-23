@@ -17,7 +17,8 @@ import type {
     HookReference,
     JsonObject,
     FlowEdgeSourceMappingDefinition,
-    FlowIntegrationPointType
+    FlowIntegrationPointType,
+    FlowTriggerDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ExecutionAdapterClass } from "@vertix.gg/gui/src/runtime/data-driven-adapter-factory";
@@ -99,8 +100,14 @@ export interface RuntimeFlowState {
     hooks: RuntimeHook[];
 }
 
+export interface RuntimeFlowTrigger {
+    definition: FlowTriggerDefinition;
+    callable?: RuntimeHandler;
+}
+
 export interface RuntimeFlowTransition {
     definition: FlowTransitionDefinition;
+    triggers: RuntimeFlowTrigger[];
 }
 
 export interface RuntimeFlowRequiredData {

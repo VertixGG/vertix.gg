@@ -3,8 +3,42 @@
         "name": "VertixBot/UI-General/FeedbackComponent",
         "type": "component",
         "instanceType": "Static",
-        "elementsGroups": [],
-        "embedsGroups": [],
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/FeedbackComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/FeedbackReportButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/FeedbackSuggestionButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WelcomeSupportButton"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/FeedbackInviteDeveloperButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/FeedbackComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/FeedbackEmbed"
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
@@ -15,8 +49,36 @@
         "name": "VertixBot/UI-General/LanguageComponent",
         "type": "component",
         "instanceType": "Dynamic",
-        "elementsGroups": [],
-        "embedsGroups": [],
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/LanguageComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/LanguageSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/LanguageComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/LanguageEmbed"
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
@@ -27,6 +89,9 @@
         "name": "VertixBot/UI-General/SetupComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-General/SetupElementsGroup",
@@ -60,7 +125,69 @@
                 "name": "VertixBot/UI-General/SetupEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-General/SetupEmbed"
+                        "embed": "VertixBot/UI-General/SetupEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🛠  Setup Vertix",
+                            "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+                            "image": "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png",
+                            "color": 3369963,
+                            "options": {
+                                "masterChannelMessage": {
+                                    "{masterChannels}": "\n{masterChannels}",
+                                    "{masterChannelMessageDefault}": "**None**"
+                                },
+                                "badwordsMessage": {
+                                    "{badwords}": "`{badwords}`",
+                                    "{badwordsMessageDefault}": "**None**"
+                                },
+                                "none": "**None**"
+                            },
+                            "arrayOptions": {
+                                "masterChannels": {
+                                    "format": "{value}{separator}",
+                                    "separator": "\n",
+                                    "multiSeparator": "\n\n",
+                                    "options": {
+                                        "index": "**#{index}**",
+                                        "name": "▹ Name: <#{id}>",
+                                        "id": "▹ Channel ID: `{id}`",
+                                        "channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
+                                        "channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
+                                        "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
+                                        "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
+                                        "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
+                                        "version": "▹ UI Version: `{version}`"
+                                    }
+                                },
+                                "badwords": {
+                                    "format": "{value}{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "masterChannels": "{masterChannels}",
+                                "masterChannelMessage": "{masterChannelMessage}",
+                                "masterChannelMessageDefault": "{masterChannelMessageDefault}",
+                                "masterChannelsOptions": {
+                                    "index": "{index}",
+                                    "name": "{name}",
+                                    "id": "{id}",
+                                    "channelsTemplateName": "{channelsTemplateName}",
+                                    "channelsTemplateButtons": "{channelsTemplateButtons}",
+                                    "channelsVerifiedRoles": "{channelsVerifiedRoles}",
+                                    "channelsLogsChannelId": "{channelsLogsChannelId}",
+                                    "channelsAutoSave": "{channelsAutoSave}",
+                                    "version": "{version}"
+                                },
+                                "badwords": "{badwords}",
+                                "badwordsMessage": "{badwordsMessage}",
+                                "badwordsMessageDefault": "{badwordsMessageDefault}",
+                                "none": "{none}"
+                            }
+                        }
                     }
                 ]
             },
@@ -83,6 +210,9 @@
         "name": "VertixBot/UI-General/WelcomeComponent",
         "type": "component",
         "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-General/WelcomeElementsGroup",
@@ -101,7 +231,16 @@
                 ]
             }
         ],
-        "embedsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/WelcomeEmbed",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/WelcomeEmbed"
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": "VertixBot/UI-General/WelcomeElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-General/WelcomeEmbed",
@@ -112,8 +251,20 @@
         "name": "VertixBot/UI-General/NotYourChannelComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
         "elementsGroups": [],
-        "embedsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/NotYourChannelComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NotYourChannelEmbed"
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
@@ -124,6 +275,9 @@
         "name": "VertixBot/UI-V2/ClaimResultComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [],
         "embedsGroups": [
             {
@@ -193,8 +347,31 @@
         "name": "VertixBot/UI-V2/ClaimStartComponent",
         "type": "component",
         "instanceType": "Static",
-        "elementsGroups": [],
-        "embedsGroups": [],
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/ClaimStartComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ClaimStartButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/ClaimStartComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimStartEmbed"
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
@@ -205,6 +382,9 @@
         "name": "VertixBot/UI-V2/ClaimVoteComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/ClaimVoteElementsGroup",
@@ -268,6 +448,9 @@
         "name": "VertixBot/UI-V2/DynamicChannel",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/DynamicChannelElementsGroup",
@@ -304,7 +487,16 @@
                 ]
             }
         ],
-        "embedsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannel/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelEmbed"
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": "VertixBot/UI-V2/DynamicChannelElementsGroup",
         "defaultEmbedsGroup": null,
@@ -315,6 +507,9 @@
         "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButtonGroup",
@@ -363,6 +558,9 @@
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [],
         "embedsGroups": [
             {
@@ -400,6 +598,9 @@
         "name": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [],
         "embedsGroups": [
             {
@@ -437,6 +638,9 @@
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
@@ -577,6 +781,9 @@
         "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButtonGroup",
@@ -617,6 +824,9 @@
         "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup",
@@ -694,6 +904,9 @@
         "name": "VertixBot/UI-V2/ConfigComponent",
         "type": "component",
         "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/SetupEditElementsGroup",
@@ -821,6 +1034,9 @@
         "name": "VertixBot/UI-V2/SetupNewWizardComponent",
         "type": "component",
         "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V2/SetupStep1Component/ElementsGroup",
@@ -948,6 +1164,9 @@
         "name": "VertixBot/UI-V3/ClaimResultComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [],
         "embedsGroups": [
             {
@@ -1017,8 +1236,41 @@
         "name": "VertixBot/UI-V3/ClaimStartComponent",
         "type": "component",
         "instanceType": "Static",
-        "elementsGroups": [],
-        "embedsGroups": [],
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimStartComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ClaimStartButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimStartComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimStartEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👋  {ownerDisplayName} abandoned his channel!",
+                            "description": "<@{ownerId}> has been absent for more than {absentMinutes} minutes.\nWill you be the one to take charge? Step up and claim it for yourself!",
+                            "vars": {
+                                "ownerId": "{ownerId}",
+                                "ownerDisplayName": "{ownerDisplayName}",
+                                "absentMinutes": "{absentMinutes}"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
         "modals": [],
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
@@ -1029,6 +1281,9 @@
         "name": "VertixBot/UI-V3/ClaimVoteComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/ClaimVoteElementsGroup",
@@ -1092,6 +1347,9 @@
         "name": "VertixBot/UI-V3/DynamicChannel",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
@@ -1151,6 +1409,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelClearChatComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelClearChatButtonGroup",
@@ -1199,6 +1460,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelLimitComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [],
         "embedsGroups": [
             {
@@ -1236,6 +1500,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
@@ -1376,6 +1643,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/ElementsGroup",
@@ -1465,6 +1735,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelPrivacyComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
@@ -1497,6 +1770,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelRegionComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
@@ -1529,6 +1805,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [],
         "embedsGroups": [
             {
@@ -1566,6 +1845,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelResetChannelButtonGroup",
@@ -1606,6 +1888,9 @@
         "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
         "type": "component",
         "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenuGroup",
@@ -1683,6 +1968,9 @@
         "name": "VertixBot/UI-V3/ConfigComponent",
         "type": "component",
         "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/SetupEditElementsGroup",
@@ -1771,7 +2059,80 @@
                 "name": "VertixBot/UI-V3/SetupEditEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupEditEmbed"
+                        "embed": "VertixBot/UI-V3/SetupEditEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔧  Configure Master Channel #{index}",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "on": "`🟢∙On`",
+                                "off": "`🔴∙Off`",
+                                "dynamicChannelLogsChannelDisplay": {
+                                    "{dynamicChannelLogsChannelDefault}": "**None**",
+                                    "{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
+                                },
+                                "configUserMention": {
+                                    "{configUserMentionEnabled}": "{on}",
+                                    "{configUserMentionDisabled}": "{off}"
+                                },
+                                "configAutoSave": {
+                                    "{configAutoSaveEnabled}": "{on}",
+                                    "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configLogs": {
+                                    "{configLogsEnabled}": "{on}",
+                                    "{configLogsDisabled}": "{off}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                },
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "- ( {value} ){separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
+                                        "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
+                                        "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
+                                        "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
+                                        "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
+                                        "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
+                                        "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
+                                        "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
+                                        "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
+                                        "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "on": "{on}",
+                                "off": "{off}",
+                                "index": "{index}",
+                                "masterChannelId": "{masterChannelId}",
+                                "configUserMention": "{configUserMention}",
+                                "configUserMentionEnabled": "{configUserMentionEnabled}",
+                                "configUserMentionDisabled": "{configUserMentionDisabled}",
+                                "configAutoSave": "{configAutoSave}",
+                                "configAutoSaveEnabled": "{configAutoSaveEnabled}",
+                                "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configLogs": "{configLogs}",
+                                "configLogsEnabled": "{configLogsEnabled}",
+                                "configLogsDisabled": "{configLogsDisabled}",
+                                "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}",
+                                "dynamicChannelLogsChannelId": "{dynamicChannelLogsChannelId}",
+                                "dynamicChannelLogsChannelDefault": "{dynamicChannelLogsChannelDefault}",
+                                "dynamicChannelLogsChannelSelected": "{dynamicChannelLogsChannelSelected}",
+                                "dynamicChannelLogsChannelDisplay": "{dynamicChannelLogsChannelDisplay}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
+                                "verifiedRoles": "{verifiedRoles}"
+                            }
+                        }
                     }
                 ]
             },
@@ -1779,7 +2140,39 @@
                 "name": "VertixBot/UI-V3/SetupEditButtonsEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupEditButtonsEmbed"
+                        "embed": "VertixBot/UI-V3/SetupEditButtonsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
+                            "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n{dynamicChannelButtonsTemplate}",
+                            "footer": "Current enabled buttons at the menu below",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "- ( {value} ){separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
+                                        "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
+                                        "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
+                                        "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
+                                        "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
+                                        "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
+                                        "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
+                                        "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
+                                        "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
+                                        "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "index": "{index}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                            }
+                        }
                     }
                 ]
             },
@@ -1787,7 +2180,18 @@
                 "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed"
+                        "embed": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
+                            "description": "Editing buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
+                            "footer": "Current enabled buttons at the menu below",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "index": "{index}"
+                            }
+                        }
                     }
                 ]
             },
@@ -1795,7 +2199,27 @@
                 "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed"
+                        "embed": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
+                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRoles}",
+                            "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "arrayOptions": {
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "index": "{index}",
+                                "verifiedRoles": "{verifiedRoles}"
+                            }
+                        }
                     }
                 ]
             }
@@ -1810,6 +2234,9 @@
         "name": "VertixBot/UI-V3/SetupNewWizardComponent",
         "type": "component",
         "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
         "elementsGroups": [
             {
                 "name": "VertixBot/UI-V3/SetupStep1Component/ElementsGroup",
@@ -1890,7 +2317,14 @@
                 "name": "VertixBot/UI-V3/SetupStep1Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupNewStep1Embed"
+                        "embed": "VertixBot/UI-V3/SetupNewStep1Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 1 - Set Dynamic Channels Template Name",
+                            "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1).",
+                            "color": 3369963,
+                            "vars": {}
+                        }
                     }
                 ]
             },
@@ -1898,7 +2332,69 @@
                 "name": "VertixBot/UI-V3/SetupStep2Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupNewStep2Embed"
+                        "embed": "VertixBot/UI-V3/SetupNewStep2Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 2 - Dynamic Channels Setup",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "on": "`🟢∙On`",
+                                "off": "`🔴∙Off`",
+                                "message": {
+                                    "{defaultMessage}": "{dynamicChannelButtonsTemplate}\n",
+                                    "{noButtonsMessage}": "There are no buttons selected!\n"
+                                },
+                                "configUserMention": {
+                                    "{configUserMentionEnabled}": "{on}",
+                                    "{configUserMentionDisabled}": "{off}"
+                                },
+                                "configAutoSave": {
+                                    "{configAutoSaveEnabled}": "{on}",
+                                    "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "footer": {
+                                    "{defaultFooter}": "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
+                                    "{noButtonsFooter}": "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "- ( {value} ){separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
+                                        "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
+                                        "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
+                                        "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
+                                        "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
+                                        "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
+                                        "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
+                                        "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
+                                        "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
+                                        "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "on": "{on}",
+                                "off": "{off}",
+                                "message": "{message}",
+                                "defaultMessage": "{defaultMessage}",
+                                "noButtonsMessage": "{noButtonsMessage}",
+                                "configUserMention": "{configUserMention}",
+                                "configUserMentionEnabled": "{configUserMentionEnabled}",
+                                "configUserMentionDisabled": "{configUserMentionDisabled}",
+                                "configAutoSave": "{configAutoSave}",
+                                "configAutoSaveEnabled": "{configAutoSaveEnabled}",
+                                "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "footer": "{footer}",
+                                "defaultFooter": "{defaultFooter}",
+                                "noButtonsFooter": "{noButtonsFooter}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                            }
+                        }
                     }
                 ]
             },
@@ -1906,7 +2402,30 @@
                 "name": "VertixBot/UI-V3/SetupStep3Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/SetupNewStep3Embed"
+                        "embed": "VertixBot/UI-V3/SetupNewStep3Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 3 - Select Verified Roles",
+                            "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+                            "color": 3369963,
+                            "options": {
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesDefault}": "**None**"
+                                }
+                            },
+                            "arrayOptions": {
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDefault": "{verifiedRolesDefault}"
+                            }
+                        }
                     }
                 ]
             },

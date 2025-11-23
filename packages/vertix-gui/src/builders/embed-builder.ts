@@ -1,4 +1,8 @@
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+
+import type { EmbedBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 import type {
     UIInstancesTypes
@@ -6,12 +10,17 @@ import type {
     UIArgs
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-type StringHandler<TVars> = string | ( ( vars: TVars ) => Promise<string> | string );
-type NumberHandler<TVars> = number | ( ( vars: TVars ) => Promise<number> | number );
-type OptionsHandler<TVars> = object | ( ( vars: TVars ) => Promise<object> | object );
-type LogicHandler<TArgs extends UIArgs, TVars> = ( args: TArgs, vars: TVars ) => Promise<object> | object;
+type AsyncOrSync<T> = Promise<T> | T;
 
-export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
+export type StringHandler<TVars> = string | ( ( vars: TVars ) => AsyncOrSync<string> );
+export type NumberHandler<TVars> = number | ( ( vars: TVars ) => AsyncOrSync<number> );
+export type OptionsHandler<TVars> =
+    | Record<string, JsonValue>
+    | ( ( vars: TVars ) => AsyncOrSync<Record<string, JsonValue>> );
+export type LogicHandler<TArgs extends UIArgs, TVars> =
+    | ( ( args: TArgs, vars: TVars ) => AsyncOrSync<Record<string, JsonValue>> );
+
+export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, JsonValue>> {
     private name: string;
     private instanceType: UIInstancesTypes | null = null;
     private title: StringHandler<TVars> | undefined;
@@ -77,7 +86,7 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
     public build(): typeof UIEmbedBase {
         const builder = this;
 
-        return class GeneratedEmbed extends UIEmbedBase {
+        const GeneratedEmbed = class extends UIEmbedBase {
             public static getName() {
                 return builder.name;
             }
@@ -153,12 +162,32 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = any> {
                 return builder.arrayOptions || {};
             }
 
-            protected getLogicAsync( args: TArgs ): Promise<any> {
+            protected getLogicAsync( args: TArgs ): Promise<Record<string, JsonValue>> {
                 if ( builder.logic ) {
                     return Promise.resolve( builder.logic( args, builder.vars as TVars ) );
                 }
                 return super.getLogicAsync( args );
             }
         };
+
+        const metadata: EmbedBuilderMetadata<TArgs, TVars> = {
+            name: builder.name,
+            instanceType: builder.instanceType,
+            title: builder.title,
+            description: builder.description,
+            color: builder.color,
+            image: builder.image,
+            footer: builder.footer,
+            options: builder.options,
+            arrayOptions: builder.arrayOptions,
+            logic: builder.logic,
+            vars: builder.vars
+        };
+
+        Reflect.defineProperty( GeneratedEmbed, BUILDER_METADATA_SYMBOL, {
+            value: metadata
+        } );
+
+        return GeneratedEmbed;
     }
 }

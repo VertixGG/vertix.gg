@@ -1,11 +1,25 @@
 import type { ChannelType, PermissionsBitField } from "discord.js";
 
-import type { UIComponentTypeConstructor, UIExecutionSteps, UIInstancesTypes, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type {
+    UIArgs,
+    UIComponentTypeConstructor,
+    UIExecutionSteps,
+    UIInstancesTypes,
+    UIEntityTypes
+} from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import type { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+
+import type {
+    StringHandler,
+    NumberHandler,
+    OptionsHandler,
+    LogicHandler
+} from "@vertix.gg/gui/src/builders/embed-builder";
 
 export const BUILDER_METADATA_SYMBOL = Symbol( "VertixGUI/BuilderMetadata" );
 
@@ -45,6 +59,23 @@ export interface AdapterBuilderMetadata {
     wizard?: WizardAdapterMetadata;
 }
 
+export interface EmbedBuilderMetadata<
+    TArgs extends UIArgs = UIArgs,
+    TVars extends Record<string, JsonValue> = Record<string, JsonValue>
+> {
+    name: string;
+    instanceType: UIInstancesTypes | null;
+    title?: StringHandler<TVars>;
+    description?: StringHandler<TVars>;
+    color?: NumberHandler<TVars>;
+    image?: StringHandler<TVars>;
+    footer?: StringHandler<TVars>;
+    options?: OptionsHandler<TVars>;
+    arrayOptions?: OptionsHandler<TVars>;
+    logic?: LogicHandler<TArgs, TVars>;
+    vars?: TVars;
+}
+
 export interface WizardAdapterMetadata {
     componentConfig?: {
         name: string;
@@ -61,6 +92,7 @@ export interface FlowBuilderMetadata {
 export type BuilderMetadata =
     | ComponentBuilderMetadata
     | AdapterBuilderMetadata
+    | EmbedBuilderMetadata
     | FlowBuilderMetadata;
 
 export type BuilderMetadataCarrier = {

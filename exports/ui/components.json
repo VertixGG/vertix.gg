@@ -43,7 +43,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-General/LanguageComponent",
@@ -83,7 +90,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-General/SetupComponent",
@@ -204,7 +218,14 @@
         "defaultElementsGroup": "VertixBot/UI-General/SetupElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 2,
+                "withDefinition": 1,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-General/WelcomeComponent",
@@ -245,7 +266,14 @@
         "defaultElementsGroup": "VertixBot/UI-General/WelcomeElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-General/WelcomeEmbed",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-General/NotYourChannelComponent",
@@ -269,7 +297,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/ClaimResultComponent",
@@ -341,7 +376,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 7,
+                "withDefinition": 0,
+                "missingDefinition": 7
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/ClaimStartComponent",
@@ -376,7 +418,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/ClaimVoteComponent",
@@ -442,7 +491,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannel",
@@ -501,7 +557,14 @@
         "defaultElementsGroup": "VertixBot/UI-V2/DynamicChannelElementsGroup",
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent",
@@ -552,7 +615,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitComponent",
@@ -592,7 +662,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
@@ -632,7 +709,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
@@ -775,7 +859,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 12,
+                "withDefinition": 0,
+                "missingDefinition": 12
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent",
@@ -818,7 +909,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 2,
+                "withDefinition": 0,
+                "missingDefinition": 2
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
@@ -898,7 +996,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 5,
+                "withDefinition": 0,
+                "missingDefinition": 5
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/ConfigComponent",
@@ -1028,7 +1133,14 @@
         "defaultElementsGroup": "VertixBot/UI-V2/SetupEditElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V2/SetupEditEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 4,
+                "withDefinition": 0,
+                "missingDefinition": 4
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V2/SetupNewWizardComponent",
@@ -1158,7 +1270,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 5,
+                "withDefinition": 0,
+                "missingDefinition": 5
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/ClaimResultComponent",
@@ -1230,7 +1349,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 7,
+                "withDefinition": 0,
+                "missingDefinition": 7
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/ClaimStartComponent",
@@ -1275,7 +1401,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/ClaimVoteComponent",
@@ -1341,7 +1474,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannel",
@@ -1403,7 +1543,14 @@
         "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannel/EmbedsGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelClearChatComponent",
@@ -1454,7 +1601,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelLimitComponent",
@@ -1494,7 +1648,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
@@ -1637,7 +1798,14 @@
         "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 12,
+                "withDefinition": 0,
+                "missingDefinition": 12
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
@@ -1729,7 +1897,14 @@
         "defaultElementsGroup": "VertixBot/UI-General/YesNoElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelPrivacyComponent",
@@ -1764,7 +1939,14 @@
         "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelRegionComponent",
@@ -1799,7 +1981,14 @@
         "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 0,
+                "missingDefinition": 1
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelRenameComponent",
@@ -1839,7 +2028,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 0,
+                "missingDefinition": 3
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
@@ -1882,7 +2078,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 2,
+                "withDefinition": 0,
+                "missingDefinition": 2
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
@@ -1962,7 +2165,14 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 5,
+                "withDefinition": 0,
+                "missingDefinition": 5
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/ConfigComponent",
@@ -2234,7 +2444,14 @@
         "defaultElementsGroup": "VertixBot/UI-V3/SetupEditElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/SetupEditEmbedGroup",
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 4,
+                "withDefinition": 4,
+                "missingDefinition": 0
+            }
+        }
     },
     {
         "name": "VertixBot/UI-V3/SetupNewWizardComponent",
@@ -2456,6 +2673,13 @@
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
-        "hooks": []
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 5,
+                "withDefinition": 3,
+                "missingDefinition": 2
+            }
+        }
     }
 ]

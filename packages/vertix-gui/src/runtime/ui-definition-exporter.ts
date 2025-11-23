@@ -78,11 +78,46 @@ type AdapterClass =
 
 type FlowClass = typeof UIFlowBase;
 
+interface EmbedAuditStats {
+    total: number;
+    withDefinition: number;
+    missingDefinition: number;
+}
+
+interface ModuleExportSummary {
+    components: number;
+    adapters: number;
+    flows: number;
+    embedsTotal: number;
+    embedsWithDefinition: number;
+    embedsMissingDefinition: number;
+}
+
 type FlowTriggerRegistrar = (
     flowName: string,
     transition: string,
     trigger: FlowTriggerDefinition
 ) => void;
+
+function getOrCreateModuleSummary(
+    summaries: Map<string, ModuleExportSummary>,
+    moduleName: string
+): ModuleExportSummary {
+    let summary = summaries.get( moduleName );
+    if ( !summary ) {
+        summary = {
+            components: 0,
+            adapters: 0,
+            flows: 0,
+            embedsTotal: 0,
+            embedsWithDefinition: 0,
+            embedsMissingDefinition: 0
+        };
+        summaries.set( moduleName, summary );
+    }
+
+    return summary;
+}
 
 export async function exportUIDefinitions( uiService: UIService, options: ExporterOptions ) {
     const includeComponents = options.includeComponents ?? true;
@@ -96,12 +131,15 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
     const handlerMap = new Map<string, HandlerCapture>();
     const wizardAdapterComponents = new Map<string, string[]>();
     const flowTriggersByAdapter = new Map<string, Map<string, FlowTriggerDefinition[]>>();
+    const moduleSummaries = new Map<string, ModuleExportSummary>();
+    const globalEmbedStats: EmbedAuditStats = { total: 0, withDefinition: 0, missingDefinition: 0 };
 
     const modules = uiService.getUIModules();
 
     for ( const [ moduleName, ModuleCtor ] of modules ) {
         log.info( "exportUIDefinitions", `Exporting module ${ moduleName }` );
         const moduleInstance = uiService.getUIModule<UIModuleBase>( moduleName, true ) ?? new ModuleCtor();
+        const moduleSummary = getOrCreateModuleSummary( moduleSummaries, moduleName );
 
         if ( includeAdapters ) {
             const moduleAdapters = ModuleCtor.getAdapters?.() ?? [];
@@ -114,9 +152,12 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
                         components,
                         handlerMap,
                         moduleName,
-                        flowTriggersByAdapter
+                        flowTriggersByAdapter,
+                        moduleSummary,
+                        globalEmbedStats
                     );
                     adapters.push( definition );
+                    moduleSummary.adapters += 1;
 
                     const adapterMetadata = getAdapterMetadata( adapterClass );
                     const wizardComponents = extractWizardComponentNames( adapterMetadata );
@@ -148,6 +189,7 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
                         flowTriggersByAdapter
                     );
                     flows.push( definition );
+                    moduleSummary.flows += 1;
                 } catch( error ) {
                     log.error(
                         "exportUIDefinitions",
@@ -160,6 +202,18 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
         }
     }
 
+    const moduleSummaryList = Array.from( moduleSummaries.entries() ).map( ( [ moduleName, summary ] ) => ( {
+        module: moduleName,
+        components: summary.components,
+        adapters: summary.adapters,
+        flows: summary.flows,
+        embeds: {
+            total: summary.embedsTotal,
+            withDefinition: summary.embedsWithDefinition,
+            missingDefinition: summary.embedsMissingDefinition
+        }
+    } ) );
+
     const exportMeta = {
         schemaVersion: "1.0.0",
         exportedAt: new Date().toISOString(),
@@ -168,7 +222,13 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
             adapters: adapters.length,
             flows: flows.length
         },
-        modules: Array.from( modules.keys() )
+        modules: Array.from( modules.keys() ),
+        moduleSummary: moduleSummaryList,
+        embedCoverage: {
+            total: globalEmbedStats.total,
+            withDefinition: globalEmbedStats.withDefinition,
+            missingDefinition: globalEmbedStats.missingDefinition
+        }
     };
 
     if ( includeComponents ) {
@@ -203,7 +263,15 @@ function determineAdapterKind( adapterClass: AdapterClass ): string {
     return "base";
 }
 
-function serializeComponent( componentClass: UIComponentTypeConstructor, moduleName?: string ): ComponentDefinition {
+interface ComponentSerializationResult {
+    definition: ComponentDefinition;
+    embedAudit: EmbedAuditStats;
+}
+
+function serializeComponent(
+    componentClass: UIComponentTypeConstructor,
+    moduleName?: string
+): ComponentSerializationResult {
     const metadata = getComponentMetadata( componentClass );
 
     const instanceType = metadata?.instanceType ?? safeCall( () => componentClass.getInstanceType() ) ?? "dynamic";
@@ -221,8 +289,20 @@ function serializeComponent( componentClass: UIComponentTypeConstructor, moduleN
         serializeElementsGroup( componentClass, group, index )
     );
 
+    const embedAudit: EmbedAuditStats = {
+        total: 0,
+        withDefinition: 0,
+        missingDefinition: 0
+    };
+    const recordEmbed = ( reference: EmbedReference ) => {
+        embedAudit.total += 1;
+        if ( reference.definition ) {
+            embedAudit.withDefinition += 1;
+        }
+    };
+
     let embedsGroups = rawEmbedsGroups.map( ( group, index ) =>
-        serializeEmbedsGroup( componentClass, group, index )
+        serializeEmbedsGroup( componentClass, group, index, recordEmbed )
     );
 
     const modals = rawModals.map( ( modal ) => extractEntityName( modal ) );
@@ -253,14 +333,20 @@ function serializeComponent( componentClass: UIComponentTypeConstructor, moduleN
                 {
                     name: groupName,
                     resolver: undefined,
-                    items: directEmbeds.map( ( embed ) => serializeEmbedReference( embed ) ),
+                    items: directEmbeds.map( ( embed ) => {
+                        const reference = serializeEmbedReference( embed );
+                        recordEmbed( reference );
+                        return reference;
+                    } ),
                     options: undefined
                 }
             ];
         }
     }
 
-    return {
+    embedAudit.missingDefinition = embedAudit.total - embedAudit.withDefinition;
+
+    const componentDefinition: ComponentDefinition = {
         name: componentClass.getName(),
         type: safeCall( () => componentClass.getType() ) ?? "component",
         instanceType,
@@ -275,7 +361,20 @@ function serializeComponent( componentClass: UIComponentTypeConstructor, moduleN
         defaultMarkdownsGroup:
             metadata?.defaultMarkdownsGroup ?? safeCall( () => componentClass.getDefaultMarkdownsGroup?.() ) ?? null,
         hooks: [],
-        options: undefined
+        options: embedAudit.total
+            ? {
+                embedAudit: {
+                    total: embedAudit.total,
+                    withDefinition: embedAudit.withDefinition,
+                    missingDefinition: embedAudit.missingDefinition
+                }
+            }
+            : undefined
+    };
+
+    return {
+        definition: componentDefinition,
+        embedAudit
     };
 }
 
@@ -303,11 +402,16 @@ function serializeElementsGroup(
 function serializeEmbedsGroup(
     componentClass: UIComponentTypeConstructor,
     group: typeof UIEmbedsGroupBase,
-    index: number
+    index: number,
+    recordEmbed?: ( reference: EmbedReference ) => void
 ): EmbedsGroupDefinition {
     const name = group.getName?.() ?? `${ componentClass.getName() }/EmbedsGroup/${ index }`;
     const itemsRaw = safeCall( () => group.getItems?.() ) ?? [];
-    const items = itemsRaw.map( ( embed ) => serializeEmbedReference( embed ) );
+    const items = itemsRaw.map( ( embed ) => {
+        const reference = serializeEmbedReference( embed );
+        recordEmbed?.( reference );
+        return reference;
+    } );
 
     return {
         name,
@@ -323,7 +427,9 @@ async function serializeAdapter(
     components: Map<string, ComponentDefinition>,
     handlerMap: Map<string, HandlerCapture>,
     moduleName: string,
-    flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>
+    flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>,
+    moduleSummary: ModuleExportSummary,
+    globalEmbedStats: EmbedAuditStats
 ): Promise<AdapterDefinition> {
     const adapterName = adapterClass.getName();
     const adapterInstance = uiService.get( adapterName, true ) as UIAdapterBase<any, any> | undefined;
@@ -340,7 +446,15 @@ async function serializeAdapter(
             : "";
 
     if ( componentClass && !components.has( componentName ) ) {
-        components.set( componentName, serializeComponent( componentClass, moduleName ) );
+        const { definition, embedAudit } = serializeComponent( componentClass, moduleName );
+        components.set( componentName, definition );
+        moduleSummary.components += 1;
+        moduleSummary.embedsTotal += embedAudit.total;
+        moduleSummary.embedsWithDefinition += embedAudit.withDefinition;
+        moduleSummary.embedsMissingDefinition += embedAudit.missingDefinition;
+        globalEmbedStats.total += embedAudit.total;
+        globalEmbedStats.withDefinition += embedAudit.withDefinition;
+        globalEmbedStats.missingDefinition += embedAudit.missingDefinition;
     }
 
     const executionSteps = serializeExecutionSteps( adapterClass );

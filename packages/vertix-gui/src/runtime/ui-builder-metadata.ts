@@ -42,6 +42,7 @@ export interface AdapterBuilderMetadata {
     excludedElements?: UIEntityTypes;
     permissions?: PermissionsBitField;
     channelTypes?: ChannelType[];
+    shouldDisableMiddleware?: boolean;
     generateCustomIdForEntityHandler?: unknown;
     getCustomIdForEntityHandler?: unknown;
     shouldDeletePreviousReplyHandler?: unknown;

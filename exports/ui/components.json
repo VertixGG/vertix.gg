@@ -1977,7 +1977,13 @@
                 "items": [
                     [
                         {
-                            "element": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu"
+                            "element": "VertixBot/UI-V3/SetupEditOpenNameButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/SetupEditOpenButtonsButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton"
                         }
                     ],
                     [

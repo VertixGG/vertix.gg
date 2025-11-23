@@ -3,6 +3,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { ChannelType, PermissionFlagsBits, PermissionsBitField } from "discord.js";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
 
@@ -11,58 +12,67 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { BaseMessageOptions, VoiceChannel } from "discord.js";
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-export class WelcomeAdapter extends UIAdapterBase<VoiceChannel, UIDefaultButtonChannelVoiceInteraction> {
-    public static getName() {
-        return "VertixBot/UI-General/WelcomeAdapter";
-    }
+type WelcomeInteraction = UIDefaultButtonChannelVoiceInteraction;
+type WelcomeContext = IAdapterContext<WelcomeInteraction, UIArgs>;
 
-    public static getComponent() {
-        return WelcomeComponent;
-    }
+const WelcomeAdapterBase = new AdapterBuilderBase<
+    VoiceChannel,
+    WelcomeInteraction,
+        typeof UIAdapterBase<VoiceChannel, WelcomeInteraction>,
+        UIArgs,
+        WelcomeContext
+>( "VertixBot/UI-General/WelcomeAdapter", UIAdapterBase )
+    .setComponent( WelcomeComponent )
+    .setPermissions( new PermissionsBitField( PermissionFlagsBits.ViewChannel ) )
+    .setChannelTypes( [ ChannelType.GuildVoice, ChannelType.GuildText ] )
+    .getStartArgs( async() => ( {} ) )
+    .getReplyArgs( async() => ( {} ) )
+    .onEntityMap( async( { bindButton } ) => {
+        bindButton(
+            "VertixBot/UI-General/WelcomeSetupButton",
+            async( context, interaction ) => {
+                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                await uiService.get( "VertixBot/UI-General/SetupAdapter" )?.ephemeral( interaction );
+                context.deleteArgs( interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/WelcomeFlow",
+                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked"
+                        }
+                    }
+                ]
+            }
+        );
+    } )
+    .build();
 
-    public getPermissions() {
+export class WelcomeAdapter extends WelcomeAdapterBase {
+    public override getPermissions() {
         return new PermissionsBitField( PermissionFlagsBits.ViewChannel );
     }
 
-    public getChannelTypes() {
+    public override getChannelTypes() {
         return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
-    protected getMessage(
+    protected override getMessage(
         from: UIAdapterBuildSource,
         context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction,
-        argsFromManager?: UIArgs
+        argsFromManager: UIArgs = {}
     ): BaseMessageOptions {
-        const result = super.getMessage();
+        const result = super.getMessage( from, context, argsFromManager );
 
-        // Mention the owner of the channel - TODO Find cleaner way to do this.
-        if ( argsFromManager?.userId && "send" === from ) {
+        if ( argsFromManager?.userId && from === "send" ) {
             result.content = "<@" + argsFromManager.userId + ">";
         }
 
         return result;
-    }
-
-    protected getStartArgs() {
-        return {};
-    }
-
-    protected getReplyArgs() {
-        return {};
-    }
-
-    protected onEntityMap() {
-        this.bindButton( "VertixBot/UI-General/WelcomeSetupButton", async( interaction ) => {
-            const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ),
-                uiAdapter = uiService.get( "VertixBot/UI-General/SetupAdapter" );
-
-            await uiAdapter?.ephemeral( interaction );
-
-            const argsId = this.getArgsManager().getArgsId( interaction );
-
-            this.getArgsManager().deleteArgs( this, argsId );
-        } );
     }
 }

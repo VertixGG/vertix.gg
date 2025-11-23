@@ -16,6 +16,7 @@ import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow"
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
 import { HelpFlow } from "@vertix.gg/bot/src/ui/general/help/help-flow";
 import { SetupFlow } from "@vertix.gg/bot/src/ui/general/setup/setup-flow";
+import { FeedbackFlow } from "@vertix.gg/bot/src/ui/general/feedback/feedback-flow";
 import { WelcomeController } from "@vertix.gg/bot/src/controllers/welcome-controller";
 
 import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
@@ -36,7 +37,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [ WelcomeFlow, SetupFlow, HelpFlow, LanguageFlow ];
+        return [ WelcomeFlow, SetupFlow, HelpFlow, LanguageFlow, FeedbackFlow ];
     }
 
     public static getSystemFlows() {

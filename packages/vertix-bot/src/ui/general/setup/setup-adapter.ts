@@ -16,10 +16,7 @@ import {
     UIInstancesTypes
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    AdminAdapterBuilder
-
-} from "@vertix.gg/gui/src/builders/admin-adapter-builder";
+import { AdminAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-adapter-builder";
 
 import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
 import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
@@ -66,12 +63,18 @@ import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versi
 
 import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
-    UIDefaultButtonChannelTextInteraction, UIDefaultModalChannelTextInteraction
+    UIDefaultButtonChannelTextInteraction,
+    UIDefaultModalChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 import type { BaseGuildTextChannel } from "discord.js";
 import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+
+type SetupInteractions =
+    | UIDefaultButtonChannelTextInteraction
+    | UIDefaultModalChannelTextInteraction
+    | UIDefaultStringSelectMenuChannelTextInteraction;
 
 async function onSelectEditMasterChannel(
     context: IAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
@@ -327,7 +330,7 @@ const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponen
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction | UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
+const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteractions, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
     .setComponent( SetupComponent )
     .setExcludedElements( [ LanguageSelectMenu ] )
     .generateCustomIdForEntity( ( context, entity ) => {
@@ -359,39 +362,113 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButt
 
         return args;
     } )
-    .onBeforeBuildRun( async( {
-        bindButton,
-        bindModal,
-        bindSelectMenu
-    } ) => {
+    .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateButton",
-            ( context, interaction ) => onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 )
+            async( context, interaction ) => {
+                await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateV3Button",
-            ( context, interaction ) => onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 )
+            async( context, interaction ) => {
+                await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupBadwordsEditButton",
-            onEditBadwordsClicked
+            async( context, interaction ) => {
+                await onEditBadwordsClicked( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/LanguageChooseButton",
-            onLanguageChooseClicked
+            async( context, interaction ) => {
+                await onLanguageChooseClicked( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindModal<UIDefaultModalChannelTextInteraction>(
             "VertixBot/UI-General/BadwordsModal",
-            onBadwordsModalSubmitted
+            async( context, interaction ) => {
+                await onBadwordsModalSubmitted( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterEditSelectMenu",
-            onSelectEditMasterChannel
+            async( context, interaction ) => {
+                await onSelectEditMasterChannel( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
     } )
     .build();

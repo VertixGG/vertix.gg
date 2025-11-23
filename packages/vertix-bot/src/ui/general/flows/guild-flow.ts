@@ -12,13 +12,6 @@ import type { ChannelType } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIFlowData, FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
-// --- Define Constants ---
-const STATE_INITIAL = "VertixBot/UI-General/GuildFlow/States/Initial";
-const TRANSITION_ON_JOIN = "VertixBot/GuildEvents/VertixOnJoin";
-// Target state from WelcomeFlow (ensure this is correct)
-const TARGET_WELCOME_INITIAL = "VertixBot/UI-General/WelcomeFlow/States/Initial";
-// --- End Constants ---
-
 // Minimal data interface for this system flow
 export interface GuildFlowData extends UIFlowData {}
 
@@ -42,19 +35,21 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
 
     public static getFlowTransitions(): Record<string, string[]> {
         return {
-            [ STATE_INITIAL ]: [ TRANSITION_ON_JOIN ],
+            "VertixBot/UI-General/GuildFlow/States/Initial": [
+                "VertixBot/GuildEvents/VertixOnJoin"
+            ],
         };
     }
 
     public static getNextStates(): Record<string, string> {
         return {
-            [ TRANSITION_ON_JOIN ]: TARGET_WELCOME_INITIAL,
+            "VertixBot/GuildEvents/VertixOnJoin": "VertixBot/UI-General/WelcomeFlow/States/Initial",
         };
     }
 
     public static getRequiredData(): Record<string, ( keyof GuildFlowData )[]> {
         return {
-            [ TRANSITION_ON_JOIN ]: [],
+            "VertixBot/GuildEvents/VertixOnJoin": [],
         };
     }
 
@@ -66,8 +61,8 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
             new FlowIntegrationPointGeneric( {
                 flowName: "System/GuildEvents", // Conceptual source
                 description: "Entry point triggered when bot joins a guild.",
-                transition: TRANSITION_ON_JOIN,
-                targetState: STATE_INITIAL
+                transition: "VertixBot/GuildEvents/VertixOnJoin",
+                targetState: "VertixBot/UI-General/GuildFlow/States/Initial"
             } )
         ];
     }
@@ -80,9 +75,9 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
             new FlowIntegrationPointEvent( {
                 flowName: WelcomeFlow.getName(), // Use static name of target flow
                 description: "Handoff to WelcomeFlow after bot joins.",
-                sourceState: STATE_INITIAL,
-                transition: TRANSITION_ON_JOIN,
-                targetState: TARGET_WELCOME_INITIAL
+                sourceState: "VertixBot/UI-General/GuildFlow/States/Initial",
+                transition: "VertixBot/GuildEvents/VertixOnJoin",
+                targetState: "VertixBot/UI-General/WelcomeFlow/States/Initial"
             } )
         ];
     }
@@ -116,7 +111,7 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
 
     public override getNextState( transition: string ): string {
         // Basic next state logic, assumes valid transition
-        return GuildFlow.getNextStates()[ transition ] ?? STATE_INITIAL; // Fallback to initial
+        return GuildFlow.getNextStates()[ transition ] ?? "VertixBot/UI-General/GuildFlow/States/Initial"; // Fallback to initial
     }
 
     public override getRequiredData( transition: string ): ( keyof GuildFlowData )[] {
@@ -124,7 +119,7 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
     }
 
     protected override getInitialState(): string {
-        return STATE_INITIAL;
+        return "VertixBot/UI-General/GuildFlow/States/Initial";
     }
 
     protected override getInitialData(): GuildFlowData {

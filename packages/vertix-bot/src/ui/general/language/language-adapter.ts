@@ -1,46 +1,72 @@
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { AdminAdapterBase } from "@vertix.gg/bot/src/ui/general/admin/admin-adapter-base";
+import { AdminAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-adapter-builder";
 
 import { LanguageComponent } from "@vertix.gg/bot/src/ui/general/language/language-component";
 
 import type {
-    UIDefaultButtonChannelTextInteraction,
-    UIDefaultStringSelectMenuChannelTextInteraction
-} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+    ButtonInteraction,
+    StringSelectMenuInteraction,
+    BaseGuildTextChannel
+} from "discord.js";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type UIService from "@vertix.gg/gui/src/ui-service";
 
-import type { BaseGuildTextChannel } from "discord.js";
+type LanguageInteractions =
+    | ButtonInteraction<"cached">
+    | StringSelectMenuInteraction<"cached">;
 
-export class LanguageAdapter extends AdminAdapterBase<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction> {
-    public static getName() {
-        return "VertixBot/UI-General/LanguageAdapter";
-    }
+const LanguageAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, LanguageInteractions, UIArgs>(
+    "VertixBot/UI-General/LanguageAdapter"
+)
+    .setComponent( LanguageComponent )
+    .getReplyArgs( async() => ( {} ) )
+    .onEntityMap( async( { bindSelectMenu, bindButton } ) => {
+        bindSelectMenu(
+            "VertixBot/UI-General/LanguageSelectMenu",
+            async( context, interaction ) => {
+                const language = interaction.values[ 0 ];
 
-    public static getComponent() {
-        return LanguageComponent;
-    }
+                await GuildDataManager.$.setLanguage( interaction.guild, language );
 
-    protected async getReplyArgs() {
-        return {};
-    }
+                await context.editReply( interaction, {
+                    _language: language
+                } );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/LanguageFlow",
+                        transition: "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage",
+                        mutations: [ { type: "set", path: [ "selectedLanguage" ] } ],
+                        navigation: {
+                            targetState: "VertixBot/UI-General/LanguageFlow/States/LanguageSelected"
+                        }
+                    }
+                ]
+            }
+        );
 
-    protected onEntityMap() {
-        this.bindSelectMenu( "VertixBot/UI-General/LanguageSelectMenu", this.onLanguageSelected );
+        bindButton(
+            "VertixBot/UI-General/DoneButton",
+            async( context, interaction ) => {
+                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                await uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/LanguageFlow",
+                        transition: "VertixBot/UI-General/LanguageFlow/Transitions/Done",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/LanguageFlow/States/Completed"
+                        }
+                    }
+                ]
+            }
+        );
+    } )
+    .build();
 
-        this.bindButton( "VertixBot/UI-General/DoneButton", this.onDoneClicked );
-    }
-
-    private async onLanguageSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {
-        const language = interaction.values[ 0 ];
-
-        await GuildDataManager.$.setLanguage( interaction.guild, language );
-
-        this.uiService.get( "VertixBot/UI-General/LanguageAdapter" )?.editReply( interaction, {
-            _language: language
-        } );
-    }
-
-    private async onDoneClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
-        this.uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
-    }
-}
+export { LanguageAdapter };

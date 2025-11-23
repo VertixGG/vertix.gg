@@ -16,12 +16,14 @@ import { DynamicChannelRegionFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-chann
 import { DynamicChannelRenameFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-flow";
 import { DynamicChannelResetChannelFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-flow";
 import { DynamicChannelTransferOwnerFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-flow";
+import { DynamicChannelFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-flow";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { ClaimResultFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-result-flow";
 import { ClaimStartFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-start-flow";
 import { ClaimVoteFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-vote-flow";
 import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
+import { SetupEditFlow } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-flow";
 
 import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 
@@ -56,7 +58,9 @@ export class UIModuleV3 extends UIModuleBase {
             DynamicChannelRegionFlow,
             DynamicChannelPermissionsFlow,
             DynamicChannelPrivacyFlow,
-            DynamicChannelPrimaryMessageEditFlow
+            DynamicChannelPrimaryMessageEditFlow,
+            DynamicChannelFlow,
+            SetupEditFlow
         ];
     }
 

@@ -93,6 +93,7 @@ export class AdapterBuilderBase<
         | undefined;
 
     protected static dedicatedLogger = new Logger( this.getName() );
+    protected disableMiddlewareFlag: boolean | undefined;
 
     public static getName(): string {
         return "VertixGUI/Builders/AdapterBuilderBase";
@@ -120,6 +121,16 @@ export class AdapterBuilderBase<
 
     public setChannelTypes( channelTypes: ChannelType[] ): this {
         this.channelTypes = channelTypes;
+        return this;
+    }
+
+    public disableMiddleware(): this {
+        this.disableMiddlewareFlag = true;
+        return this;
+    }
+
+    public setShouldDisableMiddleware( value: boolean ): this {
+        this.disableMiddlewareFlag = value;
         return this;
     }
 
@@ -321,6 +332,14 @@ export class AdapterBuilderBase<
                     }
                     return base as TContext;
                 }
+
+                protected shouldDisableMiddleware(): boolean {
+                    const builderValue = builder.disableMiddlewareFlag;
+                    if ( builderValue !== undefined ) {
+                        return builderValue;
+                    }
+                    return super.shouldDisableMiddleware ? super.shouldDisableMiddleware() : false;
+                }
             };
 
             return AdapterBuilderGenerated as TAdapterStaticContract & (
@@ -339,6 +358,7 @@ export class AdapterBuilderBase<
             excludedElements: builder.excludedElements,
             permissions: builder.permissions,
             channelTypes: builder.channelTypes,
+            shouldDisableMiddleware: builder.disableMiddlewareFlag,
             generateCustomIdForEntityHandler: builder.generateCustomIdForEntityHandler,
             getCustomIdForEntityHandler: builder.getCustomIdForEntityHandler,
             startArgsHandler: builder.startArgsHandler,

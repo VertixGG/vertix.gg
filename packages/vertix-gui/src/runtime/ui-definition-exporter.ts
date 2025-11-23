@@ -70,13 +70,6 @@ interface HandlerCapture {
     id: string;
 }
 
-interface EmbedAuditAlert {
-    component: string;
-    module?: string;
-    missing: number;
-    total: number;
-}
-
 type AdapterConstructor = new ( ...args: never[] ) => UIAdapterBase<any, any>;
 
 type AdapterClass =
@@ -115,6 +108,19 @@ interface EmbedAuditStats {
     missingDefinition: number;
 }
 
+interface ComponentEmbedDiagnostics {
+    component: string;
+    module?: string;
+    total: number;
+    withDefinition: number;
+    missing: ComponentEmbedDiagnosticEntry[];
+}
+
+interface ComponentEmbedDiagnosticEntry {
+    group: string;
+    embed: string;
+}
+
 interface ModuleExportSummary {
     components: number;
     adapters: number;
@@ -122,6 +128,8 @@ interface ModuleExportSummary {
     embedsTotal: number;
     embedsWithDefinition: number;
     embedsMissingDefinition: number;
+    componentsWithEmbeds: number;
+    componentsWithMissingEmbeds: number;
 }
 
 type FlowTriggerRegistrar = (
@@ -142,7 +150,9 @@ function getOrCreateModuleSummary(
             flows: 0,
             embedsTotal: 0,
             embedsWithDefinition: 0,
-            embedsMissingDefinition: 0
+            embedsMissingDefinition: 0,
+            componentsWithEmbeds: 0,
+            componentsWithMissingEmbeds: 0
         };
         summaries.set( moduleName, summary );
     }
@@ -164,7 +174,7 @@ async function exportUIDefinitionsInternal( uiService: UIService, options: Expor
     const flowTriggersByAdapter = new Map<string, Map<string, FlowTriggerDefinition[]>>();
     const moduleSummaries = new Map<string, ModuleExportSummary>();
     const globalEmbedStats: EmbedAuditStats = { total: 0, withDefinition: 0, missingDefinition: 0 };
-    const embedAuditWarnings: EmbedAuditAlert[] = [];
+    const embedDiagnostics: ComponentEmbedDiagnostics[] = [];
 
     const modules = uiService.getUIModules();
 
@@ -187,7 +197,7 @@ async function exportUIDefinitionsInternal( uiService: UIService, options: Expor
                         flowTriggersByAdapter,
                         moduleSummary,
                         globalEmbedStats,
-                        embedAuditWarnings,
+                        embedDiagnostics,
                         logger
                     );
                     adapters.push( definition );
@@ -245,7 +255,9 @@ async function exportUIDefinitionsInternal( uiService: UIService, options: Expor
             total: summary.embedsTotal,
             withDefinition: summary.embedsWithDefinition,
             missingDefinition: summary.embedsMissingDefinition
-        }
+        },
+        componentsWithEmbeds: summary.componentsWithEmbeds,
+        componentsWithMissingEmbeds: summary.componentsWithMissingEmbeds
     } ) );
 
     const exportMeta = {
@@ -263,7 +275,7 @@ async function exportUIDefinitionsInternal( uiService: UIService, options: Expor
             withDefinition: globalEmbedStats.withDefinition,
             missingDefinition: globalEmbedStats.missingDefinition
         },
-        embedAuditWarnings
+        embedDiagnostics
     };
 
     if ( includeComponents ) {
@@ -280,11 +292,21 @@ async function exportUIDefinitionsInternal( uiService: UIService, options: Expor
 
     writeJson( path.join( options.outputDir, "meta.json" ), exportMeta );
 
-    if ( embedAuditWarnings.length ) {
+    if ( embedDiagnostics.length ) {
+        const missingTotal = embedDiagnostics.reduce( ( sum, entry ) => sum + entry.missing.length, 0 );
         logger.warn(
             "exportUIDefinitions",
-            `Found ${ embedAuditWarnings.length } component(s) with embeds missing metadata. See meta.json embedAuditWarnings for details.`
+            `Found ${ embedDiagnostics.length } component(s) with ${ missingTotal } embed definition(s) missing metadata.`
         );
+        embedDiagnostics.forEach( ( entry ) => {
+            const details = entry.missing
+                .map( ( item ) => `${ item.group } -> ${ item.embed }` )
+                .join( ", " );
+            logger.warn(
+                "exportUIDefinitions",
+                `Component '${ entry.module ? `${ entry.module }::${ entry.component }` : entry.component }' missing embeds: ${ details }`
+            );
+        } );
     }
 
     logger.info(
@@ -308,6 +330,7 @@ function determineAdapterKind( adapterClass: AdapterClass ): string {
 interface ComponentSerializationResult {
     definition: ComponentDefinition;
     embedAudit: EmbedAuditStats;
+    diagnostics: ComponentEmbedDiagnostics;
 }
 
 function serializeComponent(
@@ -337,11 +360,17 @@ function serializeComponent(
         withDefinition: 0,
         missingDefinition: 0
     };
-    const recordEmbed = ( reference: EmbedReference ) => {
+    const missingEmbeds: ComponentEmbedDiagnosticEntry[] = [];
+    const recordEmbed = ( reference: EmbedReference, groupName: string ) => {
         embedAudit.total += 1;
         if ( reference.definition ) {
             embedAudit.withDefinition += 1;
+            return;
         }
+        missingEmbeds.push( {
+            group: groupName,
+            embed: reference.embed
+        } );
     };
 
     let embedsGroups = rawEmbedsGroups.map( ( group, index ) =>
@@ -378,7 +407,7 @@ function serializeComponent(
                     resolver: undefined,
                     items: directEmbeds.map( ( embed ) => {
                         const reference = serializeEmbedReference( embed );
-                        recordEmbed( reference );
+                        recordEmbed( reference, groupName );
                         return reference;
                     } ),
                     options: undefined
@@ -423,9 +452,18 @@ function serializeComponent(
         );
     }
 
+    const diagnostics: ComponentEmbedDiagnostics = {
+        component: componentDefinition.name,
+        module: moduleName,
+        total: embedAudit.total,
+        withDefinition: embedAudit.withDefinition,
+        missing: missingEmbeds
+    };
+
     return {
         definition: componentDefinition,
-        embedAudit
+        embedAudit,
+        diagnostics
     };
 }
 
@@ -454,13 +492,13 @@ function serializeEmbedsGroup(
     componentClass: UIComponentTypeConstructor,
     group: typeof UIEmbedsGroupBase,
     index: number,
-    recordEmbed?: ( reference: EmbedReference ) => void
+    recordEmbed?: ( reference: EmbedReference, groupName: string ) => void
 ): EmbedsGroupDefinition {
     const name = group.getName?.() ?? `${ componentClass.getName() }/EmbedsGroup/${ index }`;
     const itemsRaw = safeCall( () => group.getItems?.() ) ?? [];
     const items = itemsRaw.map( ( embed ) => {
         const reference = serializeEmbedReference( embed );
-        recordEmbed?.( reference );
+        recordEmbed?.( reference, name );
         return reference;
     } );
 
@@ -481,7 +519,7 @@ async function serializeAdapter(
     flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>,
     moduleSummary: ModuleExportSummary,
     globalEmbedStats: EmbedAuditStats,
-    embedAuditWarnings: EmbedAuditAlert[],
+    embedDiagnostics: ComponentEmbedDiagnostics[],
     logger: Logger
 ): Promise<AdapterDefinition> {
     const adapterName = adapterClass.getName();
@@ -499,7 +537,7 @@ async function serializeAdapter(
             : "";
 
     if ( componentClass && !components.has( componentName ) ) {
-        const { definition, embedAudit } = serializeComponent( componentClass, moduleName, logger );
+        const { definition, embedAudit, diagnostics } = serializeComponent( componentClass, moduleName, logger );
         components.set( componentName, definition );
         moduleSummary.components += 1;
         moduleSummary.embedsTotal += embedAudit.total;
@@ -509,13 +547,12 @@ async function serializeAdapter(
         globalEmbedStats.withDefinition += embedAudit.withDefinition;
         globalEmbedStats.missingDefinition += embedAudit.missingDefinition;
 
-        if ( embedAudit.missingDefinition > 0 ) {
-            embedAuditWarnings.push( {
-                component: definition.name,
-                module: moduleName,
-                missing: embedAudit.missingDefinition,
-                total: embedAudit.total
-            } );
+        if ( embedAudit.total > 0 ) {
+            moduleSummary.componentsWithEmbeds += 1;
+        }
+        if ( diagnostics.missing.length ) {
+            moduleSummary.componentsWithMissingEmbeds += 1;
+            embedDiagnostics.push( diagnostics );
         }
     }
 

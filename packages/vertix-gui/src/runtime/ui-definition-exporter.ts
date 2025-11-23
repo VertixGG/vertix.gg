@@ -22,8 +22,6 @@ import type {
     FlowDefinition,
     FlowIntegrationPointDefinition,
     FlowStateDefinition,
-    FlowContextMutationDefinition,
-    FlowNavigationDefinition,
     FlowTriggerHandlerKind,
     FlowTriggerDefinition,
     BindingFlowTriggerDefinition,
@@ -55,7 +53,6 @@ import type {
     OptionsHandler
 } from "@vertix.gg/gui/src/builders/embed-builder";
 import type {
-    BindingFlowTriggerConfig,
     BindingRegistrationOptions
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 
@@ -81,8 +78,6 @@ type AdapterClass =
 
 type FlowClass = typeof UIFlowBase;
 
-type FlowTriggerCollection = Map<string, FlowTriggerDefinition[]>;
-type FlowTriggersByAdapter = Map<string, FlowTriggerCollection>;
 type FlowTriggerRegistrar = (
     flowName: string,
     transition: string,
@@ -100,7 +95,7 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
 
     const handlerMap = new Map<string, HandlerCapture>();
     const wizardAdapterComponents = new Map<string, string[]>();
-    const flowTriggersByAdapter: FlowTriggersByAdapter = new Map();
+    const flowTriggersByAdapter = new Map<string, Map<string, FlowTriggerDefinition[]>>();
 
     const modules = uiService.getUIModules();
 
@@ -328,7 +323,7 @@ async function serializeAdapter(
     components: Map<string, ComponentDefinition>,
     handlerMap: Map<string, HandlerCapture>,
     moduleName: string,
-    flowTriggersByAdapter: FlowTriggersByAdapter
+    flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>
 ): Promise<AdapterDefinition> {
     const adapterName = adapterClass.getName();
     const adapterInstance = uiService.get( adapterName, true ) as UIAdapterBase<any, any> | undefined;
@@ -349,7 +344,7 @@ async function serializeAdapter(
     }
 
     const executionSteps = serializeExecutionSteps( adapterClass );
-    const triggerCollection: FlowTriggerCollection = new Map();
+    const triggerCollection = new Map<string, FlowTriggerDefinition[]>();
     const bindings = await serializeBindings(
         adapterName,
         metadata,
@@ -598,25 +593,6 @@ function serializeAdapterHooks(
     return hooks;
 }
 
-function bindingKindToFlowHandlerKind( kind: string | undefined ): FlowTriggerHandlerKind {
-    switch ( kind ) {
-        case "button":
-            return "button";
-        case "modal":
-            return "modal";
-        case "modal-button":
-            return "modal-button";
-        case "string-select":
-            return "string-select";
-        case "user-select":
-            return "user-select";
-        case "command":
-            return "command";
-        default:
-            return "unknown";
-    }
-}
-
 function cloneFlowTriggers( entries: FlowTriggerDefinition[] | undefined ): FlowTriggerDefinition[] | undefined {
     if ( !entries || entries.length === 0 ) {
         return undefined;
@@ -646,7 +622,7 @@ async function serializeFlow(
     moduleInstance: UIModuleBase,
     wizardAdapterComponents: Map<string, string[]>,
     moduleName: string,
-    flowTriggersByAdapter: FlowTriggersByAdapter
+    flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>
 ): Promise<FlowDefinition> {
     const flowName = flowClass.getName();
     const FlowCtor = flowClass as unknown as new ( options: { module: UIModuleBase } ) => UIFlowBase<string, string>;
@@ -698,7 +674,7 @@ async function serializeFlow(
 
 function serializeFlowTransitions(
     flowClass: FlowClass,
-    triggerMap?: FlowTriggerCollection
+    triggerMap?: Map<string, FlowTriggerDefinition[]>
 ): FlowDefinition[ "transitions" ] {
     const getNextStates = Reflect.get( flowClass, "getNextStates" ) as ( () => Record<string, string> ) | undefined;
     const nextStates = getNextStates?.call( flowClass ) ?? {};
@@ -716,13 +692,15 @@ function serializeFlowStates(
 ): FlowStateDefinition[] {
     const getFlowTransitions = Reflect.get( flowClass, "getFlowTransitions" ) as ( () => Record<string, string[]> ) | undefined;
     const transitions = getFlowTransitions?.call( flowClass ) ?? {};
+    const getStateOptions = Reflect.get( flowClass, "getStateOptions" ) as ( () => Record<string, JsonObject> ) | undefined;
+    const stateOptions = getStateOptions?.call( flowClass ) ?? {};
 
     return Object.keys( transitions ).map( ( stateKey ) => ( {
         key: stateKey,
         component: stateComponentMap?.get( stateKey ) ?? null,
         transitions: transitions[ stateKey ],
         hooks: [],
-        options: undefined
+        options: stateOptions[ stateKey ]
     } ) );
 }
 

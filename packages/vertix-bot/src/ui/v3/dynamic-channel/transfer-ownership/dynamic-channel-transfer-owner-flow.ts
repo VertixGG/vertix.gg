@@ -10,34 +10,6 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 
 type DynamicChannelTransferOwnerFlowData = UIFlowData;
 
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow";
-
-const STATE_SELECT_USER = `${ FLOW_NAME }/States/SelectUser`;
-const STATE_CONFIRM = `${ FLOW_NAME }/States/Confirm`;
-const STATE_SUCCESS = `${ FLOW_NAME }/States/Success`;
-const STATE_CANCELLED = `${ FLOW_NAME }/States/Cancelled`;
-
-const TRANSITION_OPEN = `${ FLOW_NAME }/Transitions/Open`;
-const TRANSITION_USER_SELECTED = `${ FLOW_NAME }/Transitions/UserSelected`;
-const TRANSITION_CONFIRM = `${ FLOW_NAME }/Transitions/Confirm`;
-const TRANSITION_CANCEL = `${ FLOW_NAME }/Transitions/Cancel`;
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_SELECT_USER ]: [ TRANSITION_USER_SELECTED, TRANSITION_CANCEL ],
-    [ STATE_CONFIRM ]: [ TRANSITION_CONFIRM, TRANSITION_CANCEL ],
-    [ STATE_SUCCESS ]: [],
-    [ STATE_CANCELLED ]: []
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_OPEN ]: STATE_SELECT_USER,
-    [ TRANSITION_USER_SELECTED ]: STATE_CONFIRM,
-    [ TRANSITION_CONFIRM ]: STATE_SUCCESS,
-    [ TRANSITION_CANCEL ]: STATE_CANCELLED
-};
-
-const REQUIRED_DATA: Record<string, ( keyof DynamicChannelTransferOwnerFlowData )[]> = {};
-
 /**
  * Flow that guides an owner through transferring a dynamic channel.
  */
@@ -47,7 +19,7 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
     DynamicChannelTransferOwnerFlowData
 > {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow";
     }
 
     public static override getFlowType(): string {
@@ -55,15 +27,31 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser": [
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected",
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel"
+            ],
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Confirm": [
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm",
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel"
+            ],
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Success": [],
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Cancelled": []
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Open": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Confirm",
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Success",
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Cancelled"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelTransferOwnerFlowData )[]> {
-        return REQUIRED_DATA;
+        return {};
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -83,7 +71,7 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
     }
 
     protected override getInitialState(): string {
-        return STATE_SELECT_USER;
+        return "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser";
     }
 
     protected override getInitialData(): DynamicChannelTransferOwnerFlowData {
@@ -91,26 +79,26 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
     }
 
     protected override initializeTransitions(): void {
-        Object.entries( FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( DynamicChannelTransferOwnerFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.setTransitionsForState( state, new Set( transitions ) );
         } );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return DynamicChannelTransferOwnerFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = DynamicChannelTransferOwnerFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ DynamicChannelTransferOwnerFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof DynamicChannelTransferOwnerFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return DynamicChannelTransferOwnerFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

@@ -43,7 +43,7 @@ async function onYesButtonClicked(
     context: IWizardAdapterContext<DefaultInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent" );
+    // Flow trigger drives navigation.
 }
 
 async function onEditTitleModalSubmit(
@@ -57,7 +57,10 @@ async function onEditTitleModalSubmit(
 
     const title = interaction.fields.getTextInputValue( context.customIdStrategy.generateId( inputId ) );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent", {
+    const args = context.getArgs( interaction ) ?? {};
+
+    context.setArgs( interaction, {
+        ...args,
         title
     } );
 
@@ -85,7 +88,10 @@ async function onEditDescriptionModalSubmit(
 
     const description = interaction.fields.getTextInputValue( context.customIdStrategy.generateId( inputId ) );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent", {
+    const args = context.getArgs( interaction ) ?? {};
+
+    context.setArgs( interaction, {
+        ...args,
         description
     } );
 
@@ -193,19 +199,61 @@ const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceCh
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/YesButton",
-            onYesButtonClicked
+            onYesButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
+                        }
+                    }
+                ]
+            }
         );
 
         bindModalWithButton(
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
-            onEditTitleModalSubmit
+            onEditTitleModalSubmit,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "title" ] }
+                        ]
+                    }
+                ]
+            }
         );
 
         bindModalWithButton(
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
-            onEditDescriptionModalSubmit
+            onEditDescriptionModalSubmit,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "description" ] }
+                        ]
+                    }
+                ]
+            }
         );
     } )
     .build();

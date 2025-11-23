@@ -10,27 +10,12 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 
 type DynamicChannelPrivacyFlowData = UIFlowData;
 
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelPrivacyFlow";
-
-const STATE_DEFAULT = `${ FLOW_NAME }/States/Default`;
-const TRANSITION_UPDATE = `${ FLOW_NAME }/Transitions/UpdatePrivacyState`;
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_DEFAULT ]: [ TRANSITION_UPDATE ]
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_UPDATE ]: STATE_DEFAULT
-};
-
-const REQUIRED_DATA: Record<string, ( keyof DynamicChannelPrivacyFlowData )[]> = {};
-
 /**
  * Flow that captures privacy toggles for a dynamic channel.
  */
 export class DynamicChannelPrivacyFlow extends UIFlowBase<string, string, DynamicChannelPrivacyFlowData> {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/DynamicChannelPrivacyFlow";
     }
 
     public static override getFlowType(): string {
@@ -38,15 +23,21 @@ export class DynamicChannelPrivacyFlow extends UIFlowBase<string, string, Dynami
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default": [
+                "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState"
+            ]
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState": "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelPrivacyFlowData )[]> {
-        return REQUIRED_DATA;
+        return {};
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -66,7 +57,7 @@ export class DynamicChannelPrivacyFlow extends UIFlowBase<string, string, Dynami
     }
 
     protected override getInitialState(): string {
-        return STATE_DEFAULT;
+        return "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default";
     }
 
     protected override getInitialData(): DynamicChannelPrivacyFlowData {
@@ -74,24 +65,27 @@ export class DynamicChannelPrivacyFlow extends UIFlowBase<string, string, Dynami
     }
 
     protected override initializeTransitions(): void {
-        this.setTransitionsForState( STATE_DEFAULT, new Set( FLOW_TRANSITIONS[ STATE_DEFAULT ] ) );
+        this.setTransitionsForState(
+            "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default",
+            new Set( DynamicChannelPrivacyFlow.getFlowTransitions()[ "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default" ] )
+        );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return DynamicChannelPrivacyFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = DynamicChannelPrivacyFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ DynamicChannelPrivacyFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof DynamicChannelPrivacyFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return DynamicChannelPrivacyFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

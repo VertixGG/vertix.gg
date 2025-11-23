@@ -12,29 +12,12 @@ interface DynamicChannelRegionFlowData extends UIFlowData {
     region?: string;
 }
 
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelRegionFlow";
-
-const STATE_DEFAULT = `${ FLOW_NAME }/States/Default`;
-const TRANSITION_SELECT_REGION = `${ FLOW_NAME }/Transitions/SelectRegion`;
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_DEFAULT ]: [ TRANSITION_SELECT_REGION ]
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_SELECT_REGION ]: STATE_DEFAULT
-};
-
-const REQUIRED_DATA: Record<string, ( keyof DynamicChannelRegionFlowData )[]> = {
-    [ TRANSITION_SELECT_REGION ]: [ "region" ]
-};
-
 /**
  * Flow that persists the selected region for a dynamic voice channel.
  */
 export class DynamicChannelRegionFlow extends UIFlowBase<string, string, DynamicChannelRegionFlowData> {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/DynamicChannelRegionFlow";
     }
 
     public static override getFlowType(): string {
@@ -42,15 +25,23 @@ export class DynamicChannelRegionFlow extends UIFlowBase<string, string, Dynamic
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default": [
+                "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion"
+            ]
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelRegionFlowData )[]> {
-        return REQUIRED_DATA;
+        return {
+            "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion": [ "region" ]
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -70,7 +61,7 @@ export class DynamicChannelRegionFlow extends UIFlowBase<string, string, Dynamic
     }
 
     protected override getInitialState(): string {
-        return STATE_DEFAULT;
+        return "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default";
     }
 
     protected override getInitialData(): DynamicChannelRegionFlowData {
@@ -78,26 +69,26 @@ export class DynamicChannelRegionFlow extends UIFlowBase<string, string, Dynamic
     }
 
     protected override initializeTransitions(): void {
-        Object.entries( FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( DynamicChannelRegionFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.setTransitionsForState( state, new Set( transitions ) );
         } );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return DynamicChannelRegionFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = DynamicChannelRegionFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ DynamicChannelRegionFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof DynamicChannelRegionFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return DynamicChannelRegionFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

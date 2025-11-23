@@ -9,55 +9,12 @@ import { DynamicChannelPrimaryMessageEditTitleComponent } from "@vertix.gg/bot/s
 import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 interface DynamicChannelPrimaryMessageEditFlowData extends UIFlowData {
     title?: string;
     description?: string;
 }
-
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow";
-
-const STATE_CONFIRM = `${ FLOW_NAME }/States/Confirm`;
-const STATE_EDIT_TITLE = `${ FLOW_NAME }/States/EditTitle`;
-const STATE_EDIT_DESCRIPTION = `${ FLOW_NAME }/States/EditDescription`;
-const STATE_COMPLETED = "VertixGUI/UIWizardFlowBase/States/Completed";
-const STATE_ERROR = "VertixGUI/UIWizardFlowBase/States/Error";
-
-const TRANSITION_BEGIN = `${ FLOW_NAME }/Transitions/BeginEditing`;
-const TRANSITION_SUBMIT_TITLE = `${ FLOW_NAME }/Transitions/SubmitTitle`;
-const TRANSITION_SUBMIT_DESCRIPTION = `${ FLOW_NAME }/Transitions/SubmitDescription`;
-const TRANSITION_NEXT = "VertixGUI/UIWizardFlowBase/Transitions/Next";
-const TRANSITION_BACK = "VertixGUI/UIWizardFlowBase/Transitions/Back";
-const TRANSITION_FINISH = "VertixGUI/UIWizardFlowBase/Transitions/Finish";
-const TRANSITION_ERROR = "VertixGUI/UIWizardFlowBase/Transitions/Error";
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_CONFIRM ]: [ TRANSITION_BEGIN ],
-    [ STATE_EDIT_TITLE ]: [ TRANSITION_SUBMIT_TITLE, TRANSITION_NEXT, TRANSITION_BACK, TRANSITION_ERROR ],
-    [ STATE_EDIT_DESCRIPTION ]: [ TRANSITION_SUBMIT_DESCRIPTION, TRANSITION_BACK, TRANSITION_FINISH, TRANSITION_ERROR ],
-    [ STATE_COMPLETED ]: [],
-    [ STATE_ERROR ]: [ TRANSITION_BEGIN ]
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_BEGIN ]: STATE_EDIT_TITLE,
-    [ TRANSITION_SUBMIT_TITLE ]: STATE_EDIT_TITLE,
-    [ TRANSITION_SUBMIT_DESCRIPTION ]: STATE_EDIT_DESCRIPTION,
-    [ TRANSITION_NEXT ]: STATE_EDIT_DESCRIPTION,
-    [ TRANSITION_BACK ]: STATE_EDIT_TITLE,
-    [ TRANSITION_FINISH ]: STATE_COMPLETED,
-    [ TRANSITION_ERROR ]: STATE_ERROR
-};
-
-const REQUIRED_DATA: Record<string, ( keyof DynamicChannelPrimaryMessageEditFlowData )[]> = {
-    [ TRANSITION_SUBMIT_TITLE ]: [ "title" ],
-    [ TRANSITION_SUBMIT_DESCRIPTION ]: [ "description" ],
-    [ TRANSITION_FINISH ]: [ "title", "description" ],
-    [ TRANSITION_BEGIN ]: [],
-    [ TRANSITION_NEXT ]: [],
-    [ TRANSITION_BACK ]: [],
-    [ TRANSITION_ERROR ]: []
-};
 
 /**
  * Flow that edits the dynamic channel primary message in a two-step wizard.
@@ -68,7 +25,7 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
     DynamicChannelPrimaryMessageEditFlowData
 > {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow";
     }
 
     public static override getFlowType(): string {
@@ -76,15 +33,65 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/Confirm": [
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing"
+            ],
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle": [
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle",
+                "VertixGUI/UIWizardFlowBase/Transitions/Next",
+                "VertixGUI/UIWizardFlowBase/Transitions/Back",
+                "VertixGUI/UIWizardFlowBase/Transitions/Error"
+            ],
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription": [
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription",
+                "VertixGUI/UIWizardFlowBase/Transitions/Back",
+                "VertixGUI/UIWizardFlowBase/Transitions/Finish",
+                "VertixGUI/UIWizardFlowBase/Transitions/Error"
+            ],
+            "VertixGUI/UIWizardFlowBase/States/Completed": [],
+            "VertixGUI/UIWizardFlowBase/States/Error": [
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing"
+            ]
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
+            "VertixGUI/UIWizardFlowBase/Transitions/Next": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
+            "VertixGUI/UIWizardFlowBase/Transitions/Back": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
+            "VertixGUI/UIWizardFlowBase/Transitions/Finish": "VertixGUI/UIWizardFlowBase/States/Completed",
+            "VertixGUI/UIWizardFlowBase/Transitions/Error": "VertixGUI/UIWizardFlowBase/States/Error"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelPrimaryMessageEditFlowData )[]> {
-        return REQUIRED_DATA;
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle": [ "title" ],
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription": [ "description" ],
+            "VertixGUI/UIWizardFlowBase/Transitions/Finish": [ "title", "description" ],
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing": [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Next": [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Back": [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Error": []
+        };
+    }
+
+    public static getStateOptions(): Record<string, JsonObject> {
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/Confirm": {
+                executionStep: "default"
+            },
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle": {
+                executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
+            },
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription": {
+                executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent"
+            }
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -108,7 +115,7 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
     }
 
     protected override getInitialState(): string {
-        return STATE_CONFIRM;
+        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/Confirm";
     }
 
     protected override getInitialData(): DynamicChannelPrimaryMessageEditFlowData {
@@ -116,26 +123,26 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
     }
 
     protected override initializeTransitions(): void {
-        Object.entries( FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( DynamicChannelPrimaryMessageEditFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.setTransitionsForState( state, new Set( transitions ) );
         } );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return DynamicChannelPrimaryMessageEditFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = DynamicChannelPrimaryMessageEditFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ DynamicChannelPrimaryMessageEditFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof DynamicChannelPrimaryMessageEditFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return DynamicChannelPrimaryMessageEditFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

@@ -13,42 +13,12 @@ interface DynamicChannelClearChatFlowData extends UIFlowData {
     totalMessages?: number;
 }
 
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelClearChatFlow";
-
-const STATE_DEFAULT = `${ FLOW_NAME }/States/Default`;
-const STATE_SUCCESS = `${ FLOW_NAME }/States/Success`;
-const STATE_NOTHING = `${ FLOW_NAME }/States/NothingToClear`;
-const STATE_ERROR = `${ FLOW_NAME }/States/Error`;
-
-const TRANSITION_SUCCESS = `${ FLOW_NAME }/Transitions/ClearSuccess`;
-const TRANSITION_NOTHING = `${ FLOW_NAME }/Transitions/ClearNothing`;
-const TRANSITION_ERROR = `${ FLOW_NAME }/Transitions/ClearError`;
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_DEFAULT ]: [ TRANSITION_SUCCESS, TRANSITION_NOTHING, TRANSITION_ERROR ],
-    [ STATE_SUCCESS ]: [],
-    [ STATE_NOTHING ]: [],
-    [ STATE_ERROR ]: []
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_SUCCESS ]: STATE_SUCCESS,
-    [ TRANSITION_NOTHING ]: STATE_NOTHING,
-    [ TRANSITION_ERROR ]: STATE_ERROR
-};
-
-const REQUIRED_DATA: Record<string, ( keyof DynamicChannelClearChatFlowData )[]> = {
-    [ TRANSITION_SUCCESS ]: [ "ownerDisplayName", "totalMessages" ],
-    [ TRANSITION_NOTHING ]: [],
-    [ TRANSITION_ERROR ]: []
-};
-
 /**
  * Flow that reports the outcome of clearing the dynamic channel chat history.
  */
 export class DynamicChannelClearChatFlow extends UIFlowBase<string, string, DynamicChannelClearChatFlowData> {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/DynamicChannelClearChatFlow";
     }
 
     public static override getFlowType(): string {
@@ -56,15 +26,32 @@ export class DynamicChannelClearChatFlow extends UIFlowBase<string, string, Dyna
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Default": [
+                "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearSuccess",
+                "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearNothing",
+                "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearError"
+            ],
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Success": [],
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/NothingToClear": [],
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Error": []
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearSuccess": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Success",
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearNothing": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/NothingToClear",
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearError": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Error"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelClearChatFlowData )[]> {
-        return REQUIRED_DATA;
+        return {
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearSuccess": [ "ownerDisplayName", "totalMessages" ],
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearNothing": [],
+            "VertixBot/UI-V3/DynamicChannelClearChatFlow/Transitions/ClearError": []
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -84,7 +71,7 @@ export class DynamicChannelClearChatFlow extends UIFlowBase<string, string, Dyna
     }
 
     protected override getInitialState(): string {
-        return STATE_DEFAULT;
+        return "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Default";
     }
 
     protected override getInitialData(): DynamicChannelClearChatFlowData {
@@ -92,26 +79,26 @@ export class DynamicChannelClearChatFlow extends UIFlowBase<string, string, Dyna
     }
 
     protected override initializeTransitions(): void {
-        Object.entries( FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( DynamicChannelClearChatFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.setTransitionsForState( state, new Set( transitions ) );
         } );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return DynamicChannelClearChatFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = DynamicChannelClearChatFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ DynamicChannelClearChatFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof DynamicChannelClearChatFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return DynamicChannelClearChatFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

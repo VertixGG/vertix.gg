@@ -112,10 +112,10 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Finish" ]: "VertixGUI/UIWizardFlowBase/States/Completed",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Error" ]: "VertixGUI/UIWizardFlowBase/States/Error",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Next" ]: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Back" ]: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+            "VertixGUI/UIWizardFlowBase/Transitions/Finish": "VertixGUI/UIWizardFlowBase/States/Completed",
+            "VertixGUI/UIWizardFlowBase/Transitions/Error": "VertixGUI/UIWizardFlowBase/States/Error",
+            "VertixGUI/UIWizardFlowBase/Transitions/Next": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+            "VertixGUI/UIWizardFlowBase/Transitions/Back": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
         };
     }
 
@@ -131,14 +131,14 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": [ "dynamicChannelNameTemplate" ],
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras": [ "dynamicChannelMentionable", "dynamicChannelAutoSave" ],
             "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": [ "dynamicChannelIncludeEveryoneRole" ],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Finish" ]: [
+            "VertixGUI/UIWizardFlowBase/Transitions/Finish": [
                 "dynamicChannelNameTemplate",
                 "dynamicChannelButtonsTemplate",
                 "dynamicChannelVerifiedRoles",
             ],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Error" ]: [ "errorCode", "errorMessage" ],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Next" ]: [],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Back" ]: [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Error": [ "errorCode", "errorMessage" ],
+            "VertixGUI/UIWizardFlowBase/Transitions/Next": [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Back": [],
         };
     }
 

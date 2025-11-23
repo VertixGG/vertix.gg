@@ -12,36 +12,6 @@ interface DynamicChannelResetChannelFlowData extends UIFlowData {
     result?: string;
 }
 
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelResetChannelFlow";
-
-const STATE_DEFAULT = `${ FLOW_NAME }/States/Default`;
-const STATE_SUCCESS = `${ FLOW_NAME }/States/Success`;
-const STATE_VOTE_REQUIRED = `${ FLOW_NAME }/States/VoteRequired`;
-const STATE_ERROR = `${ FLOW_NAME }/States/Error`;
-
-const TRANSITION_SUCCESS = `${ FLOW_NAME }/Transitions/ResetSuccess`;
-const TRANSITION_VOTE_REQUIRED = `${ FLOW_NAME }/Transitions/ResetVoteRequired`;
-const TRANSITION_ERROR = `${ FLOW_NAME }/Transitions/ResetError`;
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_DEFAULT ]: [ TRANSITION_SUCCESS, TRANSITION_VOTE_REQUIRED, TRANSITION_ERROR ],
-    [ STATE_SUCCESS ]: [],
-    [ STATE_VOTE_REQUIRED ]: [],
-    [ STATE_ERROR ]: []
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_SUCCESS ]: STATE_SUCCESS,
-    [ TRANSITION_VOTE_REQUIRED ]: STATE_VOTE_REQUIRED,
-    [ TRANSITION_ERROR ]: STATE_ERROR
-};
-
-const REQUIRED_DATA: Record<string, ( keyof DynamicChannelResetChannelFlowData )[]> = {
-    [ TRANSITION_SUCCESS ]: [ "result" ],
-    [ TRANSITION_VOTE_REQUIRED ]: [],
-    [ TRANSITION_ERROR ]: []
-};
-
 /**
  * Flow that communicates the outcome of resetting a dynamic channel.
  */
@@ -51,7 +21,7 @@ export class DynamicChannelResetChannelFlow extends UIFlowBase<
     DynamicChannelResetChannelFlowData
 > {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/DynamicChannelResetChannelFlow";
     }
 
     public static override getFlowType(): string {
@@ -59,15 +29,32 @@ export class DynamicChannelResetChannelFlow extends UIFlowBase<
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default": [
+                "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess",
+                "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired",
+                "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError"
+            ],
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Success": [],
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/VoteRequired": [],
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Error": []
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Success",
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/VoteRequired",
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Error"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelResetChannelFlowData )[]> {
-        return REQUIRED_DATA;
+        return {
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess": [ "result" ],
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired": [],
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError": []
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -87,7 +74,7 @@ export class DynamicChannelResetChannelFlow extends UIFlowBase<
     }
 
     protected override getInitialState(): string {
-        return STATE_DEFAULT;
+        return "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default";
     }
 
     protected override getInitialData(): DynamicChannelResetChannelFlowData {
@@ -95,26 +82,26 @@ export class DynamicChannelResetChannelFlow extends UIFlowBase<
     }
 
     protected override initializeTransitions(): void {
-        Object.entries( FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( DynamicChannelResetChannelFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.setTransitionsForState( state, new Set( transitions ) );
         } );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return DynamicChannelResetChannelFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = DynamicChannelResetChannelFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ DynamicChannelResetChannelFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof DynamicChannelResetChannelFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return DynamicChannelResetChannelFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

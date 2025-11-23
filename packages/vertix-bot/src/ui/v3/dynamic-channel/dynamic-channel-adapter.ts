@@ -38,6 +38,9 @@ const DYNAMIC_CHANNEL_STEPS = {
 
 const logger = new Logger( "VertixBot/UI-V3/DynamicChannelAdapter" );
 
+const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelFlow";
+const FLOW_STATE_DEFAULT = `${ FLOW_NAME }/States/Default`;
+
 async function getAllArgs( channel: VoiceChannel, argsFromManager: UIArgs = {} ) {
     const args: UIArgs = {
             channelName: channel.name,
@@ -214,16 +217,166 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
         return getAllArgs( message.channel as VoiceChannel, argsFromManager );
     } )
     .onEntityMap( async( { bindButton } ) => {
-        bindButton( "VertixBot/UI-V3/DynamicChannelRenameButton", onRenameButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelLimitMetaButton", onLimitButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton", onAccessButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelPrivacyButton", onPrivacyButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelRegionButton", onRegionButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton", onPrimaryMessageEditButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelClearChatButton", onClearChatButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelResetChannelButton", onResetChannelButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelClaimChannelButton", onClaimButtonClicked );
-        bindButton( "VertixBot/UI-V3/DynamicChannelTransferOwnerButton", onTransferOwnerButtonClicked );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelRenameButton",
+            onRenameButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/OpenRename`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+            onLimitButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/OpenLimit`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+            onAccessButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/OpenPermissions`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+            onPrivacyButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/OpenPrivacy`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelRegionButton",
+            onRegionButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/OpenRegion`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+            onPrimaryMessageEditButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/OpenPrimaryMessageEdit`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelClearChatButton",
+            onClearChatButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/ClearChat`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+            onResetChannelButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/ResetChannel`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+            onClaimButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/ClaimChannel`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+            onTransferOwnerButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: FLOW_NAME,
+                        transition: `${ FLOW_NAME }/Transitions/TransferOwner`,
+                        navigation: {
+                            targetState: FLOW_STATE_DEFAULT,
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
     } )
     .build();
 

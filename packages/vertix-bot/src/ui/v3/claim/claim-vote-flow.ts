@@ -15,59 +15,12 @@ interface ClaimVoteFlowData extends UIFlowData {
     currentUserId?: string;
 }
 
-const FLOW_NAME = "VertixBot/UI-V3/ClaimVoteFlow";
-
-const STATE_STEP_IN = `${ FLOW_NAME }/States/StepIn`;
-const STATE_VOTE_PROCESS = `${ FLOW_NAME }/States/VoteProcess`;
-const STATE_VOTE_WON = `${ FLOW_NAME }/States/VoteWon`;
-const STATE_VOTE_ALREADY_SELF = `${ FLOW_NAME }/States/VoteAlreadySelf`;
-const STATE_VOTE_SUCCESS = `${ FLOW_NAME }/States/VoteSuccess`;
-const STATE_VOTE_SAME = `${ FLOW_NAME }/States/VoteSameChoice`;
-const STATE_VOTE_UPDATED = `${ FLOW_NAME }/States/VoteUpdated`;
-
-const TRANSITION_START_VOTE = `${ FLOW_NAME }/Transitions/StartVote`;
-const TRANSITION_ADD_CANDIDATE = `${ FLOW_NAME }/Transitions/AddCandidate`;
-const TRANSITION_VOTE_SELF = `${ FLOW_NAME }/Transitions/VoteSelf`;
-const TRANSITION_VOTE_SUCCESS = `${ FLOW_NAME }/Transitions/VoteSuccess`;
-const TRANSITION_VOTE_SAME = `${ FLOW_NAME }/Transitions/VoteSame`;
-const TRANSITION_VOTE_UPDATED = `${ FLOW_NAME }/Transitions/VoteUpdated`;
-
-const FLOW_TRANSITIONS: Record<string, string[]> = {
-    [ STATE_STEP_IN ]: [ TRANSITION_START_VOTE, TRANSITION_ADD_CANDIDATE ],
-    [ STATE_VOTE_PROCESS ]: [
-        TRANSITION_VOTE_SELF,
-        TRANSITION_VOTE_SUCCESS,
-        TRANSITION_VOTE_SAME,
-        TRANSITION_VOTE_UPDATED
-    ],
-    [ STATE_VOTE_WON ]: [],
-    [ STATE_VOTE_ALREADY_SELF ]: [],
-    [ STATE_VOTE_SUCCESS ]: [],
-    [ STATE_VOTE_SAME ]: [],
-    [ STATE_VOTE_UPDATED ]: []
-};
-
-const NEXT_STATES: Record<string, string> = {
-    [ TRANSITION_START_VOTE ]: STATE_VOTE_PROCESS,
-    [ TRANSITION_ADD_CANDIDATE ]: STATE_STEP_IN,
-    [ TRANSITION_VOTE_SELF ]: STATE_VOTE_ALREADY_SELF,
-    [ TRANSITION_VOTE_SUCCESS ]: STATE_VOTE_SUCCESS,
-    [ TRANSITION_VOTE_SAME ]: STATE_VOTE_SAME,
-    [ TRANSITION_VOTE_UPDATED ]: STATE_VOTE_UPDATED
-};
-
-const REQUIRED_DATA: Record<string, ( keyof ClaimVoteFlowData )[]> = {
-    [ TRANSITION_VOTE_SUCCESS ]: [ "targetId" ],
-    [ TRANSITION_VOTE_SAME ]: [ "targetId" ],
-    [ TRANSITION_VOTE_UPDATED ]: [ "prevUserId", "currentUserId" ]
-};
-
 /**
  * Flow that orchestrates voting interactions when a channel is claimed.
  */
 export class ClaimVoteFlow extends UIFlowBase<string, string, ClaimVoteFlowData> {
     public static override getName(): string {
-        return FLOW_NAME;
+        return "VertixBot/UI-V3/ClaimVoteFlow";
     }
 
     public static override getFlowType(): string {
@@ -75,15 +28,42 @@ export class ClaimVoteFlow extends UIFlowBase<string, string, ClaimVoteFlowData>
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
-        return FLOW_TRANSITIONS;
+        return {
+            "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn": [
+                "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote",
+                "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate"
+            ],
+            "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess": [
+                "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf",
+                "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess",
+                "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame",
+                "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated"
+            ],
+            "VertixBot/UI-V3/ClaimVoteFlow/States/VoteWon": [],
+            "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf": [],
+            "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess": [],
+            "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice": [],
+            "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated": []
+        };
     }
 
     public static getNextStates(): Record<string, string> {
-        return NEXT_STATES;
+        return {
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess",
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate": "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf",
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess",
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice",
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated": "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated"
+        };
     }
 
     public static getRequiredData(): Record<string, ( keyof ClaimVoteFlowData )[]> {
-        return REQUIRED_DATA;
+        return {
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess": [ "targetId" ],
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame": [ "targetId" ],
+            "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated": [ "prevUserId", "currentUserId" ]
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -103,7 +83,7 @@ export class ClaimVoteFlow extends UIFlowBase<string, string, ClaimVoteFlowData>
     }
 
     protected override getInitialState(): string {
-        return STATE_STEP_IN;
+        return "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn";
     }
 
     protected override getInitialData(): ClaimVoteFlowData {
@@ -111,26 +91,26 @@ export class ClaimVoteFlow extends UIFlowBase<string, string, ClaimVoteFlowData>
     }
 
     protected override initializeTransitions(): void {
-        Object.entries( FLOW_TRANSITIONS ).forEach( ( [ state, transitions ] ) => {
+        Object.entries( ClaimVoteFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
             this.setTransitionsForState( state, new Set( transitions ) );
         } );
     }
 
     public override getAvailableTransitions(): string[] {
-        return FLOW_TRANSITIONS[ this.getCurrentState() ] ?? [];
+        return ClaimVoteFlow.getFlowTransitions()[ this.getCurrentState() ] ?? [];
     }
 
     public override getNextState( transition: string ): string {
-        const next = NEXT_STATES[ transition ];
+        const next = ClaimVoteFlow.getNextStates()[ transition ];
         if ( !next ) {
-            throw new Error( `${ FLOW_NAME }: unknown transition '${ transition }'` );
+            throw new Error( `${ ClaimVoteFlow.getName() }: unknown transition '${ transition }'` );
         }
 
         return next;
     }
 
     public override getRequiredData( transition: string ): ( keyof ClaimVoteFlowData )[] {
-        return REQUIRED_DATA[ transition ] ?? [];
+        return ClaimVoteFlow.getRequiredData()[ transition ] ?? [];
     }
 }
 

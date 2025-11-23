@@ -51,6 +51,7 @@ function resolveExportsDirectory(): string {
     throw new Error( "UiDefinitionLoaderService: unable to locate 'exports/ui' directory" );
 }
 
+// TODO: Move to VertixGUI
 export default class UiDefinitionLoaderService extends ServiceWithDependenciesBase<{
     uiService: UIService;
 }> {

@@ -800,43 +800,64 @@
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/OwnerStop",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultOwnerStop"
+                }
             },
             {
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/AddedSuccessfully",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultAddedSuccessfully"
+                }
             },
             {
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/AlreadyAdded",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultAlreadyAdded"
+                }
             },
             {
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/VoteAlreadySelf",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted"
+                }
             },
             {
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/VoteSuccess",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
+                }
             },
             {
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/VoteSameChoice",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame"
+                }
             },
             {
                 "key": "VertixBot/UI-V3/ClaimResultFlow/States/VoteUpdated",
                 "component": null,
                 "transitions": [],
-                "hooks": []
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
+                }
             }
         ],
         "transitions": [],

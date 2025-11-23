@@ -7,6 +7,7 @@ import { ClaimResultComponent } from "@vertix.gg/bot/src/ui/v3/claim/result/clai
 import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 interface ClaimResultFlowData extends UIFlowData {
     targetId?: string;
@@ -38,6 +39,30 @@ const NEXT_STATES: Record<string, string> = {};
 
 const REQUIRED_DATA: Record<string, ( keyof ClaimResultFlowData )[]> = {};
 
+const FLOW_STATE_OPTIONS: Record<string, JsonObject> = {
+    [ STATE_OWNER_STOP ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop"
+    },
+    [ STATE_ADDED_SUCCESSFULLY ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultAddedSuccessfully"
+    },
+    [ STATE_ALREADY_ADDED ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultAlreadyAdded"
+    },
+    [ STATE_VOTE_ALREADY_SELF ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted"
+    },
+    [ STATE_VOTE_SUCCESS ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
+    },
+    [ STATE_VOTE_SAME_CHOICE ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame"
+    },
+    [ STATE_VOTE_UPDATED ]: {
+        executionStep: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
+    }
+};
+
 /**
  * Flow that exposes the result embeds for the claim workflow.
  */
@@ -60,6 +85,10 @@ export class ClaimResultFlow extends UIFlowBase<string, string, ClaimResultFlowD
 
     public static getRequiredData(): Record<string, ( keyof ClaimResultFlowData )[]> {
         return REQUIRED_DATA;
+    }
+
+    public static getStateOptions(): Record<string, JsonObject> {
+        return FLOW_STATE_OPTIONS;
     }
 
     public static override getComponents(): UIComponentConstructor[] {

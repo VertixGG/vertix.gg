@@ -18,7 +18,7 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
-import type { UiDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
+import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
@@ -56,7 +56,7 @@ interface TDynamicChannelClaimManagerRegisterArgs {
 
     ownershipTimeout?: number;
     ownershipTimerInterval?: number;
-    definitionLoader?: UiDefinitionLoader;
+    definitionLoader?: UIDefinitionLoader;
     fallbacks?: TDynamicChannelClaimFallbacks;
 }
 
@@ -69,7 +69,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     private dynamicChannelService: DynamicChannelService;
 
-    private readonly definitionLoader?: UiDefinitionLoader;
+    private readonly definitionLoader?: UIDefinitionLoader;
     private claimFlowsReady: Promise<void> | null = null;
     private claimResultStateSteps?: Map<string, string>;
     private claimVoteTransitionSteps?: Map<string, string>;
@@ -189,7 +189,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         private dynamicChannelClaimButtonId: string,
         private ownershipTimeout: number,
         private ownershipTimerInterval: number,
-        definitionLoader?: UiDefinitionLoader,
+        definitionLoader?: UIDefinitionLoader,
         fallbacks?: TDynamicChannelClaimFallbacks
     ) {
         super();

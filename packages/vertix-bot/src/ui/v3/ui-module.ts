@@ -27,7 +27,7 @@ import { SetupEditFlow } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-fl
 
 import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 
-import type UiDefinitionLoaderService from "@vertix.gg/bot/src/services/ui-definition-loader-service";
+import type UIDefinitionLoaderService from "@vertix.gg/bot/src/services/ui-definition-loader-service";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
@@ -74,8 +74,8 @@ export class UIModuleV3 extends UIModuleBase {
 
     protected async initialize() {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-        const definitionLoaderService = ServiceLocator.$.get<UiDefinitionLoaderService>(
-            "VertixBot/Services/UiDefinitionLoaderService"
+        const definitionLoaderService = ServiceLocator.$.get<UIDefinitionLoaderService>(
+            "VertixBot/Services/UIDefinitionLoaderService"
         );
 
         DynamicChannelClaimManager.register( "VertixBot/UI-V3/DynamicChannelClaimManager", {

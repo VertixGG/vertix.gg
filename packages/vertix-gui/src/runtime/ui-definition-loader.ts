@@ -1,4 +1,5 @@
-import { Logger } from "@vertix.gg/base/src/modules/logger";
+import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
 
 import { interactionHandlerRegistry } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
@@ -53,8 +54,6 @@ import type {
 
 type LoaderMode = "mongo" | "static";
 
-const loaderLog = new Logger( "VertixGUI/UiDefinitionLoader" );
-
 const WIZARD_BASE_TRANSITIONS = new Set( [
     "VertixGUI/UIWizardFlowBase/Transitions/Next",
     "VertixGUI/UIWizardFlowBase/Transitions/Back",
@@ -78,7 +77,7 @@ type CachedInstance<T extends object> = {
     updatedAt: number;
 };
 
-export class UiDefinitionLoader {
+export class UIDefinitionLoader extends InitializeBase {
     private readonly mode: LoaderMode;
 
     private readonly componentsCollection?: GenericCollection<ComponentDefinition>;
@@ -89,7 +88,12 @@ export class UiDefinitionLoader {
     private readonly adapterCache = new Map<string, CachedInstance<HydratedAdapter>>();
     private readonly flowCache = new Map<string, CachedInstance<HydratedFlow>>();
 
+    public static override getName(): string {
+        return "VertixGUI/Runtime/UIDefinitionLoader";
+    }
+
     public constructor( options: LoaderOptions ) {
+        super( false );
         this.mode = options.mode;
         this.componentsCollection = options.componentsCollection;
         this.adaptersCollection = options.adaptersCollection;
@@ -98,7 +102,7 @@ export class UiDefinitionLoader {
 
     public async loadComponent( name: string ): Promise<HydratedComponent> {
         if ( "static" === this.mode ) {
-            throw new Error( "UiDefinitionLoader: static mode not supported for component definitions" );
+            throw new Error( "UIDefinitionLoader: static mode not supported for component definitions" );
         }
 
         const cached = this.componentCache.get( name );
@@ -110,7 +114,7 @@ export class UiDefinitionLoader {
         const document = await this.componentsCollection?.findOne( { name } );
 
         if ( !document ) {
-            throw new Error( `UiDefinitionLoader: component '${ name }' not found` );
+            throw new Error( `UIDefinitionLoader: component '${ name }' not found` );
         }
 
         const instance = this.hydrateComponent( document );
@@ -124,7 +128,7 @@ export class UiDefinitionLoader {
 
     public async loadAdapter( name: string ): Promise<HydratedAdapter> {
         if ( "static" === this.mode ) {
-            throw new Error( "UiDefinitionLoader: static mode not supported for adapter definitions" );
+            throw new Error( "UIDefinitionLoader: static mode not supported for adapter definitions" );
         }
 
         const cached = this.adapterCache.get( name );
@@ -136,7 +140,7 @@ export class UiDefinitionLoader {
         const document = await this.adaptersCollection?.findOne( { name } );
 
         if ( !document ) {
-            throw new Error( `UiDefinitionLoader: adapter '${ name }' not found` );
+            throw new Error( `UIDefinitionLoader: adapter '${ name }' not found` );
         }
 
         const instance = this.hydrateAdapter( document );
@@ -144,7 +148,7 @@ export class UiDefinitionLoader {
         const componentClass = component.componentClass;
 
         if ( !componentClass ) {
-            throw new Error( `UiDefinitionLoader: component '${ document.component }' did not produce a runtime class` );
+            throw new Error( `UIDefinitionLoader: component '${ document.component }' did not produce a runtime class` );
         }
 
         instance.componentClass = componentClass;
@@ -161,7 +165,7 @@ export class UiDefinitionLoader {
 
     public async loadFlow( name: string ): Promise<HydratedFlow> {
         if ( "static" === this.mode ) {
-            throw new Error( "UiDefinitionLoader: static mode not supported for flow definitions" );
+            throw new Error( "UIDefinitionLoader: static mode not supported for flow definitions" );
         }
 
         const cached = this.flowCache.get( name );
@@ -173,7 +177,7 @@ export class UiDefinitionLoader {
         const document = await this.flowsCollection?.findOne( { name } );
 
         if ( !document ) {
-            throw new Error( `UiDefinitionLoader: flow '${ name }' not found` );
+            throw new Error( `UIDefinitionLoader: flow '${ name }' not found` );
         }
 
         const instance = this.hydrateFlow( document );
@@ -219,21 +223,21 @@ export class UiDefinitionLoader {
             options: document.options ? this.cloneJsonObject( document.options ) : undefined
         };
 
-    const moduleName = document.modules?.[ 0 ];
-    const embedAudit = this.extractEmbedAudit( document.options );
+        const moduleName = document.modules?.[ 0 ];
+        const embedAudit = this.extractEmbedAudit( document.options );
 
-    if ( embedAudit ) {
-        this.warnMissingEmbedDefinitions( document.name, moduleName, embedAudit );
-    }
+        if ( embedAudit ) {
+            this.warnMissingEmbedDefinitions( document.name, moduleName, embedAudit );
+        }
 
         return {
             definition,
             elementsGroups,
             embedsGroups,
             modals,
-        hooks,
-        module: moduleName,
-        embedAudit
+            hooks,
+            module: moduleName,
+            embedAudit
         };
     }
 
@@ -257,29 +261,29 @@ export class UiDefinitionLoader {
             options: document.options ? this.cloneJsonObject( document.options ) : undefined
         };
 
-    for ( const binding of bindings ) {
-        const flowTriggers = binding.definition.flowTriggers ?? [];
+        for ( const binding of bindings ) {
+            const flowTriggers = binding.definition.flowTriggers ?? [];
 
-        if ( flowTriggers.length ) {
-            this.validateBindingFlowTriggers( document.name, binding.definition.handler, flowTriggers );
+            if ( flowTriggers.length ) {
+                this.validateBindingFlowTriggers( document.name, binding.definition.handler, flowTriggers );
+            }
         }
-    }
 
-    const flowTriggersByHandler = this.collectFlowTriggersByHandler( bindings );
+        const flowTriggersByHandler = this.collectFlowTriggersByHandler( bindings );
 
-    const adapter: HydratedAdapter = {
+        const adapter: HydratedAdapter = {
             definition,
             executionSteps,
             bindings,
-        hooks,
-        module: document.module
+            hooks,
+            module: document.module
         };
 
-    if ( flowTriggersByHandler ) {
-        adapter.flowTriggersByHandler = flowTriggersByHandler;
-    }
+        if ( flowTriggersByHandler ) {
+            adapter.flowTriggersByHandler = flowTriggersByHandler;
+        }
 
-    return adapter;
+        return adapter;
     }
 
     private hydrateFlow( document: FlowDefinition ): HydratedFlow {
@@ -339,8 +343,8 @@ export class UiDefinitionLoader {
             channelTypes,
             permissions,
             initialData: initialData ? this.cloneJsonObject( initialData ) : undefined,
-        flowType,
-        module: document.module
+            flowType,
+            module: document.module
         };
     }
 
@@ -360,7 +364,7 @@ export class UiDefinitionLoader {
         } catch( error ) {
             const message = error instanceof Error ? error.message : String( error );
             throw new Error(
-                `UiDefinitionLoader: unable to resolve component for flow '${ flowName }' state '${ state }' - ${ message }`
+                `UIDefinitionLoader: unable to resolve component for flow '${ flowName }' state '${ state }' - ${ message }`
             );
         }
     }
@@ -605,7 +609,7 @@ export class UiDefinitionLoader {
             const handler = interactionHandlerRegistry.get( reference );
 
             if ( !handler ) {
-                throw new Error( `UiDefinitionLoader: handler '${ reference }' unexpectedly missing` );
+                throw new Error( `UIDefinitionLoader: handler '${ reference }' unexpectedly missing` );
             }
 
             return {
@@ -618,7 +622,7 @@ export class UiDefinitionLoader {
         const [ className, method ] = reference.split( ":" );
 
         if ( !className || !method ) {
-            throw new Error( `UiDefinitionLoader: invalid handler reference '${ reference }'` );
+            throw new Error( `UIDefinitionLoader: invalid handler reference '${ reference }'` );
         }
 
         const classRef = this.createClassRef( className );
@@ -661,22 +665,142 @@ export class UiDefinitionLoader {
         return cloned;
     }
 
+    private extractEmbedAudit( options?: JsonObject ): HydratedEmbedAudit | undefined {
+        if ( !options ) {
+            return undefined;
+        }
+
+        const raw = options[ "embedAudit" ] as unknown;
+
+        if ( !raw || typeof raw !== "object" || Array.isArray( raw ) ) {
+            return undefined;
+        }
+
+        const audit = raw as Record<string, unknown>;
+        const total = typeof audit.total === "number" ? audit.total : 0;
+        const withDefinition = typeof audit.withDefinition === "number" ? audit.withDefinition : 0;
+        const missingDefinition =
+            typeof audit.missingDefinition === "number"
+                ? audit.missingDefinition
+                : Math.max( total - withDefinition, 0 );
+
+        if ( total === 0 && withDefinition === 0 && missingDefinition === 0 ) {
+            return undefined;
+        }
+
+        return {
+            total,
+            withDefinition,
+            missingDefinition
+        };
+    }
+
+    private warnMissingEmbedDefinitions(
+        componentName: string,
+        moduleName: string | undefined,
+        audit: HydratedEmbedAudit
+    ): void {
+        if ( audit.missingDefinition <= 0 ) {
+            return;
+        }
+
+        const scope = moduleName ? `${ componentName } (module ${ moduleName })` : componentName;
+
+        this.logger.warn(
+            "UIDefinitionLoader",
+            `Component '${ scope }' has ${ audit.missingDefinition } of ${ audit.total } embed(s) missing metadata captured by builders.`
+        );
+    }
+
+    private collectFlowTriggersByHandler(
+        bindings: RuntimeBinding[]
+    ): Record<string, BindingFlowTriggerDefinition[]> | null {
+        let hasEntries = false;
+        const result: Record<string, BindingFlowTriggerDefinition[]> = {};
+
+        for ( const binding of bindings ) {
+            const triggers = binding.definition.flowTriggers;
+
+            if ( !triggers?.length ) {
+                continue;
+            }
+
+            result[ binding.definition.handler ] = triggers.map( ( trigger ) => this.cloneBindingFlowTrigger( trigger ) );
+            hasEntries = true;
+        }
+
+        return hasEntries ? result : null;
+    }
+
+    private validateBindingFlowTriggers(
+        adapterName: string,
+        handlerId: string,
+        triggers: BindingFlowTriggerDefinition[]
+    ): void {
+        for ( const [ index, trigger ] of triggers.entries() ) {
+            if ( !trigger.flowName ) {
+                throw new Error(
+                    `UIDefinitionLoader: adapter '${ adapterName }' binding '${ handlerId }' trigger[${ index }] is missing flowName`
+                );
+            }
+
+            if ( !trigger.transition ) {
+                throw new Error(
+                    `UIDefinitionLoader: adapter '${ adapterName }' binding '${ handlerId }' trigger[${ index }] is missing transition`
+                );
+            }
+
+            if ( trigger.navigation ) {
+                if ( trigger.navigation.targetState && typeof trigger.navigation.targetState !== "string" ) {
+                    throw new Error(
+                        `UIDefinitionLoader: adapter '${ adapterName }' binding '${ handlerId }' trigger[${ index }] targetState must be string`
+                    );
+                }
+
+                if (
+                    trigger.navigation.executionStep &&
+                    typeof trigger.navigation.executionStep !== "string"
+                ) {
+                    throw new Error(
+                        `UIDefinitionLoader: adapter '${ adapterName }' binding '${ handlerId }' trigger[${ index }] executionStep must be string`
+                    );
+                }
+            }
+
+            if ( trigger.mutations ) {
+                for ( const [ mutationIndex, mutation ] of trigger.mutations.entries() ) {
+                    if ( mutation.type !== "set" ) {
+                        throw new Error(
+                            `UIDefinitionLoader: adapter '${ adapterName }' binding '${ handlerId }' trigger[${ index }] mutation[${ mutationIndex }] has unsupported type '${ mutation.type }'`
+                        );
+                    }
+
+                    if ( !Array.isArray( mutation.path ) || !mutation.path.length ) {
+                        throw new Error(
+                            `UIDefinitionLoader: adapter '${ adapterName }' binding '${ handlerId }' trigger[${ index }] mutation[${ mutationIndex }] path must be non-empty array`
+                        );
+                    }
+                }
+            }
+        }
+    }
+
     private validateFlowDefinition( document: FlowDefinition ): void {
         const states = document.states ?? [];
 
         if ( !states.length ) {
-            throw new Error( `UiDefinitionLoader: flow '${ document.name }' must declare at least one state` );
+            throw new Error( `UIDefinitionLoader: flow '${ document.name }' must declare at least one state` );
         }
 
         const stateKeys = new Set<string>();
 
         for ( const state of states ) {
             if ( !state.key ) {
-                throw new Error( `UiDefinitionLoader: flow '${ document.name }' has a state with an empty key` );
+                throw new Error( `UIDefinitionLoader: flow '${ document.name }' has a state with an empty key` );
             }
 
             if ( stateKeys.has( state.key ) ) {
-                throw new Error( `UiDefinitionLoader: flow '${ document.name }' has duplicate state '${ state.key }'` );
+                throw new Error( `UIDefinitionLoader: flow '${ document.name }' has duplicate state '${ state.key }'` );
             }
 
             stateKeys.add( state.key );
@@ -684,7 +808,7 @@ export class UiDefinitionLoader {
 
         if ( !stateKeys.has( document.initialState ) ) {
             throw new Error(
-                `UiDefinitionLoader: flow '${ document.name }' initial state '${ document.initialState }' is not declared`
+                `UIDefinitionLoader: flow '${ document.name }' initial state '${ document.initialState }' is not declared`
             );
         }
 
@@ -693,18 +817,18 @@ export class UiDefinitionLoader {
 
         for ( const transition of transitions ) {
             if ( !transition.from ) {
-                throw new Error( `UiDefinitionLoader: flow '${ document.name }' has a transition without a name` );
+                throw new Error( `UIDefinitionLoader: flow '${ document.name }' has a transition without a name` );
             }
 
             if ( !transition.to ) {
                 throw new Error(
-                    `UiDefinitionLoader: flow '${ document.name }' transition '${ transition.from }' is missing a target state`
+                    `UIDefinitionLoader: flow '${ document.name }' transition '${ transition.from }' is missing a target state`
                 );
             }
 
             if ( !stateKeys.has( transition.to ) ) {
                 throw new Error(
-                    `UiDefinitionLoader: flow '${ document.name }' transition '${ transition.from }' targets unknown state '${ transition.to }'`
+                    `UIDefinitionLoader: flow '${ document.name }' transition '${ transition.from }' targets unknown state '${ transition.to }'`
                 );
             }
 
@@ -723,7 +847,7 @@ export class UiDefinitionLoader {
                     !( isWizard && WIZARD_BASE_TRANSITIONS.has( transitionName ) )
                 ) {
                     throw new Error(
-                        `UiDefinitionLoader: flow '${ document.name }' transition '${ transitionName }' declared for state '${ state.key }' has no mapping`
+                        `UIDefinitionLoader: flow '${ document.name }' transition '${ transitionName }' declared for state '${ state.key }' has no mapping`
                     );
                 }
             }
@@ -733,7 +857,7 @@ export class UiDefinitionLoader {
 
         for ( const item of requiredData ) {
             if ( !item.transition ) {
-                throw new Error( `UiDefinitionLoader: flow '${ document.name }' has required data without transition name` );
+                throw new Error( `UIDefinitionLoader: flow '${ document.name }' has required data without transition name` );
             }
 
             if (
@@ -741,7 +865,7 @@ export class UiDefinitionLoader {
                 !( isWizard && WIZARD_BASE_TRANSITIONS.has( item.transition ) )
             ) {
                 throw new Error(
-                    `UiDefinitionLoader: flow '${ document.name }' required data references unknown transition '${ item.transition }'`
+                    `UIDefinitionLoader: flow '${ document.name }' required data references unknown transition '${ item.transition }'`
                 );
             }
         }
@@ -754,13 +878,13 @@ export class UiDefinitionLoader {
             for ( const point of points ) {
                 if ( point.sourceState && !stateKeys.has( point.sourceState ) ) {
                     throw new Error(
-                        `UiDefinitionLoader: flow '${ document.name }' ${ type } point references unknown source state '${ point.sourceState }'`
+                        `UIDefinitionLoader: flow '${ document.name }' ${ type } point references unknown source state '${ point.sourceState }'`
                     );
                 }
 
                 if ( point.targetState && !stateKeys.has( point.targetState ) ) {
                     throw new Error(
-                        `UiDefinitionLoader: flow '${ document.name }' ${ type } point references unknown target state '${ point.targetState }'`
+                        `UIDefinitionLoader: flow '${ document.name }' ${ type } point references unknown target state '${ point.targetState }'`
                     );
                 }
 
@@ -770,7 +894,7 @@ export class UiDefinitionLoader {
                     !( isWizard && WIZARD_BASE_TRANSITIONS.has( point.transition ) )
                 ) {
                     throw new Error(
-                        `UiDefinitionLoader: flow '${ document.name }' ${ type } point references unknown transition '${ point.transition }'`
+                        `UIDefinitionLoader: flow '${ document.name }' ${ type } point references unknown transition '${ point.transition }'`
                     );
                 }
             }
@@ -787,7 +911,7 @@ export class UiDefinitionLoader {
                     !( isWizard && WIZARD_BASE_TRANSITIONS.has( mapping.transitionName ) )
                 ) {
                     throw new Error(
-                        `UiDefinitionLoader: flow '${ document.name }' edge source mapping references unknown transition '${ mapping.transitionName }'`
+                        `UIDefinitionLoader: flow '${ document.name }' edge source mapping references unknown transition '${ mapping.transitionName }'`
                     );
                 }
             }
@@ -797,7 +921,7 @@ export class UiDefinitionLoader {
             for ( const state of document.stepStates ) {
                 if ( !stateKeys.has( state ) ) {
                     throw new Error(
-                        `UiDefinitionLoader: flow '${ document.name }' wizard step state '${ state }' is not declared`
+                        `UIDefinitionLoader: flow '${ document.name }' wizard step state '${ state }' is not declared`
                     );
                 }
             }
@@ -805,13 +929,13 @@ export class UiDefinitionLoader {
 
         if ( document.stepComponents && document.stepComponents.some( ( name ) => !name ) ) {
             throw new Error(
-                `UiDefinitionLoader: flow '${ document.name }' wizard step components list contains empty entries`
+                `UIDefinitionLoader: flow '${ document.name }' wizard step components list contains empty entries`
             );
         }
 
         if ( document.stepStates && document.stepComponents && document.stepStates.length !== document.stepComponents.length ) {
             throw new Error(
-                `UiDefinitionLoader: flow '${ document.name }' wizard step states count (${ document.stepStates.length }) does not match step components count (${ document.stepComponents.length })`
+                `UIDefinitionLoader: flow '${ document.name }' wizard step states count (${ document.stepStates.length }) does not match step components count (${ document.stepComponents.length })`
             );
         }
     }

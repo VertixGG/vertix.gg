@@ -2,8 +2,10 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
-import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
+
 import { ChannelType } from "discord.js";
+
+import { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
 
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
@@ -57,8 +59,6 @@ import type {
     BindingRegistrationOptions
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 
-const log = new Logger( "VertixGUI/UIDefinitionExporter" );
-
 interface ExporterOptions {
     outputDir: string;
     includeFlows?: boolean;
@@ -86,17 +86,28 @@ type AdapterClass =
 
 type FlowClass = typeof UIFlowBase;
 
-export class UiDefinitionExporter extends ObjectBase {
+export class UIDefinitionExporter extends UIBase {
+    private readonly logger: Logger;
+
     public static override getName(): string {
-        return "VertixGUI/UIDefinitionExporter";
+        return "VertixGUI/Runtime/UIDefinitionExporter";
+    }
+
+    public constructor() {
+        super();
+        this.logger = new Logger( UIDefinitionExporter.getName() );
     }
 
     public async export( uiService: UIService, options: ExporterOptions ): Promise<void> {
-        await exportUIDefinitionsInternal( uiService, options );
+        await exportUIDefinitionsInternal( uiService, options, this.logger );
     }
 }
 
-const uiDefinitionExporter = new UiDefinitionExporter();
+const uiDefinitionExporter = new UIDefinitionExporter();
+
+export async function exportUIDefinitions( uiService: UIService, options: ExporterOptions ) {
+    await uiDefinitionExporter.export( uiService, options );
+}
 
 interface EmbedAuditStats {
     total: number;
@@ -139,7 +150,7 @@ function getOrCreateModuleSummary(
     return summary;
 }
 
-export async function exportUIDefinitions( uiService: UIService, options: ExporterOptions ) {
+async function exportUIDefinitionsInternal( uiService: UIService, options: ExporterOptions, logger: Logger ) {
     const includeComponents = options.includeComponents ?? true;
     const includeAdapters = options.includeAdapters ?? true;
     const includeFlows = options.includeFlows ?? true;
@@ -158,7 +169,7 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
     const modules = uiService.getUIModules();
 
     for ( const [ moduleName, ModuleCtor ] of modules ) {
-        log.info( "exportUIDefinitions", `Exporting module ${ moduleName }` );
+        logger.info( "exportUIDefinitions", `Exporting module ${ moduleName }` );
         const moduleInstance = uiService.getUIModule<UIModuleBase>( moduleName, true ) ?? new ModuleCtor();
         const moduleSummary = getOrCreateModuleSummary( moduleSummaries, moduleName );
 
@@ -176,7 +187,8 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
                         flowTriggersByAdapter,
                         moduleSummary,
                         globalEmbedStats,
-                        embedAuditWarnings
+                        embedAuditWarnings,
+                        logger
                     );
                     adapters.push( definition );
                     moduleSummary.adapters += 1;
@@ -188,7 +200,7 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
                         wizardAdapterComponents.set( adapterClass.getName(), wizardComponents );
                     }
                 } catch( error ) {
-                    log.error(
+                    logger.error(
                         "exportUIDefinitions",
                         `Failed to export adapter '${ adapterClass.getName?.() ?? adapterClass }'`,
                         error
@@ -213,7 +225,7 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
                     flows.push( definition );
                     moduleSummary.flows += 1;
                 } catch( error ) {
-                    log.error(
+                    logger.error(
                         "exportUIDefinitions",
                         `Failed to export flow '${ flowClass.getName?.() ?? flowClass }'`,
                         error
@@ -269,13 +281,13 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
     writeJson( path.join( options.outputDir, "meta.json" ), exportMeta );
 
     if ( embedAuditWarnings.length ) {
-        log.warn(
+        logger.warn(
             "exportUIDefinitions",
             `Found ${ embedAuditWarnings.length } component(s) with embeds missing metadata. See meta.json embedAuditWarnings for details.`
         );
     }
 
-    log.info(
+    logger.info(
         "exportUIDefinitions",
         `Export completed. Components: ${ components.size }, Adapters: ${ adapters.length }, Flows: ${ flows.length }`
     );
@@ -300,7 +312,8 @@ interface ComponentSerializationResult {
 
 function serializeComponent(
     componentClass: UIComponentTypeConstructor,
-    moduleName?: string
+    moduleName: string | undefined,
+    logger: Logger
 ): ComponentSerializationResult {
     const metadata = getComponentMetadata( componentClass );
 
@@ -404,7 +417,7 @@ function serializeComponent(
 
     if ( embedAudit.missingDefinition > 0 ) {
         const scope = moduleName ? `${ componentDefinition.name } (module ${ moduleName })` : componentDefinition.name;
-        log.warn(
+        logger.warn(
             "serializeComponent",
             `Component '${ scope }' has ${ embedAudit.missingDefinition } of ${ embedAudit.total } embed(s) missing metadata captured by builders.`
         );
@@ -468,7 +481,8 @@ async function serializeAdapter(
     flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>,
     moduleSummary: ModuleExportSummary,
     globalEmbedStats: EmbedAuditStats,
-    embedAuditWarnings: EmbedAuditAlert[]
+    embedAuditWarnings: EmbedAuditAlert[],
+    logger: Logger
 ): Promise<AdapterDefinition> {
     const adapterName = adapterClass.getName();
     const adapterInstance = uiService.get( adapterName, true ) as UIAdapterBase<any, any> | undefined;
@@ -485,7 +499,7 @@ async function serializeAdapter(
             : "";
 
     if ( componentClass && !components.has( componentName ) ) {
-        const { definition, embedAudit } = serializeComponent( componentClass, moduleName );
+        const { definition, embedAudit } = serializeComponent( componentClass, moduleName, logger );
         components.set( componentName, definition );
         moduleSummary.components += 1;
         moduleSummary.embedsTotal += embedAudit.total;

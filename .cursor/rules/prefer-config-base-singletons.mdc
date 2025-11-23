@@ -1,0 +1,7 @@
+# Prefer ConfigBase-Style Singletons Over Free Functions
+
+When a helper doesn’t require per-call state, expose it as a class and export a shared instance instead of bare functions. UI runtime helpers should still extend `UIBase`, while other modules can inherit from the appropriate base (e.g. `ObjectBase`, `InitializeBase`, or a domain-specific base).
+
+- Follow the pattern used by `ConfigBase` (`this.constructor as typeof ConfigBase`) to access static API from the singleton.
+- Keep legacy `export function ...` signatures as thin delegates that forward to the shared instance.
+- Avoid standalone procedural modules; encapsulate behaviour within the class for consistency, logging, and future extension points.

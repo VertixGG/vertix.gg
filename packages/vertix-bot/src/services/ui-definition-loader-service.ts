@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
-import { UiDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
+import { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
@@ -48,22 +48,22 @@ function resolveExportsDirectory(): string {
         }
     }
 
-    throw new Error( "UiDefinitionLoaderService: unable to locate 'exports/ui' directory" );
+    throw new Error( "UIDefinitionLoaderService: unable to locate 'exports/ui' directory" );
 }
 
 // TODO: Move to VertixGUI
-export default class UiDefinitionLoaderService extends ServiceWithDependenciesBase<{
+export default class UIDefinitionLoaderService extends ServiceWithDependenciesBase<{
     uiService: UIService;
 }> {
-    private loader: UiDefinitionLoader | null = null;
+    private loader: UIDefinitionLoader | null = null;
 
     public static getName() {
-        return "VertixBot/Services/UiDefinitionLoaderService";
+        return "VertixBot/Services/UIDefinitionLoaderService";
     }
 
-    public getLoader(): UiDefinitionLoader {
+    public getLoader(): UIDefinitionLoader {
         if ( !this.loader ) {
-            throw new Error( "UiDefinitionLoaderService: loader accessed before initialization" );
+            throw new Error( "UIDefinitionLoaderService: loader accessed before initialization" );
         }
 
         return this.loader;
@@ -84,7 +84,7 @@ export default class UiDefinitionLoaderService extends ServiceWithDependenciesBa
         const adapters = loadJsonFile<AdapterDefinition[]>( path.join( exportsDir, "adapters.json" ) );
         const flows = loadJsonFile<FlowDefinition[]>( path.join( exportsDir, "flows.json" ) );
 
-        this.loader = new UiDefinitionLoader( {
+        this.loader = new UIDefinitionLoader( {
             mode: "mongo",
             componentsCollection: new JsonCollection<ComponentDefinition>( { entries: components } ),
             adaptersCollection: new JsonCollection<AdapterDefinition>( { entries: adapters } ),

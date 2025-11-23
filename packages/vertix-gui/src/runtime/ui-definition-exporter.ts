@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
+import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 import { ChannelType } from "discord.js";
 
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
@@ -69,6 +70,13 @@ interface HandlerCapture {
     id: string;
 }
 
+interface EmbedAuditAlert {
+    component: string;
+    module?: string;
+    missing: number;
+    total: number;
+}
+
 type AdapterConstructor = new ( ...args: never[] ) => UIAdapterBase<any, any>;
 
 type AdapterClass =
@@ -77,6 +85,18 @@ type AdapterClass =
     | typeof UIWizardAdapterBase;
 
 type FlowClass = typeof UIFlowBase;
+
+export class UiDefinitionExporter extends ObjectBase {
+    public static override getName(): string {
+        return "VertixGUI/UIDefinitionExporter";
+    }
+
+    public async export( uiService: UIService, options: ExporterOptions ): Promise<void> {
+        await exportUIDefinitionsInternal( uiService, options );
+    }
+}
+
+const uiDefinitionExporter = new UiDefinitionExporter();
 
 interface EmbedAuditStats {
     total: number;
@@ -133,6 +153,7 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
     const flowTriggersByAdapter = new Map<string, Map<string, FlowTriggerDefinition[]>>();
     const moduleSummaries = new Map<string, ModuleExportSummary>();
     const globalEmbedStats: EmbedAuditStats = { total: 0, withDefinition: 0, missingDefinition: 0 };
+    const embedAuditWarnings: EmbedAuditAlert[] = [];
 
     const modules = uiService.getUIModules();
 
@@ -154,7 +175,8 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
                         moduleName,
                         flowTriggersByAdapter,
                         moduleSummary,
-                        globalEmbedStats
+                        globalEmbedStats,
+                        embedAuditWarnings
                     );
                     adapters.push( definition );
                     moduleSummary.adapters += 1;
@@ -228,7 +250,8 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
             total: globalEmbedStats.total,
             withDefinition: globalEmbedStats.withDefinition,
             missingDefinition: globalEmbedStats.missingDefinition
-        }
+        },
+        embedAuditWarnings
     };
 
     if ( includeComponents ) {
@@ -244,6 +267,13 @@ export async function exportUIDefinitions( uiService: UIService, options: Export
     }
 
     writeJson( path.join( options.outputDir, "meta.json" ), exportMeta );
+
+    if ( embedAuditWarnings.length ) {
+        log.warn(
+            "exportUIDefinitions",
+            `Found ${ embedAuditWarnings.length } component(s) with embeds missing metadata. See meta.json embedAuditWarnings for details.`
+        );
+    }
 
     log.info(
         "exportUIDefinitions",
@@ -372,6 +402,14 @@ function serializeComponent(
             : undefined
     };
 
+    if ( embedAudit.missingDefinition > 0 ) {
+        const scope = moduleName ? `${ componentDefinition.name } (module ${ moduleName })` : componentDefinition.name;
+        log.warn(
+            "serializeComponent",
+            `Component '${ scope }' has ${ embedAudit.missingDefinition } of ${ embedAudit.total } embed(s) missing metadata captured by builders.`
+        );
+    }
+
     return {
         definition: componentDefinition,
         embedAudit
@@ -429,7 +467,8 @@ async function serializeAdapter(
     moduleName: string,
     flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>,
     moduleSummary: ModuleExportSummary,
-    globalEmbedStats: EmbedAuditStats
+    globalEmbedStats: EmbedAuditStats,
+    embedAuditWarnings: EmbedAuditAlert[]
 ): Promise<AdapterDefinition> {
     const adapterName = adapterClass.getName();
     const adapterInstance = uiService.get( adapterName, true ) as UIAdapterBase<any, any> | undefined;
@@ -455,6 +494,15 @@ async function serializeAdapter(
         globalEmbedStats.total += embedAudit.total;
         globalEmbedStats.withDefinition += embedAudit.withDefinition;
         globalEmbedStats.missingDefinition += embedAudit.missingDefinition;
+
+        if ( embedAudit.missingDefinition > 0 ) {
+            embedAuditWarnings.push( {
+                component: definition.name,
+                module: moduleName,
+                missing: embedAudit.missingDefinition,
+                total: embedAudit.total
+            } );
+        }
     }
 
     const executionSteps = serializeExecutionSteps( adapterClass );

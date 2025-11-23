@@ -76,6 +76,12 @@ export interface RuntimeBinding {
     callable: RuntimeHandler;
 }
 
+export interface HydratedEmbedAudit {
+    total: number;
+    withDefinition: number;
+    missingDefinition: number;
+}
+
 export interface HydratedComponent {
     definition: ComponentDefinition;
     elementsGroups: RuntimeElementsGroup[];
@@ -83,6 +89,8 @@ export interface HydratedComponent {
     modals: RuntimeClassRef[];
     hooks: RuntimeHook[];
     componentClass?: UIComponentTypeConstructor;
+    module?: string;
+    embedAudit?: HydratedEmbedAudit;
 }
 
 export interface HydratedAdapter {
@@ -92,6 +100,8 @@ export interface HydratedAdapter {
     hooks: RuntimeHook[];
     componentClass?: UIComponentTypeConstructor;
     adapterClass?: ExecutionAdapterClass;
+    module?: string;
+    flowTriggersByHandler?: Record<string, BindingFlowTriggerDefinition[]>;
 }
 
 export interface RuntimeFlowState {
@@ -136,6 +146,7 @@ export interface HydratedFlow {
     initialData?: JsonObject;
     flowType?: string;
     flowClass?: FlowConstructor;
+    module?: string;
 }
 
 export type FlowConstructor = typeof UIFlowBase;

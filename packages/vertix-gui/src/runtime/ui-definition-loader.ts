@@ -1,3 +1,4 @@
+import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
 
 import { interactionHandlerRegistry } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
@@ -33,6 +34,7 @@ import type {
     HydratedAdapter,
     HydratedComponent,
     HydratedFlow,
+    HydratedEmbedAudit,
     RuntimeBinding,
     RuntimeClassRef,
     RuntimeElementsGroup,
@@ -50,6 +52,8 @@ import type {
 } from "@vertix.gg/gui/src/runtime/ui-definition-runtime";
 
 type LoaderMode = "mongo" | "static";
+
+const loaderLog = new Logger( "VertixGUI/UiDefinitionLoader" );
 
 const WIZARD_BASE_TRANSITIONS = new Set( [
     "VertixGUI/UIWizardFlowBase/Transitions/Next",
@@ -215,12 +219,21 @@ export class UiDefinitionLoader {
             options: document.options ? this.cloneJsonObject( document.options ) : undefined
         };
 
+    const moduleName = document.modules?.[ 0 ];
+    const embedAudit = this.extractEmbedAudit( document.options );
+
+    if ( embedAudit ) {
+        this.warnMissingEmbedDefinitions( document.name, moduleName, embedAudit );
+    }
+
         return {
             definition,
             elementsGroups,
             embedsGroups,
             modals,
-            hooks
+        hooks,
+        module: moduleName,
+        embedAudit
         };
     }
 
@@ -244,12 +257,29 @@ export class UiDefinitionLoader {
             options: document.options ? this.cloneJsonObject( document.options ) : undefined
         };
 
-        return {
+    for ( const binding of bindings ) {
+        const flowTriggers = binding.definition.flowTriggers ?? [];
+
+        if ( flowTriggers.length ) {
+            this.validateBindingFlowTriggers( document.name, binding.definition.handler, flowTriggers );
+        }
+    }
+
+    const flowTriggersByHandler = this.collectFlowTriggersByHandler( bindings );
+
+    const adapter: HydratedAdapter = {
             definition,
             executionSteps,
             bindings,
-            hooks
+        hooks,
+        module: document.module
         };
+
+    if ( flowTriggersByHandler ) {
+        adapter.flowTriggersByHandler = flowTriggersByHandler;
+    }
+
+    return adapter;
     }
 
     private hydrateFlow( document: FlowDefinition ): HydratedFlow {
@@ -309,7 +339,8 @@ export class UiDefinitionLoader {
             channelTypes,
             permissions,
             initialData: initialData ? this.cloneJsonObject( initialData ) : undefined,
-            flowType
+        flowType,
+        module: document.module
         };
     }
 

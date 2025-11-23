@@ -12,6 +12,8 @@ import * as adapters from "@vertix.gg/bot/src/ui/v2/ui-adapters-index";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
+import type UiDefinitionLoaderService from "@vertix.gg/bot/src/services/ui-definition-loader-service";
+
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class UIModuleV2 extends UIModuleBase {
@@ -41,6 +43,9 @@ export class UIModuleV2 extends UIModuleBase {
 
     protected async initialize() {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const definitionLoaderService = ServiceLocator.$.get(
+            "VertixBot/Services/UiDefinitionLoader"
+        ) as unknown as UiDefinitionLoaderService;
 
         DynamicChannelClaimManager.register( "VertixBot/UI-V2/DynamicChannelClaimManager", {
             adapters: {
@@ -68,7 +73,9 @@ export class UIModuleV2 extends UIModuleBase {
             entities: {
                 claimVoteAddButton: "VertixBot/UI-V2/ClaimVoteAddButton",
                 claimVoteStepInButton: "VertixBot/UI-V2/ClaimVoteStepInButton"
-            }
+            },
+
+            definitionLoader: definitionLoaderService.getLoader()
         } );
     }
 }

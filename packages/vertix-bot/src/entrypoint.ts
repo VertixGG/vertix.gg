@@ -69,7 +69,8 @@ export async function registerServices() {
 
         import( "@vertix.gg/bot/src/services/channel-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
-        import( "@vertix.gg/bot/src/services/master-channel-service" )
+        import( "@vertix.gg/bot/src/services/master-channel-service" ),
+        import( "@vertix.gg/bot/src/services/ui-definition-loader-service" )
     ] );
 
     services.forEach( ( service ) => {

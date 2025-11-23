@@ -1,0 +1,442 @@
+[
+    {
+        "name": "VertixBot/UI-General/WelcomeFlow",
+        "flowKind": "ui",
+        "initialState": "VertixBot/UI-General/WelcomeFlow/States/Initial",
+        "states": [
+            {
+                "key": "VertixBot/UI-General/WelcomeFlow/States/Initial",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage"
+                ],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+                "component": null,
+                "transitions": [],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/WelcomeFlow/States/SupportClicked",
+                "component": null,
+                "transitions": [],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/WelcomeFlow/States/InviteClicked",
+                "component": null,
+                "transitions": [],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/WelcomeFlow/States/LanguageSelected",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                    "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite"
+                ],
+                "hooks": []
+            }
+        ],
+        "transitions": [
+            {
+                "from": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "to": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked"
+            },
+            {
+                "from": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                "to": "VertixBot/UI-General/WelcomeFlow/States/SupportClicked"
+            },
+            {
+                "from": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
+                "to": "VertixBot/UI-General/WelcomeFlow/States/InviteClicked"
+            },
+            {
+                "from": "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage",
+                "to": "VertixBot/UI-General/WelcomeFlow/States/LanguageSelected"
+            }
+        ],
+        "requiredData": [
+            {
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage",
+                "fields": [
+                    "selectedLanguage"
+                ]
+            }
+        ],
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/CommandsFlow",
+                "description": "Entry point triggered by CommandsFlow via Welcome command",
+                "targetState": "VertixBot/UI-General/WelcomeFlow/States/Initial",
+                "transition": "VertixBot/Commands/Welcome",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-General/SetupFlow",
+                "description": "Hands off to Setup Flow when setup button is clicked",
+                "sourceState": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "requiredData": [],
+                "integrationType": "GENERIC"
+            }
+        ],
+        "externalReferences": {
+            "setupWizardFlow": "VertixBot/UI-V3/SetupNewWizardFlow",
+            "setupWizardAdapter": "VertixBot/UI-V3/SetupNewWizardAdapter",
+            "setupWizardEntryTransition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
+        },
+        "edgeSourceMappings": [
+            {
+                "triggeringElementId": "VertixBot/UI-General/WelcomeSetupButton",
+                "transitionName": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "targetFlowName": "VertixBot/UI-General/SetupFlow"
+            }
+        ],
+        "requiredDataComponents": [
+            "Vertix/Data/Guild/BadwordsData",
+            "Vertix/Data/MaxMasterChannelsData",
+            "Vertix/Data/Guild/MasterChannelsData"
+        ],
+        "channelTypes": [
+            "2",
+            "0"
+        ],
+        "permissions": "1024",
+        "flowType": "ui",
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/SetupFlow",
+        "flowKind": "ui",
+        "initialState": "VertixBot/UI-General/SetupFlow/States/Initial",
+        "states": [],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/CommandsFlow",
+                "description": "Entry point triggered by CommandsFlow via Setup command",
+                "targetState": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "transition": "VertixBot/Commands/Setup",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-V3/SetupNewWizardFlow",
+                "description": "Handoff to V3 Setup Wizard when Create V3 button is clicked",
+                "sourceState": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "transition": "VertixBot/UI-General/SetupFlow/Transitions/CreateV3",
+                "requiredData": [],
+                "integrationType": "GENERIC"
+            },
+            {
+                "flowName": "VertixBot/UI-General/LanguageFlow",
+                "description": "Handoff to Language selection flow",
+                "sourceState": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "transition": "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                "requiredData": [],
+                "integrationType": "GENERIC"
+            }
+        ],
+        "externalReferences": {},
+        "edgeSourceMappings": [
+            {
+                "triggeringElementId": "VertixBot/UI-General/SetupMasterCreateV3Button",
+                "transitionName": "VertixBot/UI-General/SetupFlow/Transitions/CreateV3",
+                "targetFlowName": "VertixBot/UI-V3/SetupNewWizardFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-General/LanguageChooseButton",
+                "transitionName": "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                "targetFlowName": "VertixBot/UI-General/LanguageFlow"
+            }
+        ],
+        "requiredDataComponents": [],
+        "channelTypes": [
+            "0"
+        ],
+        "permissions": "3072",
+        "flowType": "ui",
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/HelpFlow",
+        "flowKind": "ui",
+        "initialState": "VertixBot/UI-General/HelpFlow/States/Initial",
+        "states": [],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/CommandsFlow",
+                "description": "Entry point triggered by CommandsFlow via Help command",
+                "targetState": "VertixBot/UI-General/HelpFlow/States/Initial",
+                "transition": "VertixBot/Commands/Help",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "handoffPoints": [],
+        "externalReferences": {},
+        "requiredDataComponents": [],
+        "channelTypes": [
+            "0"
+        ],
+        "permissions": "3072",
+        "flowType": "ui",
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/LanguageFlow",
+        "flowKind": "ui",
+        "initialState": "VertixBot/UI-General/LanguageFlow/States/Initial",
+        "states": [],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/SetupFlow",
+                "description": "Entry point triggered by SetupFlow via Choose Language button",
+                "targetState": "VertixBot/UI-General/LanguageFlow/States/Initial",
+                "transition": "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "handoffPoints": [],
+        "externalReferences": {},
+        "requiredDataComponents": [],
+        "channelTypes": [
+            "0"
+        ],
+        "permissions": "3072",
+        "flowType": "ui",
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/SetupNewWizardFlow",
+        "flowKind": "ui",
+        "initialState": "VertixGUI/UIWizardFlowBase/States/Initial",
+        "states": [
+            {
+                "key": "VertixGUI/UIWizardFlowBase/States/Initial",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
+                ],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Next",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Error",
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal"
+                ],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Next",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Back",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Error",
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras"
+                ],
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Finish",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Back",
+                    "VertixGUI/UIWizardFlowBase/Transitions/Error",
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone"
+                ],
+                "hooks": []
+            },
+            {
+                "key": "VertixGUI/UIWizardFlowBase/States/Completed",
+                "component": null,
+                "transitions": [],
+                "hooks": []
+            },
+            {
+                "key": "VertixGUI/UIWizardFlowBase/States/Error",
+                "component": null,
+                "transitions": [
+                    "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup"
+                ],
+                "hooks": []
+            }
+        ],
+        "transitions": [
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles"
+            },
+            {
+                "from": "VertixGUI/UIWizardFlowBase/Transitions/Finish",
+                "to": "VertixGUI/UIWizardFlowBase/States/Completed"
+            },
+            {
+                "from": "VertixGUI/UIWizardFlowBase/Transitions/Error",
+                "to": "VertixGUI/UIWizardFlowBase/States/Error"
+            },
+            {
+                "from": "VertixGUI/UIWizardFlowBase/Transitions/Next",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons"
+            },
+            {
+                "from": "VertixGUI/UIWizardFlowBase/Transitions/Back",
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate"
+            }
+        ],
+        "requiredData": [
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate",
+                "fields": [
+                    "dynamicChannelNameTemplate"
+                ]
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+                "fields": [
+                    "dynamicChannelButtonsTemplate"
+                ]
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+                "fields": [
+                    "dynamicChannelVerifiedRoles"
+                ]
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
+                "fields": [
+                    "dynamicChannelNameTemplate"
+                ]
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
+                "fields": [
+                    "dynamicChannelMentionable",
+                    "dynamicChannelAutoSave"
+                ]
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
+                "fields": [
+                    "dynamicChannelIncludeEveryoneRole"
+                ]
+            },
+            {
+                "transition": "VertixGUI/UIWizardFlowBase/Transitions/Finish",
+                "fields": [
+                    "dynamicChannelNameTemplate",
+                    "dynamicChannelButtonsTemplate",
+                    "dynamicChannelVerifiedRoles"
+                ]
+            },
+            {
+                "transition": "VertixGUI/UIWizardFlowBase/Transitions/Error",
+                "fields": [
+                    "errorCode",
+                    "errorMessage"
+                ]
+            },
+            {
+                "transition": "VertixGUI/UIWizardFlowBase/Transitions/Next",
+                "fields": []
+            },
+            {
+                "transition": "VertixGUI/UIWizardFlowBase/Transitions/Back",
+                "fields": []
+            }
+        ],
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/WelcomeFlow",
+                "description": "Entry point from Welcome flow when setup button is clicked",
+                "sourceState": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked",
+                "targetState": "VertixGUI/UIWizardFlowBase/States/Initial",
+                "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
+                "requiredData": [
+                    "originFlow",
+                    "originState",
+                    "originTransition",
+                    "sourceButton"
+                ],
+                "integrationType": "GENERIC"
+            }
+        ],
+        "handoffPoints": [],
+        "externalReferences": {
+            "welcomeFlow": "VertixBot/UI-General/WelcomeFlow",
+            "welcomeAdapter": "VertixBot/UI-General/WelcomeAdapter",
+            "masterChannelService": "Vertix/Services/MasterChannelService"
+        },
+        "requiredDataComponents": [],
+        "channelTypes": [
+            "2",
+            "0"
+        ],
+        "permissions": "268435504",
+        "flowType": "ui",
+        "hooks": []
+    }
+]

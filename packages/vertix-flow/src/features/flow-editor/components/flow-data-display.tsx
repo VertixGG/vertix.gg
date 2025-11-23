@@ -36,7 +36,7 @@ export const FlowDataDisplay: React.FC<FlowDataDisplayProps> = ( {
     const setLoading = useFlowEditorStore( state => state.setLoading );
 
     const flowDataResource = useFlowData( moduleName, flowName );
-    const data = flowDataResource.read?.().data;
+    const data = flowDataResource.read();
 
     useEffect( () => {
         try {

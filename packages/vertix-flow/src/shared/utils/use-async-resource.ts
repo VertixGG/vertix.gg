@@ -13,9 +13,9 @@ type TWrappedPromise<T> = {
  * Creates a resource that wraps a promise and makes it compatible with React Suspense
  * TODO: Remove this after migration to React 19, use `React.use` instead
  */
-export function useAsyncResource<T, Args extends any[]>(
+export function useAsyncResource<T, Args extends any[] = []>(
     fetcher: ( ...args: Args ) => Promise<T>,
-    deps: string[] = []
+    deps: Array<string | number> = []
 ) {
     const key = deps.join( "-" );
 

@@ -25,6 +25,8 @@ import { config } from "dotenv";
 
 import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
+import { exportUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
+
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
@@ -279,6 +281,41 @@ async function exportLanguages( languageCodes: string[] ) {
     return languages.size;
 }
 
+async function exportUIDefinitionsCommand( outputDirArg?: string ) {
+    const outputDir = outputDirArg ?? path.join( "exports", "ui" );
+    const resolvedOutputDir = path.isAbsolute( outputDir )
+        ? outputDir
+        : path.resolve( process.cwd(), "../../", outputDir );
+
+    const { default: botInitialize } = await import( "./vertix" );
+    const client = await botInitialize( { enableListeners: false } );
+
+    // Register required services
+    await registerUIServices( client );
+
+    await registerConfigs();
+    await registerServices();
+
+    await EmojiManager.$.promise();
+
+    await registerUIAdapters();
+    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUIVersionStrategies();
+
+    await registerDataServicesAndComponents();
+
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+
+    await exportUIDefinitions( uiService, {
+        outputDir: resolvedOutputDir,
+        includeAdapters: true,
+        includeComponents: true,
+        includeFlows: true
+    } );
+
+    return resolvedOutputDir;
+}
+
 // Function to register Data Service and Components
 async function registerDataServicesAndComponents() {
     GlobalLogger.$.info( registerDataServicesAndComponents, "Registering data services and components..." );
@@ -375,6 +412,24 @@ export async function entryPoint( options: {
             process.exit( 0 );
         } catch( error ) {
             GlobalLogger.$.error( entryPoint, "Failed to export languages", error );
+            process.exit( 1 );
+        }
+    }
+
+    const exportUiArg = process.argv.find( ( arg ) => arg.startsWith( "--export-ui" ) );
+    if ( exportUiArg ) {
+        GlobalLogger.$.info( entryPoint, "Export UI definitions command detected" );
+        try {
+            const outputDirArg = exportUiArg.includes( "=" )
+                ? exportUiArg.split( "=" )[ 1 ]
+                : undefined;
+
+            const resolvedOutputDir = await exportUIDefinitionsCommand( outputDirArg );
+
+            GlobalLogger.$.info( entryPoint, `UI definitions exported to '${ resolvedOutputDir }'` );
+            process.exit( 0 );
+        } catch( error ) {
+            GlobalLogger.$.error( entryPoint, "Failed to export UI definitions", error );
             process.exit( 1 );
         }
     }

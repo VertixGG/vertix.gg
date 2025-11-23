@@ -19,7 +19,7 @@ const ModuleSelectorInner: React.FC<ModuleSelectorProps> = ( { onSelectModule } 
     const setModules = useModuleSelectorStore( state => state.setModules );
     const uiModulesResource = useUIModules();
 
-    const resource = uiModulesResource.read().data;
+    const resource = uiModulesResource.read();
 
     useEffect( () => {
         if ( resource?.uiModules ) {

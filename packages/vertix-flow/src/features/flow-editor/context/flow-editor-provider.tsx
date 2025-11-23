@@ -14,19 +14,18 @@ import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector
 
 import type { FlowEditorContextType } from "@vertix.gg/flow/src/features/flow-editor/context/flow-editor-context";
 
-import type { GuildResponseItem, UIModuleFile } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { GuildResponseItem, UIModuleFile, UIModulesResponse } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 // Import the zustand store hook
 
 // Assuming useGuilds returns a resource-like object with a read() method and data structure
 // Adjust this type based on the actual return type of useGuilds
 interface GuildsResource {
-    read: () => { data?: GuildResponseItem[] };
+    read: () => GuildResponseItem[];
 }
 
-// Adjust this type based on the actual return type of useUIModules
 interface UIModulesResource {
-    read: () => { data?: { uiModules?: UIModuleFile[] } };
+    read: () => UIModulesResponse;
 }
 
 interface FlowEditorContextInitializerProps {
@@ -51,14 +50,13 @@ const FlowEditorContextInitializer: React.FC<FlowEditorContextInitializerProps> 
 
     // --- Read Guild Data (Suspends here if not ready) ---
     // This read() call happens during render, allowing Suspense to catch it
-    const guildsData = guildsResource.read();
-    const guilds: GuildResponseItem[] = guildsData?.data || [];
+    const guilds = guildsResource.read();
 
     // --- Read Modules Data (Suspends here if not ready) ---
     // Reading modules data here ensures it's available for the hook below
     // This read() might suspend, caught by the <Suspense> in main.tsx
-    const modulesData = uiModulesResource.read(); // Read modules data
-    const modules: UIModuleFile[] = modulesData?.data?.uiModules || []; // Get modules list
+    const modulesData = uiModulesResource.read();
+    const modules: UIModuleFile[] = modulesData.uiModules || [];
 
     // --- Calculate Initial Guild State (based on param and *available* data) ---
     const initialGuild = useMemo( () => {

@@ -5,11 +5,13 @@ import { ComponentType } from "discord.js";
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor, UIEntitySchemaBase, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
+import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import type {
     UIAdapterReplyContext,
@@ -244,6 +246,24 @@ export class WizardAdapterBuilder<
         try {
             Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } );
         } catch {}
+
+        const metadataCarrier = AdapterClass as unknown as { [ BUILDER_METADATA_SYMBOL ]?: AdapterBuilderMetadata };
+        const metadata = metadataCarrier[ BUILDER_METADATA_SYMBOL ];
+
+        if ( metadata ) {
+            metadata.executionSteps = builder.executionSteps;
+            metadata.initiatorElement = metadata.initiatorElement ?? builder.initiatorElement;
+            metadata.wizard = {
+                componentConfig: builder.componentConfig
+                    ? {
+                          name: builder.componentConfig.name,
+                          components: builder.componentConfig.components,
+                          baseComponent: builder.componentConfig.baseComponent
+                      }
+                    : undefined,
+                componentEmbedsGroups: builder.componentEmbedsGroups
+            };
+        }
 
         return AdapterClass;
     }

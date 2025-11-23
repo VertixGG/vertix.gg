@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import axios from "axios";
 
 import { UIEFlowIntegrationPointType } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
@@ -10,19 +9,12 @@ import { getConnectedFlows } from "@vertix.gg/flow/src/features/flow-editor/util
 import { useFlowEditorStore } from "@vertix.gg/flow/src/features/flow-editor/store/flow-editor-store";
 
 import { FLOW_EDITOR } from "@vertix.gg/flow/src/features/flow-editor/config";
+import { fetchUIFlow, UIFlowApiError } from "@vertix.gg/flow/src/lib/api/ui-flow-client";
 
 import type React from "react";
 
 import type { Node, Edge } from "@xyflow/react";
 import type { FlowData, VisualConnection, FlowIntegrationPoint } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
-
-// Helper function to get the correct API base URL
-const getApiBaseUrl = () => {
-    if ( window.location.origin.includes( "localhost:5173" ) || window.location.origin.includes( "127.0.0.1:5173" ) ) {
-        return "http://localhost:3000";
-    }
-    return window.location.origin;
-};
 
 export interface UseConnectedFlowsReturn {
     mainFlowData: FlowData | null;
@@ -48,7 +40,6 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
     const loadConnectedFlows = async( connectedFlowNames: string[] ) => {
         try {
             setIsLoadingConnectedFlows( true );
-            const apiBaseUrl = getApiBaseUrl();
             const loadedFlows: FlowData[] = [];
             const processedFlows = new Set<string>(); // Track processed flows to avoid cycles
 
@@ -62,38 +53,31 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
                 const moduleName = `${ moduleNameParts[ 0 ] }/${ moduleNameParts[ 1 ] }/Module`;
 
                 try {
-                    const response = await axios.get<FlowData>( `${ apiBaseUrl }/api/ui-flows`, {
-                        params: {
-                            moduleName,
-                            flowName
-                        }
-                    } );
+                    const flowData = await fetchUIFlow( { moduleName, flowName } );
 
-                    if ( response.data ) {
+                    if ( flowData ) {
                         // Always add the loaded flow, regardless of direct handoff from parent
-                        loadedFlows.push( response.data );
+                        loadedFlows.push( flowData );
 
                         // --- Combine flows from both handoffs and visual connections ---
                         const flowsToLoadNext = new Set<string>();
 
                         // Get nested connected flows from handoff points
-                        const handoffTargets = response.data.integrations?.handoffPoints?.map(
+                        const handoffTargets = flowData.integrations?.handoffPoints?.map(
                             hp => hp.flowName
                         ) ?? [];
                         handoffTargets.forEach( name => { if ( name ) flowsToLoadNext.add( name ); } );
 
                         // Get nested connected flows from visual connections
-                        const edgeSourceMappings = response.data.getEdgeSourceMappings?.map(
-                            vc => vc.targetFlowName
-                        ) ?? [];
+                        const edgeSourceMappings = flowData.edgeSourceMappings?.map( vc => vc.targetFlowName ) ?? [];
                         edgeSourceMappings.forEach( name => { if ( name ) flowsToLoadNext.add( name ); } );
 
                         // Load each unique nested flow
                         for ( const nextFlowName of flowsToLoadNext ) {
-                            await loadFlow( nextFlowName, response.data );
+                            await loadFlow( nextFlowName, flowData );
                         }
                     }
-                } catch( error ) {
+                } catch( error: UIFlowApiError | Error ) {
                     console.error( `Failed to load connected flow: ${ flowName }`, error );
                 }
             };
@@ -104,7 +88,7 @@ export const useConnectedFlows = (): UseConnectedFlowsReturn => {
             }
 
             setConnectedFlowsData( loadedFlows );
-        } catch( error ) {
+        } catch( error: UIFlowApiError | Error ) {
             console.error( "Error loading connected flows:", error );
             setError( "Failed to load connected flows" );
         } finally {

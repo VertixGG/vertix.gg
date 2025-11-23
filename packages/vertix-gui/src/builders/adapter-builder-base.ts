@@ -1,9 +1,17 @@
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
-import { PermissionsBitField  } from "discord.js";
+import { PermissionsBitField } from "discord.js";
 
-import type { ChannelType } from "discord.js";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+
+import type {
+    ChannelType,
+    ButtonInteraction,
+    ModalSubmitInteraction,
+    StringSelectMenuInteraction,
+    UserSelectMenuInteraction
+} from "discord.js";
 
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
@@ -15,8 +23,6 @@ import type {
     UIAdapterReplyContext,
     UIAdapterStartContext,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-
-import type { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInteraction, UserSelectMenuInteraction } from "discord.js";
 
 import type {
     UIArgs,
@@ -37,6 +43,7 @@ import type {
     IBinder,
     BeforeFinishHandler
 } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 type StartArgsHandler<TContext, TChannel, TArgs> = (
@@ -319,6 +326,28 @@ export class AdapterBuilderBase<
 
         try { Object.defineProperty( AdapterClass, "displayName", { value: builder.name } ); } catch {}
         try { Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } ); } catch {}
+
+        const metadata: AdapterBuilderMetadata = {
+            name: builder.name,
+            component: builder.component,
+            excludedElements: builder.excludedElements,
+            permissions: builder.permissions,
+            channelTypes: builder.channelTypes,
+            generateCustomIdForEntityHandler: builder.generateCustomIdForEntityHandler,
+            getCustomIdForEntityHandler: builder.getCustomIdForEntityHandler,
+            startArgsHandler: builder.startArgsHandler,
+            replyArgsHandler: builder.replyArgsHandler,
+            beforeBuildHandler: builder.beforeBuildHandler,
+            beforeBuildRunHandler: builder.beforeBuildRunHandler,
+            beforeFinishHandler: builder.beforeFinishHandler,
+            entityMapHandler: builder.entityMapHandler,
+            contextFactory: builder.contextFactory,
+            rawBuilder: builder
+        };
+
+        Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
+            value: metadata
+        } );
 
         return AdapterClass;
     }

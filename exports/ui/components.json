@@ -1,0 +1,1936 @@
+[
+    {
+        "name": "VertixBot/UI-General/FeedbackComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/LanguageComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/SetupComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/SetupElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/SetupMasterEditSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/SetupMasterCreateButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/SetupMasterCreateV3Button"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/LanguageChooseButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/SetupBadwordsEditButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/SetupEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-General/SetupElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/WelcomeComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/WelcomeElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WelcomeSupportButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WelcomeInviteButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WelcomeSetupButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-General/WelcomeElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-General/WelcomeEmbed",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-General/NotYourChannelComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/ClaimResultComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimResultVotedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultVotedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultVotedSameEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimResultStepInEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultStepInEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/ClaimStartComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/ClaimVoteComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/ClaimVoteElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ClaimVoteAddButton"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ClaimVoteStepInButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimVoteStepInButtonGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ClaimVoteStepInButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/ClaimVoteStepInEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimVoteStepInEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimVoteEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimVoteEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/ClaimVoteWonEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/ClaimVoteWonEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannel",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaRenameButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaLimitButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V2/DynamicChannelElementsGroup",
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButtonGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaLimitComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/NothingChangedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NothingChangedEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButtonGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/YesNoElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/YesButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/NoButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/DisabledWhileClaimEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/DisabledWhileClaimEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/ConfigComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/SetupEditElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/ConfigExtrasSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/LogChannelSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditButtonsElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditButtonsEffectElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/SetupEditEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupEditEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditButtonsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupEditButtonsEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V2/SetupEditElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V2/SetupEditEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V2/SetupNewWizardComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/SetupStep1Component/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/ChannelNameTemplateEditButton"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupStep2Component/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/ConfigExtrasSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupStep3Component/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupStep1Embed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupStep2Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupStep2Embed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupStep3Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupStep3Embed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/ClaimResultComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultOwnerStopEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimResultVotedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultVotedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultVotedSameEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimResultStepInEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultStepInEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimResultVoteSelfEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/ClaimStartComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [],
+        "embedsGroups": [],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/ClaimVoteComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimVoteElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ClaimVoteAddButton"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ClaimVoteStepInButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimVoteStepInButtonGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ClaimVoteStepInButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimVoteStepInEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimVoteStepInEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimVoteEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimVoteEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimVoteWonEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimVoteWonEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannel",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelRenameButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelLimitMetaButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrivacyButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelRegionButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClearChatButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelResetChannelButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannel/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannel/EmbedsGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelClearChatComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelClearChatButtonGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClearChatButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelLimitComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/NothingChangedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NothingChangedEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/YesNoElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/YesButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/NoButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-General/YesNoElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelPrivacyComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrivacyMenu"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPrivacyEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelRegionComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelRegionSelectMenu"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelRegionEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelRenameComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelResetChannelButtonGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelResetChannelButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelResetChannelEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/YesNoElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/YesButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/NoButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/DisabledWhileClaimEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/DisabledWhileClaimEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/ConfigComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/SetupEditElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/ConfigExtrasSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/LogChannelSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditButtonsElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/SetupEditEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupEditEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditButtonsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupEditButtonsEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/SetupEditElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/SetupEditEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    },
+    {
+        "name": "VertixBot/UI-V3/SetupNewWizardComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/SetupStep1Component/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/ChannelNameTemplateEditButton"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupStep2Component/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/ConfigExtrasSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupStep3Component/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu"
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardNextButton"
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardFinishButton"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/SetupStep1Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupNewStep1Embed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupStep2Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupNewStep2Embed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupStep3Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupNewStep3Embed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed"
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed"
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": []
+    }
+]

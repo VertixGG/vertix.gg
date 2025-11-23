@@ -53,10 +53,15 @@ const server = new Server();
 // Start server if this file is run directly
 if ( import.meta.url === `file://${ process.argv[ 1 ] }` ) {
     if ( process.env.BUN_ENV === "development" ) {
-        // Use Bun's hot reloading in development
-        Bun.serve( handler );
+        const port = environment.getPort();
+        const host = environment.getHost();
+
+        Bun.serve( {
+            ...handler,
+            port,
+            hostname: host
+        } );
     } else {
-        // Use traditional server start in other environments
         server.start();
     }
 }

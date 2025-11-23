@@ -13,7 +13,7 @@ const GuildSelectorInner: React.FC = () => {
     // Use the new context state names
     const { selectedGuild, setSelectedGuild } = useFlowEditorContext();
     const guildsResource = useGuilds();
-    const guilds: GuildResponseItem[] = guildsResource.read().data || [];
+    const guilds: GuildResponseItem[] = guildsResource.read();
 
     // --- Define Props for ItemSelectorList ---
 

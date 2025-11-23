@@ -64,21 +64,56 @@ class ErrorBoundary extends React.Component<
     }
 }
 
-const rootElement = document.getElementById( "root" );
+declare global {
+    interface Window {
+        __reactRoot?: ReturnType<typeof ReactDOM.createRoot>;
+    }
+}
 
-if ( rootElement ) {
-    const root = ReactDOM.createRoot( rootElement );
+function initApp(): void {
+    console.log( "[main.tsx] Initializing app..." );
 
-    root.render(
-        <ErrorBoundary>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={ <FlowEditor /> } />
-                    <Route path="/" element={ <Navigate to="/flow" replace /> } />
-                </Routes>
-            </BrowserRouter>
-        </ErrorBoundary>
-    );
+    const rootElement = document.getElementById( "root" );
+
+    if ( !rootElement ) {
+        console.error( "[main.tsx] Failed to find the root element" );
+        return;
+    }
+
+    console.log( "[main.tsx] Root element found, creating React root..." );
+
+    try {
+        let root = window.__reactRoot;
+
+        if ( !root ) {
+            console.log( "[main.tsx] Creating new React root..." );
+            root = ReactDOM.createRoot( rootElement );
+            window.__reactRoot = root;
+        } else {
+            console.log( "[main.tsx] Reusing existing React root..." );
+        }
+
+        console.log( "[main.tsx] Rendering app..." );
+        root.render(
+            <ErrorBoundary>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={ <FlowEditor /> } />
+                        <Route path="/" element={ <Navigate to="/flow" replace /> } />
+                    </Routes>
+                </BrowserRouter>
+            </ErrorBoundary>
+        );
+
+        console.log( "[main.tsx] App rendered successfully" );
+    } catch( error ) {
+        console.error( "[main.tsx] Failed to initialize React app:", error );
+        throw error;
+    }
+}
+
+if ( document.readyState === "loading" ) {
+    document.addEventListener( "DOMContentLoaded", initApp );
 } else {
-    console.error( "Failed to find the root element" );
+    initApp();
 }

@@ -7,6 +7,7 @@ import { DynamicChannelPermissionsComponent } from "@vertix.gg/bot/src/ui/v3/dyn
 import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 interface DynamicChannelPermissionsFlowData extends UIFlowData {
     userGrantedDisplayName?: string;
@@ -124,6 +125,45 @@ const REQUIRED_DATA: Record<string, ( keyof DynamicChannelPermissionsFlowData )[
     [ TRANSITION_KICK_ERROR ]: []
 };
 
+const FLOW_STATE_OPTIONS: Record<string, JsonObject> = {
+    [ STATE_DEFAULT ]: {
+        executionStep: "default"
+    },
+    [ STATE_PUBLIC ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
+    },
+    [ STATE_PRIVATE ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate"
+    },
+    [ STATE_HIDDEN ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
+    },
+    [ STATE_SHOWN ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateShown"
+    },
+    [ STATE_GRANTED ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted"
+    },
+    [ STATE_DENIED ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied"
+    },
+    [ STATE_BLOCKED ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
+    },
+    [ STATE_UNBLOCKED ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
+    },
+    [ STATE_KICKED ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick"
+    },
+    [ STATE_ERROR ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+    },
+    [ STATE_NOTHING_CHANGED ]: {
+        executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
+    }
+};
+
 /**
  * Flow that consolidates all dynamic channel permission outcomes.
  */
@@ -150,6 +190,10 @@ export class DynamicChannelPermissionsFlow extends UIFlowBase<
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelPermissionsFlowData )[]> {
         return REQUIRED_DATA;
+    }
+
+    public static getStateOptions(): Record<string, JsonObject> {
+        return FLOW_STATE_OPTIONS;
     }
 
     public static override getComponents(): UIComponentConstructor[] {

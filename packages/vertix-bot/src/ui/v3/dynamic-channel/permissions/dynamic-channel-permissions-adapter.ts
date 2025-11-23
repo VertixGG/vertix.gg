@@ -155,6 +155,26 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 if ( state === "public" || state === "private" ) {
                     await onStateChanged( context, voiceInteraction, state );
                 }
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetPublic",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetPrivate",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Private",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate"
+                        }
+                    }
+                ]
             }
         );
 
@@ -166,6 +186,26 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 if ( visibility === "hidden" || visibility === "shown" ) {
                     await onVisibilityChanged( context, voiceInteraction, visibility );
                 }
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetHidden",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetShown",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Shown",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateShown"
+                        }
+                    }
+                ]
             }
         );
 
@@ -221,6 +261,29 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         }
                         break;
                 }
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/GrantAccessSuccess",
+                        mutations: [
+                            { type: "set", path: [ "userGrantedDisplayName" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Granted",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/GrantAccessError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+                        }
+                    }
+                ]
             }
         );
 
@@ -285,6 +348,37 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         }
                         break;
                 }
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/DenyAccessSuccess",
+                        mutations: [
+                            { type: "set", path: [ "userDeniedDisplayName" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Denied",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/DenyAccessNothingChanged",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/DenyAccessError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+                        }
+                    }
+                ]
             }
         );
 
@@ -293,6 +387,37 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             async( context, interaction ) => {
                 const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
                 await onBlockChanged( context, voiceInteraction, true, voiceInteraction.values[ 0 ] );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/BlockUserSuccess",
+                        mutations: [
+                            { type: "set", path: [ "userBlockedDisplayName" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Blocked",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/BlockUserNothingChanged",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/BlockUserError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+                        }
+                    }
+                ]
             }
         );
 
@@ -301,6 +426,37 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             async( context, interaction ) => {
                 const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
                 await onBlockChanged( context, voiceInteraction, false, voiceInteraction.values[ 0 ] );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockUserSuccess",
+                        mutations: [
+                            { type: "set", path: [ "userUnBlockedDisplayName" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Unblocked",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockUserNothingChanged",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockUserError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+                        }
+                    }
+                ]
             }
         );
 
@@ -350,6 +506,29 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         }
                         break;
                 }
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/KickUserSuccess",
+                        mutations: [
+                            { type: "set", path: [ "userKickedDisplayName" ] }
+                        ],
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Kicked",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick"
+                        }
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPermissionsFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/KickUserError",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
+                            executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+                        }
+                    }
+                ]
             }
         );
     } )

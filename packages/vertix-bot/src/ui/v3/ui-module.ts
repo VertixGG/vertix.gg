@@ -85,21 +85,6 @@ export class UIModuleV3 extends UIModuleBase {
                 "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
             )!.getId(),
 
-            steps: {
-                claimResultAddedSuccessfully: "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
-                claimResultAlreadyAdded: "VertixBot/UI-V3/ClaimResultAlreadyAdded",
-                claimResultOwnerStop: "VertixBot/UI-V3/ClaimResultOwnerStop",
-                claimResultVoteAlreadySelfVoted: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
-                claimResultVoteAlreadyVotedSame: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame",
-                claimResultVoteUpdatedSuccessfully: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully",
-                claimResultVotedSuccessfully: "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
-            },
-
-            entities: {
-                claimVoteAddButton: "VertixBot/UI-V3/ClaimVoteAddButton",
-                claimVoteStepInButton: "VertixBot/UI-V3/ClaimVoteStepInButton"
-            },
-
             definitionLoader: definitionLoaderService.getLoader()
         } );
     }

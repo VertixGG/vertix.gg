@@ -42,31 +42,22 @@ interface TDynamicChannelClaimAdapters {
     claimResultAdapter(): TAdapterMapping[ "execution" ];
 }
 
-interface TDynamicChannelClaimAdapterSteps {
-    claimResultAddedSuccessfully: string;
-    claimResultAlreadyAdded: string;
-    claimResultOwnerStop: string;
-    claimResultVoteAlreadySelfVoted: string;
-    claimResultVoteAlreadyVotedSame: string;
-    claimResultVoteUpdatedSuccessfully: string;
-    claimResultVotedSuccessfully: string;
-}
-
-interface TDynamicChannelClaimAdapterEntities {
-    claimVoteAddButton: string;
-    claimVoteStepInButton: string;
+interface TDynamicChannelClaimFallbacks {
+    claimResultSteps?: Record<string, string>;
+    claimVoteSteps?: Record<string, string>;
+    claimVoteStepInEntity?: string;
+    claimVoteAddEntity?: string;
 }
 
 interface TDynamicChannelClaimManagerRegisterArgs {
     adapters: TDynamicChannelClaimAdapters;
-    steps: TDynamicChannelClaimAdapterSteps;
-    entities: TDynamicChannelClaimAdapterEntities;
 
     dynamicChannelClaimButtonId: string;
 
     ownershipTimeout?: number;
     ownershipTimerInterval?: number;
     definitionLoader?: UiDefinitionLoader;
+    fallbacks?: TDynamicChannelClaimFallbacks;
 }
 
 export class DynamicChannelClaimManager extends InitializeBase {
@@ -81,6 +72,13 @@ export class DynamicChannelClaimManager extends InitializeBase {
     private readonly definitionLoader?: UiDefinitionLoader;
     private claimFlowsReady: Promise<void> | null = null;
     private claimResultStateSteps?: Map<string, string>;
+    private claimVoteTransitionSteps?: Map<string, string>;
+    private claimVoteStepInEntity?: string;
+    private claimVoteAddEntity?: string;
+    private readonly fallbackClaimResultSteps: Record<string, string>;
+    private readonly fallbackClaimVoteSteps: Record<string, string>;
+    private readonly fallbackClaimVoteStepInEntity: string;
+    private readonly fallbackClaimVoteAddEntity: string;
     private static readonly CLAIM_RESULT_FLOW_NAME = "VertixBot/UI-V3/ClaimResultFlow";
     private static readonly CLAIM_RESULT_STATES = {
         OwnerStop: "VertixBot/UI-V3/ClaimResultFlow/States/OwnerStop",
@@ -91,6 +89,41 @@ export class DynamicChannelClaimManager extends InitializeBase {
         VoteSameChoice: "VertixBot/UI-V3/ClaimResultFlow/States/VoteSameChoice",
         VoteUpdated: "VertixBot/UI-V3/ClaimResultFlow/States/VoteUpdated"
     } as const;
+    private static readonly DEFAULT_CLAIM_RESULT_STEP_FALLBACKS: Record<string, string> = {
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.OwnerStop ]: "VertixBot/UI-V3/ClaimResultOwnerStop",
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.AddedSuccessfully ]:
+            "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.AlreadyAdded ]: "VertixBot/UI-V3/ClaimResultAlreadyAdded",
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteAlreadySelf ]:
+            "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteSuccess ]: "VertixBot/UI-V3/ClaimResultVotedSuccessfully",
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteSameChoice ]:
+            "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame",
+        [ DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteUpdated ]:
+            "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
+    };
+    private static readonly CLAIM_VOTE_TRANSITIONS = {
+        StartVote: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote",
+        AddCandidate: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate",
+        VoteSelf: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf",
+        VoteSuccess: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess",
+        VoteSame: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame",
+        VoteUpdated: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated"
+    } as const;
+    private static readonly DEFAULT_CLAIM_VOTE_STEP_FALLBACKS: Record<string, string> = {
+        [ DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.StartVote ]: "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
+        [ DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.AddCandidate ]: "VertixBot/UI-V3/ClaimResultAlreadyAdded",
+        [ DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSelf ]:
+            "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
+        [ DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSuccess ]:
+            "VertixBot/UI-V3/ClaimResultVotedSuccessfully",
+        [ DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSame ]:
+            "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame",
+        [ DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteUpdated ]:
+            "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
+    };
+    private static readonly DEFAULT_CLAIM_VOTE_STEP_IN_ENTITY = "VertixBot/UI-V3/ClaimVoteStepInButton";
+    private static readonly DEFAULT_CLAIM_VOTE_ADD_ENTITY = "VertixBot/UI-V3/ClaimVoteAddButton";
 
     private readonly timerIntervals: NodeJS.Timeout[] = [];
 
@@ -129,12 +162,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         const instance = new DynamicChannelClaimManager(
             args.adapters,
-            args.steps,
-            args.entities,
             args.dynamicChannelClaimButtonId,
             args.ownershipTimeout,
             args.ownershipTimerInterval,
-            args.definitionLoader
+            args.definitionLoader,
+            args.fallbacks
         );
 
         DynamicChannelClaimManager.instances.set( instanceName, instance );
@@ -154,12 +186,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     protected constructor(
         private adapters: TDynamicChannelClaimAdapters,
-        private steps: TDynamicChannelClaimAdapterSteps,
-        private entities: TDynamicChannelClaimAdapterEntities,
         private dynamicChannelClaimButtonId: string,
         private ownershipTimeout: number,
         private ownershipTimerInterval: number,
-        definitionLoader?: UiDefinitionLoader
+        definitionLoader?: UiDefinitionLoader,
+        fallbacks?: TDynamicChannelClaimFallbacks
     ) {
         super();
 
@@ -192,6 +223,18 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.uiService = ServiceLocator.$.get( "VertixGUI/UIService" );
         this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
         this.definitionLoader = definitionLoader;
+        this.fallbackClaimResultSteps = {
+            ...DynamicChannelClaimManager.DEFAULT_CLAIM_RESULT_STEP_FALLBACKS,
+            ...( fallbacks?.claimResultSteps ?? {} )
+        };
+        this.fallbackClaimVoteSteps = {
+            ...DynamicChannelClaimManager.DEFAULT_CLAIM_VOTE_STEP_FALLBACKS,
+            ...( fallbacks?.claimVoteSteps ?? {} )
+        };
+        this.fallbackClaimVoteStepInEntity =
+            fallbacks?.claimVoteStepInEntity ?? DynamicChannelClaimManager.DEFAULT_CLAIM_VOTE_STEP_IN_ENTITY;
+        this.fallbackClaimVoteAddEntity =
+            fallbacks?.claimVoteAddEntity ?? DynamicChannelClaimManager.DEFAULT_CLAIM_VOTE_ADD_ENTITY;
 
         if ( this.definitionLoader ) {
             this.claimFlowsReady = this.initializeFlowMetadata();
@@ -216,6 +259,19 @@ export class DynamicChannelClaimManager extends InitializeBase {
             }
         };
 
+        const loadAdapterSafely = async( name: string ) => {
+            try {
+                return await this.definitionLoader!.loadAdapter( name );
+            } catch( error ) {
+                this.logger.warn(
+                    this.initializeFlowMetadata,
+                    `Unable to load adapter '${ name }' from exported definitions`,
+                    error
+                );
+                return undefined;
+            }
+        };
+
         const claimResultFlow = await loadFlowSafely( DynamicChannelClaimManager.CLAIM_RESULT_FLOW_NAME );
 
         if ( claimResultFlow ) {
@@ -229,14 +285,58 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 }
             }
         }
+
+        const claimVoteAdapter = await loadAdapterSafely( "VertixBot/UI-V3/ClaimVoteAdapter" );
+
+        if ( claimVoteAdapter ) {
+            this.claimVoteTransitionSteps = new Map();
+
+            for ( const binding of claimVoteAdapter.bindings ) {
+                const triggers = binding.definition.flowTriggers ?? [];
+
+                for ( const trigger of triggers ) {
+                    if ( trigger.navigation?.executionStep ) {
+                        this.claimVoteTransitionSteps.set( trigger.transition, trigger.navigation.executionStep );
+                    }
+
+                    if ( trigger.transition === DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.StartVote ) {
+                        this.claimVoteStepInEntity = binding.definition.entity;
+                    }
+
+                    if ( trigger.transition === DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSuccess ) {
+                        this.claimVoteAddEntity = binding.definition.entity;
+                    }
+                }
+            }
+        }
     }
 
-    private async resolveClaimResultStep( stateKey: string, fallback: string ): Promise<string> {
+    private async resolveClaimResultStep( stateKey: string ): Promise<string> {
         if ( this.claimFlowsReady ) {
             await this.claimFlowsReady;
         }
 
-        return this.claimResultStateSteps?.get( stateKey ) ?? fallback;
+        const fallback = this.fallbackClaimResultSteps[ stateKey ];
+
+        return this.claimResultStateSteps?.get( stateKey ) ?? fallback ?? stateKey;
+    }
+
+    private async resolveClaimVoteTriggerStep( transition: string ): Promise<string> {
+        if ( this.claimFlowsReady ) {
+            await this.claimFlowsReady;
+        }
+
+        const fallback = this.fallbackClaimVoteSteps[ transition ];
+
+        return this.claimVoteTransitionSteps?.get( transition ) ?? fallback ?? transition;
+    }
+
+    private getClaimVoteStepInEntity(): string {
+        return this.claimVoteStepInEntity ?? this.fallbackClaimVoteStepInEntity;
+    }
+
+    private getClaimVoteAddEntity(): string {
+        return this.claimVoteAddEntity ?? this.fallbackClaimVoteAddEntity;
     }
 
     // TODO: Base timer.
@@ -488,8 +588,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     dynamicChannelService.editPrimaryMessageDebounce( interaction.channel as VoiceChannel );
 
                     const ownerStopStep = await this.resolveClaimResultStep(
-                        DynamicChannelClaimManager.CLAIM_RESULT_STATES.OwnerStop,
-                        this.steps.claimResultOwnerStop
+                        DynamicChannelClaimManager.CLAIM_RESULT_STATES.OwnerStop
                     );
 
                     await claimResultAdapter().ephemeralWithStep( interaction, ownerStopStep );
@@ -545,14 +644,14 @@ export class DynamicChannelClaimManager extends InitializeBase {
         const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
 
         switch ( customIdParts[ 1 ] ) {
-            case this.entities.claimVoteStepInButton:
+            case this.getClaimVoteStepInEntity():
                 this.logger.admin(
                     this.handleVoteRequest,
                     `😈  Claim step-In button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
                 );
                 return this.handleVoteStepIn( interaction );
 
-            case this.entities.claimVoteAddButton:
+            case this.getClaimVoteAddEntity():
                 this.logger.admin(
                     this.handleVoteRequest,
                     `😈  Claim vote button clicked by: "${ interaction.member.displayName }" - "${ interaction.channel.name }" (${ interaction.channel.guild.name }) (${ interaction.guild.memberCount })`
@@ -574,17 +673,15 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         switch ( DynamicChannelVoteManager.$.addCandidate( interaction ) ) {
             case "success": {
-                const addedStep = await this.resolveClaimResultStep(
-                    DynamicChannelClaimManager.CLAIM_RESULT_STATES.AddedSuccessfully,
-                    this.steps.claimResultAddedSuccessfully
+                const addedStep = await this.resolveClaimVoteTriggerStep(
+                    DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.StartVote
                 );
                 return claimResultAdapter().ephemeralWithStep( interaction, addedStep );
             }
 
             case "already": {
-                const alreadyStep = await this.resolveClaimResultStep(
-                    DynamicChannelClaimManager.CLAIM_RESULT_STATES.AlreadyAdded,
-                    this.steps.claimResultAlreadyAdded
+                const alreadyStep = await this.resolveClaimVoteTriggerStep(
+                    DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.AddCandidate
                 );
                 return claimResultAdapter().ephemeralWithStep( interaction, alreadyStep );
             }
@@ -608,17 +705,15 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         switch ( state ) {
             case "self-manage": {
-                const step = await this.resolveClaimResultStep(
-                    DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteAlreadySelf,
-                    this.steps.claimResultVoteAlreadySelfVoted
+                const step = await this.resolveClaimVoteTriggerStep(
+                    DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSelf
                 );
                 return claimResultAdapter().ephemeralWithStep( interaction, step );
             }
 
             case "success": {
-                const step = await this.resolveClaimResultStep(
-                    DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteSuccess,
-                    this.steps.claimResultVotedSuccessfully
+                const step = await this.resolveClaimVoteTriggerStep(
+                    DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSuccess
                 );
                 return claimResultAdapter().ephemeralWithStep( interaction, step, { targetId } );
             }
@@ -627,9 +722,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 const previousVoteTargetId = DynamicChannelVoteManager.$.getVotedFor( interaction );
 
                 if ( previousVoteTargetId === targetId ) {
-                    const step = await this.resolveClaimResultStep(
-                        DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteSameChoice,
-                        this.steps.claimResultVoteAlreadyVotedSame
+                    const step = await this.resolveClaimVoteTriggerStep(
+                        DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteSame
                     );
                     return claimResultAdapter().ephemeralWithStep( interaction, step, { targetId } );
                 }
@@ -638,9 +732,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     added = DynamicChannelVoteManager.$.addVote( interaction, targetId ).toString();
 
                 if ( previousVoteTargetId && [ removed, added ].every( ( i ) => "success" === i ) ) {
-                    const step = await this.resolveClaimResultStep(
-                        DynamicChannelClaimManager.CLAIM_RESULT_STATES.VoteUpdated,
-                        this.steps.claimResultVoteUpdatedSuccessfully
+                    const step = await this.resolveClaimVoteTriggerStep(
+                        DynamicChannelClaimManager.CLAIM_VOTE_TRANSITIONS.VoteUpdated
                     );
                     return claimResultAdapter().ephemeralWithStep( interaction, step, {
                         prevUserId: previousVoteTargetId,

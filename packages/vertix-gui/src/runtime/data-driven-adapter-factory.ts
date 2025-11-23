@@ -35,6 +35,9 @@ const HANDLER_KIND_TO_METHOD: Record<string, string> = {
 export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
     const { hydrated, componentClass, resolveFlowComponent } = config;
     const logger = new Logger( hydrated.definition.name );
+    const adapterExecutionStepKeys = new Set(
+        ( hydrated.definition.executionSteps ?? [] ).map( ( step ) => step.key )
+    );
 
     class DataDrivenExecutionAdapter extends UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext> {
         public static override getName() {
@@ -303,7 +306,11 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
                     }
                 }
 
-                if ( executionStep && typeof editReplyWithStep === "function" ) {
+                if (
+                    executionStep &&
+                    adapterExecutionStepKeys.has( executionStep ) &&
+                    typeof editReplyWithStep === "function"
+                ) {
                     await editReplyWithStep( interaction, executionStep, args );
                 }
             }

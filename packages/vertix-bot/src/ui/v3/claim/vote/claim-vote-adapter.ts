@@ -158,14 +158,16 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
                         flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                         transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess"
+                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess",
+                            executionStep: "VertixBot/UI-V3/ClaimResultAddedSuccessfully"
                         }
                     },
                     {
                         flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                         transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn"
+                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
+                            executionStep: "VertixBot/UI-V3/ClaimResultAlreadyAdded"
                         }
                     }
                 ]
@@ -184,28 +186,32 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
                         flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                         transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf"
+                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf",
+                            executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted"
                         }
                     },
                     {
                         flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                         transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess"
+                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess",
+                            executionStep: "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
                         }
                     },
                     {
                         flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                         transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice"
+                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice",
+                            executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame"
                         }
                     },
                     {
                         flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                         transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated"
+                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated",
+                            executionStep: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
                         }
                     }
                 ]

@@ -32,8 +32,9 @@
             <color id="11" value="#626a36" name="Color 11" enabled="true"/>
             <color id="16" value="#2A008C1d" name="Color 16" enabled="true"/>
 
-            <color id="99" name="violet" value="#200079" enabled="true"/>
+            <color id="99" name="sky" value="#06C1FA" enabled="true"/>
         </colors>
         <option name="marksForCollapsedHighlights" value="Dots"/>
     </component>
 </project>
+

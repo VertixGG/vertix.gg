@@ -10,9 +10,9 @@
         "prisma-migrate-api-deploy": "bunx prisma migrate deploy --schema prisma/api.schema.prisma"
     },
     "dependencies": {
-        "@prisma/client": "latest",
+        "@prisma/client": "^6.0.0",
         "@vertix.gg/base": "workspace:*",
-        "prisma": "latest"
+        "prisma": "^6.0.0"
     },
     "exports": {
         "./package.json": "./package.json",
@@ -28,5 +28,8 @@
             "require": "./src/prisma-bot-client/runtime/library.js",
             "types": "./src/prisma-bot-client/runtime/library.d.ts"
         }
+    },
+    "devDependencies": {
+        "dotenv": "^17.2.3"
     }
 }

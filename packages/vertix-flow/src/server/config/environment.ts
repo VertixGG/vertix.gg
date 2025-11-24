@@ -6,7 +6,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
  */
 export class Environment extends InitializeBase {
     private readonly defaults = {
-        port: 3000,
+        port: 3021,
         host: "0.0.0.0",
         nodeEnv: "development"
     };
@@ -30,14 +30,14 @@ export class Environment extends InitializeBase {
      * Get the server port
      */
     public getPort(): number {
-        return process.env.PORT ? parseInt( process.env.PORT, 10 ) : this.defaults.port;
+        return process.env.FLOW_API_PORT ? parseInt( process.env.FLOW_API_PORT, 10 ) : this.defaults.port;
     }
 
     /**
      * Get the server host
      */
     public getHost(): string {
-        return process.env.HOST || this.defaults.host;
+        return process.env.FLOW_API_HOST || this.defaults.host;
     }
 
     /**

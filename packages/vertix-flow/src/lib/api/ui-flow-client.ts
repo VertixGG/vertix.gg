@@ -13,12 +13,9 @@ export class UIFlowApiError extends Error {
 }
 
 export const resolveApiBaseUrl = (): string => {
-    if ( typeof window !== "undefined" ) {
-        return "";
-    }
-
-    const apiPort = process.env.PORT || "3000";
-    const apiHost = process.env.HOST || "localhost";
+    const viteEnv = import.meta.env;
+    const apiPort = viteEnv?.VITE_FLOW_API_PORT ?? "3021";
+    const apiHost = viteEnv?.VITE_FLOW_API_HOST ?? "localhost";
 
     return `http://${ apiHost }:${ apiPort }`;
 };

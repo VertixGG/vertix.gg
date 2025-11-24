@@ -2,9 +2,10 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import type { UIModuleFile, GuildResponseItem } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { UIModulesResponse } from "@vertix.gg/flow/src/shared/types/flow-data";
 
 interface UIModulesResource {
-    read: () => { data?: { uiModules?: UIModuleFile[] } };
+    read: () => UIModulesResponse;
 }
 
 export interface UseModuleFlowSelectionProps {
@@ -60,7 +61,7 @@ export const useModuleFlowSelection = ( {
         if ( newModulePath && !moduleName ) {
             try {
                 const modulesData = uiModulesResource.read();
-                const modules = modulesData?.data?.uiModules || [];
+                const modules = modulesData.uiModules ?? [];
                 const currentModule = modules.find( m => m.path === newModulePath );
                 if ( currentModule ) {
                     setModuleName( currentModule.shortName );

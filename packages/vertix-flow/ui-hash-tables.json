@@ -878,6 +878,18 @@
         [
           "VertixBot/UI-V3/SetupNewStep3Embed",
           "3126e82df5b1d58a12ad4c0e0849da473126e82df5b1d58a1"
+        ],
+        [
+          "VertixBot/UI-V3/SetupEditOpenNameButton",
+          "c81048c76f76faf466d5f5fdcd278f1bc81048c76f76faf46"
+        ],
+        [
+          "VertixBot/UI-V3/SetupEditOpenButtonsButton",
+          "f692032e2d78e6c9f0105b92a81fec3ff692032e2d78e6c9f"
+        ],
+        [
+          "VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton",
+          "754a5b938c4df715f1b5ebdfdfbc8051754a5b938c4df715f"
         ]
       ]
     ],
@@ -1827,6 +1839,18 @@
         [
           "VertixBot/UI-V3/SetupNewWizardAdapter:VertixBot/UI-V3/SetupNewStep3Embed",
           "ff93fc6b0b1754dce9f2bc4a7637aeb59c73fc6b0b1754dce:3126e82df5b1d58a12ad4c0e0849da473126e82df5b1d58a1"
+        ],
+        [
+          "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-V3/SetupEditOpenNameButton",
+          "ff9732cf5b4321f94d90dc34d120c8c2abd732cf5b4321f94:c81048c76f76faf466d5f5fdcd278f1bc81048c76f76faf46"
+        ],
+        [
+          "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-V3/SetupEditOpenButtonsButton",
+          "ff9732cf5b4321f94d90dc34d120c8c2abd732cf5b4321f94:f692032e2d78e6c9f0105b92a81fec3ff692032e2d78e6c9f"
+        ],
+        [
+          "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton",
+          "ff9732cf5b4321f94d90dc34d120c8c2abd732cf5b4321f94:754a5b938c4df715f1b5ebdfdfbc8051754a5b938c4df715f"
         ]
       ]
     ]
@@ -2710,6 +2734,18 @@
         [
           "3126e82df5b1d58a12ad4c0e0849da473126e82df5b1d58a1",
           "VertixBot/UI-V3/SetupNewStep3Embed"
+        ],
+        [
+          "c81048c76f76faf466d5f5fdcd278f1bc81048c76f76faf46",
+          "VertixBot/UI-V3/SetupEditOpenNameButton"
+        ],
+        [
+          "f692032e2d78e6c9f0105b92a81fec3ff692032e2d78e6c9f",
+          "VertixBot/UI-V3/SetupEditOpenButtonsButton"
+        ],
+        [
+          "754a5b938c4df715f1b5ebdfdfbc8051754a5b938c4df715f",
+          "VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton"
         ]
       ]
     ],
@@ -3659,6 +3695,18 @@
         [
           "ff93fc6b0b1754dce9f2bc4a7637aeb59c73fc6b0b1754dce:3126e82df5b1d58a12ad4c0e0849da473126e82df5b1d58a1",
           "VertixBot/UI-V3/SetupNewWizardAdapter:VertixBot/UI-V3/SetupNewStep3Embed"
+        ],
+        [
+          "ff9732cf5b4321f94d90dc34d120c8c2abd732cf5b4321f94:c81048c76f76faf466d5f5fdcd278f1bc81048c76f76faf46",
+          "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-V3/SetupEditOpenNameButton"
+        ],
+        [
+          "ff9732cf5b4321f94d90dc34d120c8c2abd732cf5b4321f94:f692032e2d78e6c9f0105b92a81fec3ff692032e2d78e6c9f",
+          "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-V3/SetupEditOpenButtonsButton"
+        ],
+        [
+          "ff9732cf5b4321f94d90dc34d120c8c2abd732cf5b4321f94:754a5b938c4df715f1b5ebdfdfbc8051754a5b938c4df715f",
+          "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton"
         ]
       ]
     ]

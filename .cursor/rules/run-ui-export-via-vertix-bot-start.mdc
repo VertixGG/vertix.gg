@@ -1,0 +1,5 @@
+## Rule: run-ui-export-via-vertix-bot-start
+
+- Always export UI definitions by running:
+  `bun run vertix:bot:bun:start:dev --export-ui=/Users/inewlegend/Desktop/dev/vertix.gg/exports/ui`
+- Do not call other export scripts or entrypoints; this command is the enforced path.

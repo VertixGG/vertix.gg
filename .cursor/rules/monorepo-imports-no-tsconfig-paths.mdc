@@ -1,0 +1,12 @@
+---
+description: Always rely on Bun workspace module resolution instead of tsconfig path aliases
+globs: **
+alwaysApply: true
+---
+
+# Use Bun workspace imports, never tsconfig paths
+
+- Do not add, edit, or rely on `compilerOptions.paths` entries in any `tsconfig*.json`
+- All cross-package imports must use the monorepo workspace names (e.g. `@vertix.gg/<package>/...`)
+- If a module cannot be resolved, fix the workspace dependency graph rather than introducing tsconfig path aliases
+- Bun's workspace resolution must remain the single source of truth for import paths

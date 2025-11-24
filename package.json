@@ -55,6 +55,7 @@
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/test-utils": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
+        "@vertix.gg/embed": "workspace:*",
         "@vertix.gg/website": "workspace:*",
         "@vertix.gg/flow": "workspace:*",
         "@zenflux/cli": "latest",

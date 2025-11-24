@@ -1,19 +1,14 @@
-export { DiscordEmbed } from "@vertix.gg/embed";
-export type { DiscordEmbedProps } from "@vertix.gg/embed";
 import * as React from "react";
+
 import { Slot } from "@radix-ui/react-slot";
-import { cva } from "class-variance-authority";
-import ReactMarkdown from "react-markdown";
+import { cva, type VariantProps } from "class-variance-authority";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-import remarkGfm from "remark-gfm"; // Plugin for GFM (autolinks, tables, etc.)
+import { cn } from "@vertix.gg/embed/src/lib/utils";
 
-import { cn } from "@vertix.gg/flow/src/lib/utils";
+import "./styles/discord-embed.css";
 
-import type { Components } from "react-markdown";
-
-import type { VariantProps } from "class-variance-authority";
-
-// Discord embed variants
 const discordEmbedVariants = cva(
     "discord-embed relative overflow-hidden rounded-md",
     {
@@ -36,7 +31,6 @@ const discordEmbedVariants = cva(
     }
 );
 
-// Discord embed content variants
 const discordEmbedContentVariants = cva(
     "discord-embed-content relative rounded-md bg-[#2F3136] p-4 text-white border-l-4",
     {
@@ -55,7 +49,6 @@ const discordEmbedContentVariants = cva(
     }
 );
 
-// Base interface to extend without the HTML color property
 type BaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, "color">;
 
 export interface DiscordEmbedProps
@@ -65,7 +58,7 @@ export interface DiscordEmbedProps
     description?: string;
     thumbnail?: { url: string };
     image?: { url: string };
-    color?: number; // Discord uses numbers for colors
+    color?: number;
     footer?: { text: string; icon_url?: string };
     author?: { name: string; icon_url?: string; url?: string };
     fields?: Array<{ name: string; value: string; inline?: boolean }>;
@@ -77,19 +70,14 @@ export interface DiscordEmbedProps
     [key: string]: unknown;
 }
 
-// Type helper for custom component props
 interface CustomComponentProps {
-    node?: any; // The remark AST node, can be typed more strictly if needed
+    node?: unknown;
     children?: React.ReactNode;
     className?: string;
     inline?: boolean;
-    // Allow any other HTML attributes
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
-/**
- * Discord-styled embed component
- */
 export function DiscordEmbed( {
     title,
     description,
@@ -111,20 +99,16 @@ export function DiscordEmbed( {
 }: DiscordEmbedProps ) {
     const Comp = asChild ? Slot : "div";
 
-    // Convert color number to hex string if provided and no colorVariant
     const colorStyle = !colorVariant && color ? {
         borderLeftColor: `#${ color.toString( 16 ).padStart( 6, "0" ) }`
     } : {};
 
-    // If color is provided as a number and no colorVariant, use it for custom color
     const contentVariant = colorVariant || "default";
 
-    // --- Define Custom Renderers for ReactMarkdown (with types) ---
     const markdownComponents: Components = {
-    // Render links with target=_blank and appropriate styles
-        a: ( { node, children, ...props }: CustomComponentProps ) => (
+        a: ( { children, ...anchorProps }: CustomComponentProps ) => (
             <a
-                { ...props }
+                { ...anchorProps }
                 className="text-blue-400 hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -132,45 +116,36 @@ export function DiscordEmbed( {
                 { children }
             </a>
         ),
-        // Render inline code with background and padding
-        code: ( { node, inline, className, children, ...props }: CustomComponentProps ) => {
-            // Only style inline code, not code blocks
-            return inline ? (
-                <code
-                    className="bg-zinc-700 px-1.5 py-0.5 rounded-sm font-mono text-white"
-                    { ...props }
-                >
-                    { children }
-                </code>
-            ) : (
-            // Basic fallback for block code
-                <code className={ className } { ...props }>
-                    { children }
-                </code>
-            );
-        },
-        // Style unordered lists - Hanging indent and space after
-        ul: ( { node, ...props }: CustomComponentProps ) => (
+        code: ( {
+            inline,
+            className: codeClassName,
+            children: codeChildren,
+            ...codeProps
+        }: CustomComponentProps ) => inline ? (
+            <code
+                className="bg-zinc-700 px-1.5 py-0.5 rounded-sm font-mono text-white"
+                { ...codeProps }
+            >
+                { codeChildren }
+            </code>
+        ) : (
+            <code className={ codeClassName } { ...codeProps }>
+                { codeChildren }
+            </code>
+        ),
+        ul: ( props ) => (
             <ul className="list-disc list-outside pl-5 mb-2" { ...props } />
         ),
-        // Style list items - No extra margin needed
-        li: ( { node, children, ...props }: CustomComponentProps ) => (
-            <li { ...props }>
-                { children }
-            </li>
+        li: ( props ) => (
+            <li { ...props } />
         ),
-        // Ensure strong renders correctly
-        strong: ( { node, children, ...props }: CustomComponentProps ) => (
-            <strong { ...props }>{ children }</strong>
+        strong: ( props ) => (
+            <strong { ...props } />
         ),
-        // Handle paragraphs - Add margin for spacing between paragraphs
-        p: ( { node, children, ...props }: CustomComponentProps ) => (
-            <p className="mb-2" { ...props }>
-                { children }
-            </p>
+        p: ( props ) => (
+            <p className="mb-2" { ...props } />
         )
     };
-    // --- END Custom Renderers ---
 
     return (
         <Comp
@@ -185,7 +160,6 @@ export function DiscordEmbed( {
                 ) }
                 style={ colorStyle }
             >
-                { /* Author Section */ }
                 { author && (
                     <div className="discord-embed-author mb-2 flex items-center gap-2 text-sm font-medium text-[#FFFFFF]">
                         { author.icon_url && (
@@ -199,14 +173,12 @@ export function DiscordEmbed( {
                     </div>
                 ) }
 
-                { /* Embed Header */ }
                 { title && (
                     <div className="discord-embed-title mb-2 font-bold text-base text-[#FFFFFF]">
                         { url ? <a href={ url } className="hover:underline">{ title }</a> : title }
                     </div>
                 ) }
 
-                { /* Embed Description - Use ReactMarkdown */ }
                 { description && (
                     <div
                         className="discord-embed-description text-sm text-[#DCDDDE]"
@@ -220,7 +192,6 @@ export function DiscordEmbed( {
                     </div>
                 ) }
 
-                { /* Embed Fields */ }
                 { fields && fields.length > 0 && (
                     <div className="discord-embed-fields mb-3 grid grid-cols-3 gap-2">
                         { fields.map( ( field, index ) => (
@@ -242,9 +213,7 @@ export function DiscordEmbed( {
                     </div>
                 ) }
 
-                { /* Embed Media Container - For handling thumbnail and image placement */ }
                 <div className="discord-embed-media relative">
-                    { /* Embed Image */ }
                     { image?.url && (
                         <div className="discord-embed-image mt-2 mb-2 overflow-hidden rounded-md">
                             <img
@@ -254,9 +223,16 @@ export function DiscordEmbed( {
                             />
                         </div>
                     ) }
+                    { thumbnail?.url && (
+                        <div className="discord-embed-thumbnail">
+                            <img
+                                src={ thumbnail.url }
+                                alt="Thumbnail"
+                            />
+                        </div>
+                    ) }
                 </div>
 
-                { /* Footer Section */ }
                 { ( footer || timestamp ) && (
                     <div className="discord-embed-footer mt-2 flex items-center gap-2 text-xs text-[#A3A6AA]">
                         { footer?.icon_url && (
@@ -281,4 +257,6 @@ export function DiscordEmbed( {
         </Comp>
     );
 }
+
+export default DiscordEmbed;
 

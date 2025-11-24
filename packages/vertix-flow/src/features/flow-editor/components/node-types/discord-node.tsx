@@ -5,7 +5,7 @@ import { ButtonStyle } from "discord-api-types/v10";
 import { DiscordButton } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-button";
 import { DiscordSelect } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-select-menu";
 import { DiscordRoleMenu } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-role-menu";
-import { DiscordEmbed } from "@vertix.gg/flow/src/features/flow-editor/components/node-types/discord/discord-embed";
+import { DiscordEmbed } from "@vertix.gg/embed";
 
 import {
     isButtonComponent,

@@ -5,11 +5,14 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 import { McpServer } from "@vertix.gg/base/src/modules/mcp-server/mcp-server"; // Assuming mcp-server.ts is in the same directory
 
 // TODO: Get port/host from configuration/environment variables
-const MCP_PORT = 3090;
 const MCP_HOST = "0.0.0.0";
+const MCP_PORT_MIN = 45000;
+const MCP_PORT_MAX = 46000;
+const MCP_PORT_ATTEMPTS = 8;
 
 export class MCPService extends ServiceBase {
     private static mcpServer: McpServer;
+    private static currentPort: number | null = null;
 
     public static getName(): string {
         return "VertixBase/Modules/MCPService";
@@ -24,21 +27,31 @@ export class MCPService extends ServiceBase {
     protected async initialize(): Promise<void> {
         this.logger.log( this.initialize, "Initializing MCP Service..." );
 
-        try {
-            MCPService.mcpServer = new McpServer();
+        MCPService.mcpServer = new McpServer();
 
-            // Start the MCP server (Fastify instance)
-            // Consider adding error handling or status checking
-            await MCPService.mcpServer.start( MCP_PORT, MCP_HOST );
+        let lastError: unknown = null;
 
-            EventBus.$.on( "VertixBase/Modules/Logger", "outputInternal", this.onLoggerOutput.bind( this ) );
+        for ( let attempt = 0; attempt < MCP_PORT_ATTEMPTS; attempt += 1 ) {
+            const candidatePort = MCPService.getRandomPort();
 
-            this.logger.info( this.initialize, `MCP Server started on http://${ MCP_HOST }:${ MCP_PORT }` );
-        } catch( error ) {
-            this.logger.error( this.initialize, "Failed to start MCP Server", error );
-            // Rethrow or handle appropriately - ServiceBase might catch this
-            throw error;
+            try {
+                await MCPService.mcpServer.start( candidatePort, MCP_HOST );
+                MCPService.currentPort = candidatePort;
+                EventBus.$.on( "VertixBase/Modules/Logger", "outputInternal", this.onLoggerOutput.bind( this ) );
+                this.logger.info( this.initialize, `MCP Server started on http://${ MCP_HOST }:${ candidatePort }` );
+                return;
+            } catch( error ) {
+                lastError = error;
+                this.logger.warn(
+                    this.initialize,
+                    `Failed to start MCP Server on port ${ candidatePort }, attempt ${ attempt + 1 }/${ MCP_PORT_ATTEMPTS }`,
+                    error
+                );
+            }
         }
+
+        this.logger.error( this.initialize, "Failed to start MCP Server after exhausting port attempts", lastError );
+        throw lastError instanceof Error ? lastError : new Error( "Failed to start MCP Server" );
     }
 
     /**
@@ -49,6 +62,7 @@ export class MCPService extends ServiceBase {
         if ( MCPService.mcpServer ) {
             this.logger.log( this.stopServer, "Stopping MCP Server..." );
             await MCPService.mcpServer.stop();
+            MCPService.currentPort = null;
             this.logger.info( this.stopServer, "MCP Server stopped." );
         }
     }
@@ -76,5 +90,10 @@ export class MCPService extends ServiceBase {
                 console.error( "MCPService.onLoggerOutput: Failed to add log via addLog method:", error );
             }
         }
+    }
+
+    private static getRandomPort(): number {
+        const range = MCP_PORT_MAX - MCP_PORT_MIN + 1;
+        return MCP_PORT_MIN + Math.floor( Math.random() * range );
     }
 }

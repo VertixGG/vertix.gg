@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 
 import type { UIModuleFile, GuildResponseItem } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
@@ -73,25 +73,29 @@ export const useModuleFlowSelection = ( {
     }, [ modulePathParam, flowNameParam, modulePath, flowName, activeTab, moduleName, uiModulesResource ] );
 
     const handleModuleClick = useCallback( ( module: UIModuleFile ) => {
-        setModulePath( module.path );
-        setModuleName( module.shortName );
-        setActiveTab( "flows" );
-        if ( selectedGuild ) {
-            const newPath = `/flow/${ selectedGuild.guildId }/${ encodeURIComponent( module.path ) }`;
-            navigate( newPath );
-        } else {
-            console.warn( "[useModuleFlowSelection] Cannot navigate on module click: No guild selected." );
-        }
+        startTransition( () => {
+            setModulePath( module.path );
+            setModuleName( module.shortName );
+            setActiveTab( "flows" );
+            if ( selectedGuild ) {
+                const newPath = `/flow/${ selectedGuild.guildId }/${ encodeURIComponent( module.path ) }`;
+                navigate( newPath );
+            } else {
+                console.warn( "[useModuleFlowSelection] Cannot navigate on module click: No guild selected." );
+            }
+        } );
     }, [ navigate, selectedGuild ] );
 
     const handleFlowClick = useCallback( ( newFlowName: string ) => {
-        setFlowName( newFlowName );
-        if ( selectedGuild && modulePath ) {
-            const newPath = `/flow/${ selectedGuild.guildId }/${ encodeURIComponent( modulePath ) }/${ encodeURIComponent( newFlowName ) }`;
-            navigate( newPath );
-        } else {
-            console.warn( "[useModuleFlowSelection] Cannot navigate on flow click: No guild or modulePath selected.", { guildId: selectedGuild?.guildId, modulePath } );
-        }
+        startTransition( () => {
+            setFlowName( newFlowName );
+            if ( selectedGuild && modulePath ) {
+                const newPath = `/flow/${ selectedGuild.guildId }/${ encodeURIComponent( modulePath ) }/${ encodeURIComponent( newFlowName ) }`;
+                navigate( newPath );
+            } else {
+                console.warn( "[useModuleFlowSelection] Cannot navigate on flow click: No guild or modulePath selected.", { guildId: selectedGuild?.guildId, modulePath } );
+            }
+        } );
     }, [ navigate, selectedGuild, modulePath ] );
 
     const handleZoomChange = useCallback( ( zoom: number ) => {

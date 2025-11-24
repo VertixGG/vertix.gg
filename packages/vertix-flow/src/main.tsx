@@ -9,6 +9,7 @@ import { FlowEditor } from "@vertix.gg/flow/src/features/flow-editor/flow-editor
 import { Alert, AlertDescription, AlertTitle } from "@vertix.gg/flow/src/shared/components/alert";
 import { Button } from "@vertix.gg/flow/src/shared/components/button";
 import { Card, CardContent } from "@vertix.gg/flow/src/shared/components/card";
+import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 
 import type { ErrorInfo, ReactNode } from "react";
 
@@ -97,10 +98,17 @@ function initApp(): void {
         root.render(
             <ErrorBoundary>
                 <BrowserRouter>
-                    <Routes>
-                        <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={ <FlowEditor /> } />
-                        <Route path="/" element={ <Navigate to="/flow" replace /> } />
-                    </Routes>
+                    <React.Suspense fallback={
+                        <div className="flex items-center justify-center h-screen">
+                            <LoadingIndicator />
+                            <span className="ml-2">Loading flow editor...</span>
+                        </div>
+                    }>
+                        <Routes>
+                            <Route path="/flow/:guildId?/:modulePath?/:flowName?" element={ <FlowEditor /> } />
+                            <Route path="/" element={ <Navigate to="/flow" replace /> } />
+                        </Routes>
+                    </React.Suspense>
                 </BrowserRouter>
             </ErrorBoundary>
         );

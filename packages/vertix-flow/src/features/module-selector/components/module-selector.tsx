@@ -4,6 +4,7 @@ import { useUIModules } from "@vertix.gg/flow/src/features/module-selector/hooks
 import { Badge } from "@vertix.gg/flow/src/shared/components/badge";
 import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
 import { ItemSelectorList } from "@vertix.gg/flow/src/shared/components/item-selector-list";
+import { CopyButton } from "@vertix.gg/flow/src/shared/components/copy-button";
 import { LoadingIndicator } from "@vertix.gg/flow/src/features/flow-editor/components/ui/loading-indicator";
 
 import type { UIModuleFile } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
@@ -31,8 +32,14 @@ const ModuleSelectorInner: React.FC<ModuleSelectorProps> = ( { onSelectModule } 
 
     const renderItemContent = ( module: UIModuleFile ): React.ReactNode => (
         <div className="flex flex-col items-start gap-2 w-full">
-            <div className="font-medium">{ module.name }</div>
-            <div className="text-xs text-muted-foreground">{ module.path }</div>
+            <div className="flex items-center gap-2 w-full">
+                <div className="font-medium">{ module.name }</div>
+                <CopyButton
+                    value={ module.name }
+                    ariaLabel={ `Copy module name ${ module.name }` }
+                />
+            </div>
+            <div className="text-xs text-muted-foreground break-all">{ module.path }</div>
             <div className="flex flex-wrap gap-1">
                 { module.flows?.length > 0 && (
                     <Badge variant="secondary">{ module.flows.length } UI flow(s)</Badge>

@@ -3,6 +3,7 @@ import React from "react";
 import { ScrollArea } from "@vertix.gg/flow/src/shared/components/scroll-area";
 import { Button } from "@vertix.gg/flow/src/shared/components/button";
 import { Separator } from "@vertix.gg/flow/src/shared/components/separator";
+import { CopyButton } from "@vertix.gg/flow/src/shared/components/copy-button";
 
 import useModuleSelectorStore from "@vertix.gg/flow/src/features/module-selector/store/module-selector-store";
 
@@ -27,7 +28,13 @@ const renderFlowButtons = (
                 }` }
                 onClick={ () => handleFlowClick( flowName ) }
             >
-                <div className="font-medium">{ flowName }</div>
+                <div className="flex items-center gap-2 w-full">
+                    <div className="font-medium break-all">{ flowName }</div>
+                    <CopyButton
+                        value={ flowName }
+                        ariaLabel={ `Copy flow name ${ flowName }` }
+                    />
+                </div>
             </Button>
             { /* Separator logic can be adjusted if needed between sections */ }
             { /* {index < flows.length - 1 && ( <Separator className="my-1"/> )} */ }

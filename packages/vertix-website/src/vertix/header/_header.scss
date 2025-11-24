@@ -1,11 +1,12 @@
 @use "../bootstrap" as bootstrap;
 
 #header {
+    position: relative;
     .navbar {
-        z-index: 1;
-
-        background: #00000069;
-        box-shadow: 20px 15px 160px 60px #00000078;
+        z-index: 0;
+        background: black;
+        box-shadow: 0 50px 60px 179px rgb(0 0 0 / 20%);
+        height: 160px;
 
         .container-fluid {
             max-width: 80%;
@@ -106,6 +107,16 @@
                 }
             }
         }
+    }
+
+    .navbar-opacity-fix {
+        position: absolute;
+        top: -697px;
+        left: 0;
+        height: 0;
+        width: 100%;
+        box-shadow: 0 -230px 1510px 1302px rgb(0 0 0);
+        z-index: -2;
     }
 
     #vertix-wings {

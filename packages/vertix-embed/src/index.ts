@@ -1,2 +1,4 @@
-export * from "@vertix.gg/embed/src/discord-embed";
+export * from "./discord-embed";
+export * from "./discord-button";
+export * from "./discord-message";
 

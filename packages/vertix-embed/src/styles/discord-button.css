@@ -1,0 +1,84 @@
+.discord-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 32px;
+    min-width: 80px;
+    padding: 0 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s ease, background-color 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+}
+
+.discord-button:active {
+    transform: translateY(1px);
+}
+
+.discord-button-primary {
+    background-color: #5865f2;
+    color: #ffffff;
+}
+
+.discord-button-secondary {
+    background-color: #4f545c;
+    color: #ffffff;
+}
+
+.discord-button-success {
+    background-color: #2dc770;
+    color: #ffffff;
+}
+
+.discord-button-danger {
+    background-color: #f23f43;
+    color: #ffffff;
+}
+
+.discord-button-link {
+    background-color: #4f545c;
+    color: #ffffff;
+}
+
+.discord-button-premium {
+    background: linear-gradient(90deg, #7f00ff 0%, #e100ff 100%);
+    color: #ffffff;
+}
+
+.discord-button-sm {
+    min-height: 28px;
+    padding: 0 12px;
+    font-size: 0.8rem;
+}
+
+.discord-button-lg {
+    min-height: 36px;
+    padding: 0 20px;
+    font-size: 1rem;
+}
+
+.discord-button-emoji {
+    font-size: 1rem;
+    filter: grayscale(15%);
+}
+
+.discord-button-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.discord-button-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+

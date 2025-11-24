@@ -1,7 +1,9 @@
 import * as React from "react";
 
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva  } from "class-variance-authority";
+
+import type {VariantProps} from "class-variance-authority";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -55,10 +57,10 @@ export interface DiscordEmbedProps
     extends BaseProps,
     Omit<VariantProps<typeof discordEmbedVariants>, "variant"> {
     title?: string;
-    description?: string;
+    description?: string | React.ReactNode;
     thumbnail?: { url: string };
     image?: { url: string };
-    color?: number;
+    color?: string | number;
     footer?: { text: string; icon_url?: string };
     author?: { name: string; icon_url?: string; url?: string };
     fields?: Array<{ name: string; value: string; inline?: boolean }>;
@@ -99,9 +101,17 @@ export function DiscordEmbed( {
 }: DiscordEmbedProps ) {
     const Comp = asChild ? Slot : "div";
 
-    const colorStyle = !colorVariant && color ? {
-        borderLeftColor: `#${ color.toString( 16 ).padStart( 6, "0" ) }`
-    } : {};
+    const colorStyle = React.useMemo( () => {
+        if ( colorVariant || !color ) {
+            return {};
+        }
+
+        if ( typeof color === "number" ) {
+            return { borderLeftColor: `#${ color.toString( 16 ).padStart( 6, "0" ) }` };
+        }
+
+        return { borderLeftColor: color };
+    }, [ color, colorVariant ] );
 
     const contentVariant = colorVariant || "default";
 
@@ -180,15 +190,15 @@ export function DiscordEmbed( {
                 ) }
 
                 { description && (
-                    <div
-                        className="discord-embed-description text-sm text-[#DCDDDE]"
-                    >
-                        <ReactMarkdown
-                            components={ markdownComponents }
-                            remarkPlugins={ [ remarkGfm ] }
-                        >
-                            { description }
-                        </ReactMarkdown>
+                    <div className="discord-embed-description text-sm text-[#DCDDDE]">
+                        { typeof description === "string" ? (
+                            <ReactMarkdown
+                                components={ markdownComponents }
+                                remarkPlugins={ [ remarkGfm ] }
+                            >
+                                { description }
+                            </ReactMarkdown>
+                        ) : description }
                     </div>
                 ) }
 

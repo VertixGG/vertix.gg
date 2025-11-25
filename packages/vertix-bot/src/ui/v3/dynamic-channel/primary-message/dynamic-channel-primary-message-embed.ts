@@ -12,6 +12,10 @@ import { DYNAMIC_CHANNEL_PRIVACY_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-c
 import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-meta-button";
 import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
+import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -72,16 +76,38 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof DYNAMI
     .setLogic( ( args: UIArgs ) => {
         const { limitDisplayValue, limitDisplayUnlimited } = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_VARS;
 
-        return {
+        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+
+        const logic: Record<string, any> = {
             name: args.channelName,
             limit: 0 === args.userLimit ? limitDisplayUnlimited : limitDisplayValue,
-
             limitValue: args.userLimit,
-
             renameEmoji: DynamicChannelRenameButton.getEmoji(),
             limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
-            privacyEmoji: DynamicChannelPrivacyButton.getEmoji()
+            privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
+            title: args.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
+            description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
+            region: args.region || "Automatic",
+            regionEmoji: DynamicChannelRegionButton.getEmoji()
         };
+
+        switch ( args.state ) {
+            default:
+            case "public":
+                logic.state = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_VARS.statePublic;
+                break;
+            case "private":
+                logic.state = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_VARS.statePrivate;
+                break;
+            case "shown":
+                logic.state = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_VARS.stateShown;
+                break;
+            case "hidden":
+                logic.state = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_VARS.stateHidden;
+                break;
+        }
+
+        return logic;
     } )
     .build();
 

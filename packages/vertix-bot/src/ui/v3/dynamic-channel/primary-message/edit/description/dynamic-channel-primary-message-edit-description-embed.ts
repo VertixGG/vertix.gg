@@ -1,68 +1,48 @@
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
-import { UIEmbedWithVarsExtend } from "@vertix.gg/gui/src/ui-embed/ui-embed-with-vars";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
-
-import { DynamicChannelEmbedBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-embed-base";
-
 import { DynamicChannelPrimaryMessageEditButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-button";
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
-
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
-    DynamicChannelEmbedBase,
-    new UIEmbedVars(
-        "description",
+const DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS = {
+    description: uiUtilsWrapAsTemplate( "description" ),
+    descriptionDisplayDefault: uiUtilsWrapAsTemplate( "descriptionDisplayDefault" ),
+    descriptionDisplayValue: uiUtilsWrapAsTemplate( "descriptionDisplayValue" ),
+    descriptionValue: uiUtilsWrapAsTemplate( "descriptionValue" ),
+    editPrimaryMessageEmoji: uiUtilsWrapAsTemplate( "editPrimaryMessageEmoji" )
+};
 
-        "descriptionDisplayDefault",
-        "descriptionDisplayValue",
-        "descriptionValue",
-
-        "editPrimaryMessageEmoji"
-    )
-);
-
-export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicChannelEmbedBaseWithVars {
-    private configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-        "Vertix/Config/MasterChannel",
-        VERSION_UI_V3
-    );
-
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed";
-    }
-
-    protected getImage(): string {
-        return "https://i.imgur.com/sGjDVJ4.png";
-    }
-
-    protected getTitle(): string {
-        return `${ this.vars.get( "editPrimaryMessageEmoji" ) }  •  Edit description of your channel`;
-    }
-
-    protected getDescription(): string {
-        return "\n _Description_:\n `" + this.vars.get( "description" ) + "`\n" + "\n### Do you want to change it?";
-    }
-
-    protected getOptions() {
-        const vars = this.vars.get();
-
+const DynamicChannelPrimaryMessageEditDescriptionEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS>(
+    "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed",
+    DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0x4b6f91 )
+    .setImage( "https://i.imgur.com/sGjDVJ4.png" )
+    .setTitle( () => `${ DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.editPrimaryMessageEmoji }  •  Edit description of your channel` )
+    .setDescription( () => "\n _Description_:\n `" + DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description + "`\n" + "\n### Do you want to change it?" )
+    .setOptions( () => {
+        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+            "Vertix/Config/MasterChannel",
+            VERSION_UI_V3
+        );
+        const vars = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;
         return {
             description: {
                 [ vars.descriptionDisplayValue ]: vars.descriptionValue,
-                [ vars.descriptionDisplayDefault ]: this.configV3.data.constants.dynamicChannelPrimaryMessageDescription
+                [ vars.descriptionDisplayDefault ]: configV3.data.constants.dynamicChannelPrimaryMessageDescription
             }
         };
-    }
-
-    protected async getLogicAsync( args: UIArgs ) {
-        const result = super.getLogic( args );
-
-        const { descriptionDisplayValue, descriptionDisplayDefault } = this.vars.get();
+    } )
+    .setLogic( async( args: UIArgs ) => {
+        const result: any = {};
+        const { descriptionDisplayValue, descriptionDisplayDefault } = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;
 
         if ( args.description ) {
             result.descriptionValue = args.description;
@@ -76,5 +56,7 @@ export class DynamicChannelPrimaryMessageEditDescriptionEmbed extends DynamicCha
         );
 
         return result;
-    }
-}
+    } )
+    .build();
+
+export { DynamicChannelPrimaryMessageEditDescriptionEmbed, DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS };

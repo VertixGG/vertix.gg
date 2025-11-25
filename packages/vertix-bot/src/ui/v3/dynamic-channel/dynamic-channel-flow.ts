@@ -107,7 +107,7 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, DynamicChanne
         return next;
     }
 
-    public override getRequiredData( transition: string ): ( keyof DynamicChannelFlowData )[] {
+    public override getRequiredData( _transition: string ): ( keyof DynamicChannelFlowData )[] {
         return [];
     }
 }

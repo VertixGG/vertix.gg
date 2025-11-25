@@ -1,112 +1,67 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelPermissionsHiddenEmbed extends UIEmbedBase {
-    private static vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+const DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS = {
+    separator: uiUtilsWrapAsTemplate( "separator" ),
+    value: uiUtilsWrapAsTemplate( "value" ),
+    message: uiUtilsWrapAsTemplate( "message" ),
+    messageDefault: uiUtilsWrapAsTemplate( "messageDefault" ),
+    messageAccessNotAvailable: uiUtilsWrapAsTemplate( "messageAccessNotAvailable" ),
+    allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
+    allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
+    allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" )
+};
 
-        message: uiUtilsWrapAsTemplate( "message" ),
-        messageDefault: uiUtilsWrapAsTemplate( "messageDefault" ),
-        messageAccessNotAvailable: uiUtilsWrapAsTemplate( "messageAccessNotAvailable" ),
+const DynamicChannelPermissionsHiddenEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS>(
+    "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbed",
+    DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0xc79d5f )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( "🙈  The channel is hidden now" )
+    .setDescription( () => (
+        "Please be aware that only granted users can see your channel.\n\n" +
+        DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.allowedUsersDisplay +
+        "\n" +
+        DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.message
+    ) )
+    .setOptions( () => ( {
+        message: {
+            [ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.messageDefault ]:
+                "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+            [ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.messageAccessNotAvailable ]:
+                "There is no way to grant access to your channel for new members.\n\n" +
+                "This is because the **(👥 Access)** Button has been disabled by the administrator"
+        },
+        allowedUsersDisplay: {
+            [ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.allowedUsersDefault ]: "Currently no other user has access except you.\n",
+            [ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.allowedUsers ]: `**_Allowed users_**: \n${ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.allowedUsers }\n`
+        }
+    } ) )
+    .setArrayOptions( () => ( {
+        allowedUsers: {
+            format: `- <@${ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.value }>${ DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.separator }`,
+            separator: "\n"
+        }
+    } ) )
+    .setLogic( ( args: UIArgs ) => {
+        const allowedUsers = Array.isArray( args.allowedUsers ) ? args.allowedUsers.map( ( user ) => user.id ) : undefined;
 
-        allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
-        allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
-        allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" )
-    };
-
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbed";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic; // TODO: Should be static.
-    }
-
-    protected getColor() {
-        return 0xc79d5f; // Same as globe emoji.
-    }
-
-    protected getImage(): string {
-        return UI_IMAGE_EMPTY_LINE_URL;
-    }
-
-    protected getTitle() {
-        return "🙈  The channel is hidden now";
-    }
-
-    protected getDescription() {
-        return (
-            "Please be aware that only granted users can see your channel.\n\n" +
-            DynamicChannelPermissionsHiddenEmbed.vars.allowedUsersDisplay +
-            "\n" +
-            DynamicChannelPermissionsHiddenEmbed.vars.message
-        );
-    }
-
-    protected getOptions() {
-        const {
-            messageDefault,
-            messageAccessNotAvailable,
-
+        return {
             allowedUsers,
-            allowedUsersDefault
-        } = DynamicChannelPermissionsHiddenEmbed.vars;
-
-        return {
-            message: {
-                [ messageDefault ]: "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
-                [ messageAccessNotAvailable ]:
-                    "There is no way to grant access to your channel for new members.\n\n" +
-                    "This is because the **(👥 Access)** Button has been disabled by the administrator"
-            },
-
-            allowedUsersDisplay: {
-                [ allowedUsersDefault ]: "Currently no other user has access except you.\n",
-                [ allowedUsers ]: "**_Allowed users_**: \n" + `${ allowedUsers }\n`
-            }
+            allowedUsersDisplay: allowedUsers?.length
+                ? DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.allowedUsers
+                : DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.allowedUsersDefault,
+            message: args.dynamicChannelButtonsIsAccessButtonAvailable
+                ? DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.messageDefault
+                : DYNAMIC_CHANNEL_PERMISSIONS_HIDDEN_VARS.messageAccessNotAvailable
         };
-    }
+    } )
+    .build();
 
-    protected getArrayOptions() {
-        const { separator, value } = DynamicChannelPermissionsHiddenEmbed.vars;
-
-        return {
-            allowedUsers: {
-                format: `- <@${ value }>${ separator }`,
-                separator: "\n"
-            }
-        };
-    }
-
-    protected getLogic( args: UIArgs ) {
-        const result: any = {},
-            {
-                messageDefault,
-                messageAccessNotAvailable,
-
-                allowedUsers,
-                allowedUsersDefault
-            } = DynamicChannelPermissionsHiddenEmbed.vars;
-
-        if ( args.allowedUsers?.length ) {
-            result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
-            result.allowedUsersDisplay = allowedUsers;
-        } else {
-            result.allowedUsersDisplay = allowedUsersDefault;
-        }
-
-        if ( args.dynamicChannelButtonsIsAccessButtonAvailable ) {
-            result.message = messageDefault;
-        } else {
-            result.message = messageAccessNotAvailable;
-        }
-
-        return result;
-    }
-}
+export { DynamicChannelPermissionsHiddenEmbed };

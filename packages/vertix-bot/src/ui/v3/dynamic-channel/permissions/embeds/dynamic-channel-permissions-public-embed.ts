@@ -1,33 +1,17 @@
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelPermissionsPublicEmbed extends UIEmbedBase {
-    private static vars = {};
+const DynamicChannelPermissionsPublicEmbed = new EmbedBuilder(
+    "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbed"
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0x75c8e1 )
+    .setImage( "https://i.imgur.com/NthLO3W.png" )
+    .setTitle( "🌐  The channel is public now" )
+    .setDescription(
+        "Please be aware that your room is currently accessible to anyone.\n\n" +
+        "Members **without** access will be able to enter the room unless it is hidden or set to private."
+    )
+    .build();
 
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbed";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic; // TODO: Should be static.
-    }
-
-    protected getColor() {
-        return 0x75c8e1; // Same as globe emoji.
-    }
-
-    protected getImage(): string {
-        return "https://i.imgur.com/NthLO3W.png";
-    }
-
-    protected getTitle() {
-        return "🌐  The channel is public now";
-    }
-
-    protected getDescription() {
-        return (
-            "Please be aware that your room is currently accessible to anyone.\n\n" +
-            "Members **without** access will be able to enter the room unless it is hidden or set to private."
-        );
-    }
-}
+export { DynamicChannelPermissionsPublicEmbed };

@@ -1,23 +1,10 @@
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-/**
- * Shown when the user successfully put himself forward as a potential owner of the channel.
- */
-export class ClaimResultStepInEmbed extends UIEmbedBase {
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimResultStepInEmbed";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getTitle() {
-        return "😈  Channel might be yours";
-    }
-
-    protected getDescription() {
-        return "You've put yourself forward as a potential owner of this channel.\n" + "Good luck!\n";
-    }
-}
+export const ClaimResultStepInEmbed = new EmbedBuilder(
+    "VertixBot/UI-V3/ClaimResultStepInEmbed"
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setTitle( "😈  Channel might be yours" )
+    .setDescription( "You've put yourself forward as a potential owner of this channel.\nGood luck!\n" )
+    .build();

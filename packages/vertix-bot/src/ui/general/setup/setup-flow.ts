@@ -13,7 +13,6 @@ import type {
     UIFlowData,
     FlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 
 export interface SetupFlowData extends UIFlowData {}

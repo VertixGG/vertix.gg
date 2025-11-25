@@ -9,14 +9,29 @@ import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
-import type { BaseMessageOptions, VoiceChannel } from "discord.js";
-
+import type { BaseMessageOptions, InteractionReplyOptions, VoiceChannel } from "discord.js";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type {
+    UIDefaultButtonChannelVoiceInteraction,
+    UIDefaultStringSelectMenuChannelTextInteraction
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 type WelcomeInteraction = UIDefaultButtonChannelVoiceInteraction;
 type WelcomeContext = IAdapterContext<WelcomeInteraction, UIArgs>;
+
+async function replyEphemeral(
+    interaction: WelcomeInteraction | UIDefaultStringSelectMenuChannelTextInteraction,
+    payload: InteractionReplyOptions
+) {
+    const message = { ...payload, ephemeral: true };
+
+    if ( interaction.replied || interaction.deferred ) {
+        await interaction.followUp( message );
+    } else {
+        await interaction.reply( message );
+    }
+}
 
 const WelcomeAdapterBase = new AdapterBuilderBase<
     VoiceChannel,
@@ -30,7 +45,7 @@ const WelcomeAdapterBase = new AdapterBuilderBase<
     .setChannelTypes( [ ChannelType.GuildVoice, ChannelType.GuildText ] )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async() => ( {} ) )
-    .onEntityMap( async( { bindButton } ) => {
+    .onEntityMap( async( { bindButton, bindSelectMenu } ) => {
         bindButton(
             "VertixBot/UI-General/WelcomeSetupButton",
             async( context, interaction ) => {
@@ -46,6 +61,86 @@ const WelcomeAdapterBase = new AdapterBuilderBase<
                         navigation: {
                             targetState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked"
                         }
+                    }
+                ]
+            }
+        );
+
+        bindButton(
+            "VertixBot/UI-General/WelcomeSupportButton",
+            async( context, interaction ) => {
+                await replyEphemeral( interaction, {
+                    content: "Support link/info coming soon. (Placeholder)",
+                    components: []
+                } );
+                context.deleteArgs( interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/WelcomeFlow",
+                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/WelcomeFlow/States/SupportClicked"
+                        }
+                    }
+                ]
+            }
+        );
+
+        bindButton(
+            "VertixBot/UI-General/WelcomeInviteButton",
+            async( context, interaction ) => {
+                await replyEphemeral( interaction, {
+                    content: "Invite link coming soon. (Placeholder)",
+                    components: []
+                } );
+                context.deleteArgs( interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/WelcomeFlow",
+                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/WelcomeFlow/States/InviteClicked"
+                        }
+                    }
+                ]
+            }
+        );
+
+        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/LanguageSelectMenu",
+            async( context, interaction ) => {
+                const selectedLanguage = interaction.values?.[ 0 ];
+
+                if ( !selectedLanguage ) {
+                    await replyEphemeral( interaction, {
+                        content: "No language selected.",
+                        components: []
+                    } );
+                    return;
+                }
+
+                context.setArgs( interaction, { selectedLanguage } );
+
+                await replyEphemeral( interaction, {
+                    content: `Language set to: \`${ selectedLanguage }\`.`,
+                    components: []
+                } );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/WelcomeFlow",
+                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/SelectLanguage",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/WelcomeFlow/States/LanguageSelected"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "selectedLanguage" ] }
+                        ]
                     }
                 ]
             }

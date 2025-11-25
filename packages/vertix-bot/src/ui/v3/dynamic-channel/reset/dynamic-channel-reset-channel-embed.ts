@@ -1,107 +1,82 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
+import { ElapsedEmbedBuilder } from "@vertix.gg/gui/src/builders/elapsed-embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelResetChannelButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-button";
 
 import type { IDynamicResetChannelResult } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 
-export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
-    private static vars = {
-        separator: uiUtilsWrapAsTemplate( "separator" ),
-        value: uiUtilsWrapAsTemplate( "value" ),
+const DYNAMIC_CHANNEL_RESET_CHANNEL_VARS = {
+    separator: uiUtilsWrapAsTemplate( "separator" ),
+    value: uiUtilsWrapAsTemplate( "value" ),
 
-        changedDisplay: uiUtilsWrapAsTemplate( "changedDisplay" ),
-        unchangedDisplay: uiUtilsWrapAsTemplate( "unchangedDisplay" ),
+    changedDisplay: uiUtilsWrapAsTemplate( "changedDisplay" ),
+    unchangedDisplay: uiUtilsWrapAsTemplate( "unchangedDisplay" ),
 
-        name: uiUtilsWrapAsTemplate( "name" ),
-        nameChanged: uiUtilsWrapAsTemplate( "nameChanged" ),
+    name: uiUtilsWrapAsTemplate( "name" ),
+    nameChanged: uiUtilsWrapAsTemplate( "nameChanged" ),
 
-        userLimit: uiUtilsWrapAsTemplate( "userLimit" ),
-        userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
-        userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
-        userLimitChanged: uiUtilsWrapAsTemplate( "userLimitChanged" ),
+    userLimit: uiUtilsWrapAsTemplate( "userLimit" ),
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
+    userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
+    userLimitChanged: uiUtilsWrapAsTemplate( "userLimitChanged" ),
 
-        state: uiUtilsWrapAsTemplate( "state" ),
-        statePublic: uiUtilsWrapAsTemplate( "statePublic" ),
-        statePrivate: uiUtilsWrapAsTemplate( "statePrivate" ),
-        stateChanged: uiUtilsWrapAsTemplate( "stateChanged" ),
+    state: uiUtilsWrapAsTemplate( "state" ),
+    statePublic: uiUtilsWrapAsTemplate( "statePublic" ),
+    statePrivate: uiUtilsWrapAsTemplate( "statePrivate" ),
+    stateChanged: uiUtilsWrapAsTemplate( "stateChanged" ),
 
-        visibilityState: uiUtilsWrapAsTemplate( "visibilityState" ),
-        visibilityStateShown: uiUtilsWrapAsTemplate( "visibilityStateShown" ),
-        visibilityStateHidden: uiUtilsWrapAsTemplate( "visibilityStateHidden" ),
-        visibilityStateChanged: uiUtilsWrapAsTemplate( "visibilityStateChanged" ),
+    visibilityState: uiUtilsWrapAsTemplate( "visibilityState" ),
+    visibilityStateShown: uiUtilsWrapAsTemplate( "visibilityStateShown" ),
+    visibilityStateHidden: uiUtilsWrapAsTemplate( "visibilityStateHidden" ),
+    visibilityStateChanged: uiUtilsWrapAsTemplate( "visibilityStateChanged" ),
 
-        /** @since 0.0.8 */
+    region: uiUtilsWrapAsTemplate( "region" ),
+    regionChanged: uiUtilsWrapAsTemplate( "regionChanged" ),
 
-        region: uiUtilsWrapAsTemplate( "region" ),
-        regionChanged: uiUtilsWrapAsTemplate( "regionChanged" ),
+    primaryMessageChanged: uiUtilsWrapAsTemplate( "primaryMessageChanged" ),
 
-        primaryMessageChanged: uiUtilsWrapAsTemplate( "primaryMessageChanged" ),
+    allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
+    allowedUsersChanged: uiUtilsWrapAsTemplate( "allowedUsersChanged" ),
 
-        /** @end @since */
+    blockedUsers: uiUtilsWrapAsTemplate( "blockedUsers" ),
+    blockedUsersChanged: uiUtilsWrapAsTemplate( "blockedUsersChanged" ),
 
-        allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
-        allowedUsersChanged: uiUtilsWrapAsTemplate( "allowedUsersChanged" ),
+    rateLimited: uiUtilsWrapAsTemplate( "rateLimited" ),
+    rateLimitedNone: uiUtilsWrapAsTemplate( "rateLimitedNone" ),
+    rateLimitedDisplay: uiUtilsWrapAsTemplate( "rateLimitedDisplay" ),
 
-        blockedUsers: uiUtilsWrapAsTemplate( "blockedUsers" ),
-        blockedUsersChanged: uiUtilsWrapAsTemplate( "blockedUsersChanged" ),
+    resetEmoji: uiUtilsWrapAsTemplate( "resetEmoji" ),
+    elapsedTimeFormatFraction: uiUtilsWrapAsTemplate( "elapsedTimeFormatFraction" )
+};
 
-        rateLimited: uiUtilsWrapAsTemplate( "rateLimited" ),
-        rateLimitedNone: uiUtilsWrapAsTemplate( "rateLimitedNone" ),
-        rateLimitedDisplay: uiUtilsWrapAsTemplate( "rateLimitedDisplay" ),
-
-        resetEmoji: uiUtilsWrapAsTemplate( "resetEmoji" )
-    };
-
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelResetChannelEmbed";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getEndTime( args: IDynamicResetChannelResult ): Date {
-        return new Date( Date.now() + ( args.rateLimitRetryAfter || 30000 ) * 1000 );
-    }
-
-    protected getColor() {
-        return 0x7a9cbd;
-    }
-
-    protected getTitle() {
-        return `${ DynamicChannelResetChannelEmbed.vars.resetEmoji }  Dynamic Channel has been reset to default settings! `;
-    }
-
-    protected getDescription() {
+const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetChannelResult, typeof DYNAMIC_CHANNEL_RESET_CHANNEL_VARS>(
+    "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
+    DYNAMIC_CHANNEL_RESET_CHANNEL_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setEndTime( ( args ) => new Date( Date.now() + ( args.rateLimitRetryAfter || 30000 ) * 1000 ) )
+    .setColor( 0x7a9cbd )
+    .setTitle( () => `${ DYNAMIC_CHANNEL_RESET_CHANNEL_VARS.resetEmoji }  Dynamic Channel has been reset to default settings! ` )
+    .setDescription( () => {
         const {
             name,
             nameChanged,
-
             userLimit,
             userLimitChanged,
-
             state,
             stateChanged,
-
             visibilityState,
             visibilityStateChanged,
-
             region,
             regionChanged,
-
             primaryMessageChanged,
-
             allowedUsers,
             allowedUsersChanged,
-
             blockedUsers,
             blockedUsersChanged,
-
             rateLimited
-        } = DynamicChannelResetChannelEmbed.vars;
+        } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS;
 
         return (
             "Settings has been reset to default:\n\n" +
@@ -115,22 +90,19 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
             `- Blocked Users: ${ blockedUsers } ${ blockedUsersChanged }` +
             rateLimited
         );
-    }
-
-    protected getOptions() {
+    } )
+    .setOptions( () => {
         const {
             userLimitUnlimited,
             userLimitValue,
-
             statePublic,
             statePrivate,
-
             visibilityStateShown,
             visibilityStateHidden,
-
             rateLimitedNone,
-            rateLimitedDisplay
-        } = DynamicChannelResetChannelEmbed.vars;
+            rateLimitedDisplay,
+            elapsedTimeFormatFraction
+        } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS;
 
         return {
             changedDisplay: "(__restored__)",
@@ -153,14 +125,12 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
                 [ rateLimitedDisplay ]:
                     "\n\n" +
                     "⚠️ Renaming cannot be performed at the moment due to rate limit restrictions.\n\n" +
-                    `Please wait for ${ this.getElapsedTimeFormatFractionVariable() } seconds or create a new channel instead.`
+                    `Please wait for ${ elapsedTimeFormatFraction } seconds or create a new channel instead.`
             }
         };
-    }
-
-    protected getArrayOptions() {
-        const { separator, value } = DynamicChannelResetChannelEmbed.vars;
-
+    } )
+    .setArrayOptions( () => {
+        const { separator, value } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS;
         return {
             allowedUsers: {
                 format: `<@${ value }>${ separator }`,
@@ -171,25 +141,20 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
                 separator: ", "
             }
         };
-    }
-
-    protected getLogic( args: IDynamicResetChannelResult ) {
+    } )
+    .setLogic( ( args: IDynamicResetChannelResult ) => {
         const {
                 changedDisplay,
                 unchangedDisplay,
-
                 userLimitUnlimited,
                 userLimitValue,
-
                 statePublic,
                 statePrivate,
-
                 visibilityStateShown,
                 visibilityStateHidden,
-
                 rateLimitedNone,
                 rateLimitedDisplay
-            } = DynamicChannelResetChannelEmbed.vars,
+            } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS,
             { newState, oldState } = args;
 
         const primaryMessageChanged = () => {
@@ -235,5 +200,7 @@ export class DynamicChannelResetChannelEmbed extends UIEmbedElapsedTimeBase {
 
             resetEmoji: DynamicChannelResetChannelButton.getEmoji()
         };
-    }
-}
+    } )
+    .build();
+
+export { DynamicChannelResetChannelEmbed };

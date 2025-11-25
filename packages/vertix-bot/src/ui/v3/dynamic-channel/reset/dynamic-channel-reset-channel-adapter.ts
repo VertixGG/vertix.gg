@@ -27,30 +27,30 @@ async function onResetChannelButtonClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
-        const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-        const result = await dynamicChannelService.resetChannel( interaction, interaction.channel, {
-            includeRegion: true,
-            includePrimaryMessage: true
-        } );
+    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+    const result = await dynamicChannelService.resetChannel( interaction, interaction.channel, {
+        includeRegion: true,
+        includePrimaryMessage: true
+    } );
 
-        switch ( result?.code ) {
-            case "success-rename-rate-limit":
-            case "success":
+    switch ( result?.code ) {
+        case "success-rename-rate-limit":
+        case "success":
             context.getComponent().switchEmbedsGroup(
-                    "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
-                );
+                "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
+            );
 
             await context.ephemeral( interaction, { result } );
-                break;
+            break;
 
-            case "vote-required":
-                await TopGGManager.$.sendVoteEmbed( interaction );
-                break;
+        case "vote-required":
+            await TopGGManager.$.sendVoteEmbed( interaction );
+            break;
 
-            default:
+        default:
             context.getComponent().switchEmbedsGroup(
-                    "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-                );
+                "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+            );
             await context.ephemeral( interaction, {} );
     }
 }

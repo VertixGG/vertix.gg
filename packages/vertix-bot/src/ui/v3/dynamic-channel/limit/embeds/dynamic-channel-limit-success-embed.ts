@@ -1,52 +1,37 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelLimitSuccessEmbed extends UIEmbedBase {
-    private static vars = {
-        userLimit: uiUtilsWrapAsTemplate( "userLimit" ),
-        userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
-        userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" )
-    };
+const DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS = {
+    userLimit: uiUtilsWrapAsTemplate( "userLimit" ),
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
+    userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed";
-    }
+const DynamicChannelLimitSuccessEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS>(
+    "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed",
+    DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0xf5cf4d )
+    .setTitle(
+        () => `✋  Your channel's user limit has changed to ${ DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimit }`
+    )
+    .setOptions( () => ( {
+        userLimit: {
+            [ DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitValue ]: DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitValue,
+            [ DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitUnlimited ]: "Unlimited"
+        }
+    } ) )
+    .setLogic( ( args: UIArgs ) => ( {
+        userLimit: args.userLimit === 0
+            ? DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitUnlimited
+            : DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitValue,
+        userLimitValue: args.userLimit
+    } ) )
+    .build();
 
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor(): number {
-        return 0xf5cf4d; // Hand like.
-    }
-
-    protected getTitle(): string {
-        return `✋  Your channel's user limit has changed to ${ DynamicChannelLimitSuccessEmbed.vars.userLimit }`;
-    }
-
-    protected getOptions() {
-        const { userLimitValue, userLimitUnlimited } = DynamicChannelLimitSuccessEmbed.vars;
-
-        return {
-            userLimit: {
-                [ userLimitValue ]: userLimitValue,
-                [ userLimitUnlimited ]: "Unlimited"
-            }
-        };
-    }
-
-    protected getLogic( args: UIArgs ) {
-        const { userLimitValue, userLimitUnlimited } = DynamicChannelLimitSuccessEmbed.vars;
-
-        return {
-            userLimit: args.userLimit === 0 ? userLimitUnlimited : userLimitValue,
-
-            userLimitValue: args.userLimit
-        };
-    }
-}
+export { DynamicChannelLimitSuccessEmbed };

@@ -1,40 +1,26 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-/**
- * Shown when user vote for the same user.
- */
-export class ClaimResultVotedSameEmbed extends UIEmbedBase {
-    private static vars = {
-        userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" ),
-        userId: uiUtilsWrapAsTemplate( "userId" )
-    };
+const CLAIM_RESULT_VOTED_SAME_VARS = {
+    userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" ),
+    userId: uiUtilsWrapAsTemplate( "userId" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimResultVotedSameEmbed";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getTitle() {
-        return `🗳️  You already voted for ${ ClaimResultVotedSameEmbed.vars.userDisplayName }`;
-    }
-
-    protected getDescription() {
-        return `Your vote has been already cast in favor of <@${ ClaimResultVotedSameEmbed.vars.userId }>, you can vote for someone else if you changed your mind.`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            userDisplayName: args.userDisplayName,
-            userId: args.userId
-        };
-    }
-}
+export const ClaimResultVotedSameEmbed = new EmbedBuilder<UIArgs, typeof CLAIM_RESULT_VOTED_SAME_VARS>(
+    "VertixBot/UI-V3/ClaimResultVotedSameEmbed",
+    CLAIM_RESULT_VOTED_SAME_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setTitle( () => `🗳️  You already voted for ${ CLAIM_RESULT_VOTED_SAME_VARS.userDisplayName }` )
+    .setDescription( () =>
+        `Your vote has been already cast in favor of <@${ CLAIM_RESULT_VOTED_SAME_VARS.userId }>, you can vote for someone else if you changed your mind.`
+    )
+    .setLogic( ( args: UIArgs ) => ( {
+        userDisplayName: args.userDisplayName,
+        userId: args.userId
+    } ) )
+    .build();

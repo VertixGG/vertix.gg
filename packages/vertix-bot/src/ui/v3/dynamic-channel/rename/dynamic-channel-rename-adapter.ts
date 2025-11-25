@@ -120,7 +120,7 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                         break;
                 }
             }
-        ,
+            ,
             {
                 flowTriggers: [
                     {

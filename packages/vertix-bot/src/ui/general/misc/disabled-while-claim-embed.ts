@@ -1,28 +1,17 @@
 import { Colors } from "discord.js";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DisabledWhileClaimEmbed extends UIEmbedBase {
-    public static getName() {
-        return "VertixBot/UI-General/DisabledWhileClaimEmbed";
-    }
+const DisabledWhileClaimEmbed = new EmbedBuilder(
+    "VertixBot/UI-General/DisabledWhileClaimEmbed"
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setTitle( "😈 The action is disabled" )
+    .setDescription(
+        "The action is disabled while the claim is in progress.\n\nPlease wait until the claim is completed."
+    )
+    .setColor( Colors.Red )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic; // TODO: Should be static.
-    }
-
-    protected getTitle(): string {
-        return "😈 The action is disabled";
-    }
-
-    protected getDescription(): string {
-        return (
-            "The action is disabled while the claim is in progress.\n\n" + "Please wait until the claim is completed."
-        );
-    }
-
-    protected getColor(): number {
-        return Colors.Red;
-    }
-}
+export { DisabledWhileClaimEmbed };

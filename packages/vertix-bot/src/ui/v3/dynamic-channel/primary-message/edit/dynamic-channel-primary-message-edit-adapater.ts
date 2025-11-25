@@ -40,8 +40,8 @@ async function onNoButtonClicked(
 }
 
 async function onYesButtonClicked(
-    context: IWizardAdapterContext<DefaultInteraction, UIArgs>,
-    interaction: UIDefaultButtonChannelVoiceInteraction
+    _context: IWizardAdapterContext<DefaultInteraction, UIArgs>,
+    _interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
     // Flow trigger drives navigation.
 }

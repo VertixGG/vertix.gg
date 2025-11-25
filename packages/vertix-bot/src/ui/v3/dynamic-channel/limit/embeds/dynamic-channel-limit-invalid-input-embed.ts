@@ -1,39 +1,31 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/app";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelLimitInvalidInputEmbed extends UIEmbedBase {
-    private static vars = {
-        minValue: uiUtilsWrapAsTemplate( "minValue" ),
-        maxValue: uiUtilsWrapAsTemplate( "maxValue" )
-    };
+const DYNAMIC_CHANNEL_LIMIT_INVALID_VARS = {
+    minValue: uiUtilsWrapAsTemplate( "minValue" ),
+    maxValue: uiUtilsWrapAsTemplate( "maxValue" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed";
-    }
+const DynamicChannelLimitInvalidInputEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_LIMIT_INVALID_VARS>(
+    "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed",
+    DYNAMIC_CHANNEL_LIMIT_INVALID_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
+    .setTitle(
+        () =>
+            `🙅  User limit must be between ${ DYNAMIC_CHANNEL_LIMIT_INVALID_VARS.minValue } and ${ DYNAMIC_CHANNEL_LIMIT_INVALID_VARS.maxValue }`
+    )
+    .setLogic( ( args: UIArgs ) => ( {
+        minValue: args.minValue,
+        maxValue: args.maxValue
+    } ) )
+    .build();
 
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor(): number {
-        return VERTIX_DEFAULT_COLOR_ORANGE_RED;
-    }
-
-    protected getTitle(): string {
-        return `🙅  User limit must be between ${ DynamicChannelLimitInvalidInputEmbed.vars.minValue } and ${ DynamicChannelLimitInvalidInputEmbed.vars.maxValue }`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            minValue: args.minValue,
-            maxValue: args.maxValue
-        };
-    }
-}
+export { DynamicChannelLimitInvalidInputEmbed };

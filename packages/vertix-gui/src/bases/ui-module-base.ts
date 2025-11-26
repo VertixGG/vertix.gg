@@ -8,9 +8,6 @@ import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-
 
 import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { TFlowClassType } from "@vertix.gg/gui/src/definitions/ui-flow-declaration";
-import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
-
-type ControllerClassConstructor = new ( options: any ) => UIControllerBase<any>;
 
 export abstract class UIModuleBase extends UIBase {
     public customIdStrategy: UICustomIdStrategyBase;
@@ -21,10 +18,6 @@ export abstract class UIModuleBase extends UIBase {
 
     public static getAdapters(): ReadonlyArray<TAdapterClassType> {
         throw new ForceMethodImplementation( this, this.getAdapters.name );
-    }
-
-    public static getControllers(): ControllerClassConstructor[] {
-        return [];
     }
 
     public static getFlows(): TFlowClassType[] {

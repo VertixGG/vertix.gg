@@ -51,7 +51,6 @@ import type {
     TPossibleAdapters
 } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
-import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
 
 export type TAdapterMapping = {
     base: UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
@@ -71,11 +70,7 @@ const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
     silent: false
 };
 
-// Add type for Concrete Controller Constructor + Statics
-type ConcreteControllerClass = ( new ( options: any ) => UIControllerBase<any> ) & {
-    getName: () => string;
-    // Add other static methods if needed
-};
+const USE_EXPORT_DEFINITIONS = process.env.UI_DEFS_FROM_EXPORTS !== "false";
 
 export class UIService extends ServiceWithDependenciesBase<{
     uiHashService: UIHashService;

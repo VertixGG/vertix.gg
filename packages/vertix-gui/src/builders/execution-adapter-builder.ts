@@ -113,8 +113,18 @@ export class ExecutionAdapterBuilder<
             }
 
             protected async getEditMessageArgs( message?: Message<true>, argsFromManager?: UIArgs ) {
+                const dataArgs = await builder.resolveArgsFromDataSource( "edit", message, argsFromManager );
+
                 if ( builder.getEditMessageArgsHandler ) {
-                    return builder.getEditMessageArgsHandler( this.getContext(), message, argsFromManager );
+                    const handlerArgs = await builder.getEditMessageArgsHandler( this.getContext(), message, argsFromManager );
+                    if ( dataArgs ) {
+                        return { ...dataArgs, ...handlerArgs };
+                    }
+                    return handlerArgs;
+                }
+
+                if ( dataArgs ) {
+                    return dataArgs;
                 }
 
                 return super.getEditMessageArgs?.( message, argsFromManager );

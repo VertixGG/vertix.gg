@@ -793,7 +793,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId as string );
 
         const sendArgs = {
-            ownerId: dynamicChannelDB.userOwnerId
+            ownerId: dynamicChannelDB.userOwnerId,
+            channelId: channel.id
         } as any;
 
         if ( masterChannelDB ) {

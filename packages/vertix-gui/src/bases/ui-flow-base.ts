@@ -156,6 +156,16 @@ export abstract class UIFlowBase<
         return {};
     }
 
+    /**
+     * Optional mapping of adapters to UIData components this flow relies on
+     * for runtime/export arg hydration.
+     *
+     * Returns an array of tuples: [adapterName, dataComponentName].
+     */
+    public static getArgsDataProviders?(): Array<[ string, string ]> {
+        return [];
+    }
+
     public static getFlowType(): "ui" | "system" | string {
         return "ui";
     }

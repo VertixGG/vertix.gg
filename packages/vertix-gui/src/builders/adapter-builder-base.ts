@@ -1,5 +1,6 @@
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { PermissionsBitField } from "discord.js";
 
@@ -46,6 +47,7 @@ import type {
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 
 type StartArgsHandler<TContext, TChannel, TArgs> = (
     context: TContext,
@@ -84,6 +86,12 @@ export class AdapterBuilderBase<
     protected beforeBuildRunHandler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeFinishHandler: BeforeFinishHandler<TInteraction, TArgs, TContext> | undefined;
     protected entityMapHandler: EntityMapHandler<TInteraction, TArgs, TContext> | undefined;
+    protected argsDataSource:
+        | {
+            targets: Set<"start" | "reply" | "edit">;
+            dataComponentName: string;
+        }
+        | undefined;
 
     protected contextFactory:
         | ( (
@@ -169,6 +177,34 @@ export class AdapterBuilderBase<
         return this;
     }
 
+    /**
+     * Use a UIDataBase component as the args data source for adapter methods.
+     * targets: array including 'start', 'reply', 'edit', or 'all' (applies to all).
+     */
+    public setArgsDataSource(
+        targets: Array<"start" | "reply" | "edit" | "all">,
+        dataComponentName: string
+    ): this {
+        const normalized = new Set<"start" | "reply" | "edit">();
+
+        targets.forEach( ( target ) => {
+            if ( target === "all" ) {
+                normalized.add( "start" );
+                normalized.add( "reply" );
+                normalized.add( "edit" );
+                return;
+            }
+            normalized.add( target );
+        } );
+
+        this.argsDataSource = {
+            targets: normalized,
+            dataComponentName
+        };
+
+        return this;
+    }
+
     public useContextFactory(
         factory: (
             base: IAdapterContext<TInteraction, TArgs>,
@@ -247,16 +283,38 @@ export class AdapterBuilderBase<
                 }
 
                 protected async getStartArgs( channel: TChannel, argsFromManager?: UIArgs ): Promise<UIArgs> {
+                    const dataArgs = await builder.resolveArgsFromDataSource( "start", channel, argsFromManager );
+
                     if ( builder.startArgsHandler ) {
-                        return builder.startArgsHandler( this.getContext(), channel, argsFromManager as TArgs );
+                        const handlerArgs = await builder.startArgsHandler( this.getContext(), channel, argsFromManager as TArgs );
+                        if ( dataArgs ) {
+                            return { ...dataArgs, ...handlerArgs };
+                        }
+                        return handlerArgs;
                     }
+
+                    if ( dataArgs ) {
+                        return dataArgs;
+                    }
+
                     return super.getStartArgs( channel, argsFromManager );
                 }
 
                 protected async getReplyArgs( interaction: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> {
+                    const dataArgs = await builder.resolveArgsFromDataSource( "reply", interaction, argsFromManager );
+
                     if ( builder.replyArgsHandler ) {
-                        return builder.replyArgsHandler( this.getContext(), interaction, argsFromManager as TArgs );
+                        const handlerArgs = await builder.replyArgsHandler( this.getContext(), interaction, argsFromManager as TArgs );
+                        if ( dataArgs ) {
+                            return { ...dataArgs, ...handlerArgs };
+                        }
+                        return handlerArgs;
                     }
+
+                    if ( dataArgs ) {
+                        return dataArgs;
+                    }
+
                     return super.getReplyArgs( interaction, argsFromManager );
                 }
 
@@ -440,4 +498,36 @@ export class AdapterBuilderBase<
         return [ ...base, ...additional, ...extra ];
     }
 
+    protected async resolveArgsFromDataSource(
+        target: "start" | "reply" | "edit",
+        context: unknown,
+        argsFromManager?: UIArgs
+    ): Promise<UIArgs | undefined> {
+        if ( !this.argsDataSource?.targets.has( target ) || !this.argsDataSource.dataComponentName ) {
+            return undefined;
+        }
+
+        try {
+            const uiDataService = ServiceLocator.$.get<UIDataService>( "VertixGUI/UIDataService" );
+            const dataComponent = uiDataService.getDataComponent( this.argsDataSource.dataComponentName, true );
+
+            if ( !dataComponent || "function" !== typeof ( dataComponent as any ).read ) {
+                return argsFromManager;
+            }
+
+            const identifier = {
+                ...( "object" === typeof context ? ( context as Record<string, unknown> ) : {} ),
+                ...( argsFromManager ?? {} )
+            };
+
+            const data = await ( dataComponent as { read: ( payload: Record<string, unknown> ) => Promise<UIArgs | null> } )
+                .read( identifier );
+
+            return { ...( data ?? {} ), ...( argsFromManager ?? {} ) };
+        } catch( error ) {
+            const logger = new Logger( this.name );
+            logger.warn( this.resolveArgsFromDataSource, `Failed to resolve data source for '${ this.name }'`, error );
+            return argsFromManager;
+        }
+    }
 }

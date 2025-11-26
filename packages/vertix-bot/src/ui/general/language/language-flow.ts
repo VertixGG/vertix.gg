@@ -4,6 +4,8 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
+import { LanguageComponent } from "@vertix.gg/bot/src/ui/general/language/language-component";
+
 import type {
     UIFlowData,
     FlowIntegrationPointBase
@@ -16,6 +18,10 @@ export interface LanguageFlowData extends UIFlowData {
 export class LanguageFlow extends UIFlowBase<string, string, LanguageFlowData> {
     public static override getName(): string {
         return "VertixBot/UI-General/LanguageFlow";
+    }
+
+    public static override getComponents() {
+        return [ LanguageComponent ];
     }
 
     public static override getEntryPoints(): FlowIntegrationPointBase[] {

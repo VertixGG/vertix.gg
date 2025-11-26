@@ -75,6 +75,8 @@ async function onTransferOwnerUserSelected(
         return;
     }
 
+    context.setArgs( interaction, { userDisplayName: target.displayName } );
+
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected", {
         userDisplayName: target.displayName
     } );
@@ -152,14 +154,16 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
     .setExcludedElements( [ DynamicChannelTransferOwnerButton ] )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
-        switch ( context.getCurrentExecutionStep( interaction )?.name ) {
-            case "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected":
-                return {
-                    userDisplayName: argsFromManager?.userDisplayName
-                };
+        const currentStep = context.getCurrentExecutionStep( interaction )?.name;
+        const storedArgs = context.getArgs( interaction );
+
+        if ( currentStep === "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected" ) {
+            return {
+                userDisplayName: storedArgs.userDisplayName ?? argsFromManager?.userDisplayName
+            };
         }
 
-        return {};
+        return storedArgs;
     } )
     .onEntityMap( async( { bindButton, bindUserSelectMenu } ) => {
         bindButton<UIDefaultButtonChannelVoiceInteraction>(

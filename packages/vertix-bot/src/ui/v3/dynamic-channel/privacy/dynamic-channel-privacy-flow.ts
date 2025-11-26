@@ -37,7 +37,9 @@ export class DynamicChannelPrivacyFlow extends UIFlowBase<string, string, Dynami
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelPrivacyFlowData )[]> {
-        return {};
+        return {
+            "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState": [ "state" ]
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {

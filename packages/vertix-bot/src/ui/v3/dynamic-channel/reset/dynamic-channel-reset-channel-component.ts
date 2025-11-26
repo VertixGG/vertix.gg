@@ -30,10 +30,10 @@ export class DynamicChannelResetChannelComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return null;
+        return "VertixBot/UI-V3/DynamicChannelResetChannelButtonGroup";
     }
 
     public static getDefaultEmbedsGroup() {
-        return null;
+        return "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup";
     }
 }

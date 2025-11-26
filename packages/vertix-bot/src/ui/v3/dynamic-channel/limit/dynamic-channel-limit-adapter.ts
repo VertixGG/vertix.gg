@@ -69,6 +69,11 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
                     parsedInput < DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH ||
                     parsedInput > DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
                 ) {
+                    context.setArgs( voiceInteraction, {
+                        minValue: DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH,
+                        maxValue: DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
+                    } );
+
                     return await context.ephemeralWithStep(
                         voiceInteraction,
                         "VertixBot/UI-V3/DynamicChannelLimitInvalidInput",
@@ -85,6 +90,10 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
                         {}
                     );
                 }
+
+                context.setArgs( voiceInteraction, {
+                    userLimit: parsedInput
+                } );
 
                 return await context.ephemeralWithStep(
                     voiceInteraction,

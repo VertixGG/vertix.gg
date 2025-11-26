@@ -19,6 +19,10 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction = UIDefaultStringSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
+const privacyFlowName = "VertixBot/UI-V3/DynamicChannelPrivacyFlow";
+const updatePrivacyTransition = `${ privacyFlowName }/Transitions/UpdatePrivacyState`;
+const defaultPrivacyState = `${ privacyFlowName }/States/Default`;
+
 const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelPrivacyAdapter"
 )
@@ -41,6 +45,8 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
             async( context, interaction ) => {
                 const state = interaction.values[ 0 ];
 
+                context.setArgs( interaction, { state } );
+
                 const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
                 await dynamicChannelService.editChannelPrivacyState(
                     interaction,
@@ -49,6 +55,21 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
                 );
 
                 await context.editReply( interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: privacyFlowName,
+                        transition: updatePrivacyTransition,
+                        navigation: {
+                            targetState: defaultPrivacyState,
+                            executionStep: "default"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "state" ] }
+                        ]
+                    }
+                ]
             }
         );
     } )

@@ -39,10 +39,10 @@ export class DynamicChannelClearChatComponent extends UIComponentBase {
     }
 
     public static getDefaultElementsGroup() {
-        return null;
+        return "VertixBot/UI-V3/DynamicChannelClearChatButtonGroup";
     }
 
     public static getDefaultEmbedsGroup() {
-        return null;
+        return "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup";
     }
 }

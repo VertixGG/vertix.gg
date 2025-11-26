@@ -36,11 +36,12 @@ async function onResetChannelButtonClicked(
     switch ( result?.code ) {
         case "success-rename-rate-limit":
         case "success":
-            context.getComponent().switchEmbedsGroup(
-                "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
+            context.setArgs( interaction, { result } );
+            await context.ephemeralWithStep(
+                interaction,
+                "VertixBot/UI-V3/DynamicChannelResetChannelSuccess",
+                { result }
             );
-
-            await context.ephemeral( interaction, { result } );
             break;
 
         case "vote-required":
@@ -48,10 +49,11 @@ async function onResetChannelButtonClicked(
             break;
 
         default:
-            context.getComponent().switchEmbedsGroup(
-                "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+            await context.ephemeralWithStep(
+                interaction,
+                "VertixBot/UI-V3/DynamicChannelResetChannelError",
+                {}
             );
-            await context.ephemeral( interaction, {} );
     }
 }
 
@@ -90,7 +92,7 @@ const DynamicChannelResetChannelAdapter = new DynamicExecutionAdapterBuilder<UID
                         transition: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired",
                         navigation: {
                             targetState: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/VoteRequired",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelVote"
+                            executionStep: "default"
                         }
                     },
                     {

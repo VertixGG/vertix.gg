@@ -8,7 +8,9 @@ import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
-type DynamicChannelTransferOwnerFlowData = UIFlowData;
+interface DynamicChannelTransferOwnerFlowData extends UIFlowData {
+    userDisplayName?: string;
+}
 
 /**
  * Flow that guides an owner through transferring a dynamic channel.
@@ -28,6 +30,9 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
 
     public static getFlowTransitions(): Record<string, string[]> {
         return {
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Initial": [
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Open"
+            ],
             "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser": [
                 "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected",
                 "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel"
@@ -51,7 +56,9 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
     }
 
     public static getRequiredData(): Record<string, ( keyof DynamicChannelTransferOwnerFlowData )[]> {
-        return {};
+        return {
+            "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected": [ "userDisplayName" ]
+        };
     }
 
     public static override getComponents(): UIComponentConstructor[] {
@@ -71,7 +78,7 @@ export class DynamicChannelTransferOwnerFlow extends UIFlowBase<
     }
 
     protected override getInitialState(): string {
-        return "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser";
+        return "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Initial";
     }
 
     protected override getInitialData(): DynamicChannelTransferOwnerFlowData {

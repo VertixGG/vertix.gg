@@ -21,17 +21,17 @@ export type LogicHandler<TArgs extends UIArgs, TVars> =
     | ( ( args: TArgs, vars: TVars ) => AsyncOrSync<Record<string, JsonValue>> );
 
 export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, JsonValue>> {
-    private name: string;
-    private instanceType: UIInstancesTypes | null = null;
-    private title: StringHandler<TVars> | undefined;
-    private description: StringHandler<TVars> | undefined;
-    private color: NumberHandler<TVars> | undefined;
-    private image: StringHandler<TVars> | undefined;
-    private options: OptionsHandler<TVars> | undefined;
-    private footer: StringHandler<TVars> | undefined;
-    private arrayOptions: OptionsHandler<TVars> | undefined;
-    private logic: LogicHandler<TArgs, TVars> | undefined;
-    private vars: TVars | undefined;
+    protected name: string;
+    protected instanceType: UIInstancesTypes | null = null;
+    protected title: StringHandler<TVars> | undefined;
+    protected description: StringHandler<TVars> | undefined;
+    protected color: NumberHandler<TVars> | undefined;
+    protected image: StringHandler<TVars> | undefined;
+    protected options: OptionsHandler<TVars> | undefined;
+    protected footer: StringHandler<TVars> | undefined;
+    protected arrayOptions: OptionsHandler<TVars> | undefined;
+    protected logic: LogicHandler<TArgs, TVars> | undefined;
+    protected vars: TVars | undefined;
 
     public constructor( name: string, vars?: TVars ) {
         this.name = name;

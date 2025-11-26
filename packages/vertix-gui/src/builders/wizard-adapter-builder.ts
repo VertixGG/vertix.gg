@@ -256,10 +256,10 @@ export class WizardAdapterBuilder<
             metadata.wizard = {
                 componentConfig: builder.componentConfig
                     ? {
-                          name: builder.componentConfig.name,
-                          components: builder.componentConfig.components,
-                          baseComponent: builder.componentConfig.baseComponent
-                      }
+                        name: builder.componentConfig.name,
+                        components: builder.componentConfig.components,
+                        baseComponent: builder.componentConfig.baseComponent
+                    }
                     : undefined,
                 componentEmbedsGroups: builder.componentEmbedsGroups
             };

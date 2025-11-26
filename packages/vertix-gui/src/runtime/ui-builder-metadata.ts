@@ -77,6 +77,15 @@ export interface EmbedBuilderMetadata<
     vars?: TVars;
 }
 
+export type EndTimeHandler<TArgs extends UIArgs> = ( args: TArgs ) => Date;
+
+export interface ElapsedEmbedBuilderMetadata<
+    TArgs extends UIArgs = UIArgs,
+    TVars extends Record<string, JsonValue> = Record<string, JsonValue>
+> extends EmbedBuilderMetadata<TArgs, TVars> {
+    endTime: EndTimeHandler<TArgs>;
+}
+
 export interface WizardAdapterMetadata {
     componentConfig?: {
         name: string;
@@ -94,9 +103,9 @@ export type BuilderMetadata =
     | ComponentBuilderMetadata
     | AdapterBuilderMetadata
     | EmbedBuilderMetadata
+    | ElapsedEmbedBuilderMetadata
     | FlowBuilderMetadata;
 
 export type BuilderMetadataCarrier = {
     [ BUILDER_METADATA_SYMBOL ]?: BuilderMetadata;
 };
-

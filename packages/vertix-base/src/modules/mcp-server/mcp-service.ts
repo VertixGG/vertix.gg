@@ -2,77 +2,126 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
-import { McpServer } from "@vertix.gg/base/src/modules/mcp-server/mcp-server"; // Assuming mcp-server.ts is in the same directory
-
-// TODO: Get port/host from configuration/environment variables
-const MCP_HOST = "0.0.0.0";
-const MCP_PORT_MIN = 45000;
-const MCP_PORT_MAX = 46000;
-const MCP_PORT_ATTEMPTS = 8;
+const LOGGER_SERVER_HTTP_PORT = process.env.LOGGER_SERVER_HTTP_PORT ? parseInt( process.env.LOGGER_SERVER_HTTP_PORT, 10 ) : 3090;
+const LOGGER_SERVER_HOST = process.env.LOGGER_SERVER_HOST || "localhost";
 
 export class MCPService extends ServiceBase {
-    private static mcpServer: McpServer;
-    private static currentPort: number | null = null;
+    private static loggerServerUrl: string;
+    private static isServerAvailable: boolean = false;
 
     public static getName(): string {
         return "VertixBase/Modules/MCPService";
     }
 
-    public constructor() {
-        super();
+    public static getLoggerServerUrl(): string | null {
+        return MCPService.loggerServerUrl || null;
+    }
 
-        // Initialization logic is handled in the initialize method by ServiceBase
+    private options?: { loggerServerUrl?: string };
+    private healthCheckInterval: NodeJS.Timeout | null = null;
+
+    public constructor( options?: { loggerServerUrl?: string } ) {
+        super();
+        this.options = options;
     }
 
     protected async initialize(): Promise<void> {
-        this.logger.log( this.initialize, "Initializing MCP Service..." );
+        this.logger.log( this.initialize, "Initializing MCP Service (Logger Client)..." );
 
-        MCPService.mcpServer = new McpServer();
+        // Determine logger server URL
+        const loggerServerUrl = this.options?.loggerServerUrl ||
+            `http://${ LOGGER_SERVER_HOST }:${ LOGGER_SERVER_HTTP_PORT }`;
 
-        let lastError: unknown = null;
+        MCPService.loggerServerUrl = loggerServerUrl;
 
-        for ( let attempt = 0; attempt < MCP_PORT_ATTEMPTS; attempt += 1 ) {
-            const candidatePort = MCPService.getRandomPort();
+        // Start periodic health checks (will detect when server becomes available)
+        this.startHealthChecks( loggerServerUrl );
 
+        // Try to connect to logger server in background (non-blocking)
+        this.waitForLoggerServer( loggerServerUrl ).catch( () => {
+            // Already logged in waitForLoggerServer, just continue
+        } );
+
+        // Register event listener to send logs to logger server
+        EventBus.$.on( "VertixBase/Modules/Logger", "outputEvent", this.onLoggerOutput.bind( this ) );
+
+        this.logger.info( this.initialize, `MCP Service initialized, sending logs to ${ loggerServerUrl }` );
+    }
+
+    private async waitForLoggerServer( url: string, maxAttempts: number = 3, delayMs: number = 500 ): Promise<void> {
+        for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
             try {
-                await MCPService.mcpServer.start( candidatePort, MCP_HOST );
-                MCPService.currentPort = candidatePort;
-                EventBus.$.on( "VertixBase/Modules/Logger", "outputInternal", this.onLoggerOutput.bind( this ) );
-                this.logger.info( this.initialize, `MCP Server started on http://${ MCP_HOST }:${ candidatePort }` );
-                return;
-            } catch( error ) {
-                lastError = error;
-                this.logger.warn(
-                    this.initialize,
-                    `Failed to start MCP Server on port ${ candidatePort }, attempt ${ attempt + 1 }/${ MCP_PORT_ATTEMPTS }`,
-                    error
-                );
+                const response = await fetch( `${ url }/health`, {
+                    method: "GET",
+                    signal: AbortSignal.timeout( 2000 )
+                } );
+
+                if ( response.ok ) {
+                    MCPService.isServerAvailable = true;
+                    this.logger.info( this.waitForLoggerServer, `Logger server is available at ${ url }` );
+                    return;
+                }
+            } catch {
+                if ( attempt < maxAttempts ) {
+                    this.logger.warn(
+                        this.waitForLoggerServer,
+                        `Logger server not available (attempt ${ attempt }/${ maxAttempts }), retrying in ${ delayMs }ms...`
+                    );
+                    await new Promise( resolve => setTimeout( resolve, delayMs ) );
+                } else {
+                    this.logger.error(
+                        this.waitForLoggerServer,
+                        `Logger server not available after ${ maxAttempts } attempts. Logs will be sent when server becomes available.`
+                    );
+                }
             }
         }
-
-        this.logger.error( this.initialize, "Failed to start MCP Server after exhausting port attempts", lastError );
-        throw lastError instanceof Error ? lastError : new Error( "Failed to start MCP Server" );
     }
 
-    /**
-     * Optional: Add a method to explicitly stop the server if needed.
-     * ServiceBase doesn't seem to have a standard shutdown hook, so manual call might be necessary.
-     */
-    public async stopServer(): Promise<void> {
-        if ( MCPService.mcpServer ) {
-            this.logger.log( this.stopServer, "Stopping MCP Server..." );
-            await MCPService.mcpServer.stop();
-            MCPService.currentPort = null;
-            this.logger.info( this.stopServer, "MCP Server stopped." );
+    private startHealthChecks( url: string ): void {
+        // Perform initial health check immediately
+        this.performHealthCheck( url );
+
+        // Then check every 5 seconds
+        this.healthCheckInterval = setInterval( () => {
+            this.performHealthCheck( url );
+        }, 5000 );
+    }
+
+    private async performHealthCheck( url: string ): Promise<void> {
+        try {
+            const response = await fetch( `${ url }/health`, {
+                method: "GET",
+                signal: AbortSignal.timeout( 2000 )
+            } );
+
+            MCPService.isServerAvailable = response.ok;
+        } catch {
+            MCPService.isServerAvailable = false;
         }
     }
 
-    // You can add methods here to interact with McpServer if needed,
-    // e.g., retrieving logs or status, although tools will likely handle log retrieval.
-    private onLoggerOutput( prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ) {
+    public async stop(): Promise<void> {
+        if ( this.healthCheckInterval ) {
+            clearInterval( this.healthCheckInterval );
+            this.healthCheckInterval = null;
+        }
+    }
+
+    private async onLoggerOutput( prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): Promise<void> {
+        // Skip sending if server is known to be unavailable (health check will retry)
+        if ( !MCPService.isServerAvailable ) {
+            return;
+        }
+
+        const processName = process.env.LOGGER_PROCESS_NAME ||
+            process.env.npm_package_name ||
+            "unknown";
+
         // Create a log entry with all the relevant information
         const logEntry = {
             timestamp: new Date().getTime(),
+            process: processName,
             prefix,
             timeDiff,
             source,
@@ -82,18 +131,31 @@ export class MCPService extends ServiceBase {
             formatted: `${ prefix }[+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`
         };
 
-        if ( MCPService.mcpServer ) {
-            // Call the addLog method directly on the static McpServer instance
-            try {
-                MCPService.mcpServer.addLog( logEntry );
-            } catch( error ) {
-                console.error( "MCPService.onLoggerOutput: Failed to add log via addLog method:", error );
+        // Send log to logger server via HTTP
+        try {
+            const response = await fetch( `${ MCPService.loggerServerUrl }/logs`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify( logEntry ),
+                signal: AbortSignal.timeout( 1000 )
+            } );
+
+            if ( !response.ok ) {
+                MCPService.isServerAvailable = false;
+                if ( process.env.DEBUG_LOGGER_CLIENT === "true" ) {
+                    console.error( `Failed to send log to logger server: ${ response.status } ${ response.statusText }` );
+                }
+            }
+        } catch( error ) {
+            MCPService.isServerAvailable = false;
+            // Silently fail to avoid log spam if logger server is not available
+            // Only log error in debug mode
+            if ( process.env.DEBUG_LOGGER_CLIENT === "true" ) {
+                console.error( "MCPService.onLoggerOutput: Failed to send log to logger server:", error );
             }
         }
     }
-
-    private static getRandomPort(): number {
-        const range = MCP_PORT_MAX - MCP_PORT_MIN + 1;
-        return MCP_PORT_MIN + Math.floor( Math.random() * range );
-    }
 }
+

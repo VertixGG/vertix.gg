@@ -1,0 +1,7 @@
+# Rule: Access singletons via static `.$` helper, never via exported instances
+
+- Do **not** create or export singleton instances (`export const Foo = ...`).
+- Do **not** re-export `Foo.$` as a const (e.g., `export const foo = Foo.$`).
+- Always consume singletons directly with the static accessor: `Foo.$`.
+- Applies to all singleton-style utilities/registries (e.g., UIArgsProviderRegistry, services, managers) across the project.
+- Prefer extending `SingletonBase` / `InitializeBase` patterns when introducing new singletons.

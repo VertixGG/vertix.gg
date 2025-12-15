@@ -17,6 +17,7 @@ import type {
     AdapterDefinition,
     BindingDefinition,
     ComponentDefinition,
+    ElementDefinition,
     ElementsGroupDefinition,
     EmbedsGroupDefinition,
     EmbedReference,
@@ -30,7 +31,9 @@ import type {
     BindingFlowTriggerDefinition,
     HookReference,
     JsonValue,
-    JsonObject
+    JsonObject,
+    ModalDefinition,
+    ModalInputDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 import type {
     AdapterBuilderMetadata,
@@ -43,7 +46,7 @@ import type {
     UIExecutionSteps
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
-import type { UIFlowBase, FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowBase, UIFlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
@@ -64,6 +67,47 @@ interface ExporterOptions {
     includeFlows?: boolean;
     includeAdapters?: boolean;
     includeComponents?: boolean;
+}
+
+interface UIDefinitionExportMeta {
+    schemaVersion: string;
+    exportedAt: string;
+    counts: {
+        components: number;
+        adapters: number;
+        flows: number;
+    };
+    modules: string[];
+    moduleSummary: Array<{
+        module: string;
+        components: number;
+        adapters: number;
+        flows: number;
+        embeds: {
+            total: number;
+            withDefinition: number;
+            missingDefinition: number;
+        };
+        componentsWithEmbeds: number;
+        componentsWithMissingEmbeds: number;
+    }>;
+    embedCoverage: {
+        total: number;
+        withDefinition: number;
+        missingDefinition: number;
+    };
+}
+
+interface UIDefinitionCollections {
+    components: ComponentDefinition[];
+    adapters: AdapterDefinition[];
+    flows: FlowDefinition[];
+    meta: UIDefinitionExportMeta;
+}
+
+interface UIDefinitionCollectionResult {
+    collections: UIDefinitionCollections;
+    embedDiagnostics: ComponentEmbedDiagnostics[];
 }
 
 interface HandlerCapture {
@@ -140,11 +184,60 @@ export class UIDefinitionExporter extends UIBase {
     }
 
     public async export( uiService: UIService, options: ExporterOptions ): Promise<void> {
-        await this.exportUIDefinitionsInternal( uiService, options );
+        const { collections, embedDiagnostics } = await this.collectUIDefinitionsInternal( uiService, options );
+
+        const _includeComponents = options.includeComponents ?? true;
+        const includeAdapters = options.includeAdapters ?? true;
+        const includeFlows = options.includeFlows ?? true;
+
+        if ( _includeComponents ) {
+            this.writeJson( path.join( options.outputDir, "components.json" ), collections.components );
+        }
+
+        if ( includeAdapters ) {
+            this.writeJson( path.join( options.outputDir, "adapters.json" ), collections.adapters );
+        }
+
+        if ( includeFlows ) {
+            this.writeJson( path.join( options.outputDir, "flows.json" ), collections.flows );
+        }
+
+        this.writeJson( path.join( options.outputDir, "meta.json" ), collections.meta );
+
+        if ( embedDiagnostics.length ) {
+            const missingTotal = embedDiagnostics.reduce( ( sum, entry ) => sum + entry.missing.length, 0 );
+            this.logger.warn(
+                "exportUIDefinitions",
+                `Found ${ embedDiagnostics.length } component(s) with ${ missingTotal } embed definition(s) missing metadata.`
+            );
+            embedDiagnostics.forEach( ( entry ) => {
+                const details = entry.missing
+                    .map( ( item ) => `${ item.group } -> ${ item.embed }` )
+                    .join( ", " );
+                this.logger.warn(
+                    "exportUIDefinitions",
+                    `Component '${ entry.module ? `${ entry.module }::${ entry.component }` : entry.component }' missing embeds: ${ details }`
+                );
+            } );
+        }
+
+        this.logger.info(
+            "exportUIDefinitions",
+            `Export completed. Components: ${ collections.meta.counts.components }, Adapters: ${ collections.meta.counts.adapters }, Flows: ${ collections.meta.counts.flows }`
+        );
     }
 
-    private async exportUIDefinitionsInternal( uiService: UIService, options: ExporterOptions ): Promise<void> {
-        const includeComponents = options.includeComponents ?? true;
+    public async collect( uiService: UIService, options: ExporterOptions ): Promise<UIDefinitionCollections> {
+        const { collections } = await this.collectUIDefinitionsInternal( uiService, options );
+
+        return collections;
+    }
+
+    private async collectUIDefinitionsInternal(
+        uiService: UIService,
+        options: ExporterOptions
+    ): Promise<UIDefinitionCollectionResult> {
+        const _includeComponentsInternal = options.includeComponents ?? true;
         const includeAdapters = options.includeAdapters ?? true;
         const includeFlows = options.includeFlows ?? true;
 
@@ -190,6 +283,40 @@ export class UIDefinitionExporter extends UIBase {
 
                         if ( wizardComponents?.length ) {
                             wizardAdapterComponents.set( adapterClass.getName(), wizardComponents );
+
+                            const wizardComponentClasses = this.extractWizardComponentClasses( adapterMetadata );
+                            for ( const wizardComponentClass of wizardComponentClasses ) {
+                                const wizardCompName = this.callStaticString( wizardComponentClass, "getName" );
+                                if ( wizardCompName && !components.has( wizardCompName ) ) {
+                                    try {
+                                        const { definition, embedAudit, diagnostics } = await this.serializeComponent(
+                                            wizardComponentClass,
+                                            moduleName
+                                        );
+                                        components.set( wizardCompName, definition );
+                                        moduleSummary.components += 1;
+                                        moduleSummary.embedsTotal += embedAudit.total;
+                                        moduleSummary.embedsWithDefinition += embedAudit.withDefinition;
+                                        moduleSummary.embedsMissingDefinition += embedAudit.missingDefinition;
+                                        globalEmbedStats.total += embedAudit.total;
+                                        globalEmbedStats.withDefinition += embedAudit.withDefinition;
+                                        globalEmbedStats.missingDefinition += embedAudit.missingDefinition;
+
+                                        if ( embedAudit.total > 0 ) {
+                                            moduleSummary.componentsWithEmbeds += 1;
+                                        }
+                                        if ( diagnostics.missing.length ) {
+                                            moduleSummary.componentsWithMissingEmbeds += 1;
+                                            embedDiagnostics.push( diagnostics );
+                                        }
+                                    } catch( wizardCompError ) {
+                                        this.logger.warn(
+                                            "exportUIDefinitions",
+                                            `Failed to serialize wizard component '${ wizardCompName }': ${ wizardCompError }`
+                                        );
+                                    }
+                                }
+                            }
                         }
                     } catch( error ) {
                         this.logger.error(
@@ -225,6 +352,29 @@ export class UIDefinitionExporter extends UIBase {
                         throw error;
                     }
                 }
+
+                const moduleSystemFlows = ModuleCtor.getSystemFlows?.() ?? [];
+
+                for ( const flowClass of moduleSystemFlows ) {
+                    try {
+                        const definition = await this.serializeFlow(
+                            flowClass as FlowClass,
+                            moduleInstance,
+                            wizardAdapterComponents,
+                            moduleName,
+                            flowTriggersByAdapter
+                        );
+                        definition.flowKind = "system";
+                        flows.push( definition );
+                    } catch( error ) {
+                        this.logger.error(
+                            "exportUIDefinitions",
+                            `Failed to export system flow '${ flowClass.getName?.() ?? flowClass }'`,
+                            error
+                        );
+                        throw error;
+                    }
+                }
             }
         }
 
@@ -242,7 +392,7 @@ export class UIDefinitionExporter extends UIBase {
             componentsWithMissingEmbeds: summary.componentsWithMissingEmbeds
         } ) );
 
-        const exportMeta = {
+        const exportMeta: UIDefinitionExportMeta = {
             schemaVersion: "1.0.0",
             exportedAt: new Date().toISOString(),
             counts: {
@@ -256,45 +406,20 @@ export class UIDefinitionExporter extends UIBase {
                 total: globalEmbedStats.total,
                 withDefinition: globalEmbedStats.withDefinition,
                 missingDefinition: globalEmbedStats.missingDefinition
-            },
-            embedDiagnostics
+            }
         };
 
-        if ( includeComponents ) {
-            this.writeJson( path.join( options.outputDir, "components.json" ), Array.from( components.values() ) );
-        }
+        const collections: UIDefinitionCollections = {
+            components: Array.from( components.values() ),
+            adapters: [ ...adapters ],
+            flows: [ ...flows ],
+            meta: exportMeta
+        };
 
-        if ( includeAdapters ) {
-            this.writeJson( path.join( options.outputDir, "adapters.json" ), adapters );
-        }
-
-        if ( includeFlows ) {
-            this.writeJson( path.join( options.outputDir, "flows.json" ), flows );
-        }
-
-        this.writeJson( path.join( options.outputDir, "meta.json" ), exportMeta );
-
-        if ( embedDiagnostics.length ) {
-            const missingTotal = embedDiagnostics.reduce( ( sum, entry ) => sum + entry.missing.length, 0 );
-            this.logger.warn(
-                "exportUIDefinitions",
-                `Found ${ embedDiagnostics.length } component(s) with ${ missingTotal } embed definition(s) missing metadata.`
-            );
-            embedDiagnostics.forEach( ( entry ) => {
-                const details = entry.missing
-                    .map( ( item ) => `${ item.group } -> ${ item.embed }` )
-                    .join( ", " );
-                this.logger.warn(
-                    "exportUIDefinitions",
-                    `Component '${ entry.module ? `${ entry.module }::${ entry.component }` : entry.component }' missing embeds: ${ details }`
-                );
-            } );
-        }
-
-        this.logger.info(
-            "exportUIDefinitions",
-            `Export completed. Components: ${ components.size }, Adapters: ${ adapters.length }, Flows: ${ flows.length }`
-        );
+        return {
+            collections,
+            embedDiagnostics
+        };
     }
 
     private getOrCreateModuleSummary(
@@ -331,10 +456,10 @@ export class UIDefinitionExporter extends UIBase {
         return "base";
     }
 
-    private serializeComponent(
+    private async serializeComponent(
         componentClass: UIComponentTypeConstructor,
         moduleName: string | undefined
-    ): ComponentSerializationResult {
+    ): Promise<ComponentSerializationResult> {
         const metadata = this.getComponentMetadata( componentClass );
 
         const instanceType = metadata?.instanceType ?? this.safeCall( () => componentClass.getInstanceType() ) ?? "dynamic";
@@ -346,10 +471,19 @@ export class UIDefinitionExporter extends UIBase {
             metadata?.embedsGroups ??
             this.safeCall( () => componentClass.getEmbedsGroups?.() ) ??
             [];
-        const rawModals = metadata?.modals ?? [];
+        const staticModals = this.safeCall( () =>
+            ( componentClass as unknown as { getModals?: () => unknown[] } ).getModals?.()
+        );
 
-        const elementsGroups = rawElementsGroups.map( ( group, index ) =>
-            this.serializeElementsGroup( componentClass, group, index )
+        const rawModals =
+            ( metadata?.modals && metadata.modals.length ? metadata.modals : undefined ) ??
+            staticModals ??
+            [];
+
+        const elementsGroups = await Promise.all(
+            rawElementsGroups.map( ( group, index ) =>
+                this.serializeElementsGroup( componentClass, group, index )
+            )
         );
 
         const embedAudit: EmbedAuditStats = {
@@ -375,6 +509,7 @@ export class UIDefinitionExporter extends UIBase {
         );
 
         const modals = rawModals.map( ( modal ) => this.extractEntityName( modal ) );
+        const modalDefinitions = await this.serializeModals( rawModals );
 
         if ( !elementsGroups.length ) {
             const directElements = this.callStaticArray( componentClass, "getElements" );
@@ -385,7 +520,7 @@ export class UIDefinitionExporter extends UIBase {
                     this.safeCall( () => componentClass.getDefaultElementsGroup?.() ) ??
                     `${ componentClass.getName() }/ElementsGroup`;
 
-                elementsGroups.push( this.createElementsGroupFromDirect( groupName, directElements ) );
+                elementsGroups.push( await this.createElementsGroupFromDirect( groupName, directElements ) );
             }
         }
 
@@ -423,6 +558,7 @@ export class UIDefinitionExporter extends UIBase {
             elementsGroups,
             embedsGroups,
             modals,
+            modalDefinitions,
             defaultElementsGroup:
                 metadata?.defaultElementsGroup ??
                 this.safeCall( () => componentClass.getDefaultElementsGroup?.() ) ??
@@ -470,18 +606,149 @@ export class UIDefinitionExporter extends UIBase {
         };
     }
 
-    private serializeElementsGroup(
+    private async serializeModals( rawModals: unknown[] ): Promise<ModalDefinition[]> {
+        const modalDefinitions: ModalDefinition[] = [];
+
+        for ( const modal of rawModals ) {
+            if ( !modal || typeof modal !== "function" ) {
+                continue;
+            }
+
+            const ModalClass = modal as {
+                getName?: () => string;
+                getInputElements?: () => unknown[][];
+                prototype?: {
+                    getTitle?: () => string;
+                };
+            };
+
+            const name = ModalClass.getName?.() ?? "UnknownModal";
+            let title: string | undefined;
+
+            if ( ModalClass.prototype?.getTitle ) {
+                try {
+                    title = ModalClass.prototype.getTitle.call( {} );
+                } catch {
+                    title = undefined;
+                }
+            }
+
+            const inputs: ModalInputDefinition[] = [];
+            const rawInputElements = ModalClass.getInputElements?.() ?? [];
+            const inputElements = this.normalize2D( rawInputElements );
+
+            for ( const row of inputElements ) {
+                if ( !Array.isArray( row ) ) {
+                    continue;
+                }
+
+                for ( const input of row ) {
+                    if ( !input || typeof input !== "function" ) {
+                        continue;
+                    }
+
+                    const InputClass = input as {
+                        getName?: () => string;
+                        prototype?: {
+                            getLabel?: () => Promise<string>;
+                            getPlaceholder?: () => Promise<string>;
+                            getStyle?: () => Promise<string>;
+                            getMinLength?: () => Promise<number>;
+                            getMaxLength?: () => Promise<number>;
+                        };
+                    };
+
+                    const inputName = InputClass.getName?.() ?? "UnknownInput";
+                    let label: string | undefined;
+                    let placeholder: string | undefined;
+                    let style: "short" | "paragraph" | undefined;
+                    let minLength: number | undefined;
+                    let maxLength: number | undefined;
+
+                    const proto = InputClass.prototype;
+
+                    if ( proto?.getLabel ) {
+                        try {
+                            label = await proto.getLabel.call( {} );
+                        } catch {
+                            label = undefined;
+                        }
+                    }
+
+                    if ( proto?.getPlaceholder ) {
+                        try {
+                            placeholder = await proto.getPlaceholder.call( {} );
+                        } catch {
+                            placeholder = undefined;
+                        }
+                    }
+
+                    if ( proto?.getStyle ) {
+                        try {
+                            const rawStyle = await proto.getStyle.call( {} );
+                            style = rawStyle === "long" || rawStyle === "paragraph" ? "paragraph" : "short";
+                        } catch {
+                            style = "short";
+                        }
+                    }
+
+                    if ( proto?.getMinLength ) {
+                        try {
+                            minLength = await proto.getMinLength.call( {} );
+                        } catch {
+                            minLength = undefined;
+                        }
+                    }
+
+                    if ( proto?.getMaxLength ) {
+                        try {
+                            maxLength = await proto.getMaxLength.call( {} );
+                        } catch {
+                            maxLength = undefined;
+                        }
+                    }
+
+                    inputs.push( {
+                        name: inputName,
+                        label,
+                        placeholder,
+                        style,
+                        minLength,
+                        maxLength
+                    } );
+                }
+            }
+
+            modalDefinitions.push( {
+                name,
+                title,
+                inputs
+            } );
+        }
+
+        return modalDefinitions;
+    }
+
+    private async serializeElementsGroup(
         componentClass: UIComponentTypeConstructor,
         group: typeof UIElementsGroupBase,
         index: number
-    ): ElementsGroupDefinition {
+    ): Promise<ElementsGroupDefinition> {
         const name = group.getName?.() ?? `${ componentClass.getName() }/ElementsGroup/${ index }`;
         const itemsRaw = this.safeCall( () => group.getItems?.() ) ?? [];
-        const rows = this.normalize2D( itemsRaw ).map( ( row ) =>
-            row.map( ( element ) => ( {
-                element: this.extractEntityName( element )
-            } ) )
-        );
+        const normalized = this.normalize2D( itemsRaw );
+
+        const rows: Array<Array<{ element: string; definition?: ElementDefinition }>> = [];
+
+        for ( const row of normalized ) {
+            const rowItems: Array<{ element: string; definition?: ElementDefinition }> = [];
+            for ( const element of row ) {
+                const elementName = this.extractEntityName( element );
+                const definition = await this.serializeElementDefinition( element );
+                rowItems.push( { element: elementName, definition } );
+            }
+            rows.push( rowItems );
+        }
 
         return {
             name,
@@ -489,6 +756,166 @@ export class UIDefinitionExporter extends UIBase {
             items: rows,
             options: undefined
         };
+    }
+
+    private async serializeElementDefinition( element: unknown ): Promise<ElementDefinition | undefined> {
+        if ( !element || typeof element !== "function" ) {
+            return undefined;
+        }
+
+        const ElementClass = element as {
+            getName?: () => string;
+            getInstanceType?: () => string;
+            getComponentType?: () => number;
+            prototype?: {
+                getLabel?: () => Promise<string>;
+                isLabelOmitted?: () => Promise<boolean>;
+                getStyle?: () => Promise<string | number>;
+                getEmoji?: () => Promise<string>;
+                getURL?: () => Promise<string>;
+                getPlaceholder?: () => Promise<string>;
+            };
+        };
+
+        const name = this.safeCall( () => ElementClass.getName?.() ) ?? "";
+        const instanceType = this.safeCall( () => ElementClass.getInstanceType?.() );
+        const componentType = this.safeCall( () => ElementClass.getComponentType?.() );
+
+        const proto = ElementClass.prototype;
+        const hasGetURL = Boolean( proto && typeof proto.getURL === "function" );
+
+        const definition: ElementDefinition = {
+            name,
+            elementType: this.resolveElementType( componentType, hasGetURL ),
+            instanceType: instanceType ? String( instanceType ) : undefined
+        };
+
+        if ( !proto ) {
+            return definition;
+        }
+
+        if ( proto.isLabelOmitted ) {
+            try {
+                const isOmitted = await proto.isLabelOmitted.call( {} );
+                if ( isOmitted ) {
+                    definition.labelOmitted = true;
+                }
+            } catch {
+            }
+        }
+
+        if ( proto.getLabel && !definition.labelOmitted ) {
+            try {
+                const label = await proto.getLabel.call( {} );
+                if ( label ) {
+                    definition.label = label;
+                }
+            } catch {
+            }
+        }
+
+        if ( proto.getStyle ) {
+            try {
+                const styleValue = await proto.getStyle.call( {} );
+                const style = this.normalizeButtonStyle( styleValue );
+                if ( style ) {
+                    definition.style = style;
+                }
+            } catch {
+            }
+        }
+
+        if ( hasGetURL ) {
+            definition.style = "link";
+            try {
+                const url = await proto.getURL!.call( {} );
+                if ( url ) {
+                    definition.url = url;
+                }
+            } catch {
+            }
+        }
+
+        if ( proto.getEmoji ) {
+            try {
+                const emoji = await proto.getEmoji.call( {} );
+                if ( emoji ) {
+                    definition.emoji = emoji;
+                }
+            } catch {
+            }
+        }
+
+        if ( proto.getPlaceholder ) {
+            try {
+                const placeholder = await proto.getPlaceholder.call( {} );
+                if ( placeholder ) {
+                    definition.placeholder = placeholder;
+                }
+            } catch {
+            }
+        }
+
+        return definition;
+    }
+
+    private resolveElementType(
+        componentType: number | undefined,
+        hasGetURL: boolean
+    ): ElementDefinition[ "elementType" ] {
+        if ( componentType === 2 ) {
+            return hasGetURL ? "button-url" : "button";
+        }
+        if ( componentType === 3 ) {
+            return "select-menu";
+        }
+        if ( componentType === 4 ) {
+            return "text-input";
+        }
+        if ( componentType === 5 ) {
+            return "user-select";
+        }
+        if ( componentType === 6 ) {
+            return "role-select";
+        }
+        if ( componentType === 7 ) {
+            return "mentionable-select";
+        }
+        if ( componentType === 8 ) {
+            return "channel-select";
+        }
+
+        return "unknown";
+    }
+
+    private normalizeButtonStyle( styleValue: string | number ): ElementDefinition[ "style" ] | undefined {
+        const validStyles = [ "primary", "secondary", "success", "danger", "link" ] as const;
+
+        if ( typeof styleValue === "string" ) {
+            const lower = styleValue.toLowerCase();
+            if ( validStyles.includes( lower as typeof validStyles[ number ] ) ) {
+                return lower as ElementDefinition[ "style" ];
+            }
+            return undefined;
+        }
+
+        if ( styleValue === 1 ) {
+            return "primary";
+        }
+        if ( styleValue === 2 ) {
+            return "secondary";
+        }
+        if ( styleValue === 3 ) {
+            return "success";
+        }
+        if ( styleValue === 4 ) {
+            return "danger";
+        }
+        if ( styleValue === 5 ) {
+            return "link";
+        }
+
+        return undefined;
     }
 
     private serializeEmbedsGroup(
@@ -539,7 +966,7 @@ export class UIDefinitionExporter extends UIBase {
                 : "";
 
         if ( componentClass && !components.has( componentName ) ) {
-            const { definition, embedAudit, diagnostics } = this.serializeComponent( componentClass, moduleName );
+            const { definition, embedAudit, diagnostics } = await this.serializeComponent( componentClass, moduleName );
             components.set( componentName, definition );
             moduleSummary.components += 1;
             moduleSummary.embedsTotal += embedAudit.total;
@@ -808,13 +1235,16 @@ export class UIDefinitionExporter extends UIBase {
         return hooks;
     }
 
-    private cloneFlowTriggers( entries: FlowTriggerDefinition[] | undefined ): FlowTriggerDefinition[] | undefined {
+    private cloneFlowTriggers(
+        entries: FlowTriggerDefinition[] | undefined,
+        handlerIdSuffix: string | undefined
+    ): FlowTriggerDefinition[] | undefined {
         if ( !entries || entries.length === 0 ) {
             return undefined;
         }
 
         return entries.map( ( entry ) => ( {
-            handlerId: entry.handlerId,
+            handlerId: handlerIdSuffix ? `${ entry.handlerId }/${ handlerIdSuffix }` : entry.handlerId,
             sourceEntity: entry.sourceEntity,
             handlerKind: entry.handlerKind,
             mutations: entry.mutations
@@ -874,6 +1304,7 @@ export class UIDefinitionExporter extends UIBase {
             externalReferences: flowClass.getExternalReferences?.(),
             edgeSourceMappings: flowClass.getEdgeSourceMappings?.(),
             requiredDataComponents: flowClass.getRequiredDataComponents?.(),
+            inputRequirements: flowClass.getInputRequirements?.(),
             channelTypes: this.normalizeChannelTypes( this.safeCall( () => flowInstance.getChannelTypes() ) ),
             permissions: this.safeCall( () => flowInstance.getPermissions()?.bitfield.toString() ),
             initialData: undefined,
@@ -896,7 +1327,7 @@ export class UIDefinitionExporter extends UIBase {
         return Object.entries( nextStates ).map( ( [ transition, target ] ) => ( {
             from: transition,
             to: typeof target === "string" ? target : "",
-            triggeredBy: this.cloneFlowTriggers( triggerMap?.get( transition ) ),
+            triggeredBy: this.cloneFlowTriggers( triggerMap?.get( transition ), transition ),
             options: undefined
         } ) );
     }
@@ -912,11 +1343,23 @@ export class UIDefinitionExporter extends UIBase {
 
         return Object.keys( transitions ).map( ( stateKey ) => ( {
             key: stateKey,
-            component: stateComponentMap?.get( stateKey ) ?? null,
+            component:
+                stateComponentMap?.get( stateKey )
+                ?? this.normalizeExecutionStepToComponent( stateOptions[ stateKey ]?.executionStep ),
             transitions: transitions[ stateKey ],
             hooks: [],
             options: stateOptions[ stateKey ]
         } ) );
+    }
+
+    private normalizeExecutionStepToComponent( executionStep: unknown ): string | undefined {
+        if ( typeof executionStep !== "string" ) {
+            return undefined;
+        }
+
+        const normalized = executionStep.trim();
+
+        return normalized.length ? normalized : undefined;
     }
 
     private serializeFlowRequiredData( flowClass: FlowClass ): FlowDefinition[ "requiredData" ] {
@@ -930,7 +1373,7 @@ export class UIDefinitionExporter extends UIBase {
         } ) );
     }
 
-    private serializeIntegrationPoints( points: FlowIntegrationPointBase[] ): FlowIntegrationPointDefinition[] {
+    private serializeIntegrationPoints( points: UIFlowIntegrationPointBase[] ): FlowIntegrationPointDefinition[] {
         return points.map( ( point ) => ( {
             flowName: point.flowName,
             description: point.description,
@@ -1023,7 +1466,19 @@ export class UIDefinitionExporter extends UIBase {
         if ( typeof embed === "function" ) {
             const embedClass = embed as typeof UIEmbedBase;
             const metadata = this.getEmbedMetadata( embedClass );
+            if ( !metadata ) {
+                this.logger.warn(
+                    "serializeEmbedReference",
+                    `Embed '${ embedName }' is missing builder metadata.`
+                );
+            }
             definition = this.buildEmbedDefinitionFromMetadata( metadata );
+            if ( metadata && ( !definition || Object.keys( definition ).length === 0 ) ) {
+                this.logger.warn(
+                    "serializeEmbedReference",
+                    `Embed '${ embedName }' has builder metadata but produced empty definition.`
+                );
+            }
         }
 
         const reference: EmbedReference = { embed: embedName };
@@ -1069,6 +1524,11 @@ export class UIDefinitionExporter extends UIBase {
             definition.image = image;
         }
 
+        const thumbnail = this.evaluateEmbedText( metadata.thumbnail, vars );
+        if ( thumbnail ) {
+            definition.thumbnail = thumbnail;
+        }
+
         const colorValue = this.evaluateEmbedNumber( metadata.color, vars );
         if ( colorValue !== undefined ) {
             definition.color = colorValue;
@@ -1086,6 +1546,10 @@ export class UIDefinitionExporter extends UIBase {
 
         if ( vars !== undefined ) {
             definition.vars = this.serializeEmbedVars( vars );
+        }
+
+        if ( metadata.defaultVars && vars ) {
+            definition.defaultVars = this.serializePartialEmbedVars( metadata.defaultVars( vars ) );
         }
 
         return Object.keys( definition ).length ? definition : undefined;
@@ -1160,6 +1624,17 @@ export class UIDefinitionExporter extends UIBase {
             key,
             this.normalizeJsonValue( value )
         ] );
+
+        return Object.fromEntries( entries );
+    }
+
+    private serializePartialEmbedVars( vars: Partial<Record<string, JsonValue>> ): JsonObject {
+        const entries = Object.entries( vars )
+            .filter( ( entry ): entry is [ string, JsonValue ] => entry[ 1 ] !== undefined )
+            .map<[ string, JsonValue ]>( ( [ key, value ] ) => [
+                key,
+                this.normalizeJsonValue( value )
+            ] );
 
         return Object.fromEntries( entries );
     }
@@ -1255,16 +1730,24 @@ export class UIDefinitionExporter extends UIBase {
         return String( entry );
     }
 
-    private createElementsGroupFromDirect(
+    private async createElementsGroupFromDirect(
         name: string | null | undefined,
         elements: unknown
-    ): ElementsGroupDefinition {
+    ): Promise<ElementsGroupDefinition> {
         const groupName = name ?? "Component/Elements";
-        const rows = this.normalize2D( elements ).map( ( row ) =>
-            row.map( ( element ) => ( {
-                element: this.extractEntityName( element )
-            } ) )
-        );
+        const normalized = this.normalize2D( elements );
+
+        const rows: Array<Array<{ element: string; definition?: ElementDefinition }>> = [];
+
+        for ( const row of normalized ) {
+            const rowItems: Array<{ element: string; definition?: ElementDefinition }> = [];
+            for ( const element of row ) {
+                const elementName = this.extractEntityName( element );
+                const definition = await this.serializeElementDefinition( element );
+                rowItems.push( { element: elementName, definition } );
+            }
+            rows.push( rowItems );
+        }
 
         return {
             name: groupName,
@@ -1275,7 +1758,7 @@ export class UIDefinitionExporter extends UIBase {
     }
 
     private getIntegrationPointType(
-        point: FlowIntegrationPointBase
+        point: UIFlowIntegrationPointBase
     ): FlowIntegrationPointDefinition[ "integrationType" ] {
         const ctor = point.constructor as { getType?: () => FlowIntegrationPointDefinition[ "integrationType" ] };
         return typeof ctor.getType === "function" ? ctor.getType() : undefined;
@@ -1299,22 +1782,47 @@ export class UIDefinitionExporter extends UIBase {
         const flowClass = flowInstance.constructor as FlowClass;
         const transitionsFactory = Reflect.get( flowClass, "getFlowTransitions" ) as ( () => Record<string, string[]> ) | undefined;
         const stateKeys = Object.keys( transitionsFactory?.call( flowClass ) ?? {} );
+        const getStateOptions = Reflect.get( flowClass, "getStateOptions" ) as ( () => Record<string, JsonObject> ) | undefined;
+        const stateOptions = getStateOptions?.call( flowClass ) ?? {};
+        const hasStepStates = stateKeys.some( ( key ) => this.extractWizardStepIndex( key ) !== null );
+
+        if ( !hasStepStates ) {
+            return {
+                stateToComponent: new Map<string, string>(),
+                orderedStateNames: [],
+                componentNames
+            };
+        }
+
+        let sequentialIndex = 0;
 
         for ( const stateKey of stateKeys ) {
-            const stepIndex = this.extractWizardStepIndex( stateKey );
-
-            if ( stepIndex === null ) {
+            if ( stateKey.includes( "UIWizardFlowBase/States" ) ) {
                 continue;
             }
 
-            const componentName = componentNames[ stepIndex ];
+            const executionStep = this.normalizeExecutionStepToComponent( stateOptions[ stateKey ]?.executionStep );
+
+            if ( executionStep ) {
+                stateToComponent.set( stateKey, executionStep );
+                continue;
+            }
+
+            const stepIndex = this.extractWizardStepIndex( stateKey );
+            const componentIndex = stepIndex !== null ? stepIndex : sequentialIndex;
+
+            const componentName = componentNames[ componentIndex ];
 
             if ( !componentName ) {
                 continue;
             }
 
             stateToComponent.set( stateKey, componentName );
-            orderedStateNames[ stepIndex ] = stateKey;
+            orderedStateNames[ componentIndex ] = stateKey;
+
+            if ( stepIndex === null ) {
+                sequentialIndex += 1;
+            }
         }
 
         return {
@@ -1345,22 +1853,43 @@ export class UIDefinitionExporter extends UIBase {
 
         const transitionsFactory = Reflect.get( flowClass, "getFlowTransitions" ) as ( () => Record<string, string[]> ) | undefined;
         const stateKeys = Object.keys( transitionsFactory?.call( flowClass ) ?? {} );
+        const getStateOptions = Reflect.get( flowClass, "getStateOptions" ) as ( () => Record<string, JsonObject> ) | undefined;
+        const stateOptions = getStateOptions?.call( flowClass ) ?? {};
+        const hasStepStates = stateKeys.some( ( key ) => this.extractWizardStepIndex( key ) !== null );
+
+        if ( !hasStepStates ) {
+            return undefined;
+        }
+
+        let sequentialIndex = 0;
 
         for ( const stateKey of stateKeys ) {
-            const stepIndex = this.extractWizardStepIndex( stateKey );
-
-            if ( stepIndex === null ) {
+            if ( stateKey.includes( "UIWizardFlowBase/States" ) ) {
                 continue;
             }
 
-            const componentName = componentNames[ stepIndex ];
+            const executionStep = this.normalizeExecutionStepToComponent( stateOptions[ stateKey ]?.executionStep );
+
+            if ( executionStep ) {
+                stateToComponent.set( stateKey, executionStep );
+                continue;
+            }
+
+            const stepIndex = this.extractWizardStepIndex( stateKey );
+
+            const componentIndex = stepIndex !== null ? stepIndex : sequentialIndex;
+            const componentName = componentNames[ componentIndex ];
 
             if ( !componentName ) {
                 continue;
             }
 
             stateToComponent.set( stateKey, componentName );
-            orderedStateNames[ stepIndex ] = stateKey;
+            orderedStateNames[ componentIndex ] = stateKey;
+
+            if ( stepIndex === null ) {
+                sequentialIndex += 1;
+            }
         }
 
         if ( stateToComponent.size === 0 ) {
@@ -1397,6 +1926,18 @@ export class UIDefinitionExporter extends UIBase {
 
         return names.length ? names : undefined;
     }
+
+    private extractWizardComponentClasses(
+        metadata: AdapterBuilderMetadata | undefined
+    ): UIComponentTypeConstructor[] {
+        const components = metadata?.wizard?.componentConfig?.components;
+
+        if ( !components?.length ) {
+            return [];
+        }
+
+        return components as UIComponentTypeConstructor[];
+    }
 }
 
 let uiDefinitionExporter: UIDefinitionExporter | null = null;
@@ -1410,4 +1951,8 @@ function getUIDefinitionExporter(): UIDefinitionExporter {
 
 export async function exportUIDefinitions( uiService: UIService, options: ExporterOptions ) {
     await getUIDefinitionExporter().export( uiService, options );
+}
+
+export async function collectUIDefinitions( uiService: UIService, options: ExporterOptions ) {
+    return getUIDefinitionExporter().collect( uiService, options );
 }

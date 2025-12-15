@@ -5,6 +5,9 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { PermissionsBitField } from "discord.js";
 
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
 
 import type {
     ChannelType,
@@ -48,6 +51,7 @@ import type {
 import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
+import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 
 type StartArgsHandler<TContext, TChannel, TArgs> = (
     context: TContext,
@@ -274,7 +278,10 @@ export class AdapterBuilderBase<
 
                 protected generateCustomIdForEntity( entity: UIEntitySchemaBase | UIModalSchema ): string {
                     const builderResult = builder.generateCustomIdForEntityHandler?.( this.getContext(), entity );
-                    return builderResult ?? super.generateCustomIdForEntity( entity );
+                    if ( builderResult ) {
+                        return builderResult;
+                    }
+                    return builder.buildCustomId( this.getName(), entity, this.customIdStrategy );
                 }
 
                 protected getCustomIdForEntity( hash: string ): string {
@@ -496,6 +503,50 @@ export class AdapterBuilderBase<
         extra: ( typeof UIEmbedsGroupBase )[]
     ): ( typeof UIEmbedsGroupBase )[] {
         return [ ...base, ...additional, ...extra ];
+    }
+
+    protected buildCustomId(
+        adapterName: string,
+        entity: UIEntitySchemaBase | UIModalSchema,
+        strategy: UICustomIdStrategyBase
+    ): string {
+        const customId = entity.attributes.custom_id;
+        if ( customId ) {
+            return customId;
+        }
+
+        const baseName = adapterName;
+        const entityName = entity.name;
+        const separatorLength = UI_CUSTOM_ID_SEPARATOR.length;
+        const candidate = baseName + UI_CUSTOM_ID_SEPARATOR + entityName;
+
+        if ( candidate.length <= UI_MAX_CUSTOM_ID_LENGTH ) {
+            return strategy.generateId( candidate );
+        }
+
+        const availableBaseLength = UI_MAX_CUSTOM_ID_LENGTH - separatorLength - entityName.length;
+
+        if ( availableBaseLength > 0 ) {
+            const hashedBase = UIHashService.generateHash( baseName, availableBaseLength, true );
+            return hashedBase + UI_CUSTOM_ID_SEPARATOR + entityName;
+        }
+
+        const entityParts = entityName.split( UI_CUSTOM_ID_SEPARATOR );
+        const entitySuffix = entityParts.pop();
+        const entityCore = entityParts.join( UI_CUSTOM_ID_SEPARATOR );
+        const baseBudget = Math.floor( UI_MAX_CUSTOM_ID_LENGTH / 3 );
+        const entityBudget = UI_MAX_CUSTOM_ID_LENGTH - separatorLength * 2 - baseBudget - ( entitySuffix ? entitySuffix.length : 0 );
+        const hashedBase = UIHashService.generateHash( baseName, Math.max( baseBudget, 6 ), true );
+        const hashedEntityCore = UIHashService.generateHash( entityCore || entityName, Math.max( entityBudget, 6 ), true );
+
+        if ( entitySuffix ) {
+            const id = hashedBase + UI_CUSTOM_ID_SEPARATOR + hashedEntityCore + UI_CUSTOM_ID_SEPARATOR + entitySuffix;
+            if ( id.length <= UI_MAX_CUSTOM_ID_LENGTH ) {
+                return id;
+            }
+        }
+
+        return UIHashService.generateHash( candidate, UI_MAX_CUSTOM_ID_LENGTH, true );
     }
 
     protected async resolveArgsFromDataSource(

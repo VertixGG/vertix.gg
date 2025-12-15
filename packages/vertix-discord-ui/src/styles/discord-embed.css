@@ -1,0 +1,151 @@
+.discord-embed {
+    max-width: 520px;
+}
+
+.discord-embed-content {
+    position: relative;
+    background-color: #2b2d31;
+    border-radius: 4px;
+    padding: 0.75rem 1rem 1rem 0.75rem;
+    border-left-width: 4px;
+    border-left-style: solid;
+    color: #f2f3f5;
+    margin-top: 0.5rem;
+    min-height: 0;
+}
+
+.discord-embed-thumbnail {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.discord-embed-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.discord-embed-author {
+    margin-bottom: 0.5rem;
+    line-height: 1.25rem;
+}
+
+.discord-embed-author img,
+.discord-embed-footer img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.discord-embed-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.25rem;
+}
+
+.discord-embed-title:not(:first-child) {
+    margin-top: 0.5rem;
+}
+
+.discord-embed-description {
+    color: #dcddde;
+    white-space: pre-wrap;
+    line-height: 1.375rem;
+    margin-top: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.discord-embed-description:not(:first-child) {
+    margin-top: 0.5rem;
+}
+
+.discord-embed-fields {
+    margin-top: 1rem;
+}
+
+.discord-embed-field {
+    margin-bottom: 0.5rem;
+}
+
+.discord-embed-field:last-child {
+    margin-bottom: 0;
+}
+
+.discord-embed-field-name {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+    line-height: 1rem;
+}
+
+.discord-embed-field-value {
+    color: #dcddde;
+    line-height: 1.375rem;
+}
+
+.discord-embed-main-content {
+    padding-right: 96px;
+    min-height: 80px;
+    position: relative;
+}
+
+.discord-embed-image {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 100%;
+    clear: both;
+}
+
+.discord-embed-image img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.discord-embed-buttons {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.discord-embed-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.discord-embed-footer {
+    font-size: 12px;
+    color: #a3a6aa;
+    margin-top: 0.5rem;
+    line-height: 1rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

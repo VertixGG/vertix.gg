@@ -53,21 +53,24 @@ const DynamicChannelPermissionsBlockedEmbed = new EmbedBuilder<UIArgs, typeof DY
         }
     } ) )
     .setLogic( ( args: UIArgs ) => {
-        const allowedUsers = Array.isArray( args.allowedUsers ) ? args.allowedUsers.map( ( user ) => user.id ) : undefined;
-        const blockedUsers = Array.isArray( args.blockedUsers ) ? args.blockedUsers.map( ( user ) => user.id ) : undefined;
+        const allowedUsers = Array.isArray( args.allowedUsers ) ? args.allowedUsers.map( ( user ) => user.id ) : [];
+        const blockedUsers = Array.isArray( args.blockedUsers ) ? args.blockedUsers.map( ( user ) => user.id ) : [];
 
         return {
             allowedUsers,
             blockedUsers,
-            allowedUsersDisplay: allowedUsers?.length
+            allowedUsersDisplay: allowedUsers.length
                 ? DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.allowedUsers
                 : DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.allowedUsersDefault,
-            blockedUsersDisplay: blockedUsers?.length
+            blockedUsersDisplay: blockedUsers.length
                 ? DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.blockedUsers
                 : DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.blockedUsersDefault,
             userBlockedDisplayName: args.userBlockedDisplayName ?? "Unknown"
         };
     } )
+    .setDefaultVars( () => ( {
+        userBlockedDisplayName: "Example User"
+    } ) )
     .build();
 
 export { DynamicChannelPermissionsBlockedEmbed };

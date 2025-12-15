@@ -5,7 +5,7 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-component";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
-import { DynamicChannelUiData } from "@vertix.gg/bot/src/data/dynamic-channel/dynamic-channel-ui-data";
+import { DynamicChannelUIData } from "@vertix.gg/bot/src/data/dynamic-channel/dynamic-channel-ui-data";
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
@@ -149,7 +149,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
 )
     .setComponent( DynamicChannelComponent )
     .setExecutionSteps( DYNAMIC_CHANNEL_STEPS )
-    .setArgsDataSource( [ "all" ], DynamicChannelUiData.getName() )
+    .setArgsDataSource( [ "all" ], DynamicChannelUIData.getName() )
     .onEntityMap( async( { bindButton } ) => {
         bindButton(
             "VertixBot/UI-V3/DynamicChannelRenameButton",

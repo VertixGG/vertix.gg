@@ -19,10 +19,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction = UIDefaultStringSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
-const privacyFlowName = "VertixBot/UI-V3/DynamicChannelPrivacyFlow";
-const updatePrivacyTransition = `${ privacyFlowName }/Transitions/UpdatePrivacyState`;
-const defaultPrivacyState = `${ privacyFlowName }/States/Default`;
-
 const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelPrivacyAdapter"
 )
@@ -59,10 +55,32 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
             {
                 flowTriggers: [
                     {
-                        flowName: privacyFlowName,
-                        transition: updatePrivacyTransition,
+                        flowName: "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState/Public",
                         navigation: {
-                            targetState: defaultPrivacyState,
+                            targetState: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Public",
+                            executionStep: "default"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "state" ] }
+                        ]
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState/Private",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Private",
+                            executionStep: "default"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "state" ] }
+                        ]
+                    },
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState/Hidden",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Hidden",
                             executionStep: "default"
                         },
                         mutations: [

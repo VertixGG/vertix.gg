@@ -22,7 +22,6 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import { ClaimResultFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-result-flow";
 import { ClaimStartFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-start-flow";
 import { ClaimVoteFlow } from "@vertix.gg/bot/src/ui/v3/claim/claim-vote-flow";
-import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
 import { SetupEditFlow } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-flow";
 
 import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
@@ -46,7 +45,6 @@ export class UIModuleV3 extends UIModuleBase {
 
     public static getFlows() {
         return [
-            SetupNewWizardFlow,
             ClaimStartFlow,
             ClaimVoteFlow,
             ClaimResultFlow,
@@ -82,6 +80,22 @@ export class UIModuleV3 extends UIModuleBase {
         const definitionLoaderService = ServiceLocator.$.get<UIDefinitionLoaderService>(
             "VertixBot/Services/UIDefinitionLoaderService"
         );
+
+        // If exported definitions exist, register them to override the defaults for this module.
+        const names = definitionLoaderService.getExportsNames();
+        const hasExports =
+            names.adapters.length > 0 || names.flows.length > 0 || names.components.length > 0;
+
+        if ( hasExports ) {
+            const loader = definitionLoaderService.getLoader();
+
+            await uiService.registerFromDefinitions( loader, {
+                adapterNames: names.adapters,
+                flowNames: names.flows,
+                componentNames: names.components,
+                moduleName: UIModuleV3.getName()
+            } );
+        }
 
         DynamicChannelClaimManager.register( "VertixBot/UI-V3/DynamicChannelClaimManager", {
             adapters: {

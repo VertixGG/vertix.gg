@@ -4,11 +4,11 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { DynamicChannelRegionComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface DynamicChannelRegionFlowData extends UIFlowData {
+interface DynamicChannelRegionFlowData extends UIFlowDataBase {
     region?: string;
 }
 

@@ -25,19 +25,19 @@
          id="title7">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(245, 229, 255, 0.98);"
+         style="stop-color: rgba(79, 231, 255, 0.98);"
          id="stop7" />
       <stop
          offset="0.0001"
-         style="stop-color: rgb(195, 136, 255);"
+         style="stop-color: rgb(41, 189, 251);"
          id="stop8" />
       <stop
          offset="1"
-         style="stop-color: rgb(157, 78, 221);"
+         style="stop-color: rgb(2, 143, 247);"
          id="stop9" />
       <stop
          offset="1"
-         style="stop-color: rgb(90, 45, 145);"
+         style="stop-color: rgb(33, 76, 158);"
          id="stop10" />
     </linearGradient>
     <linearGradient
@@ -55,19 +55,19 @@
          id="title1">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(245, 229, 255, 0.98);"
+         style="stop-color: rgba(79, 231, 255, 0.98);"
          id="stop1" />
       <stop
          offset="0.295"
-         style="stop-color: rgb(195, 136, 255);"
+         style="stop-color: rgb(41, 189, 251);"
          id="stop2-3" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(157, 78, 221);"
+         style="stop-color: rgb(2, 143, 247);"
          id="stop3-9" />
       <stop
          offset="1"
-         style="stop-color: rgb(90, 45, 145);"
+         style="stop-color: rgb(33, 76, 158);"
          id="stop4" />
     </linearGradient>
     <linearGradient
@@ -121,19 +121,19 @@
          id="title20">vertix</title>
       <stop
          offset="0"
-         style="stop-color: rgba(245, 229, 255, 0.98);"
+         style="stop-color: rgba(79, 231, 255, 0.98);"
          id="stop21" />
       <stop
          offset="0.0001"
-         style="stop-color: rgb(195, 136, 255);"
+         style="stop-color: rgb(41, 189, 251);"
          id="stop22" />
       <stop
          offset="0.60473353"
-         style="stop-color: rgb(157, 78, 221);"
+         style="stop-color: rgb(2, 143, 247);"
          id="stop23" />
       <stop
          offset="1"
-         style="stop-color: rgb(90, 45, 145);"
+         style="stop-color: rgb(33, 76, 158);"
          id="stop24" />
     </linearGradient>
     <radialGradient
@@ -151,15 +151,15 @@
          id="title8-2">vertix</title>
       <stop
          offset="0.295"
-         style="stop-color: rgb(195, 136, 255);"
+         style="stop-color: rgb(41, 189, 251);"
          id="stop25" />
       <stop
          offset="0.614"
-         style="stop-color: rgb(157, 78, 221);"
+         style="stop-color: rgb(2, 143, 247);"
          id="stop26" />
       <stop
          offset="1"
-         style="stop-color: rgb(90, 45, 145);"
+         style="stop-color: rgb(33, 76, 158);"
          id="stop27" />
     </linearGradient>
     <linearGradient
@@ -192,13 +192,13 @@
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <path
-     fill="#f5e5ff"
+     fill="#dff0fe"
      d="M 19.932886,39.284175 C 9.2994875,39.284175 0.6487107,30.633399 0.6487107,20 c 0,-5.602835 2.4496114,-10.9221399 6.7213168,-14.5923875 L 7.7963642,5.0417343 3.4704546,0.71582479 H 16.284528 V 13.529899 L 12.246318,9.4916881 11.882525,9.7773023 C 8.717835,12.268609 6.9030378,15.994103 6.9030378,20 c 0,7.185179 5.8446692,13.029848 13.0298482,13.029848 7.185179,0 13.029848,-5.844669 13.029848,-13.029848 0,-5.371425 -3.335641,-10.2039347 -8.339103,-12.1406913 V 1.2985196 C 33.117008,3.4249908 39.217061,11.187653 39.217061,20 c 0,10.633399 -8.650777,19.284175 -19.284175,19.284175 z"
      id="path1"
      style="fill:url(#linearGradient7);fill-opacity:1;stroke-width:1.04239" />
   <path
-     fill="#a55dff"
+     fill="#4788c7"
      d="M 15.763334,1.2370187 V 7.903089 12.271737 L 12.941591,9.4499926 12.286971,8.795373 11.560427,9.3676439 C 8.2696083,11.957977 6.3818439,15.832533 6.3818439,20 c 0,7.471836 6.0792061,13.551042 13.5510421,13.551042 7.471836,0 13.551041,-6.079206 13.551041,-13.551042 0,-5.466282 -3.321046,-10.395734 -8.339102,-12.4930183 V 1.9791989 C 33.0701,4.2714097 38.695867,11.651515 38.695867,20 c 0,10.345699 -8.417282,18.762981 -18.762981,18.762981 C 9.5871865,38.762981 1.1699047,30.345699 1.1699047,20 c 0,-5.451689 2.383941,-10.6261017 6.5399413,-14.1962801 L 8.5625193,5.0709213 7.7671773,4.2755793 4.7286168,1.2370187 H 15.763334 M 16.805722,0.19463087 H 2.2122924 L 7.0302092,5.0125475 C 2.8106231,8.6379725 0.12751678,13.996889 0.12751678,20 c 0,10.937775 8.86759342,19.805369 19.80536922,19.805369 10.937776,0 19.805369,-8.867594 19.805369,-19.805369 0,-9.506577 -6.701511,-17.4412335 -15.635817,-19.35714235 V 8.2210173 C 28.952668,9.9440844 32.44154,14.566033 32.44154,20 c 0,6.897481 -5.611174,12.508655 -12.508654,12.508655 -6.89748,0 -12.5086543,-5.611174 -12.5086543,-12.508655 0,-3.980879 1.8731709,-7.523955 4.7803903,-9.813039 l 4.6011,4.6011 V 7.903089 0.46460933 Z"
      id="path2"
-     style="stroke-width:1.04241667;fill:#000000;fill-opacity:1;stroke:#d4a5ff;stroke-opacity:0.85576922;stroke-dasharray:none" />
+     style="stroke-width:1.04241667;fill:#000000;fill-opacity:1;stroke:#05d7ff;stroke-opacity:0.85576922;stroke-dasharray:none" />
 </svg>

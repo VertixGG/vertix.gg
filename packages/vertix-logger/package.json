@@ -5,7 +5,9 @@
     "version": "0.0.0",
     "scripts": {
         "vertix-logger:start": "bunx dotenv-cli -e ../../.env -- bun run src/index.ts",
-        "vertix-logger:dev": "bunx dotenv-cli -e ../../.env -- bun --watch src/index.ts"
+        "vertix-logger:dev": "bunx dotenv-cli -e ../../.env -- bun --watch src/index.ts",
+        "vertix-logger:service:install": "bash ./install-systemd-service.bash",
+        "vertix-logger:service:uninstall": "bash ./uninstall-systemd-service.bash"
     },
     "dependencies": {
         "@vertix.gg/base": "workspace:*",

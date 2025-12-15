@@ -12,9 +12,10 @@ Avoid using `unknown` and `any` types. Use proper TypeScript typing with generic
 
 1. **Never use `any`** - It defeats the purpose of TypeScript
 2. **Never use `unknown`** - Use proper types or generics instead
-3. **Favor generics** - Use generic type parameters for flexible, type-safe code
-4. **Avoid type casting** - Use type guards, narrowing, or proper types instead of `as` casts
-5. **Use type inference** - Let TypeScript infer types when possible
+3. **NEVER use `as any`** - This is strictly forbidden. Use proper types, generics, or `as unknown as Type` only when absolutely necessary with proper type guards
+4. **Favor generics** - Use generic type parameters for flexible, type-safe code
+5. **Avoid type casting** - Use type guards, narrowing, or proper types instead of `as` casts
+6. **Use type inference** - Let TypeScript infer types when possible
 
 ## Examples
 
@@ -75,6 +76,16 @@ function processData(input: unknown) {
 await this.api.fetch("POST", "path", input as unknown as Record<string, unknown>);
 ```
 
+### ❌ Incorrect - Using `as any` (FORBIDDEN)
+
+```typescript
+ServiceLocator.$.register( GuildUIData as any );
+
+const data = someFunction() as any;
+
+componentConstructors as any
+```
+
 ### ❌ Incorrect - Excessive Type Casting
 
 ```typescript
@@ -100,9 +111,16 @@ Only use type assertions (`as`) when:
 2. You're dealing with external APIs and have runtime checks
 3. TypeScript's type inference is provably wrong (rare)
 
+**NEVER use `as any`** - If you need to cast, use `as unknown as Type` with proper validation:
+
 ```typescript
 if (isChannel(data)) {
     const channel = data as Channel;
+}
+
+// If absolutely necessary (rare), use double cast with validation:
+if (isValidGuildUIData(service)) {
+    const guildUIData = service as unknown as GuildUIData;
 }
 ```
 

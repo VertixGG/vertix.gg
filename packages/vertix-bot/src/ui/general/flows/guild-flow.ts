@@ -10,10 +10,11 @@ import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow"
 
 import type { ChannelType } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIFlowData, FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 // Minimal data interface for this system flow
-export interface GuildFlowData extends UIFlowData {}
+export interface GuildFlowData extends UIFlowDataBase {}
 
 /**
  * A system flow that handles the bot joining a new guild
@@ -56,7 +57,7 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
     /**
      * Entry point representing the external guild join event.
      */
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
                 flowName: "System/GuildEvents", // Conceptual source
@@ -70,7 +71,7 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
     /**
      * Handoff point to the WelcomeFlow.
      */
-    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
+    public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointEvent( {
                 flowName: WelcomeFlow.getName(), // Use static name of target flow

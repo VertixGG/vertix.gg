@@ -5,19 +5,17 @@ import {
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIFlowData ,
-    FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
-
-// Simple data interface, might not be heavily used for this flow type
-export interface CommandsFlowData extends UIFlowData {}
+import type {
+    UIFlowIntegrationPointBase
+} from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowVisualConnection, UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 /**
  * A declarative flow definition mapping slash command names (as transitions)
  * to the initial states of the UI Flows they trigger.
  * This flow acts as a router for command interactions.
  */
-export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
+export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
 
     public static override getName(): string {
         // Using a more descriptive name for the flow itself
@@ -63,9 +61,9 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
             // Command Transition                         => Target UI Flow Initial State
             // IMPORTANT: Target flow initial state strings must be accurate!
             //            Assuming SetupFlow and HelpFlow will be created later.
-            "VertixBot/Commands/Setup":   "VertixBot/UI-General/SetupFlow/States/Initial",    // Target: SetupFlow (To be created)
-            "VertixBot/Commands/Help":    "VertixBot/UI-General/HelpFlow/States/Initial",     // Target: HelpFlow (To be created)
-            "VertixBot/Commands/Welcome": "VertixBot/UI-General/WelcomeFlow/States/Initial",  // Target: WelcomeFlow (Existing)
+            "VertixBot/Commands/Setup":   "VertixBot/UI-General/SetupFlow/States/Initial",
+            "VertixBot/Commands/Help":    "VertixBot/UI-General/FeedbackFlow/States/Initial",
+            "VertixBot/Commands/Welcome": "VertixBot/UI-General/WelcomeFlow/States/Initial",
             // "VertixBot/Commands/Ping":    "VertixBot/Misc/PingFlow/States/Initial",       // Example
         };
     }
@@ -73,9 +71,9 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
     /**
      * Required data for command transitions (typically none needed just for dispatch).
      */
-    public static getRequiredData(): Record<string, ( keyof CommandsFlowData )[]> {
+    public static getRequiredData(): Record<string, ( keyof UIFlowDataBase )[]> {
         const commands = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
-        const requiredData: Record<string, ( keyof CommandsFlowData )[]> = {};
+        const requiredData: Record<string, ( keyof UIFlowDataBase )[]> = {};
         commands.forEach( cmdTransition => {
             requiredData[ cmdTransition ] = [];
         } );
@@ -102,8 +100,8 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
      * Defines the handoff points from this command router flow.
      * Aligned with UIFlowBase structure. Uses FlowIntegrationPointCommand.
      */
-    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
-        const handoffPoints: FlowIntegrationPointBase[] = [];
+    public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
+        const handoffPoints: UIFlowIntegrationPointBase[] = [];
         const commandTransitions = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
         const nextStates = this.getNextStates();
 
@@ -128,6 +126,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
                 }
             }
         } );
+
         return handoffPoints;
     }
 
@@ -135,11 +134,23 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
      * Defines entry points (none for this router flow).
      * Added for structural consistency with UIFlowBase.
      */
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
-        return [];
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
+        const transitions = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
+
+        return transitions.map( ( transition ) => {
+            const commandName = transition.split( "/" ).pop() ?? "Command";
+
+            return new FlowIntegrationPointCommand( {
+                flowName: this.getName(),
+                description: `Slash command entry: ${ commandName }`,
+                transition,
+                targetState: "VertixBot/CommandsFlow/States/Initial",
+                requiredData: []
+            } );
+        } );
     }
 
-    public static override getEdgeSourceMappings(): VisualConnection[] {
+    public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
         return [];
     }
 
@@ -179,7 +190,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
         return "VertixBot/CommandsFlow/States/Initial";
     }
 
-    protected override getInitialData(): CommandsFlowData {
+    protected override getInitialData(): UIFlowDataBase {
         return {}; // No initial data needed for dispatch logic
     }
 
@@ -211,12 +222,7 @@ export class CommandsFlow extends UIFlowBase<string, string, CommandsFlowData> {
     }
 
     // Required by base class, uses static definition
-    public override getRequiredData( transition: string ): ( keyof CommandsFlowData )[] {
+    public override getRequiredData( transition: string ): ( keyof UIFlowDataBase )[] {
         return CommandsFlow.getRequiredData()[ transition ] || [];
     }
-
-    // No modal associated with this flow type
-    // protected showModal(): Promise<void> { // Base class doesn't define this
-    //     return Promise.resolve();
-    // }
 }

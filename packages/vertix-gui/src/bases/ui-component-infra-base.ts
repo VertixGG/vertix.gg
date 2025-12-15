@@ -171,8 +171,9 @@ export abstract class UIComponentInfraBase extends UIPortableBase {
     protected static getInitialGroup( groupType: UIGroupsType, groups: ( typeof UIGroupBase )[] ) {
         const initialGroup = this.groupTypesMap[ groupType ].getInitialGroup( this );
 
+        // If no explicit default is provided, fall back to the first group to avoid empty entity sets.
         if ( !initialGroup ) {
-            return null;
+            return groups[ 0 ] || null;
         }
 
         for ( const group of groups ) {

@@ -1,11 +1,19 @@
+import { ComponentType } from "discord.js";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
+import { UIArgsProviderRegistry } from "@vertix.gg/gui/src/runtime/ui-args-provider-registry";
 
 import { interactionHandlerRegistry } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
 import { createComponentClass } from "@vertix.gg/gui/src/runtime/data-driven-component-factory";
 import { createExecutionAdapter } from "@vertix.gg/gui/src/runtime/data-driven-adapter-factory";
 import { createFlowClass } from "@vertix.gg/gui/src/runtime/data-driven-flow-factory";
+
+import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
+import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { isExportRuntime } from "@vertix.gg/gui/src/runtime/ui-runtime-flags";
 
 import type {
     AdapterDefinition,
@@ -31,6 +39,7 @@ import type {
     FlowContextMutationDefinition,
     FlowNavigationDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { UIFlowInputRequirement } from "@vertix.gg/definitions/src/ui-flow-definitions";
 import type {
     HydratedAdapter,
     HydratedComponent,
@@ -51,6 +60,7 @@ import type {
     RuntimeFlowTrigger,
     RuntimeHandler
 } from "@vertix.gg/gui/src/runtime/ui-definition-runtime";
+import type { RegisterableClass } from "@vertix.gg/gui/src/runtime/ui-class-registry";
 
 type LoaderMode = "mongo" | "static";
 
@@ -158,6 +168,8 @@ export class UIDefinitionLoader extends InitializeBase {
             resolveFlowComponent: ( flowName, state ) => this.resolveFlowComponentName( flowName, state )
         } );
 
+        this.registerAdapterDataProvidersFromFlows( document.name );
+
         this.adapterCache.set( name, { value: instance, updatedAt: Date.now() } );
 
         return instance;
@@ -182,6 +194,14 @@ export class UIDefinitionLoader extends InitializeBase {
 
         const instance = this.hydrateFlow( document );
         instance.flowClass = createFlowClass( instance );
+
+        // Register args providers declared by this flow (covers export/runtime).
+        const providers = instance.flowClass?.getArgsDataProviders?.() ?? [];
+        providers.forEach( ( [ adapterName, dataComponentName ] ) => {
+            if ( !UIArgsProviderRegistry.$.has( adapterName ) ) {
+                UIArgsProviderRegistry.$.registerDataProvider( adapterName, dataComponentName );
+            }
+        } );
 
         this.flowCache.set( name, { value: instance, updatedAt: Date.now() } );
 
@@ -298,6 +318,9 @@ export class UIDefinitionLoader extends InitializeBase {
         const options = document.options ? this.cloneJsonObject( document.options ) : undefined;
         const edgeSourceMappings = ( document.edgeSourceMappings ?? [] ).map( ( mapping ) => this.cloneEdgeSourceMapping( mapping ) );
         const requiredDataComponents = document.requiredDataComponents ? [ ...document.requiredDataComponents ] : undefined;
+        const inputRequirements = document.inputRequirements
+            ? document.inputRequirements.map( ( requirement ) => this.cloneFlowInputRequirement( requirement ) )
+            : undefined;
         const channelTypes = document.channelTypes ? [ ...document.channelTypes ] : undefined;
         const permissions = document.permissions ?? null;
         const initialData = document.initialData ? this.cloneJsonObject( document.initialData ) : undefined;
@@ -324,6 +347,9 @@ export class UIDefinitionLoader extends InitializeBase {
             stepStates: stepStates ? [ ...stepStates ] : undefined,
             stepComponents: stepComponents ? [ ...stepComponents ] : undefined,
             flowType,
+            inputRequirements: inputRequirements
+                ? inputRequirements.map( ( requirement ) => this.cloneFlowInputRequirement( requirement ) )
+                : undefined,
             hooks: hooks.map( ( hook ) => hook.definition ),
             options
         };
@@ -339,6 +365,7 @@ export class UIDefinitionLoader extends InitializeBase {
             externalReferences: definition.externalReferences,
             options,
             requiredDataComponents,
+            inputRequirements,
             edgeSourceMappings,
             channelTypes,
             permissions,
@@ -442,7 +469,11 @@ export class UIDefinitionLoader extends InitializeBase {
 
     private createRuntimeFlowState( state: FlowStateDefinition ): RuntimeFlowState {
         const hooks = ( state.hooks ?? [] ).map( ( hook ) => this.createRuntimeHook( hook ) );
-        const componentRef = state.component ? this.createClassRef( state.component ) : null;
+        const optionsComponent = this.resolveFlowStateComponent( state.options );
+        const componentName =
+            optionsComponent
+            ?? ( state.component && state.component !== "default" ? state.component : undefined );
+        const componentRef = componentName ? this.createClassRef( componentName ) : null;
 
         const definition: FlowStateDefinition = {
             key: state.key,
@@ -457,6 +488,20 @@ export class UIDefinitionLoader extends InitializeBase {
             componentRef,
             hooks
         };
+    }
+
+    private resolveFlowStateComponent( options: FlowStateDefinition[ "options" ] ): string | undefined {
+        if ( !options || typeof options !== "object" ) {
+            return undefined;
+        }
+
+        if ( !Object.prototype.hasOwnProperty.call( options, "component" ) ) {
+            return undefined;
+        }
+
+        const raw = ( options as { component?: string } ).component;
+
+        return typeof raw === "string" && raw.length ? raw : undefined;
     }
 
     private createRuntimeFlowTransition( transition: FlowTransitionDefinition ): RuntimeFlowTransition {
@@ -538,6 +583,29 @@ export class UIDefinitionLoader extends InitializeBase {
         };
     }
 
+    private registerAdapterDataProvidersFromFlows( adapterName: string ) {
+        // Check all loaded system flows for declared providers
+        for ( const [ , flowHydrated ] of this.flowCache.entries() ) {
+            if ( !flowHydrated.value?.flowClass?.getArgsDataProviders ) {
+                continue;
+            }
+
+            const providers = flowHydrated.value.flowClass.getArgsDataProviders();
+
+            providers.forEach( ( [ providerAdapter, dataComponent ] ) => {
+                if ( providerAdapter !== adapterName ) {
+                    return;
+                }
+
+                if ( UIArgsProviderRegistry.$.has( providerAdapter ) ) {
+                    return;
+                }
+
+                UIArgsProviderRegistry.$.registerDataProvider( providerAdapter, dataComponent );
+            } );
+        }
+    }
+
     private cloneBindingFlowTrigger( trigger: BindingFlowTriggerDefinition ): BindingFlowTriggerDefinition {
         return {
             flowName: trigger.flowName,
@@ -558,6 +626,24 @@ export class UIDefinitionLoader extends InitializeBase {
             transitionName: mapping.transitionName,
             targetFlowName: mapping.targetFlowName,
             options: mapping.options ? this.cloneJsonObject( mapping.options ) : undefined
+        };
+    }
+
+    private cloneFlowInputRequirement( requirement: UIFlowInputRequirement ): UIFlowInputRequirement {
+        return {
+            key: requirement.key,
+            label: requirement.label,
+            description: requirement.description,
+            inputType: requirement.inputType,
+            optional: requirement.optional,
+            dependsOn: requirement.dependsOn ? [ ...requirement.dependsOn ] : undefined,
+            options: requirement.options
+                ? requirement.options.map( ( option:typeof requirement.options[ number ] ) => ( {
+                    value: option.value,
+                    label: option.label,
+                    description: option.description
+                } ) )
+                : undefined
         };
     }
 
@@ -582,7 +668,7 @@ export class UIDefinitionLoader extends InitializeBase {
             options: element.options ? this.cloneJsonObject( element.options ) : undefined
         };
 
-        const classRef = this.createClassRef( definition.element );
+        const classRef = this.createClassRef( definition.element, "element" );
 
         return {
             definition,
@@ -596,7 +682,7 @@ export class UIDefinitionLoader extends InitializeBase {
             options: embed.options ? this.cloneJsonObject( embed.options ) : undefined
         };
 
-        const classRef = this.createClassRef( definition.embed );
+        const classRef = this.createClassRef( definition.embed, "embed" );
 
         return {
             definition,
@@ -622,7 +708,21 @@ export class UIDefinitionLoader extends InitializeBase {
         const [ className, method ] = reference.split( ":" );
 
         if ( !className || !method ) {
-            throw new Error( `UIDefinitionLoader: invalid handler reference '${ reference }'` );
+            this.logger.warn(
+                "parseHandlerReference",
+                `Handler reference '${ reference }' is not resolvable (missing registry entry or class/method). Falling back to stub handler.`
+            );
+
+            return {
+                type: "function",
+                name: reference,
+                handler: async() => {
+                    this.logger.warn(
+                        "parseHandlerReference",
+                        `Stub handler executed for '${ reference }'. No action performed.`
+                    );
+                }
+            };
         }
 
         const classRef = this.createClassRef( className );
@@ -634,13 +734,112 @@ export class UIDefinitionLoader extends InitializeBase {
         };
     }
 
-    private createClassRef( name: string ): RuntimeClassRef {
-        const Class = uiClassRegistry.getClass<object>( name );
+    private createClassRef( name: string, kind?: "element" | "embed" ): RuntimeClassRef {
+        const Class = this.resolveRegisteredClass( name, kind );
 
         return {
             name,
             Class
         };
+    }
+
+    private resolveRegisteredClass( name: string, kind?: "element" | "embed" ): RegisterableClass<object> {
+        if ( uiClassRegistry.has( name ) ) {
+            const existing = uiClassRegistry.getClass<object>( name );
+
+            if ( kind === "element" && !( existing.prototype instanceof UIElementBase ) ) {
+                return this.createStubElementClass( name );
+            }
+
+            if ( kind === "embed" && !( existing.prototype instanceof UIEmbedBase ) ) {
+                return this.createStubEmbedClass( name );
+            }
+
+            return existing;
+        }
+
+        if ( kind === "element" ) {
+            return this.createStubElementClass( name );
+        }
+
+        if ( kind === "embed" ) {
+            return this.createStubEmbedClass( name );
+        }
+
+        this.logger.warn(
+            "UIDefinitionLoader",
+            `Class '${ name }' is not registered in UiClassRegistry; using stub implementation for exported definitions.`
+        );
+
+        const StubClass = this.createGenericStubClass( name );
+        uiClassRegistry.register( StubClass );
+        return StubClass;
+    }
+
+    private createStubElementClass( name: string ): RegisterableClass<object> {
+        this.logger.warn(
+            "UIDefinitionLoader",
+            `Element '${ name }' missing from registry; inserting no-op UIElementBase stub.`
+        );
+
+        const StubElement = class extends UIElementBase<any> {
+            public static override getName(): string {
+                return name;
+            }
+
+            public static override getComponentType(): ComponentType {
+                return ComponentType.Button;
+            }
+
+            public static override getInstanceType(): UIInstancesTypes {
+                return UIInstancesTypes.Dynamic;
+            }
+
+            public async getTranslatableContent(): Promise<Record<string, unknown>> {
+                return {};
+            }
+
+            protected async getAttributes(): Promise<any> {
+                return {};
+            }
+        } as RegisterableClass<object>;
+
+        uiClassRegistry.register( StubElement );
+
+        return StubElement;
+    }
+
+    private createStubEmbedClass( name: string ): RegisterableClass<object> {
+        this.logger.warn(
+            "UIDefinitionLoader",
+            `Embed '${ name }' missing from registry; inserting no-op UIEmbedBase stub.`
+        );
+
+        const StubEmbed = class extends UIEmbedBase {
+            public static override getName(): string {
+                return name;
+            }
+
+            public static override getInstanceType(): UIInstancesTypes {
+                return UIInstancesTypes.Dynamic;
+            }
+        } as RegisterableClass<object>;
+
+        uiClassRegistry.register( StubEmbed );
+
+        return StubEmbed;
+    }
+
+    private createGenericStubClass( name: string ): RegisterableClass<object> {
+        const StubClass = class {
+            public static getName(): string {
+                return name;
+            }
+
+            public constructor() {}
+        } as RegisterableClass<object>;
+
+        return StubClass;
     }
 
     private cloneJsonValue( value: JsonValue ): JsonValue {
@@ -786,6 +985,10 @@ export class UIDefinitionLoader extends InitializeBase {
     }
 
     private validateFlowDefinition( document: FlowDefinition ): void {
+        if ( isExportRuntime() ) {
+            return;
+        }
+
         const states = document.states ?? [];
 
         if ( !states.length ) {
@@ -940,4 +1143,3 @@ export class UIDefinitionLoader extends InitializeBase {
         }
     }
 }
-

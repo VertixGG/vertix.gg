@@ -4,6 +4,8 @@ import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { BaseInteraction, ChannelType, GuildChannel, Message } from "discord.js";
 
+import { normalizeChannelTypesForRuntime } from "@vertix.gg/gui/src/runtime/ui-runtime-channel-type-normalizer";
+
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
@@ -138,8 +140,9 @@ export class UIInteractionMiddleware<
     private async ensureChannel( context: TChannel | TInteraction, callback?: Function ) {
         const channel = context instanceof GuildChannel ? context : ( context.channel as TChannel );
 
-        const requiredTypes = this.target.getChannelTypes(),
-            expectedTypes = requiredTypes.map( ( type ) => ChannelType[ type ] ).join( ", " );
+        const requiredTypesRaw = this.target.getChannelTypes(),
+            requiredTypes = normalizeChannelTypesForRuntime( requiredTypesRaw ) as ChannelType[],
+            expectedTypes = requiredTypes.map( ( type ) => ChannelType[ type as ChannelType ] ?? String( type ) ).join( ", " );
 
         if ( requiredTypes.includes( channel.type ) ) {
             return callback?.() || true;

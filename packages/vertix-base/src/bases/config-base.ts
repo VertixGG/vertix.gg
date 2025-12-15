@@ -12,6 +12,8 @@ import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
 
 import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
+
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 interface ConfigBaseDefaultsInterface {

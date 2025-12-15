@@ -89,7 +89,8 @@ export class ComponentBuilder {
 
     public build(): UIComponentTypeConstructor {
         const builder = this;
-        return class GeneratedComponent extends UIComponentBase {
+
+        class GeneratedComponent extends UIComponentBase {
             public static getName() {
                 return builder.name;
             }
@@ -135,7 +136,7 @@ export class ComponentBuilder {
             public static getMarkdowns() {
                 return builder.markdowns;
             }
-        };
+        }
 
         const metadata: ComponentBuilderMetadata = {
             name: builder.name,
@@ -153,5 +154,7 @@ export class ComponentBuilder {
         Reflect.defineProperty( GeneratedComponent, BUILDER_METADATA_SYMBOL, {
             value: metadata
         } );
+
+        return GeneratedComponent as UIComponentTypeConstructor;
     }
 }

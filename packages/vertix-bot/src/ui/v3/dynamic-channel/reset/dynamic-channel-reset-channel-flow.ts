@@ -4,11 +4,11 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { DynamicChannelResetChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIFlowDataBase, UIFlowVisualConnection } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface DynamicChannelResetChannelFlowData extends UIFlowData {
+interface DynamicChannelResetChannelFlowData extends UIFlowDataBase {
     result?: string;
 }
 
@@ -49,11 +49,78 @@ export class DynamicChannelResetChannelFlow extends UIFlowBase<
         };
     }
 
+    public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
+        const flowName = DynamicChannelResetChannelFlow.getName();
+
+        return [
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError",
+                targetFlowName: flowName
+            }
+        ];
+    }
+
     public static getRequiredData(): Record<string, ( keyof DynamicChannelResetChannelFlowData )[]> {
         return {
             "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetSuccess": [ "result" ],
             "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetVoteRequired": [],
             "VertixBot/UI-V3/DynamicChannelResetChannelFlow/Transitions/ResetError": []
+        };
+    }
+
+    public static getStateOptions() {
+        const previewVars = [
+            "resetEmoji",
+            "name",
+            "nameChanged",
+            "userLimit",
+            "userLimitChanged",
+            "state",
+            "stateChanged",
+            "visibilityState",
+            "visibilityStateChanged",
+            "region",
+            "regionChanged",
+            "primaryMessageChanged",
+            "allowedUsers",
+            "allowedUsersChanged",
+            "blockedUsers",
+            "blockedUsersChanged",
+            "rateLimited"
+        ];
+
+        return {
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default": {
+                component: "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+                executionStep: "default",
+                previewVars
+            },
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Success": {
+                component: "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelSuccess",
+                previewVars
+            },
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/VoteRequired": {
+                component: "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+                executionStep: "default",
+                previewEmbedsGroup: "VertixBot/UI-General/TopGGVoteEmbedGroup"
+            },
+            "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Error": {
+                component: "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelError",
+                previewEmbedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+            }
         };
     }
 
@@ -106,4 +173,3 @@ export class DynamicChannelResetChannelFlow extends UIFlowBase<
 }
 
 export default DynamicChannelResetChannelFlow;
-

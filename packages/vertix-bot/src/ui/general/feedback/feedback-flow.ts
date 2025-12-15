@@ -4,12 +4,12 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { FeedbackComponent } from "@vertix.gg/bot/src/ui/general/feedback/feedback-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface FeedbackFlowData extends UIFlowData {}
+interface FeedbackFlowData extends UIFlowDataBase {}
 
 export class FeedbackFlow extends UIFlowBase<string, string, FeedbackFlowData> {
     public static override getName(): string {

@@ -20,18 +20,20 @@ export type OptionsHandler<TVars> =
 export type LogicHandler<TArgs extends UIArgs, TVars> =
     | ( ( args: TArgs, vars: TVars ) => AsyncOrSync<Record<string, JsonValue>> );
 
-export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, JsonValue>> {
+export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Record<string, JsonValue> = Record<string, JsonValue>> {
     protected name: string;
     protected instanceType: UIInstancesTypes | null = null;
     protected title: StringHandler<TVars> | undefined;
     protected description: StringHandler<TVars> | undefined;
     protected color: NumberHandler<TVars> | undefined;
     protected image: StringHandler<TVars> | undefined;
+    protected thumbnail: StringHandler<TVars> | undefined;
     protected options: OptionsHandler<TVars> | undefined;
     protected footer: StringHandler<TVars> | undefined;
     protected arrayOptions: OptionsHandler<TVars> | undefined;
     protected logic: LogicHandler<TArgs, TVars> | undefined;
     protected vars: TVars | undefined;
+    protected defaultVars: ( ( vars: TVars ) => Partial<Record<keyof TVars, JsonValue>> ) | undefined;
 
     public constructor( name: string, vars?: TVars ) {
         this.name = name;
@@ -63,6 +65,11 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, 
         return this;
     }
 
+    public setThumbnail( thumbnail: StringHandler<TVars> ): this {
+        this.thumbnail = thumbnail;
+        return this;
+    }
+
     public setOptions( options: OptionsHandler<TVars> ): this {
         this.options = options;
         return this;
@@ -80,6 +87,11 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, 
 
     public setLogic( logic: LogicHandler<TArgs, TVars> ): this {
         this.logic = logic;
+        return this;
+    }
+
+    public setDefaultVars( getDefaultVars: ( vars: TVars ) => Partial<Record<keyof TVars, JsonValue>> ): this {
+        this.defaultVars = getDefaultVars;
         return this;
     }
 
@@ -135,6 +147,16 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, 
                 return builder.image || "";
             }
 
+            protected getThumbnail() {
+                if ( typeof builder.thumbnail === "function" ) {
+                    const value = (
+                        builder.thumbnail as Function
+                    )( builder.vars as TVars );
+                    return value ? { url: value } : null;
+                }
+                return builder.thumbnail ? { url: builder.thumbnail } : null;
+            }
+
             protected getOptions() {
                 if ( typeof builder.options === "function" ) {
                     return (
@@ -162,6 +184,14 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, 
                 return builder.arrayOptions || {};
             }
 
+            protected getDefaultVars() {
+                if ( builder.defaultVars ) {
+                    return builder.defaultVars( builder.vars as TVars ) ?? {};
+                }
+
+                return {};
+            }
+
             protected getLogicAsync( args: TArgs ): Promise<Record<string, JsonValue>> {
                 if ( builder.logic ) {
                     return Promise.resolve( builder.logic( args, builder.vars as TVars ) );
@@ -177,11 +207,13 @@ export class EmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, 
             description: builder.description,
             color: builder.color,
             image: builder.image,
+            thumbnail: builder.thumbnail,
             footer: builder.footer,
             options: builder.options,
             arrayOptions: builder.arrayOptions,
             logic: builder.logic,
-            vars: builder.vars
+            vars: builder.vars,
+            defaultVars: builder.defaultVars
         };
 
         Reflect.defineProperty( GeneratedEmbed, BUILDER_METADATA_SYMBOL, {

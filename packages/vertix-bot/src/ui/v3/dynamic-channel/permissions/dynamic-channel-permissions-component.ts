@@ -11,10 +11,6 @@ import {
     DynamicChannelPermissionsAccessEmbed,
     DynamicChannelPermissionsDeniedEmbed,
     DynamicChannelPermissionsGrantedEmbed,
-    DynamicChannelPermissionsHiddenEmbed,
-    DynamicChannelPermissionsPrivateEmbed,
-    DynamicChannelPermissionsPublicEmbed,
-    DynamicChannelPermissionsShownEmbed,
     DynamicChannelPermissionsBlockedEmbed,
     DynamicChannelPermissionsUnblockedEmbed,
     DynamicChannelPermissionsKickEmbed
@@ -31,12 +27,6 @@ export class DynamicChannelPermissionsComponent extends UIComponentBase {
 
     public static getEmbedsGroups() {
         return [
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsPrivateEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsPublicEmbed ),
-
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsHiddenEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsShownEmbed ),
-
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsGrantedEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsDeniedEmbed ),
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsBlockedEmbed ),

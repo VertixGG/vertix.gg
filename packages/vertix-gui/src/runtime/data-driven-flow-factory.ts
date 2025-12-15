@@ -8,11 +8,14 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { UIWizardFlowBase } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
+import { isExportRuntime } from "@vertix.gg/gui/src/runtime/ui-runtime-flags";
 
-import type { FlowIntegrationPointBase, UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
+import type { UIFlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowWizardData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 import type {
     HydratedFlow,
     RuntimeFlowState,
@@ -37,7 +40,7 @@ type FlowIntegrationPointBuilder = new ( options: {
     targetState?: string;
     transition?: string;
     requiredData?: string[];
-} ) => FlowIntegrationPointBase;
+} ) => UIFlowIntegrationPointBase;
 
 const INTEGRATION_POINT_BY_TYPE: Record<string, FlowIntegrationPointBuilder> = {
     GENERIC: FlowIntegrationPointGeneric,
@@ -58,6 +61,48 @@ function ensureComponentConstructor(
 ): UIComponentTypeConstructor {
     if ( !( candidate.prototype instanceof UIComponentBase ) ) {
         const candidateName = typeof candidate.getName === "function" ? candidate.getName() : "unknown";
+        if ( isExportRuntime() ) {
+            const name = candidateName || description;
+
+            const StubComponent = class extends UIComponentBase {
+                public static override getName() {
+                    return name;
+                }
+
+                public static override getInstanceType() {
+                    return UIInstancesTypes.Dynamic;
+                }
+
+                public static override getElementsGroups() {
+                    return [];
+                }
+
+                public static override getEmbedsGroups() {
+                    return [];
+                }
+
+                public static override getModals() {
+                    return [];
+                }
+
+                public static override getDefaultElementsGroup() {
+                    return null;
+                }
+
+                public static override getDefaultEmbedsGroup() {
+                    return null;
+                }
+
+                public static override getDefaultMarkdownsGroup() {
+                    return null;
+                }
+            } as RegisterableClass<object>;
+
+            uiClassRegistry.register( StubComponent );
+
+            return StubComponent as unknown as UIComponentTypeConstructor;
+        }
+
         throw new Error( `DataDrivenFlowFactory: ${ description } does not extend '${ UIComponentBase.getName() }' (received '${ candidateName }')` );
     }
 
@@ -124,7 +169,7 @@ function cloneArray<T>( values?: T[] | null ): T[] {
     return values ? Array.from( values ) : [];
 }
 
-function buildIntegrationPoints( points: RuntimeFlowIntegrationPoint[] ): FlowIntegrationPointBase[] {
+function buildIntegrationPoints( points: RuntimeFlowIntegrationPoint[] ): UIFlowIntegrationPointBase[] {
     return points.map( ( point ) => {
         const builder = INTEGRATION_POINT_BY_TYPE[ point.type ] ?? FlowIntegrationPointGeneric;
         return new builder( {
@@ -322,6 +367,7 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
     const flowType = hydrated.flowType ?? hydrated.definition.flowType ?? hydrated.definition.flowKind ?? "ui";
     const initialDataTemplate = cloneInitialData( hydrated.initialData );
     const requiredDataComponents = hydrated.requiredDataComponents ? [ ...hydrated.requiredDataComponents ] : [];
+    const inputRequirements = hydrated.inputRequirements ? [ ...hydrated.inputRequirements ] : [];
     const stateComponentMap = collectStateComponents( hydrated.states );
     const flowComponents = dedupeComponents( stateComponentMap.values() );
     const nextStatesRecord = buildNextStatesMap( transitionTargets );
@@ -344,7 +390,7 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
             customTransitionsByState.set( state, custom );
         }
 
-        class DataDrivenWizardFlow extends UIWizardFlowBase<string, string, WizardFlowData> {
+        class DataDrivenWizardFlow extends UIWizardFlowBase<string, string, UIFlowWizardData> {
             protected static readonly transitionTriggers = transitionTriggerMap;
 
             public static override getName() {
@@ -412,9 +458,9 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
                 return hydrated.definition.initialState;
             }
 
-            protected override getInitialData(): WizardFlowData {
+            protected override getInitialData(): UIFlowWizardData {
                 const initial = cloneInitialData( initialDataTemplate ) ?? {};
-                return initial as WizardFlowData;
+                return initial as UIFlowWizardData;
             }
 
             protected override initializeTransitions(): void {
@@ -457,7 +503,7 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
         return DataDrivenWizardFlow as unknown as FlowConstructor;
     }
 
-    class DataDrivenFlow extends UIFlowBase<string, string, UIFlowData> {
+    class DataDrivenFlow extends UIFlowBase<string, string, UIFlowDataBase> {
         private static readonly components = flowComponents;
         private static readonly transitionTriggers = transitionTriggerMap;
 
@@ -497,6 +543,10 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
             return requiredDataComponents;
         }
 
+        public static override getInputRequirements() {
+            return inputRequirements;
+        }
+
         public static override getFlowType() {
             return flowType;
         }
@@ -526,9 +576,9 @@ export function createFlowClass( hydrated: HydratedFlow ): FlowConstructor {
             return hydrated.definition.initialState;
         }
 
-        protected override getInitialData(): UIFlowData {
+        protected override getInitialData(): UIFlowDataBase {
             const initial = cloneInitialData( initialDataTemplate ) ?? {};
-            return initial as UIFlowData;
+            return initial as UIFlowDataBase;
         }
 
         protected override initializeTransitions(): void {

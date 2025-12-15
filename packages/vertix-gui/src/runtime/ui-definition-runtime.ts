@@ -18,11 +18,13 @@ import type {
     JsonObject,
     FlowEdgeSourceMappingDefinition,
     FlowIntegrationPointType,
-    FlowTriggerDefinition
+    FlowTriggerDefinition,
+    BindingFlowTriggerDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ExecutionAdapterClass } from "@vertix.gg/gui/src/runtime/data-driven-adapter-factory";
 import type { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowInputRequirement } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 export interface RuntimeClassRef {
     name: string;
@@ -109,7 +111,6 @@ export interface RuntimeFlowState {
     componentRef?: RuntimeClassRef | null;
     hooks: RuntimeHook[];
 }
-
 export interface RuntimeFlowTrigger {
     definition: FlowTriggerDefinition;
     callable?: RuntimeHandler;
@@ -140,6 +141,7 @@ export interface HydratedFlow {
     externalReferences?: Record<string, string>;
     options?: JsonObject;
     requiredDataComponents?: string[];
+    inputRequirements?: UIFlowInputRequirement[];
     edgeSourceMappings?: FlowEdgeSourceMappingDefinition[];
     channelTypes?: string[];
     permissions?: string | number | null;
@@ -150,5 +152,3 @@ export interface HydratedFlow {
 }
 
 export type FlowConstructor = typeof UIFlowBase;
-
-

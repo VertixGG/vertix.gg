@@ -22,4 +22,3 @@ class InteractionHandlerRegistry {
 
 export const interactionHandlerRegistry = new InteractionHandlerRegistry();
 
-

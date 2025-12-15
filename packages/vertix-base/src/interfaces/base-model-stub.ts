@@ -1,4 +1,4 @@
-import "@vertix.gg/prisma/bot-client";
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 export interface TBaseModelStub {
     name?: PrismaBot.Prisma.ModelName;

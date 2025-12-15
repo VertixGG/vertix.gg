@@ -1,0 +1,42 @@
+---
+description: Core coding principles and hard rules
+globs: *.tsx,*.ts,*.js,*.jsx
+alwaysApply: true
+---
+
+# Core Coding Principles
+
+Never kill or build or start the server
+
+Each time u run command first run pwd
+
+Avoid hard coded values as much as possible
+
+now listen be focused and do exactly what im saying nothing more then that,
+
+SoC and SRP is the way to go!
+
+## Hard Rules
+
+- Dont add comments
+- Use (empty new line) as logical separator
+- Never use `any` or `unknown` those are hacks and highly restricted
+- Alwayas consult with me before editting the code!!!
+- write better code
+- write better code
+- write better code
+- try write simple and reliable code
+- dont overcomplicate
+- never over do
+- always focus on the request
+- never edit files without of my permission, if u want edit suggest and ask my permision
+- never commit / push without mine permission
+- every time you create new file ensure that the file aint already exist with different extension
+
+## Follow
+
+- separation of concerns
+- single responsibility principle
+- composition over inheritance when inheritance not possible
+- design patterns
+- more agnostic approach to further improve reusability. change it to something that better represents its purpose without implementation-specific terminology

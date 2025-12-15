@@ -1,0 +1,22 @@
+{
+    "name": "@vertix.gg/ui",
+    "type": "module",
+    "version": "0.0.0",
+    "main": "src/index.ts",
+    "scripts": {
+        "vertix-ui:typecheck": "bunx --bun tsc --noEmit"
+    },
+    "dependencies": {
+        "react": "latest",
+        "tailwind-merge": "^3.0.2",
+        "tailwindcss": "^4.1.17",
+        "tailwindcss-animate": "^1.0.7"
+    },
+    "devDependencies": {
+        "@types/react": "latest",
+        "typescript": "~5.7.2"
+    },
+    "peerDependencies": {
+        "react": ">=18"
+    }
+}

@@ -1,15 +1,17 @@
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { UIFlowBase, FlowIntegrationPointGeneric } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-adapter";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { UIFlowVisualConnection, UIFlowInputRequirementDefinition, UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface SetupEditFlowData extends UIFlowData {
+interface SetupEditFlowData extends UIFlowDataBase {
     masterChannelId?: string;
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelVerifiedRoles?: string[];
@@ -22,6 +24,19 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
 
     public static override getFlowType(): string {
         return "ui";
+    }
+
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
+        return [
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-General/SetupFlow",
+                description: "Triggered via Setup flow Edit Master transition",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                targetState: "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                requiredData: [ "guildId", "masterChannelId" ]
+            } )
+        ];
     }
 
     public static getFlowTransitions(): Record<string, string[]> {
@@ -54,6 +69,88 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
                 "VertixBot/UI-V3/SetupEditFlow/Transitions/Done"
             ]
         };
+    }
+
+    public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
+        const flowName = SetupEditFlow.getName();
+
+        return [
+            {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/SelectMaster",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditOpenNameButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenNameModal",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditOpenButtonsButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenButtons",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenVerifiedRoles",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/ShowButtonsEffect",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsImmediateApplied",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsNewApplied",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/ConfigExtrasSelectMenu",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/ConfigExtrasUpdated",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/LogChannelSelectMenu",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/LogChannelUpdated",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/ChannelNameTemplateModal",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/VerifiedRolesMenu",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/VerifiedRolesUpdated",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/VerifiedRolesEveryoneToggled",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/DoneButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/Done",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/WizardBackButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/Back",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/WizardFinishButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/Finish",
+                targetFlowName: flowName
+            }
+        ];
     }
 
     public static getNextStates(): Record<string, string> {
@@ -109,6 +206,30 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
 
     public static override getComponents(): UIComponentConstructor[] {
         return [ SetupEditComponent ];
+    }
+
+    public static override getRequiredDataComponents(): string[] {
+        return [ "VertixBot/Data/DynamicChannelUIData" ];
+    }
+
+    public static override getArgsDataProviders(): Array<[ string, string ]> {
+        return [
+            [ "VertixBot/UI-V3/SetupEditAdapter", "VertixBot/Data/DynamicChannelUIData" ]
+        ];
+    }
+
+    public static override getInputRequirements(): UIFlowInputRequirementDefinition[] {
+        return [
+            {
+                key: "masterChannelId",
+                label: "Master Channel",
+                description: "Select which master channel to preview and edit.",
+                inputType: "select",
+                optionsDataComponent: "VertixBot/Data/SetupEditRequirementsData",
+                optionsDataKey: "masterChannels",
+                dependsOn: [ "guildId" ]
+            }
+        ];
     }
 
     public constructor( options: TAdapterRegisterOptions ) {

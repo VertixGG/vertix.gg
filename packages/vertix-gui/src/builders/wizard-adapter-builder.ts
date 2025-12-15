@@ -235,8 +235,7 @@ export class WizardAdapterBuilder<
             }
 
             private generateCustomIdForEntityWrapper( entity: UIEntitySchemaBase | UIModalSchema ) {
-                const method = Reflect.get( this, "generateCustomIdForEntity" ) as Function;
-                return method.call( this, entity );
+                return builder.buildCustomId( this.getName(), entity, this.customIdStrategy );
             }
         };
 

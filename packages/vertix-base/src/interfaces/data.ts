@@ -1,4 +1,4 @@
-import "@vertix.gg/prisma/bot-client";
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 type TDataDataTypes = PrismaBot.E_DATA_TYPES;
 

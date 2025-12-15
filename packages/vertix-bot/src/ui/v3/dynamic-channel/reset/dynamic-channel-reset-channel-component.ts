@@ -5,6 +5,7 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
+import { TopGGVoteEmbed } from "@vertix.gg/bot/src/ui/general/misc/top-gg-vote-embed";
 
 import { DynamicChannelResetChannelButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-button";
 import { DynamicChannelResetChannelEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-embed";
@@ -25,6 +26,7 @@ export class DynamicChannelResetChannelComponent extends UIComponentBase {
     public static getEmbedsGroups() {
         return [
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelResetChannelEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( TopGGVoteEmbed ),
             UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
         ];
     }

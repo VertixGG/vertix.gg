@@ -8,7 +8,7 @@ export { DynamicChannelClearChatAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic
 export { DynamicChannelRenameAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-adapter";
 export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
 export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-adapter";
-export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-adapater";
+export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-adapter";
 export { DynamicChannelResetChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-adapter";
 export { DynamicChannelPrivacyAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-adapter";
 export { DynamicChannelRegionAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-adapter";

@@ -9,7 +9,7 @@ import type {
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
-export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<string, JsonValue>> extends EmbedBuilder<TArgs, TVars> {
+export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Record<string, JsonValue> = Record<string, JsonValue>> extends EmbedBuilder<TArgs, TVars> {
     protected endTime: EndTimeHandler<TArgs> | undefined;
 
     public setEndTime( handler: EndTimeHandler<TArgs> ): this {
@@ -71,6 +71,14 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<s
                 return builder.image || "";
             }
 
+            protected getThumbnail() {
+                if ( typeof builder.thumbnail === "function" ) {
+                    const value = ( builder.thumbnail as Function )( builder.vars as TVars );
+                    return value ? { url: value } : null;
+                }
+                return builder.thumbnail ? { url: builder.thumbnail } : null;
+            }
+
             protected getOptions() {
                 if ( typeof builder.options === "function" ) {
                     return ( builder.options as Function )( builder.vars as TVars );
@@ -92,6 +100,14 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<s
                 return builder.arrayOptions || {};
             }
 
+            protected getDefaultVars() {
+                if ( builder.defaultVars ) {
+                    return builder.defaultVars( builder.vars as TVars ) ?? {};
+                }
+
+                return {};
+            }
+
             protected getLogicAsync( args: TArgs ): Promise<Record<string, JsonValue>> {
                 if ( builder.logic ) {
                     return Promise.resolve( builder.logic( args, builder.vars as TVars ) );
@@ -107,11 +123,13 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars = Record<s
             description: builder.description,
             color: builder.color,
             image: builder.image,
+            thumbnail: builder.thumbnail,
             footer: builder.footer,
             options: builder.options,
             arrayOptions: builder.arrayOptions,
             logic: builder.logic,
             vars: builder.vars,
+            defaultVars: builder.defaultVars,
             endTime: builder.endTime
         };
 

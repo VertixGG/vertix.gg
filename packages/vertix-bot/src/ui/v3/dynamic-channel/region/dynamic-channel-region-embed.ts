@@ -3,7 +3,6 @@ import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/ba
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
-import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -13,27 +12,27 @@ const utcRegionVars = Object.values( DEFAULT_RTC_REGIONS ).reduce( ( acc, region
     return acc;
 }, {} as Record<string, string> );
 
-const DYNAMIC_CHANNEL_REGION_VARS = {
+const vars = {
     region: uiUtilsWrapAsTemplate( "region" ),
     regionOptions: uiUtilsWrapAsTemplate( "regionOptions" ),
     regionEmoji: uiUtilsWrapAsTemplate( "regionEmoji" ),
     ...utcRegionVars
 };
 
-const DynamicChannelRegionEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_REGION_VARS>(
+const DynamicChannelRegionEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V3/DynamicChannelRegionEmbed",
-    DYNAMIC_CHANNEL_REGION_VARS
+    vars
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( 0x4b6f91 )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
-    .setTitle( () => `${ DYNAMIC_CHANNEL_REGION_VARS.regionEmoji }  Set voice region for your channel` )
+    .setTitle( () => `${ vars.regionEmoji }  Set voice region for your channel` )
     .setDescription( () => (
         "-# The region determines the voice server's location.\n" +
         "-# It should be the closest to all voice channel members.\n" +
         "-# The recommended is `Automatic`\n\n" +
         "Current voice region: `" +
-        DYNAMIC_CHANNEL_REGION_VARS.region +
+        vars.region +
         "`"
     ) )
     .setOptions( () => {
@@ -42,7 +41,7 @@ const DynamicChannelRegionEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNE
         Object.entries( DEFAULT_RTC_REGIONS ).forEach( ( [ label, value ] ) => {
             const key = ( "region-" + ( value ?? "auto" ) );
             // @ts-ignore
-            const utcRegionVar = DYNAMIC_CHANNEL_REGION_VARS[ key ];
+            const utcRegionVar = vars[ key ];
 
             mapRegions[ utcRegionVar ] = label;
         } );
@@ -56,16 +55,17 @@ const DynamicChannelRegionEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNE
 
         if ( args.region ) {
             // @ts-ignore
-            result.region = DYNAMIC_CHANNEL_REGION_VARS[ `region-${ args.region }` ];
+            result.region = vars[ `region-${ args.region }` ];
         } else {
             // @ts-ignore
-            result.region = DYNAMIC_CHANNEL_REGION_VARS[ "region-auto" ];
+            result.region = vars[ "region-auto" ];
         }
 
-        result.regionEmoji = await EmojiManager.$.getMarkdown( DynamicChannelRegionButton.getBaseName() );
-
         return result;
-    } )
+    } ).
+    setDefaultVars( () => ( {
+        regionEmoji: DynamicChannelRegionButton.getEmoji()
+    } ) )
     .build();
 
-export { DynamicChannelRegionEmbed, DYNAMIC_CHANNEL_REGION_VARS };
+export { DynamicChannelRegionEmbed, vars as DYNAMIC_CHANNEL_REGION_VARS };

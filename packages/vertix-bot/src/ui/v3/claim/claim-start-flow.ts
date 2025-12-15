@@ -4,11 +4,11 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { ClaimStartComponent } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-start-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface ClaimStartFlowData extends UIFlowData {}
+interface ClaimStartFlowData extends UIFlowDataBase {}
 
 /**
  * Flow that models the claim start interaction for dynamic channel ownership.

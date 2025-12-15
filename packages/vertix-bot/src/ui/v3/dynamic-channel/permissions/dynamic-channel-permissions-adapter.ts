@@ -27,55 +27,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
-const PERMISSIONS_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsAccess": {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsStateShown": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsGranted": {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsDenied": {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsBlocked": {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked": {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsKick": {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsStateError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged": {
-        embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
-    }
-} as const;
-
 const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelPermissionsAdapter"
 )
@@ -84,7 +35,54 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
         DynamicChannelPermissionsStateButton,
         DynamicChannelPermissionsVisibilityButton
     ] )
-    .setExecutionSteps( PERMISSIONS_STEPS )
+    .setExecutionSteps( {
+        default: {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsAccess": {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic": {
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate": {
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden": {
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsStateShown": {
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsGranted": {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsDenied": {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsBlocked": {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked": {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsKick": {
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsStateError": {
+            embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+        },
+        "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged": {
+            embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
+        }
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const channel = interaction.channel as VoiceChannel;

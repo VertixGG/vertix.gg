@@ -1,14 +1,15 @@
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
-
 import { gToken } from "@vertix.gg/base/src/discord/login";
+import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { GatewayVersion } from "discord-api-types/gateway/v10";
 import { Routes } from "discord-api-types/v10";
 
 import { REST } from "discord.js";
+
+import { getEmojiFromPreviewCache } from "@vertix.gg/utils/src/emoji-preview-cache";
 
 import type { RESTGetAPIApplicationEmojisResult } from "discord-api-types/v9";
 
@@ -76,10 +77,19 @@ export class EmojiManager extends InitializeBase {
     public getMarkdown( baseName: string, fromCache = true ) {
         const emoji = this.emojis?.items?.find( ( emoji ) => emoji.name!.includes( baseName ) );
 
-        if ( emoji ) {
-            return `<:${ emoji.name }:${ emoji.id }>`;
+        if ( this.emojis ) {
+            if ( emoji ) {
+                return `<:${ emoji.name }:${ emoji.id }>`;
+            }
+
+            throw new Error( `Emoji: '${ baseName }' not found` );
         }
 
-        throw new Error( `Emoji: '${ baseName }' not found` );
+        const previewEmoji = getEmojiFromPreviewCache( baseName );
+        if ( previewEmoji ) {
+            return previewEmoji.markdown;
+        }
+
+        return `:${ baseName }:`; // Fallback placeholder
     }
 }

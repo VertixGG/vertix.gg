@@ -6,7 +6,7 @@ import { DynamicChannelResetChannelButton } from "@vertix.gg/bot/src/ui/v3/dynam
 
 import type { IDynamicResetChannelResult } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 
-const DYNAMIC_CHANNEL_RESET_CHANNEL_VARS = {
+const vars = {
     separator: uiUtilsWrapAsTemplate( "separator" ),
     value: uiUtilsWrapAsTemplate( "value" ),
 
@@ -50,14 +50,14 @@ const DYNAMIC_CHANNEL_RESET_CHANNEL_VARS = {
     elapsedTimeFormatFraction: uiUtilsWrapAsTemplate( "elapsedTimeFormatFraction" )
 };
 
-const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetChannelResult, typeof DYNAMIC_CHANNEL_RESET_CHANNEL_VARS>(
+const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetChannelResult, typeof vars>(
     "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
-    DYNAMIC_CHANNEL_RESET_CHANNEL_VARS
+    vars
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setEndTime( ( args ) => new Date( Date.now() + ( args.rateLimitRetryAfter || 30000 ) * 1000 ) )
     .setColor( 0x7a9cbd )
-    .setTitle( () => `${ DYNAMIC_CHANNEL_RESET_CHANNEL_VARS.resetEmoji }  Dynamic Channel has been reset to default settings! ` )
+    .setTitle( () => `${ vars.resetEmoji }  Dynamic Channel has been reset to default settings! ` )
     .setDescription( () => {
         const {
             name,
@@ -76,7 +76,7 @@ const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetCha
             blockedUsers,
             blockedUsersChanged,
             rateLimited
-        } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS;
+        } = vars;
 
         return (
             "Settings has been reset to default:\n\n" +
@@ -102,7 +102,7 @@ const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetCha
             rateLimitedNone,
             rateLimitedDisplay,
             elapsedTimeFormatFraction
-        } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS;
+        } = vars;
 
         return {
             changedDisplay: "(__restored__)",
@@ -130,7 +130,7 @@ const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetCha
         };
     } )
     .setArrayOptions( () => {
-        const { separator, value } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS;
+        const { separator, value } = vars;
         return {
             allowedUsers: {
                 format: `<@${ value }>${ separator }`,
@@ -154,7 +154,7 @@ const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetCha
                 visibilityStateHidden,
                 rateLimitedNone,
                 rateLimitedDisplay
-            } = DYNAMIC_CHANNEL_RESET_CHANNEL_VARS,
+            } = vars,
             { newState, oldState } = args;
 
         const primaryMessageChanged = () => {
@@ -165,12 +165,12 @@ const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetCha
         };
 
         return {
-            name: newState?.name,
+            name: newState?.name ?? null,
             nameChanged: newState?.name !== oldState?.name ? changedDisplay : unchangedDisplay,
 
             userLimit: 0 === newState?.userLimit ? userLimitUnlimited : userLimitValue,
             userLimitChanged: newState?.userLimit !== oldState?.userLimit ? changedDisplay : unchangedDisplay,
-            userLimitValue: newState?.userLimit,
+            userLimitValue: newState?.userLimit ?? 0,
 
             state: newState?.state === "public" ? statePublic : statePrivate,
             stateChanged: newState?.state !== oldState?.state ? changedDisplay : unchangedDisplay,
@@ -179,28 +179,45 @@ const DynamicChannelResetChannelEmbed = new ElapsedEmbedBuilder<IDynamicResetCha
             visibilityStateChanged:
                 newState?.visibilityState !== oldState?.visibilityState ? changedDisplay : unchangedDisplay,
 
-            region: newState?.region,
+            region: newState?.region ?? null,
             regionChanged: newState?.region !== oldState?.region ? changedDisplay : unchangedDisplay,
 
             primaryMessageChanged: primaryMessageChanged(),
 
-            allowedUsers: newState?.allowedUserIds,
+            allowedUsers: newState?.allowedUserIds ?? [],
             allowedUsersChanged:
                 JSON.stringify( newState?.allowedUserIds ) !== JSON.stringify( oldState?.allowedUserIds )
                     ? changedDisplay
                     : unchangedDisplay,
 
-            blockedUsers: newState?.blockedUserIds,
+            blockedUsers: newState?.blockedUserIds ?? [],
             blockedUsersChanged:
                 JSON.stringify( newState?.blockedUserIds ) !== JSON.stringify( oldState?.blockedUserIds )
                     ? changedDisplay
                     : unchangedDisplay,
 
             rateLimited: args.rateLimitRetryAfter ? rateLimitedDisplay : rateLimitedNone,
-
-            resetEmoji: DynamicChannelResetChannelButton.getEmoji()
         };
     } )
+    .setDefaultVars( () => ( {
+        name: "My Channel",
+        nameChanged: "(__unchanged__)",
+        userLimit: "Unlimited",
+        userLimitChanged: "(__unchanged__)",
+        state: "🌐 **Public**",
+        stateChanged: "(__unchanged__)",
+        visibilityState: "🐵 **Shown**",
+        visibilityStateChanged: "(__unchanged__)",
+        region: "Automatic",
+        regionChanged: "(__unchanged__)",
+        primaryMessageChanged: "(__unchanged__)",
+        allowedUsers: "None",
+        allowedUsersChanged: "(__unchanged__)",
+        blockedUsers: "None",
+        blockedUsersChanged: "(__unchanged__)",
+        rateLimited: "",
+        resetEmoji: DynamicChannelResetChannelButton.getEmoji()
+    } ) )
     .build();
 
 export { DynamicChannelResetChannelEmbed };

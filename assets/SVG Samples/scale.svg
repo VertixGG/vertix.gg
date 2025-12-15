@@ -3,10 +3,10 @@
   <defs>
     <linearGradient id="vertix" bx:pinned="true">
       <title>vertix</title>
-      <stop offset="0" style="stop-color: rgba(245, 229, 255, 0.98);"/>
-      <stop offset="0.295" style="stop-color: rgb(195, 136, 255);"/>
-      <stop offset="0.614" style="stop-color: rgb(157, 78, 221);"/>
-      <stop offset="1" style="stop-color: rgb(90, 45, 145);"/>
+      <stop offset="0" style="stop-color: rgba(79, 231, 255, 0.98);"/>
+      <stop offset="0.295" style="stop-color: rgb(41, 189, 251);"/>
+      <stop offset="0.614" style="stop-color: rgb(2, 143, 247);"/>
+      <stop offset="1" style="stop-color: rgb(33, 76, 158);"/>
     </linearGradient>
     <linearGradient id="vertix-1" gradientUnits="userSpaceOnUse" x1="66.57" y1="21.261" x2="66.57" y2="147.361" xlink:href="#vertix"/>
     <linearGradient id="vertix-2" gradientUnits="userSpaceOnUse" x1="28.416" y1="1.231" x2="28.416" y2="64.332" gradientTransform="matrix(1.0139, -0.138605, 0.126667, 0.931883, -7.304065, 5.374034)" xlink:href="#vertix"/>

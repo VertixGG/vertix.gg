@@ -4,6 +4,7 @@ import { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 const DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VARS = new UIEmbedVars(
     "separator",
@@ -18,9 +19,9 @@ const DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VARS = new UIEmbedVars(
 );
 const DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VAR_MAP = DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VARS.get();
 
-const DynamicChannelPermissionsGrantedEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VARS>(
+const DynamicChannelPermissionsGrantedEmbed = new EmbedBuilder<UIArgs, Record<string, JsonValue>>(
     "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbed",
-    DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VAR_MAP
+    DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VARS as unknown as Record<string, JsonValue>
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( 0x4b6f91 )
@@ -54,21 +55,24 @@ const DynamicChannelPermissionsGrantedEmbed = new EmbedBuilder<UIArgs, typeof DY
         }
     } ) )
     .setLogic( ( args: UIArgs ) => {
-        const allowedUsers = Array.isArray( args.allowedUsers ) ? args.allowedUsers.map( ( user ) => user.id ) : undefined;
-        const blockedUsers = Array.isArray( args.blockedUsers ) ? args.blockedUsers.map( ( user ) => user.id ) : undefined;
+        const allowedUsers = Array.isArray( args.allowedUsers ) ? args.allowedUsers.map( ( user ) => user.id ) : [];
+        const blockedUsers = Array.isArray( args.blockedUsers ) ? args.blockedUsers.map( ( user ) => user.id ) : [];
 
         return {
             allowedUsers,
             blockedUsers,
-            allowedUsersDisplay: allowedUsers?.length
+            allowedUsersDisplay: allowedUsers.length
                 ? DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VAR_MAP.allowedUsers
                 : DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VAR_MAP.allowedUsersDefault,
-            blockedUsersDisplay: blockedUsers?.length
+            blockedUsersDisplay: blockedUsers.length
                 ? DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VAR_MAP.blockedUsers
                 : DYNAMIC_CHANNEL_PERMISSIONS_GRANTED_VAR_MAP.blockedUsersDefault,
             userGrantedDisplayName: args.userGrantedDisplayName ?? "Unknown"
         };
     } )
+    .setDefaultVars( () => ( {
+        userGrantedDisplayName: "Example User"
+    } ) )
     .build();
 
 export { DynamicChannelPermissionsGrantedEmbed };

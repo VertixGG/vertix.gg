@@ -3,6 +3,7 @@ import { PermissionsBitField } from "discord.js";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
+import { UIArgsProviderRegistry } from "@vertix.gg/gui/src/runtime/ui-args-provider-registry";
 
 import type { ChannelType } from "discord.js";
 
@@ -13,7 +14,7 @@ import type {
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIArgs, UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { RegisterableClass } from "@vertix.gg/gui/src/runtime/ui-class-registry";
-import type { BindingFlowTriggerDefinition } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { BindingFlowTriggerDefinition, ExecutionStepDefinition } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 type BindingInvoker = ( context: Record<string, unknown>, interaction: unknown ) => Promise<void>;
 type FlowComponentResolver = ( flowName: string, state: string ) => Promise<string | undefined>;
@@ -32,12 +33,65 @@ const HANDLER_KIND_TO_METHOD: Record<string, string> = {
     "user-select": "bindUserSelectMenu"
 };
 
+function ensureExecutionSteps( hydrated: HydratedAdapter, getComponentClass: () => UIComponentTypeConstructor ): ExecutionStepDefinition[] {
+    const existing = hydrated.definition.executionSteps ?? [];
+
+    if ( existing.length ) {
+        return existing;
+    }
+
+    const componentClass = getComponentClass();
+
+    const elementsGroups = componentClass.getElementsGroups?.() ?? [];
+    const embedsGroups = componentClass.getEmbedsGroups?.() ?? [];
+    const markdownGroups = componentClass.getMarkdownsGroups?.() ?? [];
+
+    if ( !elementsGroups.length && !embedsGroups.length && !markdownGroups.length ) {
+        return existing;
+    }
+
+    const defaultStep: ExecutionStepDefinition = {
+        key: "default",
+        elementsGroup: elementsGroups[ 0 ]?.getName?.() ?? null,
+        embedsGroup: embedsGroups[ 0 ]?.getName?.() ?? null,
+        markdownGroup: markdownGroups[ 0 ]?.getName?.() ?? null,
+        hooks: []
+    };
+
+    const steps: ExecutionStepDefinition[] = [ defaultStep ];
+    const covered = new Set( [ defaultStep.elementsGroup, defaultStep.embedsGroup, defaultStep.markdownGroup ].filter( Boolean ) as string[] );
+
+    const addMissingStep = ( groupName: string | null | undefined, keyPrefix: string ) => {
+        if ( groupName && !covered.has( groupName ) ) {
+            steps.push( {
+                key: `${ keyPrefix }:${ groupName }`,
+                [ `${ keyPrefix }Group` as const ]: groupName,
+                hooks: []
+            } as ExecutionStepDefinition );
+            covered.add( groupName );
+        }
+    };
+
+    elementsGroups.forEach( ( group ) => addMissingStep( group.getName?.(), "elements" ) );
+    embedsGroups.forEach( ( group ) => addMissingStep( group.getName?.(), "embeds" ) );
+    markdownGroups.forEach( ( group ) => addMissingStep( group.getName?.(), "markdown" ) );
+
+    hydrated.definition.executionSteps = steps;
+    hydrated.executionSteps = steps.map( ( step ) => ( { definition: step, hooks: [] } ) );
+
+    return hydrated.definition.executionSteps;
+}
+
 export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
     const { hydrated, componentClass, resolveFlowComponent } = config;
     const logger = new Logger( hydrated.definition.name );
-    const adapterExecutionStepKeys = new Set(
-        ( hydrated.definition.executionSteps ?? [] ).map( ( step ) => step.key )
+    const componentCtor = componentClass();
+    const componentEntityNames = new Set(
+        ( componentCtor.getEntities?.() ?? [] ).map( ( entity: { getName?: () => string } ) => entity?.getName?.() ).filter( Boolean ) as string[]
     );
+
+    const executionSteps = ensureExecutionSteps( hydrated, () => componentCtor );
+    const adapterExecutionStepKeys = new Set( executionSteps.map( ( step ) => step.key ) );
 
     class DataDrivenExecutionAdapter extends UIAdapterExecutionStepsBase<UIAdapterStartContext, UIAdapterReplyContext> {
         public static override getName() {
@@ -45,11 +99,11 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
         }
 
         public static override getComponent() {
-            return componentClass();
+            return componentCtor;
         }
 
         public static override getExecutionSteps() {
-            return hydrated.definition.executionSteps.reduce<Record<string, {
+            return executionSteps.reduce<Record<string, {
                 elementsGroup?: string | null;
                 embedsGroup?: string | null;
                 markdownGroup?: string | null;
@@ -87,7 +141,9 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
 
         public constructor( options: ConstructorParameters<typeof UIAdapterExecutionStepsBase>[ 0 ] ) {
             super( options );
+        }
 
+        protected override onEntityMap() {
             this.bindRuntimeInteractions();
         }
 
@@ -95,22 +151,59 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
             channel: UIAdapterStartContext,
             argsFromManager?: UIArgs
         ): Promise<UIArgs> {
-            return this.invokeHook<UIArgs>(
+            const fallback = async() => argsFromManager ?? {};
+
+            const args = await this.invokeHook<UIArgs>(
                 "getStartArgs",
                 [ this.createContext(), channel, argsFromManager ],
-                async() => super.getStartArgs( channel, argsFromManager )
+                fallback
             );
+
+            return this.applyArgsProvider( args, channel, argsFromManager );
         }
 
         protected override async getReplyArgs(
             interaction: UIAdapterReplyContext,
             argsFromManager?: UIArgs
         ): Promise<UIArgs> {
-            return this.invokeHook<UIArgs>(
+            const fallback = async() => argsFromManager ?? {};
+
+            const args = await this.invokeHook<UIArgs>(
                 "getReplyArgs",
                 [ this.createContext(), interaction, argsFromManager ],
-                async() => super.getReplyArgs( interaction, argsFromManager )
+                fallback
             );
+
+            return this.applyArgsProvider( args, interaction, argsFromManager );
+        }
+
+        /**
+         * Allow external providers (registered elsewhere) to enrich args per adapter.
+         * Keeps this factory adapter-agnostic.
+         */
+        private async applyArgsProvider(
+            args: UIArgs,
+            context: UIAdapterStartContext | UIAdapterReplyContext,
+            argsFromManager?: UIArgs
+        ): Promise<UIArgs> {
+            const provider = UIArgsProviderRegistry.$.get( hydrated.definition.name );
+
+            if ( !provider ) {
+                return args;
+            }
+
+            try {
+                const provided = await provider.getArgs( context, argsFromManager ?? {} );
+
+                return { ...provided, ...args };
+            } catch( error ) {
+                logger.warn(
+                    "DataDrivenExecutionAdapter:applyArgsProvider",
+                    `Args provider for '${ hydrated.definition.name }' failed; continuing with existing args.`,
+                    error
+                );
+                return args;
+            }
         }
 
         protected override async onBeforeBuild(
@@ -198,10 +291,7 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
                     continue;
                 }
 
-                const binder = Reflect.get(
-                    this,
-                    methodName
-                ) as ( name: string, handler: ( interaction: unknown ) => Promise<void> ) => void;
+                const binder = Reflect.get( this, methodName ) as ( ...args: unknown[] ) => void;
 
                 if ( "function" !== typeof binder ) {
                     throw new Error( `DataDrivenExecutionAdapter: binder method '${ methodName }' not found` );
@@ -210,19 +300,54 @@ export function createExecutionAdapter( config: DataDrivenAdapterConfig ) {
                 const invoker = createBindingInvoker( binding.callable );
                 const flowTriggers = binding.definition.flowTriggers ?? [];
 
-                const binderFn = binder as ( name: string, handler: ( interaction: unknown ) => Promise<void> ) => void;
+                const handler = async( interaction: unknown ) => {
+                    const context = this.createContext();
 
-                binderFn.call(
-                    this,
-                    binding.definition.entity,
-                    async( interaction: unknown ) => {
-                        const context = this.createContext();
+                    await invoker( context, interaction );
 
-                        await invoker( context, interaction );
+                    await this.applyFlowTriggers( context, interaction, flowTriggers );
+                };
 
-                        await this.applyFlowTriggers( context, interaction, flowTriggers );
+                const { kind = "button", entity, options } = binding.definition;
+
+                const ensureEntityExists = ( name: string | undefined, description: string ) => {
+                    if ( !name ) {
+                        logger.warn(
+                            "DataDrivenExecutionAdapter:bindRuntimeInteractions",
+                            `${ description } is missing; skipping binding '${ entity }'.`
+                        );
+                        return false;
                     }
-                );
+
+                    if ( !componentEntityNames.has( name ) ) {
+                        logger.warn(
+                            "DataDrivenExecutionAdapter:bindRuntimeInteractions",
+                            `${ description } '${ name }' not found in component '${ componentCtor.getName() }'; skipping binding '${ entity }'.`
+                        );
+                        return false;
+                    }
+
+                    return true;
+                };
+
+                if ( kind === "modal-button" ) {
+                    const [ entityButton, entityModal ] = entity.split( "::" );
+                    const buttonName = ( options as Record<string, string> | undefined )?.button || entityButton;
+                    const modalName = ( options as Record<string, string> | undefined )?.modal || entityModal;
+
+                    if ( !ensureEntityExists( buttonName, "Button" ) || !ensureEntityExists( modalName, "Modal" ) ) {
+                        continue;
+                    }
+
+                    binder.call( this, buttonName, modalName, handler );
+                    continue;
+                }
+
+                if ( !ensureEntityExists( entity, "Entity" ) ) {
+                    continue;
+                }
+
+                binder.call( this, entity, handler );
             }
         }
 
@@ -368,4 +493,3 @@ async function callHandler<T>( handler: RuntimeHandler, args: unknown[], fallbac
 
     return ( undefined === result ? fallback : result ) as T;
 }
-

@@ -7,11 +7,11 @@ import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.j
 import { LanguageComponent } from "@vertix.gg/bot/src/ui/general/language/language-component";
 
 import type {
-    UIFlowData,
-    FlowIntegrationPointBase
+    UIFlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-export interface LanguageFlowData extends UIFlowData {
+export interface LanguageFlowData extends UIFlowDataBase {
     selectedLanguage?: string;
 }
 
@@ -24,7 +24,7 @@ export class LanguageFlow extends UIFlowBase<string, string, LanguageFlowData> {
         return [ LanguageComponent ];
     }
 
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/SetupFlow",

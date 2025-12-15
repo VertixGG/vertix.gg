@@ -5,11 +5,11 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ClaimResultComponent } from "@vertix.gg/bot/src/ui/v3/claim/result/claim-result-component";
 import { ClaimVoteComponent } from "@vertix.gg/bot/src/ui/v3/claim/vote/claim-vote-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface ClaimVoteFlowData extends UIFlowData {
+interface ClaimVoteFlowData extends UIFlowDataBase {
     targetId?: string;
     prevUserId?: string;
     currentUserId?: string;

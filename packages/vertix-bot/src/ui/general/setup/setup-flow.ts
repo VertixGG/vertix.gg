@@ -10,12 +10,11 @@ import { LanguageFlow } from "@vertix.gg/bot/src/ui/general/language/language-fl
 import { SetupComponent } from "@vertix.gg/bot/src/ui/general/setup/setup-adapter";
 
 import type {
-    UIFlowData,
-    FlowIntegrationPointBase
+    UIFlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { UIFlowVisualConnection, UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-export interface SetupFlowData extends UIFlowData {}
+export interface SetupFlowData extends UIFlowDataBase {}
 
 export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
     public static override getName(): string {
@@ -26,7 +25,7 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
         return [ SetupComponent ];
     }
 
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
@@ -37,13 +36,14 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
         ];
     }
 
-    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
+    public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
                 flowName: SetupNewWizardFlow.getName(),
                 description: "Handoff to V3 Setup Wizard when Create V3 button is clicked",
                 sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
                 transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
+                targetState: "VertixGUI/UIWizardFlowBase/States/Initial",
                 requiredData: []
             } ),
             new FlowIntegrationPointGeneric( {
@@ -52,11 +52,19 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
                 sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
                 transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 requiredData: []
+            } ),
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-V3/SetupEditFlow",
+                description: "Handoff to Setup Edit flow when editing an existing master channel",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                targetState: "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                requiredData: []
             } )
         ];
     }
 
-    public static override getEdgeSourceMappings(): VisualConnection[] {
+    public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
         return [
             {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterCreateButton",

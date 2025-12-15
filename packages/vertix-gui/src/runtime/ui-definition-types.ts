@@ -1,3 +1,5 @@
+import type { UIFlowInputRequirement } from "@vertix.gg/definitions/src/ui-flow-definitions";
+
 export type JsonPrimitive = string | number | boolean | null;
 
 export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
@@ -14,8 +16,23 @@ export interface HookReference {
     options?: JsonObject;
 }
 
+export interface ElementDefinition {
+    name: string;
+    elementType: "button" | "button-url" | "select-menu" | "user-select" | "role-select" | "channel-select" | "mentionable-select" | "text-input" | "unknown";
+    instanceType?: string;
+    label?: string;
+    labelOmitted?: boolean;
+    style?: "primary" | "secondary" | "success" | "danger" | "link";
+    emoji?: string;
+    url?: string;
+    placeholder?: string;
+    disabled?: boolean;
+    options?: JsonObject;
+}
+
 export interface ElementReference {
     element: string;
+    definition?: ElementDefinition;
     options?: JsonObject;
 }
 
@@ -38,11 +55,13 @@ export interface EmbedContentDefinition {
     description?: string;
     color?: JsonValue;
     image?: string;
+    thumbnail?: string;
     footer?: string;
     options?: JsonObject;
     arrayOptions?: JsonObject;
     logic?: JsonObject;
     vars?: JsonValue;
+    defaultVars?: JsonObject;
 }
 
 export type FlowTriggerHandlerKind =
@@ -84,6 +103,22 @@ export interface EmbedsGroupDefinition {
     options?: JsonObject;
 }
 
+export interface ModalInputDefinition {
+    name: string;
+    label?: string;
+    placeholder?: string;
+    style?: "short" | "paragraph";
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+}
+
+export interface ModalDefinition {
+    name: string;
+    title?: string;
+    inputs: ModalInputDefinition[];
+}
+
 export interface ComponentDefinition {
     name: string;
     type: string;
@@ -92,6 +127,7 @@ export interface ComponentDefinition {
     elementsGroups: ElementsGroupDefinition[];
     embedsGroups: EmbedsGroupDefinition[];
     modals: string[];
+    modalDefinitions?: ModalDefinition[];
     defaultElementsGroup?: string | null;
     defaultEmbedsGroup?: string | null;
     defaultMarkdownsGroup?: string | null;
@@ -191,6 +227,7 @@ export interface FlowDefinition {
     stepStates?: string[];
     stepComponents?: string[];
     flowType?: string;
+    inputRequirements?: UIFlowInputRequirement[];
     hooks: HookReference[];
     options?: JsonObject;
 }

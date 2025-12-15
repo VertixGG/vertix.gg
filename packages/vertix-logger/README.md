@@ -22,6 +22,36 @@ bun run vertix:logger:start
 bun run vertix:logger:dev
 ```
 
+### Install as a systemd service
+
+From the repo root:
+
+```bash
+bash packages/vertix-logger/install-systemd-service.bash
+```
+
+This installs a user-scoped unit to `~/.config/systemd/user/vertix-logger.service` and enables it.
+
+Optional flags:
+
+```bash
+bash packages/vertix-logger/install-systemd-service.bash --name vertix-logger --scope user --linger
+bash packages/vertix-logger/install-systemd-service.bash --repo-root /opt/vertix.gg
+bash packages/vertix-logger/install-systemd-service.bash --scope system --unit-dir /etc/systemd/system
+```
+
+Uninstall:
+
+```bash
+bash packages/vertix-logger/uninstall-systemd-service.bash
+```
+
+Logs:
+
+```bash
+journalctl --user -u vertix-logger.service -f
+```
+
 ### Environment Variables
 
 - `LOGGER_SERVER_HTTP_PORT` - HTTP server port (default: 3090)

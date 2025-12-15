@@ -1,9 +1,7 @@
 import { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
 
-import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
+import { PrismaBotClient , PrismaBot } from "@vertix.gg/prisma/bot-client";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
-
-import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 const client = PrismaBotClient.$.getClient();
 
@@ -25,7 +23,7 @@ export interface SetupWizardPersistencePayload {
     channelId: string;
     createdAtDiscord: number;
     version: string;
-    internalType?: PrismaBot.Prisma.E_INTERNAL_CHANNEL_TYPES;
+    internalType?: PrismaBot.E_INTERNAL_CHANNEL_TYPES;
     dataItems: SetupWizardChannelDataItem[];
 }
 
@@ -41,13 +39,39 @@ export class SetupWizardMasterChannelsData extends UIDataBase<Channel> {
         this.logger = new Logger( this );
     }
 
+    public async create( identifier: { guildId: string }, data: SetupWizardPersistencePayload ): Promise<Channel> {
+        return this.createMasterChannel( data );
+    }
+
+    public async read( identifier: { guildId: string; channelId?: string } ): Promise<Channel | null> {
+        if ( identifier.channelId ) {
+            return await client.channel.findUnique( {
+                where: { channelId: identifier.channelId }
+            } );
+        }
+        return null;
+    }
+
+    public async update( identifier: { guildId: string; channelId: string }, data: Partial<Channel> ): Promise<Channel> {
+        return await client.channel.update( {
+            where: { channelId: identifier.channelId },
+            data
+        } );
+    }
+
+    public async delete( identifier: { guildId: string; channelId: string } ): Promise<Channel | boolean | void> {
+        return await client.channel.delete( {
+            where: { channelId: identifier.channelId }
+        } );
+    }
+
     public async createMasterChannel( payload: SetupWizardPersistencePayload ): Promise<Channel> {
         const createInput: ChannelCreateInput = {
             guildId: payload.guildId,
             userOwnerId: payload.userOwnerId,
             channelId: payload.channelId,
             version: payload.version,
-            internalType: payload.internalType ?? PrismaBot.Prisma.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+            internalType: payload.internalType ?? PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             createdAtDiscord: payload.createdAtDiscord,
             data: {
                 create: this.buildChannelDataItems( payload.dataItems )
@@ -82,11 +106,11 @@ export class SetupWizardMasterChannelsData extends UIDataBase<Channel> {
                     record.values = item.values.map( ( value ) => String( value ) );
                 }
 
-                if ( record.type !== PrismaBot.Prisma.E_DATA_TYPES.array ) {
+                if ( record.type !== PrismaBot.E_DATA_TYPES.array ) {
                     delete record.values;
                 }
 
-                if ( record.type === PrismaBot.Prisma.E_DATA_TYPES.array ) {
+                if ( record.type === PrismaBot.E_DATA_TYPES.array ) {
                     delete record.value;
                 }
 
@@ -94,15 +118,15 @@ export class SetupWizardMasterChannelsData extends UIDataBase<Channel> {
             } );
     }
 
-    private mapType( type: SetupWizardChannelDataItem[ "type" ] ): PrismaBot.Prisma.E_DATA_TYPES {
+    private mapType( type: SetupWizardChannelDataItem[ "type" ] ): PrismaBot.E_DATA_TYPES {
         switch ( type ) {
             case "boolean":
-                return PrismaBot.Prisma.E_DATA_TYPES.boolean;
+                return PrismaBot.E_DATA_TYPES.boolean;
             case "array":
-                return PrismaBot.Prisma.E_DATA_TYPES.array;
+                return PrismaBot.E_DATA_TYPES.array;
             case "string":
             default:
-                return PrismaBot.Prisma.E_DATA_TYPES.string;
+                return PrismaBot.E_DATA_TYPES.string;
         }
     }
 }

@@ -127,7 +127,7 @@ export class LoggerServer extends ObjectBase {
                     body += chunk.toString();
                 } );
 
-                    req.on( "end", () => {
+                req.on( "end", () => {
                     try {
                         const logEntry = JSON.parse( body );
 

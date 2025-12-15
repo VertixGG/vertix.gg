@@ -1,0 +1,25 @@
+{
+    "name": "@vertix.gg/api",
+    "version": "0.0.0",
+    "license": "MIT",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "main": "index.ts",
+    "type": "module",
+    "scripts": {
+        "vertix-api:typecheck": "bunx --bun tsc --noEmit",
+        "vertix-api:bun:start:dev": "bunx dotenv-cli -e ../../.env -- bun run --bun --hot src/index-bun.ts",
+        "vertix-api:ts-node:start:dev": "tsx --tsconfig tsconfig.json --trace-exit --trace-uncaught --enable-source-maps src/index.ts"
+    },
+    "dependencies": {
+        "@fastify/cors": "^11.0.0",
+        "@fastify/type-provider-typebox": "^5.1.0",
+        "@sinclair/typebox": "^0.34.30",
+        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/bot": "workspace:*",
+        "@vertix.gg/gui": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
+        "dotenv": "^16.0.3",
+        "fastify": "^5.2.1",
+        "picocolors": "^1.0.1"
+    }
+}

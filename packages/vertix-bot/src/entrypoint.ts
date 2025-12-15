@@ -25,13 +25,26 @@ import { config } from "dotenv";
 
 import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import { exportUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
+import { collectUIDefinitions, exportUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
+import { UIArgsProviderRegistry } from "@vertix.gg/gui/src/runtime/ui-args-provider-registry";
+import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
+import { interactionHandlerRegistry  } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
+
+import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
+import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
+import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
+
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
+import type { InteractionHandler } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
 
 import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 
@@ -40,8 +53,291 @@ import type { Client } from "discord.js";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
-
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
+import type { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
+import type { RegisterableClass } from "@vertix.gg/gui/src/runtime/ui-class-registry";
+
+type AdapterWithComponent = {
+    getComponent?: () => {
+        getEntities?: () => unknown[];
+    };
+};
+
+type EntityConstructor = {
+    getName?: () => string;
+    prototype?: unknown;
+};
+
+type AdapterCtor = {
+    getName?: () => string;
+};
+
+type BindingRegistrationOptions = {
+    flowTriggers?: readonly {
+        transition?: string;
+    }[];
+};
+
+type ExportBinder = {
+    bindButton: (
+        name: string,
+        callback: ( context: object, interaction: object ) => Promise<void>,
+        options?: BindingRegistrationOptions
+    ) => void;
+    bindModal: (
+        name: string,
+        callback: ( context: object, interaction: object ) => Promise<void>,
+        options?: BindingRegistrationOptions
+    ) => void;
+    bindModalWithButton: (
+        button: string,
+        modal: string,
+        callback: ( context: object, interaction: object ) => Promise<void>,
+        options?: BindingRegistrationOptions
+    ) => void;
+    bindSelectMenu: (
+        name: string,
+        callback: ( context: object, interaction: object ) => Promise<void>,
+        options?: BindingRegistrationOptions
+    ) => void;
+    bindUserSelectMenu: (
+        name: string,
+        callback: ( context: object, interaction: object ) => Promise<void>,
+        options?: BindingRegistrationOptions
+    ) => void;
+};
+
+function registerHandlerIfMissing(
+    id: string,
+    handler: InteractionHandler
+): void {
+    if ( interactionHandlerRegistry.has( id ) ) {
+        return;
+    }
+
+    interactionHandlerRegistry.register( id, handler );
+}
+
+function registerExportHandlersFromModules( modules: Array<{ default?: object }> ): void {
+    modules.forEach( ( moduleEntry ) => {
+        const ModuleCtor = ( moduleEntry as { default?: object } ).default ?? moduleEntry;
+
+        if ( !ModuleCtor || "function" !== typeof ( ModuleCtor as { getAdapters?: () => object[] } ).getAdapters ) {
+            return;
+        }
+
+        const adapters = ( ModuleCtor as { getAdapters: () => object[] } ).getAdapters() ?? [];
+
+        adapters.forEach( ( adapter ) => {
+            if ( !adapter || "function" !== typeof adapter ) {
+                return;
+            }
+
+            const adapterCtor = adapter as AdapterCtor;
+            const adapterName = adapterCtor.getName?.();
+
+            if ( !adapterName ) {
+                return;
+            }
+
+            const metadata = Reflect.get( adapterCtor, BUILDER_METADATA_SYMBOL ) as object | undefined;
+
+            if ( !metadata ) {
+                return;
+            }
+
+            const entityMapHandler = Reflect.get( metadata, "entityMapHandler" ) as ( ( binder: ExportBinder ) => Promise<void> | void ) | undefined;
+
+            const registerBinding = (
+                id: string,
+                callback: ( context: object, interaction: object ) => Promise<void>,
+                options?: BindingRegistrationOptions
+            ) => {
+                registerHandlerIfMissing( id, async( ...args ) => {
+                    const [ context, interaction ] = args;
+                    if ( typeof context === "object" && context !== null && typeof interaction === "object" && interaction !== null ) {
+                        await callback( context, interaction );
+                    }
+                } );
+
+                const transitions = options?.flowTriggers?.map( ( trigger ) => trigger.transition ).filter( ( entry ): entry is string => typeof entry === "string" && entry.length > 0 ) ?? [];
+
+                transitions.forEach( ( transition ) => {
+                    const flowHandlerId = `${ id }/${ transition }`;
+                    registerHandlerIfMissing( flowHandlerId, async( ...args ) => {
+                        const [ context, interaction ] = args;
+                        if ( typeof context === "object" && context !== null && typeof interaction === "object" && interaction !== null ) {
+                            await callback( context, interaction );
+                        }
+                    } );
+                } );
+            };
+
+            if ( entityMapHandler ) {
+                const binder: ExportBinder = {
+                    bindButton: ( name, callback, options ) => {
+                        registerBinding( `${ adapterName }/Bindings/Button/${ name }`, callback, options );
+                    },
+                    bindModal: ( name, callback, options ) => {
+                        registerBinding( `${ adapterName }/Bindings/Modal/${ name }`, callback, options );
+                    },
+                    bindModalWithButton: ( button, _modal, callback, options ) => {
+                        registerBinding( `${ adapterName }/Bindings/ModalWithButton/${ button }`, callback, options );
+                    },
+                    bindSelectMenu: ( name, callback, options ) => {
+                        registerBinding( `${ adapterName }/Bindings/StringSelect/${ name }`, callback, options );
+                    },
+                    bindUserSelectMenu: ( name, callback, options ) => {
+                        registerBinding( `${ adapterName }/Bindings/UserSelect/${ name }`, callback, options );
+                    }
+                };
+
+                void entityMapHandler( binder );
+            }
+
+            const hookHandler = ( suffix: string, key: string ) => {
+                const handler = Reflect.get( metadata, key ) as InteractionHandler | undefined;
+
+                if ( "function" !== typeof handler ) {
+                    return;
+                }
+
+                const id = `${ adapterName }/Hooks/${ suffix }`;
+
+                registerHandlerIfMissing( id, handler );
+            };
+
+            hookHandler( "GetStartArgs", "startArgsHandler" );
+            hookHandler( "GetReplyArgs", "replyArgsHandler" );
+            hookHandler( "OnBeforeBuild", "beforeBuildHandler" );
+            hookHandler( "OnBeforeFinish", "beforeFinishHandler" );
+            hookHandler( "OnStep", "onStepHandler" );
+        } );
+    } );
+}
+
+function preloadUiRegistryFromModules( modules: Array<{ default?: unknown }> ) {
+    const toRegister = new Set<unknown>();
+
+    modules.forEach( ( moduleEntry ) => {
+        const ModuleCtor = ( moduleEntry as { default?: unknown } ).default ?? moduleEntry;
+
+        if ( !ModuleCtor || "function" !== typeof ( ModuleCtor as { getAdapters?: () => unknown[] } ).getAdapters ) {
+            return;
+        }
+
+        const adapters = ( ModuleCtor as { getAdapters: () => unknown[] } ).getAdapters() ?? [];
+
+        adapters.forEach( ( adapter: unknown ) => {
+            const adapterWithComponent = adapter as AdapterWithComponent;
+            const component = adapterWithComponent?.getComponent?.();
+
+            if ( component?.getEntities ) {
+                const entities = component.getEntities();
+
+                entities.forEach( ( entity: unknown ) => {
+                    toRegister.add( entity );
+                } );
+            }
+        } );
+    } );
+
+    toRegister.forEach( ( classCtor: unknown ) => {
+        const ClassCtor = classCtor as EntityConstructor;
+        const name = ClassCtor?.getName?.();
+
+        if ( !name || uiClassRegistry.has( name ) ) {
+            return;
+        }
+
+        if (
+            ClassCtor.prototype instanceof UIElementBase ||
+            ClassCtor.prototype instanceof UIEmbedBase ||
+            ClassCtor.prototype instanceof UIModalBase ||
+            ClassCtor.prototype instanceof UIMarkdownBase
+        ) {
+            const name = ClassCtor.getName?.();
+            if ( name ) {
+                uiClassRegistry.register( ClassCtor as RegisterableClass<object> );
+            }
+        }
+    } );
+}
+
+function registerFlowDataProvidersFromModules(
+    modules: Array<{ getFlows?: () => unknown[]; getSystemFlows?: () => unknown[] }>
+) {
+    const flows = modules.flatMap( ( mod ) => [
+        ...( mod.getFlows?.() ?? [] ),
+        ...( mod.getSystemFlows?.() ?? [] )
+    ] );
+
+    flows.forEach( ( flow ) => {
+        if ( !flow || typeof flow !== "function" ) {
+            return;
+        }
+
+        const providers = ( ( flow as { getArgsDataProviders?: () => Array<[ string, string ]> } ).getArgsDataProviders?.() ?? [] );
+        providers.forEach( ( [ adapterName, dataComponentName ]: [ string, string ] ) => {
+            if ( !UIArgsProviderRegistry.$.has( adapterName ) ) {
+                UIArgsProviderRegistry.$.registerDataProvider( adapterName, dataComponentName );
+            }
+        } );
+    } );
+}
+
+async function _registerDynamicChannelClaimManagerFromExports(
+    uiService: UIService,
+    loaderService: { getLoader: () => unknown }
+) {
+    const { DynamicChannelPrimaryMessageElementsGroup } = await import(
+        "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group"
+    );
+    const { DynamicChannelElementsGroup } = await import(
+        "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group"
+    );
+
+    const claimButtonV3 = DynamicChannelPrimaryMessageElementsGroup.getByName?.(
+        "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
+    );
+
+    const claimButtonV2 = DynamicChannelElementsGroup.getByName?.(
+        "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton"
+    );
+
+    const v3ButtonId = String( claimButtonV3?.getId?.() ?? "claim-button-v3" );
+    const v2ButtonId = String( claimButtonV2?.getId?.() ?? "claim-button-v2" );
+
+    // V3
+    try {
+        DynamicChannelClaimManager.register( "VertixBot/UI-V3/DynamicChannelClaimManager", {
+            adapters: {
+                claimStartAdapter: () => uiService.get( "VertixBot/UI-V3/ClaimStartAdapter" )!,
+                claimVoteAdapter: () => uiService.get<"execution">( "VertixBot/UI-V3/ClaimVoteAdapter" )!,
+                claimResultAdapter: () => uiService.get<"execution">( "VertixBot/UI-V3/ClaimResultAdapter" )!
+            },
+            dynamicChannelClaimButtonId: v3ButtonId,
+            definitionLoader: loaderService.getLoader() as never
+        } );
+    } catch {
+        // Instance already exists, ignore
+    }
+
+    // V2
+    try {
+        DynamicChannelClaimManager.register( "VertixBot/UI-V2/DynamicChannelClaimManager", {
+            adapters: {
+                claimStartAdapter: () => uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )!,
+                claimVoteAdapter: () => uiService.get<"execution">( "VertixBot/UI-V2/ClaimVoteAdapter" )!,
+                claimResultAdapter: () => uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )!
+            },
+            dynamicChannelClaimButtonId: v2ButtonId,
+            definitionLoader: loaderService.getLoader() as never
+        } );
+    } catch {
+        // Instance already exists, ignore
+    }
+}
 
 async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
@@ -119,16 +415,21 @@ async function registerUIAdapters() {
     ] );
 
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+    const registerCodeModules = () => {
+        uiModules.forEach( ( module ) => {
+            GlobalLogger.$.debug( registerUIAdapters, `Registering UI module: '${ module.default.getName() }'` );
+
+            uiService.registerModule( module.default );
+
+            GlobalLogger.$.debug( registerUIAdapters, `UI module registered: '${ module.default.getName() }'` );
+        } );
+    };
 
     await registerSystemUI();
-
-    uiModules.forEach( ( module ) => {
-        GlobalLogger.$.debug( registerUIAdapters, `Registering UI module: '${ module.default.getName() }'` );
-
-        uiService.registerModule( module.default );
-
-        GlobalLogger.$.debug( registerUIAdapters, `UI module registered: '${ module.default.getName() }'` );
-    } );
+    registerExportHandlersFromModules( uiModules );
+    preloadUiRegistryFromModules( uiModules );
+    registerCodeModules();
+    registerFlowDataProvidersFromModules( uiModules.map( ( m ) => m.default ) );
 }
 
 async function registerUILanguageManager( options: {
@@ -211,15 +512,24 @@ async function createCleanupWorker() {
     }
 }
 
+async function registerLoggerServerService() {
+    GlobalLogger.$.info( registerLoggerServerService, "Logger Server is now a standalone process. Services will connect as clients." );
+}
+
 async function registerMCPService() {
-    GlobalLogger.$.info( registerMCPService, "Registering MCP service ..." );
+    GlobalLogger.$.info( registerMCPService, "Registering MCP service (Logger Client) ..." );
+
+    const LOGGER_SERVER_HTTP_PORT = process.env.LOGGER_SERVER_HTTP_PORT ? parseInt( process.env.LOGGER_SERVER_HTTP_PORT, 10 ) : 3090;
+    const LOGGER_SERVER_HOST = process.env.LOGGER_SERVER_HOST || "localhost";
+    const loggerServerUrl = `http://${ LOGGER_SERVER_HOST }:${ LOGGER_SERVER_HTTP_PORT }`;
 
     const { MCPService } = await import( "@vertix.gg/base/src/modules/mcp-server/mcp-service" );
 
-    ServiceLocator.$.register( MCPService );
+    ServiceLocator.$.register( MCPService, { loggerServerUrl } );
 
-    GlobalLogger.$.info( registerMCPService, "MCP service is registered" );
+    await ServiceLocator.$.waitFor( MCPService.getName() );
 
+    GlobalLogger.$.info( registerMCPService, "MCP service (Logger Client) is registered" );
 }
 
 /**
@@ -282,39 +592,53 @@ async function exportLanguages( languageCodes: string[] ) {
     return languages.size;
 }
 
+async function bootstrapUIRuntime(): Promise<UIService> {
+    const { default: botInitialize } = await import( "./vertix" );
+    const client = await botInitialize( { enableListeners: false } );
+    await registerUIServices( client );
+    await registerConfigs();
+    await registerServices();
+    await EmojiManager.$.promise();
+    await registerUIAdapters();
+    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUIVersionStrategies();
+    await registerDataServicesAndComponents();
+    return ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+}
+
 async function exportUIDefinitionsCommand( outputDirArg?: string ) {
     const outputDir = outputDirArg ?? path.join( "exports", "ui" );
     const resolvedOutputDir = path.isAbsolute( outputDir )
         ? outputDir
         : path.resolve( process.cwd(), "../../", outputDir );
-
-    const { default: botInitialize } = await import( "./vertix" );
-    const client = await botInitialize( { enableListeners: false } );
-
-    // Register required services
-    await registerUIServices( client );
-
-    await registerConfigs();
-    await registerServices();
-
-    await EmojiManager.$.promise();
-
-    await registerUIAdapters();
-    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
-    await registerUIVersionStrategies();
-
-    await registerDataServicesAndComponents();
-
-    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-
+    const uiService = await bootstrapUIRuntime();
     await exportUIDefinitions( uiService, {
         outputDir: resolvedOutputDir,
         includeAdapters: true,
         includeComponents: true,
         includeFlows: true
     } );
-
     return resolvedOutputDir;
+}
+
+async function testFlowCommand( flowNameArg?: string ) {
+    const targetFlow = flowNameArg && flowNameArg.length ? flowNameArg : "VertixBot/UI-V3/SetupEditFlow";
+    GlobalLogger.$.info( testFlowCommand, `Testing flow '${ targetFlow }'` );
+    const uiService = await bootstrapUIRuntime();
+    const collections = await collectUIDefinitions( uiService, {
+        outputDir: "",
+        includeAdapters: true,
+        includeComponents: true,
+        includeFlows: true
+    } );
+    const definition = collections.flows.find( ( flow ) => flow.name === targetFlow );
+    if ( !definition ) {
+        GlobalLogger.$.error( testFlowCommand, `Flow '${ targetFlow }' not found in collected definitions` );
+        return;
+    }
+    const requirements = definition.inputRequirements ?? [];
+    GlobalLogger.$.info( testFlowCommand, `Input requirements: ${ JSON.stringify( requirements, null, 2 ) }` );
+    GlobalLogger.$.info( testFlowCommand, `Components count: ${ definition.states?.length ?? 0 } states` );
 }
 
 // Function to register Data Service and Components
@@ -323,29 +647,41 @@ async function registerDataServicesAndComponents() {
 
     // Import the service and components
     const { UIDataService } = await import( "@vertix.gg/gui/src/ui-data-service" );
+    const { GuildUIData } = await import( "@vertix.gg/bot/src/data/guild/guild-ui-data" );
     const dataComponents = await Promise.all( [
         import( "@vertix.gg/bot/src/data/guild/master-channels-data" ),
         import( "@vertix.gg/bot/src/data/guild/badwords-data" ),
         import( "@vertix.gg/bot/src/data/guild/max-master-channels-data" ),
+        import( "@vertix.gg/bot/src/data/setup/setup-wizard-master-channels-data" ),
+        import( "@vertix.gg/bot/src/data/dynamic-channel/dynamic-channel-ui-data" ),
+        import( "@vertix.gg/bot/src/data/dynamic-channel/setup-edit-requirements-data" ),
     ] );
 
+    ServiceLocator.$.register( GuildUIData as unknown as new ( ...args: unknown[] ) => ServiceBase );
+    GlobalLogger.$.debug( registerDataServicesAndComponents, "Registered service: 'VertixBot/Data/Guild/GuildUIData'" );
+
     // Register the UIDataService itself
-    GlobalLogger.$.debug( registerDataServicesAndComponents, `Registering service: '${ UIDataService.getName() }'` );
+    GlobalLogger.$.debug( registerDataServicesAndComponents, "Registering service: 'VertixGUI/UIDataService'" );
     ServiceLocator.$.register<UIDataService>( UIDataService );
-    GlobalLogger.$.debug( registerDataServicesAndComponents, `Service registered: '${ UIDataService.getName() }'` );
+    GlobalLogger.$.debug( registerDataServicesAndComponents, "Service registered: 'VertixGUI/UIDataService'" );
 
     // Wait for UIDataService to be ready (if it has async initialization)
-    await ServiceLocator.$.waitFor( UIDataService.getName() );
+    await ServiceLocator.$.waitFor( "VertixGUI/UIDataService" );
 
     // Get the UIDataService instance
     const uiDataService = ServiceLocator.$.get<UIDataService>( UIDataService.getName() );
 
+    type UIDataComponentConstructor = new ( ...args: unknown[] ) => UIDataBase<Record<string, unknown>>;
+
     // Register the data components with the service
-    const componentConstructors = dataComponents.map( module => Object.values( module )[ 0 ] ); // Assumes default export or first export is the class
-    uiDataService.registerDataComponents( componentConstructors as any ); // Use 'as any' for now if type inference struggles
+    const componentConstructors = dataComponents.map( module => Object.values( module )[ 0 ] as UIDataComponentConstructor );
+    uiDataService.registerDataComponents( componentConstructors );
 
     componentConstructors.forEach( comp => {
-        GlobalLogger.$.debug( registerDataServicesAndComponents, `Registered data component: '${ ( comp as any ).getName() }'` );
+        const componentName = ( comp as { getName?: () => string } ).getName?.();
+        if ( componentName ) {
+            GlobalLogger.$.debug( registerDataServicesAndComponents, `Registered data component: '${ componentName }'` );
+        }
     } );
 
     GlobalLogger.$.info( registerDataServicesAndComponents, "Data services and components registered." );
@@ -366,6 +702,7 @@ export async function entryPoint( options: {
     GlobalLogger.$.log( entryPoint, "ENV PATH:", envPath );
     GlobalLogger.$.log( entryPoint, "CWD:", process.cwd() );
 
+    await registerLoggerServerService();
     await registerMCPService();
 
     const envOutput = config( {
@@ -431,6 +768,21 @@ export async function entryPoint( options: {
             process.exit( 0 );
         } catch( error ) {
             GlobalLogger.$.error( entryPoint, "Failed to export UI definitions", error );
+            process.exit( 1 );
+        }
+    }
+
+    const testFlowArg = process.argv.find( arg => arg.startsWith( "--test-flow" ) );
+    if ( testFlowArg ) {
+        GlobalLogger.$.info( entryPoint, "Test flow command detected" );
+        try {
+            const flowName = testFlowArg.includes( "=" )
+                ? testFlowArg.split( "=" )[ 1 ]
+                : undefined;
+            await testFlowCommand( flowName );
+            process.exit( 0 );
+        } catch( error ) {
+            GlobalLogger.$.error( entryPoint, "Failed to run test flow command", error );
             process.exit( 1 );
         }
     }

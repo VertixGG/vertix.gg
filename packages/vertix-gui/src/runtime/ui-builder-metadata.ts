@@ -70,11 +70,13 @@ export interface EmbedBuilderMetadata<
     description?: StringHandler<TVars>;
     color?: NumberHandler<TVars>;
     image?: StringHandler<TVars>;
+    thumbnail?: StringHandler<TVars>;
     footer?: StringHandler<TVars>;
     options?: OptionsHandler<TVars>;
     arrayOptions?: OptionsHandler<TVars>;
     logic?: LogicHandler<TArgs, TVars>;
     vars?: TVars;
+    defaultVars?: ( vars: TVars ) => Partial<Record<keyof TVars, JsonValue>>;
 }
 
 export type EndTimeHandler<TArgs extends UIArgs> = ( args: TArgs ) => Date;

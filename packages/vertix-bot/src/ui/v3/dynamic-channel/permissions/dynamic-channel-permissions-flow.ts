@@ -4,12 +4,12 @@ import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
 import { DynamicChannelPermissionsComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface DynamicChannelPermissionsFlowData extends UIFlowData {
+interface DynamicChannelPermissionsFlowData extends UIFlowDataBase {
     userGrantedDisplayName?: string;
     userDeniedDisplayName?: string;
     userBlockedDisplayName?: string;
@@ -117,40 +117,50 @@ export class DynamicChannelPermissionsFlow extends UIFlowBase<
     public static getStateOptions(): Record<string, JsonObject> {
         return {
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default": {
-                executionStep: "default"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Private": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
-            },
-            "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Shown": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateShown"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "default",
+
+                previewVars: [ "permissionsEmoji", "allowedUsersDisplay", "blockedUsersDisplay" ]
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Granted": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted",
+
+                previewVars: [ "userGrantedDisplayName", "allowedUsersDisplay", "blockedUsersDisplay" ]
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Denied": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied",
+
+                previewVars: [ "userDeniedDisplayName", "allowedUsersDisplay", "blockedUsersDisplay" ]
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Blocked": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked",
+
+                previewVars: [ "userBlockedDisplayName", "allowedUsersDisplay", "blockedUsersDisplay" ]
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Unblocked": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked",
+
+                previewVars: [ "userUnBlockedDisplayName", "allowedUsersDisplay", "blockedUsersDisplay" ]
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Kicked": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick",
+
+                previewVars: [ "userKickedDisplayName", "allowedUsersDisplay", "blockedUsersDisplay" ]
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
+                previewEmbedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             },
             "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged": {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged"
+                component: "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
+                previewEmbedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
             }
         };
     }
@@ -204,4 +214,3 @@ export class DynamicChannelPermissionsFlow extends UIFlowBase<
 }
 
 export default DynamicChannelPermissionsFlow;
-

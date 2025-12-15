@@ -59,7 +59,7 @@ const ClaimVoteEmbed = new ElapsedEmbedBuilder<UIArgs, typeof CLAIM_VOTE_EMBED_V
         return {
             candidatesCount: candidates.length,
             userInitiatorId: args.userInitiatorId,
-            candidates: candidates.length ? candidates : undefined,
+            candidates: candidates.length ? candidates : [],
             candidatesState: candidates.length ? CLAIM_VOTE_EMBED_VARS.candidates : CLAIM_VOTE_EMBED_VARS.candidatesDefault
         };
     } )

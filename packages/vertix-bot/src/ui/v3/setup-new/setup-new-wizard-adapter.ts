@@ -361,10 +361,10 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             {
                 flowTriggers: [
                     {
-                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
-                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup",
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup",
                         navigation: {
-                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
                             executionStep: "VertixBot/UI-V3/SetupStep1Component"
                         }
                     }
@@ -379,13 +379,13 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             {
                 flowTriggers: [
                     {
-                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
-                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
                         mutations: [
                             { type: "set", path: [ "dynamicChannelNameTemplate" ] }
                         ],
                         navigation: {
-                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
                             executionStep: "VertixBot/UI-V3/SetupStep1Component"
                         }
                     }
@@ -399,13 +399,13 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             {
                 flowTriggers: [
                     {
-                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
-                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectButtons",
                         mutations: [
                             { type: "set", path: [ "dynamicChannelButtonsTemplate" ] }
                         ],
                         navigation: {
-                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
                             executionStep: "VertixBot/UI-V3/SetupStep2Component"
                         }
                     }
@@ -419,14 +419,14 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             {
                 flowTriggers: [
                     {
-                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
-                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
                         mutations: [
                             { type: "set", path: [ "dynamicChannelMentionable" ] },
                             { type: "set", path: [ "dynamicChannelAutoSave" ] }
                         ],
                         navigation: {
-                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
                             executionStep: "VertixBot/UI-V3/SetupStep2Component"
                         }
                     }
@@ -440,13 +440,13 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             {
                 flowTriggers: [
                     {
-                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
-                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectRoles",
                         mutations: [
                             { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
                         ],
                         navigation: {
-                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles",
                             executionStep: "VertixBot/UI-V3/SetupStep3Component"
                         }
                     }
@@ -460,14 +460,14 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             {
                 flowTriggers: [
                     {
-                        flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
-                        transition: "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
                         mutations: [
                             { type: "set", path: [ "dynamicChannelIncludeEveryoneRole" ] },
                             { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
                         ],
                         navigation: {
-                            targetState: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles",
                             executionStep: "VertixBot/UI-V3/SetupStep3Component"
                         }
                     }

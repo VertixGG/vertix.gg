@@ -4,6 +4,8 @@ import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
+import { isExportRuntime } from "@vertix.gg/gui/src/runtime/ui-runtime-flags";
+
 import type { Message, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 import type {
     UIArgs,
@@ -34,6 +36,7 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     public static validate( skipDefaultGroups = false ) {
+        const relaxedExportValidation = isExportRuntime();
         const component = this.getComponent();
 
         // If one of the entities group are specify but there are no execution steps for them.
@@ -77,26 +80,28 @@ export abstract class UIAdapterExecutionStepsBase<
             } );
         }
 
-        // Check if all the entities groups are in the execution steps.
-        for ( const group of possibleGroups ) {
-            // If found in excluded elements, skip.
-            if ( excludedElements.find( ( excludedElement ) => excludedElement.getName() + "Group" === group.getName() ) ) {
-                continue;
+        if ( !relaxedExportValidation ) {
+            // Check if all the entities groups are in the execution steps.
+            for ( const group of possibleGroups ) {
+                // If found in excluded elements, skip.
+                if ( excludedElements.find( ( excludedElement ) => excludedElement.getName() + "Group" === group.getName() ) ) {
+                    continue;
+                }
+
+                if ( !possibleSteps.find( ( step ) => step === group.getName() ) ) {
+                    throw new Error(
+                        `Adapter: '${ this.getName() }' missing execution step for the group: '${ group.getName() }'`
+                    );
+                }
             }
 
-            if ( !possibleSteps.find( ( step ) => step === group.getName() ) ) {
-                throw new Error(
-                    `Adapter: '${ this.getName() }' missing execution step for the group: '${ group.getName() }'`
-                );
-            }
-        }
-
-        // Check if all the execution steps are in the entities groups.
-        for ( const step of possibleSteps ) {
-            if ( !possibleGroups.find( ( group ) => group.getName() === step ) ) {
-                throw new Error(
-                    `Missing entities group for the execution step: '${ step }' adapter: '${ this.getName() }'`
-                );
+            // Check if all the execution steps are in the entities groups.
+            for ( const step of possibleSteps ) {
+                if ( !possibleGroups.find( ( group ) => group.getName() === step ) ) {
+                    throw new Error(
+                        `Missing entities group for the execution step: '${ step }' adapter: '${ this.getName() }'`
+                    );
+                }
             }
         }
 

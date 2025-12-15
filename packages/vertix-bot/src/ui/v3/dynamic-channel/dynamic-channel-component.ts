@@ -33,11 +33,15 @@ export class DynamicChannelComponent extends UIComponentBase {
     }
 
     public static getDefaultEmbedsGroup() {
-        return DynamicChannelPrimaryMessageEmbedsGroup.getName();
+        return "VertixBot/UI-V3/DynamicChannel/EmbedsGroup";
     }
 
     protected async getSchemaInternal() {
         const schema = await super.getSchemaInternal();
+
+        if ( !schema.entities ) {
+            return schema;
+        }
 
         schema.entities.elements = uiUtilsDynamicElementsRearrange(
             [

@@ -1,13 +1,13 @@
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-const WelcomeEmbedBase = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
+const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
     .setInstanceType( UIInstancesTypes.Static )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( "https://i.imgur.com/x8jMguN.gif" )
+    .setThumbnail( "https://s11.gifyu.com/images/SuW5n.gif" )
     .setTitle( "༄ Vertix is here, let's get started!" )
     .setDescription(
         "Welcome to Vertix, an incredible addition to your server!\n" +
@@ -22,21 +22,5 @@ const WelcomeEmbedBase = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
         "Join us at: https://discord.gg/dEwKeQefUU"
     )
     .build();
-
-class WelcomeEmbed extends WelcomeEmbedBase {
-    protected getThumbnail() {
-        return { url: "https://s11.gifyu.com/images/SuW5n.gif" };
-    }
-}
-
-const metadata = Reflect.get( WelcomeEmbedBase, BUILDER_METADATA_SYMBOL );
-
-if ( metadata ) {
-    Reflect.defineProperty( WelcomeEmbed, BUILDER_METADATA_SYMBOL, {
-        value: metadata,
-        configurable: false,
-        enumerable: false
-    } );
-}
 
 export { WelcomeEmbed };

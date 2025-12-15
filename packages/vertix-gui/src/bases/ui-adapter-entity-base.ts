@@ -23,6 +23,8 @@ import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { AnyComponentBuilder } from "discord.js";
+
 import type {
     UIEntitySchemaBase,
     UIComponentConstructor,
@@ -36,7 +38,6 @@ import type { UIEntityBase } from "@vertix.gg/gui/src/bases/ui-entity-base";
 
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { ComponentBuilder } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
@@ -173,65 +174,77 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
 
     protected buildComponentsBySchema( schema: any ) {
         // TODO: Add type.
-        return schema
-            .map( ( row: any ) =>
-                new ActionRowBuilder().addComponents(
-                    row
-                        .map( ( entity: any ) => {
-                            // TODO: Add type.
-                            if ( !entity.isAvailable ) {
+        const MAX_COMPONENTS_PER_ROW = 5;
+
+        const chunkRow = ( row: any[] ) => {
+            const chunks: any[][] = [];
+
+            for ( let i = 0; i < row.length; i += MAX_COMPONENTS_PER_ROW ) {
+                chunks.push( row.slice( i, i + MAX_COMPONENTS_PER_ROW ) );
+            }
+
+            return chunks;
+        };
+
+        const buildRow = ( row: any[] ) => {
+            const components: AnyComponentBuilder[] = row
+                .filter( ( entity: any ): entity is any => entity?.isAvailable )
+                .map( ( entity: any ): AnyComponentBuilder | null => {
+                    // TODO: Add type.
+
+                    let component: AnyComponentBuilder | null = null,
+                        data = {
+                            ...entity.attributes
+                        };
+
+                    if ( entity.attributes.style !== ButtonStyle.Link ) {
+                        data.customId = this.generateCustomIdForEntity( entity );
+                    }
+
+                    switch ( entity.attributes.type ) {
+                        case ComponentType.Button:
+                            component = new ButtonBuilder( data );
+                            break;
+
+                        case ComponentType.TextInput:
+                            component = new TextInputBuilder( data );
+                            break;
+
+                        case ComponentType.StringSelect:
+                            if ( !data.options.length ) {
+                                // TODO: Warning.
                                 return null;
                             }
 
-                            let component: ComponentBuilder | null = null,
-                                data = {
-                                    ...entity.attributes
-                                };
+                            component = new StringSelectMenuBuilder( data );
+                            break;
 
-                            if ( entity.attributes.style !== ButtonStyle.Link ) {
-                                data.customId = this.generateCustomIdForEntity( entity );
-                            }
+                        case ComponentType.UserSelect:
+                            component = new UserSelectMenuBuilder( data );
+                            break;
 
-                            switch ( entity.attributes.type ) {
-                                case ComponentType.Button:
-                                    component = new ButtonBuilder( data );
-                                    break;
+                        case ComponentType.RoleSelect:
+                            component = new RoleSelectMenuBuilder( data );
+                            break;
 
-                                case ComponentType.TextInput:
-                                    component = new TextInputBuilder( data );
-                                    break;
+                        case ComponentType.ChannelSelect:
+                            component = new ChannelSelectMenuBuilder( data );
+                            break;
 
-                                case ComponentType.StringSelect:
-                                    if ( !data.options.length ) {
-                                        // TODO: Warning.
-                                        return null;
-                                    }
+                        default:
+                            throw new UnknownElementTypeError( entity );
+                    }
 
-                                    component = new StringSelectMenuBuilder( data );
-                                    break;
+                    return component;
+                } )
+                .filter( ( i: AnyComponentBuilder | null ): i is AnyComponentBuilder => i !== null );
 
-                                case ComponentType.UserSelect:
-                                    component = new UserSelectMenuBuilder( data );
-                                    break;
+            return new ActionRowBuilder().addComponents( ...components );
+        };
 
-                                case ComponentType.RoleSelect:
-                                    component = new RoleSelectMenuBuilder( data );
-                                    break;
-
-                                case ComponentType.ChannelSelect:
-                                    component = new ChannelSelectMenuBuilder( data );
-                                    break;
-
-                                default:
-                                    throw new UnknownElementTypeError( entity );
-                            }
-
-                            return component;
-                        } )
-                        .filter( ( i: unknown ) => i !== null )
-                )
-            )
-            .filter( ( i: any ) => i.components.length );
+        return schema
+            .flatMap( ( row: any ) => chunkRow( row as any[] ).map( buildRow ) )
+            .filter( ( actionRow: any ) => actionRow.components.length );
     }
 
     protected generateCustomIdForEntity( entity: UIEntitySchemaBase | UIModalSchema ) {
@@ -280,10 +293,6 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
     private defineOptions() {
         const { module } = this.options;
 
-        if ( module ) {
-            this.customIdStrategy = module.customIdStrategy;
-        } else {
-            this.customIdStrategy = new UICustomIdPlainStrategy();
-        }
+        this.customIdStrategy = module?.customIdStrategy || new UICustomIdPlainStrategy();
     }
 }

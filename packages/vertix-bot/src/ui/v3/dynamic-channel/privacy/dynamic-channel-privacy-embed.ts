@@ -6,7 +6,7 @@ import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-ch
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DYNAMIC_CHANNEL_PRIVACY_VARS = {
+const vars = {
     state: uiUtilsWrapAsTemplate( "state" ),
     stateMessage: uiUtilsWrapAsTemplate( "stateMessage" ),
     statePublic: uiUtilsWrapAsTemplate( "statePublic" ),
@@ -29,55 +29,55 @@ const DYNAMIC_CHANNEL_PRIVACY_VARS = {
     separator: uiUtilsWrapAsTemplate( "separator" )
 };
 
-const DynamicChannelPrivacyEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_PRIVACY_VARS>(
+const DynamicChannelPrivacyEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V3/DynamicChannelPrivacyEmbed",
-    DYNAMIC_CHANNEL_PRIVACY_VARS
+    vars
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( 0x4b6f91 )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
-    .setTitle( () => `${ DYNAMIC_CHANNEL_PRIVACY_VARS.privacyEmoji }  Manage privacy of your channel` )
+    .setTitle( () => `${ vars.privacyEmoji }  Manage privacy of your channel` )
     .setDescription( () => (
-        `**_State_**: \`${ DYNAMIC_CHANNEL_PRIVACY_VARS.state }\`` +
+        `**_State_**: \`${ vars.state }\`` +
         "\n**_Intends_**: \`" +
-        DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessage +
+        vars.stateMessage +
         "\`\n" +
         "\n**_Trusted Users_**:\n" +
-        DYNAMIC_CHANNEL_PRIVACY_VARS.allowedUsersDisplay +
+        vars.allowedUsersDisplay +
         "\n**_Blocked Users_**:\n" +
-        DYNAMIC_CHANNEL_PRIVACY_VARS.blockedUsersDisplay +
+        vars.blockedUsersDisplay +
         "\n-# Blocked Users cannot join your channel in any state."
     ) )
     .setFooterText( "Use the menu below to manage privacy state of your channel." )
     .setOptions( () => ( {
         state: {
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.statePublic ]: "🌐 Public",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.statePrivate ]: "🚫 Private",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.stateShown ]: "🐵 Shown",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.stateHidden ]: "🙈 Hidden"
+            [ vars.statePublic ]: "🌐 Public",
+            [ vars.statePrivate ]: "🚫 Private",
+            [ vars.stateShown ]: "🐵 Shown",
+            [ vars.stateHidden ]: "🙈 Hidden"
         },
         stateMessage: {
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessagePublic ]: "Everyone can join your channel.",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessagePrivate ]: "Only trusted users can join your channel.",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessageShown ]: "Everyone can see and join your channel.",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessageHidden ]: "Only trusted users can see and join your channel."
+            [ vars.stateMessagePublic ]: "Everyone can join your channel.",
+            [ vars.stateMessagePrivate ]: "Only trusted users can join your channel.",
+            [ vars.stateMessageShown ]: "Everyone can see and join your channel.",
+            [ vars.stateMessageHidden ]: "Only trusted users can see and join your channel."
         },
         allowedUsersDisplay: {
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.allowedUsersDefault ]: "Currently there are no trusted users." + "\n",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.allowedUsers ]: DYNAMIC_CHANNEL_PRIVACY_VARS.allowedUsers + "\n"
+            [ vars.allowedUsersDefault ]: "Currently there are no trusted users." + "\n",
+            [ vars.allowedUsers ]: vars.allowedUsers + "\n"
         },
         blockedUsersDisplay: {
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.blockedUsersDefault ]: "Currently there are no blocked users." + "\n",
-            [ DYNAMIC_CHANNEL_PRIVACY_VARS.blockedUsers ]: DYNAMIC_CHANNEL_PRIVACY_VARS.blockedUsers + "\n"
+            [ vars.blockedUsersDefault ]: "Currently there are no blocked users." + "\n",
+            [ vars.blockedUsers ]: vars.blockedUsers + "\n"
         }
     } ) )
     .setArrayOptions( () => ( {
         allowedUsers: {
-            format: `- <@${ DYNAMIC_CHANNEL_PRIVACY_VARS.value }>${ DYNAMIC_CHANNEL_PRIVACY_VARS.separator }`,
+            format: `- <@${ vars.value }>${ vars.separator }`,
             separator: "\n"
         },
         blockedUsers: {
-            format: `- <@${ DYNAMIC_CHANNEL_PRIVACY_VARS.value }>${ DYNAMIC_CHANNEL_PRIVACY_VARS.separator }`,
+            format: `- <@${ vars.value }>${ vars.separator }`,
             separator: "\n"
         }
     } ) )
@@ -87,41 +87,45 @@ const DynamicChannelPrivacyEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANN
         switch ( args.state ) {
             default:
             case "public":
-                result.state = DYNAMIC_CHANNEL_PRIVACY_VARS.statePublic;
-                result.stateMessage = DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessagePublic;
+                result.state = vars.statePublic;
+                result.stateMessage = vars.stateMessagePublic;
                 break;
             case "private":
-                result.state = DYNAMIC_CHANNEL_PRIVACY_VARS.statePrivate;
-                result.stateMessage = DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessagePrivate;
+                result.state = vars.statePrivate;
+                result.stateMessage = vars.stateMessagePrivate;
                 break;
             case "shown":
-                result.state = DYNAMIC_CHANNEL_PRIVACY_VARS.stateShown;
-                result.stateMessage = DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessageShown;
+                result.state = vars.stateShown;
+                result.stateMessage = vars.stateMessageShown;
                 break;
             case "hidden":
-                result.state = DYNAMIC_CHANNEL_PRIVACY_VARS.stateHidden;
-                result.stateMessage = DYNAMIC_CHANNEL_PRIVACY_VARS.stateMessageHidden;
+                result.state = vars.stateHidden;
+                result.stateMessage = vars.stateMessageHidden;
                 break;
         }
 
-        result.privacyEmoji = DynamicChannelPrivacyButton.getEmoji();
+        // TODO: Should work via default vars
+        // result.privacyEmoji = DynamicChannelPrivacyButton.getEmoji();
 
         if ( args.allowedUsers?.length ) {
             result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
-            result.allowedUsersDisplay = DYNAMIC_CHANNEL_PRIVACY_VARS.allowedUsers;
+            result.allowedUsersDisplay = vars.allowedUsers;
         } else {
-            result.allowedUsersDisplay = DYNAMIC_CHANNEL_PRIVACY_VARS.allowedUsersDefault;
+            result.allowedUsersDisplay = vars.allowedUsersDefault;
         }
 
         if ( args.blockedUsers?.length ) {
             result.blockedUsers = args.blockedUsers?.map( ( user: any ) => user.id );
-            result.blockedUsersDisplay = DYNAMIC_CHANNEL_PRIVACY_VARS.blockedUsers;
+            result.blockedUsersDisplay = vars.blockedUsers;
         } else {
-            result.blockedUsersDisplay = DYNAMIC_CHANNEL_PRIVACY_VARS.blockedUsersDefault;
+            result.blockedUsersDisplay = vars.blockedUsersDefault;
         }
 
         return result;
     } )
+    .setDefaultVars( () => ( {
+        privacyEmoji: DynamicChannelPrivacyButton.getEmoji()
+    } ) )
     .build();
 
-export { DynamicChannelPrivacyEmbed, DYNAMIC_CHANNEL_PRIVACY_VARS };
+export { DynamicChannelPrivacyEmbed, vars as DYNAMIC_CHANNEL_PRIVACY_VARS };

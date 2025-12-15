@@ -1,41 +1,19 @@
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
+
+import { UIEFlowIntegrationPointType } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 import { UIInstanceTypeBase } from "@vertix.gg/gui/src/bases/ui-instance-type-base";
 
+import type { UISerializationFlowComponent, UISerializationComponentSchemaResult, UISerializationModalSchema, UISerializationModalFieldSchema, UISerializationFlowModal, UISerializationFlowModalField, UISerializationFlowAttributeValue, UISerializationFlowAttributes, UISerializationContext } from "@vertix.gg/definitions/src/ui-serialization-definitions";
+import type { UIFlowIntegrationPoint, UIFlowDataBase, UIFlowInputRequirement, UIFlowInputRequirementDefinition, UIFlowVisualConnection, UIFlowDataBlueprint } from "@vertix.gg/definitions/src/ui-flow-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { PermissionsBitField, ChannelType } from "discord.js";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { FlowComponent as SharedFlowComponent, FlowData as SharedFlowData, FlowIntegrationPoint as SharedFlowIntegrationPoint, VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
 import type { SerializationContext } from "@vertix.gg/gui/src/bases/ui-serialization";
 
-export enum UIEFlowIntegrationPointType {
-    GENERIC = "GENERIC",
-    COMMAND = "COMMAND",
-    EVENT = "EVENT",
-}
-
-interface FlowIntegrationPointBaseOptions {
-    flowName: string;
-    description: string;
-    sourceState?: string;
-    targetState?: string;
-    transition?: string;
-    requiredData?: string[];
-}
-
-export type UIFlowState = string;
-export type UIFlowTransition = string;
-
-export interface UIFlowData {
-    originFlow?: string;
-    originState?: string;
-    originTransition?: string;
-    interactionId?: string;
-    [key: string]: unknown;
-}
-
-export abstract class FlowIntegrationPointBase extends ObjectBase {
+export abstract class UIFlowIntegrationPointBase extends ObjectBase {
     public readonly flowName: string;
     public readonly description: string;
     public readonly sourceState?: string;
@@ -43,7 +21,7 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
     public readonly transition?: string;
     public readonly requiredData?: string[];
 
-    protected constructor( options: FlowIntegrationPointBaseOptions ) {
+    protected constructor( options: UIFlowIntegrationPointBaseOptions ) {
         super();
         this.flowName = options.flowName;
         this.description = options.description;
@@ -62,8 +40,8 @@ export abstract class FlowIntegrationPointBase extends ObjectBase {
     }
 }
 
-export class FlowIntegrationPointGeneric extends FlowIntegrationPointBase {
-    public constructor( options: FlowIntegrationPointBaseOptions ) {
+export class FlowIntegrationPointGeneric extends UIFlowIntegrationPointBase {
+    public constructor( options: UIFlowIntegrationPointBaseOptions ) {
         super( options );
     }
 
@@ -76,8 +54,8 @@ export class FlowIntegrationPointGeneric extends FlowIntegrationPointBase {
     }
 }
 
-export class FlowIntegrationPointCommand extends FlowIntegrationPointBase {
-    public constructor( options: FlowIntegrationPointBaseOptions ) {
+export class FlowIntegrationPointCommand extends UIFlowIntegrationPointBase {
+    public constructor( options: UIFlowIntegrationPointBaseOptions ) {
         super( options );
     }
 
@@ -90,8 +68,8 @@ export class FlowIntegrationPointCommand extends FlowIntegrationPointBase {
     }
 }
 
-export class FlowIntegrationPointEvent extends FlowIntegrationPointBase {
-    public constructor( options: FlowIntegrationPointBaseOptions ) {
+export class FlowIntegrationPointEvent extends UIFlowIntegrationPointBase {
+    public constructor( options: UIFlowIntegrationPointBaseOptions ) {
         super( options );
     }
 
@@ -104,31 +82,23 @@ export class FlowIntegrationPointEvent extends FlowIntegrationPointBase {
     }
 }
 
-export interface ComponentSchemaResult {
-    name?: string;
-    type?: string;
-    entities?: {
-        elements?: unknown[];
-        embeds?: unknown[];
-    };
-    components?: ComponentSchemaResult[];
-    [key: string]: unknown;
-}
-
 // Define type for Controller Constructor
 // type ControllerClassConstructor = new (options: any) => UIControllerBase<any>; // Removed
 
 export abstract class UIFlowBase<
     TState extends string,
     TTransition extends string,
-    TData extends UIFlowData = UIFlowData
+    TData extends UIFlowDataBase = UIFlowDataBase
 > extends UIInstanceTypeBase {
+    protected logger: Logger;
     private currentState: TState;
     private readonly transitions: Map<TState, Set<TTransition>> = new Map();
     private data: TData;
 
     public constructor( protected options: TAdapterRegisterOptions ) {
         super();
+
+        this.logger = new Logger( this );
 
         this.currentState = this.getInitialState();
         this.data = this.getInitialData();
@@ -144,11 +114,11 @@ export abstract class UIFlowBase<
         throw new ForceMethodImplementation( "UIFlowBase", "getComponents" );
     }
 
-    public static getEntryPoints?(): FlowIntegrationPointBase[] {
+    public static getEntryPoints?(): UIFlowIntegrationPointBase[] {
         return [];
     }
 
-    public static getHandoffPoints?(): FlowIntegrationPointBase[] {
+    public static getHandoffPoints?(): UIFlowIntegrationPointBase[] {
         return [];
     }
 
@@ -225,25 +195,147 @@ export abstract class UIFlowBase<
         return ( this.constructor as typeof UIFlowBase ).getComponents();
     }
 
-    public async buildComponentSchemas( components = this.getComponents(), context?: SerializationContext ): Promise<ComponentSchemaResult[]> {
-        const schemas: ComponentSchemaResult[] = [];
+    public async buildComponentSchemas( components = this.getComponents(), context?: SerializationContext ): Promise<UISerializationComponentSchemaResult[]> {
+        const schemas: UISerializationComponentSchemaResult[] = [];
 
         for ( const Component of components ) {
             try {
                 const component = new Component();
                 const serializedSchema = await component.toSchema( context );
-                const schema: ComponentSchemaResult = {
+
+                if ( !serializedSchema ) {
+                    this.logger.warn( this.buildComponentSchemas, `Component ${ Component.name } returned null schema` );
+                    continue;
+                }
+
+                const normalizedModals = this.normalizeModalSchemas(
+                    serializedSchema.entities?.modals as UISerializationModalSchema[] | undefined
+                );
+
+                // Preserve existing entities and merge normalized modals
+                const entities = serializedSchema.entities || normalizedModals
+                    ? {
+                        elements: serializedSchema.entities?.elements as any,
+                        embeds: serializedSchema.entities?.embeds as any,
+                        modals: normalizedModals ?? serializedSchema.entities?.modals
+                    }
+                    : undefined;
+
+                const schema: UISerializationComponentSchemaResult = {
                     name: serializedSchema.name,
                     type: serializedSchema.type,
-                    entities: serializedSchema.entities,
-                    components: serializedSchema.components as ComponentSchemaResult[]
+                    entities,
+                    components: ( serializedSchema.components ?? [] ) as UISerializationFlowComponent[]
                 };
-                if ( schema ) { schemas.push( schema ); }
+
+                // Ensure schema has required fields before adding
+                if ( schema && schema.name && schema.type ) {
+                    schemas.push( schema );
+                } else {
+                    this.logger.warn( this.buildComponentSchemas, `Component ${ Component.name } schema missing required fields:`, schema );
+                }
             } catch( error ) {
-                console.error( "Error serializing component:", error );
+                this.logger.error( this.buildComponentSchemas, `Error serializing component ${ Component.name }:`, error );
             }
         }
+
         return schemas.length ? schemas : [];
+    }
+
+    private normalizeModalSchemas(
+        modalSchemas?: UISerializationModalSchema[]
+    ): UISerializationFlowModal[] | undefined {
+        if ( !modalSchemas?.length ) {
+            return undefined;
+        }
+
+        const normalized = modalSchemas
+            .map( ( modal ) => {
+                const entities = modal.entities;
+                if ( !Array.isArray( entities ) ) {
+                    return {
+                        name: modal.name ?? "Modal",
+                        type: modal.type ?? "modal",
+                        attributes: ( modal as { attributes?: UISerializationFlowAttributes } ).attributes ?? {},
+                        entities: []
+                    };
+                }
+
+                const normalizedRows = entities
+                    .map( ( row: Array<UISerializationModalFieldSchema | undefined> | undefined ) => {
+                        if ( !Array.isArray( row ) ) {
+                            return [];
+                        }
+
+                        return row
+                            .filter( Boolean )
+                            .map( ( field ) => this.normalizeModalField( field ) );
+                    } )
+                    .filter( ( row ): row is UISerializationFlowModalField[] => row.length > 0 );
+
+                return {
+                    name: modal.name ?? "Modal",
+                    type: modal.type ?? "modal",
+                    attributes: ( modal as { attributes?: UISerializationFlowAttributes } ).attributes ?? {},
+                    entities: normalizedRows
+                };
+            } )
+            .filter( Boolean ) as UISerializationFlowModal[];
+
+        return normalized.length ? normalized : undefined;
+    }
+
+    private normalizeModalField( field: UISerializationModalFieldSchema | UISerializationFlowModalField | undefined ): UISerializationFlowModalField {
+        if ( !field ) {
+            return {
+                name: "Field",
+                type: "text-input",
+                attributes: {}
+            };
+        }
+
+        const fieldRecord = field as Record<string, UISerializationFlowAttributeValue>;
+        const nestedAttributes = fieldRecord.attributes;
+        const attributes: UISerializationFlowAttributes = (
+            nestedAttributes &&
+            typeof nestedAttributes === "object" &&
+            !Array.isArray( nestedAttributes )
+        )
+            ? nestedAttributes as UISerializationFlowAttributes
+            : fieldRecord as UISerializationFlowAttributes;
+
+        const nameFromRecord = typeof fieldRecord.name === "string"
+            ? fieldRecord.name
+            : undefined;
+        const customId = typeof attributes.custom_id === "string" && attributes.custom_id.length
+            ? attributes.custom_id
+            : undefined;
+        const label = typeof attributes.label === "string" && attributes.label.length
+            ? attributes.label
+            : undefined;
+        const resolvedName = ( customId ?? label ?? nameFromRecord ?? "Field" ).toString();
+
+        const explicitType = fieldRecord.type ?? attributes.type;
+        const resolvedType = typeof explicitType === "number"
+            ? explicitType.toString()
+            : ( explicitType?.toString() ?? "text-input" );
+
+        const normalizedField: UISerializationFlowModalField = {
+            name: resolvedName,
+            type: resolvedType,
+            attributes
+        };
+
+        const isDisabled =
+            typeof fieldRecord.isAvailable === "boolean"
+                ? !fieldRecord.isAvailable
+                : ( typeof attributes.disabled === "boolean" ? attributes.disabled : undefined );
+
+        if ( typeof isDisabled === "boolean" ) {
+            normalizedField.isAvailable = !isDisabled;
+        }
+
+        return normalizedField;
     }
 
     public static getNextStates?(): Record<string, string>;
@@ -253,9 +345,9 @@ export abstract class UIFlowBase<
      * Used by the flow editor to determine the source handle for inter-flow edges.
      * @returns An array of VisualConnection objects (or a compatible structure).
      */
-    public static getEdgeSourceMappings?(): VisualConnection[];
+    public static getEdgeSourceMappings?(): UIFlowVisualConnection[];
 
-    public async toJSON( context?: SerializationContext ): Promise<SharedFlowData> {
+    public async toJSON( context?: UISerializationContext ): Promise<UIFlowDataBlueprint> {
         const transactions = this.getAvailableTransitions();
         const requiredDataMap: Record<string, ( keyof TData )[]> = {};
 
@@ -270,8 +362,9 @@ export abstract class UIFlowBase<
         const nextStatesMap = constructor.getNextStates ? constructor.getNextStates() : {};
         const builtComponents = await this.buildComponentSchemas( this.getComponents(), context );
         const edgeSourceMappings = constructor.getEdgeSourceMappings?.() || [];
+        const inputRequirements = constructor.getInputRequirements?.() || [];
 
-        const flowDataResult: SharedFlowData = {
+        const flowDataResult: UIFlowDataBlueprint = {
             name: constructor.getName(),
             type: constructor.getFlowType(),
             transactions,
@@ -282,9 +375,13 @@ export abstract class UIFlowBase<
                 handoffPoints: handoffPoints.map( p => this.serializeIntegrationPointForEditor( p ) ),
                 externalReferences: externalRefs
             },
-            components: builtComponents as SharedFlowComponent[],
+            components: builtComponents as UISerializationFlowComponent[],
             edgeSourceMappings
         };
+
+        if ( inputRequirements.length ) {
+            flowDataResult.inputRequirements = inputRequirements as UIFlowInputRequirement[];
+        }
 
         if ( !flowDataResult.integrations?.entryPoints?.length ) {
             if ( flowDataResult.integrations ) delete flowDataResult.integrations.entryPoints;
@@ -305,10 +402,10 @@ export abstract class UIFlowBase<
         return flowDataResult;
     }
 
-    private serializeIntegrationPointForEditor( point: FlowIntegrationPointBase ): SharedFlowIntegrationPoint {
-        const integrationType = ( point.constructor as typeof FlowIntegrationPointBase ).getType();
+    private serializeIntegrationPointForEditor( point: UIFlowIntegrationPointBase ): UIFlowIntegrationPoint {
+        const integrationType = ( point.constructor as typeof UIFlowIntegrationPointBase ).getType();
 
-        const serializedPoint: SharedFlowIntegrationPoint = {
+        const serializedPoint: UIFlowIntegrationPoint = {
             fullName: point.flowName,
             flowName: point.flowName,
             description: point.description,
@@ -341,14 +438,24 @@ export abstract class UIFlowBase<
     }
 
     /**
-     * NEW: Returns the string names/keys of the UIDataBase components required by this flow.
+     * Returns the string names/keys of the UIDataBase components required by this flow.
      * Controllers can use this to fetch necessary data components from UIDataService.
      */
     public static getRequiredDataComponents(): string[] {
         return []; // Default to no data components required
     }
 
-    /**
-     * Returns documentation about handoff points using the new class structure
-     */
+    public static getInputRequirements(): UIFlowInputRequirementDefinition[] {
+        return [];
+    }
 }
+
+interface UIFlowIntegrationPointBaseOptions {
+    flowName: string;
+    description: string;
+    sourceState?: string;
+    targetState?: string;
+    transition?: string;
+    requiredData?: string[];
+}
+

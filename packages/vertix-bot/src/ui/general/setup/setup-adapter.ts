@@ -49,6 +49,8 @@ import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui/general/setup/ele
 
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
 
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
@@ -100,16 +102,61 @@ async function onSelectEditMasterChannel(
     }
 
     const uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
-            "VertixGUI/UIVersioningAdapterService"
-        ),
-        setupEditAdapter = await uiVersioningAdapterService.get( "Vertix/SetupEditAdapter", masterChannelDB.id );
+        "VertixGUI/UIVersioningAdapterService"
+    );
 
-    await setupEditAdapter?.runInitial( interaction, {
-        masterChannelIndex,
-        masterChannelDB
-    } );
+    context.logger.debug(
+        onSelectEditMasterChannel,
+        `Determining version for master channel: ${ masterChannelDB.id }, version field: ${ masterChannelDB.version }`
+    );
 
-    // Delete Args since left to another adapter.
+    let setupEditAdapter;
+    try {
+        const determinedVersion = await uiVersioningAdapterService.determineVersion( masterChannelDB.id as any );
+        context.logger.debug(
+            onSelectEditMasterChannel,
+            `Determined version: ${ determinedVersion } for master channel: ${ masterChannelDB.id }`
+        );
+
+        setupEditAdapter = await uiVersioningAdapterService.get( "VertixBot/SetupEditAdapter", masterChannelDB.id );
+    } catch( error ) {
+        context.logger.error(
+            onSelectEditMasterChannel,
+            `Error getting adapter for master channel: ${ masterChannelDB.id }`,
+            error
+        );
+        await context.editReply( interaction as any, {} );
+        return;
+    }
+
+    if ( !setupEditAdapter ) {
+        context.logger.error(
+            onSelectEditMasterChannel,
+            `Adapter not found for master channel: ${ masterChannelDB.id }, channelId: ${ masterChannelId }`
+        );
+        await context.editReply( interaction as any, {} );
+        return;
+    }
+
+    context.logger.log(
+        onSelectEditMasterChannel,
+        `Running SetupEditAdapter for master channel: ${ masterChannelDB.id }`
+    );
+
+    try {
+        await setupEditAdapter.runInitial( interaction, {
+            masterChannelIndex,
+            masterChannelDB
+        } );
+    } catch( error ) {
+        context.logger.error(
+            onSelectEditMasterChannel,
+            `Error running SetupEditAdapter for master channel: ${ masterChannelDB.id }`,
+            error
+        );
+        throw error;
+    }
+
     context.deleteArgs( interaction as any );
 }
 
@@ -215,39 +262,66 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         "\n\n" +
         "-# 💡 You can set logs channel by editing the master channel.\n"
     )
-    .setArrayOptions( ( { masterChannelsOptions, value, separator } ) => ( {
-        masterChannels: {
-            format: value + separator,
-            separator: "\n",
-            multiSeparator: "\n\n",
-            options: {
-                index: `**#${ masterChannelsOptions.index }**`,
-                name: `▹ Name: <#${ masterChannelsOptions.id }>`,
-                id: `▹ Channel ID: \`${ masterChannelsOptions.id }\``,
-                channelsTemplateName: `▹ Dynamic Channels Name: \`${ masterChannelsOptions.channelsTemplateName }\``,
-                channelsTemplateButtons: `▹ Buttons: **${ masterChannelsOptions.channelsTemplateButtons }**`,
-                channelsVerifiedRoles: `▹ Verified Roles: ${ masterChannelsOptions.channelsVerifiedRoles }`,
-                channelsLogsChannelId: `▹ Logs Channel: ${ masterChannelsOptions.channelsLogsChannelId }`,
-                channelsAutoSave: `▹ Auto Save: \`${ masterChannelsOptions.channelsAutoSave }\``,
-                version: `▹ UI Version: \`${ masterChannelsOptions.version }\``
-            }
-        },
-        badwords: {
-            format: `${ value }${ separator }`,
-            separator: ", "
+    .setArrayOptions( ( { masterChannelsOptions, value, separator } ) => {
+        if ( !masterChannelsOptions || typeof masterChannelsOptions !== "object" || Array.isArray( masterChannelsOptions ) ) {
+            throw new Error( "Invalid masterChannelsOptions" );
         }
-    } ) )
-    .setOptions( ( { masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault } ) => ( {
-        masterChannelMessage: {
-            [ masterChannels ]: "\n" + masterChannels,
-            [ masterChannelMessageDefault ]: "**None**"
-        },
-        badwordsMessage: {
-            [ badwords ]: "`" + badwords + "`",
-            [ badwordsMessageDefault ]: "**None**"
-        },
-        none: "**None**"
-    } ) )
+
+        const options = masterChannelsOptions as {
+            index: number;
+            id: string;
+            channelsTemplateName: string;
+            channelsTemplateButtons: string;
+            channelsVerifiedRoles: string;
+            channelsLogsChannelId: string;
+            channelsAutoSave: string;
+            version: string;
+        };
+
+        const valueStr = value != null ? String( value ) : "";
+        const separatorStr = separator != null ? String( separator ) : "";
+
+        return {
+            masterChannels: {
+                format: valueStr + separatorStr,
+                separator: "\n",
+                multiSeparator: "\n\n",
+                options: {
+                    index: `**#${ options.index }**`,
+                    name: `▹ Name: <#${ options.id }>`,
+                    id: `▹ Channel ID: \`${ options.id }\``,
+                    channelsTemplateName: `▹ Dynamic Channels Name: \`${ options.channelsTemplateName }\``,
+                    channelsTemplateButtons: `▹ Buttons: **${ options.channelsTemplateButtons }**`,
+                    channelsVerifiedRoles: `▹ Verified Roles: ${ options.channelsVerifiedRoles }`,
+                    channelsLogsChannelId: `▹ Logs Channel: ${ options.channelsLogsChannelId }`,
+                    channelsAutoSave: `▹ Auto Save: \`${ options.channelsAutoSave }\``,
+                    version: `▹ UI Version: \`${ options.version }\``
+                }
+            },
+            badwords: {
+                format: `${ valueStr }${ separatorStr }`,
+                separator: ", "
+            }
+        };
+    } )
+    .setOptions( ( { masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault } ) => {
+        const masterChannelsKey = String( masterChannels );
+        const masterChannelMessageDefaultKey = String( masterChannelMessageDefault );
+        const badwordsKey = String( badwords );
+        const badwordsMessageDefaultKey = String( badwordsMessageDefault );
+
+        return {
+            masterChannelMessage: {
+                [ masterChannelsKey ]: "\n" + masterChannels,
+                [ masterChannelMessageDefaultKey ]: "**None**"
+            },
+            badwordsMessage: {
+                [ badwordsKey ]: "`" + badwords + "`",
+                [ badwordsMessageDefaultKey ]: "**None**"
+            },
+            none: "**None**"
+        };
+    } )
     .setLogic( async( args, vars ) => {
         const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
             "Vertix/Config/MasterChannel",
@@ -293,7 +367,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             };
         } ) );
 
-        const result: Record<string, unknown> = {};
+        const result: Record<string, JsonValue> = {};
 
         if ( masterChannels.length ) {
             result.masterChannels = masterChannels;

@@ -6,12 +6,12 @@ import { DynamicChannelPrimaryMessageEditComponent } from "@vertix.gg/bot/src/ui
 import { DynamicChannelPrimaryMessageEditDescriptionComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/description/dynamic-channel-primary-message-edit-description-component";
 import { DynamicChannelPrimaryMessageEditTitleComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/title/dynamic-channel-primary-message-edit-title-component";
 
-import type { UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { JsonObject } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { UIFlowVisualConnection, UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-interface DynamicChannelPrimaryMessageEditFlowData extends UIFlowData {
+interface DynamicChannelPrimaryMessageEditFlowData extends UIFlowDataBase {
     title?: string;
     description?: string;
 }
@@ -59,7 +59,7 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
     public static getNextStates(): Record<string, string> {
         return {
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
+            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
             "VertixGUI/UIWizardFlowBase/Transitions/Next": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
             "VertixGUI/UIWizardFlowBase/Transitions/Back": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
@@ -83,7 +83,10 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
     public static getStateOptions(): Record<string, JsonObject> {
         return {
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/Confirm": {
-                executionStep: "default"
+                executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
+                transitionHandles: {
+                    "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing": "VertixBot/UI-General/YesButton"
+                }
             },
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle": {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
@@ -99,6 +102,18 @@ export class DynamicChannelPrimaryMessageEditFlow extends UIFlowBase<
             DynamicChannelPrimaryMessageEditComponent,
             DynamicChannelPrimaryMessageEditTitleComponent,
             DynamicChannelPrimaryMessageEditDescriptionComponent
+        ];
+    }
+
+    public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
+        const flowName = this.getName();
+
+        return [
+            {
+                triggeringElementId: "VertixBot/UI-General/YesButton",
+                transitionName: `${ flowName }/Transitions/BeginEditing`,
+                targetFlowName: flowName
+            }
         ];
     }
 

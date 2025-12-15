@@ -6,6 +6,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
+import type { APIEmbed } from "discord.js";
 import type { UIDefaultButtonChannelVoiceInteraction, UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
@@ -65,7 +66,7 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
                         const schema = await component.toSchema();
                         if ( schema.entities?.embeds ) {
                             await voiceInteraction.channel.send( {
-                                embeds: schema.entities.embeds
+                                embeds: schema.entities.embeds as unknown as APIEmbed[]
                             } );
                         }
                         return;

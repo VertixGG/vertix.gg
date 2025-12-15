@@ -1,13 +1,16 @@
 import { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import UIService from "@vertix.gg/gui/src/ui-service";
 
-import type { UIComponentConstructor, UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { UIFlowData, ComponentSchemaResult } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
+import type { UIComponentConstructor, UIComponentTypeConstructor, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UISerializationComponentSchemaResult , UISerializationFlowElement } from "@vertix.gg/definitions/src/ui-serialization-definitions";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 /**
  * Base interface for wizard flow data
  */
-export interface WizardFlowData extends UIFlowData {
+export interface UIFlowWizardData extends UIFlowDataBase {
     currentStep: number;
     totalSteps: number;
     stepHistory: number[];
@@ -22,7 +25,7 @@ export interface WizardFlowData extends UIFlowData {
 export abstract class UIWizardFlowBase<
     TState extends string = string,
     TTransition extends string = string,
-    TData extends WizardFlowData = WizardFlowData
+    TData extends UIFlowWizardData = UIFlowWizardData
 > extends UIFlowBase<TState, TTransition, TData> {
 
     private stepComponents: UIComponentConstructor[] = [];
@@ -126,15 +129,32 @@ export abstract class UIWizardFlowBase<
     /**
      * Override to build schema from step components
      */
-    public async buildComponentSchemas(): Promise<ComponentSchemaResult[]> {
-        const schemas: ComponentSchemaResult[] = [];
+    public async buildComponentSchemas(): Promise<UISerializationComponentSchemaResult[]> {
+        const schemas: UISerializationComponentSchemaResult[] = [];
+        const totalSteps = this.stepComponents.length;
 
-        for ( const Component of this.stepComponents ) {
+        for ( let index = 0; index < this.stepComponents.length; index++ ) {
+            const Component = this.stepComponents[ index ];
             const component = new Component();
 
             await component.waitUntilInitialized();
 
-            const result = await component.build( {} ) as ComponentSchemaResult;
+            const result = await component.build( {} ) as UISerializationComponentSchemaResult;
+            const controlRow = await this.buildWizardControlRow( index, totalSteps );
+
+            if ( controlRow.length ) {
+                if ( !result.entities ) {
+                    result.entities = {
+                        elements: [],
+                        embeds: []
+                    };
+                }
+                if ( !result.entities.elements ) {
+                    result.entities.elements = [];
+                }
+                result.entities.elements.push( controlRow );
+            }
+
             schemas.push( result );
         }
 
@@ -168,5 +188,65 @@ export abstract class UIWizardFlowBase<
             errorCode: undefined,
             errorMessage: undefined,
         } as Partial<TData> );
+    }
+
+    private async buildWizardControlRow( stepIndex: number, totalSteps: number ): Promise<UISerializationFlowElement[]> {
+        const { WizardBackButton, WizardNextButton, WizardFinishButton } = UIService.getSystemElements();
+
+        if ( !WizardBackButton || !WizardNextButton || !WizardFinishButton ) {
+            return [];
+        }
+
+        const args = this.getWizardControlArgs( stepIndex, totalSteps );
+        const isLastStep = stepIndex === totalSteps - 1;
+        const buttons: Array<{ ctor: new () => { build: ( uiArgs?: UIArgs ) => Promise<UISerializationFlowElement> }; include: boolean }> = [
+            { ctor: WizardBackButton, include: true },
+            { ctor: WizardNextButton, include: !isLastStep },
+            { ctor: WizardFinishButton, include: isLastStep }
+        ];
+
+        const schemas: UISerializationFlowElement[] = [];
+
+        for ( const { ctor, include } of buttons ) {
+            if ( !include ) {
+                continue;
+            }
+
+            const instance = new ctor();
+            const schema = await instance.build( args ) as UISerializationFlowElement;
+            schemas.push( schema );
+        }
+
+        return schemas;
+    }
+
+    private getWizardControlArgs( stepIndex: number, totalSteps: number ): UIArgs {
+        const isFirstStep = stepIndex === 0;
+        const isLastStep = stepIndex === totalSteps - 1;
+        const Component = this.stepComponents[ stepIndex ];
+        const componentClass = Component as unknown as typeof UIComponentBase;
+        const stepName = componentClass.getName?.() || `Step${ stepIndex + 1 }`;
+
+        const args: UIArgs = {
+            _step: stepName,
+            _wizardIsBackButtonDisabled: isFirstStep,
+            _wizardIsNextButtonDisabled: isLastStep,
+            _wizardIsFinishButtonDisabled: !isLastStep,
+            _wizardIsNextButtonAvailable: !isLastStep,
+            _wizardIsFinishButtonAvailable: isLastStep,
+            _wizardIsBackButtonAvailable: !isFirstStep,
+            _wizardShouldDisableFinishButton: false
+        };
+
+        if ( isLastStep ) {
+            args._wizardIsNextButtonDisabled = true;
+            args._wizardIsNextButtonAvailable = false;
+        }
+
+        if ( !isLastStep ) {
+            args._wizardIsFinishButtonAvailable = false;
+        }
+
+        return args;
     }
 }

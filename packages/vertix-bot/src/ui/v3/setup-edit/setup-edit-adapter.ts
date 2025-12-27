@@ -432,9 +432,8 @@ async function onDoneButtonClicked(
         context.deleteArgs( interaction );
         ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
             .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, {} );
+        return;
     }
-
-    context.deleteArgs( interaction );
 }
 
 async function onConfigExtrasSelected(

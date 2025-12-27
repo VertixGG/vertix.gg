@@ -47,8 +47,10 @@ export class UIArgsManager extends InitializeBase {
             id = context.id;
         } else if ( context.isCommand() ) {
             id = context.id;
-        } else if ( context.message?.interaction ) {
-            id = context.message.interaction.id;
+        } else if ( context.isMessageComponent?.() ) {
+            id = context.message.id;
+        } else if ( context.isModalSubmit?.() ) {
+            id = context.message?.id ?? context.id;
         } else {
             id = context.message?.id;
         }

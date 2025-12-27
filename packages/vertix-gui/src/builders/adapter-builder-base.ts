@@ -346,7 +346,7 @@ export class AdapterBuilderBase<
                     const getContext = this.getContext.bind( this );
 
                     const applyFlowTriggers = async(
-                        interaction: TInteraction,
+                        interaction: UIAdapterReplyContext,
                         options?: BindingRegistrationOptions
                     ) => {
                         const triggers = options?.flowTriggers ?? [];
@@ -356,15 +356,19 @@ export class AdapterBuilderBase<
                         }
 
                         const context = getContext();
-                        const editReplyWithStep = ( context as unknown as {
-                            editReplyWithStep?: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
-                        } ).editReplyWithStep;
+                        const editReplyWithStep = ( context as Partial<{
+                            editReplyWithStep: ( interaction: UIAdapterReplyContext, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
+                        }> ).editReplyWithStep;
 
                         if ( typeof editReplyWithStep !== "function" ) {
                             return;
                         }
 
-                        const args = context.getArgs( interaction ) as TArgs;
+                        const args = context.getArgs( interaction ) as TArgs | undefined;
+
+                        if ( !args || typeof args !== "object" ) {
+                            return;
+                        }
 
                         for ( const trigger of triggers as BindingFlowTriggerConfig[] ) {
                             const executionStep = trigger.navigation?.executionStep;
@@ -382,7 +386,7 @@ export class AdapterBuilderBase<
                             _options?: BindingRegistrationOptions
                         ) => this.bindButton( name, async( interaction ) => {
                             await callback( getContext(), interaction as T );
-                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                            await applyFlowTriggers( interaction, _options );
                         } ),
                         bindModal: <T extends ModalSubmitInteraction<"cached">>(
                             name: string,
@@ -390,7 +394,7 @@ export class AdapterBuilderBase<
                             _options?: BindingRegistrationOptions
                         ) => this.bindModal( name, async( interaction ) => {
                             await callback( getContext(), interaction as T );
-                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                            await applyFlowTriggers( interaction, _options );
                         } ),
                         bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
                             buttonName: string,
@@ -399,7 +403,7 @@ export class AdapterBuilderBase<
                             _options?: BindingRegistrationOptions
                         ) => this.bindModalWithButton( buttonName, modalName, async( interaction ) => {
                             await callback( getContext(), interaction as T );
-                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                            await applyFlowTriggers( interaction, _options );
                         } ),
                         bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
                             name: string,
@@ -407,7 +411,7 @@ export class AdapterBuilderBase<
                             _options?: BindingRegistrationOptions
                         ) => this.bindSelectMenu( name, async( interaction ) => {
                             await callback( getContext(), interaction as T );
-                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                            await applyFlowTriggers( interaction, _options );
                         } ),
                         bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
                             name: string,
@@ -415,7 +419,7 @@ export class AdapterBuilderBase<
                             _options?: BindingRegistrationOptions
                         ) => this.bindUserSelectMenu( name, async( interaction ) => {
                             await callback( getContext(), interaction as T );
-                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                            await applyFlowTriggers( interaction, _options );
                         } )
                     };
                 }

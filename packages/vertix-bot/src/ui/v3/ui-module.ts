@@ -81,15 +81,17 @@ export class UIModuleV3 extends UIModuleBase {
             "VertixBot/Services/UIDefinitionLoaderService"
         );
 
+        let definitionLoader: ReturnType<UIDefinitionLoaderService[ "getLoader" ]> | undefined;
+
         // If exported definitions exist, register them to override the defaults for this module.
         const names = definitionLoaderService.getExportsNames();
         const hasExports =
             names.adapters.length > 0 || names.flows.length > 0 || names.components.length > 0;
 
         if ( hasExports ) {
-            const loader = definitionLoaderService.getLoader();
+            definitionLoader = definitionLoaderService.getLoader();
 
-            await uiService.registerFromDefinitions( loader, {
+            await uiService.registerFromDefinitions( definitionLoader, {
                 adapterNames: names.adapters,
                 flowNames: names.flows,
                 componentNames: names.components,
@@ -108,7 +110,7 @@ export class UIModuleV3 extends UIModuleBase {
                 "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
             )!.getId(),
 
-            definitionLoader: definitionLoaderService.getLoader()
+            definitionLoader
         } );
     }
 }

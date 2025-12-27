@@ -281,7 +281,13 @@ async function onSetupMasterEditSelected(
         ( args )[ key ] = value;
     } );
 
-    if ( args[ masterChannelKeys.dynamicChannelVerifiedRoles ].includes( interaction.guild.roles.everyone.id ) ) {
+    const verifiedRoles = Array.isArray( args[ masterChannelKeys.dynamicChannelVerifiedRoles ] )
+        ? args[ masterChannelKeys.dynamicChannelVerifiedRoles ] as string[]
+        : [ interaction.guild.roles.everyone.id ];
+
+    args[ masterChannelKeys.dynamicChannelVerifiedRoles ] = verifiedRoles;
+
+    if ( verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
         args.dynamicChannelIncludeEveryoneRole = true;
     }
 

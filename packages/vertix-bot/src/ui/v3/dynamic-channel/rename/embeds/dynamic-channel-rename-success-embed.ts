@@ -1,35 +1,26 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelRenameSuccessEmbed extends UIEmbedBase {
-    private static vars = {
-        channelName: uiUtilsWrapAsTemplate( "channelName" )
-    };
+const DYNAMIC_CHANNEL_RENAME_SUCCESS_VARS = {
+    channelName: uiUtilsWrapAsTemplate( "channelName" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed";
-    }
+const DynamicChannelRenameSuccessEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_RENAME_SUCCESS_VARS>(
+    "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
+    DYNAMIC_CHANNEL_RENAME_SUCCESS_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0xe8ae08 )
+    .setTitle(
+        () => `✏️  Your channel's name has changed to '${ DYNAMIC_CHANNEL_RENAME_SUCCESS_VARS.channelName }'`
+    )
+    .setLogic( ( args: UIArgs ) => ( {
+        channelName: args.channelName
+    } ) )
+    .build();
 
-    protected getColor(): number {
-        return 0xe8ae08; // Pencil like.
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getTitle(): string {
-        return `✏️  Your channel's name has changed to '${ DynamicChannelRenameSuccessEmbed.vars.channelName }'`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            channelName: args.channelName
-        };
-    }
-}
+export { DynamicChannelRenameSuccessEmbed };

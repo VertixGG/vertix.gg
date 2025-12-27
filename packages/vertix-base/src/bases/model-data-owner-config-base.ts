@@ -16,14 +16,14 @@ export abstract class ModelDataOwnerConfigBase<
     TDataModelResult extends TDataDefaultResult,
     TDataModelUniqueKeys extends TDataOwnerDefaultUniqueKeys,
     TDataConfig extends ConfigBaseInterface,
-    TDataConfigSlice extends keyof TDataConfig["data"],
-    TDataSlice extends TDataConfig["data"][TDataConfigSlice] = TDataConfig["data"][TDataConfigSlice]
+    TDataConfigSlice extends keyof TDataConfig[ "data" ],
+    TDataSlice extends TDataConfig[ "data" ][ TDataConfigSlice ] = TDataConfig[ "data" ][ TDataConfigSlice ]
 > extends ModelDataOwnerStrictDataBase<
         TModel,
         TDataModel,
         TDataModelResult,
         TDataModelUniqueKeys,
-        TDataConfig["data"][TDataConfigSlice]
+        TDataConfig[ "data" ][ TDataConfigSlice ]
     > {
     public static getName() {
         return "VertixBase/Bases/ModelDataOwnerConfigBase";
@@ -38,7 +38,7 @@ export abstract class ModelDataOwnerConfigBase<
     }
 
     protected async getSliceData(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         key: string,
         cache = true,
         returnDefaults = false
@@ -51,9 +51,9 @@ export abstract class ModelDataOwnerConfigBase<
     }
 
     protected async setSliceData(
-        args: Parameters<TModel["findUnique"]>[0],
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         key: string,
-        data: Partial<TDataConfig["data"][TDataConfigSlice]>,
+        data: Partial<TDataConfig[ "data" ][ TDataConfigSlice ]>,
         assignDefaults = true
     ) {
         const keys = { key } as TDataModelUniqueKeys;

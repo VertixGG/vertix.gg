@@ -5,8 +5,9 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { deepMerge } from "@vertix.gg/utils/src/object";
 
 import { ModelBaseCachedWithModel } from "@vertix.gg/base/src/bases/model-base";
-
 import { DataTypeFactory } from "@vertix.gg/base/src/factory/data-type-factory";
+
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 import type { TDataDefaultResult } from "@vertix.gg/base/src/factory/data-type-factory";
 

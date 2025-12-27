@@ -1,0 +1,12 @@
+# UI Runtime Classes Must Extend `UIBase`
+
+Any module that exposes reusable behaviour should do so via a class extending the appropriate base:
+
+- UI-oriented helpers must extend `UIBase`.
+- Other modules should extend `InitializeBase`, `ObjectBase`, or a domain-specific base.
+
+Keep this pattern consistent across the monorepo for uniform lifecycle, logging, and dependency handling.
+
+- Implement a `static getName(): string` that returns the fully-qualified identifier (e.g. `VertixGUI/Runtime/UiDefinitionExporter`).
+- Expose behaviour through instance methods; keep only thin re-export functions if legacy call sites require them.
+- Avoid standalone procedural modules—wrap state and logging inside the `UIBase` subclass so we get consistent naming, lifecycle hooks, and logger wiring.

@@ -1,0 +1,19 @@
+{
+    "name": "@vertix.gg/logger",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "version": "0.0.0",
+    "scripts": {
+        "vertix-logger:start": "bunx dotenv-cli -e ../../.env -- bun run src/index.ts",
+        "vertix-logger:dev": "bunx dotenv-cli -e ../../.env -- bun --watch src/index.ts",
+        "vertix-logger:service:install": "bash ./install-systemd-service.bash",
+        "vertix-logger:service:uninstall": "bash ./uninstall-systemd-service.bash"
+    },
+    "dependencies": {
+        "@vertix.gg/base": "workspace:*",
+        "@modelcontextprotocol/sdk": "^1.23.0",
+        "fastmcp": "^1.27.7",
+        "zod": "^3.25.76"
+    }
+}
+

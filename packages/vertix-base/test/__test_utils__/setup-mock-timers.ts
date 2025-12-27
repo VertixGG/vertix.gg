@@ -1,4 +1,4 @@
-export function setupMockTimers( { beforeEach, afterEach } ) {
+export function setupMockTimers( { beforeEach, afterEach }: { beforeEach: ( fn: () => void ) => void, afterEach: ( fn: () => void ) => void } ) {
     let originalSetTimeout: typeof global.setTimeout;
     let originalClearTimeout: typeof global.clearTimeout;
     let timeoutCallbacks: Array<{ callback: () => void, time: number }> = [];
@@ -16,10 +16,11 @@ export function setupMockTimers( { beforeEach, afterEach } ) {
             return timeoutCallbacks.length - 1;
         };
 
-        global.clearTimeout = ( id: number ) => {
-            if ( timeoutCallbacks[ id ] ) {
-                timeoutCallbacks[ id ].callback = () => {};
-                timeoutCallbacks[ id ].time = Infinity;
+        global.clearTimeout = ( id: string | number | NodeJS.Timeout | undefined ) => {
+            const numericId = typeof id === "number" ? id : -1;
+            if ( timeoutCallbacks[ numericId ] ) {
+                timeoutCallbacks[ numericId ].callback = () => {};
+                timeoutCallbacks[ numericId ].time = Infinity;
             }
         };
     } );

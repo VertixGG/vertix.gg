@@ -1,6 +1,7 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
+import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { ClaimStartComponent } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-start-component";
@@ -10,31 +11,25 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
 }
 
-export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultInteraction> {
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimStartAdapter";
-    }
-
-    public static getComponent() {
-        return ClaimStartComponent;
-    }
-
-    public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( 0n );
-    }
-
-    public getChannelTypes() {
-        return [ ChannelType.GuildVoice ];
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
+const ClaimStartAdapter = new AdapterBuilderBase<
+    VoiceChannel,
+    DefaultInteraction,
+        typeof UIAdapterBase<VoiceChannel, DefaultInteraction>,
+        UIArgs,
+        IAdapterContext<DefaultInteraction, UIArgs>
+>( "VertixBot/UI-V3/ClaimStartAdapter", UIAdapterBase )
+    .setComponent( ClaimStartComponent )
+    .setPermissions( new PermissionsBitField( 0n ) )
+    .setChannelTypes( [ ChannelType.GuildVoice ] )
+    .getStartArgs( async( context, channel ) => {
         const channelDB = await ChannelModel.$.getByChannelId( channel.id );
 
         if ( !channelDB || !channelDB.userOwnerId ) {
@@ -49,13 +44,28 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
                 "VertixBot/UI-V3/DynamicChannelClaimManager"
             ).getChannelOwnershipTimeout()
         };
-    }
+    } )
+    .onEntityMap( async( { bindButton } ) => {
+        bindButton<UIDefaultButtonChannelTextInteraction>(
+            "VertixBot/UI-V3/ClaimStartButton",
+            async( _context, interaction ) => {
+                const voiceInteraction = interaction as unknown as DefaultInteraction;
+                await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" )
+                    .handleVoteRequest( voiceInteraction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/ClaimStartFlow",
+                        transition: "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/ClaimStartFlow/States/Default"
+                        }
+                    }
+                ]
+            }
+        );
+    } )
+    .build();
 
-    protected onEntityMap() {
-        this.bindButton<DefaultInteraction>( "VertixBot/UI-V3/ClaimStartButton", this.onClaimStartButtonClicked );
-    }
-
-    private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
-        await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
-    }
-}
+export { ClaimStartAdapter };

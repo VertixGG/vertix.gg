@@ -4,18 +4,15 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
-import type { UIFlowData ,
-    FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import { LanguageComponent } from "@vertix.gg/bot/src/ui/general/language/language-component";
 
-// Define initial state
-const STATE_INITIAL = "VertixBot/UI-General/LanguageFlow/States/Initial";
-const STATE_LANGUAGE_SELECTED = "VertixBot/UI-General/LanguageFlow/States/LanguageSelected"; // Example state
+import type {
+    UIFlowIntegrationPointBase
+} from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-// Define conceptual transitions
-const TRANSITION_SELECT_LANGUAGE = "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage";
-
-export interface LanguageFlowData extends UIFlowData {
-    selectedLanguage?: string; // Example data field
+export interface LanguageFlowData extends UIFlowDataBase {
+    selectedLanguage?: string;
 }
 
 export class LanguageFlow extends UIFlowBase<string, string, LanguageFlowData> {
@@ -23,76 +20,83 @@ export class LanguageFlow extends UIFlowBase<string, string, LanguageFlowData> {
         return "VertixBot/UI-General/LanguageFlow";
     }
 
-    // If there's a specific LanguageComponent, add it here
-    public static override getComponents() { return []; }
+    public static override getComponents() {
+        return [ LanguageComponent ];
+    }
 
-    // Define entry points if this flow can be started from others
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
-                flowName: "VertixBot/UI-General/SetupFlow", // Example entry from SetupFlow
+                flowName: "VertixBot/UI-General/SetupFlow",
                 transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
-                targetState: STATE_INITIAL,
+                targetState: "VertixBot/UI-General/LanguageFlow/States/Initial",
                 description: "Entry point triggered by SetupFlow via Choose Language button"
             } )
         ];
     }
 
-    // Define handoff points if this flow leads to others
-    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
-        // Example: Handoff back to SetupFlow after selection?
-        // return [
-        //     new FlowIntegrationPointGeneric( {
-        //         flowName: "VertixBot/UI-General/SetupFlow",
-        //         description: "Return to Setup after language selection",
-        //         sourceState: STATE_LANGUAGE_SELECTED,
-        //         transition: TRANSITION_SELECT_LANGUAGE, // Or a different transition like "ConfirmLanguage"
-        //         targetState: "VertixBot/UI-General/SetupFlow/States/Initial" // Target state in SetupFlow
-        //     } )
-        // ];
-        return []; // Default to no handoffs
+    public static getFlowTransitions(): Record<string, string[]> {
+        const selectLanguage = "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage";
+        const done = "VertixBot/UI-General/LanguageFlow/Transitions/Done";
+
+        return {
+            "VertixBot/UI-General/LanguageFlow/States/Initial": [
+                selectLanguage,
+                done
+            ],
+            "VertixBot/UI-General/LanguageFlow/States/LanguageSelected": [
+                selectLanguage,
+                done
+            ],
+            "VertixBot/UI-General/LanguageFlow/States/Completed": []
+        };
     }
 
-    // Define required permissions
-    public override getPermissions(): PermissionsBitField { return new PermissionsBitField( PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages ); }
+    public static getNextStates(): Record<string, string> {
+        return {
+            "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage": "VertixBot/UI-General/LanguageFlow/States/LanguageSelected",
+            "VertixBot/UI-General/LanguageFlow/Transitions/Done": "VertixBot/UI-General/LanguageFlow/States/Completed"
+        };
+    }
 
-    // Define supported channel types
-    public override getChannelTypes(): ChannelType[] { return [ ChannelType.GuildText ]; }
+    public static getRequiredData(): Record<string, ( keyof LanguageFlowData )[]> {
+        return {
+            "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage": [ "selectedLanguage" ],
+            "VertixBot/UI-General/LanguageFlow/Transitions/Done": []
+        };
+    }
 
-    protected override getInitialState(): string { return STATE_INITIAL; }
-    protected override getInitialData(): LanguageFlowData { return {}; }
+    public override getPermissions(): PermissionsBitField {
+        return new PermissionsBitField( PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages );
+    }
+
+    public override getChannelTypes(): ChannelType[] {
+        return [ ChannelType.GuildText ];
+    }
+
+    protected override getInitialState(): string {
+        return "VertixBot/UI-General/LanguageFlow/States/Initial";
+    }
+
+    protected override getInitialData(): LanguageFlowData {
+        return {};
+    }
 
     protected override initializeTransitions(): void {
-        this.addTransitions( STATE_INITIAL, [ TRANSITION_SELECT_LANGUAGE ] );
-        this.addTransitions( STATE_LANGUAGE_SELECTED, [] ); // Example: No transitions from selected state initially
+        Object.entries( LanguageFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
+            this.setTransitionsForState( state, new Set( transitions ) );
+        } );
     }
 
-    public override getAvailableTransitions(): string[] { return Array.from( this.getTransitionsForState( this.getCurrentState() ) || [] ); }
+    public override getAvailableTransitions(): string[] {
+        return LanguageFlow.getFlowTransitions()[ this.getCurrentState() ] || [];
+    }
 
-    // Define how transitions change state
     public override getNextState( transition: string ): string {
-        switch ( transition ) {
-            case TRANSITION_SELECT_LANGUAGE:
-                return STATE_LANGUAGE_SELECTED;
-            default:
-                return this.getCurrentState(); // Stay in current state if transition unknown
-        }
+        return LanguageFlow.getNextStates()[ transition ] || this.getCurrentState();
     }
 
-    // Define required data for transitions
     public override getRequiredData( transition: string ): ( keyof LanguageFlowData )[] {
-        switch ( transition ) {
-            case TRANSITION_SELECT_LANGUAGE:
-                return [ "selectedLanguage" ]; // Example: Require language selection
-            default:
-                return [];
-        }
-    }
-
-    // Helper method from base class
-    protected addTransitions( state: string, transitions: string[] ): void {
-        if ( !this.hasTransitions( state ) ) { this.setTransitionsForState( state, new Set() ); }
-        const stateTransitions = this.getTransitionsForState( state );
-        if ( stateTransitions ) { transitions.forEach( ( transition ) => stateTransitions.add( transition ) ); this.setTransitionsForState( state, stateTransitions ); }
+        return LanguageFlow.getRequiredData()[ transition ] || [];
     }
 }

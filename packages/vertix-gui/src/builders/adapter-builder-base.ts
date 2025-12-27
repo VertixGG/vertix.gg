@@ -1,9 +1,21 @@
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { PermissionsBitField  } from "discord.js";
+import { PermissionsBitField } from "discord.js";
 
-import type { ChannelType } from "discord.js";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
+
+import type {
+    ChannelType,
+    ButtonInteraction,
+    ModalSubmitInteraction,
+    StringSelectMenuInteraction,
+    UserSelectMenuInteraction
+} from "discord.js";
 
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
@@ -14,9 +26,6 @@ import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import type {
     UIAdapterReplyContext,
     UIAdapterStartContext,
-    UIDefaultButtonChannelTextInteraction,
-    UIDefaultModalChannelTextInteraction,
-    UIDefaultStringSelectMenuChannelTextInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type {
@@ -36,11 +45,19 @@ import type {
     GetCustomIdForEntityHandler,
     GetStartArgsHandler,
     IBinder,
-    BeforeFinishHandler
+    BeforeFinishHandler,
+    BindingRegistrationOptions
 } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
+import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 
-type StartArgsHandler<TContext, TChannel, TArgs> = ( context: TContext, channel: TChannel ) => Promise<TArgs>;
+type StartArgsHandler<TContext, TChannel, TArgs> = (
+    context: TContext,
+    channel: TChannel,
+    argsFromManager?: TArgs
+) => Promise<TArgs>;
 type ReplyArgsHandler<TContext, TInteraction, TArgs> = (
     context: TContext,
     interaction?: TInteraction,
@@ -73,6 +90,12 @@ export class AdapterBuilderBase<
     protected beforeBuildRunHandler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeFinishHandler: BeforeFinishHandler<TInteraction, TArgs, TContext> | undefined;
     protected entityMapHandler: EntityMapHandler<TInteraction, TArgs, TContext> | undefined;
+    protected argsDataSource:
+        | {
+            targets: Set<"start" | "reply" | "edit">;
+            dataComponentName: string;
+        }
+        | undefined;
 
     protected contextFactory:
         | ( (
@@ -82,6 +105,7 @@ export class AdapterBuilderBase<
         | undefined;
 
     protected static dedicatedLogger = new Logger( this.getName() );
+    protected disableMiddlewareFlag: boolean | undefined;
 
     public static getName(): string {
         return "VertixGUI/Builders/AdapterBuilderBase";
@@ -109,6 +133,16 @@ export class AdapterBuilderBase<
 
     public setChannelTypes( channelTypes: ChannelType[] ): this {
         this.channelTypes = channelTypes;
+        return this;
+    }
+
+    public disableMiddleware(): this {
+        this.disableMiddlewareFlag = true;
+        return this;
+    }
+
+    public setShouldDisableMiddleware( value: boolean ): this {
+        this.disableMiddlewareFlag = value;
         return this;
     }
 
@@ -144,6 +178,34 @@ export class AdapterBuilderBase<
 
     public onBeforeBuildRun( handler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> ): this {
         this.beforeBuildRunHandler = handler;
+        return this;
+    }
+
+    /**
+     * Use a UIDataBase component as the args data source for adapter methods.
+     * targets: array including 'start', 'reply', 'edit', or 'all' (applies to all).
+     */
+    public setArgsDataSource(
+        targets: Array<"start" | "reply" | "edit" | "all">,
+        dataComponentName: string
+    ): this {
+        const normalized = new Set<"start" | "reply" | "edit">();
+
+        targets.forEach( ( target ) => {
+            if ( target === "all" ) {
+                normalized.add( "start" );
+                normalized.add( "reply" );
+                normalized.add( "edit" );
+                return;
+            }
+            normalized.add( target );
+        } );
+
+        this.argsDataSource = {
+            targets: normalized,
+            dataComponentName
+        };
+
         return this;
     }
 
@@ -216,7 +278,10 @@ export class AdapterBuilderBase<
 
                 protected generateCustomIdForEntity( entity: UIEntitySchemaBase | UIModalSchema ): string {
                     const builderResult = builder.generateCustomIdForEntityHandler?.( this.getContext(), entity );
-                    return builderResult ?? super.generateCustomIdForEntity( entity );
+                    if ( builderResult ) {
+                        return builderResult;
+                    }
+                    return builder.buildCustomId( this.getName(), entity, this.customIdStrategy );
                 }
 
                 protected getCustomIdForEntity( hash: string ): string {
@@ -224,17 +289,39 @@ export class AdapterBuilderBase<
                     return builderResult ?? super.getCustomIdForEntity( hash );
                 }
 
-                protected async getStartArgs( channel: TChannel, _argsFromManager?: UIArgs ): Promise<UIArgs> {
+                protected async getStartArgs( channel: TChannel, argsFromManager?: UIArgs ): Promise<UIArgs> {
+                    const dataArgs = await builder.resolveArgsFromDataSource( "start", channel, argsFromManager );
+
                     if ( builder.startArgsHandler ) {
-                        return builder.startArgsHandler( this.getContext(), channel );
+                        const handlerArgs = await builder.startArgsHandler( this.getContext(), channel, argsFromManager as TArgs );
+                        if ( dataArgs ) {
+                            return { ...dataArgs, ...handlerArgs };
+                        }
+                        return handlerArgs;
                     }
-                    return super.getStartArgs( channel, _argsFromManager );
+
+                    if ( dataArgs ) {
+                        return dataArgs;
+                    }
+
+                    return super.getStartArgs( channel, argsFromManager );
                 }
 
                 protected async getReplyArgs( interaction: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> {
+                    const dataArgs = await builder.resolveArgsFromDataSource( "reply", interaction, argsFromManager );
+
                     if ( builder.replyArgsHandler ) {
-                        return builder.replyArgsHandler( this.getContext(), interaction, argsFromManager as TArgs );
+                        const handlerArgs = await builder.replyArgsHandler( this.getContext(), interaction, argsFromManager as TArgs );
+                        if ( dataArgs ) {
+                            return { ...dataArgs, ...handlerArgs };
+                        }
+                        return handlerArgs;
                     }
+
+                    if ( dataArgs ) {
+                        return dataArgs;
+                    }
+
                     return super.getReplyArgs( interaction, argsFromManager );
                 }
 
@@ -257,27 +344,36 @@ export class AdapterBuilderBase<
                 protected createBinder(): IBinder<TInteraction, TArgs, TContext> {
                     const getContext = this.getContext.bind( this );
                     return {
-                        bindButton: <T extends UIDefaultButtonChannelTextInteraction>(
+                        bindButton: <T extends ButtonInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindButton( name, ( interaction ) => callback( getContext(), interaction as T ) ),
-                        bindModal: <T extends UIDefaultModalChannelTextInteraction>(
+                        bindModal: <T extends ModalSubmitInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindModal( name, ( interaction ) => callback( getContext(), interaction as T ) ),
-                        bindModalWithButton: <T extends UIDefaultModalChannelTextInteraction>(
+                        bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
                             buttonName: string,
                             modalName: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
                         ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( getContext(), interaction as T ) ),
-                        bindSelectMenu: <T extends UIDefaultStringSelectMenuChannelTextInteraction>(
+                        bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
                             name: string,
-                            callback: ( context: TContext, interaction: T ) => Promise<void>
-                        ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
+                        ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
+                            name: string,
+                            callback: ( context: TContext, interaction: T ) => Promise<void>,
+                            _options?: BindingRegistrationOptions
+                        ) => this.bindUserSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
                     };
                 }
 
-                protected getBaseContext() {
+                protected getBaseContext(): IAdapterContext<TInteraction, TArgs> {
                     return {
                         logger: AdapterBuilderBase.dedicatedLogger,
                         customIdStrategy: this.customIdStrategy,
@@ -288,8 +384,10 @@ export class AdapterBuilderBase<
                         deleteArgs: this.deleteArgs.bind( this ),
                         ephemeral: this.ephemeral.bind( this ),
                         editReply: this.editReply.bind( this ),
-                        showModal: ( interaction, name ) => this.showModal( name, interaction )
-                    } satisfies IAdapterContext<TInteraction, TArgs>;
+                        showModal: ( interaction, name ) => this.showModal( name, interaction ),
+                        updateInteractionDefer: this.updateInteractionDefer.bind( this ),
+                        deleteRelatedEphemeralInteractionsInternal: this.deleteRelatedEphemeralInteractionsInternal.bind( this )
+                    };
                 }
 
                 protected getContext() {
@@ -298,6 +396,14 @@ export class AdapterBuilderBase<
                         return builder.contextFactory( base, this as InstanceType<TAdapter> );
                     }
                     return base as TContext;
+                }
+
+                protected shouldDisableMiddleware(): boolean {
+                    const builderValue = builder.disableMiddlewareFlag;
+                    if ( builderValue !== undefined ) {
+                        return builderValue;
+                    }
+                    return super.shouldDisableMiddleware ? super.shouldDisableMiddleware() : false;
                 }
             };
 
@@ -311,16 +417,40 @@ export class AdapterBuilderBase<
         try { Object.defineProperty( AdapterClass, "displayName", { value: builder.name } ); } catch {}
         try { Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } ); } catch {}
 
+        const metadata: AdapterBuilderMetadata = {
+            name: builder.name,
+            component: builder.component,
+            excludedElements: builder.excludedElements,
+            permissions: builder.permissions,
+            channelTypes: builder.channelTypes,
+            shouldDisableMiddleware: builder.disableMiddlewareFlag,
+            generateCustomIdForEntityHandler: builder.generateCustomIdForEntityHandler,
+            getCustomIdForEntityHandler: builder.getCustomIdForEntityHandler,
+            startArgsHandler: builder.startArgsHandler,
+            replyArgsHandler: builder.replyArgsHandler,
+            beforeBuildHandler: builder.beforeBuildHandler,
+            beforeBuildRunHandler: builder.beforeBuildRunHandler,
+            beforeFinishHandler: builder.beforeFinishHandler,
+            entityMapHandler: builder.entityMapHandler,
+            contextFactory: builder.contextFactory,
+            rawBuilder: builder
+        };
+
+        Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
+            value: metadata
+        } );
+
         return AdapterClass;
     }
 
     protected callGetStartArgs(
         handler: StartArgsHandler<TContext, TChannel, TArgs> | undefined,
         context: TContext,
-        channel: TChannel
+        channel: TChannel,
+        argsFromManager?: TArgs
     ): Promise<UIArgs> {
         if ( handler ) {
-            return handler( context, channel );
+            return handler( context, channel, argsFromManager );
         }
         return Promise.resolve( {} );
     }
@@ -375,4 +505,80 @@ export class AdapterBuilderBase<
         return [ ...base, ...additional, ...extra ];
     }
 
+    protected buildCustomId(
+        adapterName: string,
+        entity: UIEntitySchemaBase | UIModalSchema,
+        strategy: UICustomIdStrategyBase
+    ): string {
+        const customId = entity.attributes.custom_id;
+        if ( customId ) {
+            return customId;
+        }
+
+        const baseName = adapterName;
+        const entityName = entity.name;
+        const separatorLength = UI_CUSTOM_ID_SEPARATOR.length;
+        const candidate = baseName + UI_CUSTOM_ID_SEPARATOR + entityName;
+
+        if ( candidate.length <= UI_MAX_CUSTOM_ID_LENGTH ) {
+            return strategy.generateId( candidate );
+        }
+
+        const availableBaseLength = UI_MAX_CUSTOM_ID_LENGTH - separatorLength - entityName.length;
+
+        if ( availableBaseLength > 0 ) {
+            const hashedBase = UIHashService.generateHash( baseName, availableBaseLength, true );
+            return hashedBase + UI_CUSTOM_ID_SEPARATOR + entityName;
+        }
+
+        const entityParts = entityName.split( UI_CUSTOM_ID_SEPARATOR );
+        const entitySuffix = entityParts.pop();
+        const entityCore = entityParts.join( UI_CUSTOM_ID_SEPARATOR );
+        const baseBudget = Math.floor( UI_MAX_CUSTOM_ID_LENGTH / 3 );
+        const entityBudget = UI_MAX_CUSTOM_ID_LENGTH - separatorLength * 2 - baseBudget - ( entitySuffix ? entitySuffix.length : 0 );
+        const hashedBase = UIHashService.generateHash( baseName, Math.max( baseBudget, 6 ), true );
+        const hashedEntityCore = UIHashService.generateHash( entityCore || entityName, Math.max( entityBudget, 6 ), true );
+
+        if ( entitySuffix ) {
+            const id = hashedBase + UI_CUSTOM_ID_SEPARATOR + hashedEntityCore + UI_CUSTOM_ID_SEPARATOR + entitySuffix;
+            if ( id.length <= UI_MAX_CUSTOM_ID_LENGTH ) {
+                return id;
+            }
+        }
+
+        return UIHashService.generateHash( candidate, UI_MAX_CUSTOM_ID_LENGTH, true );
+    }
+
+    protected async resolveArgsFromDataSource(
+        target: "start" | "reply" | "edit",
+        context: unknown,
+        argsFromManager?: UIArgs
+    ): Promise<UIArgs | undefined> {
+        if ( !this.argsDataSource?.targets.has( target ) || !this.argsDataSource.dataComponentName ) {
+            return undefined;
+        }
+
+        try {
+            const uiDataService = ServiceLocator.$.get<UIDataService>( "VertixGUI/UIDataService" );
+            const dataComponent = uiDataService.getDataComponent( this.argsDataSource.dataComponentName, true );
+
+            if ( !dataComponent || "function" !== typeof ( dataComponent as any ).read ) {
+                return argsFromManager;
+            }
+
+            const identifier = {
+                ...( "object" === typeof context ? ( context as Record<string, unknown> ) : {} ),
+                ...( argsFromManager ?? {} )
+            };
+
+            const data = await ( dataComponent as { read: ( payload: Record<string, unknown> ) => Promise<UIArgs | null> } )
+                .read( identifier );
+
+            return { ...( data ?? {} ), ...( argsFromManager ?? {} ) };
+        } catch( error ) {
+            const logger = new Logger( this.name );
+            logger.warn( this.resolveArgsFromDataSource, `Failed to resolve data source for '${ this.name }'`, error );
+            return argsFromManager;
+        }
+    }
 }

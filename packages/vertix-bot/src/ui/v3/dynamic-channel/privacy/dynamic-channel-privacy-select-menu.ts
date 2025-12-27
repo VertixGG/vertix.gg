@@ -8,7 +8,7 @@ export class DynamicChannelPrivacySelectMenu extends DynamicChannelStringMenuBas
     }
 
     public getId(): string {
-        throw new Error( "Method not implemented." );
+        return "dynamic-channel-privacy-select-menu";
     }
 
     protected async getPlaceholder() {

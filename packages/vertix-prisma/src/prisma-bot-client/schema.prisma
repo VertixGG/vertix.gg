@@ -1,8 +1,7 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["clientExtensions"]
-  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "rhel-openssl-1.0.x", "linux-arm64-openssl-3.0.x"]
-  output          = "../src/prisma-bot-client"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "rhel-openssl-1.0.x", "linux-arm64-openssl-3.0.x"]
+  output        = "../src/prisma-bot-client"
 }
 
 datasource db {
@@ -14,6 +13,7 @@ enum E_INTERNAL_CHANNEL_TYPES {
   DEFAULT_CHANNEL
   DYNAMIC_CHANNEL
   MASTER_CREATE_CHANNEL
+  SCALING_CHANNEL
 }
 
 enum E_DATA_TYPES {
@@ -58,6 +58,7 @@ model Category {
 
   @@index([categoryId])
   @@index([guildId])
+  @@index([guildId, categoryId])
 }
 
 model Guild {
@@ -73,6 +74,9 @@ model Guild {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   updatedAtInternal DateTime?
+
+  @@index([isInGuild])
+  @@index([updatedAtInternal])
 }
 
 model GuildData {
@@ -93,6 +97,7 @@ model GuildData {
   updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
+  @@index([ownerId, key])
 }
 
 model Channel {
@@ -118,6 +123,9 @@ model Channel {
   @@index([guildId])
   @@index([categoryId])
   @@index([userOwnerId])
+  @@index([internalType])
+  @@index([guildId, internalType])
+  @@index([ownerChannelId])
 }
 
 model ChannelData {
@@ -138,6 +146,7 @@ model ChannelData {
   updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
+  @@index([ownerId, key])
 }
 
 model User {
@@ -173,6 +182,7 @@ model UserData {
   @@unique([ownerId, key, version])
   @@index([key])
   @@index([ownerId])
+  @@index([ownerId, key])
 }
 
 model UserChannelData {
@@ -198,6 +208,7 @@ model UserChannelData {
   @@index([channelId])
   @@index([key])
   @@index([ownerId])
+  @@index([ownerId, key])
 }
 
 // Language.

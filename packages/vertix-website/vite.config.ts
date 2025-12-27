@@ -1,29 +1,23 @@
-import { resolve } from "path";
+import path from "path";
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+// https://vitejs.dev/config/
 export default defineConfig( {
     plugins: [ react() ],
     resolve: {
         alias: {
-            "@internal": resolve( __dirname, "./src" ),
-            "@vertix": resolve( __dirname, "./src/vertix" ),
+            "@vertix.gg/website": path.resolve( __dirname, "./" ),
+            "@": path.resolve( __dirname, "./src/vertix" ),
         },
     },
     css: {
         preprocessorOptions: {
             scss: {
-                api: "modern-compiler",
-                silenceDeprecations: [ "legacy-js-api" ],
-            },
-        },
-    },
-    server: {
-        port: 3000,
-        open: true,
-    },
-    build: {
-        outDir: "build",
-    },
+                // Ensure SASS variables are available globally if needed,
+                // though explicit imports are preferred for modularity.
+            }
+        }
+    }
 } );

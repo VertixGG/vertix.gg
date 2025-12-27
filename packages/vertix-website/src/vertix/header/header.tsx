@@ -2,6 +2,8 @@ import React from "react";
 
 import { useLocation } from "react-router-dom";
 
+import ShinyStars from "@vertix.gg/website/src/vertix/components/ui/shiny-stars";
+
 import VertixWeb from "@vertix.gg/website/src/vertix/assets/vertix-optimized.webp";
 
 const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } ) => {
@@ -75,6 +77,7 @@ export default function Header() {
 
     return (
         <section id="header" className="header">
+            <ShinyStars sensitivity={ 0.5 } count={ 30 } className="d-none d-md-block" />
             <nav className="navbar navbar-expand-xl pt-xl-5">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
@@ -127,6 +130,7 @@ export default function Header() {
                     </div>
                 </div>
             </nav>
+            <div className="navbar-opacity-fix"></div>
 
             <div id="vertix-wings" className="d-flex justify-content-center">
                 <div id="vertix-wings-placeholder" className="text-center">

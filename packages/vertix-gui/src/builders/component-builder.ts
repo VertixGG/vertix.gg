@@ -2,7 +2,10 @@
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
-import type {  UIInstancesTypes , UIElementsConstructor, UIElementsTypes, UIEmbedTypes, UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+
+import type { ComponentBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import type { UIInstancesTypes, UIElementsConstructor, UIElementsTypes, UIEmbedTypes, UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
@@ -86,7 +89,8 @@ export class ComponentBuilder {
 
     public build(): UIComponentTypeConstructor {
         const builder = this;
-        return class GeneratedComponent extends UIComponentBase {
+
+        class GeneratedComponent extends UIComponentBase {
             public static getName() {
                 return builder.name;
             }
@@ -132,6 +136,25 @@ export class ComponentBuilder {
             public static getMarkdowns() {
                 return builder.markdowns;
             }
+        }
+
+        const metadata: ComponentBuilderMetadata = {
+            name: builder.name,
+            instanceType: builder.instanceType,
+            elementsGroups: builder.elementsGroups,
+            embedsGroups: builder.embedsGroups,
+            modals: builder.modals,
+            elements: builder.elements,
+            embeds: builder.embeds,
+            defaultElementsGroup: builder.defaultElementsGroup,
+            defaultEmbedsGroup: builder.defaultEmbedsGroup,
+            defaultMarkdownsGroup: builder.defaultMarkdownsGroup
         };
+
+        Reflect.defineProperty( GeneratedComponent, BUILDER_METADATA_SYMBOL, {
+            value: metadata
+        } );
+
+        return GeneratedComponent as UIComponentTypeConstructor;
     }
 }

@@ -14,6 +14,7 @@ import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import type { UIComponentTypeConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ComponentSchemaResult } from "@vertix.gg/gui/src/bases/ui-serialization";
+import type { UISerializationFlowComponent } from "@vertix.gg/definitions/src/ui-serialization-definitions";
 
 export class UIWizardComponentBase extends UIComponentBase {
     public static getName() {
@@ -129,7 +130,7 @@ export class UIWizardComponentBase extends UIComponentBase {
         }
 
         if ( childSchemas && childSchemas.length ) {
-            schema.components.push( ...childSchemas );
+            schema.components.push( ...childSchemas as UISerializationFlowComponent[] );
         }
 
         return schema;

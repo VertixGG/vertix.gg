@@ -1,0 +1,3 @@
+Avoid predicting edge handles from inferred data.
+
+Edge handle resolution must rely on explicit metadata provided by flows (e.g., declared transition-to-element mappings), not heuristics or guesses in graph-builder or related code. If a handle cannot be resolved from explicit data, render with a neutral fallback rather than inferring.

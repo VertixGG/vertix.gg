@@ -8,7 +8,13 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
+import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
+
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
+
+import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
@@ -50,8 +56,7 @@ import type {
     TAdapterRegisterOptions,
     TPossibleAdapters
 } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
-import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
+import type { UIFlowClassType } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 export type TAdapterMapping = {
     base: UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>;
@@ -69,12 +74,6 @@ const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER
 const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
     timeout: 0,
     silent: false
-};
-
-// Add type for Concrete Controller Constructor + Statics
-type ConcreteControllerClass = ( new ( options: any ) => UIControllerBase<any> ) & {
-    getName: () => string;
-    // Add other static methods if needed
 };
 
 export class UIService extends ServiceWithDependenciesBase<{
@@ -97,8 +96,9 @@ export class UIService extends ServiceWithDependenciesBase<{
     private uiModulesTypes = new Map<string, TModuleConstructor>();
     private uiModulesInstances = new Map<string, UIModuleBase>();
 
-    // Add map for Flow -> Controller
-    private flowNameToControllerClass = new Map<string, ConcreteControllerClass>();
+    // When definitions are loaded from exports, we synthesize module entries here
+    private uiModulesFromDefs = new Set<string>();
+    private usingExports = false;
 
     private uiAdaptersTypes = new Map<string, TAdapterClassType | TAdapterConstructor>();
     private uiAdaptersStaticInstances = new Map<string, TPossibleAdapters>();
@@ -179,11 +179,15 @@ export class UIService extends ServiceWithDependenciesBase<{
         return this.uiModulesTypes;
     }
 
+    public isUsingExports(): boolean {
+        return this.usingExports;
+    }
+
     // TODO: Rename to getUIAdapter
     public get<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         silent = false
-    ): TAdapterMapping[T] | undefined {
+    ): TAdapterMapping[ T ] | undefined {
         uiName = uiName.split( UI_CUSTOM_ID_SEPARATOR )[ 0 ];
 
         const UIClass = this.uiAdaptersTypes.get( uiName ) as TAdapterClassType;
@@ -197,10 +201,10 @@ export class UIService extends ServiceWithDependenciesBase<{
         }
 
         if ( UIClass.isDynamic() ) {
-            return this.createInstance( uiName ) as TAdapterMapping[T];
+            return this.createInstance( uiName ) as TAdapterMapping[ T ];
         }
 
-        return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[T];
+        return this.uiAdaptersStaticInstances.get( uiName ) as TAdapterMapping[ T ];
     }
 
     public getUIModule<T extends UIModuleBase>( name: string, silent = false ): T | undefined {
@@ -222,8 +226,6 @@ export class UIService extends ServiceWithDependenciesBase<{
         Module.validate?.(); // Use optional chaining for validate
 
         const adapters = Module.getAdapters();
-        const flows = Module.getFlows(); // Get flows
-        const controllers = Module.getControllers() as ConcreteControllerClass[]; // Assert concrete type
 
         const module = new Module();
 
@@ -233,27 +235,88 @@ export class UIService extends ServiceWithDependenciesBase<{
         // Register Adapters
         this.registerAdapters( adapters, { module } );
 
-        // --- Build Flow -> Controller Map ---
-        this.logger.debug( this.registerModule, `Mapping flows to controllers for module ${ moduleName }...` );
-        flows.forEach( flowClass => {
-            const flowName = flowClass.getName();
-            const expectedControllerName = flowName.replace( /Flow$/, "Controller" );
-            // Find controller using the concrete type
-            const controllerClass = controllers.find( c => c.getName() === expectedControllerName );
-
-            if ( controllerClass ) {
-                this.flowNameToControllerClass.set( flowName, controllerClass );
-                this.logger.debug( this.registerModule, `Mapped Flow '${ flowName }' to Controller '${ controllerClass.getName() }'` );
-            } else {
-                this.logger.warn( this.registerModule, `Could not find matching controller for flow '${ flowName }' based on naming convention.` );
-            }
-        } );
-        this.logger.debug( this.registerModule, `Finished mapping for module ${ moduleName }. Map size: ${ this.flowNameToControllerClass.size }` );
     }
 
-    // Update return type
-    public getControllerClassForFlowName( flowName: string ): ConcreteControllerClass | undefined {
-        return this.flowNameToControllerClass.get( flowName );
+    /**
+     * Register adapters/flows/components directly from exported definitions
+     * without relying on code modules. The loader must provide runtime classes.
+     */
+    public async registerFromDefinitions( loader: UIDefinitionLoader, options?: { adapterNames?: string[]; flowNames?: string[]; componentNames?: string[]; moduleName?: string } ) {
+        this.usingExports = true;
+
+        const adapterNames = options?.adapterNames || [];
+        const flowNames = options?.flowNames || [];
+        const componentNames = options?.componentNames || [];
+        const moduleName = options?.moduleName || "VertixGUI/ExportsModule";
+
+        const loadedAdapters: TAdapterClassType[] = [];
+        const loadedFlows: Array<{ getName: () => string }> = [];
+
+        // Preload components so adapters can reference their classes (no registry needed)
+        for ( const name of componentNames ) {
+            await loader.loadComponent( name );
+        }
+
+        for ( const name of adapterNames ) {
+            const hydrated = await loader.loadAdapter( name );
+            if ( this.uiAdaptersTypes.has( name ) ) {
+                loadedAdapters.push( this.uiAdaptersTypes.get( name ) as TAdapterClassType );
+                continue;
+            }
+            const adapterClass = hydrated.adapterClass;
+            if ( !adapterClass ) {
+                throw new Error( `UIService/registerFromDefinitions: adapter '${ name }' missing runtime class` );
+            }
+            this.registerAdapter( adapterClass, { module: { getName: () => moduleName } as unknown as UIModuleBase } );
+            loadedAdapters.push( adapterClass );
+        }
+
+        // Touch flows so they are cached/hydrated; registry not required
+        for ( const name of flowNames ) {
+            const hydrated = await loader.loadFlow( name );
+            if ( hydrated.flowClass ) {
+                loadedFlows.push( hydrated.flowClass );
+            }
+        }
+
+        // Register module placeholder if not present
+        if ( !this.uiModulesTypes.has( moduleName ) ) {
+            // Avoid creating empty placeholder modules when no classes were exported.
+            if ( loadedAdapters.length === 0 && loadedFlows.length === 0 ) {
+                return;
+            }
+
+            this.uiModulesFromDefs.add( moduleName );
+
+            class ExportsModule extends UIModuleBase {
+                public static override getName() {
+                    return moduleName;
+                }
+
+                public static override getAdapters() {
+                    return loadedAdapters;
+                }
+
+                public static override getFlows() {
+                    return loadedFlows as unknown as UIFlowClassType[];
+                }
+
+                public static override getSystemFlows() {
+                    return [];
+                }
+
+                public static override getSourcePath() {
+                    return moduleName;
+                }
+
+                protected override getCustomIdStrategy() {
+                    return new UICustomIdPlainStrategy();
+                }
+            }
+
+            this.uiModulesTypes.set( moduleName, ExportsModule as unknown as TModuleConstructor );
+            this.uiModulesInstances.set( moduleName, new ExportsModule() );
+        }
     }
 
     public async registerSystemUIAdapters() {
@@ -305,7 +368,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     public async waitForAdapter<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         options = ADAPTER_WAITFOR_DEFAULT_OPTIONS
-    ): Promise<TAdapterMapping[T] | undefined> {
+    ): Promise<TAdapterMapping[ T ] | undefined> {
         return new Promise( ( resolve, reject ) => {
             const adapter = this.get<T>( uiName, true );
 
@@ -346,7 +409,7 @@ export class UIService extends ServiceWithDependenciesBase<{
             Boolean
         );
 
-        return result as TAdapterMapping[T][];
+        return result as TAdapterMapping[ T ][];
     }
 
     public registerUILanguageManager( uiLanguageManager: UILanguageManagerInterface ) {
@@ -462,4 +525,3 @@ export class UIService extends ServiceWithDependenciesBase<{
 }
 
 export default UIService;
- 

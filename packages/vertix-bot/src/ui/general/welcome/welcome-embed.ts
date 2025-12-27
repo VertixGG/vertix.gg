@@ -1,49 +1,26 @@
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-export class WelcomeEmbed extends UIEmbedBase {
-    private static vars = {};
+const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
+    .setInstanceType( UIInstancesTypes.Static )
+    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setImage( "https://i.imgur.com/x8jMguN.gif" )
+    .setThumbnail( "https://s11.gifyu.com/images/SuW5n.gif" )
+    .setTitle( "༄ Vertix is here, let's get started!" )
+    .setDescription(
+        "Welcome to Vertix, an incredible addition to your server!\n" +
+        "Let's collaborate and make your server even better.\n\n" +
+        "**Bot Setup**\n" +
+        "- Type `/setup` or press `(🛠 Setup)` button.\n" +
+        "- Click on `(➕ Create Master Channel)`\n" +
+        "- Follow the steps.\n\n" +
+        "Still not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\n" +
+        "You can always edit the configurations by using the `/setup` command.\n\n" +
+        "If you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\n" +
+        "Join us at: https://discord.gg/dEwKeQefUU"
+    )
+    .build();
 
-    public static getName() {
-        return "VertixBot/UI-General/WelcomeEmbed";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Static;
-    }
-
-    protected getColor() {
-        return VERTIX_DEFAULT_COLOR_BRAND;
-    }
-
-    protected getImage() {
-        return "https://i.imgur.com/x8jMguN.gif";
-    }
-
-    protected getTitle(): string {
-        return "༄ Vertix is here, let's get started!";
-    }
-
-    protected getThumbnail() {
-        return {
-            url: "https://s11.gifyu.com/images/SuW5n.gif"
-        };
-    }
-
-    protected getDescription() {
-        return (
-            "Welcome to Vertix, an incredible addition to your server!\n" +
-            "Let's collaborate and make your server even better.\n\n" +
-            "**Bot Setup**\n" +
-            "- Type `/setup` or press `(🛠 Setup)` button.\n" +
-            "- Click on `(➕ Create Master Channel)`\n" +
-            "- Follow the steps.\n\n" +
-            "Still not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\n" +
-            "You can always edit the configurations by using the `/setup` command.\n\n" +
-            "If you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\n" +
-            "Join us at: https://discord.gg/dEwKeQefUU"
-        );
-    }
-}
+export { WelcomeEmbed };

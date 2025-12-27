@@ -33,7 +33,6 @@ export class DynamicChannelLimitComponent extends UIComponentBase {
     }
 
     public static getDefaultEmbedsGroup() {
-        // By default, its handles only the modal.
-        return null;
+        return "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbedGroup";
     }
 }

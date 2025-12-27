@@ -1,8 +1,4 @@
-import { fileURLToPath } from "node:url";
-
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
-
-import { ensureInWorker } from "@zenflux/worker/utils";
 
 import { ChannelType, Client, DiscordAPIError, GatewayIntentBits } from "discord.js";
 
@@ -17,8 +13,6 @@ import type { AppService as AppServiceType } from "@vertix.gg/bot/src/services/a
 import type { ChannelService as ChannelServiceType } from "@vertix.gg/bot/src/services/channel-service";
 
 import type { PrismaBotClient as PrismaBotClientType } from "@vertix.gg/prisma/bot-client";
-
-import type { DThreadHostInterface } from "@zenflux/worker/definitions";
 
 import type { VoiceChannel } from "discord.js";
 
@@ -51,7 +45,7 @@ class CleanupWorker extends InitializeBase {
     }
 
     private async removeDynamicChannelFromDB(
-        prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]>,
+        prisma: ReturnType<( typeof PrismaBotClient.$ )[ "getClient" ]>,
         channel: any
     ) {
         await prisma.channel.delete( {
@@ -120,7 +114,7 @@ class CleanupWorker extends InitializeBase {
                             channel: channelFetch
                         } );
                     }
-                } catch ( error: any ) {
+                } catch( error: any ) {
                     if ( error instanceof DiscordAPIError && error.code === 10004 ) {
                         // Unknown Guild, remove from db
                         this.logger.info(
@@ -223,7 +217,7 @@ class CleanupWorker extends InitializeBase {
                             `Master channel id: '${ channel.channelId }' is deleted from db.`
                         );
                     }
-                } catch ( error ) {
+                } catch( error ) {
                     this.logger.error( this.removeNonExistMasterChannelsFromDB, "", error );
                 }
             } );
@@ -401,7 +395,7 @@ class CleanupWorker extends InitializeBase {
         );
     }
 
-    private async getGuildsDidntUpdateRecently( prisma: ReturnType<( typeof PrismaBotClient.$ )["getClient"]> ) {
+    private async getGuildsDidntUpdateRecently( prisma: ReturnType<( typeof PrismaBotClient.$ )[ "getClient" ]> ) {
         return prisma.guild.findMany( {
             where: {
                 updatedAtInternal: {
@@ -460,29 +454,8 @@ class CleanupWorker extends InitializeBase {
     }
 }
 
-export function inWorker( threadHost: DThreadHostInterface ) {
-    ensureInWorker();
-
+export async function initWorker( _args = [] ) {
     return CleanupWorker.$.handle().catch( ( e ) => {
-        threadHost.sendMessage( "error", {
-            name: e.name,
-            message: e.message,
-            stack: e.stack,
-            code: e.code
-        } );
-    } );
-}
-
-export async function initWorker( args = [] ) {
-    const { zCreateWorker } = await import( "@zenflux/worker" );
-
-    return zCreateWorker( {
-        name: "clean-up-worker",
-        display: CleanupWorker.getName(),
-
-        workFilePath: fileURLToPath( import.meta.url ),
-        workFunction: inWorker,
-
-        workArgs: args
+        throw e;
     } );
 }

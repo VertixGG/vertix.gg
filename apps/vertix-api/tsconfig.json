@@ -1,0 +1,35 @@
+{
+    "extends": "./tsconfig.paths.json",
+
+    "compilerOptions": {
+        "incremental": true,
+        "rootDir": "./",
+        "typeRoots": [
+            "../../node_modules/@types",
+            "./types"
+        ],
+
+        "types": [
+            "node"
+        ],
+
+        "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": false
+    }
+}

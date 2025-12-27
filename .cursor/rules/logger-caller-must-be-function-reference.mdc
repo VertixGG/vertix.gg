@@ -1,0 +1,65 @@
+# Logger Caller Must Be Function Reference
+
+When using the Logger from `@vertix.gg/base`, the first argument (caller) must always be a function reference, never a hardcoded string.
+
+## Rules
+
+1. **Always pass the function itself** as the first argument to logger methods
+2. **Never use hardcoded strings** for the caller parameter
+3. **Extract anonymous functions** to named functions when logging is needed inside them
+
+## Examples
+
+### ✅ Correct - Function Reference
+
+```typescript
+function handleRequest() {
+    logger.info( handleRequest, "Processing request" );
+}
+
+async function fetchData() {
+    logger.error( fetchData, "Failed to fetch", error );
+}
+
+class MyService {
+    public async start() {
+        logger.info( this.start, "Service starting" );
+    }
+}
+```
+
+### ❌ Incorrect - Hardcoded String
+
+```typescript
+function handleRequest() {
+    logger.info( "handleRequest", "Processing request" );
+}
+
+logger.error( "fetchData", "Failed to fetch", error );
+```
+
+### ✅ Correct - Extract Anonymous to Named Function
+
+```typescript
+async function handleGetModules( request, reply ) {
+    logger.info( handleGetModules, "Fetching modules" );
+}
+
+fastify.get( "/modules", handleGetModules );
+```
+
+### ❌ Incorrect - Anonymous Function with Hardcoded String
+
+```typescript
+fastify.get( "/modules", async ( request, reply ) => {
+    logger.info( "handleModules", "Fetching modules" );
+} );
+```
+
+## Why This Matters
+
+- **Automatic refactoring**: Function names update automatically when renamed
+- **Stack trace accuracy**: Logger can extract accurate caller information
+- **Consistency**: Ensures uniform logging patterns across the codebase
+- **Type safety**: TypeScript validates function references
+

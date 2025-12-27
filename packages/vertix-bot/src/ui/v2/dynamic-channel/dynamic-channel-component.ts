@@ -36,6 +36,10 @@ export class DynamicChannelComponent extends UIComponentBase {
     protected async getSchemaInternal() {
         const schema = await super.getSchemaInternal();
 
+        if ( !schema.entities ) {
+            return schema;
+        }
+
         schema.entities.elements = uiUtilsDynamicElementsRearrange(
             [
                 schema.entities.elements.flat( UI_ELEMENTS_DEPTH ).filter(

@@ -4,7 +4,7 @@ import { UIPortableBase } from "@vertix.gg/gui/src/bases/ui-portable-base";
 
 import type { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 
-import type { UIArgs, UIEntityTypes, UIPortableSchemaBase, UIType } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIEntitySchemaBase, UIEntityTypes, UIPortableSchemaBase, UIType } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIModalLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
@@ -13,6 +13,7 @@ export interface UIModalSchema extends UIPortableSchemaBase {
         title: string;
         custom_id?: string;
     };
+    entities: UIEntitySchemaBase[][];
 }
 
 // TODO: test.

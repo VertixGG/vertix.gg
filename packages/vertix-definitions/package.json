@@ -1,0 +1,9 @@
+{
+    "name": "@vertix.gg/definitions",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "scripts": {
+        "vertix-definitions:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects definitions",
+        "vertix-definitions:typecheck": "bunx --bun tsc --noEmit"
+    }
+}

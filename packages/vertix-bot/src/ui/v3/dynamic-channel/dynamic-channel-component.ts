@@ -9,7 +9,7 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
-import { DynamicChannelPrimaryMessageEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-embed";
+import { DynamicChannelPrimaryMessageEmbedsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-embeds-group";
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {
@@ -28,12 +28,20 @@ export class DynamicChannelComponent extends UIComponentBase {
         return "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup";
     }
 
-    protected static getEmbeds() {
-        return [ DynamicChannelPrimaryMessageEmbed ];
+    public static getEmbedsGroups() {
+        return [ DynamicChannelPrimaryMessageEmbedsGroup ];
+    }
+
+    public static getDefaultEmbedsGroup() {
+        return "VertixBot/UI-V3/DynamicChannel/EmbedsGroup";
     }
 
     protected async getSchemaInternal() {
         const schema = await super.getSchemaInternal();
+
+        if ( !schema.entities ) {
+            return schema;
+        }
 
         schema.entities.elements = uiUtilsDynamicElementsRearrange(
             [

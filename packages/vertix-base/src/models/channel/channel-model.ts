@@ -164,7 +164,7 @@ export class ChannelModel extends ModelWithDataBase<
         return handlers[ cacheKey ][ includeKey ]();
     }
 
-    public async create( createArgs: PrismaBot.Prisma.ChannelCreateArgs["data"], cache = true ) {
+    public async create( createArgs: PrismaBot.Prisma.ChannelCreateArgs[ "data" ], cache = true ) {
         this.logger.log(
             this.create,
             `Guild id: '${ createArgs.guildId }' - Creating entry for channel id: '${ createArgs.channelId }''`
@@ -205,7 +205,7 @@ export class ChannelModel extends ModelWithDataBase<
         return result;
     }
 
-    public async delete( deleteArgs: PrismaBot.Prisma.ChannelDeleteArgs["where"], cache = true ) {
+    public async delete( deleteArgs: PrismaBot.Prisma.ChannelDeleteArgs[ "where" ], cache = true ) {
         this.logger.log( this.delete, `Deleting entry for channel id: '${ deleteArgs.channelId }''` );
 
         // Delete cache
@@ -221,7 +221,7 @@ export class ChannelModel extends ModelWithDataBase<
         } );
     }
 
-    public async deleteMany( where: PrismaBot.Prisma.ChannelDeleteManyArgs["where"], cache = true ) {
+    public async deleteMany( where: PrismaBot.Prisma.ChannelDeleteManyArgs[ "where" ], cache = true ) {
         this.logger.log( this.deleteMany, `Deleting entries for guild id: '${ where!.guildId }''` );
 
         if ( !cache ) {
@@ -240,12 +240,12 @@ export class ChannelModel extends ModelWithDataBase<
     }
 
     public async getMasters( guildId: string, dataKey?: string ) {
-        const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
+        const where: ChannelFindManyArgsWithDataIncludeKey[ "where" ] = {
             guildId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
         };
 
-        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+        const include: ChannelFindManyArgsWithDataIncludeKey[ "include" ] | undefined = dataKey
             ? {
                 data: true,
                 key: dataKey
@@ -256,12 +256,12 @@ export class ChannelModel extends ModelWithDataBase<
     }
 
     public async getDynamics( guildId: string, dataKey?: string ) {
-        const where: ChannelFindManyArgsWithDataIncludeKey["where"] = {
+        const where: ChannelFindManyArgsWithDataIncludeKey[ "where" ] = {
             guildId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL
         };
 
-        const include: ChannelFindManyArgsWithDataIncludeKey["include"] | undefined = dataKey
+        const include: ChannelFindManyArgsWithDataIncludeKey[ "include" ] | undefined = dataKey
             ? {
                 data: true,
                 key: dataKey

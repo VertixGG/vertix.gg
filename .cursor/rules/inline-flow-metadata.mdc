@@ -1,0 +1,4 @@
+Inline Flow Metadata Only
+
+When defining flow classes, declare state, transition, required data, and state options inside the static helper methods or accessor bodies. Avoid module-level constants or shared mutable structures for these definitions to keep flows self-contained and data-driven.
+

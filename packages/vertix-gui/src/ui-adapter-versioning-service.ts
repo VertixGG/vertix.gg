@@ -34,7 +34,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
                 console.warn( "No versions registered after initialization, registering default versions [2, 3]" );
                 try {
                     this.registerVersions( [ 2, 3 ] );
-                } catch ( error ) {
+                } catch( error ) {
                     console.error( "Error registering default versions in constructor:", error );
                 }
             }
@@ -75,7 +75,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
             }
 
             console.log( `Successfully registered ${ this.versions.size } versions` );
-        } catch ( error ) {
+        } catch( error ) {
             console.error( "Error registering versions:", error );
 
             // Ensure at least one version is registered to prevent crashes

@@ -14,13 +14,9 @@ import { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/general/not-your-ch
 import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow";
 import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow";
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
-import { HelpFlow } from "@vertix.gg/bot/src/ui/general/help/help-flow";
 import { SetupFlow } from "@vertix.gg/bot/src/ui/general/setup/setup-flow";
-import { WelcomeController } from "@vertix.gg/bot/src/controllers/welcome-controller";
-
-import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
-
-type ControllerClassConstructor = new ( options: any ) => UIControllerBase<any>;
+import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
+import { FeedbackFlow } from "@vertix.gg/bot/src/ui/general/feedback/feedback-flow";
 
 export class UIModuleGeneral extends UIModuleBase {
     public static getName() {
@@ -36,18 +32,11 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [ WelcomeFlow, SetupFlow, HelpFlow, LanguageFlow ];
+        return [ WelcomeFlow, SetupFlow, SetupNewWizardFlow, LanguageFlow, FeedbackFlow ];
     }
 
     public static getSystemFlows() {
         return [ CommandsFlow, GuildFlow ];
-    }
-
-    /**
-     * Returns the Controller classes associated with this module.
-     */
-    public static override getControllers(): ControllerClassConstructor[] {
-        return [ WelcomeController as unknown as ControllerClassConstructor ];
     }
 
     protected getCustomIdStrategy() {

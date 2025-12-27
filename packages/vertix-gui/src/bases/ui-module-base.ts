@@ -7,10 +7,7 @@ import { DEFAULT_UI_NAMESPACE_SEPARATOR } from "@vertix.gg/gui/src/definitions/u
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
 
 import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
-import type { TFlowClassType } from "@vertix.gg/gui/src/definitions/ui-flow-declaration";
-import type { UIControllerBase } from "@vertix.gg/gui/src/bases/ui-controller-base";
-
-type ControllerClassConstructor = new ( options: any ) => UIControllerBase<any>;
+import type { UIFlowClassType } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 export abstract class UIModuleBase extends UIBase {
     public customIdStrategy: UICustomIdStrategyBase;
@@ -23,15 +20,11 @@ export abstract class UIModuleBase extends UIBase {
         throw new ForceMethodImplementation( this, this.getAdapters.name );
     }
 
-    public static getControllers(): ControllerClassConstructor[] {
+    public static getFlows(): UIFlowClassType[] {
         return [];
     }
 
-    public static getFlows(): TFlowClassType[] {
-        return [];
-    }
-
-    public static getSystemFlows(): TFlowClassType[] {
+    public static getSystemFlows(): UIFlowClassType[] {
         return [];
     }
 

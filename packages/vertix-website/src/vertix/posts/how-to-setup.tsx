@@ -17,15 +17,15 @@ export default function HowToSetup() {
                     </li>
                     <hr/>
                     <br/>
-                    <HowToSetupStep1 displayStep={true} />
+                    <HowToSetupStep1 displayStep={ true } />
                     <br/>
                     <hr/>
                     <br/>
-                    <HowToSetupStep2 displayStep={true} />
+                    <HowToSetupStep2 displayStep={ true } />
                     <br/>
                     <hr/>
                     <br/>
-                    <HowToSetupStep3 displayStep={true} />
+                    <HowToSetupStep3 displayStep={ true } />
                 </ul>
 
                 <hr/>

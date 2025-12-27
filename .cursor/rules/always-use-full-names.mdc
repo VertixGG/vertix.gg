@@ -1,0 +1,1 @@
+Always use fully qualified string literals (no template composition) for flow names, transitions, and state identifiers.

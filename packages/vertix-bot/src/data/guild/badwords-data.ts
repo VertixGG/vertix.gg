@@ -6,12 +6,7 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/base/src/definitions/guild-data-keys";
 import { DEFAULT_BADWORDS } from "@vertix.gg/base/src/definitions/badwords-defaults";
 
-import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
-
 const client = PrismaBotClient.$.getClient();
-
-// Use the GuildData model for badwords
-type GuildData = PrismaBot.GuildData;
 // Define interfaces for interaction parameters
 interface BadwordIdentifier {
     guildId: string;
@@ -31,7 +26,7 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
 
     public constructor() {
         super();
-        this.logger = new Logger(this);
+        this.logger = new Logger( this );
     }
 
     /**
@@ -41,16 +36,16 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
      * @param data Contains the list of words.
      * @returns The conceptual BadwordData (list of words).
      */
-    public async create(identifier: BadwordIdentifier, data: BadwordData): Promise<BadwordData> {
+    public async create( identifier: BadwordIdentifier, data: BadwordData ): Promise<BadwordData> {
         const { guildId } = identifier;
         const { words } = data;
 
-        if (!guildId) {
-            throw new Error("Guild ID is required to create/update badwords.");
+        if ( !guildId ) {
+            throw new Error( "Guild ID is required to create/update badwords." );
         }
 
         try {
-            await client.guildData.upsert({
+            await client.guildData.upsert( {
                 where: {
                     ownerId_key_version: { // Assuming GuildData uses ownerId for guild relation
                         ownerId: guildId,
@@ -69,11 +64,11 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
                     values: words,
                     type: "array"
                 }
-            });
-            this.logger.log(this.create, `Upserted badwords for guild: ${guildId}`);
+            } );
+            this.logger.log( this.create, `Upserted badwords for guild: ${ guildId }` );
             return data; // Return the input data as the result
-        } catch (error) {
-            this.logger.error(this.create, `Error upserting badwords for guild ${guildId}:`, error);
+        } catch( error ) {
+            this.logger.error( this.create, `Error upserting badwords for guild ${ guildId }:`, error );
             throw error;
         }
     }
@@ -83,14 +78,14 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
      * @param identifier Contains guildId.
      * @returns The BadwordData (list of words) or null if not set.
      */
-    public async read(identifier: BadwordIdentifier): Promise<BadwordData | null> {
+    public async read( identifier: BadwordIdentifier ): Promise<BadwordData | null> {
         const { guildId } = identifier;
-        if (!guildId) {
-            this.logger.warn(this.read, "Read called with invalid identifier (missing guildId)");
+        if ( !guildId ) {
+            this.logger.warn( this.read, "Read called with invalid identifier (missing guildId)" );
             return null;
         }
         try {
-            const guildData = await client.guildData.findUnique({
+            const guildData = await client.guildData.findUnique( {
                 where: {
                     ownerId_key_version: { // Assuming GuildData uses ownerId for guild relation
                         ownerId: guildId,
@@ -98,18 +93,18 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
                         version: "0.0.0.0" // Assuming a default version or get dynamically
                     }
                 }
-            });
+            } );
 
-            if (!guildData || !guildData.values) {
-                this.logger.log(this.read, `Badwords not found or empty for guild: ${guildId}, returning default.`);
+            if ( !guildData || !guildData.values ) {
+                this.logger.log( this.read, `Badwords not found or empty for guild: ${ guildId }, returning default.` );
                 // Return default badwords if none are set in DB
                 return { words: DEFAULT_BADWORDS };
             }
 
-            this.logger.log(this.read, `Read badwords for guild: ${guildId}`);
+            this.logger.log( this.read, `Read badwords for guild: ${ guildId }` );
             return { words: guildData.values };
-        } catch (error) {
-            this.logger.error(this.read, `Error reading badwords for guild ${guildId}:`, error);
+        } catch( error ) {
+            this.logger.error( this.read, `Error reading badwords for guild ${ guildId }:`, error );
             throw error;
         }
     }
@@ -117,8 +112,8 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
     /**
      * Updates the badword list (same as create/upsert).
      */
-    public async update(identifier: BadwordIdentifier, data: BadwordData): Promise<BadwordData> {
-        return this.create(identifier, data);
+    public async update( identifier: BadwordIdentifier, data: BadwordData ): Promise<BadwordData> {
+        return this.create( identifier, data );
     }
 
     /**
@@ -126,25 +121,25 @@ export class GuildBadwordsData extends UIDataBase<BadwordData> { // Generic type
      * @param identifier Contains guildId.
      * @returns The deleted conceptual BadwordData (previous list or default).
      */
-    public async delete(identifier: BadwordIdentifier): Promise<BadwordData> {
+    public async delete( identifier: BadwordIdentifier ): Promise<BadwordData> {
         const { guildId } = identifier;
-        if (!guildId) {
-            this.logger.error(this.delete, "Delete called with invalid identifier (missing guildId)");
-            throw new Error("Invalid identifier provided for delete.");
+        if ( !guildId ) {
+            this.logger.error( this.delete, "Delete called with invalid identifier (missing guildId)" );
+            throw new Error( "Invalid identifier provided for delete." );
         }
         try {
-            const existingData = await this.read(identifier) ?? { words: [] }; // Get current/default words
-            await client.guildData.deleteMany({
+            const existingData = await this.read( identifier ) ?? { words: [] }; // Get current/default words
+            await client.guildData.deleteMany( {
                 where: {
                     ownerId: guildId,
                     key: DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
                     // Maybe add version filter if necessary
                 }
-            });
-            this.logger.log(this.delete, `Deleted badwords entry for guild: ${guildId}`);
+            } );
+            this.logger.log( this.delete, `Deleted badwords entry for guild: ${ guildId }` );
             return existingData; // Return what was deleted (or default)
-        } catch (error) {
-            this.logger.error(this.delete, `Error deleting badwords for guild ${guildId}:`, error);
+        } catch( error ) {
+            this.logger.error( this.delete, `Error deleting badwords for guild ${ guildId }:`, error );
             throw error;
         }
     }

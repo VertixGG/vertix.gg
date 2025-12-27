@@ -1,10 +1,10 @@
-import "@vertix.gg/prisma/bot-client";
-
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 export type TPossibleClients = PrismaBot.PrismaClient; // | PrismaApiClient;
 

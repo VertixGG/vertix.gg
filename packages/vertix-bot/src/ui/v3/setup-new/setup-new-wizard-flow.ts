@@ -20,10 +20,10 @@ import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
 import type {
-    FlowIntegrationPointBase
+    UIFlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
-import type { WizardFlowData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
+import type { UIFlowWizardData } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -31,7 +31,7 @@ import type { UIComponentConstructor } from "@vertix.gg/gui/src/bases/ui-definit
 /**
  * Interface for Setup Wizard flow data
  */
-export interface SetupWizardFlowData extends WizardFlowData {
+export interface SetupWizardFlowData extends UIFlowWizardData {
     // Step 1 data
     dynamicChannelNameTemplate?: string;
 
@@ -56,7 +56,7 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
      * Get the name of this flow
      */
     public static getName() {
-        return "VertixBot/UI-V3/SetupNewWizardFlow";
+        return "VertixBot/UI-General/SetupNewWizardFlow";
     }
 
     /**
@@ -74,29 +74,29 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
      */
     public static getFlowTransitions(): Record<string, string[]> {
         return {
-            "VertixGUI/UIWizardFlowBase/States/Initial": [ "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup" ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate": [
-                "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate",
+            "VertixGUI/UIWizardFlowBase/States/Initial": [ "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup" ],
+            "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate": [
+                "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SubmitNameTemplate",
                 "VertixGUI/UIWizardFlowBase/Transitions/Next",
                 "VertixGUI/UIWizardFlowBase/Transitions/Error",
-                "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
+                "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal",
             ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons": [
-                "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
+            "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons": [
+                "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectButtons",
                 "VertixGUI/UIWizardFlowBase/Transitions/Next",
                 "VertixGUI/UIWizardFlowBase/Transitions/Back",
                 "VertixGUI/UIWizardFlowBase/Transitions/Error",
-                "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
+                "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
             ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles": [
-                "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles",
+            "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles": [
+                "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectRoles",
                 "VertixGUI/UIWizardFlowBase/Transitions/Finish",
                 "VertixGUI/UIWizardFlowBase/Transitions/Back",
                 "VertixGUI/UIWizardFlowBase/Transitions/Error",
-                "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
+                "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone",
             ],
             "VertixGUI/UIWizardFlowBase/States/Completed": [],
-            "VertixGUI/UIWizardFlowBase/States/Error": [ "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup" ],
+            "VertixGUI/UIWizardFlowBase/States/Error": [ "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup" ],
         };
     }
 
@@ -105,17 +105,17 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
      */
     public static getNextStates(): Record<string, string> {
         return {
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Finish" ]: "VertixGUI/UIWizardFlowBase/States/Completed",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Error" ]: "VertixGUI/UIWizardFlowBase/States/Error",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Next" ]: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Back" ]: "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup": "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SubmitNameTemplate": "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectButtons": "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectRoles": "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateConfigExtras": "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles",
+            "VertixGUI/UIWizardFlowBase/Transitions/Finish": "VertixGUI/UIWizardFlowBase/States/Completed",
+            "VertixGUI/UIWizardFlowBase/Transitions/Error": "VertixGUI/UIWizardFlowBase/States/Error",
+            "VertixGUI/UIWizardFlowBase/Transitions/Next": "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
+            "VertixGUI/UIWizardFlowBase/Transitions/Back": "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
         };
     }
 
@@ -124,28 +124,28 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
      */
     public static getRequiredData(): Record<string, ( keyof SetupWizardFlowData )[]> {
         return {
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/StartSetup": [],
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SubmitNameTemplate": [ "dynamicChannelNameTemplate" ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons": [ "dynamicChannelButtonsTemplate" ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectRoles": [ "dynamicChannelVerifiedRoles" ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": [ "dynamicChannelNameTemplate" ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateConfigExtras": [ "dynamicChannelMentionable", "dynamicChannelAutoSave" ],
-            "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": [ "dynamicChannelIncludeEveryoneRole" ],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Finish" ]: [
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup": [],
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SubmitNameTemplate": [ "dynamicChannelNameTemplate" ],
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectButtons": [ "dynamicChannelButtonsTemplate" ],
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/SelectRoles": [ "dynamicChannelVerifiedRoles" ],
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateNameTemplateModal": [ "dynamicChannelNameTemplate" ],
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateConfigExtras": [ "dynamicChannelMentionable", "dynamicChannelAutoSave" ],
+            "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateVerifiedEveryone": [ "dynamicChannelIncludeEveryoneRole" ],
+            "VertixGUI/UIWizardFlowBase/Transitions/Finish": [
                 "dynamicChannelNameTemplate",
                 "dynamicChannelButtonsTemplate",
                 "dynamicChannelVerifiedRoles",
             ],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Error" ]: [ "errorCode", "errorMessage" ],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Next" ]: [],
-            [ "VertixGUI/UIWizardFlowBase/Transitions/Back" ]: [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Error": [ "errorCode", "errorMessage" ],
+            "VertixGUI/UIWizardFlowBase/Transitions/Next": [],
+            "VertixGUI/UIWizardFlowBase/Transitions/Back": [],
         };
     }
 
     /**
      * Returns entry point documentation using the new class structure
      */
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
             // Changed class name
             new FlowIntegrationPointGeneric( {
@@ -208,11 +208,11 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
     }
 
     protected addTransitions( state: string, transitions: string[] ): void {
-        if( !this.hasTransitions( state ) ) {
+        if ( !this.hasTransitions( state ) ) {
             this.setTransitionsForState( state, new Set() );
         }
         const stateTransitions = this.getTransitionsForState( state );
-        if( stateTransitions ) {
+        if ( stateTransitions ) {
             transitions.forEach( ( transition ) => {
                 stateTransitions.add( transition );
             } );
@@ -227,22 +227,22 @@ export class SetupNewWizardFlow extends UIWizardFlowBase<string, string, SetupWi
         const data = this.getData();
 
         // Use full string literals for comparison
-        if( transition === "VertixGUI/UIWizardFlowBase/Transitions/Next" ) {
+        if ( transition === "VertixGUI/UIWizardFlowBase/Transitions/Next" ) {
             const currentStep = data.currentStep || 0;
             const stepStates = [
-                "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
-                "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-                "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
+                "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
+                "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles",
             ];
             return stepStates[ Math.min( currentStep + 1, stepStates.length - 1 ) ];
         }
 
-        if( transition === "VertixGUI/UIWizardFlowBase/Transitions/Back" ) {
+        if ( transition === "VertixGUI/UIWizardFlowBase/Transitions/Back" ) {
             const currentStep = data.currentStep || 0;
             const stepStates = [
-                "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1NameTemplate",
-                "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2Buttons",
-                "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3Roles",
+                "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
+                "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
+                "VertixBot/UI-General/SetupNewWizardFlow/States/Step3Roles",
             ];
             return stepStates[ Math.max( currentStep - 1, 0 ) ];
         }

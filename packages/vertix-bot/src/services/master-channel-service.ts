@@ -313,7 +313,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 );
                 return;
             }
-        } catch ( e ) {
+        } catch( e ) {
             this.logger.error(
                 this.onJoinMasterChannel,
                 `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'`

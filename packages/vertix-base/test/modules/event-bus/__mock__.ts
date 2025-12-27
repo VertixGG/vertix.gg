@@ -10,7 +10,7 @@ export class MockObject extends ObjectBase {
         super();
     }
 
-    public mockMethod() {
+    public mockMethod( ...args: string[] ) {
     }
 }
 

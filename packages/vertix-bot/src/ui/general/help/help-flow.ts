@@ -4,13 +4,12 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
-// import type { FlowIntegrationPoint , UIFlowData } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { UIFlowData ,
-    FlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
+import type { UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
 const STATE_INITIAL = "VertixBot/UI-General/HelpFlow/States/Initial";
 
-export interface HelpFlowData extends UIFlowData {}
+export interface HelpFlowData extends UIFlowDataBase {}
 
 export class HelpFlow extends UIFlowBase<string, string, HelpFlowData> {
     public static override getName(): string {
@@ -18,7 +17,7 @@ export class HelpFlow extends UIFlowBase<string, string, HelpFlowData> {
     }
     public static override getComponents() { return []; }
 
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/CommandsFlow",

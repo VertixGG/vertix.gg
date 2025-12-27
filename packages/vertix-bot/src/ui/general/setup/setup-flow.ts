@@ -10,95 +10,151 @@ import { LanguageFlow } from "@vertix.gg/bot/src/ui/general/language/language-fl
 import { SetupComponent } from "@vertix.gg/bot/src/ui/general/setup/setup-adapter";
 
 import type {
-    UIFlowData,
-    FlowIntegrationPointBase
+    UIFlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
-import type { VisualConnection } from "@vertix.gg/flow/src/features/flow-editor/types/flow";
+import type { UIFlowVisualConnection, UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
 
-const STATE_INITIAL = "VertixBot/UI-General/SetupFlow/States/Initial";
-const STATE_DONE = "VertixBot/UI-General/SetupFlow/States/Done";
-
-// Conceptual Transitions
-const TRANSITION_CREATE_V3 = "VertixBot/UI-General/SetupFlow/Transitions/CreateV3";
-const TRANSITION_EDIT_MASTER = "VertixBot/UI-General/SetupFlow/Transitions/EditMaster";
-const TRANSITION_CHOOSE_LANGUAGE = "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage";
-
-export interface SetupFlowData extends UIFlowData { }
+export interface SetupFlowData extends UIFlowDataBase {}
 
 export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
     public static override getName(): string {
         return "VertixBot/UI-General/SetupFlow";
     }
-    public static override getComponents() { return [SetupComponent]; }
 
-    public static override getEntryPoints(): FlowIntegrationPointBase[] {
+    public static override getComponents() {
+        return [ SetupComponent ];
+    }
+
+    public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointGeneric({
+            new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
                 transition: "VertixBot/Commands/Setup",
-                targetState: STATE_INITIAL,
+                targetState: "VertixBot/UI-General/SetupFlow/States/Initial",
                 description: "Entry point triggered by CommandsFlow via Setup command"
-            })
+            } )
         ];
     }
 
-    // Define Handoff Points (Re-added LanguageFlow)
-    public static override getHandoffPoints(): FlowIntegrationPointBase[] {
+    public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
         return [
-            new FlowIntegrationPointGeneric({
+            new FlowIntegrationPointGeneric( {
                 flowName: SetupNewWizardFlow.getName(),
                 description: "Handoff to V3 Setup Wizard when Create V3 button is clicked",
-                sourceState: STATE_INITIAL,
-                transition: TRANSITION_CREATE_V3,
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
+                targetState: "VertixGUI/UIWizardFlowBase/States/Initial",
                 requiredData: []
-            }),
-            new FlowIntegrationPointGeneric({
+            } ),
+            new FlowIntegrationPointGeneric( {
                 flowName: LanguageFlow.getName(),
                 description: "Handoff to Language selection flow",
-                sourceState: STATE_INITIAL,
-                transition: TRANSITION_CHOOSE_LANGUAGE,
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 requiredData: []
-            })
-            // Note: EditMaster handoff is complex due to select menu & adapter logic
+            } ),
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-V3/SetupEditFlow",
+                description: "Handoff to Setup Edit flow when editing an existing master channel",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                targetState: "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                requiredData: []
+            } )
         ];
     }
 
-    // Define Visual Connections (Re-added LanguageFlow)
-    public static override getEdgeSourceMappings(): VisualConnection[] {
+    public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
         return [
             {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterCreateButton",
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
+                targetFlowName: "VertixBot/UI-General/SetupFlow"
+            },
+            {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterCreateV3Button",
-                transitionName: TRANSITION_CREATE_V3,
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
                 targetFlowName: SetupNewWizardFlow.getName()
             },
             {
                 triggeringElementId: "VertixBot/UI-General/LanguageChooseButton",
-                transitionName: TRANSITION_CHOOSE_LANGUAGE,
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 targetFlowName: LanguageFlow.getName()
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
             }
-            // Note: SetupMasterEditSelectMenu is harder to represent visually
         ];
     }
 
-    public override getPermissions(): PermissionsBitField { return new PermissionsBitField(PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages); }
-    public override getChannelTypes(): ChannelType[] { return [ChannelType.GuildText]; }
-    protected override getInitialState(): string { return STATE_INITIAL; }
-    protected override getInitialData(): SetupFlowData { return {}; }
-
-    protected override initializeTransitions(): void {
-        this.addTransitions(STATE_INITIAL, [
-            TRANSITION_CREATE_V3,
-            TRANSITION_EDIT_MASTER,
-            TRANSITION_CHOOSE_LANGUAGE
-        ]);
+    public static getFlowTransitions(): Record<string, string[]> {
+        return {
+            "VertixBot/UI-General/SetupFlow/States/Initial": [
+                "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
+                "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
+                "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
+                "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords"
+            ]
+        };
     }
 
-    public override getAvailableTransitions(): string[] { return Array.from(this.getTransitionsForState(this.getCurrentState()) || []); }
-    public override getNextState(_transition: string): string { return STATE_DONE; }
-    public override getRequiredData(_transition: string): (keyof SetupFlowData)[] { return []; }
-    protected addTransitions(state: string, transitions: string[]): void {
-        if (!this.hasTransitions(state)) { this.setTransitionsForState(state, new Set()); }
-        const stateTransitions = this.getTransitionsForState(state);
-        if (stateTransitions) { transitions.forEach((transition) => stateTransitions.add(transition)); this.setTransitionsForState(state, stateTransitions); }
+    public static getNextStates(): Record<string, string> {
+        return {
+            "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2": "VertixBot/UI-General/SetupFlow/States/Initial",
+            "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3": "VertixBot/UI-General/SetupFlow/States/Initial",
+            "VertixBot/UI-General/SetupFlow/Transitions/EditMaster": "VertixBot/UI-General/SetupFlow/States/Initial",
+            "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage": "VertixBot/UI-General/SetupFlow/States/Initial",
+            "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal": "VertixBot/UI-General/SetupFlow/States/Initial",
+            "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords": "VertixBot/UI-General/SetupFlow/States/Initial"
+        };
+    }
+
+    public static getRequiredData(): Record<string, ( keyof SetupFlowData )[]> {
+        return {
+            "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2": [],
+            "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3": [],
+            "VertixBot/UI-General/SetupFlow/Transitions/EditMaster": [],
+            "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage": [],
+            "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal": [],
+            "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords": []
+        };
+    }
+
+    public override getPermissions(): PermissionsBitField {
+        return new PermissionsBitField( PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages );
+    }
+
+    public override getChannelTypes(): ChannelType[] {
+        return [ ChannelType.GuildText ];
+    }
+
+    protected override getInitialState(): string {
+        return "VertixBot/UI-General/SetupFlow/States/Initial";
+    }
+
+    protected override getInitialData(): SetupFlowData {
+        return {};
+    }
+
+    protected override initializeTransitions(): void {
+        Object.entries( SetupFlow.getFlowTransitions() ).forEach( ( [ state, transitions ] ) => {
+            this.setTransitionsForState( state, new Set( transitions ) );
+        } );
+    }
+
+    public override getAvailableTransitions(): string[] {
+        return SetupFlow.getFlowTransitions()[ this.getCurrentState() ] || [];
+    }
+
+    public override getNextState( transition: string ): string {
+        return SetupFlow.getNextStates()[ transition ] || "VertixBot/UI-General/SetupFlow/States/Initial";
+    }
+
+    public override getRequiredData( transition: string ): ( keyof SetupFlowData )[] {
+        return SetupFlow.getRequiredData()[ transition ] || [];
     }
 }

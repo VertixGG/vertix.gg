@@ -93,7 +93,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
                     },
                     true
                 );
-            } catch ( e ) {
+            } catch( e ) {
                 this.logger.error( this.setBadwords, "", e );
             }
 

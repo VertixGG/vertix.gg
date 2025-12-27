@@ -11,8 +11,7 @@ export class WelcomeElementsGroup extends UIElementsGroupBase {
 
     public static getItems() {
         return [
-            [ WelcomeSupportButton, WelcomeInviteButton, WelcomeSetupButton ]
-            // [ WelcomeSetupButton, LanguageChooseButton ]
+            [ WelcomeSupportButton, WelcomeInviteButton, WelcomeSetupButton ],
         ];
     }
 }

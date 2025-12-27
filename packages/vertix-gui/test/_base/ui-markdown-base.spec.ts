@@ -32,7 +32,7 @@ describe( "VertixGUI/UIMarkdownTemplateBase", () => {
             const act = () => Class.ensure();
 
             // Assert.
-            expect( act ).toThrowError( "ENOENT: no such file or directory, open '/some/path'" );
+            expect( act ).toThrow( "ENOENT: no such file or directory, open '/some/path'" );
         } );
 
         it( "should have valid content when content is available", () => {

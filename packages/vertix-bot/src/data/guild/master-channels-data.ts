@@ -20,7 +20,7 @@ export class GuildMasterChannelsData extends UIDataBase<Channel> {
 
     public constructor() {
         super();
-        this.logger = new Logger(this);
+        this.logger = new Logger( this );
     }
 
     /**
@@ -28,13 +28,13 @@ export class GuildMasterChannelsData extends UIDataBase<Channel> {
      * @param data - The data needed to create the channel, conforming to PrismaBot.Prisma.ChannelCreateInput.
      * @returns The created Channel record.
      */
-    public async create(data: ChannelCreateInput): Promise<Channel> {
+    public async create( data: ChannelCreateInput ): Promise<Channel> {
         try {
-            const newChannel = await client.channel.create({ data });
-            this.logger.log(this.create, `Created channel with ID: ${newChannel.id}`);
+            const newChannel = await client.channel.create( { data } );
+            this.logger.log( this.create, `Created channel with ID: ${ newChannel.id }` );
             return newChannel;
-        } catch (error) {
-            this.logger.error(this.create, "Error creating channel:", error);
+        } catch( error ) {
+            this.logger.error( this.create, "Error creating channel:", error );
             throw error;
         }
     }
@@ -44,21 +44,21 @@ export class GuildMasterChannelsData extends UIDataBase<Channel> {
      * @param identifier - The unique ID of the channel to read.
      * @returns The Channel record or null if not found.
      */
-    public async read(identifier: string): Promise<Channel | null> {
-        if (!identifier) {
-            this.logger.warn(this.read, "Read called with invalid identifier");
+    public async read( identifier: string ): Promise<Channel | null> {
+        if ( !identifier ) {
+            this.logger.warn( this.read, "Read called with invalid identifier" );
             return null;
         }
         try {
-            const channel = await client.channel.findUnique({ where: { id: identifier } });
-            if (!channel) {
-                this.logger.log(this.read, `Channel with ID: ${identifier} not found.`);
+            const channel = await client.channel.findUnique( { where: { id: identifier } } );
+            if ( !channel ) {
+                this.logger.log( this.read, `Channel with ID: ${ identifier } not found.` );
                 return null;
             }
-            this.logger.log(this.read, `Read channel with ID: ${identifier}`);
+            this.logger.log( this.read, `Read channel with ID: ${ identifier }` );
             return channel;
-        } catch (error) {
-            this.logger.error(this.read, `Error reading channel with ID: ${identifier}:`, error);
+        } catch( error ) {
+            this.logger.error( this.read, `Error reading channel with ID: ${ identifier }:`, error );
             throw error;
         }
     }
@@ -69,20 +69,20 @@ export class GuildMasterChannelsData extends UIDataBase<Channel> {
      * @param data - The data to update, conforming to PrismaBot.Prisma.ChannelUpdateInput.
      * @returns The updated Channel record.
      */
-    public async update(identifier: string, data: ChannelUpdateInput): Promise<Channel> {
-        if (!identifier) {
-            this.logger.error(this.update, "Update called with invalid identifier");
-            throw new Error("Invalid identifier provided for update.");
+    public async update( identifier: string, data: ChannelUpdateInput ): Promise<Channel> {
+        if ( !identifier ) {
+            this.logger.error( this.update, "Update called with invalid identifier" );
+            throw new Error( "Invalid identifier provided for update." );
         }
         try {
-            const updatedChannel = await client.channel.update({
+            const updatedChannel = await client.channel.update( {
                 where: { id: identifier },
                 data,
-            });
-            this.logger.log(this.update, `Updated channel with ID: ${identifier}`);
+            } );
+            this.logger.log( this.update, `Updated channel with ID: ${ identifier }` );
             return updatedChannel;
-        } catch (error) {
-            this.logger.error(this.update, `Error updating channel with ID: ${identifier}:`, error);
+        } catch( error ) {
+            this.logger.error( this.update, `Error updating channel with ID: ${ identifier }:`, error );
             throw error;
         }
     }
@@ -92,17 +92,17 @@ export class GuildMasterChannelsData extends UIDataBase<Channel> {
      * @param identifier - The unique ID of the channel to delete.
      * @returns The deleted Channel record.
      */
-    public async delete(identifier: string): Promise<Channel> {
-        if (!identifier) {
-            this.logger.error(this.delete, "Delete called with invalid identifier");
-            throw new Error("Invalid identifier provided for delete.");
+    public async delete( identifier: string ): Promise<Channel> {
+        if ( !identifier ) {
+            this.logger.error( this.delete, "Delete called with invalid identifier" );
+            throw new Error( "Invalid identifier provided for delete." );
         }
         try {
-            const deletedChannel = await client.channel.delete({ where: { id: identifier } });
-            this.logger.log(this.delete, `Deleted channel with ID: ${identifier}`);
+            const deletedChannel = await client.channel.delete( { where: { id: identifier } } );
+            this.logger.log( this.delete, `Deleted channel with ID: ${ identifier }` );
             return deletedChannel;
-        } catch (error) {
-            this.logger.error(this.delete, `Error deleting channel with ID: ${identifier}:`, error);
+        } catch( error ) {
+            this.logger.error( this.delete, `Error deleting channel with ID: ${ identifier }:`, error );
             throw error;
         }
     }

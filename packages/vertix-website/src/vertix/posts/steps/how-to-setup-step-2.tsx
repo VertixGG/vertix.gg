@@ -19,7 +19,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 }
                 Click on ( <div className="btn btn-sm btn-dark pe-none"><ArrowDown/></div> ) down arrow to edit or
                 continue with <b>( <code>default = All Buttons Enabled</code> )</b> by
-                pressing <a href={`${ props.displayStep ? "#step-3" : "3" }`} className="btn btn-sm btn-primary">Next ▶</a>
+                pressing <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="btn btn-sm btn-primary">Next ▶</a>
                 <br/>
                 <img className="normalize" src="https://i.ibb.co/ZGCGwP1/setup-step-2-buttons-set-arrow-red.png"
                     alt="s5"/>
@@ -80,7 +80,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 <br/>
 
                 <br/>
-                Select the option that suits you the most, then click <a href={`${ props.displayStep ? "#step-3" : "3" }`}
+                Select the option that suits you the most, then click <a href={ `${ props.displayStep ? "#step-3" : "3" }` }
                     className="btn btn-sm btn-primary">Next
                     ▶</a> to continue.
                 <br/>

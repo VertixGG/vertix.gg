@@ -1,6 +1,6 @@
-import "@vertix.gg/prisma/bot-client";
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
-type TDataDataTypes = keyof typeof PrismaBot.E_DATA_TYPES;
+type TDataDataTypes = PrismaBot.E_DATA_TYPES;
 
 export type defaultDataTypes = string | string[] | object;
 

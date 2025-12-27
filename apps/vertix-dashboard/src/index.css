@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@vertix.gg/ui/src/styles.css";
+
+body {
+    margin: 0;
+    padding: 0;
+}

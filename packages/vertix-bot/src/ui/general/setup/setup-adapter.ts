@@ -16,10 +16,7 @@ import {
     UIInstancesTypes
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import {
-    AdminAdapterBuilder
-
-} from "@vertix.gg/gui/src/builders/admin-adapter-builder";
+import { AdminAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-adapter-builder";
 
 import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
 import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
@@ -52,6 +49,8 @@ import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui/general/setup/ele
 
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
 
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
@@ -66,48 +65,99 @@ import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versi
 
 import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
-    UIDefaultButtonChannelTextInteraction, UIDefaultModalChannelTextInteraction
+    UIDefaultButtonChannelTextInteraction,
+    UIDefaultModalChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 import type { BaseGuildTextChannel } from "discord.js";
 import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
+type SetupInteractions =
+    | UIDefaultButtonChannelTextInteraction
+    | UIDefaultModalChannelTextInteraction
+    | UIDefaultStringSelectMenuChannelTextInteraction;
+
 async function onSelectEditMasterChannel(
     context: IAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const masterChannelValue = interaction.values.at(0);
+    const masterChannelValue = interaction.values.at( 0 );
 
     let masterChannelId, masterChannelIndex;
 
-    if (masterChannelValue) {
+    if ( masterChannelValue ) {
         [
             masterChannelId,
             masterChannelIndex
-        ] = masterChannelValue.split(UI_CUSTOM_ID_SEPARATOR, 2);
+        ] = masterChannelValue.split( UI_CUSTOM_ID_SEPARATOR, 2 );
     }
 
-    const masterChannelDB = await ChannelModel.$.getByChannelId(masterChannelId!);
+    const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannelId! );
 
-    if (!masterChannelDB) {
+    if ( !masterChannelDB ) {
         // TODO: Error...
-        await context.editReply(interaction as any, {});
+        await context.editReply( interaction as any, {} );
         return;
     }
 
     const uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
-            "VertixGUI/UIVersioningAdapterService"
-        ),
-        setupEditAdapter = await uiVersioningAdapterService.get("Vertix/SetupEditAdapter", masterChannelDB.id);
+        "VertixGUI/UIVersioningAdapterService"
+    );
 
-    await setupEditAdapter?.runInitial(interaction, {
-        masterChannelIndex,
-        masterChannelDB
-    });
+    context.logger.debug(
+        onSelectEditMasterChannel,
+        `Determining version for master channel: ${ masterChannelDB.id }, version field: ${ masterChannelDB.version }`
+    );
 
-    // Delete Args since left to another adapter.
-    context.deleteArgs(interaction as any);
+    let setupEditAdapter;
+    try {
+        const determinedVersion = await uiVersioningAdapterService.determineVersion( masterChannelDB.id as any );
+        context.logger.debug(
+            onSelectEditMasterChannel,
+            `Determined version: ${ determinedVersion } for master channel: ${ masterChannelDB.id }`
+        );
+
+        setupEditAdapter = await uiVersioningAdapterService.get( "VertixBot/SetupEditAdapter", masterChannelDB.id );
+    } catch( error ) {
+        context.logger.error(
+            onSelectEditMasterChannel,
+            `Error getting adapter for master channel: ${ masterChannelDB.id }`,
+            error
+        );
+        await context.editReply( interaction as any, {} );
+        return;
+    }
+
+    if ( !setupEditAdapter ) {
+        context.logger.error(
+            onSelectEditMasterChannel,
+            `Adapter not found for master channel: ${ masterChannelDB.id }, channelId: ${ masterChannelId }`
+        );
+        await context.editReply( interaction as any, {} );
+        return;
+    }
+
+    context.logger.log(
+        onSelectEditMasterChannel,
+        `Running SetupEditAdapter for master channel: ${ masterChannelDB.id }`
+    );
+
+    try {
+        await setupEditAdapter.runInitial( interaction, {
+            masterChannelIndex,
+            masterChannelDB
+        } );
+    } catch( error ) {
+        context.logger.error(
+            onSelectEditMasterChannel,
+            `Error running SetupEditAdapter for master channel: ${ masterChannelDB.id }`,
+            error
+        );
+        throw error;
+    }
+
+    context.deleteArgs( interaction as any );
 }
 
 async function onCreateMasterChannelClicked(
@@ -115,20 +165,20 @@ async function onCreateMasterChannelClicked(
     interaction: UIDefaultButtonChannelTextInteraction,
     version: TVersionType = VERSION_UI_V2
 ) {
-    const masterChannelService = ServiceLocator.$.get<MasterChannelService>("VertixBot/Services/MasterChannel"),
+    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
         guildId = interaction.guild.id,
-        limit = (await GuildDataManager.$.getAllSettings(guildId)).maxMasterChannels,
-        hasReachedLimit = await masterChannelService.isReachedMasterLimit(guildId, limit);
+        limit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
+        hasReachedLimit = await masterChannelService.isReachedMasterLimit( guildId, limit );
 
-    if (hasReachedLimit) {
+    if ( hasReachedLimit ) {
         const component = context.getComponent();
 
         component.clearElements();
-        component.switchEmbedsGroup("VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup");
+        component.switchEmbedsGroup( "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup" );
 
-        await context.ephemeral(interaction, {
+        await context.ephemeral( interaction, {
             maxMasterChannels: limit
-        });
+        } );
 
         return;
     }
@@ -141,25 +191,25 @@ async function onCreateMasterChannelClicked(
     const adapterName =
         version === VERSION_UI_V3 ? "VertixBot/UI-V3/SetupNewWizardAdapter" : "VertixBot/UI-V2/SetupNewWizardAdapter";
 
-    ServiceLocator.$.get<UIService>("VertixGUI/UIService").get(adapterName)?.runInitial(interaction, {
+    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).get( adapterName )?.runInitial( interaction, {
         dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
 
         dynamicChannelMentionable: settings.dynamicChannelMentionable,
         dynamicChannelAutoSave: settings.dynamicChannelAutoSave,
 
         dynamicChannelIncludeEveryoneRole: true,
-        dynamicChannelVerifiedRoles: [interaction.guild.roles.everyone.id]
-    });
+        dynamicChannelVerifiedRoles: [ interaction.guild.roles.everyone.id ]
+    } );
 
     // Delete Args since left to another adapter.
-    context.deleteArgs(interaction);
+    context.deleteArgs( interaction );
 }
 
 async function onEditBadwordsClicked(
     context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    await context.showModal(interaction, "VertixBot/UI-General/BadwordsModal");
+    await context.showModal( interaction, "VertixBot/UI-General/BadwordsModal" );
 }
 
 async function onBadwordsModalSubmitted(
@@ -170,34 +220,34 @@ async function onBadwordsModalSubmitted(
         "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/BadwordsInput"
     );
 
-    const value = interaction.fields.getTextInputValue(badwordsInputId),
-        newBadwords = badwordsNormalizeArray(badwordsSplitOrDefault(value)).map((word) => word.trim());
+    const value = interaction.fields.getTextInputValue( badwordsInputId ),
+        newBadwords = badwordsNormalizeArray( badwordsSplitOrDefault( value ) ).map( ( word ) => word.trim() );
 
-    await GuildDataManager.$.setBadwords(interaction.guildId, newBadwords).then((data) => {
-        if (data) {
+    await GuildDataManager.$.setBadwords( interaction.guildId, newBadwords ).then( ( data ) => {
+        if ( data ) {
             const guild = interaction.guild;
             context.logger.admin(
                 onBadwordsModalSubmitted,
-                `🔧 Bad Words filter has been modified - "${data.oldBadwords}" -> "${data.newBadwords}" (${guild.name}) (${guild.memberCount})`
+                `🔧 Bad Words filter has been modified - "${ data.oldBadwords }" -> "${ data.newBadwords }" (${ guild.name }) (${ guild.memberCount })`
             );
         }
-    });
+    } );
 
-    await context.editReply(interaction, {});
+    await context.editReply( interaction, {} );
 }
 
 async function onLanguageChooseClicked(
     _context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    ServiceLocator.$.get<UIService>("VertixGUI/UIService")
-        .get("VertixBot/UI-General/LanguageAdapter")?.editReply(interaction, {});
+    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+        .get( "VertixBot/UI-General/LanguageAdapter" )?.editReply( interaction, {} );
 }
 
-const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(new EmbedBuilder<ISetupArgs>("VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS))
-    .setImage("https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png")
-    .setTitle("🛠  Setup Vertix")
-    .setDescription((vars) =>
+const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
+    .setImage( "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png" )
+    .setTitle( "🛠  Setup Vertix" )
+    .setDescription( ( vars ) =>
         "Discover the limitless possibilities of **Vertix**!\n" +
         "Customize and optimize your server to perfection.\n\n" +
         "To create a new master channel just click:\n" +
@@ -212,40 +262,67 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(new EmbedBuilder
         "\n\n" +
         "-# 💡 You can set logs channel by editing the master channel.\n"
     )
-    .setArrayOptions(({ masterChannelsOptions, value, separator }) => ({
-        masterChannels: {
-            format: value + separator,
-            separator: "\n",
-            multiSeparator: "\n\n",
-            options: {
-                index: `**#${masterChannelsOptions.index}**`,
-                name: `▹ Name: <#${masterChannelsOptions.id}>`,
-                id: `▹ Channel ID: \`${masterChannelsOptions.id}\``,
-                channelsTemplateName: `▹ Dynamic Channels Name: \`${masterChannelsOptions.channelsTemplateName}\``,
-                channelsTemplateButtons: `▹ Buttons: **${masterChannelsOptions.channelsTemplateButtons}**`,
-                channelsVerifiedRoles: `▹ Verified Roles: ${masterChannelsOptions.channelsVerifiedRoles}`,
-                channelsLogsChannelId: `▹ Logs Channel: ${masterChannelsOptions.channelsLogsChannelId}`,
-                channelsAutoSave: `▹ Auto Save: \`${masterChannelsOptions.channelsAutoSave}\``,
-                version: `▹ UI Version: \`${masterChannelsOptions.version}\``
-            }
-        },
-        badwords: {
-            format: `${value}${separator}`,
-            separator: ", "
+    .setArrayOptions( ( { masterChannelsOptions, value, separator } ) => {
+        if ( !masterChannelsOptions || typeof masterChannelsOptions !== "object" || Array.isArray( masterChannelsOptions ) ) {
+            throw new Error( "Invalid masterChannelsOptions" );
         }
-    }))
-    .setOptions(({ masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault }) => ({
-        masterChannelMessage: {
-            [masterChannels]: "\n" + masterChannels,
-            [masterChannelMessageDefault]: "**None**"
-        },
-        badwordsMessage: {
-            [badwords]: "`" + badwords + "`",
-            [badwordsMessageDefault]: "**None**"
-        },
-        none: "**None**"
-    }))
-    .setLogic(async (args, vars) => {
+
+        const options = masterChannelsOptions as {
+            index: number;
+            id: string;
+            channelsTemplateName: string;
+            channelsTemplateButtons: string;
+            channelsVerifiedRoles: string;
+            channelsLogsChannelId: string;
+            channelsAutoSave: string;
+            version: string;
+        };
+
+        const valueStr = value != null ? String( value ) : "";
+        const separatorStr = separator != null ? String( separator ) : "";
+
+        return {
+            masterChannels: {
+                format: valueStr + separatorStr,
+                separator: "\n",
+                multiSeparator: "\n\n",
+                options: {
+                    index: `**#${ options.index }**`,
+                    name: `▹ Name: <#${ options.id }>`,
+                    id: `▹ Channel ID: \`${ options.id }\``,
+                    channelsTemplateName: `▹ Dynamic Channels Name: \`${ options.channelsTemplateName }\``,
+                    channelsTemplateButtons: `▹ Buttons: **${ options.channelsTemplateButtons }**`,
+                    channelsVerifiedRoles: `▹ Verified Roles: ${ options.channelsVerifiedRoles }`,
+                    channelsLogsChannelId: `▹ Logs Channel: ${ options.channelsLogsChannelId }`,
+                    channelsAutoSave: `▹ Auto Save: \`${ options.channelsAutoSave }\``,
+                    version: `▹ UI Version: \`${ options.version }\``
+                }
+            },
+            badwords: {
+                format: `${ valueStr }${ separatorStr }`,
+                separator: ", "
+            }
+        };
+    } )
+    .setOptions( ( { masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault } ) => {
+        const masterChannelsKey = String( masterChannels );
+        const masterChannelMessageDefaultKey = String( masterChannelMessageDefault );
+        const badwordsKey = String( badwords );
+        const badwordsMessageDefaultKey = String( badwordsMessageDefault );
+
+        return {
+            masterChannelMessage: {
+                [ masterChannelsKey ]: "\n" + masterChannels,
+                [ masterChannelMessageDefaultKey ]: "**None**"
+            },
+            badwordsMessage: {
+                [ badwordsKey ]: "`" + badwords + "`",
+                [ badwordsMessageDefaultKey ]: "**None**"
+            },
+            none: "**None**"
+        };
+    } )
+    .setLogic( async( args, vars ) => {
         const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
             "Vertix/Config/MasterChannel",
             VERSION_UI_V3
@@ -253,30 +330,30 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(new EmbedBuilder
 
         const channels = args?.masterChannels || [];
 
-        const masterChannels = await Promise.all(channels.map(async (channel: any, index: number) => {
-            const version = channel?.version || channel?.data?.[0]?.version || "V2";
+        const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
+            const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
 
-            const data = await MasterChannelDataManager.$.getAllSettings({
+            const data = await MasterChannelDataManager.$.getAllSettings( {
                 ...channel,
                 isDynamic: false,
                 isMaster: true
-            });
+            } );
 
             const defaultButtons = version === VERSION_UI_V3
-                ? DynamicChannelPrimaryMessageElementsGroup.getAll().map((btn) => btn.getId())
-                : DynamicChannelElementsGroup.getAll().map((btn) => btn.getId());
+                ? DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( btn ) => btn.getId() )
+                : DynamicChannelElementsGroup.getAll().map( ( btn ) => btn.getId() );
 
             const usedButtons: string[] | number[] = data.dynamicChannelButtonsTemplate || defaultButtons;
 
             const emojis = version === VERSION_UI_V3
-                ? DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis(usedButtons.map((b) => String(b)))
-                : DynamicChannelElementsGroup.getEmbedEmojis(usedButtons.map((b) => typeof b === "number" ? b : Number(b)));
+                ? DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis( usedButtons.map( ( b ) => String( b ) ) )
+                : DynamicChannelElementsGroup.getEmbedEmojis( usedButtons.map( ( b ) => typeof b === "number" ? b : Number( b ) ) );
 
-            const buttonsDisplay = (emojis.length ? emojis : ["⚠️ No emojis found"]).join(", ");
+            const buttonsDisplay = ( emojis.length ? emojis : [ "⚠️ No emojis found" ] ).join( ", " );
 
-            const rolesDisplay = (data.dynamicChannelVerifiedRoles || [])
-                .map((roleId: string) => `<@&${roleId}>`)
-                .join(", ") || "@@everyone";
+            const rolesDisplay = ( data.dynamicChannelVerifiedRoles || [] )
+                .map( ( roleId: string ) => `<@&${ roleId }>` )
+                .join( ", " ) || "@@everyone";
 
             return {
                 index: index + 1,
@@ -284,22 +361,22 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(new EmbedBuilder
                 channelsTemplateName: data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
                 channelsTemplateButtons: buttonsDisplay,
                 channelsVerifiedRoles: rolesDisplay,
-                channelsLogsChannelId: data.dynamicChannelLogsChannelId ? `<#${data.dynamicChannelLogsChannelId}>` : vars.none,
-                channelsAutoSave: String(data.dynamicChannelAutoSave ?? "false"),
+                channelsLogsChannelId: data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none,
+                channelsAutoSave: String( data.dynamicChannelAutoSave ?? "false" ),
                 version
             };
-        }));
+        } ) );
 
-        const result: Record<string, unknown> = {};
+        const result: Record<string, JsonValue> = {};
 
-        if (masterChannels.length) {
+        if ( masterChannels.length ) {
             result.masterChannels = masterChannels;
             result.masterChannelMessage = vars.masterChannels;
         } else {
             result.masterChannelMessage = vars.masterChannelMessageDefault;
         }
 
-        if (args?.badwords?.length) {
+        if ( args?.badwords?.length ) {
             result.badwords = args.badwords;
             result.badwordsMessage = vars.badwords;
         } else {
@@ -307,93 +384,167 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(new EmbedBuilder
         }
 
         return result;
-    })
-    .setInstanceType(UIInstancesTypes.Dynamic)
+    } )
+    .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupElementsGroup = new ElementsGroupBuilder("VertixBot/UI-General/SetupElementsGroup")
-    .addRow([SetupMasterEditSelectMenu])
-    .addRow([SetupMasterCreateButton, SetupMasterCreateV3Button])
-    .addRow([LanguageChooseButton, BadwordsEditButton])
+const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
+    .addRow( [ SetupMasterEditSelectMenu ] )
+    .addRow( [ SetupMasterCreateButton, SetupMasterCreateV3Button ] )
+    .addRow( [ LanguageChooseButton, BadwordsEditButton ] )
     .build();
 
-const SetupComponent = new ComponentBuilder("VertixBot/UI-General/SetupComponent")
-    .addElementsGroup(SetupElementsGroup)
-    .addEmbedsSingleGroup(SetupEmbed)
-    .addEmbedsSingleGroup(SetupMaxMasterChannelsEmbed)
-    .addModal(BadwordsModal)
-    .setDefaultElementsGroup("VertixBot/UI-General/SetupElementsGroup")
-    .setDefaultEmbedsGroup("VertixBot/UI-General/SetupEmbedGroup")
-    .setInstanceType(UIInstancesTypes.Dynamic)
+const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponent" )
+    .addElementsGroup( SetupElementsGroup )
+    .addEmbedsSingleGroup( SetupEmbed )
+    .addEmbedsSingleGroup( SetupMaxMasterChannelsEmbed )
+    .addModal( BadwordsModal )
+    .setDefaultElementsGroup( "VertixBot/UI-General/SetupElementsGroup" )
+    .setDefaultEmbedsGroup( "VertixBot/UI-General/SetupEmbedGroup" )
+    .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, UIDefaultButtonChannelTextInteraction | UIDefaultModalChannelTextInteraction | UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>("VertixBot/UI-General/SetupAdapter")
-    .setComponent(SetupComponent)
-    .setExcludedElements([LanguageSelectMenu])
-    .generateCustomIdForEntity((context, entity) => {
-        switch (entity.name) {
+const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteractions, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
+    .setComponent( SetupComponent )
+    .setExcludedElements( [ LanguageSelectMenu ] )
+    .generateCustomIdForEntity( ( context, entity ) => {
+        switch ( entity.name ) {
             case "VertixBot/UI-General/SetupMasterCreateV3Button":
                 return new UICustomIdHashStrategy().generateId(
                     context.getName() + UI_CUSTOM_ID_SEPARATOR + entity.name
                 );
         }
-    })
-    .getCustomIdForEntity((_context, hash) => {
-        if (hash.startsWith(UIHashService.HASH_SIGNATURE)) {
-            return new UICustomIdHashStrategy().getId(hash);
+    } )
+    .getCustomIdForEntity( ( _context, hash ) => {
+        if ( hash.startsWith( UIHashService.HASH_SIGNATURE ) ) {
+            return new UICustomIdHashStrategy().getId( hash );
         }
-    })
-    .getReplyArgs(async (_context, interaction, argsFromManager) => {
-        if (!interaction) {
+    } )
+    .getReplyArgs( async( _context, interaction, argsFromManager ) => {
+        if ( !interaction ) {
             return {};
         }
 
         const args: ISetupArgs = {
-            masterChannels: await ChannelModel.$.getMasters(interaction.guild.id, "settings"),
-            badwords: badwordsNormalizeArray(await GuildDataManager.$.getBadwords(interaction.guild.id))
+            masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
+            badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) )
         };
 
-        if (argsFromManager?.maxMasterChannels) {
+        if ( argsFromManager?.maxMasterChannels ) {
             args.maxMasterChannels = argsFromManager.maxMasterChannels;
         }
 
         return args;
-    })
-    .onBeforeBuildRun(async ({
-        bindButton,
-        bindModal,
-        bindSelectMenu
-    }) => {
+    } )
+    .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateButton",
-            (context, interaction) => onCreateMasterChannelClicked(context, interaction, VERSION_UI_V2)
+            async( context, interaction ) => {
+                await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateV3Button",
-            (context, interaction) => onCreateMasterChannelClicked(context, interaction, VERSION_UI_V3)
+            async( context, interaction ) => {
+                await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupBadwordsEditButton",
-            onEditBadwordsClicked
+            async( context, interaction ) => {
+                await onEditBadwordsClicked( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/LanguageChooseButton",
-            onLanguageChooseClicked
+            async( context, interaction ) => {
+                await onLanguageChooseClicked( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindModal<UIDefaultModalChannelTextInteraction>(
             "VertixBot/UI-General/BadwordsModal",
-            onBadwordsModalSubmitted
+            async( context, interaction ) => {
+                await onBadwordsModalSubmitted( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
 
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterEditSelectMenu",
-            onSelectEditMasterChannel
+            async( context, interaction ) => {
+                await onSelectEditMasterChannel( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
         );
-    })
+    } )
     .build();
 
 export { SetupAdapter, SetupComponent };

@@ -55,19 +55,37 @@ export class UIModuleV2 extends UIModuleBase {
                 .getId()
                 .toString(),
 
-            steps: {
-                claimResultAddedSuccessfully: "VertixBot/UI-V2/ClaimResultAddedSuccessfully",
-                claimResultAlreadyAdded: "VertixBot/UI-V2/ClaimResultAlreadyAdded",
-                claimResultOwnerStop: "VertixBot/UI-V2/ClaimResultOwnerStop",
-                claimResultVoteAlreadySelfVoted: "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted",
-                claimResultVoteAlreadyVotedSame: "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame",
-                claimResultVoteUpdatedSuccessfully: "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully",
-                claimResultVotedSuccessfully: "VertixBot/UI-V2/ClaimResultVotedSuccessfully"
-            },
-
-            entities: {
-                claimVoteAddButton: "VertixBot/UI-V2/ClaimVoteAddButton",
-                claimVoteStepInButton: "VertixBot/UI-V2/ClaimVoteStepInButton"
+            fallbacks: {
+                claimResultSteps: {
+                    "VertixBot/UI-V3/ClaimResultFlow/States/OwnerStop": "VertixBot/UI-V2/ClaimResultOwnerStop",
+                    "VertixBot/UI-V3/ClaimResultFlow/States/AddedSuccessfully":
+                        "VertixBot/UI-V2/ClaimResultAddedSuccessfully",
+                    "VertixBot/UI-V3/ClaimResultFlow/States/AlreadyAdded":
+                        "VertixBot/UI-V2/ClaimResultAlreadyAdded",
+                    "VertixBot/UI-V3/ClaimResultFlow/States/VoteAlreadySelf":
+                        "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted",
+                    "VertixBot/UI-V3/ClaimResultFlow/States/VoteSuccess":
+                        "VertixBot/UI-V2/ClaimResultVotedSuccessfully",
+                    "VertixBot/UI-V3/ClaimResultFlow/States/VoteSameChoice":
+                        "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame",
+                    "VertixBot/UI-V3/ClaimResultFlow/States/VoteUpdated":
+                        "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully"
+                },
+                claimVoteSteps: {
+                    "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote": "VertixBot/UI-V2/ClaimResultAddedSuccessfully",
+                    "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate":
+                        "VertixBot/UI-V2/ClaimResultAlreadyAdded",
+                    "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf":
+                        "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted",
+                    "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess":
+                        "VertixBot/UI-V2/ClaimResultVotedSuccessfully",
+                    "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame":
+                        "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame",
+                    "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated":
+                        "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully"
+                },
+                claimVoteStepInEntity: "VertixBot/UI-V2/ClaimVoteStepInButton",
+                claimVoteAddEntity: "VertixBot/UI-V2/ClaimVoteAddButton"
             }
         } );
     }

@@ -1,38 +1,24 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-/**
- * Shown when the owner of the channel has returned or click on "Claim button" and the channel is no longer claimable.
- */
-export class ClaimResultOwnerStopEmbed extends UIEmbedBase {
-    private static vars: any = {
-        absentMinutes: uiUtilsWrapAsTemplate( "absentMinutes" )
-    };
+const CLAIM_RESULT_OWNER_STOP_VARS = {
+    absentMinutes: uiUtilsWrapAsTemplate( "absentMinutes" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimResultOwnerStopEmbed";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getTitle() {
-        return "👑  You're back in charge!";
-    }
-
-    protected getDescription(): string {
-        return `Please be aware that if you don't return within **${ ClaimResultOwnerStopEmbed.vars.absentMinutes }** minutes, the channel will once again become available for other members to claim.\n`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            absentMinutes: ( args.absentInterval / 60000 ).toFixed( 1 )
-        };
-    }
-}
+export const ClaimResultOwnerStopEmbed = new EmbedBuilder<UIArgs, typeof CLAIM_RESULT_OWNER_STOP_VARS>(
+    "VertixBot/UI-V3/ClaimResultOwnerStopEmbed",
+    CLAIM_RESULT_OWNER_STOP_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setTitle( "👑  You're back in charge!" )
+    .setDescription( () =>
+        `Please be aware that if you don't return within **${ CLAIM_RESULT_OWNER_STOP_VARS.absentMinutes }** minutes, the channel will once again become available for other members to claim.\n`
+    )
+    .setLogic( ( args: UIArgs ) => ( {
+        absentMinutes: ( args.absentInterval / 60000 ).toFixed( 1 )
+    } ) )
+    .build();

@@ -1,0 +1,131 @@
+@import "./theme.css";
+
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+
+@plugin "tailwindcss-animate";
+
+:root {
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.tw-container {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.header-container {
+    padding-left: 1.25rem;
+    padding-right: 2rem;
+    min-height: 82px;
+    align-items: center;
+}
+
+.header-container img {
+    image-rendering: auto;
+}
+
+.logo-shape {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.logo-shape img {
+    border-radius: 14px;
+}
+
+.logo-shell {
+    height: 3.5rem;
+    width: 3.5rem;
+    border-radius: 999px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    box-shadow: none;
+}
+
+.logo-shell img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 999px;
+}
+
+.brand-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--vertix-font-component, 'El Messiri', 'Red Hat Display', sans-serif);
+    letter-spacing: 0.04em;
+    color: hsl(var(--foreground));
+    font-weight: 900;
+    font-size: 1.28rem;
+    line-height: 1;
+}
+
+.brand-v {
+    color: hsl(var(--accent));
+    font-weight: 900;
+    display: inline-block;
+    transform: translateY(-1px);
+}
+
+.brand-word {
+    color: hsl(var(--primary));
+}
+
+.tw-pill {
+    border-radius: 9999px;
+}
+
+.tw-section {
+    padding: 4rem 0;
+}
+
+.tw-card {
+    border-radius: var(--radius);
+}
+
+.surface {
+    background: var(--surface);
+}
+
+.surface-muted {
+    background: var(--surface-muted);
+}
+
+.surface-strong {
+    background: var(--surface-strong);
+}
+
+.btn-glint {
+    position: relative;
+}
+
+.btn-glint-span {
+    position: absolute;
+    left: -40%;
+    top: -20%;
+    width: 40%;
+    height: 160%;
+    transform: rotate(18deg);
+    background: linear-gradient(90deg, transparent 0%, hsla(var(--accent), 0.15) 50%, transparent 100%);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+.btn-glint:hover .btn-glint-span {
+    transform: translateX(220%) rotate(18deg);
+    opacity: 1;
+}

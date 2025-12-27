@@ -8,6 +8,7 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 import type { APIEmbedField, APIEmbedImage, APIEmbedThumbnail } from "discord.js";
 
@@ -164,6 +165,11 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return Promise.resolve( {} );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected getDefaultVars( args?: UIArgs ): Record<string, JsonValue> {
+        return {};
+    }
+
     /**
      * Function getInternalOptions() :: Used to extend the selectOptions object.
      */
@@ -181,6 +187,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
     protected async parseInternalData( content: undefined | UIEmbedLanguageContent ) {
         return this.parseLogicInternal(
             {
+                ...this.getDefaultVars( this.uiArgs ),
                 ...this.getInternalLogic( this.uiArgs ),
                 ...this.getLogic( this.uiArgs ),
                 ...( await this.getLogicAsync( this.uiArgs ) )

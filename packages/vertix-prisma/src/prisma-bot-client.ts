@@ -134,7 +134,7 @@ export class PrismaBotClient extends ObjectBase {
     }
 }
 
-global.PrismaBot = Prisma;
+( global as Record<string, typeof Prisma> ).PrismaBot = Prisma;
 
 export { Prisma as PrismaBot };
 export type { PrismaLibrary as PrismaBotLibrary };

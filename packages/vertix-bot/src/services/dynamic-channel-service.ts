@@ -190,7 +190,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             if ( channel.members.size === 0 ) {
                 try {
                     await this.onLeaveDynamicChannelEmpty( channel, channelDB, guild, args );
-                } catch ( error ) {
+                } catch( error ) {
                     this.logger.error(
                         this.onLeaveDynamicChannelEmpty,
                         `Guild id: '${ guild.id }', channel id: '${ channel.id }' - Failed to handle empty channel`,
@@ -309,11 +309,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const replacements: Record<string, string> = {
             [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
             [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName,
-            [ VAR_DYNAMIC_CHANNEL_GAME ]: args.gameName ?? ""
+            [ VAR_DYNAMIC_CHANNEL_GAME ]: args.gameName ?? "",
+            "{{username}}": userDisplayName,
+            "{{user}}": userDisplayName,
+            "{{state}}": state,
+            "{{game}}": args.gameName ?? ""
         };
 
         return channelNameTemplate.replace(
-            new RegExp( Object.keys( replacements ).join( "|" ), "g" ),
+            new RegExp( Object.keys( replacements ).map( key => key.replace( /[{}]/g, "\\$&" ) ).join( "|" ), "g" ),
             ( matched: any ) => replacements[ matched ]
         );
     }
@@ -789,7 +793,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId as string );
 
         const sendArgs = {
-            ownerId: dynamicChannelDB.userOwnerId
+            ownerId: dynamicChannelDB.userOwnerId,
+            channelId: channel.id
         } as any;
 
         if ( masterChannelDB ) {
@@ -799,7 +804,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             );
         }
 
-        return ( await this.services.uiVersioningAdapterService.get( "Vertix/DynamicChannelAdapter", channel ) )?.send(
+        return ( await this.services.uiVersioningAdapterService.get( "VertixBot/DynamicChannelAdapter", channel ) )?.send(
             channel,
             sendArgs
         );
@@ -1241,7 +1246,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         const dynamicChannelAdapter = await this.services.uiVersioningAdapterService.get(
-            "Vertix/DynamicChannelAdapter",
+            "VertixBot/DynamicChannelAdapter",
             channel
         );
 

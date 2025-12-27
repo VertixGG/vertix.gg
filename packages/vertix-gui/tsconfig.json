@@ -4,6 +4,7 @@
 
     // Compiler options
     "compilerOptions": {
+        "incremental": true,
         "typeRoots": [
             "../../node_modules/@types",
             "../vertix-prisma/types"
@@ -16,6 +17,11 @@
 
         "target": "ESNext",
 
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
         "module": "ESNext",
 
         "moduleResolution": "bundler",
@@ -25,7 +31,9 @@
         "esModuleInterop": true,
 
         "allowSyntheticDefaultImports": true,
-        // Skip lib check
+
+        "downlevelIteration": true,
+
         "skipLibCheck": true
     }
 }

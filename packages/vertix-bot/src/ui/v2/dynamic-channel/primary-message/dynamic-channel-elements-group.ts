@@ -146,10 +146,15 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
     }
 
     public static sortIds( ids: number[] ) {
-        return ids.sort(
-            ( aId: number, bId: number ) =>
-                DynamicChannelElementsGroup.getById( aId )!.getSortId() -
-                DynamicChannelElementsGroup.getById( bId )!.getSortId()
+        const validIds = ids.filter( ( id ) => DynamicChannelElementsGroup.getById( id ) !== undefined );
+
+        return validIds.sort(
+            ( aId: number, bId: number ) => {
+                const aItem = DynamicChannelElementsGroup.getById( aId )!;
+                const bItem = DynamicChannelElementsGroup.getById( bId )!;
+
+                return aItem.getSortId() - bItem.getSortId();
+            }
         );
     }
 }

@@ -1,7 +1,5 @@
-import {
-    UIElementButtonBase,
-    UIInstancesTypes
-} from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
 
 import type {
     UIButtonStyleTypes,
@@ -11,9 +9,9 @@ import type {
 export class ButtonBuilder {
     private name: string;
     private instanceType: UIInstancesTypes = UIInstancesTypes.Dynamic;
-    private label: string | ( ( args?: UIArgs ) => Promise<string> );
+    private label!: string | ( ( args?: UIArgs ) => Promise<string> );
     private style: UIButtonStyleTypes | ( ( args?: UIArgs ) => Promise<UIButtonStyleTypes> ) = "secondary";
-    private emoji: string | ( ( args?: UIArgs ) => Promise<string> );
+    private emoji!: string | ( ( args?: UIArgs ) => Promise<string> );
     private isAvailable: boolean | ( ( args?: UIArgs ) => Promise<boolean> | boolean ) = true;
     private options: any | ( ( args?: UIArgs ) => Promise<any> );
     private logic: any | ( ( args?: UIArgs ) => Promise<any> );

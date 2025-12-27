@@ -74,7 +74,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         const act = () => adapter.send( channel );
 
         // Assert.
-        await expect( act ).rejects.toThrowError( "Invalid channel type. Expected: 'GuildNews' but got: 'GuildVoice'" );
+        await expect( act ).rejects.toThrow( "Invalid channel type. Expected: 'GuildNews' but got: 'GuildVoice'" );
     } );
 
     it( "should pass 'send' method if channel type is correct", async() => {
@@ -105,7 +105,7 @@ describe( "VertixGUI/UIInteractionMiddleware", () => {
         const act = () => adapter.send( channel );
 
         // Assert.
-        await expect( act ).rejects.toThrowError( "ForceMethod implementation: at 'test-adapter' method: 'getStartArgs'" );
+        await expect( act ).rejects.toThrow( "ForceMethod implementation: at 'test-adapter' method: 'getStartArgs'" );
     } );
 
     it( "should protected 'editReply' method work only for specific permissions", async() => {

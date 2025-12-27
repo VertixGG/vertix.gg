@@ -38,7 +38,7 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 Edit by pressing <div className="btn btn-sm btn-secondary pe-none">#️⃣ Edit Channel
                     Name</div> button or
                 continue with <code>default = { "{user}" }'s channel</code>
-                by pressing <a href={`${ props.displayStep ? "#step-2" : "2" }`} className="btn btn-sm btn-primary">Next ▶</a>
+                by pressing <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="btn btn-sm btn-primary">Next ▶</a>
                 <br/>
                 <br/>
                 <ul>
@@ -72,7 +72,7 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
             <img className="normalize" src="https://i.ibb.co/mHqSW4H/003.png" alt="s4"/>
             <ul>
                 <li>
-                    <li>Then press <a href={`${ props.displayStep ? "#step-2" : "2" }`} className="btn btn-sm btn-primary">Next ▶</a> to continue.
+                    <li>Then press <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="btn btn-sm btn-primary">Next ▶</a> to continue.
                     </li>
                 </li>
             </ul>

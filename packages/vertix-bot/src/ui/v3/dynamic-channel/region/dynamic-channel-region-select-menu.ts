@@ -10,7 +10,7 @@ export class DynamicChannelRegionSelectMenu extends DynamicChannelStringMenuBase
     }
 
     public getId(): string {
-        throw new Error( "Method not implemented." );
+        return "dynamic-channel-region-select-menu";
     }
 
     protected async getPlaceholder() {

@@ -1,3 +1,16 @@
 {
-    "extends": "./tsconfig.paths.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "baseUrl": "./",
+    },
+    "include": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "tools/**/*.ts",
+        "zenflux.config.ts",
+        "jest.config.ts"
+    ],
+    "exclude": [
+        "dist"
+    ]
 }

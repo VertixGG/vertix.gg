@@ -1,0 +1,8 @@
+# UI Class Names Use `UI` Prefix In Uppercase
+
+When naming UI classes (components, adapters, flows, services, builders) ensure the `UI` prefix is uppercase and part of the PascalCase identifier.
+
+- ✅ `class UIChannelManager`, `class UIFlowDefinitionExporter`
+- ❌ `class UiChannelManager`, `class uiFlowDefinitionExporter`
+
+Apply this everywhere in the monorepo—any UI-centric class (components, adapters, flows, services, utilities) must use the uppercase `UI` prefix to stay consistent with existing abstractions.

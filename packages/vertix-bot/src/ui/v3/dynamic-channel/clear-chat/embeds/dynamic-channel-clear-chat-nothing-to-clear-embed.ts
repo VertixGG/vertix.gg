@@ -1,38 +1,31 @@
-import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
-import { UIEmbedWithVarsExtend } from "@vertix.gg/gui/src/ui-embed/ui-embed-with-vars";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DynamicChannelClearChatButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-button";
 
-import { DynamicChannelEmbedBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-embed-base";
-
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend( DynamicChannelEmbedBase, new UIEmbedVars( "clearEmoji" ) );
+const DYNAMIC_CHANNEL_CLEAR_CHAT_EMPTY_VARS = {
+    clearEmoji: uiUtilsWrapAsTemplate( "clearEmoji" )
+};
 
-export class DynamicChannelClearChatNothingToClearEmbed extends DynamicChannelEmbedBaseWithVars {
-    public static getName(): string {
-        return "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed";
-    }
+const DynamicChannelClearChatNothingToClearEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CHANNEL_CLEAR_CHAT_EMPTY_VARS>(
+    "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed",
+    DYNAMIC_CHANNEL_CLEAR_CHAT_EMPTY_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0x4b6f91 )
+    .setTitle(
+        () => `${ DYNAMIC_CHANNEL_CLEAR_CHAT_EMPTY_VARS.clearEmoji }  There are no messages available to clear`
+    )
+    .setDescription(
+        () => "Keep in mind, that only non-embeds messages can be deleted."
+    )
+    .setLogic( () => ( {
+        clearEmoji: DynamicChannelClearChatButton.getEmoji()
+    } ) )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getTitle(): string {
-        return `${ this.vars.get( "clearEmoji" ) }  There are no messages available to clear`;
-    }
-
-    protected getDescription(): string {
-        return "Keep in mind, that only non-embeds messages can be deleted.";
-    }
-
-    protected getLogic( args: UIArgs ) {
-        const result = super.getLogic( args );
-
-        result.clearEmoji = DynamicChannelClearChatButton.getEmoji();
-
-        return result;
-    }
-}
+export { DynamicChannelClearChatNothingToClearEmbed };

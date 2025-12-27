@@ -1,0 +1,66 @@
+:root {
+    --background: 210 48% 10%;
+    --foreground: 210 38% 96%;
+
+    --card: 210 40% 14%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 210 40% 14%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 203 87% 52%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 203 32% 18%;
+    --secondary-foreground: 210 38% 94%;
+
+    --muted: 210 22% 26%;
+    --muted-foreground: 210 18% 72%;
+
+    --accent: 203 87% 56%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 56%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 28% 22%;
+    --input: 210 28% 22%;
+    --ring: 203 87% 56%;
+
+    --radius: 0.75rem;
+
+    --surface: hsl(var(--card));
+    --surface-muted: hsla(var(--primary), 0.06);
+    --surface-strong: hsla(var(--primary), 0.12);
+    --surface-contrast: hsl(var(--background));
+}
+
+body {
+    font-family: "Space Grotesk", "Inter", system-ui, -apple-system, sans-serif;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    min-height: 100vh;
+}
+
+.tw-glass {
+    background: rgba(15, 30, 46, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(16px);
+}
+
+.tw-gradient-border {
+    position: relative;
+}
+
+.tw-gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius) + 2px);
+    padding: 1px;
+    background: linear-gradient(120deg, rgba(9, 123, 200, 0.9), rgba(120, 187, 255, 0.7), rgba(255, 228, 196, 0.6));
+    mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    mask-composite: exclude;
+    pointer-events: none;
+}

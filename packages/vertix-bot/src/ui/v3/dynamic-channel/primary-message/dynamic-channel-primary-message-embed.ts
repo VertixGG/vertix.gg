@@ -1,101 +1,67 @@
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
-import { UIEmbedWithVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-with-vars";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import { DynamicChannelPrimaryMessageEditDescriptionEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/description/dynamic-channel-primary-message-edit-description-embed";
-
-import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-meta-button";
-
-import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
-
-import { DynamicChannelPrivacyEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-embed";
-
-import { DynamicChannelRegionEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-embed";
-
-import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
+import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-import { DynamicChannelPrimaryMessageEditTitleEmbed } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/title/dynamic-channel-primary-message-edit-title-embed";
+import { DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/description/dynamic-channel-primary-message-edit-description-embed";
+import { DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/title/dynamic-channel-primary-message-edit-title-embed";
+import { DYNAMIC_CHANNEL_REGION_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-embed";
+import { DYNAMIC_CHANNEL_PRIVACY_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-embed";
+
+import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-meta-button";
+import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
+import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
+import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
+
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-/**
- * Show for each dynamic channel, as a primary message.
- */
-export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
-    new UIEmbedVars(
-        "name",
-        "limit",
-        "limitDisplayValue",
-        "limitDisplayUnlimited",
-        "limitValue",
-        "statePublic",
-        "statePrivate",
-        "stateShown",
-        "stateHidden",
-        "renameEmoji",
-        "limitEmoji",
-        "privacyEmoji"
-    )
-) {
-    private readonly editTitleVars;
-    private readonly editDescriptionVars;
-    private readonly regionVars;
-    private readonly privacyVars;
+const vars = {
+    name: uiUtilsWrapAsTemplate( "name" ),
+    limit: uiUtilsWrapAsTemplate( "limit" ),
+    limitDisplayValue: uiUtilsWrapAsTemplate( "limitDisplayValue" ),
+    limitDisplayUnlimited: uiUtilsWrapAsTemplate( "limitDisplayUnlimited" ),
+    limitValue: uiUtilsWrapAsTemplate( "limitValue" ),
 
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed";
-    }
+    state: DYNAMIC_CHANNEL_PRIVACY_VARS.state,
+    statePublic: DYNAMIC_CHANNEL_PRIVACY_VARS.statePublic,
+    statePrivate: DYNAMIC_CHANNEL_PRIVACY_VARS.statePrivate,
+    stateShown: DYNAMIC_CHANNEL_PRIVACY_VARS.stateShown,
+    stateHidden: DYNAMIC_CHANNEL_PRIVACY_VARS.stateHidden,
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
+    renameEmoji: uiUtilsWrapAsTemplate( "renameEmoji" ),
+    limitEmoji: uiUtilsWrapAsTemplate( "limitEmoji" ),
+    privacyEmoji: uiUtilsWrapAsTemplate( "privacyEmoji" ),
 
-    public constructor() {
-        super();
+    region: DYNAMIC_CHANNEL_REGION_VARS.region,
+    regionEmoji: DYNAMIC_CHANNEL_REGION_VARS.regionEmoji,
 
-        this.editTitleVars = this.useExternal( DynamicChannelPrimaryMessageEditTitleEmbed ).get();
-        this.editDescriptionVars = this.useExternal( DynamicChannelPrimaryMessageEditDescriptionEmbed ).get();
+    title: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS.title,
+    description: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description
+};
 
-        this.regionVars = this.useExternal( DynamicChannelRegionEmbed ).get();
-        this.privacyVars = this.useExternal( DynamicChannelPrivacyEmbed ).get();
-    }
-
-    protected getColor(): number {
-        return VERTIX_DEFAULT_COLOR_BRAND;
-    }
-
-    protected getImage(): string {
-        return "https://i.imgur.com/sGjDVJ4.png";
-    }
-
-    protected getTitle(): string {
-        return this.editTitleVars.title;
-    }
-
-    protected getDescription(): string {
-        const { name, limit, limitEmoji, renameEmoji } = this.vars.get();
-
-        const { region, regionEmoji } = this.regionVars;
-
-        const { state, privacyEmoji } = this.privacyVars;
-
-        const { description } = this.editDescriptionVars;
-
-        return (
-            `${ description }\n\n` +
-            `${ renameEmoji } ・ Name: **${ name }**\n\n` +
-            `${ limitEmoji } ・ User Limit: **${ limit }**\n\n` +
-            `${ privacyEmoji } ・ Privacy State: **${ state }**\n\n` +
-            `${ regionEmoji } ・ Region:  **${ region }**\n`
-        );
-    }
-
-    protected getOptions() {
-        const vars = this.vars.get();
-
+const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setImage( "https://i.imgur.com/sGjDVJ4.png" )
+    .setTitle( () => vars.title )
+    .setDescription( () => (
+        `${ vars.description }\n\n` +
+        `${ vars.renameEmoji } ・ Name: **${ vars.name }**\n\n` +
+        `${ vars.limitEmoji } ・ User Limit: **${ vars.limit }**\n\n` +
+        `${ vars.privacyEmoji } ・ Privacy State: **${ vars.state }**\n\n` +
+        `${ vars.regionEmoji } ・ Region:  **${ vars.region }**\n`
+    ) )
+    .setOptions( () => {
         return {
             limit: {
                 [ vars.limitDisplayValue ]: vars.limitValue,
@@ -108,20 +74,55 @@ export class DynamicChannelPrimaryMessageEmbed extends UIEmbedWithVars(
                 [ vars.stateHidden ]: "🙈 Hidden"
             }
         };
-    }
+    } )
+    .setLogic( ( args: UIArgs ) => {
+        const { limitDisplayValue, limitDisplayUnlimited } = vars;
 
-    protected getLogic( args: UIArgs ) {
-        const { limitDisplayValue, limitDisplayUnlimited } = this.vars.get();
+        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
 
-        return {
+        const logic: Record<string, any> = {
             name: args.channelName,
             limit: 0 === args.userLimit ? limitDisplayUnlimited : limitDisplayValue,
-
             limitValue: args.userLimit,
-
             renameEmoji: DynamicChannelRenameButton.getEmoji(),
             limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
-            privacyEmoji: DynamicChannelPrivacyButton.getEmoji()
+            privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
+            title: args.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
+            description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
+            region: args.region || "Automatic",
+            regionEmoji: DynamicChannelRegionButton.getEmoji()
         };
-    }
-}
+
+        switch ( args.state ) {
+            default:
+            case "public":
+                logic.state = vars.statePublic;
+                break;
+            case "private":
+                logic.state = vars.statePrivate;
+                break;
+            case "shown":
+                logic.state = vars.stateShown;
+                break;
+            case "hidden":
+                logic.state = vars.stateHidden;
+                break;
+        }
+
+        return logic;
+    } )
+    .setDefaultVars( () => {
+        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
+
+        return {
+            renameEmoji: DynamicChannelRenameButton.getEmoji(),
+            limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
+            privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
+            regionEmoji: DynamicChannelRegionButton.getEmoji(),
+            title: configV3.data.constants.dynamicChannelPrimaryMessageTitle,
+            description: configV3.data.constants.dynamicChannelPrimaryMessageDescription,
+        };
+    } )
+    .build();
+
+export { DynamicChannelPrimaryMessageEmbed };

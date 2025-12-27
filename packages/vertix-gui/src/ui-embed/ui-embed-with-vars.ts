@@ -63,7 +63,7 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             TInnerVars extends UIEmbedVars,
             TInnerClass extends Constructor<UIEmbedBase>,
             TEmbedClass extends InstanceType<TUIEmbedWithVarsBase<TInnerVars, TInnerClass>>
-        >( EmbedClass: { new (): TEmbedClass } ): ReturnType<TEmbedClass["getVars"]> {
+        >( EmbedClass: { new (): TEmbedClass } ): ReturnType<TEmbedClass[ "getVars" ]> {
             const instance = new EmbedClass();
 
             this.useExternalEmbedVars[ instance.getName() ] = instance;

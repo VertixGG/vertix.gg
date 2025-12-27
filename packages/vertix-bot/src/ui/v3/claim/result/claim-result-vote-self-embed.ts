@@ -1,30 +1,13 @@
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/app";
 
-/**
- * Shown when the user trying vote for himself
- */
-export class ClaimResultVoteSelfEmbed extends UIEmbedBase {
-    public static getName() {
-        return "VertixBot/UI-V3/ClaimResultVoteSelfEmbed";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor() {
-        return VERTIX_DEFAULT_COLOR_ORANGE_RED;
-    }
-
-    protected getTitle() {
-        return "🤷  You cannot vote for yourself";
-    }
-
-    protected getDescription() {
-        return "It's great that you believe in yourself, but voting for yourself is not allowed in this election.";
-    }
-}
+export const ClaimResultVoteSelfEmbed = new EmbedBuilder(
+    "VertixBot/UI-V3/ClaimResultVoteSelfEmbed"
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setTitle( "🤷  You cannot vote for yourself" )
+    .setDescription( "It's great that you believe in yourself, but voting for yourself is not allowed in this election." )
+    .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
+    .build();

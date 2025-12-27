@@ -9,10 +9,11 @@ import type {
     UIArgs,
     UIElementsConstructor,
     UIEntityTypes,
-    UIEntityTypesConstructor
+    UIEntityTypesConstructor,
+    UIPortableSchemaBase
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { ComponentSerializer, ComponentSchemaResult, SerializationContext } from "@vertix.gg/gui/src/bases/ui-serialization";
+import type { UISerializationComponent, UISerializationComponentSchemaResult, UISerializationContext } from "@vertix.gg/definitions/src/ui-serialization-definitions";
 
 interface UIGetEntitiesArgs {
     elements?: boolean;
@@ -21,7 +22,7 @@ interface UIGetEntitiesArgs {
     markdowns?: boolean;
 }
 
-export abstract class UIComponentBase extends UIComponentInfraBase implements ComponentSerializer {
+export abstract class UIComponentBase extends UIComponentInfraBase implements UISerializationComponent {
     private uiElements: UIElementBase<any>[][] = [];
     private uiEmbeds: UIEmbedBase[] = [];
     private uiMarkdowns: UIMarkdownBase[] = [];
@@ -139,16 +140,28 @@ export abstract class UIComponentBase extends UIComponentInfraBase implements Co
         };
     }
 
-    protected async getSchemaInternal() {
-        return {
+    protected async getSchemaInternal(): Promise<UISerializationComponentSchemaResult & UIPortableSchemaBase> {
+        const modalSchemas = this.uiModals
+            .filter( ( modal ): modal is UIModalBase => Boolean( modal ) )
+            .map( ( modal ) => modal.getSchema() );
+
+        const entities: UISerializationComponentSchemaResult[ "entities" ] = {
+            elements: this.uiElements.map( ( row ) => row.map( ( element ) => element.getSchema() ) ),
+            embeds: this.uiEmbeds.map( ( embed ) => embed.getSchema() )
+        };
+
+        if ( modalSchemas.length ) {
+            // Store raw modal schemas - they will be normalized in buildComponentSchemas
+            entities.modals = modalSchemas;
+        }
+
+        const schema: UISerializationComponentSchemaResult & UIPortableSchemaBase = {
             name: this.getName(),
             type: this.getStaticThis().getType(),
-
-            entities: {
-                elements: this.uiElements.map( ( row ) => row.map( ( element ) => element.getSchema() ) ),
-                embeds: this.uiEmbeds.map( ( embed ) => embed.getSchema() )
-            }
+            entities: entities as UISerializationComponentSchemaResult[ "entities" ] & { [key: string]: any }
         };
+
+        return schema;
     }
 
     protected async buildDynamicEntities( args?: UIArgs ) {
@@ -223,14 +236,21 @@ export abstract class UIComponentBase extends UIComponentInfraBase implements Co
         await this.buildEntities( this.uiEmbeds, embeds as UIEntityTypes, onlyStatic, args );
     }
 
-    // TODO: Test?
     private async buildModals( args?: UIArgs, onlyStatic = false ) {
         const self = this.getStaticThis(),
             modals = self.getModals() as { new ( args?: UIArgs ): UIModalBase }[];
 
         let i = 0;
         for ( const Modal of modals ) {
-            this.uiModals[ i ] = ( await this.buildEntity( this.uiModals[ i ], Modal, onlyStatic, args ) ) as UIModalBase;
+            const ModalClass = Modal as unknown as typeof UIModalBase;
+            const enforceStaticBuild = onlyStatic && ModalClass.isStatic();
+
+            this.uiModals[ i ] = ( await this.buildEntity(
+                this.uiModals[ i ],
+                Modal,
+                enforceStaticBuild,
+                args
+            ) ) as UIModalBase;
             i++;
         }
     }
@@ -250,49 +270,14 @@ export abstract class UIComponentBase extends UIComponentInfraBase implements Co
      * @param _context Optional serialization context (unused in base implementation)
      * @returns Component schema with all elements and embeds
      */
-    public async toSchema( _context?: SerializationContext ): Promise<ComponentSchemaResult> {
+    public async toSchema( context?: UISerializationContext ): Promise<UISerializationComponentSchemaResult> {
         await this.waitUntilInitialized();
 
-        // Build basic schema
-        const schema = await this.build( {} ) as ComponentSchemaResult;
+        const initialData = ( context?.properties?.initialData as UIArgs | undefined ) || {};
+        const previewArgs = ( context?.properties?.previewArgs as UIArgs | undefined ) || {};
+        const mergedArgs = { ...initialData, ...previewArgs };
 
-        // // Process element groups if any
-        // const elementGroups = this.getStaticThis().getElementsGroups();
-        // if ( elementGroups && elementGroups.length ) {
-        //     if ( !schema.entities ) {
-        //         schema.entities = { elements: [], embeds: [] };
-        //     }
-        //
-        //     if ( !schema.entities.elements ) {
-        //         schema.entities.elements = [];
-        //     }
-        //
-        //     // Add elements from each group
-        //     for ( const ElementsGroup of elementGroups ) {
-        //         try {
-        //             // Get items from the elements group - these are arrays or entities
-        //             const groupItems = ElementsGroup.getItems( {} );
-        //
-        //             // Skip if no items
-        //             if ( !groupItems || !groupItems.length ) continue;
-        //
-        //             // Handle different item structures
-        //             if ( Array.isArray( groupItems[ 0 ] ) ) {
-        //                 // Multi-row elements - each item is already an array
-        //                 groupItems.forEach( row => {
-        //                     if ( row && Array.isArray( row ) && row.length ) {
-        //                         schema.entities!.elements!.push( row );
-        //                     }
-        //                 } );
-        //             } else {
-        //                 // Single row of elements
-        //                 schema.entities.elements.push( groupItems as any[] );
-        //             }
-        //         } catch {
-        //             // Continue if there's an error
-        //         }
-        //     }
-        // }
+        const schema = await this.build( Object.keys( mergedArgs ).length ? mergedArgs : undefined ) as UISerializationComponentSchemaResult;
 
         return schema;
     }

@@ -27,13 +27,13 @@ export default function InviteVertix() {
             </h4>
             <div className="row p-5">
                 <div className="col-xl-6 mb-3">
-                    <button onClick={() => onAddToServerClick( "recommended" ) } className="btn btn-lg btn-outline-info btn-effect w-100 h-100 p-5" type="button">
+                    <button onClick={ () => onAddToServerClick( "recommended" ) } className="btn btn-lg btn-outline-info btn-effect w-100 h-100 p-5" type="button">
                         <h2>Recommended Permissions</h2>
                         <p>The best practice</p>
                     </button>
                 </div>
                 <div className="col-xl-6 mb-3">
-                    <button onClick={() => onAddToServerClick( "optimal" ) } className="btn btn-lg btn-outline-danger btn-effect w-100 h-100 p-5" type="button">
+                    <button onClick={ () => onAddToServerClick( "optimal" ) } className="btn btn-lg btn-outline-danger btn-effect w-100 h-100 p-5" type="button">
                         <h2>Minimal Permissions</h2>
                         <p>For advanced users</p>
                     </button>

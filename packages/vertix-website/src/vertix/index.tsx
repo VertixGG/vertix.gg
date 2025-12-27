@@ -4,11 +4,11 @@ import { Route, Routes } from "react-router-dom";
 
 import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } from "@vertix.gg/website/src/utils/loading";
 
-import LoadingContainer from "@vertix.gg/website/src/vertix//ui/loading-container";
+import LoadingContainer from "@vertix.gg/website/src/vertix/ui/loading-container";
 
-import Header from "@vertix.gg/website/src/vertix//header/header";
+import Header from "@vertix.gg/website/src/vertix/header/header";
 
-import localRoutes from "@vertix.gg/website/src/vertix//routes";
+import localRoutes from "@vertix.gg/website/src/vertix/routes";
 
 import "@vertix.gg/website/src/vertix/style-static.scss";
 
@@ -23,12 +23,15 @@ const loadedPromise = windowLoadedPromise(),
 const RoutesComponent = () => {
     loadedSuspensePromise.read();
 
+    const RoutesComponentTyped = Routes as React.ComponentType<{ children?: React.ReactNode }>;
+    const RouteComponentTyped = Route as React.ComponentType<{ key?: string; path?: string; element?: React.ReactElement }>;
+
     return (
-        <Routes>
+        <RoutesComponentTyped>
             { localRoutes.map( ( route ) => {
-                return <Route key={ route.path } path={ route.path } element={ <route.component/> }/>;
+                return <RouteComponentTyped key={ route.path } path={ route.path } element={ <route.component/> }/>;
             } ) }
-        </Routes>
+        </RoutesComponentTyped>
     );
 };
 

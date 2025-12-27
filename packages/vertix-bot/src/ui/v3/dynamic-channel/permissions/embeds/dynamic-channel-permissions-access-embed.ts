@@ -1,95 +1,77 @@
-import { UI_IMAGE_EMPTY_LINE_URL } from "@vertix.gg/gui/src/bases/ui-definitions";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
+import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
-import { UIEmbedWithVarsExtend } from "@vertix.gg/gui/src/ui-embed/ui-embed-with-vars";
-
-import { DynamicChannelEmbedBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-embed-base";
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import { DynamicChannelPermissionsAccessButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
-const DynamicChannelEmbedBaseWithVars = UIEmbedWithVarsExtend(
-    DynamicChannelEmbedBase,
-    new UIEmbedVars(
-        "separator",
-        "value",
-        "allowedUsers",
-        "allowedUsersDisplay",
-        "allowedUsersDefault",
-        "blockedUsers",
-        "blockedUsersDisplay",
-        "blockedUsersDefault",
-        "permissionsEmoji"
-    )
+const DYNAMIC_CHANNEL_PERMISSIONS_ACCESS_VARS = new UIEmbedVars(
+    "separator",
+    "value",
+    "allowedUsers",
+    "allowedUsersDisplay",
+    "allowedUsersDefault",
+    "blockedUsers",
+    "blockedUsersDisplay",
+    "blockedUsersDefault",
+    "permissionsEmoji"
 );
 
-export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBaseWithVars {
-    public static getName() {
-        return "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed";
-    }
+const vars = DYNAMIC_CHANNEL_PERMISSIONS_ACCESS_VARS.get();
 
-    protected getImage(): string {
-        return UI_IMAGE_EMPTY_LINE_URL;
-    }
+const DynamicChannelPermissionsAccessEmbedBase = new EmbedBuilder<
+    UIArgs,
+    typeof vars
+>(
+    "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0x4b6f91 )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( () => `${ vars.permissionsEmoji }  Manage permissions of your channel` )
+    .setDescription( () => (
+        "\n**_Trusted Users_**:\n" +
+        vars.allowedUsersDisplay +
+        "\n**_Blocked Users_**:\n" +
+        vars.blockedUsersDisplay
+    ) )
+    .setFooterText( () => "Use the menu below to manage permissions of your channel." )
+    .setOptions( () => ( {
+        allowedUsersDisplay: {
+            [ vars.allowedUsersDefault ]: "Currently there are no trusted users.\n",
+            [ vars.allowedUsers ]: `${ vars.allowedUsers }\n`
+        },
+        blockedUsersDisplay: {
+            [ vars.blockedUsersDefault ]: "Currently there are no blocked users.\n",
+            [ vars.blockedUsers ]: `${ vars.blockedUsers }\n`
+        }
+    } ) )
+    .setArrayOptions( () => ( {
+        allowedUsers: {
+            format: `- <@${ vars.value }>${ vars.separator }`,
+            separator: "\n"
+        },
+        blockedUsers: {
+            format: `- <@${ vars.value }>${ vars.separator }`,
+            separator: "\n"
+        }
+    } ) )
+    .setLogic( ( args: UIArgs ) => {
+        const result: Record<string, JsonValue> = {};
 
-    protected getOptions() {
-        const vars = this.vars.get();
-
-        return {
-            allowedUsersDisplay: {
-                [ vars.allowedUsersDefault ]: "Currently there are no trusted users." + "\n",
-                [ vars.allowedUsers ]: vars.allowedUsers + "\n"
-            },
-            blockedUsersDisplay: {
-                [ vars.blockedUsersDefault ]: "Currently there are no blocked users." + "\n",
-                [ vars.blockedUsers ]: vars.blockedUsers + "\n"
-            }
-        };
-    }
-
-    protected getArrayOptions() {
-        const { separator, value } = this.vars.get();
-
-        return {
-            allowedUsers: {
-                format: `- <@${ value }>${ separator }`,
-                separator: "\n"
-            },
-            blockedUsers: {
-                format: `- <@${ value }>${ separator }`,
-                separator: "\n"
-            }
-        };
-    }
-
-    protected getTitle() {
-        return `${ this.vars.get( "permissionsEmoji" ) }  Manage permissions of your channel`;
-    }
-
-    protected getDescription() {
-        const { allowedUsersDisplay, blockedUsersDisplay } = this.vars.get();
-
-        return "\n**_Trusted Users_**:\n" + allowedUsersDisplay + "\n**_Blocked Users_**:\n" + blockedUsersDisplay;
-    }
-
-    protected getFooter(): string {
-        return "Use the menu below to manage permissions of your channel.";
-    }
-
-    protected getLogic( args: UIArgs ) {
-        const result = super.getLogic( args ),
-            vars = this.vars.get();
-
-        if ( args?.allowedUsers?.length ) {
-            result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
+        if ( Array.isArray( args.allowedUsers ) && args.allowedUsers.length ) {
+            result.allowedUsers = args.allowedUsers.map( ( user ) => user.id );
             result.allowedUsersDisplay = vars.allowedUsers;
         } else {
             result.allowedUsersDisplay = vars.allowedUsersDefault;
         }
 
-        if ( args?.blockedUsers?.length ) {
-            result.blockedUsers = args.blockedUsers?.map( ( user: any ) => user.id );
+        if ( Array.isArray( args.blockedUsers ) && args.blockedUsers.length ) {
+            result.blockedUsers = args.blockedUsers.map( ( user ) => user.id );
             result.blockedUsersDisplay = vars.blockedUsers;
         } else {
             result.blockedUsersDisplay = vars.blockedUsersDefault;
@@ -98,5 +80,29 @@ export class DynamicChannelPermissionsAccessEmbed extends DynamicChannelEmbedBas
         result.permissionsEmoji = DynamicChannelPermissionsAccessButton.getEmoji();
 
         return result;
+    } )
+    .setDefaultVars( () => ( {
+        permissionsEmoji: DynamicChannelPermissionsAccessButton.getEmoji()
+    } ) )
+    .build();
+
+class DynamicChannelPermissionsAccessEmbed extends DynamicChannelPermissionsAccessEmbedBase {
+    public getVars() {
+        return DYNAMIC_CHANNEL_PERMISSIONS_ACCESS_VARS;
     }
 }
+
+const DYNAMIC_CHANNEL_PERMISSIONS_ACCESS_METADATA = Reflect.get(
+    DynamicChannelPermissionsAccessEmbedBase,
+    BUILDER_METADATA_SYMBOL
+);
+
+if ( DYNAMIC_CHANNEL_PERMISSIONS_ACCESS_METADATA ) {
+    Reflect.defineProperty( DynamicChannelPermissionsAccessEmbed, BUILDER_METADATA_SYMBOL, {
+        value: DYNAMIC_CHANNEL_PERMISSIONS_ACCESS_METADATA,
+        configurable: false,
+        enumerable: false
+    } );
+}
+
+export { DynamicChannelPermissionsAccessEmbed };

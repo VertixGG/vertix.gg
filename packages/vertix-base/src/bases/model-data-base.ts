@@ -1,8 +1,8 @@
-import "@vertix.gg/prisma/bot-client";
-
 import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
 import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 import type {
     IDataCreateArgs,
@@ -77,7 +77,7 @@ export abstract class ModelDataBase<
                 },
                 data: this.getInternalNormalizedData( createArgs )
             } );
-        } catch ( e ) {
+        } catch( e ) {
             this.logger.warn( this.setData, `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'` );
 
             return e;

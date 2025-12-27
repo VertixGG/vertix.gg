@@ -46,7 +46,8 @@ import type {
     GetStartArgsHandler,
     IBinder,
     BeforeFinishHandler,
-    BindingRegistrationOptions
+    BindingRegistrationOptions,
+    BindingFlowTriggerConfig
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
@@ -343,33 +344,79 @@ export class AdapterBuilderBase<
 
                 protected createBinder(): IBinder<TInteraction, TArgs, TContext> {
                     const getContext = this.getContext.bind( this );
+
+                    const applyFlowTriggers = async(
+                        interaction: TInteraction,
+                        options?: BindingRegistrationOptions
+                    ) => {
+                        const triggers = options?.flowTriggers ?? [];
+
+                        if ( triggers.length === 0 ) {
+                            return;
+                        }
+
+                        const context = getContext();
+                        const editReplyWithStep = ( context as unknown as {
+                            editReplyWithStep?: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
+                        } ).editReplyWithStep;
+
+                        if ( typeof editReplyWithStep !== "function" ) {
+                            return;
+                        }
+
+                        const args = context.getArgs( interaction ) as TArgs;
+
+                        for ( const trigger of triggers as BindingFlowTriggerConfig[] ) {
+                            const executionStep = trigger.navigation?.executionStep;
+
+                            if ( typeof executionStep === "string" && executionStep.length > 0 ) {
+                                await editReplyWithStep( interaction, executionStep, args );
+                            }
+                        }
+                    };
+
                     return {
                         bindButton: <T extends ButtonInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>,
                             _options?: BindingRegistrationOptions
-                        ) => this.bindButton( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        ) => this.bindButton( name, async( interaction ) => {
+                            await callback( getContext(), interaction as T );
+                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                        } ),
                         bindModal: <T extends ModalSubmitInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>,
                             _options?: BindingRegistrationOptions
-                        ) => this.bindModal( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        ) => this.bindModal( name, async( interaction ) => {
+                            await callback( getContext(), interaction as T );
+                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                        } ),
                         bindModalWithButton: <T extends ModalSubmitInteraction<"cached">>(
                             buttonName: string,
                             modalName: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>,
                             _options?: BindingRegistrationOptions
-                        ) => this.bindModalWithButton( buttonName, modalName, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        ) => this.bindModalWithButton( buttonName, modalName, async( interaction ) => {
+                            await callback( getContext(), interaction as T );
+                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                        } ),
                         bindSelectMenu: <T extends StringSelectMenuInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>,
                             _options?: BindingRegistrationOptions
-                        ) => this.bindSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) ),
+                        ) => this.bindSelectMenu( name, async( interaction ) => {
+                            await callback( getContext(), interaction as T );
+                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                        } ),
                         bindUserSelectMenu: <T extends UserSelectMenuInteraction<"cached">>(
                             name: string,
                             callback: ( context: TContext, interaction: T ) => Promise<void>,
                             _options?: BindingRegistrationOptions
-                        ) => this.bindUserSelectMenu( name, ( interaction ) => callback( getContext(), interaction as T ) )
+                        ) => this.bindUserSelectMenu( name, async( interaction ) => {
+                            await callback( getContext(), interaction as T );
+                            await applyFlowTriggers( interaction as unknown as TInteraction, _options );
+                        } )
                     };
                 }
 

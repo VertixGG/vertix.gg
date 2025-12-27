@@ -82,6 +82,8 @@ async function onSelectEditMasterChannel(
     context: IAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
+    await context.updateInteractionDefer( interaction );
+
     const masterChannelValue = interaction.values.at( 0 );
 
     let masterChannelId, masterChannelIndex;
@@ -97,7 +99,7 @@ async function onSelectEditMasterChannel(
 
     if ( !masterChannelDB ) {
         // TODO: Error...
-        await context.editReply( interaction as any, {} );
+        await context.editReply( interaction, {} );
         return;
     }
 
@@ -112,7 +114,7 @@ async function onSelectEditMasterChannel(
 
     let setupEditAdapter;
     try {
-        const determinedVersion = await uiVersioningAdapterService.determineVersion( masterChannelDB.id as any );
+        const determinedVersion = await uiVersioningAdapterService.determineVersion( masterChannelDB.id );
         context.logger.debug(
             onSelectEditMasterChannel,
             `Determined version: ${ determinedVersion } for master channel: ${ masterChannelDB.id }`
@@ -125,7 +127,7 @@ async function onSelectEditMasterChannel(
             `Error getting adapter for master channel: ${ masterChannelDB.id }`,
             error
         );
-        await context.editReply( interaction as any, {} );
+        await context.editReply( interaction, {} );
         return;
     }
 
@@ -134,7 +136,7 @@ async function onSelectEditMasterChannel(
             onSelectEditMasterChannel,
             `Adapter not found for master channel: ${ masterChannelDB.id }, channelId: ${ masterChannelId }`
         );
-        await context.editReply( interaction as any, {} );
+        await context.editReply( interaction, {} );
         return;
     }
 
@@ -157,7 +159,7 @@ async function onSelectEditMasterChannel(
         throw error;
     }
 
-    context.deleteArgs( interaction as any );
+    context.deleteArgs( interaction );
 }
 
 async function onCreateMasterChannelClicked(

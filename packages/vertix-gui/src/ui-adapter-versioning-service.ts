@@ -7,6 +7,8 @@ import { UIVersionStrategyBase } from "@vertix.gg/gui/src/bases/ui-version-strat
 import type { Base } from "discord.js";
 import type { UIService, TAdapterMapping } from "@vertix.gg/gui/src/ui-service";
 
+type UIVersioningContext = Base | string;
+
 class FallBackVersionStrategy extends UIVersionStrategyBase {
     public static getName() {
         return "VertixGUI/FallBackVersionStrategy";
@@ -95,7 +97,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
 
     public async get<T extends keyof TAdapterMapping = "base">(
         adapterName: string,
-        context: Base | any,
+        context: UIVersioningContext,
         options: {
             prefix?: string;
             separator?: string;
@@ -128,7 +130,7 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
         return `${ firstPart }${ separator }${ prefix }${ version }${ separator }${ restParts.join( "/" ) }`;
     }
 
-    public async determineVersion( context: Base ) {
+    public async determineVersion( context: UIVersioningContext ) {
         // `Slice` used to get copy of an array
         for ( const versionStrategy of this.versionStrategies.slice().reverse() ) {
             const tryVersion = await versionStrategy.determine( context );

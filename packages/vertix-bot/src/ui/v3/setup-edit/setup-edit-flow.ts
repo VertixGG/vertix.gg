@@ -241,7 +241,7 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
     }
 
     public override getChannelTypes(): ChannelType[] {
-        return [ ChannelType.GuildVoice ];
+        return [ ChannelType.GuildText, ChannelType.GuildVoice ];
     }
 
     protected override getInitialState(): string {

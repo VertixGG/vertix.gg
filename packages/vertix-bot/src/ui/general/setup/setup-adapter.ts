@@ -114,13 +114,13 @@ async function onSelectEditMasterChannel(
 
     let setupEditAdapter;
     try {
-        const determinedVersion = await uiVersioningAdapterService.determineVersion( masterChannelDB.id );
+        const determinedVersion = await uiVersioningAdapterService.determineVersion( masterChannelDB.channelId );
         context.logger.debug(
             onSelectEditMasterChannel,
             `Determined version: ${ determinedVersion } for master channel: ${ masterChannelDB.id }`
         );
 
-        setupEditAdapter = await uiVersioningAdapterService.get( "VertixBot/SetupEditAdapter", masterChannelDB.id );
+        setupEditAdapter = await uiVersioningAdapterService.get( "VertixBot/SetupEditAdapter", masterChannelDB.channelId );
     } catch( error ) {
         context.logger.error(
             onSelectEditMasterChannel,

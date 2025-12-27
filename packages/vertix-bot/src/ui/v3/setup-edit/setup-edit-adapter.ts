@@ -29,9 +29,7 @@ import { VerifiedRolesEveryoneSelectMenu } from "@vertix.gg/bot/src/ui/general/v
 import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
 import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
-import { SetupEditOpenNameButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-open-name-button";
-import { SetupEditOpenButtonsButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-open-buttons-button";
-import { SetupEditOpenVerifiedRolesButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-open-verified-roles-button";
+import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-select-edit-option-menu";
 
 import {
     SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS,
@@ -225,7 +223,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
     .build();
 
 const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditElementsGroup" )
-    .addRow( [ SetupEditOpenNameButton, SetupEditOpenButtonsButton, SetupEditOpenVerifiedRolesButton ] )
+    .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )
     .addRow( [ LogChannelSelectMenu ] )
     .addRow( [ DoneButton ] )
@@ -293,25 +291,29 @@ async function onSetupMasterEditSelected(
 
 }
 
-async function onOpenNameButtonClicked(
+async function onSelectEditOptionSelected(
     context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultButtonChannelTextInteraction
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    await context.showModal( interaction, "VertixBot/UI-General/ChannelNameTemplateModal" );
-}
+    const selected = interaction.values[ 0 ];
 
-async function onOpenButtonsButtonClicked(
-    _context: IExecutionAdapterContext<Interactions>,
-    _interaction: UIDefaultButtonChannelTextInteraction
-) {
-    // Navigation handled via flow triggers.
-}
+    if ( !selected ) {
+        return;
+    }
 
-async function onOpenVerifiedRolesButtonClicked(
-    _context: IExecutionAdapterContext<Interactions>,
-    _interaction: UIDefaultButtonChannelTextInteraction
-) {
-    // Navigation handled via flow triggers.
+    switch ( selected ) {
+        case "edit-dynamic-channel-name":
+            await context.showModal( interaction, "VertixBot/UI-General/ChannelNameTemplateModal" );
+            break;
+
+        case "edit-dynamic-channel-buttons":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+            break;
+
+        case "edit-dynamic-channel-verified-roles":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
+            break;
+    }
 }
 
 async function onTemplateEditModalSubmitted(
@@ -681,55 +683,9 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             }
         );
 
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-V3/SetupEditOpenNameButton",
-            onOpenNameButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/SetupEditFlow",
-                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenNameModal",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
-                            executionStep: "VertixBot/UI-V3/SetupEditMaster"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-V3/SetupEditOpenButtonsButton",
-            onOpenButtonsButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/SetupEditFlow",
-                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenButtons",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/Buttons",
-                            executionStep: "VertixBot/UI-V3/SetupEditButtons"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-V3/SetupEditOpenVerifiedRolesButton",
-            onOpenVerifiedRolesButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/SetupEditFlow",
-                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenVerifiedRoles",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/VerifiedRoles",
-                            executionStep: "VertixBot/UI-V3/SetupEditVerifiedRoles"
-                        }
-                    }
-                ]
-            }
+        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+            onSelectEditOptionSelected
         );
 
         bindModal<UIDefaultModalChannelTextInteraction>(

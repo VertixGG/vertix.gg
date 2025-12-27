@@ -13,8 +13,40 @@ export class UIMasterChannelVersionStrategy extends UIVersionStrategyBase {
         return "VertixBase/VersionStrategies/UIMasterChannelVersionStrategy";
     }
 
+    private getMaxRegisteredVersion(): number {
+        let max = 0;
+
+        for ( const version of this.versions.keys() ) {
+            if ( version > max ) {
+                max = version;
+            }
+        }
+
+        return max;
+    }
+
+    private resolveRegisteredVersion( rawVersion: string | null | undefined ): number {
+        if ( typeof rawVersion !== "string" || rawVersion.length === 0 ) {
+            return 0;
+        }
+
+        const lastSegment = rawVersion.split( "." ).at( -1 );
+
+        if ( typeof lastSegment !== "string" || lastSegment.length === 0 ) {
+            return 0;
+        }
+
+        const parsed = Number.parseInt( lastSegment, 10 );
+
+        if ( Number.isNaN( parsed ) ) {
+            return 0;
+        }
+
+        return this.versions.has( parsed ) ? parsed : 0;
+    }
+
     public async determine( context?: Base | string ) {
-        let masterChannelDBId;
+        let resolvedVersion = 0;
 
         if ( context instanceof VoiceChannel ) {
             const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( context.id, true );
@@ -23,19 +55,22 @@ export class UIMasterChannelVersionStrategy extends UIVersionStrategyBase {
                 return 0;
             }
 
-            masterChannelDBId = masterChannelDB.id;
+            resolvedVersion = this.resolveRegisteredVersion( masterChannelDB.version );
         } else if ( "string" === typeof context ) {
-            // TODO: Find better solution
-            masterChannelDBId = context;
+            const masterChannelDB = await ChannelModel.$.getByChannelId( context, true );
+
+            if ( masterChannelDB ) {
+                resolvedVersion = this.resolveRegisteredVersion( masterChannelDB.version );
+            } else {
+                const data = await MasterChannelDataModelV3.$.getSettings( context );
+
+                if ( data ) {
+                    resolvedVersion = this.getMaxRegisteredVersion();
+                }
+            }
         }
 
-        const data = masterChannelDBId ? await MasterChannelDataModelV3.$.getSettings( masterChannelDBId ) : null;
-
-        if ( !data ) {
-            return 0;
-        }
-
-        return 3;
+        return resolvedVersion;
     }
 }
 

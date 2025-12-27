@@ -44,18 +44,6 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
             embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
         },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic": {
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate": {
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden": {
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStateShown": {
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbedGroup"
-        },
         "VertixBot/UI-V3/DynamicChannelPermissionsGranted": {
             elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
             embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"

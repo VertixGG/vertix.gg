@@ -53,6 +53,7 @@ import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-build
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
+import type { GuildMember } from "discord.js";
 
 type StartArgsHandler<TContext, TChannel, TArgs> = (
     context: TContext,
@@ -90,6 +91,8 @@ export class AdapterBuilderBase<
     protected beforeBuildHandler: BeforeBuildHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeBuildRunHandler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeFinishHandler: BeforeFinishHandler<TInteraction, TArgs, TContext> | undefined;
+    protected regenerateHandler: ( ( context: TContext, interaction: MessageComponentInteraction<"cached"> ) => Promise<void> ) | undefined;
+    protected shouldRequireArgsHandler: ( ( context: TContext, interaction?: TInteraction ) => boolean ) | undefined;
     protected entityMapHandler: EntityMapHandler<TInteraction, TArgs, TContext> | undefined;
     protected argsDataSource:
         | {
@@ -179,6 +182,16 @@ export class AdapterBuilderBase<
 
     public onBeforeBuildRun( handler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> ): this {
         this.beforeBuildRunHandler = handler;
+        return this;
+    }
+
+    public onRegenerate( handler: ( context: TContext, interaction: MessageComponentInteraction<"cached"> ) => Promise<void> ): this {
+        this.regenerateHandler = handler;
+        return this;
+    }
+
+    public setShouldRequireArgs( handler: ( context: TContext, interaction?: TInteraction ) => boolean ): this {
+        this.shouldRequireArgsHandler = handler;
         return this;
     }
 
@@ -340,6 +353,19 @@ export class AdapterBuilderBase<
                     if ( builder.entityMapHandler ) {
                         await builder.entityMapHandler( this.createBinder() );
                     }
+                }
+
+                protected async regenerate( interaction: MessageComponentInteraction<"cached"> ) {
+                    if ( builder.regenerateHandler ) {
+                        await builder.regenerateHandler( this.getContext(), interaction );
+                    }
+                }
+
+                protected shouldRequireArgs( interaction?: TInteraction ): boolean {
+                    if ( builder.shouldRequireArgsHandler ) {
+                        return builder.shouldRequireArgsHandler( this.getContext(), interaction );
+                    }
+                    return super.shouldRequireArgs ? super.shouldRequireArgs( interaction ) : false;
                 }
 
                 protected createBinder(): IBinder<TInteraction, TArgs, TContext> {
@@ -621,6 +647,12 @@ export class AdapterBuilderBase<
                 ...( "object" === typeof context ? ( context as Record<string, unknown> ) : {} ),
                 ...( argsFromManager ?? {} )
             };
+
+            const member = ( context as { member?: GuildMember | null } ).member;
+
+            if ( member ) {
+                identifier.memberRoleIds = Array.from( member.roles.cache.keys() );
+            }
 
             const data = await ( dataComponent as { read: ( payload: Record<string, unknown> ) => Promise<UIArgs | null> } )
                 .read( identifier );

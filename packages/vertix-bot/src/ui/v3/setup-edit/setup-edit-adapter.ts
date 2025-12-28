@@ -417,7 +417,13 @@ async function onEditDefaultButtonsClicked(
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
     const args = context.getArgs( interaction );
-    const defaultButtons = ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [];
+
+    const masterChannelDB: ChannelExtended = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V3
+    } as ChannelExtended;
+
+    const defaultButtons = ( await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, true ) ) ?? [];
 
     context.setArgs( interaction, {
         dynamicChannelButtonsRoleId: null,
@@ -838,10 +844,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 buttonsTemplateFromDb = globalDefaults.dynamicChannelButtonsTemplate;
             }
 
-            const buttonsTemplateDefaultFromArgs = Array.isArray( availableArgs?.dynamicChannelButtonsTemplateDefault )
-                ? ( availableArgs.dynamicChannelButtonsTemplateDefault as string[] )
-                : undefined;
-
             const buttonsTemplateFromArgs = Array.isArray( availableArgs?.dynamicChannelButtonsTemplate )
                 ? ( availableArgs.dynamicChannelButtonsTemplate as string[] )
                 : undefined;
@@ -867,7 +869,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             };
 
             args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                buttonsTemplateDefaultFromArgs ?? ( buttonsTemplateFromDb as string[] )
+                buttonsTemplateFromDb as string[]
             );
 
             const roleId = availableArgs?.dynamicChannelButtonsRoleId as string | null | undefined;

@@ -1,4 +1,4 @@
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
@@ -770,7 +770,20 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             args.masterChannelId = masterChannelDB.channelId;
 
             const masterChannelKeys = MasterChannelDataManager.$.getKeys();
-            const masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+            let masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+
+            // V3 migration fallback: if V3 settings are missing, try to get V2 settings
+            if ( masterChannelDB.version === VERSION_UI_V3 && ( !masterChannelSettings || !Object.keys( masterChannelSettings ).length ) ) {
+                masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( {
+                    ...masterChannelDB,
+                    version: VERSION_UI_V2
+                } as any );
+            }
+
+            const { settings: globalDefaults } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+                "Vertix/Config/MasterChannel",
+                VERSION_UI_V3
+            ).data;
 
             const selectedKeys = [
                 masterChannelKeys.dynamicChannelNameTemplate,
@@ -780,12 +793,36 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             ];
 
             selectedKeys.forEach( ( key ) => {
-                ( args )[ key ] = ( masterChannelSettings  )[ key ];
+                ( args )[ key ] = ( masterChannelSettings )[ key ] ?? ( globalDefaults as any )[ key ];
             } );
 
-            const buttonsTemplateDefaultFromDb = Array.isArray( masterChannelSettings.dynamicChannelButtonsTemplate )
-                ? masterChannelSettings.dynamicChannelButtonsTemplate
-                : [];
+            // Migration from V2 IDs (numbers) to V3 IDs (strings)
+            const migrateV2Buttons = ( buttons: any[] ) => {
+                if ( !buttons ) return [];
+                const v2ToV3Mapping: Record<string, string> = {
+                    "0": "rename",
+                    "1": "limit",
+                    "2": "clear-chat",
+                    "3": "privacy",
+                    "4": "privacy",
+                    "5": "access",
+                    "6": "rest-channel",
+                    "7": "transfer",
+                    "8": "claim-button"
+                };
+                return Array.from( new Set( buttons.map( ( b ) => v2ToV3Mapping[ b.toString() ] || b.toString() ) ) )
+                    .filter( ( b ) => DynamicChannelPrimaryMessageElementsGroup.getById( b ) !== undefined );
+            };
+
+            let buttonsTemplateFromDb = masterChannelSettings.dynamicChannelButtonsTemplate;
+            if ( Array.isArray( buttonsTemplateFromDb ) && buttonsTemplateFromDb.length > 0 ) {
+                // If they are numbers, migrate them
+                if ( typeof buttonsTemplateFromDb[ 0 ] === "number" ) {
+                    buttonsTemplateFromDb = migrateV2Buttons( buttonsTemplateFromDb );
+                }
+            } else {
+                buttonsTemplateFromDb = globalDefaults.dynamicChannelButtonsTemplate;
+            }
 
             const buttonsTemplateDefaultFromArgs = Array.isArray( availableArgs?.dynamicChannelButtonsTemplateDefault )
                 ? ( availableArgs.dynamicChannelButtonsTemplateDefault as string[] )
@@ -797,6 +834,14 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
 
             const buttonsTemplateByRoleFromDb = masterChannelSettings.dynamicChannelButtonsTemplateByRole ?? {};
 
+            // Migrate role overrides as well
+            Object.keys( buttonsTemplateByRoleFromDb ).forEach( ( roleId ) => {
+                const buttons = buttonsTemplateByRoleFromDb[ roleId ];
+                if ( Array.isArray( buttons ) && buttons.length > 0 && typeof buttons[ 0 ] === "number" ) {
+                    buttonsTemplateByRoleFromDb[ roleId ] = migrateV2Buttons( buttons );
+                }
+            } );
+
             const buttonsTemplateByRoleFromArgs = availableArgs?.dynamicChannelButtonsTemplateByRole &&
                 "object" === typeof availableArgs.dynamicChannelButtonsTemplateByRole
                 ? ( availableArgs.dynamicChannelButtonsTemplateByRole as Record<string, string[]> )
@@ -805,7 +850,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             args.dynamicChannelButtonsTemplateByRole = buttonsTemplateByRoleFromArgs ?? buttonsTemplateByRoleFromDb;
 
             args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                buttonsTemplateDefaultFromArgs ?? buttonsTemplateDefaultFromDb
+                buttonsTemplateDefaultFromArgs ?? ( buttonsTemplateFromDb as string[] )
             );
 
             const roleId = availableArgs?.dynamicChannelButtonsRoleId as string | null | undefined;

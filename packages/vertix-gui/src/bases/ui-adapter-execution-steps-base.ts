@@ -232,7 +232,7 @@ export abstract class UIAdapterExecutionStepsBase<
 
             sysArgs.setInitialArgs( this, sysArgs.getArgsId( interaction as TInteraction ), {
                 step: this.getInitialStep()
-            } );
+            }, { overwrite: true } );
         }
 
         return super.runInitial( interaction, args );

@@ -55,6 +55,7 @@ export class UIArgsManager extends InitializeBase {
             id = context.message?.id;
         }
 
+        this.logger.debug( this.getArgsId, `Resolved ID: '${ id }' for context type: ${ context.constructor.name }` );
         this.debugger.log( this.getArgsId, "", id );
 
         if ( !id ) {
@@ -106,6 +107,7 @@ export class UIArgsManager extends InitializeBase {
             overwrite?: boolean;
         } = {}
     ) {
+        this.logger.debug( this.setInitialArgs, `Setting initial args for: '${ self.getName() }' id: '${ id }'` );
         this.debugger.log( this.setInitialArgs, self.getName() + "~" + id, args );
 
         if ( typeof this.data[ self.getName() ] !== "object" ) {
@@ -113,6 +115,7 @@ export class UIArgsManager extends InitializeBase {
         }
 
         if ( !internalArgs.overwrite && typeof this.data[ self.getName() ][ id ] === "object" ) {
+            this.logger.debug( this.setInitialArgs, `Args already exist for: '${ self.getName() }' id: '${ id }', skipping initialization because overwrite is false.` );
             this.debugger.dumpDown( this.setInitialArgs, this.data[ self.getName() ][ id ] );
 
             if ( !internalArgs.silent ) {
@@ -145,7 +148,7 @@ export class UIArgsManager extends InitializeBase {
             // TODO: Good error example.
             const error = new ArgsNotFoundError( argsId );
 
-            this.logger.error( this.setArgs, error.message, error );
+            this.logger.error( this.setArgs, `ArgsNotFound for: '${ self.getName() }' id: '${ argsId }'. Available keys for this owner: ${ Object.keys( this.data[ self.getName() ] || {} ).join( ", " ) }`, error );
 
             return;
         }

@@ -3,6 +3,7 @@ import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base"
 export interface MasterChannelSettingsInterface {
     dynamicChannelAutoSave: boolean;
     dynamicChannelButtonsTemplate: string[];
+    dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelMentionable: boolean;
     dynamicChannelNameTemplate: string;

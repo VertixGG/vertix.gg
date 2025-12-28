@@ -209,8 +209,24 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.logger.info(
             this.onOwnerJoinDynamicChannel,
             `Guild id: '${ channel.guild.id }', channel id: ${ channel.id }, state: '${ state }' - ` +
-                `Owner: '${ owner.displayName }' join dynamic channel: '${ channel.name }'`
+                                `Owner: '${ owner.displayName }' join dynamic channel: '${ channel.name }'`
         );
+    }
+
+    private async getMemberRoleIds( channel: VoiceChannel, userId: string ): Promise<string[]> {
+        const cached = channel.guild.members.cache.get( userId );
+
+        if ( cached ) {
+            return Array.from( cached.roles.cache.keys() );
+        }
+
+        const fetched = await channel.guild.members.fetch( userId ).catch( () => null );
+
+        if ( fetched ) {
+            return Array.from( fetched.roles.cache.keys() );
+        }
+
+        return [];
     }
 
     public async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
@@ -359,7 +375,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             this.logger.error(
                 this.getChannelUserIdsWithPermissionState,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - ` +
-                    `Master channel not found for dynamic channel id: '${ channel.id }'`
+                                    `Master channel not found for dynamic channel id: '${ channel.id }'`
             );
 
             return [];
@@ -380,7 +396,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             // Show only users that are not in the master channel permission overwrites.
             if (
                 masterChannelCache?.type === ChannelType.GuildVoice &&
-                masterChannelCache.permissionOverwrites.cache.has( role.id )
+                                masterChannelCache.permissionOverwrites.cache.has( role.id )
             ) {
                 continue;
             }
@@ -491,8 +507,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * TODO: This method should be dedicated and used in other places.
-     */
+                     * TODO: This method should be dedicated and used in other places.
+                     */
     public async getChannelConfiguration(
         channel: VoiceChannel,
         userId: Snowflake,
@@ -787,15 +803,26 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.logger.log(
             this.createPrimaryMessage,
             `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - ` +
-                `Creating primary message for owner id: '${ dynamicChannelDB.userOwnerId }'`
+                                `Creating primary message for owner id: '${ dynamicChannelDB.userOwnerId }'`
         );
 
         const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId as string );
 
-        const sendArgs = {
+        const sendArgs: {
+            ownerId: string;
+            channelId: string;
+            dynamicChannelMentionable?: boolean;
+            memberRoleIds?: string[];
+        } = {
             ownerId: dynamicChannelDB.userOwnerId,
             channelId: channel.id
-        } as any;
+        };
+
+        const memberRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );
+
+        if ( memberRoleIds.length ) {
+            sendArgs.memberRoleIds = memberRoleIds;
+        }
 
         if ( masterChannelDB ) {
             sendArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable(
@@ -926,7 +953,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 this.logger.error(
                     this.editChannelState,
                     `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-                        `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
+                                        `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
                 );
         }
 
@@ -1013,7 +1040,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 this.logger.error(
                     this.editChannelVisibilityState,
                     `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-                        `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
+                                        `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
                 );
         }
 
@@ -1031,8 +1058,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * @since 0.0.8
-     */
+                     * @since 0.0.8
+                     */
     public async editChannelPrivacyState(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
@@ -1061,7 +1088,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 this.logger.error(
                     this.editChannelPrivacyState,
                     `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-                        `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
+                                        `Could not change state of dynamic channel: '${ channel.name }' to state: '${ newState }'`
                 );
         }
 
@@ -1072,8 +1099,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.logger.info(
             this.editChannelPrivacyState,
             `Guild id: '${ channel.guild.id }', channel id: ${ channel.id } - ` +
-                `Current state: '${ currentState }', current visibility state: '${ currentVisibilityState }', ` +
-                `New state: '${ state }', new visibility state: '${ visibilityState }'`
+                                `Current state: '${ currentState }', current visibility state: '${ currentVisibilityState }', ` +
+                                `New state: '${ state }', new visibility state: '${ visibilityState }'`
         );
 
         if ( currentState !== state || currentVisibilityState !== visibilityState ) {
@@ -1104,8 +1131,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * @since 0.0.8
-     */
+                     * @since 0.0.8
+                     */
     public async editChannelRegion(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,
@@ -1143,7 +1170,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             this.logger.error(
                 this.editChannelOwner,
                 `Guild id: '${ channel.guild.id }' channel id: ${ channel.id } - ` +
-                    `Could not change owner of dynamic channel: '${ channel.name }' from owner id: '${ previousOwnerId }' to owner id: '${ newOwnerId }'`
+                                    `Could not change owner of dynamic channel: '${ channel.name }' from owner id: '${ previousOwnerId }' to owner id: '${ newOwnerId }'`
             );
         };
 
@@ -1185,7 +1212,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.logger.info(
             this.updateChannelOwnership,
             `Guild id: '${ channel.guild.id }' channel id: ${ channel.id } - ` +
-                `Changing owner of dynamic channel: '${ channel.name }' from owner id: '${ previousOwnerId }' to owner id: '${ newOwnerId }'`
+                                `Changing owner of dynamic channel: '${ channel.name }' from owner id: '${ previousOwnerId }' to owner id: '${ newOwnerId }'`
         );
 
         const previousOwner = channel.guild.members.cache.get( previousOwnerId ),
@@ -1234,9 +1261,19 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const masterChannelDB = await ChannelModel.$.getByChannelId( dynamicChannelDB.ownerChannelId as string );
 
-        const editMessageArgs = {
+        const editMessageArgs: {
+            ownerId: string;
+            dynamicChannelMentionable?: boolean;
+            memberRoleIds?: string[];
+        } = {
             ownerId: dynamicChannelDB.userOwnerId
-        } as any;
+        };
+
+        const memberRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );
+
+        if ( memberRoleIds.length ) {
+            editMessageArgs.memberRoleIds = memberRoleIds;
+        }
 
         if ( masterChannelDB ) {
             editMessageArgs.dynamicChannelMentionable = await MasterChannelDataManager.$.getChannelMentionable(
@@ -1517,7 +1554,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Check if permissions are already set.
         const alreadyHave =
             ( state && channel.permissionOverwrites.cache.get( member.id )?.allow.has( permissions ) ) ||
-            ( !state && channel.permissionOverwrites.cache.get( member.id )?.deny.has( permissions ) );
+                            ( !state && channel.permissionOverwrites.cache.get( member.id )?.deny.has( permissions ) );
 
         if ( alreadyHave ) {
             result = "already-have";
@@ -1584,7 +1621,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Check if user permissions are set to deny.
         if (
             !force &&
-            channel.permissionOverwrites.cache.get( member.id )?.deny.has( DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS )
+                            channel.permissionOverwrites.cache.get( member.id )?.deny.has( DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS )
         ) {
             result = "user-blocked";
 
@@ -1654,7 +1691,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // TODO: Find better way to check if message is primary.
         return (
             message?.author?.id === this.services.appService.getClient().user.id &&
-            message?.embeds?.[ 0 ]?.title?.at( 0 ) === "༄"
+                            message?.embeds?.[ 0 ]?.title?.at( 0 ) === "༄"
         );
     }
 
@@ -1689,7 +1726,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         if ( masterChannelDB ) {
             const verifiedRoles =
                 ( await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, dynamicChannel.guildId ) ) ||
-                [];
+                                [];
 
             // If we found verified roles, use them
             if ( verifiedRoles.length > 0 ) {
@@ -2063,7 +2100,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Replace words that wrapped with **%word%** and wrap it with `pc.bold` for console.
         const messageForConsole = message
             .replace( /\*\*(.*?)\*\*/g, ( _match, p1 ) => pc.bold( p1 ) )
-            // Replace words that wrapped with `` and wrap it with `pc.red` for console.
+        // Replace words that wrapped with `` and wrap it with `pc.red` for console.
             .replace( /`(.*?)`/g, ( _match, p1 ) => pc.red( `"${ p1 }"` ) );
 
         this.logger.admin( caller, `${ messageForConsole } - ${ ownerLogSuffix }` );

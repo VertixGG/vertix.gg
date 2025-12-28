@@ -10,8 +10,11 @@ import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/ve
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+
+export type MasterChannelSettingsAllVersions =
+    MasterChannelConfigInterface[ "data" ][ "settings" ] & Partial<MasterChannelConfigInterfaceV3[ "data" ][ "settings" ]>;
 
 export class MasterChannelDataManager extends InitializeBase {
     private static instance: MasterChannelDataManager;
@@ -52,8 +55,8 @@ export class MasterChannelDataManager extends InitializeBase {
 
     public async getAllSettings(
         masterChannelDB: ChannelExtended,
-        defaultSettings: Partial<MasterChannelConfigInterface[ "data" ][ "settings" ]> = {}
-    ) {
+        defaultSettings: Partial<MasterChannelSettingsAllVersions> = {}
+    ): Promise<MasterChannelSettingsAllVersions> {
         const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, false, false );
 
         if ( !settings ) {
@@ -78,6 +81,79 @@ export class MasterChannelDataManager extends InitializeBase {
     public async getChannelButtonsTemplate( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
         return ( await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, returnDefault ) )
             ?.dynamicChannelButtonsTemplate;
+    }
+
+    public async getChannelButtonsTemplateByRole(
+        masterChannelDB: ChannelExtended,
+        roleId: string,
+        returnDefault = false
+    ): Promise<string[] | undefined> {
+        const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, returnDefault );
+
+        const overrides = settings?.dynamicChannelButtonsTemplateByRole ?? {};
+        const override = overrides[ roleId ];
+
+        if ( Array.isArray( override ) && override.length ) {
+            return override;
+        }
+
+        if ( returnDefault ) {
+            return settings?.dynamicChannelButtonsTemplate;
+        }
+
+        return undefined;
+    }
+
+    public async setChannelButtonsTemplateForRole(
+        masterChannelDB: ChannelExtended,
+        roleId: string,
+        newButtons: string[],
+        shouldAdminLog = true
+    ) {
+        const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, true );
+        const previous = settings?.dynamicChannelButtonsTemplateByRole?.[ roleId ] ?? [];
+
+        const nextByRole: Record<string, string[]> = {
+            ...( settings?.dynamicChannelButtonsTemplateByRole ?? {} ),
+            [ roleId ]: newButtons
+        };
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelButtonsTemplateForRole,
+                `🎚  Dynamic Channel role buttons modified - masterChannelId: "${ masterChannelDB.id }", roleId: "${ roleId }", "${ previous.join( ", " ) }" => "${ newButtons.join( "," ) }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelButtonsTemplateByRole: nextByRole
+        } );
+    }
+
+    public async removeChannelButtonsTemplateForRole(
+        masterChannelDB: ChannelExtended,
+        roleId: string,
+        shouldAdminLog = true
+    ) {
+        const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, true );
+        const previous = settings?.dynamicChannelButtonsTemplateByRole?.[ roleId ] ?? [];
+
+        const nextByRole: Record<string, string[]> = {
+            ...( settings?.dynamicChannelButtonsTemplateByRole ?? {} )
+        };
+
+        delete nextByRole[ roleId ];
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.removeChannelButtonsTemplateForRole,
+                `🎚  Dynamic Channel role buttons removed - masterChannelId: "${ masterChannelDB.id }", roleId: "${ roleId }", "${ previous.join( ", " ) }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelButtonsTemplateByRole: nextByRole
+        } );
     }
 
     public async getChannelMentionable( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {

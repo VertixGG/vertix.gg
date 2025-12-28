@@ -30,7 +30,7 @@ export interface DynamicChannelUIDataIdentifier {
     masterChannelId?: string;
     guildId?: string;
     masterChannelIndex?: number;
-    [key: string]: unknown;
+    memberRoleIds?: string[];
 }
 
 export interface DynamicChannelUIDataResult {
@@ -113,10 +113,25 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             ).data;
             const masterChannelSettings = await MasterChannelDataModelV3.$.getSettings( masterChannelDB.id );
             const templateButtons = masterChannelSettings?.dynamicChannelButtonsTemplate;
+            const templateButtonsByRole = masterChannelSettings?.dynamicChannelButtonsTemplateByRole ?? {};
 
-            args.dynamicChannelButtonsTemplate = templateButtons?.length
-                ? DynamicChannelPrimaryMessageElementsGroup.sortIds( templateButtons )
-                : DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
+            const matchedButtons = new Set<string>();
+            const memberRoleIds = identifier.memberRoleIds ?? [];
+
+            for ( const roleId of memberRoleIds ) {
+                const override = templateButtonsByRole[ roleId ];
+                if ( Array.isArray( override ) ) {
+                    for ( const buttonId of override ) {
+                        matchedButtons.add( buttonId );
+                    }
+                }
+            }
+
+            const resolvedButtons = matchedButtons.size
+                ? Array.from( matchedButtons )
+                : ( templateButtons?.length ? templateButtons : [] );
+
+            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds( resolvedButtons );
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate
                 ?? configV3.settings.dynamicChannelNameTemplate;

@@ -20,7 +20,7 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
     }
 
     protected async getMinValues() {
-        return 1;
+        return 0;
     }
 
     protected async getMaxValues() {
@@ -29,10 +29,21 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
 
     protected async getSelectOptions() {
         const values = allItems.map( async( item ) => {
+            const emojiRaw = await item.getEmoji();
+            const match = /^<a?:([^:>]+):(\d+)>$/.exec( emojiRaw );
+
+            const emoji = match
+                ? {
+                    id: match[ 2 ],
+                    name: match[ 1 ],
+                    animated: emojiRaw.startsWith( "<a:" )
+                }
+                : ( emojiRaw.trim().length ? { name: emojiRaw } : undefined );
+
             return {
                 label: await item.getLabelForMenu(),
                 value: item.getId().toString(),
-                emoji: ( await item.getEmoji() ) as any,
+                ...( emoji ? { emoji } : {} ),
                 default: ( this.uiArgs?.dynamicChannelButtonsTemplate || [] ).includes( item.getId() )
             };
         } );

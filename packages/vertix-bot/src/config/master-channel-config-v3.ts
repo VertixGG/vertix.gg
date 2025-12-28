@@ -30,6 +30,8 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
                     i.getId().toString()
                 ),
 
+                dynamicChannelButtonsTemplateByRole: {},
+
                 dynamicChannelLogsChannelId: null,
 
                 dynamicChannelMentionable: true,

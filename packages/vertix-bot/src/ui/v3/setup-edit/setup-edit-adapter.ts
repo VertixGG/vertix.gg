@@ -28,6 +28,8 @@ import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/
 import { VerifiedRolesEveryoneSelectMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-everyone-select-menu";
 import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
 import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
+import { SetupEditButtonsRoleSelectMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-role-select-menu";
+import { SetupEditButtonsClearRoleOverrideButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-clear-role-override-button";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-select-edit-option-menu";
 
@@ -183,22 +185,6 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         verifiedRoles: {
             format: "<@&{value}>{separator}",
             separator: ", "
-        },
-        dynamicChannelButtonsTemplate: {
-            format: "- ( {value} ){separator}",
-            separator: "\n",
-            options: {
-                "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
-                "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
-                "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
-                "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
-                "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
-                "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
-                "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
-                "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
-                "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
-                "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
-            }
         }
     } )
     .setLogic( ( args, v ) => {
@@ -206,6 +192,26 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         if ( Array.isArray( processedLogsChannelId ) ) {
             processedLogsChannelId = processedLogsChannelId[ 0 ] || null;
         }
+
+        const formatButtons = ( buttonIds: string[] ) => {
+            return buttonIds.map( ( id ) => {
+                const item = DynamicChannelPrimaryMessageElementsGroup.getById( id );
+                const label = item ? item.getLabelForEmbed() : id;
+                return `> - ${ label }`;
+            } ).join( "\n" );
+        };
+
+        const defaultButtons = args.dynamicChannelButtonsTemplateDefault as string[] || args.dynamicChannelButtonsTemplate as string[] || [];
+        const roleOverrides = args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> || {};
+
+        let buttonsDisplay = `**Default Settings**\n${ formatButtons( defaultButtons ) || "> - *None*" }`;
+
+        Object.entries( roleOverrides ).forEach( ( [ roleId, buttons ] ) => {
+            if ( buttons.length > 0 ) {
+                buttonsDisplay += `\n\n**Role Override: <@&${ roleId }>**\n${ formatButtons( buttons ) }`;
+            }
+        } );
+
         return {
             index: ( args.index || 0 ) + 1,
             masterChannelId: args.masterChannelId,
@@ -216,7 +222,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             configAutoSave: args.dynamicChannelAutoSave ? v.configAutoSaveEnabled : v.configAutoSaveDisabled,
             configLogs: processedLogsChannelId ? v.configLogsEnabled : v.configLogsDisabled,
             dynamicChannelLogsChannelDisplay: processedLogsChannelId ? v.dynamicChannelLogsChannelSelected : v.dynamicChannelLogsChannelDefault,
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate || []
+            dynamicChannelButtonsTemplate: buttonsDisplay
         };
     } )
     .setInstanceType( UIInstancesTypes.Dynamic )
@@ -230,11 +236,15 @@ const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupE
     .build();
 
 const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsElementsGroup" )
+    .addRow( [ SetupEditButtonsRoleSelectMenu ] )
+    .addRow( [ SetupEditButtonsClearRoleOverrideButton ] )
     .addRow( [ ChannelButtonsTemplateSelectMenu ] )
     .addRow( [ DoneButton ] )
     .build();
 
 const SetupEditButtonsEffectElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup" )
+    .addRow( [ SetupEditButtonsRoleSelectMenu ] )
+    .addRow( [ SetupEditButtonsClearRoleOverrideButton ] )
     .addRow( [ ChannelButtonsTemplateSelectMenu ] )
     .addRow( [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ] )
     .build();
@@ -355,13 +365,148 @@ async function onButtonsSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
+    const args = context.getArgs( interaction );
+    if ( !args ) {
+        return;
+    }
+
+    const buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( interaction.values );
+
+    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
+
+    if ( roleId ) {
+        const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
+        byRole[ roleId ] = buttons;
+
+        context.setArgs( interaction, {
+            dynamicChannelButtonsTemplate: buttons,
+            dynamicChannelButtonsTemplateByRole: byRole
+        } );
+        return;
+    }
+
     context.setArgs( interaction, {
-        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( interaction.values )
+        dynamicChannelButtonsTemplate: buttons,
+        dynamicChannelButtonsTemplateDefault: buttons
     } );
 
 }
 
+async function onButtonsRoleSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+    const roleId = interaction.values.at( 0 ) ?? null;
+
+    const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
+
+    const template = roleId && Array.isArray( byRole[ roleId ] )
+        ? byRole[ roleId ]
+        : ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? ( args.dynamicChannelButtonsTemplate as string[] | undefined ) ?? [];
+
+    context.setArgs( interaction, {
+        dynamicChannelButtonsRoleId: roleId,
+        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( template )
+    } );
+}
+
+async function onClearButtonsRoleOverrideClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
+
+    if ( !roleId ) {
+        return;
+    }
+
+    const masterChannelDB: ChannelExtended = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V3
+    } as ChannelExtended;
+
+    await MasterChannelDataManager.$.removeChannelButtonsTemplateForRole( masterChannelDB, roleId );
+
+    const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
+    delete byRole[ roleId ];
+
+    const fallback = ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [];
+
+    context.setArgs( interaction, {
+        dynamicChannelButtonsTemplateByRole: byRole,
+        dynamicChannelButtonsRoleId: null,
+        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( fallback )
+    } );
+}
+
 async function onButtonsEffectImmediatelyButtonsClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+
+    if ( !args ) {
+        return;
+    }
+
+    const template = Array.isArray( args.dynamicChannelButtonsTemplate ) ? args.dynamicChannelButtonsTemplate : [];
+    const buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( template );
+
+    const masterChannelDB: ChannelExtended = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V3
+    } as ChannelExtended;
+
+    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
+
+    if ( roleId ) {
+        await MasterChannelDataManager.$.setChannelButtonsTemplateForRole( masterChannelDB, roleId, buttons );
+        context.setArgs( interaction, {
+            dynamicChannelButtonsRoleId: null,
+            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplateDefault
+        } );
+    } else {
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
+        context.setArgs( interaction, {
+            dynamicChannelButtonsTemplateDefault: buttons
+        } );
+    }
+
+    const claimChannelButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
+        "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
+    )?.getId();
+
+    setTimeout( async() => {
+        const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
+
+        const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" );
+        const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+        for ( const channelDB of channels ) {
+            const channel = appService.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
+
+            if ( !channel ) {
+                console.warn( `Channel ${ channelDB.channelId } not found.` );
+                continue;
+            }
+
+            dynamicChannelService.editPrimaryMessageDebounce( channel );
+        }
+
+        if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
+            DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" )
+                .handleAbandonedChannels( appService.getClient(), [], channels )
+                .catch( ( e ) => {
+                    throw e;
+                } );
+        }
+    } );
+
+}
+
+async function onButtonsEffectNewlyButtonClicked(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
@@ -373,52 +518,20 @@ async function onButtonsEffectImmediatelyButtonsClicked(
         version: VERSION_UI_V3
     } as ChannelExtended;
 
-    await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
+    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
 
-    const claimChannelButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
-        "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
-    )?.getId();
-
-    if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
-        setTimeout( async() => {
-            const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
-
-            const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" );
-            const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-
-            for ( const channelDB of channels ) {
-                const channel = appService.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
-
-                if ( !channel ) {
-                    console.warn( `Channel ${ channelDB.channelId } not found.` );
-                    continue;
-                }
-
-                dynamicChannelService.editPrimaryMessageDebounce( channel );
-            }
-
-            DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" )
-                .handleAbandonedChannels( appService.getClient(), [], channels )
-                .catch( ( e ) => {
-                    throw e;
-                } );
+    if ( roleId ) {
+        await MasterChannelDataManager.$.setChannelButtonsTemplateForRole( masterChannelDB, roleId, buttons );
+        context.setArgs( interaction, {
+            dynamicChannelButtonsRoleId: null,
+            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplateDefault
+        } );
+    } else {
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
+        context.setArgs( interaction, {
+            dynamicChannelButtonsTemplateDefault: buttons
         } );
     }
-
-}
-
-async function onButtonsEffectNewlyButtonClicked(
-    context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultButtonChannelTextInteraction
-) {
-    const args = context.getArgs( interaction ),
-        buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
-
-    const masterChannelDB: any = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V3
-    };
-    await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
 
 }
 
@@ -629,6 +742,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         }
     } )
     .getStartArgs( async() => ( {} ) )
+    .setShouldRequireArgs( () => true )
+    .onRegenerate( async( context, interaction ) => {
+        ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+            .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, {} );
+    } )
     .getCustomIdForEntity( ( _context, hash ) => {
         if ( hash === "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/SetupMasterEditSelectMenu" ) {
             return hash;
@@ -664,6 +782,47 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             selectedKeys.forEach( ( key ) => {
                 ( args )[ key ] = ( masterChannelSettings  )[ key ];
             } );
+
+            const buttonsTemplateDefaultFromDb = Array.isArray( masterChannelSettings.dynamicChannelButtonsTemplate )
+                ? masterChannelSettings.dynamicChannelButtonsTemplate
+                : [];
+
+            const buttonsTemplateDefaultFromArgs = Array.isArray( availableArgs?.dynamicChannelButtonsTemplateDefault )
+                ? ( availableArgs.dynamicChannelButtonsTemplateDefault as string[] )
+                : undefined;
+
+            const buttonsTemplateFromArgs = Array.isArray( availableArgs?.dynamicChannelButtonsTemplate )
+                ? ( availableArgs.dynamicChannelButtonsTemplate as string[] )
+                : undefined;
+
+            const buttonsTemplateByRoleFromDb = masterChannelSettings.dynamicChannelButtonsTemplateByRole ?? {};
+
+            const buttonsTemplateByRoleFromArgs = availableArgs?.dynamicChannelButtonsTemplateByRole &&
+                "object" === typeof availableArgs.dynamicChannelButtonsTemplateByRole
+                ? ( availableArgs.dynamicChannelButtonsTemplateByRole as Record<string, string[]> )
+                : undefined;
+
+            args.dynamicChannelButtonsTemplateByRole = buttonsTemplateByRoleFromArgs ?? buttonsTemplateByRoleFromDb;
+
+            args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
+                buttonsTemplateDefaultFromArgs ?? buttonsTemplateDefaultFromDb
+            );
+
+            const roleId = availableArgs?.dynamicChannelButtonsRoleId as string | null | undefined;
+            args.dynamicChannelButtonsRoleId = roleId ?? null;
+
+            if ( roleId && !buttonsTemplateFromArgs ) {
+                const byRole = args.dynamicChannelButtonsTemplateByRole as Record<string, string[]>;
+                const override = byRole[ roleId ];
+
+                if ( Array.isArray( override ) ) {
+                    args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds( override );
+                }
+            } else if ( buttonsTemplateFromArgs ) {
+                args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds( buttonsTemplateFromArgs );
+            } else {
+                args.dynamicChannelButtonsTemplate = args.dynamicChannelButtonsTemplateDefault;
+            }
         } else {
             args.masterChannels = await ChannelModel.$.getMasters( interaction.guild?.id || "", "settings" );
         }
@@ -728,6 +887,44 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                         mutations: [
                             { type: "set", path: [ "dynamicChannelButtonsTemplate" ] }
                         ]
+                    }
+                ]
+            }
+        );
+
+        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+            onButtonsRoleSelected,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupEditFlow",
+                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/SelectButtonsRole",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/Buttons",
+                            executionStep: "VertixBot/UI-V3/SetupEditButtons"
+                        },
+                        mutations: [
+                            { type: "set", path: [ "dynamicChannelButtonsRoleId" ] },
+                            { type: "set", path: [ "dynamicChannelButtonsTemplate" ] }
+                        ]
+                    }
+                ]
+            }
+        );
+
+        bindButton<UIDefaultButtonChannelTextInteraction>(
+            "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
+            onClearButtonsRoleOverrideClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupEditFlow",
+                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/ClearButtonsRoleOverride",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/Buttons",
+                            executionStep: "VertixBot/UI-V3/SetupEditButtons"
+                        }
                     }
                 ]
             }

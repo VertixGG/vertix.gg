@@ -1263,10 +1263,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const editMessageArgs: {
             ownerId: string;
+            channel: VoiceChannel;
             dynamicChannelMentionable?: boolean;
             memberRoleIds?: string[];
         } = {
-            ownerId: dynamicChannelDB.userOwnerId
+            ownerId: dynamicChannelDB.userOwnerId,
+            channel
         };
 
         const memberRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );

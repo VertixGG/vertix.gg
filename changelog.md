@@ -1,22 +1,14 @@
 # Changelog
 
 **Version: 0.0.9 ~ 28/12/2025**
-- Improvements & Stability:
-    - **Session Stability & Error Handling**:
-        - Fixed crash when building UI components with undefined arguments.
-        - Enhanced interaction ID resolution and session debugging in `UIArgsManager`.
-        - Resolved execution step reset issues when transitioning between adapters on the same message.
-    - **"Regenerate" Recovery Flow**:
-        - Implemented a graceful recovery system for expired interactions; replaced "Interaction Failed" errors with a user-friendly **Regenerate** button.
-        - Added core support for expiration recovery in the adapter builder framework.
-    - **Enhanced Master Channel Configuration Overview**:
-        - Reorganized "Buttons Interface" to show hierarchical Default Settings and Role-specific overrides.
-        - Improved visual layout using Discord blockquotes and bullet points for better readability.
-        - Dynamic visibility: Automatically hide role overrides with no active button configuration.
-    - **Data Migration & Legacy Support**:
-        - Added automatic conversion of UI-V2 numeric button IDs to UI-V3 string identifiers.
-        - Implemented settings fallback logic to preserve user configurations when upgrading from V2 to V3.
-        - Verified reliable fallback to global system defaults.
+- New Features:
+    - **Role-Based Button Overrides**: Admins can now customize button layouts for specific roles within a single Master Channel.
+    - **Live Configuration Sync**: Button changes now apply instantly to all currently active dynamic channels.
+    - **Session Recovery Flow**: Added a **Regenerate** button to old or expired setup messages, providing a one-click way to resume your configuration.
+- Improvements:
+    - **Redesigned Setup Overview**: Improved the master channel configuration layout with better role organization and cleaner visuals.
+    - **Enhanced Stability**: Fixed multiple issues that could cause setup sessions to expire or fail unexpectedly.
+    - **Settings Preservation**: Improved data handling to ensure your existing V2 configurations are correctly migrated and preserved.
 
 ---
 

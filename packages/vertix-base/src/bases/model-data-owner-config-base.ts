@@ -34,7 +34,7 @@ export abstract class ModelDataOwnerConfigBase<
     protected abstract getConfigSlice(): TDataConfigSlice;
 
     protected getStrictDataFactor(): TDataSlice {
-        return this.getConfig().data[ this.getConfigSlice() ];
+        return this.getConfig().defaults[ this.getConfigSlice() ];
     }
 
     protected async getSliceData(
@@ -77,20 +77,20 @@ export abstract class ModelDataOwnerConfigBase<
     public async getSettings(
         id: string,
         cache = true,
-        returnDefaults: ( ( result: any ) => TDataSlice ) | boolean = false
+        returnDefaults: ( ( result: Partial<TDataSlice> | null ) => TDataSlice ) | boolean = false
     ): Promise<TDataSlice | null> {
         const isReturnDefaultCallback = "function" === typeof returnDefaults;
 
-        const defaultSettings = !isReturnDefaultCallback && returnDefaults ? this.getConfig().data.settings : null;
+        const defaultSettings = !isReturnDefaultCallback && returnDefaults ? this.getConfig().defaults.settings : null;
 
         const queryArgs = { where: { id } };
 
-        let result = await this.getSliceData( queryArgs, "settings", cache, false );
+        let result = await this.getSliceData( queryArgs, "settings", cache, false ) as TDataSlice | null;
 
         if ( defaultSettings ) {
             result = Object.assign( defaultSettings, result );
         } else if ( isReturnDefaultCallback ) {
-            result = returnDefaults( result || {} );
+            result = returnDefaults( result );
         }
 
         // this.debugger.dumpDown( this.getSettings,

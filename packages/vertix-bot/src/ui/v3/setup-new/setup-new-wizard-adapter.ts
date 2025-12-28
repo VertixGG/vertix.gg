@@ -536,11 +536,11 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
 
         context.deleteArgs( interaction );
     } )
-    // .shouldRequireArgs( () => true )
-    // .onRegenerate( async( context, interaction, args ) => {
-    //     ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
-    //         .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, args );
-    // } )
+    .setShouldRequireArgs( () => true )
+    .onRegenerate( async( context, interaction ) => {
+        ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+            .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, {} );
+    } )
     .build();
 
 export { SetupNewWizardAdapter, SetupStep1Component, SetupStep2Component, SetupStep3Component };

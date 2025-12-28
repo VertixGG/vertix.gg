@@ -69,6 +69,7 @@ async function onEditTitleModalSubmit(
     const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channelId );
 
     if ( !masterChannelDB ) {
+        await interaction.deferUpdate();
         return;
     }
 
@@ -77,6 +78,8 @@ async function onEditTitleModalSubmit(
     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
     dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent" );
 }
 
 async function onEditDescriptionModalSubmit(
@@ -100,6 +103,7 @@ async function onEditDescriptionModalSubmit(
     const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channelId );
 
     if ( !masterChannelDB ) {
+        await interaction.deferUpdate();
         return;
     }
 
@@ -108,6 +112,8 @@ async function onEditDescriptionModalSubmit(
     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
     dynamicChannelService.editPrimaryMessageDebounce( interaction.channel );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent" );
 }
 
 const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceChannel, DefaultInteraction, UIArgs>(
@@ -148,48 +154,9 @@ const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceCh
             _step: componentClass.getComponents()[ stepIndex ]?.getName()
         };
     } )
-    .generateCustomIdForEntity( ( context, entity ) => {
-        const stepIndex = context.getCurrentStepIndex();
-
-        switch ( entity.name ) {
-            case "VertixBot/UI-General/WizardNextButton":
-                entity.name = entity.name + UI_CUSTOM_ID_SEPARATOR + stepIndex;
-                break;
-
-            case "VertixBot/UI-General/WizardBackButton":
-                entity.name = entity.name + UI_CUSTOM_ID_SEPARATOR + stepIndex;
-                break;
-
-            case "VertixBot/UI-General/WizardFinishButton":
-                entity.name = entity.name + UI_CUSTOM_ID_SEPARATOR + stepIndex;
-                break;
-        }
-
-        return context.generateCustomIdForEntity( entity );
-    } )
-    .onBeforeNext( async function( this: any, interaction ) {
-        const customId = this.customIdStrategy.getId( interaction.customId ),
-            customIdParts = customId.split( UI_CUSTOM_ID_SEPARATOR, 3 ),
-            nextIndex = parseInt( customIdParts[ 2 ] );
-
-        const component = this.constructor.getComponent();
-        const stepName = component.getComponents()[ nextIndex ].getName();
-
-        this.setStep( stepName, interaction );
-    } )
-    .onBeforeBack( async function( this: any, interaction ) {
-        const customId = this.customIdStrategy.getId( interaction.customId ),
-            customIdParts = customId.split( UI_CUSTOM_ID_SEPARATOR, 3 ),
-            nextIndex = parseInt( customIdParts[ 2 ] );
-
-        const component = this.constructor.getComponent();
-        const stepName = component.getComponents()[ nextIndex ].getName();
-
-        this.setStep( stepName, interaction );
-    } )
-    .onAfterFinish( async function( this: any, interaction ) {
+    .onAfterFinish( async function( this: { deleteRelatedEphemeralInteractionsInternal: Function }, interaction ) {
         await this.deleteRelatedEphemeralInteractionsInternal(
-            interaction,
+            interaction as UIDefaultButtonChannelVoiceInteraction,
             "VertixBot/UI-V3/DynamicChannelAdapter:VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
             1
         );

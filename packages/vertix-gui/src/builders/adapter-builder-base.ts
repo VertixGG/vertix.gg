@@ -6,16 +6,19 @@ import { PermissionsBitField } from "discord.js";
 
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import { UI_MAX_CUSTOM_ID_LENGTH } from "@vertix.gg/gui/src/ui-constants";
 
 import type {
     ChannelType,
     ButtonInteraction,
+    MessageComponentInteraction,
     ModalSubmitInteraction,
     StringSelectMenuInteraction,
-    UserSelectMenuInteraction
+    UserSelectMenuInteraction,
+    GuildMember
 } from "discord.js";
+
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 import type { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
@@ -53,7 +56,6 @@ import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-build
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
-import type { GuildMember } from "discord.js";
 
 type StartArgsHandler<TContext, TChannel, TArgs> = (
     context: TContext,
@@ -597,14 +599,22 @@ export class AdapterBuilderBase<
         const separatorLength = UI_CUSTOM_ID_SEPARATOR.length;
         const candidate = baseName + UI_CUSTOM_ID_SEPARATOR + entityName;
 
-        if ( candidate.length <= UI_MAX_CUSTOM_ID_LENGTH ) {
+        const strategyName = ( strategy.constructor as { getName?: () => string } ).getName?.();
+
+        if ( strategyName === "VertixGUI/UICustomIdHashStrategy" ) {
             return strategy.generateId( candidate );
         }
+
+        if ( candidate.length <= UI_MAX_CUSTOM_ID_LENGTH ) {
+            return candidate;
+        }
+
+        const uiHashService = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" );
 
         const availableBaseLength = UI_MAX_CUSTOM_ID_LENGTH - separatorLength - entityName.length;
 
         if ( availableBaseLength > 0 ) {
-            const hashedBase = UIHashService.generateHash( baseName, availableBaseLength, true );
+            const hashedBase = uiHashService.generateId( baseName, UI_CUSTOM_ID_SEPARATOR, availableBaseLength, true );
             return hashedBase + UI_CUSTOM_ID_SEPARATOR + entityName;
         }
 
@@ -613,8 +623,13 @@ export class AdapterBuilderBase<
         const entityCore = entityParts.join( UI_CUSTOM_ID_SEPARATOR );
         const baseBudget = Math.floor( UI_MAX_CUSTOM_ID_LENGTH / 3 );
         const entityBudget = UI_MAX_CUSTOM_ID_LENGTH - separatorLength * 2 - baseBudget - ( entitySuffix ? entitySuffix.length : 0 );
-        const hashedBase = UIHashService.generateHash( baseName, Math.max( baseBudget, 6 ), true );
-        const hashedEntityCore = UIHashService.generateHash( entityCore || entityName, Math.max( entityBudget, 6 ), true );
+        const hashedBase = uiHashService.generateId( baseName, UI_CUSTOM_ID_SEPARATOR, Math.max( baseBudget, 6 ), true );
+        const hashedEntityCore = uiHashService.generateId(
+            entityCore || entityName,
+            UI_CUSTOM_ID_SEPARATOR,
+            Math.max( entityBudget, 6 ),
+            true
+        );
 
         if ( entitySuffix ) {
             const id = hashedBase + UI_CUSTOM_ID_SEPARATOR + hashedEntityCore + UI_CUSTOM_ID_SEPARATOR + entitySuffix;
@@ -623,7 +638,7 @@ export class AdapterBuilderBase<
             }
         }
 
-        return UIHashService.generateHash( candidate, UI_MAX_CUSTOM_ID_LENGTH, true );
+        return uiHashService.generateId( candidate, UI_CUSTOM_ID_SEPARATOR, UI_MAX_CUSTOM_ID_LENGTH, true );
     }
 
     protected async resolveArgsFromDataSource(

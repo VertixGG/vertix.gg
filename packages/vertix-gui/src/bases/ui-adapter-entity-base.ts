@@ -198,7 +198,9 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
                         };
 
                     if ( entity.attributes.style !== ButtonStyle.Link ) {
-                        data.customId = this.generateCustomIdForEntity( entity );
+                        const customId = this.generateCustomIdForEntity( entity );
+                        data.customId = customId;
+                        data.custom_id = customId;
                     }
 
                     switch ( entity.attributes.type ) {

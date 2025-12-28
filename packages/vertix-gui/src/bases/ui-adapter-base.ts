@@ -81,6 +81,7 @@ export abstract class UIAdapterBase<
     } = {};
 
     private static staticArgs = new UIArgsManager( picocolors.green( "StaticArgs" ) );
+    private static dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
     private static staticSystemArgs = new UIArgsManager( picocolors.red( "SystemArgs" ) );
 
     /**
@@ -121,8 +122,6 @@ export abstract class UIAdapterBase<
     } )();
 
     private readonly argsManager: UIArgsManager;
-
-    private dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
 
     protected uiService: UIService;
 
@@ -210,7 +209,7 @@ export abstract class UIAdapterBase<
         if ( this.isStatic() ) {
             this.argsManager = UIAdapterBase.staticArgs;
         } else {
-            this.argsManager = this.dynamicArgs;
+            this.argsManager = UIAdapterBase.dynamicArgs;
         }
 
         if ( !this.shouldDisableMiddleware || !this.shouldDisableMiddleware() ) {
@@ -539,6 +538,9 @@ export abstract class UIAdapterBase<
         // this.buildEntityMap( entity );
 
         await this.build( args, "show-modal", interaction as TInteraction );
+
+        const argsId = this.argsManager.getArgsId( interaction as TInteraction );
+        this.argsManager.setInitialArgs( this, argsId, args, { overwrite: true, silent: true } );
 
         const entityMapped = this.getEntityMap( modalName ),
             modalInstance = this.getEntityInstance( entityMapped.entity ) as UIModalBase,

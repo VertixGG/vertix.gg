@@ -1,5 +1,25 @@
 # Changelog
 
+**Version: 0.0.9 ~ 28/12/2025**
+- Improvements & Stability:
+    - **Session Stability & Error Handling**:
+        - Fixed crash when building UI components with undefined arguments.
+        - Enhanced interaction ID resolution and session debugging in `UIArgsManager`.
+        - Resolved execution step reset issues when transitioning between adapters on the same message.
+    - **"Regenerate" Recovery Flow**:
+        - Implemented a graceful recovery system for expired interactions; replaced "Interaction Failed" errors with a user-friendly **Regenerate** button.
+        - Added core support for expiration recovery in the adapter builder framework.
+    - **Enhanced Master Channel Configuration Overview**:
+        - Reorganized "Buttons Interface" to show hierarchical Default Settings and Role-specific overrides.
+        - Improved visual layout using Discord blockquotes and bullet points for better readability.
+        - Dynamic visibility: Automatically hide role overrides with no active button configuration.
+    - **Data Migration & Legacy Support**:
+        - Added automatic conversion of UI-V2 numeric button IDs to UI-V3 string identifiers.
+        - Implemented settings fallback logic to preserve user configurations when upgrading from V2 to V3.
+        - Verified reliable fallback to global system defaults.
+
+---
+
 **Version: 0.0.8 2024~2025**
 - New Features / Improvements:
     - Add display of region (e.g., `Europe`, `US East`) in the **Dynamic Channel** interface.

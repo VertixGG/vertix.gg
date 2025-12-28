@@ -245,11 +245,16 @@ export abstract class UIAdapterBase<
     ) {
         await this.getComponent().waitUntilInitialized();
 
+        if ( !args ) {
+            this.$$.staticLogger.error( this.build, `Attempted to build '${ this.getName() }' with undefined args from source: '${ from }'` );
+            return null;
+        }
+
         const ownerId = "string" === typeof context ? context : context.guildId;
 
         if ( ownerId === "direct-message" ) {
             args._language = UI_LANGUAGES_INITIAL_CODE;
-        } else if ( ownerId && !args._language ) {
+        } else if ( ownerId && args && !args._language ) {
             // TODO: Move to hook.
             const language = await GuildDataManager.$.getData(
                 {
@@ -413,6 +418,20 @@ export abstract class UIAdapterBase<
         const argsId = message.id;
 
         let args = this.argsManager.getArgsById( this, argsId );
+
+        if ( this.isDynamic() && newArgs ) {
+            const refreshedArgs = {
+                ...( await this.getArgsInternal( message.channel as TChannel, newArgs ) ),
+                ...( await this.getArgsInternal( message, newArgs ) )
+            };
+
+            this.argsManager.setInitialArgs( this, argsId, refreshedArgs, {
+                overwrite: true,
+                silent: true
+            } );
+
+            args = refreshedArgs;
+        }
 
         // TODO: Ensure how it possible that dynamic args exist.
         if ( !args && this.isDynamic() ) {

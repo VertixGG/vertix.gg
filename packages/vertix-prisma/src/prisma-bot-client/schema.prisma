@@ -58,7 +58,6 @@ model Category {
 
   @@index([categoryId])
   @@index([guildId])
-  @@index([guildId, categoryId])
 }
 
 model Guild {
@@ -74,9 +73,6 @@ model Guild {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   updatedAtInternal DateTime?
-
-  @@index([isInGuild])
-  @@index([updatedAtInternal])
 }
 
 model GuildData {
@@ -97,7 +93,6 @@ model GuildData {
   updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
-  @@index([ownerId, key])
 }
 
 model Channel {
@@ -123,9 +118,6 @@ model Channel {
   @@index([guildId])
   @@index([categoryId])
   @@index([userOwnerId])
-  @@index([internalType])
-  @@index([guildId, internalType])
-  @@index([ownerChannelId])
 }
 
 model ChannelData {
@@ -146,7 +138,6 @@ model ChannelData {
   updatedAt DateTime     @updatedAt
 
   @@unique([ownerId, key, version])
-  @@index([ownerId, key])
 }
 
 model User {
@@ -182,7 +173,6 @@ model UserData {
   @@unique([ownerId, key, version])
   @@index([key])
   @@index([ownerId])
-  @@index([ownerId, key])
 }
 
 model UserChannelData {
@@ -208,7 +198,6 @@ model UserChannelData {
   @@index([channelId])
   @@index([key])
   @@index([ownerId])
-  @@index([ownerId, key])
 }
 
 // Language.

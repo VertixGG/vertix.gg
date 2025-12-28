@@ -847,7 +847,10 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 ? ( availableArgs.dynamicChannelButtonsTemplateByRole as Record<string, string[]> )
                 : undefined;
 
-            args.dynamicChannelButtonsTemplateByRole = buttonsTemplateByRoleFromArgs ?? buttonsTemplateByRoleFromDb;
+            args.dynamicChannelButtonsTemplateByRole = {
+                ...buttonsTemplateByRoleFromDb,
+                ...( buttonsTemplateByRoleFromArgs ?? {} )
+            };
 
             args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
                 buttonsTemplateDefaultFromArgs ?? ( buttonsTemplateFromDb as string[] )

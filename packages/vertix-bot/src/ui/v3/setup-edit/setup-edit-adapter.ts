@@ -30,6 +30,7 @@ import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v
 import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 import { SetupEditButtonsRoleSelectMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-role-select-menu";
 import { SetupEditButtonsClearRoleOverrideButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-clear-role-override-button";
+import { SetupEditButtonsEditDefaultButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-edit-default-button";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-select-edit-option-menu";
 
@@ -237,14 +238,14 @@ const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupE
 
 const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsElementsGroup" )
     .addRow( [ SetupEditButtonsRoleSelectMenu ] )
-    .addRow( [ SetupEditButtonsClearRoleOverrideButton ] )
+    .addRow( [ SetupEditButtonsEditDefaultButton, SetupEditButtonsClearRoleOverrideButton ] )
     .addRow( [ ChannelButtonsTemplateSelectMenu ] )
     .addRow( [ DoneButton ] )
     .build();
 
 const SetupEditButtonsEffectElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup" )
     .addRow( [ SetupEditButtonsRoleSelectMenu ] )
-    .addRow( [ SetupEditButtonsClearRoleOverrideButton ] )
+    .addRow( [ SetupEditButtonsEditDefaultButton, SetupEditButtonsClearRoleOverrideButton ] )
     .addRow( [ ChannelButtonsTemplateSelectMenu ] )
     .addRow( [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ] )
     .build();
@@ -401,13 +402,26 @@ async function onButtonsRoleSelected(
 
     const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
 
-    const template = roleId && Array.isArray( byRole[ roleId ] )
-        ? byRole[ roleId ]
-        : ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? ( args.dynamicChannelButtonsTemplate as string[] | undefined ) ?? [];
+    const template = roleId
+        ? ( Array.isArray( byRole[ roleId ] ) ? byRole[ roleId ] : [] )
+        : ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [];
 
     context.setArgs( interaction, {
         dynamicChannelButtonsRoleId: roleId,
         dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( template )
+    } );
+}
+
+async function onEditDefaultButtonsClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+    const defaultButtons = ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [];
+
+    context.setArgs( interaction, {
+        dynamicChannelButtonsRoleId: null,
+        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( defaultButtons )
     } );
 }
 
@@ -956,6 +970,23 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                             { type: "set", path: [ "dynamicChannelButtonsRoleId" ] },
                             { type: "set", path: [ "dynamicChannelButtonsTemplate" ] }
                         ]
+                    }
+                ]
+            }
+        );
+
+        bindButton<UIDefaultButtonChannelTextInteraction>(
+            "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+            onEditDefaultButtonsClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupEditFlow",
+                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/EditDefaultButtons",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/Buttons",
+                            executionStep: "VertixBot/UI-V3/SetupEditButtons"
+                        }
                     }
                 ]
             }

@@ -3,7 +3,7 @@
 **Version: 0.0.10 ~ 29/12/2025**
 - New Features:
     - **Channel Templates (Presets)**: Capture your current channel configuration as a template and reuse it later.
-    - **Global Templates**: Templates are stored per user and are available across Discord servers.
+    - **Per-Guild Templates**: Templates are stored per user per guild, keeping configurations separate for each Discord server.
     - **Apply/Delete Confirmation**: Apply and Delete actions now use a two-step confirmation flow.
 - Improvements:
     - **Templates UI**: Added a dedicated Templates menu with Capture, Apply, and Delete actions.

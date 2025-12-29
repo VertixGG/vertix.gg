@@ -56,11 +56,11 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
         return "ownerId_key_version";
     }
 
-    private getGlobalDataKey() {
+    private getLegacyGlobalDataKey() {
         return "ChannelTemplates_Global";
     }
 
-    private getLegacyGuildDataKey( guildId: string ) {
+    private getGuildDataKey( guildId: string ) {
         return `ChannelTemplates_${ guildId }`;
     }
 
@@ -88,37 +88,40 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
     public async getTemplates( userId: string, guildId: string ): Promise<ChannelTemplate[]> {
         const user = await UserModel.$.ensure( { data: { userId } } );
 
-        const globalKey = this.getGlobalDataKey();
-
-        const globalData = await this.dataGet<ChannelTemplatesData>( {
+        const guildKey = this.getGuildDataKey( guildId );
+        const guildData = await this.dataGet<ChannelTemplatesData>( {
             ownerId: user.id,
-            key: globalKey
+            key: guildKey
         } );
 
-        const globalTemplates = globalData?.templates ?? [];
+        const guildTemplates = guildData?.templates ?? [];
 
-        const legacyKey = this.getLegacyGuildDataKey( guildId );
-        const legacyData = await this.dataGet<ChannelTemplatesData>( {
-            ownerId: user.id,
-            key: legacyKey
-        } );
-
-        const legacyTemplates = legacyData?.templates ?? [];
-
-        if ( !legacyTemplates.length ) {
-            return this.normalizeTemplates( globalTemplates );
+        if ( guildTemplates.length ) {
+            return this.normalizeTemplates( guildTemplates );
         }
 
-        const mergedTemplates = this.normalizeTemplates( [ ...globalTemplates, ...legacyTemplates ] );
+        const legacyGlobalKey = this.getLegacyGlobalDataKey();
+        const legacyGlobalData = await this.dataGet<ChannelTemplatesData>( {
+            ownerId: user.id,
+            key: legacyGlobalKey
+        } );
+
+        const legacyGlobalTemplates = legacyGlobalData?.templates ?? [];
+
+        if ( !legacyGlobalTemplates.length ) {
+            return [];
+        }
+
+        const normalizedTemplates = this.normalizeTemplates( legacyGlobalTemplates );
 
         await this.dataUpsert<ChannelTemplatesData>(
-            { ownerId: user.id, key: globalKey },
-            { templates: mergedTemplates }
+            { ownerId: user.id, key: guildKey },
+            { templates: normalizedTemplates }
         );
 
-        await this.dataDelete( { ownerId: user.id, key: legacyKey } ).catch( () => {} );
+        await this.dataDelete( { ownerId: user.id, key: legacyGlobalKey } ).catch( () => {} );
 
-        return mergedTemplates;
+        return normalizedTemplates;
     }
 
     public async saveTemplate(
@@ -149,7 +152,7 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
         templates.push( template );
 
         await this.dataUpsert<ChannelTemplatesData>(
-            { ownerId: user.id, key: this.getGlobalDataKey() },
+            { ownerId: user.id, key: this.getGuildDataKey( guildId ) },
             { templates: this.normalizeTemplates( templates ) }
         );
 
@@ -174,7 +177,7 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
         templates.splice( index, 1 );
 
         await this.dataUpsert<ChannelTemplatesData>(
-            { ownerId: user.id, key: this.getGlobalDataKey() },
+            { ownerId: user.id, key: this.getGuildDataKey( guildId ) },
             { templates: this.normalizeTemplates( templates ) }
         );
 
@@ -191,8 +194,3 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
         return templates.find( t => t.id === templateId );
     }
 }
-
-
-
-
-

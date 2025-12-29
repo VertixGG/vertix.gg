@@ -306,6 +306,7 @@ async function onSetupMasterEditSelected(
 
     context.setArgs( interaction, args );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onSelectEditOptionSelected(

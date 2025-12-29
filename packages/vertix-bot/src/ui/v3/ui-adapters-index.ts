@@ -12,4 +12,5 @@ export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v
 export { DynamicChannelResetChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-adapter";
 export { DynamicChannelPrivacyAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-adapter";
 export { DynamicChannelRegionAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-adapter";
+export { DynamicChannelTemplatesAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-adapter";

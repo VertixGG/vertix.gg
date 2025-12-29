@@ -1,5 +1,16 @@
 # Changelog
 
+**Version: 0.0.10 ~ 29/12/2025**
+- New Features:
+    - **Channel Templates (Presets)**: Capture your current channel configuration as a template and reuse it later.
+    - **Global Templates**: Templates are stored per user and are available across Discord servers.
+    - **Apply/Delete Confirmation**: Apply and Delete actions now use a two-step confirmation flow.
+- Improvements:
+    - **Templates UI**: Added a dedicated Templates menu with Capture, Apply, and Delete actions.
+    - **Stability**: Fixed multiple interaction timeout/state issues in Templates flows (confirm buttons enabling, persistence across steps).
+
+---
+
 **Version: 0.0.9 ~ 28/12/2025**
 - New Features:
     - **Role-Based Button Overrides**: Admins can now customize button layouts for specific roles within a single Master Channel.

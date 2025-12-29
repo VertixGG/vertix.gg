@@ -18,6 +18,7 @@ import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
 import { DynamicChannelPermissionsAccessButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
+import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-button";
 
 import type { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
@@ -67,7 +68,8 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelClearChatButton,
             DynamicChannelResetChannelButton,
             DynamicChannelTransferOwnerButton,
-            DynamicChannelClaimChannelButton
+            DynamicChannelClaimChannelButton,
+            DynamicChannelTemplatesButton
         ].sort( ( a, b ) => a.getSortId() - b.getSortId() );
     }
 

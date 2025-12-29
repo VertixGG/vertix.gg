@@ -22,9 +22,6 @@ const DYNAMIC_CHANNEL_STEPS = {
 
 const logger = new Logger( "VertixBot/UI-V3/DynamicChannelAdapter" );
 
-const FLOW_NAME = "VertixBot/UI-V3/DynamicChannelFlow";
-const FLOW_STATE_DEFAULT = `${ FLOW_NAME }/States/Default`;
-
 async function onRenameButtonClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
@@ -144,6 +141,28 @@ async function onTransferOwnerButtonClicked(
     await uiService.get( "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter" )?.runInitial( interaction );
 }
 
+async function onTemplatesButtonClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
+    interaction: UIDefaultButtonChannelVoiceInteraction
+) {
+    const { ChannelTemplateModel } = await import( "@vertix.gg/base/src/models/data/channel-template-model" );
+
+    const templates = await ChannelTemplateModel.$.getTemplates(
+        interaction.user.id,
+        interaction.guildId
+    );
+
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" );
+
+    if ( adapter ) {
+        await adapter.ephemeral( interaction, {
+            templates,
+            maxTemplates: 5
+        } );
+    }
+}
+
 const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
     "VertixBot/UI-V3/DynamicChannelAdapter"
 )
@@ -157,10 +176,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/OpenRename`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRename",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -173,10 +192,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/OpenLimit`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLimit",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -189,10 +208,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/OpenPermissions`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPermissions",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -205,10 +224,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/OpenPrivacy`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPrivacy",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -221,10 +240,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/OpenRegion`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRegion",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -237,10 +256,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/OpenPrimaryMessageEdit`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPrimaryMessageEdit",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -253,10 +272,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/ClearChat`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClearChat",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -269,10 +288,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/ResetChannel`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ResetChannel",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -285,10 +304,10 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/ClaimChannel`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClaimChannel",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }
@@ -301,10 +320,26 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             {
                 flowTriggers: [
                     {
-                        flowName: FLOW_NAME,
-                        transition: `${ FLOW_NAME }/Transitions/TransferOwner`,
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner",
                         navigation: {
-                            targetState: FLOW_STATE_DEFAULT,
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
+                            executionStep: "default"
+                        }
+                    }
+                ]
+            }
+        );
+        bindButton(
+            "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+            onTemplatesButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                        transition: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
                             executionStep: "default"
                         }
                     }

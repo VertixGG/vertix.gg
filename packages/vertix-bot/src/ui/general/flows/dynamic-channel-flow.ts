@@ -46,7 +46,8 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClearChat",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ResetChannel",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClaimChannel",
-                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner"
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner",
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates"
             ]
         };
     }
@@ -62,7 +63,8 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClearChat": "VertixBot/UI-V3/DynamicChannelClearChatFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ResetChannel": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClaimChannel": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
-            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser"
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Menu"
         };
     }
 
@@ -165,6 +167,11 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 triggeringElementId: "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                 transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner",
                 targetFlowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow"
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates",
+                targetFlowName: "VertixBot/UI-V3/DynamicChannelTemplatesFlow"
             }
         ];
     }

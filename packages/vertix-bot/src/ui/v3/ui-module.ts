@@ -16,6 +16,7 @@ import { DynamicChannelRegionFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-chann
 import { DynamicChannelRenameFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-flow";
 import { DynamicChannelResetChannelFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-flow";
 import { DynamicChannelTransferOwnerFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-flow";
+import { DynamicChannelTemplatesFlow } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-flow";
 import { DynamicChannelFlow } from "@vertix.gg/bot/src/ui/general/flows/dynamic-channel-flow";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
@@ -57,6 +58,7 @@ export class UIModuleV3 extends UIModuleBase {
             DynamicChannelPermissionsFlow,
             DynamicChannelPrivacyFlow,
             DynamicChannelPrimaryMessageEditFlow,
+            DynamicChannelTemplatesFlow,
             SetupEditFlow
         ];
     }

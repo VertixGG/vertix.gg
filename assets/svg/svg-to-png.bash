@@ -15,7 +15,7 @@ for svg_file in *.svg; do
     fi
 
     # Define the output PNG file name
-    png_file="${svg_file%.svg}.png"
+    png_file="../${svg_file%.svg}.png"
 
     # Convert SVG to PNG using Inkscape
     inkscape "$svg_file" --export-filename="$png_file"

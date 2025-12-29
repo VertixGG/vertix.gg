@@ -383,6 +383,10 @@ export class AdapterBuilderBase<
                             return;
                         }
 
+                        if ( interaction.deferred || interaction.replied ) {
+                            return;
+                        }
+
                         const context = getContext();
                         const editReplyWithStep = ( context as Partial<{
                             editReplyWithStep: ( interaction: UIAdapterReplyContext, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;

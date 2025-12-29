@@ -36,7 +36,7 @@ async function getCurrentChannelConfig( channel: VoiceChannel ) {
         userLimit: channel.userLimit,
         state,
         visibilityState,
-        region: channel.rtcRegion ?? ""
+        region: channel.rtcRegion ?? "auto"
     };
 }
 
@@ -245,8 +245,12 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                         );
                     }
 
-                    if ( config.region ) {
-                        await interaction.channel.setRTCRegion( config.region || null );
+                    if ( typeof config.region === "string" ) {
+                        const region = config.region.trim();
+
+                        if ( region.length ) {
+                            await interaction.channel.setRTCRegion( region === "auto" ? null : region );
+                        }
                     }
 
                     if ( config.nameTemplate ) {

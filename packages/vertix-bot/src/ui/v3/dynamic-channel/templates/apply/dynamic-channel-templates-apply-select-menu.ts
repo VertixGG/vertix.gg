@@ -32,7 +32,7 @@ export class DynamicChannelTemplatesApplySelectMenu extends UIElementStringSelec
         const templates: ChannelTemplate[] = this.uiArgs?.templates ?? [];
 
         return templates.map( ( template ) => ( {
-            label: template.name,
+            label: template.name.trim() || template.config.nameTemplate.trim() || template.id,
             value: template.id,
             description: `👥 Limit: ${ template.config.userLimit }, 🔒 Privacy: ${ template.config.state }`
         } ) );

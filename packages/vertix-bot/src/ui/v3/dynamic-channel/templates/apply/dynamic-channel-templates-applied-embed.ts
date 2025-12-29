@@ -34,7 +34,9 @@ const DynamicChannelTemplatesAppliedEmbed = new EmbedBuilder<UIArgs, typeof vars
             if ( config.userLimit !== undefined ) settings.push( `- **Limit**: ${ config.userLimit === 0 ? "Unlimited" : config.userLimit }` );
             if ( config.state ) settings.push( `- **Privacy**: ${ config.state }` );
             if ( config.visibilityState ) settings.push( `- **Visibility**: ${ config.visibilityState }` );
-            if ( config.region ) settings.push( `- **Region**: ${ config.region }` );
+            if ( typeof config.region === "string" && config.region.length ) {
+                settings.push( `- **Region**: ${ config.region === "auto" ? "Automatic" : config.region }` );
+            }
         }
 
         return {

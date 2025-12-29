@@ -32,7 +32,7 @@ export class DynamicChannelTemplatesDeleteSelectMenu extends UIElementStringSele
         const templates: ChannelTemplate[] = this.uiArgs?.templates ?? [];
 
         return templates.map( ( template ) => ( {
-            label: template.name,
+            label: template.name.trim() || template.config.nameTemplate.trim() || template.id,
             value: template.id,
             description: `Created: ${ new Date( template.createdAt ).toLocaleDateString() }`,
             emoji: { name: "🗑️" }

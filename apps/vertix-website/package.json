@@ -40,7 +40,8 @@
 		"vertix-website:build": "tsc && vite build",
 		"vertix-website:preview": "vite preview",
 		"vertix-website:serve": "vite build && vite preview",
-		"vertix-website:release": "vite build && bash ./scripts/release.sh"
+		"vertix-website:release": "vite build && bash ./scripts/release.sh",
+		"vertix-website:deploy": "bun run vertix-website:release"
 	},
 	"eslintConfig": {
 		"extends": [

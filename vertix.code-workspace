@@ -22,7 +22,7 @@
         },
         {
             "name": "Website",
-            "path": "./packages/vertix-website"
+            "path": "./apps/vertix-website"
         },
         {
             "name": "Utils",

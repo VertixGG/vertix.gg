@@ -4,15 +4,23 @@ cd "$(dirname "$0")/.."
 # save current directory
 CURRENT_DIR=$(pwd)
 
-# get workspace from package.json
-workspace_pattern=$(jq -r '.workspaces[0]' package.json)
+workspace_patterns=$(jq -r '.workspaces[]' package.json)
 
-workspace_dir=$(echo "$workspace_pattern" | sed 's/\*//')
+packages=""
 
-packages=$(find "$workspace_dir" -type f -name "tsconfig.json" 2>/dev/null)
+for workspace_pattern in $workspace_patterns; do
+    workspace_dir=$(echo "$workspace_pattern" | sed 's/\*//')
+
+    found_packages=$(find "$workspace_dir" -type f -name "tsconfig.json" -not -path "*/node_modules/*" 2>/dev/null)
+
+    packages="$packages
+$found_packages"
+done
+
+packages=$(echo "$packages" | sed '/^$/d')
 
 echo "Current directory: $CURRENT_DIR"
-echo "Workspace: $workspace_pattern"
+echo "Workspace: $workspace_patterns"
 echo "Packages: $packages"
 
 # if no package found, exit with error

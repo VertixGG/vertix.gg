@@ -43,13 +43,20 @@ import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/lan
 
 import { BadwordsModal } from "@vertix.gg/bot/src/ui/general/badwords/badwords-modal";
 
+import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
+
 import { SETUP_EMBED_VARS } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
-import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-button";
-
-import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
+import {
+    MASTER_CHANNEL_TYPE_SCALING,
+    MASTER_CHANNEL_TYPE_V2,
+    MASTER_CHANNEL_TYPE_V3,
+    SetupMasterCreateSelectMenu
+} from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
 
 import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+
+import type ScalingChannelService from "@vertix.gg/bot/src/services/scaling-channel-service";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
@@ -163,8 +170,8 @@ async function onSelectEditMasterChannel(
 }
 
 async function onCreateMasterChannelClicked(
-    context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
-    interaction: UIDefaultButtonChannelTextInteraction,
+    context: IAdapterContext<SetupInteractions, ISetupArgs>,
+    interaction: SetupInteractions,
     version: TVersionType = VERSION_UI_V2
 ) {
     const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
@@ -203,7 +210,61 @@ async function onCreateMasterChannelClicked(
         dynamicChannelVerifiedRoles: [ interaction.guild.roles.everyone.id ]
     } );
 
-    // Delete Args since left to another adapter.
+    context.deleteArgs( interaction );
+}
+
+async function onCreateScalingChannelClicked(
+    context: IAdapterContext<SetupInteractions, ISetupArgs>,
+    interaction: SetupInteractions
+) {
+    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
+        guildId = interaction.guild.id,
+        limit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
+        hasReachedLimit = await masterChannelService.isReachedMasterLimit( guildId, limit );
+
+    if ( hasReachedLimit ) {
+        const component = context.getComponent();
+
+        component.clearElements();
+        component.switchEmbedsGroup( "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup" );
+
+        await context.ephemeral( interaction, {
+            maxMasterChannels: limit
+        } );
+
+        return;
+    }
+
+    await context.showModal( interaction, "VertixBot/UI-General/SetupScalingConfigModal" );
+}
+
+async function onScalingConfigModalSubmitted(
+    context: IAdapterContext<UIDefaultModalChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultModalChannelTextInteraction
+) {
+    const scalingChannelService = ServiceLocator.$.get<ScalingChannelService>( "VertixBot/Services/ScalingChannel" );
+
+    const prefixInputId = context.customIdStrategy.generateId(
+        "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/SetupScalingPrefixInput"
+    );
+
+    const maxMembersInputId = context.customIdStrategy.generateId(
+        "VertixBot/UI-General/SetupAdapter:VertixBot/UI-General/SetupScalingMaxMembersInput"
+    );
+
+    const prefix = interaction.fields.getTextInputValue( prefixInputId );
+    const maxMembersStr = interaction.fields.getTextInputValue( maxMembersInputId );
+    const maxMembers = parseInt( maxMembersStr, 10 ) || 10;
+
+    await scalingChannelService.createScalingMasterChannel( {
+        guildId: interaction.guild.id,
+        userOwnerId: interaction.user.id,
+        prefix,
+        maxMembers
+    } );
+
+    await context.editReply( interaction, {} );
+
     context.deleteArgs( interaction );
 }
 
@@ -392,7 +453,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
 const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
     .addRow( [ SetupMasterEditSelectMenu ] )
-    .addRow( [ SetupMasterCreateButton, SetupMasterCreateV3Button ] )
+    .addRow( [ SetupMasterCreateSelectMenu ] )
     .addRow( [ LanguageChooseButton, BadwordsEditButton ] )
     .build();
 
@@ -401,6 +462,7 @@ const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponen
     .addEmbedsSingleGroup( SetupEmbed )
     .addEmbedsSingleGroup( SetupMaxMasterChannelsEmbed )
     .addModal( BadwordsModal )
+    .addModal( SetupScalingConfigModal )
     .setDefaultElementsGroup( "VertixBot/UI-General/SetupElementsGroup" )
     .setDefaultEmbedsGroup( "VertixBot/UI-General/SetupEmbedGroup" )
     .setInstanceType( UIInstancesTypes.Dynamic )
@@ -439,34 +501,30 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteract
         return args;
     } )
     .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateButton",
+        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
             async( context, interaction ) => {
-                await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
+                const selectedType = interaction.values.at( 0 );
 
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateV3Button",
-            async( context, interaction ) => {
-                await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 );
+                switch ( selectedType ) {
+                    case MASTER_CHANNEL_TYPE_V2:
+                        await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 );
+                        break;
+
+                    case MASTER_CHANNEL_TYPE_V3:
+                        await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 );
+                        break;
+
+                    case MASTER_CHANNEL_TYPE_SCALING:
+                        await onCreateScalingChannelClicked( context, interaction );
+                        break;
+                }
             },
             {
                 flowTriggers: [
                     {
                         flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannel",
                         navigation: {
                             targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
                         }
@@ -521,6 +579,24 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteract
                     {
                         flowName: "VertixBot/UI-General/SetupFlow",
                         transition: "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
+                        }
+                    }
+                ]
+            }
+        );
+
+        bindModal<UIDefaultModalChannelTextInteraction>(
+            "VertixBot/UI-General/SetupScalingConfigModal",
+            async( context, interaction ) => {
+                await onScalingConfigModalSubmitted( context, interaction );
+            },
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupFlow",
+                        transition: "VertixBot/UI-General/SetupFlow/Transitions/SubmitScalingConfig",
                         navigation: {
                             targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
                         }

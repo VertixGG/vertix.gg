@@ -36,3 +36,22 @@ export interface MasterChannelConfigInterfaceV3
         constants: MasterChannelConstantsInterfaceV3;
         settings: MasterChannelSettingsInterface;
     }> {}
+
+export interface ScalingChannelSettingsInterface {
+    scalingChannelPrefix: string;
+    scalingChannelMaxMembersPerChannel: number;
+    scalingChannelCategoryId: string | null;
+}
+
+export interface ScalingChannelConstantsInterface {
+    scalingChannelDefaultPrefix: string;
+    scalingChannelDefaultMaxMembers: number;
+    scalingChannelCategoryName: string;
+    masterChannelName: string;
+}
+
+export interface ScalingChannelConfigInterface
+    extends ConfigBaseInterface<{
+        constants: ScalingChannelConstantsInterface;
+        settings: ScalingChannelSettingsInterface;
+    }> {}

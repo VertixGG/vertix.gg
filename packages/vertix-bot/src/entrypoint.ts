@@ -366,6 +366,7 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/channel-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
         import( "@vertix.gg/bot/src/services/master-channel-service" ),
+        import( "@vertix.gg/bot/src/services/scaling-channel-service" ),
         import( "@vertix.gg/bot/src/services/ui-definition-loader-service" )
     ] );
 
@@ -457,7 +458,8 @@ async function registerConfigs() {
 
     const configs = await Promise.all( [
         import( "@vertix.gg/bot/src/config/master-channel-config" ),
-        import( "@vertix.gg/bot/src/config/master-channel-config-v3" )
+        import( "@vertix.gg/bot/src/config/master-channel-config-v3" ),
+        import( "@vertix.gg/bot/src/config/scaling-channel-config" )
     ] );
 
     await Promise.all(
@@ -718,8 +720,7 @@ export async function entryPoint( options: {
 
     GlobalLogger.$.log( entryPoint, "ENV OUTPUT:", {
         error: envOutput.error,
-        parsed: envOutput.parsed,
-        env: process.env
+        parsedKeysCount: envOutput.parsed ? Object.keys( envOutput.parsed ).length : 0
     } );
 
     if ( envOutput.error ) {

@@ -326,6 +326,21 @@ export class ChannelModel extends ModelWithDataBase<
         return !!( await this.getByChannelId( channelId, cache ) )?.isDynamic;
     }
 
+    public async isScaling( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isScaling;
+    }
+
+    public async getScalingChannelsByMasterId( guildId: string, masterChannelId: string, cache = true ) {
+        return this.findMany(
+            {
+                guildId,
+                ownerChannelId: masterChannelId,
+                internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL
+            },
+            cache
+        );
+    }
+
     public getModelByVersion( version: string ) {
         return this.dataModels.find( ( m ) => m.getVersion() === version ) || this.dataModels.at( 0 );
     }

@@ -1,0 +1,60 @@
+{
+    "schemaVersion": "1.0.0",
+    "exportedAt": "2025-12-31T10:43:11.038Z",
+    "counts": {
+        "components": 38,
+        "adapters": 33,
+        "flows": 22
+    },
+    "modules": [
+        "VertixBot/UI-General/Module",
+        "VertixBot/UI-V2/Module",
+        "VertixBot/UI-V3/Module"
+    ],
+    "moduleSummary": [
+        {
+            "module": "VertixBot/UI-General/Module",
+            "components": 5,
+            "adapters": 5,
+            "flows": 5,
+            "embeds": {
+                "total": 6,
+                "withDefinition": 6,
+                "missingDefinition": 0
+            },
+            "componentsWithEmbeds": 5,
+            "componentsWithMissingEmbeds": 0
+        },
+        {
+            "module": "VertixBot/UI-V2/Module",
+            "components": 12,
+            "adapters": 12,
+            "flows": 0,
+            "embeds": {
+                "total": 49,
+                "withDefinition": 9,
+                "missingDefinition": 40
+            },
+            "componentsWithEmbeds": 12,
+            "componentsWithMissingEmbeds": 12
+        },
+        {
+            "module": "VertixBot/UI-V3/Module",
+            "components": 21,
+            "adapters": 16,
+            "flows": 14,
+            "embeds": {
+                "total": 61,
+                "withDefinition": 61,
+                "missingDefinition": 0
+            },
+            "componentsWithEmbeds": 21,
+            "componentsWithMissingEmbeds": 0
+        }
+    ],
+    "embedCoverage": {
+        "total": 116,
+        "withDefinition": 76,
+        "missingDefinition": 40
+    }
+}

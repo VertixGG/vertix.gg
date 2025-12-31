@@ -55,7 +55,7 @@ export default function Index() {
 
             <div className="container">
                 <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4">
-                    <p className="col-md-4 mb-0 text-muted">© 2023~2024 Vertix.gg</p>
+                    <p className="col-md-4 mb-0 text-muted">© 2023~2026 Vertix.gg</p>
 
                     <ul className="nav col-md justify-content-end">
                         <li className="nav-item"><a href="/privacy-policy" className="nav-link px-2 text-muted">Privacy

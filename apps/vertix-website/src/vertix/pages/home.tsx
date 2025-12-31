@@ -1,4 +1,5 @@
-import DiscordDynamicChannelMock from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-mock";
+import DiscordDynamicChannelV2 from "../components/discord/discord-dynamic-channel-v2";
+import DiscordDynamicChannelV3 from "../components/discord/discord-dynamic-channel-v3";
 
 export default function Home() {
     return (
@@ -56,13 +57,21 @@ export default function Home() {
                 <br/>
 
                 <div className="d-none d-xl-block mb-5">
-                    <a href="/features/dynamic-channels-showcase">
-                        <img src="discord.com_channels_1110248409761316944_1455846167228186739.png"
-                            alt="Voice channel managment" className="normalize"/>
-                    </a>
-
+                    <h3 className="mb-4 text-center">Experience the evolution of Vertix</h3>
                     <div className="mt-4">
-                        <DiscordDynamicChannelMock/>
+                        <div className="mb-5">
+                            <h4 className="mb-3 text-secondary text-center">UI V2 (Classic)</h4>
+                            <div className="p-4 bg-dark rounded-3 border border-secondary shadow-sm">
+                                <DiscordDynamicChannelV2/>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 className="mb-3 text-primary text-center">UI V3 (Modern)</h4>
+                            <div className="p-4 bg-dark rounded-3 border border-primary shadow-sm">
+                                <DiscordDynamicChannelV3/>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

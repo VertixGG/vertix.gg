@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { DiscordButton } from "./discord-button";
 import { DiscordEmbed } from "./discord-embed";
-import { DISCORD_EMOJI_ICON_SRC_BY_UNICODE } from "./discord-emojis";
+import { DISCORD_EMOJI_ICON_SRC_BY_NAME, DISCORD_EMOJI_ICON_SRC_BY_UNICODE } from "./discord-emojis";
 
 import { findUIEmbedDefinition, getUIComponentByName } from "./ui-definitions";
 
@@ -284,7 +284,16 @@ function buildEmojiIcon(
         return undefined;
     }
 
-    const src = emojiIconSrcByUnicode?.[ emoji ] ?? DISCORD_EMOJI_ICON_SRC_BY_UNICODE[ emoji ];
+    let src = emojiIconSrcByUnicode?.[ emoji ] ?? DISCORD_EMOJI_ICON_SRC_BY_UNICODE[ emoji ];
+
+    if ( !src ) {
+        const match = emoji.match( /<:([^:]+):(\d+)>/ );
+        if ( match ) {
+            const name = match[ 1 ];
+            src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ];
+        }
+    }
+
     if ( !src ) {
         return undefined;
     }

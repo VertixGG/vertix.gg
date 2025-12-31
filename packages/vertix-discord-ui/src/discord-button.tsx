@@ -53,6 +53,9 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
 
     const hasLabel = Boolean( label || children );
 
+    const isCustomEmojiString = emoji?.startsWith( "<:" ) && emoji?.endsWith( ">" );
+    const displayEmoji = isCustomEmojiString ? undefined : emoji;
+
     return (
         <button
             ref={ ref }
@@ -61,9 +64,9 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
             data-size={ size }
             { ...restProps }
         >
-            { emoji && (
+            { displayEmoji && (
                 <span className="discord-button-emoji" aria-hidden="true">
-                    { emoji }
+                    { displayEmoji }
                 </span>
             ) }
             { icon && (

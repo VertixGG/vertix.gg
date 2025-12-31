@@ -8,6 +8,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
+import { replaceEmojisWithIcons } from "./discord-emojis";
+
 import "./styles/discord-embed.css";
 
 import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
@@ -72,6 +74,7 @@ export interface DiscordEmbedProps
     timestamp?: string;
     embedVariant?: VariantProps<typeof discordEmbedVariants>[ "variant" ];
     colorVariant?: VariantProps<typeof discordEmbedContentVariants>[ "variant" ];
+    emojiIconSrcByUnicode?: Readonly<Record<string, string>>;
     asChild?: boolean;
     [key: string]: unknown;
 }
@@ -102,6 +105,7 @@ export function DiscordEmbed( {
     size,
     embedVariant = "default",
     colorVariant,
+    emojiIconSrcByUnicode,
     asChild = false,
     children,
     ...props
@@ -211,13 +215,13 @@ export function DiscordEmbed( {
                                     ? (
                                         <a
                                             href={ url }
-                                            dangerouslySetInnerHTML={ { __html: title } }
+                                            dangerouslySetInnerHTML={ { __html: replaceEmojisWithIcons( title, emojiIconSrcByUnicode ) } }
                                         />
                                     )
                                     : <a href={ url }>{ title }</a>
                                 )
                                 : ( typeof title === "string"
-                                    ? <span dangerouslySetInnerHTML={ { __html: title } } />
+                                    ? <span dangerouslySetInnerHTML={ { __html: replaceEmojisWithIcons( title, emojiIconSrcByUnicode ) } } />
                                     : title
                                 )
                             }
@@ -232,7 +236,7 @@ export function DiscordEmbed( {
                                     remarkPlugins={ [ remarkGfm ] }
                                     rehypePlugins={ [ rehypeRaw ] as React.ComponentProps<typeof ReactMarkdown>[ "rehypePlugins" ] }
                                 >
-                                    { description }
+                                    { replaceEmojisWithIcons( description, emojiIconSrcByUnicode ) }
                                 </ReactMarkdown>
                             ) : description }
                         </div>

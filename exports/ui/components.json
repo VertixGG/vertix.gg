@@ -890,7 +890,55 @@
                 "name": "VertixBot/UI-V2/DynamicChannel/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "༄ Manage your Dynamic Channel",
+                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\nPlease be advised that the privilege to make alterations is vested solely of the channel owner.\n\n_Current settings_:\n- Name: **{name}**\n- User Limit: ✋ **{limit}**\n- State: {state}\n- Visibility State: {visibilityState}\n- Region: 🌍 **{region}**",
+                            "color": 3369963,
+                            "options": {
+                                "limit": {
+                                    "{limitDisplayValue}": "{limitValue}",
+                                    "{limitDisplayUnlimited}": "Unlimited"
+                                },
+                                "state": {
+                                    "{statePublic}": "🌐 **Public**",
+                                    "{statePrivate}": "🚫 **Private**"
+                                },
+                                "visibilityState": {
+                                    "{visibilityStateShown}": "🐵 **Shown**",
+                                    "{visibilityStateHidden}": "🙈 **Hidden**"
+                                },
+                                "region": {
+                                    "{regionDisplayValue}": "{regionValue}",
+                                    "{regionDisplayAuto}": "Automatic"
+                                }
+                            },
+                            "vars": {
+                                "name": "{name}",
+                                "limit": "{limit}",
+                                "state": "{state}",
+                                "region": "{region}",
+                                "limitDisplayValue": "{limitDisplayValue}",
+                                "limitDisplayUnlimited": "{limitDisplayUnlimited}",
+                                "limitValue": "{limitValue}",
+                                "statePublic": "{statePublic}",
+                                "statePrivate": "{statePrivate}",
+                                "visibilityState": "{visibilityState}",
+                                "visibilityStateShown": "{visibilityStateShown}",
+                                "visibilityStateHidden": "{visibilityStateHidden}",
+                                "regionDisplayValue": "{regionDisplayValue}",
+                                "regionDisplayAuto": "{regionDisplayAuto}",
+                                "regionValue": "{regionValue}"
+                            },
+                            "defaultVars": {
+                                "name": "Channel Name",
+                                "limit": "Unlimited",
+                                "state": "🌐 **Public**",
+                                "visibilityState": "🐵 **Shown**",
+                                "region": "Automatic"
+                            }
+                        }
                     }
                 ]
             }
@@ -904,8 +952,8 @@
         "options": {
             "embedAudit": {
                 "total": 1,
-                "withDefinition": 0,
-                "missingDefinition": 1
+                "withDefinition": 1,
+                "missingDefinition": 0
             }
         }
     },

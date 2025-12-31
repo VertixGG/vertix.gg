@@ -77,7 +77,6 @@
 
 .discord-embed-description {
     color: var(--discord-text-default);
-    white-space: pre-line;
     line-height: 1.125rem;
     margin-top: 8px;
     display: block;
@@ -92,7 +91,7 @@
 
 .discord-embed-paragraph {
     display: block;
-    margin-bottom: 0;
+    margin-bottom: 0.5em;
 }
 
 .discord-embed-paragraph:last-child {
@@ -111,9 +110,6 @@
     margin: 0;
     padding-left: 1.25em;
     list-style-type: disc;
-    list-style-position: outside;
-    display: block;
-    white-space: normal;
 }
 
 .discord-embed-description li {
@@ -123,14 +119,26 @@
     display: list-item;
 }
 
-.discord-embed-description li * {
+.discord-embed-description li *,
+.discord-embed-description li p,
+.discord-embed-description li .discord-embed-paragraph,
+.discord-embed-description li strong,
+.discord-embed-description li em {
     display: inline;
     margin: 0;
     padding: 0;
+    line-height: inherit;
 }
 
 .discord-embed-description li br {
     display: none;
+}
+
+.discord-embed-description li img {
+    display: inline;
+    vertical-align: -0.1em;
+    height: 1.125em;
+    width: 1.125em;
 }
 
 .discord-embed-code {
@@ -249,8 +257,10 @@
     margin: 0 4px;
 }
 
-
-
+.discord-embed-description .emoji {
+    height: 1.375em;
+    width: 1.375em;
+}
 
 
 

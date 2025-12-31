@@ -60,6 +60,7 @@
         "@typescript-eslint/types": "^8.49.0",
         "@typescript-eslint/typescript-estree": "^8.49.0",
         "@vertix.gg/api": "workspace:*",
+        "@vertix.gg/assets": "workspace:*",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/dashboard": "workspace:*",
         "@vertix.gg/bot": "workspace:*",

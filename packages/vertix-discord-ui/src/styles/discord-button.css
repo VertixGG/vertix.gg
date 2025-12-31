@@ -1,21 +1,40 @@
+@import "./discord-tokens.css";
+
 .discord-button {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 0;
-    height: 32px;
-    padding: 2px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    line-height: 16px;
-    border: none;
-    transition: background-color 0.17s ease, color 0.17s ease;
+    background: none;
+    border: 1px solid var(--discord-opacity-white-8);
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: inherit;
     cursor: pointer;
-    user-select: none;
+    display: flex;
+    font-family: var(--discord-font-primary);
+    font-size: 14px;
+    font-weight: var(--discord-font-weight-medium);
+    gap: 4px;
+    justify-content: center;
+    line-height: 16px;
+    padding: 2px 16px;
+    position: relative;
     text-decoration: none;
+    transition:
+        background-color var(--discord-button-transition-duration) ease,
+        border-color var(--discord-button-transition-duration) ease,
+        color var(--discord-button-transition-duration) ease,
+        opacity var(--discord-button-transition-duration) ease;
+    user-select: none;
     white-space: nowrap;
+}
+
+.discord-button:disabled,
+.discord-button[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.discord-button:disabled:hover {
+    background-color: inherit;
 }
 
 .discord-button-primary {
@@ -28,12 +47,17 @@
 }
 
 .discord-button-secondary {
-    background-color: #4e5058;
-    color: #ffffff;
+    background-color: var(--discord-control-secondary-background-default);
+    border-color: var(--discord-border-muted);
+    color: var(--discord-control-secondary-text-default);
 }
 
 .discord-button-secondary:hover {
-    background-color: #6d6f78;
+    background-color: var(--discord-control-secondary-background-hover);
+}
+
+.discord-button-secondary:active {
+    background-color: var(--discord-control-secondary-background-active);
 }
 
 .discord-button-success {
@@ -69,31 +93,41 @@
 }
 
 .discord-button-default {
-    width: 60px;
     height: 32px;
-    padding: 3px 11px;
-    font-size: 13px;
+    line-height: 18px;
+    min-height: 32px;
+    min-width: 60px;
+    padding: calc(var(--discord-space-4) - 1px) calc(var(--discord-space-12) - 1px);
+    width: 60px;
 }
 
 .discord-button-emoji {
-    font-size: 1.1em;
+    font-size: 1em;
     line-height: 1;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .discord-button-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .discord-button-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }   
 
-.discord-button-icon img {
-    width: 19px;
-    height: 19px;
+.discord-button-icon img,
+.discord-button-icon .discord-emoji {
+    width: 18px;
+    height: 18px;
     object-fit: contain;
 }
 
@@ -103,9 +137,7 @@
 }
 
 .discord-embed-buttons .discord-button {
-    flex: 0 1 auto;
-    min-width: auto;
-    max-width: 100%;
+    flex: 0 0 auto;
 }
 
 .discord-embed-button-row {
@@ -114,11 +146,17 @@
     gap: 8px;
 }
 
+.discord-embed-button-row .discord-button {
+    flex: 0 0 auto;
+    width: auto;
+}
+
 .discord-action-rows {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
+    row-gap: 8px;
+    margin-top: 8px;
+    width: 100%;
 }
 
 .discord-action-rows .discord-embed-button-row:first-child {

@@ -17,6 +17,7 @@ export default defineConfig( {
         fs: {
             allow: [
                 path.resolve( __dirname ),
+                path.resolve( __dirname, "../../packages" ),
                 path.resolve( __dirname, "../../assets" )
             ]
         }

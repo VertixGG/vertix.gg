@@ -38,15 +38,15 @@ const discordEmbedVariants = cva(
 );
 
 const discordEmbedContentVariants = cva(
-    "discord-embed-content relative rounded-md bg-[#2F3136] p-4 text-white border-l-4",
+    "discord-embed-content",
     {
         variants: {
             variant: {
-                default: "border-l-[#5865F2]",
-                info: "border-l-[#5865F2]",
-                success: "border-l-[#3BA55C]",
-                warning: "border-l-[#FAA61A]",
-                danger: "border-l-[#ED4245]"
+                default: "",
+                info: "",
+                success: "",
+                warning: "",
+                danger: ""
             }
         },
         defaultVariants: {
@@ -130,7 +130,7 @@ export function DiscordEmbed( {
         a: ( { children, ...anchorProps }: CustomComponentProps ) => (
             <a
                 { ...anchorProps }
-                className="text-[#00A8FC] hover:underline"
+                className="discord-embed-link"
                 target="_blank"
                 rel="noopener noreferrer"
             >
@@ -144,7 +144,7 @@ export function DiscordEmbed( {
             ...codeProps
         }: CustomComponentProps ) => inline ? (
             <code
-                className="bg-zinc-700 px-1.5 py-0.5 rounded-sm font-mono text-white"
+                className="discord-embed-code"
                 { ...codeProps }
             >
                 { codeChildren }
@@ -155,16 +155,16 @@ export function DiscordEmbed( {
             </code>
         ),
         ul: ( { ordered, ...props }: MarkdownListProps ) => (
-            <ul className="list-disc list-outside pl-5 mb-1" { ...props } />
+            <ul { ...props } />
         ),
-        li: ( { ordered, ...props }: MarkdownListItemProps ) => (
-            <li { ...props } />
+        li: ( { ordered, children, ...props }: MarkdownListItemProps ) => (
+            <li { ...props }>{ children }</li>
         ),
         strong: ( props ) => (
             <strong { ...props } />
         ),
-        p: ( props ) => (
-            <p  { ...props } />
+        p: ( { children, ...props }: CustomComponentProps ) => (
+            <span className="discord-embed-paragraph" { ...props }>{ children }</span>
         )
     };
 
@@ -192,30 +192,29 @@ export function DiscordEmbed( {
 
                 <div className={ thumbnail?.url ? "discord-embed-main-content" : "" }>
                     { author && (
-                        <div className="discord-embed-author flex items-center gap-2 text-sm font-medium text-[#FFFFFF]">
+                        <div className="discord-embed-author">
                             { author.icon_url && (
                                 <img
                                     src={ author.icon_url }
                                     alt="Author"
-                                    className="h-6 w-6 rounded-full object-cover"
+                                    className="discord-embed-author-icon"
                                 />
                             ) }
-                            <span>{ url ? <a href={ author.url } className="hover:underline">{ author.name }</a> : author.name }</span>
+                            <span>{ url ? <a href={ author.url }>{ author.name }</a> : author.name }</span>
                         </div>
                     ) }
 
                     { title && (
-                        <div className="discord-embed-title font-bold text-base text-[#FFFFFF]">
+                        <div className="discord-embed-title">
                             { url
                                 ? ( typeof title === "string"
                                     ? (
                                         <a
                                             href={ url }
-                                            className="hover:underline"
                                             dangerouslySetInnerHTML={ { __html: title } }
                                         />
                                     )
-                                    : <a href={ url } className="hover:underline">{ title }</a>
+                                    : <a href={ url }>{ title }</a>
                                 )
                                 : ( typeof title === "string"
                                     ? <span dangerouslySetInnerHTML={ { __html: title } } />
@@ -226,7 +225,7 @@ export function DiscordEmbed( {
                     ) }
 
                     { description && (
-                        <div className="discord-embed-description text-sm text-[#DCDDDE]">
+                        <div className="discord-embed-description">
                             { typeof description === "string" ? (
                                 <ReactMarkdown
                                     components={ markdownComponents }
@@ -241,19 +240,19 @@ export function DiscordEmbed( {
                 </div>
 
                 { fields && fields.length > 0 && (
-                    <div className="discord-embed-fields grid grid-cols-3 gap-2">
+                    <div className="discord-embed-fields">
                         { fields.map( ( field, index ) => (
                             <div
                                 key={ index }
                                 className={ cn(
-                                    "discord-embed-field overflow-hidden",
-                                    field.inline ? "col-span-1" : "col-span-3"
+                                    "discord-embed-field",
+                                    field.inline ? "discord-embed-field-inline" : ""
                                 ) }
                             >
-                                <div className="discord-embed-field-name font-semibold text-sm text-[#FFFFFF]">
+                                <div className="discord-embed-field-name">
                                     { field.name }
                                 </div>
-                                <div className="discord-embed-field-value text-sm text-[#DCDDDE]">
+                                <div className="discord-embed-field-value">
                                     { field.value }
                                 </div>
                             </div>
@@ -273,17 +272,17 @@ export function DiscordEmbed( {
                 { children }
 
                 { ( footer || timestamp ) && (
-                    <div className="discord-embed-footer flex items-center gap-2 text-xs text-[#A3A6AA]">
+                    <div className="discord-embed-footer">
                         { footer?.icon_url && (
                             <img
                                 src={ footer.icon_url }
                                 alt="Footer"
-                                className="h-5 w-5 rounded-full object-cover"
+                                className="discord-embed-footer-icon"
                             />
                         ) }
-                        <span className="flex flex-wrap items-center gap-1">
+                        <span className="discord-embed-footer-text">
                             { footer?.text }
-                            { footer?.text && timestamp && <span>•</span> }
+                            { footer?.text && timestamp && <span className="discord-embed-footer-separator">•</span> }
                             { timestamp && (
                                 <span>{ new Date( timestamp ).toLocaleString() }</span>
                             ) }

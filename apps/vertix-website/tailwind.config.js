@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const path = require( "path" );
+
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -6,6 +8,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    path.join( __dirname, "../../packages/vertix-discord-ui/src/**/*.{ts,tsx}" ),
   ],
   theme: {
     container: {

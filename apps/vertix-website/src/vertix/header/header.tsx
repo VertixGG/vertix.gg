@@ -135,7 +135,7 @@ export default function Header() {
             <div id="vertix-wings" className="d-flex justify-content-center">
                 <div id="vertix-wings-placeholder" className="text-center">
                     <h1 id="vertix-wings-heading" className="user-select-none">Vertix</h1>
-                    <img id="vertix-wings-logo" className="user-select-none" width="60" height="60" src={ RobotBrand } alt=""></img>
+                    <img id="vertix-wings-logo" className="user-select-none" width="80" height="80" src={ RobotBrand } alt=""></img>
                 </div>
             </div>
         </section>

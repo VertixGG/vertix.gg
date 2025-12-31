@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import ShinyStars from "@vertix.gg/website/src/vertix/components/ui/shiny-stars";
 
-import VertixWeb from "@vertix.gg/website/src/vertix/assets/vertix-optimized.webp";
+import RobotBrand from "@assets/brand/Robot.png";
 
 const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } ) => {
     const location = useLocation();
@@ -82,7 +82,7 @@ export default function Header() {
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
                         <img id="vertix-logo" className="me-1 user-select-none" width="60px" height="60px"
-                            src={ VertixWeb } alt=""></img>
+                            src={ RobotBrand } alt=""></img>
                         <span id="vertix-brand-logo" className="d-inline">
                             <span id="vertix-first-letter">V</span>ertix
                         </span>
@@ -135,7 +135,7 @@ export default function Header() {
             <div id="vertix-wings" className="d-flex justify-content-center">
                 <div id="vertix-wings-placeholder" className="text-center">
                     <h1 id="vertix-wings-heading" className="user-select-none">Vertix</h1>
-                    <img id="vertix-wings-logo" className="user-select-none" width="60" height="60" src={ VertixWeb } alt=""></img>
+                    <img id="vertix-wings-logo" className="user-select-none" width="60" height="60" src={ RobotBrand } alt=""></img>
                 </div>
             </div>
         </section>

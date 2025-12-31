@@ -10,7 +10,16 @@ export default defineConfig( {
         alias: {
             "@vertix.gg/website": path.resolve( __dirname, "./" ),
             "@": path.resolve( __dirname, "./src/vertix" ),
+            "@assets": path.resolve( __dirname, "../../assets" ),
         },
+    },
+    server: {
+        fs: {
+            allow: [
+                path.resolve( __dirname ),
+                path.resolve( __dirname, "../../assets" )
+            ]
+        }
     },
     css: {
         preprocessorOptions: {

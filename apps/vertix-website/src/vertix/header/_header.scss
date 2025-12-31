@@ -22,14 +22,6 @@
             }
 
             #vertix-logo {
-                transform: rotate(1140deg);
-
-                &:hover {
-                    animation-name: rotate;
-                    animation-duration: 4s;
-                    animation-iteration-count: 1;
-                    animation-play-state: running;
-                }
             }
 
             #vertix-brand-logo {
@@ -154,11 +146,6 @@
 
                 cursor: pointer;
                 position: relative;
-
-                animation-name: rotate;
-                animation-duration: 5s;
-                animation-iteration-count: infinite;
-                animation-play-state: running;
             }
         }
     }

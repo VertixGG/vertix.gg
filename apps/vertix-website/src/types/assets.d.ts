@@ -27,3 +27,8 @@ declare module "*.svg" {
     const src: string;
     export default src;
 }
+
+declare module "@assets/*.png" {
+    const src: string;
+    export default src;
+}

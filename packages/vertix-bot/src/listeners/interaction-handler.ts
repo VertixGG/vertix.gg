@@ -1,5 +1,6 @@
 import { Events, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 
+import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { Commands } from "@vertix.gg/bot/src/commands";
@@ -13,6 +14,10 @@ import type { Client, CommandInteraction, Interaction } from "discord.js";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async( interaction: Interaction ) => {
+        if ( interaction.guildId ) {
+            GuildModel.$.updateLastActive( interaction.guildId );
+        }
+
         if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
             const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent(
                 interaction.customId

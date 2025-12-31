@@ -72,6 +72,13 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         } );
     }
 
+    public async updateLastActive( guildId: string ) {
+        return this.prisma.guild.update( {
+            where: { guildId },
+            data: { lastActiveAt: new Date() }
+        } );
+    }
+
     protected getClient() {
         return client;
     }

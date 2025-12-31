@@ -48,7 +48,7 @@
         "vertix:website:eslint": "bunx --bun eslint apps/vertix-website",
         "vertix:website:preview": "cd apps/vertix-website && bun run vertix-website:preview",
         "vertix:website:release": "cd apps/vertix-website && bun run vertix-website:release",
-        "vertix:website:                                    deploy": "cd apps/vertix-website && bun run vertix-website:deploy",
+        "vertix:website:deploy": "cd apps/vertix-website && bun run vertix-website:deploy",
         "vertix:website:typecheck": "cd apps/vertix-website && bun run vertix-website:typecheck",
         "vertix:logger:start": "cd packages/vertix-logger && bun run vertix-logger:start",
         "vertix:logger:dev": "cd packages/vertix-logger && bun run vertix-logger:dev"

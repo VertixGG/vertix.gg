@@ -1,8 +1,10 @@
 import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 
-import { UIElementModalBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-modal-base";
+import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export class SetupScalingPrefixInput extends UIElementInputBase {
     public static getName() {
@@ -13,6 +15,10 @@ export class SetupScalingPrefixInput extends UIElementInputBase {
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getStyle(): Promise<UIInputStyleTypes> {
+        return "short";
+    }
+
     protected async getLabel() {
         return "Channel Name Prefix";
     }
@@ -21,7 +27,7 @@ export class SetupScalingPrefixInput extends UIElementInputBase {
         return "Voice";
     }
 
-    protected async getDefaultValue() {
+    protected override async getValue() {
         return "Voice";
     }
 
@@ -43,6 +49,10 @@ export class SetupScalingMaxMembersInput extends UIElementInputBase {
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getStyle(): Promise<UIInputStyleTypes> {
+        return "short";
+    }
+
     protected async getLabel() {
         return "Max Members Per Channel";
     }
@@ -51,7 +61,7 @@ export class SetupScalingMaxMembersInput extends UIElementInputBase {
         return "10";
     }
 
-    protected async getDefaultValue() {
+    protected override async getValue() {
         return "10";
     }
 
@@ -64,7 +74,7 @@ export class SetupScalingMaxMembersInput extends UIElementInputBase {
     }
 }
 
-export class SetupScalingConfigModal extends UIElementModalBase {
+export class SetupScalingConfigModal extends UIModalBase {
     public static getName() {
         return "VertixBot/UI-General/SetupScalingConfigModal";
     }
@@ -73,16 +83,14 @@ export class SetupScalingConfigModal extends UIElementModalBase {
         return UIInstancesTypes.Dynamic;
     }
 
-    protected async getTitle() {
-        return "📈 Configure Scaling Channel";
-    }
-
-    protected async getInputElements() {
+    public static getInputElements() {
         return [
             [ SetupScalingPrefixInput ],
             [ SetupScalingMaxMembersInput ]
         ];
     }
+
+    protected getTitle() {
+        return "📈 Configure Scaling Channel";
+    }
 }
-
-

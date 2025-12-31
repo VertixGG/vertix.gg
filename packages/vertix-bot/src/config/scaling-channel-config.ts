@@ -17,11 +17,12 @@ export class ScalingChannelConfig extends ConfigBase<ScalingChannelConfigInterfa
         return VERSION_SCALING_CHANNEL;
     }
 
-    protected getDefaults(): ScalingChannelConfigInterface["defaults"] {
+    protected getDefaults(): ScalingChannelConfigInterface[ "defaults" ] {
         return {
             settings: {
                 scalingChannelPrefix: "Voice",
                 scalingChannelMaxMembersPerChannel: 10,
+                scalingChannelMinAvailableChannels: 1,
                 scalingChannelCategoryId: null
             },
 

@@ -65,7 +65,7 @@ export abstract class ModelDataOwnerStrictDataBase<
             keys.forEach( ( key ) => {
                 const value = data[ key ];
 
-                if ( !value ) {
+                if ( typeof value === "undefined" ) {
                     return;
                 }
 

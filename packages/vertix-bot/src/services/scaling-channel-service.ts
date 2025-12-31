@@ -298,20 +298,25 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         }
 
         const scalingChannels = await this.findScalingChannels( guild, masterChannelId );
+        const availableChannelsCount = this.computeAvailableChannelsCount( scalingChannels, scalingChannelMaxMembersPerChannel );
         const totalAvailableSlots = this.computeTotalAvailableSlots( scalingChannels, scalingChannelMaxMembersPerChannel );
+        const minAvailableChannels = config.scalingChannelMinAvailableChannels ?? 1;
 
-        this.debugger.log( this.handleJoinScaling, `Total available slots: ${ totalAvailableSlots }` );
+        this.logger.log( this.handleJoinScaling, `Scaling evaluation for master ${ masterChannelId }: ` +
+            `Available rooms: ${ availableChannelsCount } (min: ${ minAvailableChannels }), ` +
+            `Total slots: ${ totalAvailableSlots }` );
 
-        if ( totalAvailableSlots <= 1 ) {
-            const masterDB = await ChannelModel.$.getByChannelId( masterChannelId );
+        if ( availableChannelsCount <= minAvailableChannels || totalAvailableSlots <= 1 ) {
+            const masterDB = await ChannelModel.$.getById( masterChannelId );
 
             if ( !masterDB ) {
+                this.logger.error( this.handleJoinScaling, `Master channel DB entry not found for ID: ${ masterChannelId }` );
                 return;
             }
 
             const nextIndex = scalingChannels.length + 1;
 
-            this.logger.log( this.handleJoinScaling, `Only ${ totalAvailableSlots } slot(s) remaining, creating new scaling channel #${ nextIndex }` );
+            this.logger.log( this.handleJoinScaling, `Scaling trigger hit for master ${ masterChannelId }, creating new scaling channel #${ nextIndex }` );
 
             await this.createScaledChannel( guild, category, masterDB, scalingChannelPrefix, scalingChannelMaxMembersPerChannel, nextIndex );
         }
@@ -359,6 +364,18 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         }
 
         return total;
+    }
+
+    private computeAvailableChannelsCount( scalingChannels: VoiceChannel[], maxMembers: number ): number {
+        let count = 0;
+
+        for ( const ch of scalingChannels ) {
+            if ( ch.members.size < maxMembers ) {
+                ++count;
+            }
+        }
+
+        return count;
     }
 
     private async cleanupExcessEmptyChannels( scalingChannels: VoiceChannel[] ) {

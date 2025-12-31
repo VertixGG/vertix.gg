@@ -40,6 +40,7 @@ export interface MasterChannelConfigInterfaceV3
 export interface ScalingChannelSettingsInterface {
     scalingChannelPrefix: string;
     scalingChannelMaxMembersPerChannel: number;
+    scalingChannelMinAvailableChannels: number;
     scalingChannelCategoryId: string | null;
 }
 

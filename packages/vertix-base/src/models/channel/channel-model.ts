@@ -282,12 +282,20 @@ export class ChannelModel extends ModelWithDataBase<
     }
 
     public async getByChannelId( channelId: string | null, cache = true ) {
-        // TODO: Remove backwards compatibility.
+        // ...
         if ( !channelId ) {
             return null;
         }
 
         return this.findUnique( { where: { channelId } }, cache );
+    }
+
+    public async getById( id: string | null, cache = true ) {
+        if ( !id ) {
+            return null;
+        }
+
+        return this.findUnique( { where: { id } }, cache );
     }
 
     public async getMasterByDynamicChannelId( dynamicChannelId: string, cache = true ) {
@@ -371,10 +379,12 @@ export class ChannelModel extends ModelWithDataBase<
     }
 
     private generateCacheKey( obj: Record<string, any> ) {
-        if ( !obj.channelId ) {
-            throw new Error( "Missing channelId" );
+        const key = obj.channelId || obj.id;
+
+        if ( !key ) {
+            throw new Error( "Missing channelId or id" );
         }
 
-        return obj.channelId as string;
+        return key as string;
     }
 }

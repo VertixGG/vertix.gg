@@ -88,7 +88,7 @@ export abstract class ModelDataOwnerConfigBase<
         let result = await this.getSliceData( queryArgs, "settings", cache, false ) as TDataSlice | null;
 
         if ( defaultSettings ) {
-            result = Object.assign( defaultSettings, result );
+            result = Object.assign( {}, defaultSettings, result );
         } else if ( isReturnDefaultCallback ) {
             result = returnDefaults( result );
         }

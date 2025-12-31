@@ -1,41 +1,29 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/app";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelMetaRenameBadwordEmbed extends UIEmbedBase {
-    private static vars = {
-        badword: uiUtilsWrapAsTemplate( "badword" )
-    };
+const vars = {
+    badword: uiUtilsWrapAsTemplate( "badword" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed";
-    }
+const DynamicChannelMetaRenameBadwordEmbed = new EmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
+    .setTitle( () => "🙅  Failed to rename your channel" )
+    .setDescription( () => `The word \`${ vars.badword }\` has been classified as inappropriate by the server administrator.` )
+    .setLogic( ( args: UIArgs ) => ( {
+        badword: args.badword
+    } ) )
+    .setDefaultVars( () => ( {
+        badword: "word"
+    } ) )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor(): number {
-        return VERTIX_DEFAULT_COLOR_ORANGE_RED;
-    }
-
-    protected getTitle(): string {
-        return "🙅  Failed to rename your channel";
-    }
-
-    protected getDescription(): string {
-        return `The word \`${ DynamicChannelMetaRenameBadwordEmbed.vars.badword }\` has been classified as inappropriate by the server administrator.`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            badword: args.badword
-        };
-    }
-}
+export { DynamicChannelMetaRenameBadwordEmbed };

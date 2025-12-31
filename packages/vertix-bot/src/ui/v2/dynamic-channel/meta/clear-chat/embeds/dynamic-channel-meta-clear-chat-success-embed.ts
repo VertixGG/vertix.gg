@@ -1,41 +1,30 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelMetaClearChatSuccessEmbed extends UIEmbedBase {
-    private static vars = {
-        ownerDisplayName: uiUtilsWrapAsTemplate( "ownerDisplayName" ),
-        totalMessages: uiUtilsWrapAsTemplate( "totalMessages" )
-    };
+const vars = {
+    ownerDisplayName: uiUtilsWrapAsTemplate( "ownerDisplayName" ),
+    totalMessages: uiUtilsWrapAsTemplate( "totalMessages" )
+};
 
-    public static getName(): string {
-        return "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed";
-    }
+const DynamicChannelMetaClearChatSuccessEmbed = new EmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0xc5ac63 )
+    .setTitle( () => `🧹  Chat was cleared the by ${ vars.ownerDisplayName }!` )
+    .setDescription( () => `Total of ${ vars.totalMessages } messages.` )
+    .setLogic( ( args: UIArgs ) => ( {
+        ownerDisplayName: args.ownerDisplayName,
+        totalMessages: args.totalMessages
+    } ) )
+    .setDefaultVars( () => ( {
+        ownerDisplayName: "User",
+        totalMessages: "0"
+    } ) )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic; // TODO: change to static.
-    }
-
-    protected getColor(): number {
-        return 0xc5ac63; // Broom like.
-    }
-
-    protected getTitle(): string {
-        return `🧹  Chat was cleared the by ${ DynamicChannelMetaClearChatSuccessEmbed.vars.ownerDisplayName }!`;
-    }
-
-    protected getDescription(): string {
-        return `Total of ${ DynamicChannelMetaClearChatSuccessEmbed.vars.totalMessages } messages.`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            ownerDisplayName: args.ownerDisplayName,
-            totalMessages: args.totalMessages
-        };
-    }
-}
+export { DynamicChannelMetaClearChatSuccessEmbed };

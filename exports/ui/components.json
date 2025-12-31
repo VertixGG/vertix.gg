@@ -555,7 +555,18 @@
                 "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👑  You're back in charge!",
+                            "description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n",
+                            "vars": {
+                                "absentMinutes": "{absentMinutes}"
+                            },
+                            "defaultVars": {
+                                "absentMinutes": "5.0"
+                            }
+                        }
                     }
                 ]
             },
@@ -563,7 +574,20 @@
                 "name": "VertixBot/UI-V2/ClaimResultVotedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultVotedEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultVotedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🗳️  You have voted for {userDisplayName}",
+                            "description": "Your vote has been cast in favor of <@{userId}> taking ownership of this channel.",
+                            "vars": {
+                                "userDisplayName": "{userDisplayName}",
+                                "userId": "{userId}"
+                            },
+                            "defaultVars": {
+                                "userDisplayName": "User",
+                                "userId": "123456789"
+                            }
+                        }
                     }
                 ]
             },
@@ -571,7 +595,20 @@
                 "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultVotedSameEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🗳️  You already voted for {userDisplayName}",
+                            "description": "Your vote has been already cast in favor of <@{userId}>, you can vote for someone else if you changed your mind.",
+                            "vars": {
+                                "userDisplayName": "{userDisplayName}",
+                                "userId": "{userId}"
+                            },
+                            "defaultVars": {
+                                "userDisplayName": "User",
+                                "userId": "123456789"
+                            }
+                        }
                     }
                 ]
             },
@@ -579,7 +616,20 @@
                 "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🗳️  Your vote has been updated",
+                            "description": "You've just changed your vote from <@{prevUserId}> to <@{currentUserId}> for channel ownership.",
+                            "vars": {
+                                "prevUserId": "{prevUserId}",
+                                "currentUserId": "{currentUserId}"
+                            },
+                            "defaultVars": {
+                                "prevUserId": "123456789",
+                                "currentUserId": "987654321"
+                            }
+                        }
                     }
                 ]
             },
@@ -587,7 +637,10 @@
                 "name": "VertixBot/UI-V2/ClaimResultStepInEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultStepInEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultStepInEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic"
+                        }
                     }
                 ]
             },
@@ -595,7 +648,11 @@
                 "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "color": 16738560
+                        }
                     }
                 ]
             },
@@ -603,7 +660,11 @@
                 "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "color": 16738560
+                        }
                     }
                 ]
             }
@@ -617,8 +678,8 @@
         "options": {
             "embedAudit": {
                 "total": 7,
-                "withDefinition": 0,
-                "missingDefinition": 7
+                "withDefinition": 7,
+                "missingDefinition": 0
             }
         }
     },
@@ -654,7 +715,22 @@
                 "name": "VertixBot/UI-V2/ClaimStartComponent/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimStartEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimStartEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👋  {ownerDisplayName} abandoned his channel!",
+                            "description": "<@{ownerId}> has been absent for more than {absentMinutes} minutes.\nWill you be the one to take charge? Step up and claim it for yourself!",
+                            "vars": {
+                                "ownerId": "{ownerId}",
+                                "ownerDisplayName": "{ownerDisplayName}",
+                                "absentMinutes": "{absentMinutes}"
+                            },
+                            "defaultVars": {
+                                "ownerId": "123456789",
+                                "ownerDisplayName": "User",
+                                "absentMinutes": "5.0"
+                            }
+                        }
                     }
                 ]
             }
@@ -668,8 +744,8 @@
         "options": {
             "embedAudit": {
                 "total": 1,
-                "withDefinition": 0,
-                "missingDefinition": 1
+                "withDefinition": 1,
+                "missingDefinition": 0
             }
         }
     },
@@ -989,7 +1065,21 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🧹  Chat was cleared the by {ownerDisplayName}!",
+                            "description": "Total of {totalMessages} messages.",
+                            "color": 12954723,
+                            "vars": {
+                                "ownerDisplayName": "{ownerDisplayName}",
+                                "totalMessages": "{totalMessages}"
+                            },
+                            "defaultVars": {
+                                "ownerDisplayName": "User",
+                                "totalMessages": "0"
+                            }
+                        }
                     }
                 ]
             },
@@ -997,7 +1087,11 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "color": 12954723
+                        }
                     }
                 ]
             },
@@ -1025,8 +1119,8 @@
         "options": {
             "embedAudit": {
                 "total": 3,
-                "withDefinition": 1,
-                "missingDefinition": 2
+                "withDefinition": 3,
+                "missingDefinition": 0
             }
         }
     },
@@ -1043,7 +1137,26 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "✋  Your channel's user limit has changed to {userLimit}",
+                            "color": 16109389,
+                            "options": {
+                                "userLimit": {
+                                    "{userLimitValue}": "{userLimitValue}",
+                                    "{userLimitUnlimited}": "Unlimited"
+                                }
+                            },
+                            "vars": {
+                                "userLimit": "{userLimit}",
+                                "userLimitValue": "{userLimitValue}",
+                                "userLimitUnlimited": "{userLimitUnlimited}"
+                            },
+                            "defaultVars": {
+                                "userLimit": "Unlimited"
+                            }
+                        }
                     }
                 ]
             },
@@ -1051,7 +1164,20 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙅  User limit must be between {minValue} and {maxValue}",
+                            "color": 16738560,
+                            "vars": {
+                                "minValue": "{minValue}",
+                                "maxValue": "{maxValue}"
+                            },
+                            "defaultVars": {
+                                "minValue": "0",
+                                "maxValue": "99"
+                            }
+                        }
                     }
                 ]
             },
@@ -1096,8 +1222,8 @@
         "options": {
             "embedAudit": {
                 "total": 3,
-                "withDefinition": 1,
-                "missingDefinition": 2
+                "withDefinition": 3,
+                "missingDefinition": 0
             }
         }
     },
@@ -1114,7 +1240,19 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙅  Failed to rename your channel",
+                            "description": "The word `{badword}` has been classified as inappropriate by the server administrator.",
+                            "color": 16738560,
+                            "vars": {
+                                "badword": "{badword}"
+                            },
+                            "defaultVars": {
+                                "badword": "word"
+                            }
+                        }
                     }
                 ]
             },
@@ -1130,7 +1268,18 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "✏️  Your channel's name has changed to '{channelName}'",
+                            "color": 15248904,
+                            "vars": {
+                                "channelName": "{channelName}"
+                            },
+                            "defaultVars": {
+                                "channelName": "New Channel Name"
+                            }
+                        }
                     }
                 ]
             }
@@ -1161,8 +1310,8 @@
         "options": {
             "embedAudit": {
                 "total": 3,
-                "withDefinition": 0,
-                "missingDefinition": 3
+                "withDefinition": 2,
+                "missingDefinition": 1
             }
         }
     },
@@ -1240,7 +1389,44 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🚫  The channel is private now",
+                            "description": "Please be aware that only granted users can enter your channel.\n\n{allowedUsersDisplay}\n{message}",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 15829877,
+                            "options": {
+                                "message": {
+                                    "{messageDefault}": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                                    "{messageAccessNotAvailable}": "There is no way to grant access to your channel for new members.\n\nThis is because the **(👥 Access)** Button has been disabled by the administrator"
+                                },
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently no other user has access except you.\n",
+                                    "{allowedUsers}": "**_Allowed users_**: \n{allowedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "message": "{message}",
+                                "messageDefault": "{messageDefault}",
+                                "messageAccessNotAvailable": "{messageAccessNotAvailable}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "message": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                                "allowedUsersDisplay": "Currently no other user has access except you.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1248,7 +1434,12 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 7719137
+                        }
                     }
                 ]
             },
@@ -1256,7 +1447,44 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙈  The channel is hidden now",
+                            "description": "Please be aware that only granted users can see your channel.\n\n{allowedUsersDisplay}\n{message}",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 13081951,
+                            "options": {
+                                "message": {
+                                    "{messageDefault}": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                                    "{messageAccessNotAvailable}": "There is no way to grant access to your channel for new members.\n\nThis is because the **(👥 Access)** Button has been disabled by the administrator"
+                                },
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently no other user has access except you.\n",
+                                    "{allowedUsers}": "**_Allowed users_**: \n{allowedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "message": "{message}",
+                                "messageDefault": "{messageDefault}",
+                                "messageAccessNotAvailable": "{messageAccessNotAvailable}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "message": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
+                                "allowedUsersDisplay": "Currently no other user has access except you.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1264,7 +1492,11 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "color": 13081951
+                        }
                     }
                 ]
             },
@@ -1272,7 +1504,49 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
+                                    "{allowedUsers}": "{allowedUsers}\n"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
+                                    "{blockedUsers}": "{blockedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                },
+                                "blockedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1280,7 +1554,49 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
+                                    "{allowedUsers}": "{allowedUsers}\n"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
+                                    "{blockedUsers}": "{blockedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                },
+                                "blockedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1288,7 +1604,49 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
+                                    "{allowedUsers}": "{allowedUsers}\n"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
+                                    "{blockedUsers}": "{blockedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                },
+                                "blockedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1296,7 +1654,49 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
+                                    "{allowedUsers}": "{allowedUsers}\n"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
+                                    "{blockedUsers}": "{blockedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                },
+                                "blockedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1304,7 +1704,49 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
+                                    "{allowedUsers}": "{allowedUsers}\n"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
+                                    "{blockedUsers}": "{blockedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                },
+                                "blockedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1312,7 +1754,49 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
+                                    "{allowedUsers}": "{allowedUsers}\n"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
+                                    "{blockedUsers}": "{blockedUsers}\n"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                },
+                                "blockedUsers": {
+                                    "format": "- <@{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
                     }
                 ]
             },
@@ -1354,8 +1838,8 @@
         "options": {
             "embedAudit": {
                 "total": 12,
-                "withDefinition": 2,
-                "missingDefinition": 10
+                "withDefinition": 12,
+                "missingDefinition": 0
             }
         }
     },
@@ -1481,7 +1965,12 @@
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963
+                        }
                     }
                 ]
             },
@@ -1489,7 +1978,20 @@
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔀  Transfer channel ownership",
+                            "description": "Transfer channel ownership to {userDisplayName}.\n\n⚠️ By transferring the channel ownership to another user, you will lose your ownership privileges.\n\nAre you sure you want to transfer the channel ownership to **{userDisplayName}?**",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "userDisplayName": "{userDisplayName}"
+                            },
+                            "defaultVars": {
+                                "userDisplayName": "User"
+                            }
+                        }
                     }
                 ]
             },
@@ -1497,7 +1999,12 @@
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963
+                        }
                     }
                 ]
             },
@@ -1539,8 +2046,8 @@
         "options": {
             "embedAudit": {
                 "total": 5,
-                "withDefinition": 2,
-                "missingDefinition": 3
+                "withDefinition": 5,
+                "missingDefinition": 0
             }
         }
     },
@@ -1725,7 +2232,35 @@
                 "name": "VertixBot/UI-V2/SetupEditEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupEditEmbed"
+                        "embed": "VertixBot/UI-V2/SetupEditEmbed",
+                        "definition": {
+                            "description": "{dynamicChannelButtonsTemplate}",
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "- ( {value} ){separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "0": "✏️ ∙ **Rename**",
+                                        "1": "✋ ∙ **User Limit**",
+                                        "2": "🧹 ∙ **Clear Chat**",
+                                        "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+                                        "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+                                        "5": "👥 ∙ **Access**",
+                                        "6": "🔃 ∙ **Reset**",
+                                        "7": "😈 ∙ **Claim**",
+                                        "12": "🔀 ∙ **Transfer**"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                            },
+                            "defaultVars": {
+                                "dynamicChannelButtonsTemplate": "Button list"
+                            }
+                        }
                     }
                 ]
             },
@@ -1733,7 +2268,21 @@
                 "name": "VertixBot/UI-V2/SetupEditButtonsEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupEditButtonsEmbed"
+                        "embed": "VertixBot/UI-V2/SetupEditButtonsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
+                            "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
+                            "footer": "Current enabled buttons at the menu below",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "index": "{index}"
+                            },
+                            "defaultVars": {
+                                "index": "1"
+                            }
+                        }
                     }
                 ]
             },
@@ -1741,7 +2290,21 @@
                 "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed"
+                        "embed": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
+                            "description": "Editing buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
+                            "footer": "Current enabled buttons at the menu below",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "index": "{index}"
+                            },
+                            "defaultVars": {
+                                "index": "1"
+                            }
+                        }
                     }
                 ]
             },
@@ -1779,8 +2342,8 @@
         "options": {
             "embedAudit": {
                 "total": 4,
-                "withDefinition": 0,
-                "missingDefinition": 4
+                "withDefinition": 3,
+                "missingDefinition": 1
             }
         }
     },
@@ -1974,7 +2537,35 @@
                 "name": "VertixBot/UI-V2/SetupStep2Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupStep2Embed"
+                        "embed": "VertixBot/UI-V2/SetupStep2Embed",
+                        "definition": {
+                            "description": "{dynamicChannelButtonsTemplate}",
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "- ( {value} ){separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "0": "✏️ ∙ **Rename**",
+                                        "1": "✋ ∙ **User Limit**",
+                                        "2": "🧹 ∙ **Clear Chat**",
+                                        "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+                                        "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+                                        "5": "👥 ∙ **Access**",
+                                        "6": "🔃 ∙ **Reset**",
+                                        "7": "😈 ∙ **Claim**",
+                                        "12": "🔀 ∙ **Transfer**"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                            },
+                            "defaultVars": {
+                                "dynamicChannelButtonsTemplate": "Button list"
+                            }
+                        }
                     }
                 ]
             },
@@ -2042,8 +2633,8 @@
         "options": {
             "embedAudit": {
                 "total": 5,
-                "withDefinition": 2,
-                "missingDefinition": 3
+                "withDefinition": 3,
+                "missingDefinition": 2
             }
         }
     },

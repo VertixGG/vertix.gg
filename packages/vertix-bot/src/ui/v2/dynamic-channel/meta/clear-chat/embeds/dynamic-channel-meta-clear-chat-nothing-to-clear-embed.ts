@@ -1,24 +1,13 @@
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelMetaClearChatNothingToClearEmbed extends UIEmbedBase {
-    public static getName(): string {
-        return "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed";
-    }
+const DynamicChannelMetaClearChatNothingToClearEmbed = new EmbedBuilder(
+    "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed"
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0xc5ac63 )
+    .setTitle( () => "🧹  There are no messages available to clear" )
+    .setDescription( () => "Keep in mind, that only non-embeds messages can be deleted." )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor(): number {
-        return 0xc5ac63; // Broom like.
-    }
-
-    protected getTitle(): string {
-        return "🧹  There are no messages available to clear";
-    }
-
-    protected getDescription(): string {
-        return "Keep in mind, that only non-embeds messages can be deleted.";
-    }
-}
+export { DynamicChannelMetaClearChatNothingToClearEmbed };

@@ -1,42 +1,29 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-/**
- * Shown when the user changed his vote from one user to another.
- */
-export class ClaimResultVoteUpdatedEmbed extends UIEmbedBase {
-    private static vars = {
-        prevUserId: uiUtilsWrapAsTemplate( "prevUserId" ),
-        currentUserId: uiUtilsWrapAsTemplate( "currentUserId" )
-    };
+const vars = {
+    prevUserId: uiUtilsWrapAsTemplate( "prevUserId" ),
+    currentUserId: uiUtilsWrapAsTemplate( "currentUserId" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed";
-    }
+const ClaimResultVoteUpdatedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setTitle( () => "🗳️  Your vote has been updated" )
+    .setDescription( () => `You've just changed your vote from <@${ vars.prevUserId }> to <@${ vars.currentUserId }> for channel ownership.` )
+    .setLogic( ( args: UIArgs ) => ( {
+        prevUserId: args.prevUserId,
+        currentUserId: args.currentUserId
+    } ) )
+    .setDefaultVars( () => ( {
+        prevUserId: "123456789",
+        currentUserId: "987654321"
+    } ) )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getTitle() {
-        return "🗳️  Your vote has been updated";
-    }
-
-    protected getDescription() {
-        const { prevUserId, currentUserId } = ClaimResultVoteUpdatedEmbed.vars;
-
-        return `You've just changed your vote from <@${ prevUserId }> to <@${ currentUserId }> for channel ownership.`;
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            prevUserId: args.prevUserId,
-            currentUserId: args.currentUserId
-        };
-    }
-}
+export { ClaimResultVoteUpdatedEmbed };

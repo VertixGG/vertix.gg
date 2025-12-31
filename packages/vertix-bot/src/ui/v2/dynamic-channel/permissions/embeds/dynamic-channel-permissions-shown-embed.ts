@@ -1,22 +1,12 @@
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelPermissionsShownEmbed extends UIEmbedBase {
-    private static vars = {};
+const DynamicChannelPermissionsShownEmbed = new EmbedBuilder(
+    "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed"
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( 0xc79d5f )
+    .setTitle( () => "🐵  The channel is visible now" )
+    .build();
 
-    public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed";
-    }
-
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic; // TODO: Should be static.
-    }
-
-    protected getColor() {
-        return 0xc79d5f; // Same as globe emoji.
-    }
-
-    protected getTitle() {
-        return "🐵  The channel is visible now";
-    }
-}
+export { DynamicChannelPermissionsShownEmbed };

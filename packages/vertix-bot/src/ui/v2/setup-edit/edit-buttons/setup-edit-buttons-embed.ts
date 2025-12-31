@@ -1,53 +1,35 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class SetupEditButtonsEmbed extends UIEmbedBase {
-    private static vars = {
-        index: uiUtilsWrapAsTemplate( "index" )
-    };
+const vars = {
+    index: uiUtilsWrapAsTemplate( "index" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V2/SetupEditButtonsEmbed";
-    }
+const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/SetupEditButtonsEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( () => `🎚  Edit Buttons Of Master Channel #${ vars.index }` )
+    .setDescription( () => (
+        "Select which buttons you wish to be visible for your members.\n\n" +
+        "Only selected buttons will be enabled/visible at\n" +
+        "_Dynamic Channels_ that created by this master channel.\n\n"
+    ) )
+    .setFooterText( () => "Current enabled buttons at the menu below" )
+    .setLogic( ( args: UIArgs ) => ( {
+        index: args.index + 1
+    } ) )
+    .setDefaultVars( () => ( {
+        index: "1"
+    } ) )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getColor(): number {
-        return VERTIX_DEFAULT_COLOR_BRAND;
-    }
-
-    protected getImage(): string {
-        return UI_IMAGE_EMPTY_LINE_URL;
-    }
-
-    protected getTitle() {
-        return `🎚  Edit Buttons Of Master Channel #${ SetupEditButtonsEmbed.vars.index }`;
-    }
-
-    protected getDescription(): string {
-        return (
-            "Select which buttons you wish to be visible for your members.\n\n" +
-            "Only selected buttons will be enabled/visible at\n" +
-            "_Dynamic Channels_ that created by this master channel.\n\n"
-        );
-    }
-
-    protected getFooter() {
-        return "Current enabled buttons at the menu below";
-    }
-
-    protected getLogic( args: UIArgs ) {
-        return {
-            index: args.index + 1
-        };
-    }
-}
+export { SetupEditButtonsEmbed };

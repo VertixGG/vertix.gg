@@ -1,19 +1,12 @@
 set -e
 
-mongoUri="${BOT_PRISMA_DATABASE_URL:?BOT_PRISMA_DATABASE_URL is required}"
-
-mode="${1:-config}"
-
-if [ "${mode}" = "--all" ]; then
-    evalScript="db.Config.drop()
-db.ChannelData.drop()
-db.GuildData.drop()
-db.UserData.drop()
-db.UserChannelData.drop()"
-else
-    evalScript="db.Config.drop()"
+# Load .env if exists and BOT_PRISMA_DATABASE_URL is not set
+if [ -z "${BOT_PRISMA_DATABASE_URL}" ] && [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
 fi
 
-mongosh "${mongoUri}" --eval "${evalScript}"
+mongoUri="${BOT_PRISMA_DATABASE_URL:?BOT_PRISMA_DATABASE_URL is required}"
+
+mongosh "${mongoUri}" --eval "db.Config.drop()"
 
 

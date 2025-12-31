@@ -27,6 +27,8 @@ export const SETUP_EMBED_VARS = {
         channelsVerifiedRoles: uiUtilsWrapAsTemplate( "channelsVerifiedRoles" ),
         channelsLogsChannelId: uiUtilsWrapAsTemplate( "channelsLogsChannelId" ),
         channelsAutoSave: uiUtilsWrapAsTemplate( "channelsAutoSave" ),
+        scalingPrefix: uiUtilsWrapAsTemplate( "scalingPrefix" ),
+        scalingMaxMembers: uiUtilsWrapAsTemplate( "scalingMaxMembers" ),
         version: uiUtilsWrapAsTemplate( "version" )
     },
     badwords: uiUtilsWrapAsTemplate( "badwords" ),

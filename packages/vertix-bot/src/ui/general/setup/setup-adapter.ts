@@ -22,7 +22,9 @@ import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder"
 import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { EmbedBuilderUtils } from "@vertix.gg/gui/src/builders/embed-builder.utils";
+import { VERSION_SCALING_CHANNEL } from "@vertix.gg/bot/src/config/scaling-channel-config";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
 import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
@@ -330,17 +332,6 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             throw new Error( "Invalid masterChannelsOptions" );
         }
 
-        const options = masterChannelsOptions as {
-            index: number;
-            id: string;
-            channelsTemplateName: string;
-            channelsTemplateButtons: string;
-            channelsVerifiedRoles: string;
-            channelsLogsChannelId: string;
-            channelsAutoSave: string;
-            version: string;
-        };
-
         const valueStr = value != null ? String( value ) : "";
         const separatorStr = separator != null ? String( separator ) : "";
 
@@ -348,18 +339,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             masterChannels: {
                 format: valueStr + separatorStr,
                 separator: "\n",
-                multiSeparator: "\n\n",
-                options: {
-                    index: `**#${ options.index }**`,
-                    name: `▹ Name: <#${ options.id }>`,
-                    id: `▹ Channel ID: \`${ options.id }\``,
-                    channelsTemplateName: `▹ Dynamic Channels Name: \`${ options.channelsTemplateName }\``,
-                    channelsTemplateButtons: `▹ Buttons: **${ options.channelsTemplateButtons }**`,
-                    channelsVerifiedRoles: `▹ Verified Roles: ${ options.channelsVerifiedRoles }`,
-                    channelsLogsChannelId: `▹ Logs Channel: ${ options.channelsLogsChannelId }`,
-                    channelsAutoSave: `▹ Auto Save: \`${ options.channelsAutoSave }\``,
-                    version: `▹ UI Version: \`${ options.version }\``
-                }
+                multiSeparator: "\n\n"
             },
             badwords: {
                 format: `${ valueStr }${ separatorStr }`,
@@ -396,6 +376,22 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
             const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
 
+            if ( version === VERSION_SCALING_CHANNEL ) {
+                const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings( channel.id );
+
+                const prefix = scalingSettings?.scalingChannelPrefix || "Voice";
+                const maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel || 10;
+
+                return [
+                    `**#${ index + 1 }**`,
+                    `▹ Name: <#${ channel.channelId }>`,
+                    `▹ Channel ID: \`${ channel.channelId }\``,
+                    `▹ Scaling Prefix: \`${ prefix }\``,
+                    `▹ Max Members: \`${ maxMembers }\``,
+                    `▹ UI Version: \`${ version }\``
+                ];
+            }
+
             const data = await MasterChannelDataManager.$.getAllSettings( {
                 ...channel,
                 isDynamic: false,
@@ -418,16 +414,21 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 .map( ( roleId: string ) => `<@&${ roleId }>` )
                 .join( ", " ) || "@@everyone";
 
-            return {
-                index: index + 1,
-                id: channel.channelId,
-                channelsTemplateName: data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate,
-                channelsTemplateButtons: buttonsDisplay,
-                channelsVerifiedRoles: rolesDisplay,
-                channelsLogsChannelId: data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none,
-                channelsAutoSave: String( data.dynamicChannelAutoSave ?? "false" ),
-                version
-            };
+            const nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
+            const logsDisplay = data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none;
+            const autoSaveDisplay = String( data.dynamicChannelAutoSave ?? "false" );
+
+            return [
+                `**#${ index + 1 }**`,
+                `▹ Name: <#${ channel.channelId }>`,
+                `▹ Channel ID: \`${ channel.channelId }\``,
+                `▹ Dynamic Channels Name: \`${ nameTemplate }\``,
+                `▹ Buttons: **${ buttonsDisplay }**`,
+                `▹ Verified Roles: ${ rolesDisplay }`,
+                `▹ Logs Channel: ${ logsDisplay }`,
+                `▹ Auto Save: \`${ autoSaveDisplay }\``,
+                `▹ UI Version: \`${ version }\``
+            ];
         } ) );
 
         const result: Record<string, JsonValue> = {};

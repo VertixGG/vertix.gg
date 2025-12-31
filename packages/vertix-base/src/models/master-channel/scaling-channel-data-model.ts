@@ -1,3 +1,5 @@
+import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
+
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-base";
@@ -32,6 +34,25 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
 
     public async getScalingSettings( ownerId: string, returnDefaults = true ) {
         return super.getSettings( ownerId, true, returnDefaults );
+    }
+
+    public async getAllScalingSettings() {
+        const key = `${ this.getName() }/settings`;
+
+        const results = await PrismaBotClient.$.getClient().channelData.findMany( {
+            where: {
+                key,
+                version: this.getDataVersion()
+            },
+            include: {
+                channel: true
+            }
+        } );
+
+        return results.map( ( result ) => ( {
+            masterChannel: result.channel,
+            settings: result.object as ScalingChannelConfigInterface[ "data" ][ "settings" ]
+        } ) );
     }
 
     public async setPrefix( ownerId: string, prefix: string ) {

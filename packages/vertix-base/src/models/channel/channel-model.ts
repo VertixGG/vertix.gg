@@ -333,9 +333,11 @@ export class ChannelModel extends ModelWithDataBase<
     public async getScalingChannelsByMasterId( guildId: string, masterChannelId: string, cache = true ) {
         return this.findMany(
             {
-                guildId,
-                ownerChannelId: masterChannelId,
-                internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL
+                where: {
+                    guildId,
+                    ownerChannelId: masterChannelId,
+                    internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL
+                }
             },
             cache
         );

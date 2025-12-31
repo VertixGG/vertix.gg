@@ -141,6 +141,7 @@ exports.Prisma.GuildScalarFieldEnum = {
   guildId: 'guildId',
   name: 'name',
   isInGuild: 'isInGuild',
+  lastActiveAt: 'lastActiveAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   updatedAtInternal: 'updatedAtInternal'

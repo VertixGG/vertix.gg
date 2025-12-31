@@ -1,5 +1,16 @@
 # Changelog
 
+**Version: 0.0.11 ~ 31/12/2025**
+- New Features:
+    - **Scaling Channel Improvements**: Added `scalingChannelMinAvailableChannels` configuration to ensure a minimum number of available rooms.
+    - **Database Utility**: Added `drop-config-collections.sh` script for managing global configuration collections.
+- Improvements:
+    - **Auto-Scaling Logic**: Restored legacy "1 slot left" trigger and enhanced it with "1 room left" detection.
+    - **Framework Stability**: Fixed a critical mutation bug in `ModelDataOwnerConfigBase` and improved falsy value handling in `ModelDataOwnerStrictDataBase`.
+    - **Channel Identification**: Improved `ChannelModel` with `getById()` to support fetching by internal MongoDB `_id` and updated cache key generation.
+
+---
+
 **Version: 0.0.10 ~ 29/12/2025**
 - New Features:
     - **Channel Templates (Presets)**: Capture your current channel configuration as a template and reuse it later.

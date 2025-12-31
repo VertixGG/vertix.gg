@@ -60,15 +60,21 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             try {
                 this.logger.log( this.initialize, "App service ready, checking existing scaling channels" );
 
-                const client = this.services.appService.getClient();
+                const scalingConfigs = await ScalingChannelDataModel.$.getAllScalingSettings();
 
-                for ( const guild of client.guilds.cache.values() ) {
+                for ( const { masterChannel, settings } of scalingConfigs ) {
                     try {
-                        await this.ensureScalingChannelsForGuild( guild );
+                        const guild = this.services.appService.getClient().guilds.cache.get( masterChannel.guildId );
+
+                        if ( !guild ) {
+                            continue;
+                        }
+
+                        await this.ensureScalingChannelsForMaster( guild, masterChannel, settings );
                     } catch( error ) {
                         this.logger.error(
-                            this.ensureScalingChannelsForGuild,
-                            `Failed to ensure scaling channels for guild '${ guild.id }'`,
+                            this.initialize,
+                            `Failed to ensure scaling channels for master '${ masterChannel.id }' in guild '${ masterChannel.guildId }'`,
                             error
                         );
                     }
@@ -79,37 +85,42 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    public async ensureScalingChannelsForGuild( guild: Guild ) {
-        this.debugger.log( this.ensureScalingChannelsForGuild, `Checking guild: ${ guild.name } (${ guild.id })` );
+    public async ensureScalingChannelsForMaster(
+        guild: Guild,
+        master: ChannelExtended,
+        settings: ScalingChannelConfigInterface[ "data" ][ "settings" ]
+    ) {
+        const { scalingChannelCategoryId, scalingChannelPrefix, scalingChannelMaxMembersPerChannel } = settings;
 
-        const masters = await ChannelModel.$.getMasters( guild.id );
+        if ( !scalingChannelCategoryId || !scalingChannelPrefix || !scalingChannelMaxMembersPerChannel ) {
+            return;
+        }
 
-        for ( const master of masters ) {
-            const config = await ScalingChannelDataModel.$.getScalingSettings( master.id );
+        const category = guild.channels.cache.get( scalingChannelCategoryId ) as CategoryChannel | undefined;
 
-            if ( !config ) {
-                continue;
-            }
+        if ( !category ) {
+            this.debugger.log(
+                this.ensureScalingChannelsForMaster,
+                `Category ${ scalingChannelCategoryId } not found for master ${ master.id }`
+            );
+            return;
+        }
 
-            const { scalingChannelCategoryId, scalingChannelPrefix, scalingChannelMaxMembersPerChannel } = config;
+        const scalingChannels = await this.findScalingChannels( guild, master.id );
 
-            if ( !scalingChannelCategoryId || !scalingChannelPrefix || !scalingChannelMaxMembersPerChannel ) {
-                continue;
-            }
-
-            const category = guild.channels.cache.get( scalingChannelCategoryId ) as CategoryChannel | undefined;
-
-            if ( !category ) {
-                this.debugger.log( this.ensureScalingChannelsForGuild, `Category ${ scalingChannelCategoryId } not found for master ${ master.id }` );
-                continue;
-            }
-
-            const scalingChannels = await this.findScalingChannels( guild, master.id );
-
-            if ( scalingChannels.length === 0 ) {
-                this.logger.log( this.ensureScalingChannelsForGuild, `No scaling channels found for master ${ master.id }, creating initial channel` );
-                await this.createScaledChannel( guild, category, master, scalingChannelPrefix, scalingChannelMaxMembersPerChannel, 1 );
-            }
+        if ( scalingChannels.length === 0 ) {
+            this.logger.log(
+                this.ensureScalingChannelsForMaster,
+                `No scaling channels found for master ${ master.id }, creating initial channel`
+            );
+            await this.createScaledChannel(
+                guild,
+                category,
+                master,
+                scalingChannelPrefix,
+                scalingChannelMaxMembersPerChannel,
+                1
+            );
         }
     }
 

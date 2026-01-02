@@ -1,5 +1,6 @@
 import { Events } from "discord.js";
 
+import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { isOpenAIConfigured, runAgentChat } from "@vertix.gg/bot/src/utils/agent-client";
 
@@ -30,6 +31,10 @@ export function agentChannelHandler( client: Client ) {
 
             if ( message.guildId !== TARGET_GUILD_ID || message.channelId !== TARGET_CHANNEL_ID ) {
                 return;
+            }
+
+            if ( message.guildId ) {
+                GuildModel.$.updateLastActive( message.guildId );
             }
 
             const botId = client.user?.id;

@@ -61,16 +61,12 @@ export default function Home() {
                     <div className="mt-4">
                         <div className="mb-5">
                             <h4 className="mb-3 text-secondary text-center">UI V2 (Classic)</h4>
-                            <div className="p-4 bg-dark rounded-3 border border-secondary shadow-sm">
-                                <DiscordDynamicChannelV2/>
-                            </div>
+                            <DiscordDynamicChannelV2/>
                         </div>
 
                         <div>
                             <h4 className="mb-3 text-primary text-center">UI V3 (Modern)</h4>
-                            <div className="p-4 bg-dark rounded-3 border border-primary shadow-sm">
-                                <DiscordDynamicChannelV3/>
-                            </div>
+                            <DiscordDynamicChannelV3/>
                         </div>
                     </div>
                 </div>

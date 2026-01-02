@@ -76,3 +76,4 @@ execSync(`rm -f "${zipFile}"`, {
 
 console.log("Deployment completed!");
 
+

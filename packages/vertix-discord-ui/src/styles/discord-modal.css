@@ -46,6 +46,23 @@
     border-radius: 0 0 4px 4px;
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
+}
+
+.discord-modal-cancel {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    cursor: pointer;
+}
+
+.discord-modal-cancel:hover {
+    text-decoration: underline;
 }
 
 .discord-modal-submit {
@@ -58,6 +75,28 @@
     font-weight: 500;
     font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     cursor: pointer;
+}
+
+.discord-modal-notice {
+    background-color: #f0b232;
+    color: #000;
+    padding: 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.375rem;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.discord-modal-notice svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.discord-modal-notice span {
+    flex: 1;
 }
 
 .discord-input-wrapper {

@@ -2,9 +2,9 @@ import React from "react";
 
 import { useLocation } from "react-router-dom";
 
-import ShinyStars from "@vertix.gg/website/src/vertix/components/ui/shiny-stars";
-
 import RobotBrand from "@assets/brand/Robot.png";
+
+import ShinyStars from "@vertix.gg/website/src/vertix/components/ui/shiny-stars";
 
 const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } ) => {
     const location = useLocation();
@@ -101,7 +101,8 @@ export default function Header() {
                             <NavbarItem title="Home" href="/"/>
 
                             <NavbarDropdown title="Features" items={ [
-                                { title: "Voice Channels", href: "/features/dynamic-channels-showcase" },
+                                { title: "Dynamic Channel V2", href: "/features/dynamic-channel-v2" },
+                                { title: "Voice Channels (Legacy)", href: "/features/dynamic-channels-showcase" },
 
                                 { divider: true },
                                 { title: "Images Gallery", href: "/features-images" },

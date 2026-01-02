@@ -15,6 +15,7 @@ export interface DiscordButtonProps extends React.ButtonHTMLAttributes<HTMLButto
     emoji?: string;
     icon?: React.ReactNode;
     trailingIcon?: React.ReactNode;
+    highlighted?: boolean;
 }
 
 const variantClassName: Record<DiscordButtonVariant, string> = {
@@ -41,6 +42,7 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
         emoji,
         icon,
         trailingIcon,
+        highlighted,
         children,
         ...restProps
     } = props;
@@ -48,6 +50,7 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
         "discord-button",
         variantClassName[ variant ],
         sizeClassName[ size ],
+        highlighted && "discord-button-highlighted",
         className
     );
 

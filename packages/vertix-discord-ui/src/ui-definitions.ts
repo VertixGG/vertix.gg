@@ -10,7 +10,7 @@ export type UIInstanceType = "Static" | "Dynamic";
 
 export type UIComponentType = "component";
 
-export type UIElementType = "button" | "button-url" | "select-menu";
+export type UIElementType = "button" | "button-url" | "select-menu" | "user-select" | "channel-select" | "role-select";
 
 export type UIButtonStyle = "primary" | "secondary" | "success" | "danger" | "link";
 
@@ -30,7 +30,7 @@ export interface UIButtonDefinition extends UIElementDefinitionBase {
 }
 
 export interface UISelectMenuDefinition extends UIElementDefinitionBase {
-    elementType: "select-menu";
+    elementType: "select-menu" | "user-select" | "channel-select" | "role-select";
     placeholder?: string;
 }
 
@@ -281,7 +281,12 @@ function parseElementDefinition( value: JsonObject ): UIElementDefinition | null
         };
     }
 
-    if ( elementType === "select-menu" ) {
+    if (
+        elementType === "select-menu"
+        || elementType === "user-select"
+        || elementType === "channel-select"
+        || elementType === "role-select"
+    ) {
         const placeholder = asString( value[ "placeholder" ] );
 
         return {

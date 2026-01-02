@@ -257,7 +257,7 @@
     margin: 0 4px;
 }
 
-.discord-embed-description .emoji {
+.discord-embed-description .emoji , .discord-embed-title .emoji {
     height: 1.375em;
     width: 1.375em;
 }

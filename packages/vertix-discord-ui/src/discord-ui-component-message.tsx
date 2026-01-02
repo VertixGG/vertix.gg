@@ -14,6 +14,7 @@ export interface DiscordUIComponentMessageProps {
     variables?: Readonly<Record<string, string>>;
     elementOverrides?: Readonly<Record<string, UIElementOverride>>;
     embedOverrides?: Readonly<Record<string, UIEmbedOverride>>;
+    preferredEmbedsGroup?: string;
     app?: boolean;
 }
 
@@ -26,6 +27,7 @@ export function DiscordUIComponentMessage( {
     variables,
     elementOverrides,
     embedOverrides,
+    preferredEmbedsGroup,
     app = true,
 }: DiscordUIComponentMessageProps ) {
     return (
@@ -44,6 +46,7 @@ export function DiscordUIComponentMessage( {
                 variables={ variables }
                 elementOverrides={ elementOverrides }
                 embedOverrides={ embedOverrides }
+                preferredEmbedsGroup={ preferredEmbedsGroup }
             />
         </DiscordMessage>
     );

@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { DiscordButton } from "./discord-button";
 import { DiscordEmbed } from "./discord-embed";
+import { DiscordSelectMenu } from "./discord-select-menu";
 import { DISCORD_EMOJI_ICON_SRC_BY_NAME, DISCORD_EMOJI_ICON_SRC_BY_UNICODE } from "./discord-emojis";
 
 import { findUIEmbedDefinition, getUIComponentByName } from "./ui-definitions";
@@ -13,6 +14,7 @@ type DiscordButtonVariant = "primary" | "secondary" | "success" | "danger" | "li
 export interface UIElementOverride {
     label?: string;
     disabled?: boolean;
+    highlighted?: boolean;
 }
 
 export interface UIEmbedOverride {
@@ -28,6 +30,7 @@ export interface DiscordUIComponentRendererProps {
     embedOverrides?: Readonly<Record<string, UIEmbedOverride>>;
     variables?: Readonly<Record<string, string>>;
     emojiIconSrcByUnicode?: Readonly<Record<string, string>>;
+    preferredEmbedsGroup?: string;
 }
 
 interface ResolvedEmbedDefinition {
@@ -42,6 +45,7 @@ export function DiscordUIComponentRenderer( {
     embedOverrides,
     variables,
     emojiIconSrcByUnicode,
+    preferredEmbedsGroup,
 }: DiscordUIComponentRendererProps ) {
     const [ component, setComponent ] = React.useState<UIComponent | null>( null );
     const [ resolvedEmbeds, setResolvedEmbeds ] = React.useState<ReadonlyArray<ResolvedEmbedDefinition>>( [] );
@@ -61,7 +65,9 @@ export function DiscordUIComponentRenderer( {
                 setComponent( resolvedComponent );
 
                 if ( resolvedComponent ) {
-                    const embedsGroup = selectEmbedsGroup( resolvedComponent );
+                    const embedsGroup = preferredEmbedsGroup
+                        ? resolvedComponent.embedsGroups.find( ( g ) => g.name === preferredEmbedsGroup ) ?? selectEmbedsGroup( resolvedComponent )
+                        : selectEmbedsGroup( resolvedComponent );
                     if ( embedsGroup ) {
                         const promises = embedsGroup.items.map( async( item ) => {
                             let definition = item.definition;
@@ -96,7 +102,7 @@ export function DiscordUIComponentRenderer( {
         return () => {
             isMounted = false;
         };
-    }, [ componentName, embedOverrides, variables ] );
+    }, [ componentName, embedOverrides, variables, preferredEmbedsGroup ] );
 
     if ( isLoading ) {
         return null;
@@ -107,6 +113,12 @@ export function DiscordUIComponentRenderer( {
     }
 
     const elementsGroup = selectElementsGroup( component );
+
+    const hasSelectMenus = Boolean(
+        elementsGroup?.items.some(
+            ( row ) => row.some( ( item ) => isSelectMenuElementType( item.definition.elementType ) )
+        )
+    );
 
     return (
         <>
@@ -121,8 +133,9 @@ export function DiscordUIComponentRenderer( {
             ) ) }
 
             { elementsGroup && (
-                <div className="discord-action-rows">
+                <div className={ hasSelectMenus ? "discord-action-rows discord-action-rows-has-select" : "discord-action-rows" }>
                     { renderElementRows( elementsGroup.items, {
+                        variables: variables,
                         elementOverrides: elementOverrides,
                         emojiIconSrcByUnicode,
                     } ) }
@@ -130,6 +143,13 @@ export function DiscordUIComponentRenderer( {
             ) }
         </>
     );
+}
+
+function isSelectMenuElementType( elementType: string ): boolean {
+    return elementType === "select-menu"
+        || elementType === "user-select"
+        || elementType === "channel-select"
+        || elementType === "role-select";
 }
 
 function selectElementsGroup( component: UIComponent ) {
@@ -199,6 +219,7 @@ function applyVariables( text: string | undefined, variables: Readonly<Record<st
 function renderElementRows(
     rows: ReadonlyArray<ReadonlyArray<UIElementItem>>,
     context: {
+        variables: Readonly<Record<string, string>> | undefined;
         elementOverrides: Readonly<Record<string, UIElementOverride>> | undefined;
         emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined;
     },
@@ -226,6 +247,7 @@ function renderElementRows(
 function renderElement(
     item: UIElementItem,
     context: {
+        variables: Readonly<Record<string, string>> | undefined;
         elementOverrides: Readonly<Record<string, UIElementOverride>> | undefined;
         emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined;
     },
@@ -235,7 +257,10 @@ function renderElement(
 
     if ( definition.elementType === "button" || definition.elementType === "button-url" ) {
         const label = override?.label ?? ( definition.labelOmitted ? undefined : definition.label );
+        const resolvedLabel = applyVariables( label, context.variables );
+
         const disabled = override?.disabled;
+        const highlighted = override?.highlighted;
 
         const variant = mapButtonStyleToVariant( definition.style );
         const icon = buildEmojiIcon( definition.emoji, context.emojiIconSrcByUnicode );
@@ -244,11 +269,30 @@ function renderElement(
         return (
             <DiscordButton
                 key={ item.element }
-                label={ label }
+                label={ resolvedLabel }
                 emoji={ emoji }
                 icon={ icon }
                 variant={ variant }
                 disabled={ disabled }
+                highlighted={ highlighted }
+            />
+        );
+    }
+
+    if (
+        definition.elementType === "select-menu"
+        || definition.elementType === "user-select"
+        || definition.elementType === "channel-select"
+        || definition.elementType === "role-select"
+    ) {
+        const placeholder = applyVariables( definition.placeholder, context.variables );
+
+        return (
+            <DiscordSelectMenu
+                key={ item.element }
+                placeholder={ placeholder }
+                disabled={ override?.disabled }
+                emojiIconSrcByUnicode={ context.emojiIconSrcByUnicode }
             />
         );
     }

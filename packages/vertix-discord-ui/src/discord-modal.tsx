@@ -5,18 +5,21 @@ import type { ReactNode } from "react";
 interface DiscordModalProps {
     title: string;
     submitLabel?: string;
+    cancelLabel?: string;
+    showNotice?: boolean;
     children?: ReactNode;
 }
 
 interface DiscordInputProps {
     label: string;
     placeholder?: string;
+    value?: string;
     style?: "short" | "paragraph";
     required?: boolean;
 }
 
 export function DiscordModal( props: DiscordModalProps ) {
-    const { title, submitLabel = "Submit", children } = props;
+    const { title, submitLabel = "Submit", cancelLabel, showNotice, children } = props;
 
     return (
         <div className="discord-modal">
@@ -29,9 +32,20 @@ export function DiscordModal( props: DiscordModalProps ) {
                 </button>
             </div>
             <div className="discord-modal-content">
+                { showNotice && (
+                    <div className="discord-modal-notice">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path fill="currentColor" d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z"/>
+                        </svg>
+                        <span>This form will be submitted to Vertix. Do not share passwords or other sensitive information.</span>
+                    </div>
+                ) }
                 { children }
             </div>
             <div className="discord-modal-footer">
+                { cancelLabel && (
+                    <button className="discord-modal-cancel">{ cancelLabel }</button>
+                ) }
                 <button className="discord-modal-submit">{ submitLabel }</button>
             </div>
         </div>
@@ -39,7 +53,7 @@ export function DiscordModal( props: DiscordModalProps ) {
 }
 
 export function DiscordInput( props: DiscordInputProps ) {
-    const { label, placeholder, style = "short", required } = props;
+    const { label, placeholder, value, style = "short", required } = props;
 
     return (
         <div className="discord-input-wrapper">
@@ -52,12 +66,14 @@ export function DiscordInput( props: DiscordInputProps ) {
                     type="text"
                     className="discord-input discord-input-short"
                     placeholder={ placeholder }
+                    value={ value }
                     disabled
                 />
             ) : (
                 <textarea
                     className="discord-input discord-input-paragraph"
                     placeholder={ placeholder }
+                    value={ value }
                     disabled
                     rows={ 3 }
                 />

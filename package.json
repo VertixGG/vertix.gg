@@ -44,7 +44,7 @@
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils",
         "vertix:utils:typecheck": "cd packages/vertix-utils && bun run vertix-utils:typecheck",
         "vertix:website:build": "cd apps/vertix-website && bun run vertix-website:build",
-        "vertix:webdddsite:dev": "cd apps/vertix-website && bun run vertix-website:dev",
+        "vertix:website:dev": "cd apps/vertix-website && bun run vertix-website:dev",
         "vertix:website:eslint": "bunx --bun eslint apps/vertix-website",
         "vertix:website:preview": "cd apps/vertix-website && bun run vertix-website:preview",
         "vertix:website:release": "cd apps/vertix-website && bun run vertix-website:release",

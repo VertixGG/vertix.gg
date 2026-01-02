@@ -4888,7 +4888,7 @@ export namespace Prisma {
     guildId: string
     name: string
     isInGuild: boolean
-    lastActiveAt: Date | null
+    lastActiveAt: Date
     createdAt: Date
     updatedAt: Date
     updatedAtInternal: Date | null
@@ -4953,7 +4953,7 @@ export namespace Prisma {
       guildId: string
       name: string
       isInGuild: boolean
-      lastActiveAt: Date | null
+      lastActiveAt: Date
       createdAt: Date
       updatedAt: Date
       updatedAtInternal: Date | null
@@ -18291,7 +18291,7 @@ export namespace Prisma {
     guildId?: StringFilter<"Guild"> | string
     name?: StringFilter<"Guild"> | string
     isInGuild?: BoolFilter<"Guild"> | boolean
-    lastActiveAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
+    lastActiveAt?: DateTimeFilter<"Guild"> | Date | string
     createdAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAtInternal?: DateTimeNullableFilter<"Guild"> | Date | string | null
@@ -18318,7 +18318,7 @@ export namespace Prisma {
     NOT?: GuildWhereInput | GuildWhereInput[]
     name?: StringFilter<"Guild"> | string
     isInGuild?: BoolFilter<"Guild"> | boolean
-    lastActiveAt?: DateTimeNullableFilter<"Guild"> | Date | string | null
+    lastActiveAt?: DateTimeFilter<"Guild"> | Date | string
     createdAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAt?: DateTimeFilter<"Guild"> | Date | string
     updatedAtInternal?: DateTimeNullableFilter<"Guild"> | Date | string | null
@@ -18347,7 +18347,7 @@ export namespace Prisma {
     guildId?: StringWithAggregatesFilter<"Guild"> | string
     name?: StringWithAggregatesFilter<"Guild"> | string
     isInGuild?: BoolWithAggregatesFilter<"Guild"> | boolean
-    lastActiveAt?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
+    lastActiveAt?: DateTimeWithAggregatesFilter<"Guild"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Guild"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Guild"> | Date | string
     updatedAtInternal?: DateTimeNullableWithAggregatesFilter<"Guild"> | Date | string | null
@@ -19296,7 +19296,7 @@ export namespace Prisma {
     guildId: string
     name: string
     isInGuild: boolean
-    lastActiveAt?: Date | string | null
+    lastActiveAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -19308,7 +19308,7 @@ export namespace Prisma {
     guildId: string
     name: string
     isInGuild: boolean
-    lastActiveAt?: Date | string | null
+    lastActiveAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -19319,7 +19319,7 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     isInGuild?: BoolFieldUpdateOperationsInput | boolean
-    lastActiveAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19330,7 +19330,7 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     isInGuild?: BoolFieldUpdateOperationsInput | boolean
-    lastActiveAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19342,7 +19342,7 @@ export namespace Prisma {
     guildId: string
     name: string
     isInGuild: boolean
-    lastActiveAt?: Date | string | null
+    lastActiveAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -19352,7 +19352,7 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     isInGuild?: BoolFieldUpdateOperationsInput | boolean
-    lastActiveAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19362,7 +19362,7 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     isInGuild?: BoolFieldUpdateOperationsInput | boolean
-    lastActiveAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21879,7 +21879,7 @@ export namespace Prisma {
     guildId: string
     name: string
     isInGuild: boolean
-    lastActiveAt?: Date | string | null
+    lastActiveAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -21890,7 +21890,7 @@ export namespace Prisma {
     guildId: string
     name: string
     isInGuild: boolean
-    lastActiveAt?: Date | string | null
+    lastActiveAt?: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     updatedAtInternal?: Date | string | null
@@ -21916,7 +21916,7 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     isInGuild?: BoolFieldUpdateOperationsInput | boolean
-    lastActiveAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21926,7 +21926,7 @@ export namespace Prisma {
     guildId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     isInGuild?: BoolFieldUpdateOperationsInput | boolean
-    lastActiveAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastActiveAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAtInternal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

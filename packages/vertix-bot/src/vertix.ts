@@ -155,9 +155,9 @@ export default async function Main( { enableListeners }: {
             "Guilds",
             "GuildVoiceStates",
             "DirectMessages",
-            "GuildPresences",
-            "GuildMessages",
-            "MessageContent"
+            //"GuildPresences",
+            //"GuildMessages",
+            //"MessageContent"
         ],
         partials: [ Partials.Channel ],
         shards: "auto"

@@ -1,6 +1,6 @@
-import { entryPoint } from "@vertix.gg/bot/src/entrypoint";
-
 import process from "process";
+
+import { entryPoint } from "@vertix.gg/bot/src/entrypoint";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 

@@ -19,7 +19,3 @@ export interface ChannelTemplatesData {
     templates: ChannelTemplate[];
 }
 
-
-
-
-

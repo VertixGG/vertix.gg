@@ -16,7 +16,3 @@ export class DynamicChannelTemplatesApplyElementsGroup extends UIElementsGroupBa
     }
 }
 
-
-
-
-

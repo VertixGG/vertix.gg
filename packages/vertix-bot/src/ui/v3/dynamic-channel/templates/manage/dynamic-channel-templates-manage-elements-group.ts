@@ -16,7 +16,3 @@ export class DynamicChannelTemplatesManageElementsGroup extends UIElementsGroupB
     }
 }
 
-
-
-
-

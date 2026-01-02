@@ -47,4 +47,3 @@ export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
     }
 }
 
-

@@ -82,7 +82,7 @@ export abstract class UIAdapterBase<
 
     private static staticArgs = new UIArgsManager( picocolors.green( "StaticArgs" ) );
     // TODO: Rename to dynamicArgs.
-        private static dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
+    private static dynamicArgs = new UIArgsManager( picocolors.blue( "DynamicArgs" ) );
     private static staticSystemArgs = new UIArgsManager( picocolors.red( "SystemArgs" ) );
 
     /**

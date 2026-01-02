@@ -1507,29 +1507,29 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "title": "👍  Access granted",
+                            "description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 4943761,
+                            "color": 16109389,
                             "options": {
                                 "allowedUsersDisplay": {
-                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
-                                    "{allowedUsers}": "{allowedUsers}\n"
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
                                 },
                                 "blockedUsersDisplay": {
-                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
-                                    "{blockedUsers}": "{blockedUsers}\n"
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
                                 }
                             },
                             "arrayOptions": {
                                 "allowedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 },
                                 "blockedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 }
                             },
                             "vars": {
@@ -1540,11 +1540,13 @@
                                 "allowedUsersDefault": "{allowedUsersDefault}",
                                 "blockedUsers": "{blockedUsers}",
                                 "blockedUsersDisplay": "{blockedUsersDisplay}",
-                                "blockedUsersDefault": "{blockedUsersDefault}"
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userGrantedDisplayName": "{userGrantedDisplayName}"
                             },
                             "defaultVars": {
-                                "allowedUsersDisplay": "Currently there are no granted users.\n",
-                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                                "userGrantedDisplayName": "User",
+                                "allowedUsersDisplay": "• <@123456789>",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
                             }
                         }
                     }
@@ -1557,29 +1559,29 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "title": "👎  Access canceled",
+                            "description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 4943761,
+                            "color": 15548997,
                             "options": {
                                 "allowedUsersDisplay": {
-                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
-                                    "{allowedUsers}": "{allowedUsers}\n"
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
                                 },
                                 "blockedUsersDisplay": {
-                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
-                                    "{blockedUsers}": "{blockedUsers}\n"
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
                                 }
                             },
                             "arrayOptions": {
                                 "allowedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 },
                                 "blockedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 }
                             },
                             "vars": {
@@ -1590,11 +1592,13 @@
                                 "allowedUsersDefault": "{allowedUsersDefault}",
                                 "blockedUsers": "{blockedUsers}",
                                 "blockedUsersDisplay": "{blockedUsersDisplay}",
-                                "blockedUsersDefault": "{blockedUsersDefault}"
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userDeniedDisplayName": "{userDeniedDisplayName}"
                             },
                             "defaultVars": {
-                                "allowedUsersDisplay": "Currently there are no granted users.\n",
-                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                                "userDeniedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
                             }
                         }
                     }
@@ -1607,29 +1611,29 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "title": "🫵  User blocked",
+                            "description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 4943761,
+                            "color": 10038562,
                             "options": {
                                 "allowedUsersDisplay": {
-                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
-                                    "{allowedUsers}": "{allowedUsers}\n"
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
                                 },
                                 "blockedUsersDisplay": {
-                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
-                                    "{blockedUsers}": "{blockedUsers}\n"
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
                                 }
                             },
                             "arrayOptions": {
                                 "allowedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 },
                                 "blockedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 }
                             },
                             "vars": {
@@ -1640,11 +1644,13 @@
                                 "allowedUsersDefault": "{allowedUsersDefault}",
                                 "blockedUsers": "{blockedUsers}",
                                 "blockedUsersDisplay": "{blockedUsersDisplay}",
-                                "blockedUsersDefault": "{blockedUsersDefault}"
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userBlockedDisplayName": "{userBlockedDisplayName}"
                             },
                             "defaultVars": {
-                                "allowedUsersDisplay": "Currently there are no granted users.\n",
-                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                                "userBlockedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "• <@123456789>"
                             }
                         }
                     }
@@ -1657,29 +1663,29 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "title": "🤙  User unblocked",
+                            "description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 4943761,
+                            "color": 16705372,
                             "options": {
                                 "allowedUsersDisplay": {
-                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
-                                    "{allowedUsers}": "{allowedUsers}\n"
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
                                 },
                                 "blockedUsersDisplay": {
-                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
-                                    "{blockedUsers}": "{blockedUsers}\n"
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
                                 }
                             },
                             "arrayOptions": {
                                 "allowedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 },
                                 "blockedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 }
                             },
                             "vars": {
@@ -1690,11 +1696,13 @@
                                 "allowedUsersDefault": "{allowedUsersDefault}",
                                 "blockedUsers": "{blockedUsers}",
                                 "blockedUsersDisplay": "{blockedUsersDisplay}",
-                                "blockedUsersDefault": "{blockedUsersDefault}"
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userUnBlockedDisplayName": "{userUnBlockedDisplayName}"
                             },
                             "defaultVars": {
-                                "allowedUsersDisplay": "Currently there are no granted users.\n",
-                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                                "userUnBlockedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
                             }
                         }
                     }
@@ -1707,29 +1715,29 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "title": "👢  User kicked",
+                            "description": "**{userKickedDisplayName}** successfully kicked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 4943761,
+                            "color": 16705372,
                             "options": {
                                 "allowedUsersDisplay": {
-                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
-                                    "{allowedUsers}": "{allowedUsers}\n"
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
                                 },
                                 "blockedUsersDisplay": {
-                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
-                                    "{blockedUsers}": "{blockedUsers}\n"
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
                                 }
                             },
                             "arrayOptions": {
                                 "allowedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 },
                                 "blockedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 }
                             },
                             "vars": {
@@ -1740,11 +1748,13 @@
                                 "allowedUsersDefault": "{allowedUsersDefault}",
                                 "blockedUsers": "{blockedUsers}",
                                 "blockedUsersDisplay": "{blockedUsersDisplay}",
-                                "blockedUsersDefault": "{blockedUsersDefault}"
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userKickedDisplayName": "{userKickedDisplayName}"
                             },
                             "defaultVars": {
-                                "allowedUsersDisplay": "Currently there are no granted users.\n",
-                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                                "userKickedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
                             }
                         }
                     }
@@ -1758,28 +1768,28 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 4943761,
                             "options": {
                                 "allowedUsersDisplay": {
-                                    "{allowedUsersDefault}": "Currently there are no granted users.\n",
-                                    "{allowedUsers}": "{allowedUsers}\n"
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
                                 },
                                 "blockedUsersDisplay": {
-                                    "{blockedUsersDefault}": "Currently there are no blocked users.\n",
-                                    "{blockedUsers}": "{blockedUsers}\n"
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
                                 }
                             },
                             "arrayOptions": {
                                 "allowedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 },
                                 "blockedUsers": {
-                                    "format": "- <@{value}>{separator}",
-                                    "separator": "\n"
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
                                 }
                             },
                             "vars": {

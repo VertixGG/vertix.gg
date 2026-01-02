@@ -22,13 +22,15 @@ import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder"
 import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { EmbedBuilderUtils } from "@vertix.gg/gui/src/builders/embed-builder.utils";
-import { VERSION_SCALING_CHANNEL } from "@vertix.gg/bot/src/config/scaling-channel-config";
+
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
 import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
 import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+
+import { VERSION_SCALING_CHANNEL } from "@vertix.gg/bot/src/config/scaling-channel-config";
 
 import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/general/language/language-select-menu";
 

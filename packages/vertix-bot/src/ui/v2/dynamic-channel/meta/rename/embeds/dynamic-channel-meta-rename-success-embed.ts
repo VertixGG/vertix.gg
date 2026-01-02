@@ -5,8 +5,8 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-    channelName: uiUtilsWrapAsTemplate( "channelName" )
-};
+        channelName: uiUtilsWrapAsTemplate( "channelName" )
+    };
 
 const DynamicChannelMetaRenameSuccessEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
@@ -16,7 +16,7 @@ const DynamicChannelMetaRenameSuccessEmbed = new EmbedBuilder<UIArgs, typeof var
     .setColor( 0xe8ae08 )
     .setTitle( () => `✏️  Your channel's name has changed to '${ vars.channelName }'` )
     .setLogic( ( args: UIArgs ) => ( {
-        channelName: args.channelName
+            channelName: args.channelName
     } ) )
     .setDefaultVars( () => ( {
         channelName: "New Channel Name"

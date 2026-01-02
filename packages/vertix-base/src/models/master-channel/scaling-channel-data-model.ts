@@ -67,7 +67,7 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
         return this.setSettings( ownerId, { scalingChannelCategoryId: categoryId } );
     }
 
-    public async setAllSettings( ownerId: string, settings: Partial<ScalingChannelConfigInterface["data"]["settings"]> ) {
+    public async setAllSettings( ownerId: string, settings: Partial<ScalingChannelConfigInterface[ "data" ][ "settings" ]> ) {
         return this.setSettings( ownerId, settings );
     }
 

@@ -44,7 +44,3 @@ export class DynamicChannelTemplatesButton extends DynamicChannelButtonBase {
     }
 }
 
-
-
-
-

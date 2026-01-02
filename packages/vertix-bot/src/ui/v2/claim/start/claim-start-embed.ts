@@ -5,10 +5,10 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-    ownerId: uiUtilsWrapAsTemplate( "ownerId" ),
-    ownerDisplayName: uiUtilsWrapAsTemplate( "ownerDisplayName" ),
-    absentMinutes: uiUtilsWrapAsTemplate( "absentMinutes" )
-};
+        ownerId: uiUtilsWrapAsTemplate( "ownerId" ),
+        ownerDisplayName: uiUtilsWrapAsTemplate( "ownerDisplayName" ),
+        absentMinutes: uiUtilsWrapAsTemplate( "absentMinutes" )
+    };
 
 const ClaimStartEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/ClaimStartEmbed",
@@ -18,7 +18,7 @@ const ClaimStartEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setTitle( () => `👋  ${ vars.ownerDisplayName } abandoned his channel!` )
     .setDescription( () => (
         `<@${ vars.ownerId }> has been absent for more than ${ vars.absentMinutes } minutes.\n` +
-        "Will you be the one to take charge? Step up and claim it for yourself!"
+            "Will you be the one to take charge? Step up and claim it for yourself!"
     ) )
     .setLogic( ( args: UIArgs ) => ( {
         ownerId: args.ownerId,

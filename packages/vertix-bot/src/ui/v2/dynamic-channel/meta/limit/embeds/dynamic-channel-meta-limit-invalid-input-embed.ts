@@ -7,9 +7,9 @@ import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-    minValue: uiUtilsWrapAsTemplate( "minValue" ),
-    maxValue: uiUtilsWrapAsTemplate( "maxValue" )
-};
+        minValue: uiUtilsWrapAsTemplate( "minValue" ),
+        maxValue: uiUtilsWrapAsTemplate( "maxValue" )
+    };
 
 const DynamicChannelMetaLimitInvalidInputEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
@@ -19,8 +19,8 @@ const DynamicChannelMetaLimitInvalidInputEmbed = new EmbedBuilder<UIArgs, typeof
     .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
     .setTitle( () => `🙅  User limit must be between ${ vars.minValue } and ${ vars.maxValue }` )
     .setLogic( ( args: UIArgs ) => ( {
-        minValue: args.minValue,
-        maxValue: args.maxValue
+            minValue: args.minValue,
+            maxValue: args.maxValue
     } ) )
     .setDefaultVars( () => ( {
         minValue: "0",

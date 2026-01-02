@@ -65,7 +65,3 @@ const DynamicChannelTemplatesEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 
 export { DynamicChannelTemplatesEmbed, vars as DYNAMIC_CHANNEL_TEMPLATES_VARS };
 
-
-
-
-

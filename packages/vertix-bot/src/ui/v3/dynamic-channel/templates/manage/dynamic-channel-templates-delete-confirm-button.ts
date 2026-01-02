@@ -29,8 +29,3 @@ export class DynamicChannelTemplatesDeleteConfirmButton extends UIElementButtonB
     }
 }
 
-
-
-
-
-

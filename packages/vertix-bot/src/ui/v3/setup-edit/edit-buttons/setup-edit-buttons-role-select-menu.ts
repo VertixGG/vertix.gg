@@ -24,4 +24,3 @@ export class SetupEditButtonsRoleSelectMenu extends UIElementRoleSelectMenu {
     }
 }
 
-

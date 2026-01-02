@@ -5,9 +5,9 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-    prevUserId: uiUtilsWrapAsTemplate( "prevUserId" ),
-    currentUserId: uiUtilsWrapAsTemplate( "currentUserId" )
-};
+        prevUserId: uiUtilsWrapAsTemplate( "prevUserId" ),
+        currentUserId: uiUtilsWrapAsTemplate( "currentUserId" )
+    };
 
 const ClaimResultVoteUpdatedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
@@ -17,8 +17,8 @@ const ClaimResultVoteUpdatedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setTitle( () => "🗳️  Your vote has been updated" )
     .setDescription( () => `You've just changed your vote from <@${ vars.prevUserId }> to <@${ vars.currentUserId }> for channel ownership.` )
     .setLogic( ( args: UIArgs ) => ( {
-        prevUserId: args.prevUserId,
-        currentUserId: args.currentUserId
+            prevUserId: args.prevUserId,
+            currentUserId: args.currentUserId
     } ) )
     .setDefaultVars( () => ( {
         prevUserId: "123456789",

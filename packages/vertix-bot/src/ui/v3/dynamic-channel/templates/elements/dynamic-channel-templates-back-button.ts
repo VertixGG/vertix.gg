@@ -25,7 +25,3 @@ export class DynamicChannelTemplatesBackButton extends UIElementButtonBase {
     }
 }
 
-
-
-
-

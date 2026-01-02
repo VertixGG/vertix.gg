@@ -37,7 +37,3 @@ export class DynamicChannelTemplatesApplyButton extends UIElementButtonBase {
     }
 }
 
-
-
-
-

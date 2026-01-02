@@ -9,8 +9,8 @@ const DynamicChannelPermissionsPublicEmbed = new EmbedBuilder(
     .setImage( "https://i.imgur.com/NthLO3W.png" )
     .setTitle( () => "🌐  The channel is public now" )
     .setDescription( () => (
-        "Please be aware that your room is currently accessible to anyone.\n\n" +
-        "Members **without** access will be able to enter the room unless it is hidden or set to private."
+            "Please be aware that your room is currently accessible to anyone.\n\n" +
+            "Members **without** access will be able to enter the room unless it is hidden or set to private."
     ) )
     .build();
 

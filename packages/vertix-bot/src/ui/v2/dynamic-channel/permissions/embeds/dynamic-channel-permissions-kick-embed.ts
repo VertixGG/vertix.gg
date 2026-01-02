@@ -1,50 +1,84 @@
 import { Colors } from "discord.js";
-
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-
-import { DynamicChannelPermissionsAccessEmbed } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/embeds/dynamic-channel-permissions-access-embed";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelPermissionsKickEmbed extends DynamicChannelPermissionsAccessEmbed {
-    private static vars = {
-        userKickedDisplayName: uiUtilsWrapAsTemplate( "userKickedDisplayName" )
-    };
+const vars = {
+    separator: uiUtilsWrapAsTemplate( "separator" ),
+    value: uiUtilsWrapAsTemplate( "value" ),
 
-    public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed";
-    }
+    allowedUsers: uiUtilsWrapAsTemplate( "allowedUsers" ),
+    allowedUsersDisplay: uiUtilsWrapAsTemplate( "allowedUsersDisplay" ),
+    allowedUsersDefault: uiUtilsWrapAsTemplate( "allowedUsersDefault" ),
 
-    public static getInstanceType(): UIInstancesTypes {
-        return UIInstancesTypes.Dynamic;
-    }
+    blockedUsers: uiUtilsWrapAsTemplate( "blockedUsers" ),
+    blockedUsersDisplay: uiUtilsWrapAsTemplate( "blockedUsersDisplay" ),
+    blockedUsersDefault: uiUtilsWrapAsTemplate( "blockedUsersDefault" ),
 
-    protected getColor() {
-        return Colors.Yellow;
-    }
+    userKickedDisplayName: uiUtilsWrapAsTemplate( "userKickedDisplayName" )
+};
 
-    protected getImage(): string {
-        return UI_IMAGE_EMPTY_LINE_URL;
-    }
+const DynamicChannelPermissionsKickEmbed = new EmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( Colors.Yellow )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( () => "👢  User kicked" )
+    .setDescription( () => (
+        `**${ vars.userKickedDisplayName }** successfully kicked!\n\n` +
+        `**Allowed Users**: ${ vars.allowedUsersDisplay }\n**Blocked Users**: ${ vars.blockedUsersDisplay }`
+    ) )
+    .setFooterText( () => "Use the menu below to manage permissions of your channel." )
+    .setArrayOptions( () => ( {
+        allowedUsers: {
+            format: `• <@${ vars.value }>${ vars.separator }`,
+            separator: " "
+        },
+        blockedUsers: {
+            format: `• <@${ vars.value }>${ vars.separator }`,
+            separator: " "
+        }
+    } ) )
+    .setOptions( () => ( {
+        allowedUsersDisplay: {
+            [ vars.allowedUsersDefault ]: "Currently there are no granted users.",
+            [ vars.allowedUsers ]: vars.allowedUsers
+        },
+        blockedUsersDisplay: {
+            [ vars.blockedUsersDefault ]: "Currently there are no blocked users.",
+            [ vars.blockedUsers ]: vars.blockedUsers
+        }
+    } ) )
+    .setLogic( ( args: UIArgs ) => {
+        const result: Record<string, any> = {};
 
-    protected getTitle() {
-        return "👢  User kicked";
-    }
+        if ( args.allowedUsers?.length ) {
+            result.allowedUsers = args.allowedUsers?.map( ( user: any ) => user.id );
+            result.allowedUsersDisplay = vars.allowedUsers;
+        } else {
+            result.allowedUsersDisplay = vars.allowedUsersDefault;
+        }
 
-    protected getDescription(): string {
-        return (
-            `**${ DynamicChannelPermissionsKickEmbed.vars.userKickedDisplayName }** successfully kicked!\n` +
-            super.getDescription()
-        );
-    }
-
-    protected getLogic( args: UIArgs ) {
-        const result = super.getLogic( args );
+        if ( args.blockedUsers?.length ) {
+            result.blockedUsers = args.blockedUsers?.map( ( user: any ) => user.id );
+            result.blockedUsersDisplay = vars.blockedUsers;
+        } else {
+            result.blockedUsersDisplay = vars.blockedUsersDefault;
+        }
 
         result.userKickedDisplayName = args.userKickedDisplayName;
 
         return result;
-    }
-}
+    } )
+    .setDefaultVars( () => ( {
+        userKickedDisplayName: "User",
+        allowedUsersDisplay: "Currently there are no granted users.",
+        blockedUsersDisplay: "Currently there are no blocked users."
+    } ) )
+    .build();
+
+export { DynamicChannelPermissionsKickEmbed };

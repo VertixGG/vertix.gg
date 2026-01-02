@@ -25,26 +25,26 @@ const DynamicChannelPermissionsAccessEmbed = new EmbedBuilder<UIArgs, typeof var
     .setColor( 0x4b6f91 )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( () => "👥  Manage permissions of your channel" )
-    .setDescription( () => "\n**_Allowed Users_**:\n" + vars.allowedUsersDisplay + "\n**_Blocked Users_**:\n" + vars.blockedUsersDisplay )
+    .setDescription( () => `**Allowed Users**: ${ vars.allowedUsersDisplay }\n**Blocked Users**: ${ vars.blockedUsersDisplay }` )
     .setFooterText( () => "Use the menu below to manage permissions of your channel." )
     .setArrayOptions( () => ( {
         allowedUsers: {
-            format: `- <@${ vars.value }>${ vars.separator }`,
-            separator: "\n"
+            format: `• <@${ vars.value }>${ vars.separator }`,
+            separator: " "
         },
         blockedUsers: {
-            format: `- <@${ vars.value }>${ vars.separator }`,
-            separator: "\n"
+            format: `• <@${ vars.value }>${ vars.separator }`,
+            separator: " "
         }
     } ) )
     .setOptions( () => ( {
         allowedUsersDisplay: {
-            [ vars.allowedUsersDefault ]: "Currently there are no granted users." + "\n",
-            [ vars.allowedUsers ]: vars.allowedUsers + "\n"
+            [ vars.allowedUsersDefault ]: "Currently there are no granted users.",
+            [ vars.allowedUsers ]: vars.allowedUsers
         },
         blockedUsersDisplay: {
-            [ vars.blockedUsersDefault ]: "Currently there are no blocked users." + "\n",
-            [ vars.blockedUsers ]: vars.blockedUsers + "\n"
+            [ vars.blockedUsersDefault ]: "Currently there are no blocked users.",
+            [ vars.blockedUsers ]: vars.blockedUsers
         }
     } ) )
     .setLogic( ( args: UIArgs ) => {

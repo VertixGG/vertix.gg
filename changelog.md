@@ -1,5 +1,13 @@
 # Changelog
 
+**Version: 0.0.12 ~ 02/01/2026**
+- Improvements:
+    - **Stability**: Resolved Discord's `custom_id` character limit violation (100 chars) by migrating UI modules to a hashing strategy.
+    - **UI Framework**: Fixed a critical bug in adapter interaction hand-offs where excluded elements were not properly pre-registered.
+    - **Setup Workflow**: Improved compatibility in the Setup Wizard to handle interactions originating from the main setup dashboard.
+
+---
+
 **Version: 0.0.11 ~ 31/12/2025**
 - New Features:
     - **Scaling Channel Improvements**: Added `scalingChannelMinAvailableChannels` configuration to ensure a minimum number of available rooms.

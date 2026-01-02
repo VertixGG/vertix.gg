@@ -8,7 +8,7 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -310,7 +310,7 @@ export class UIService extends ServiceWithDependenciesBase<{
                 }
 
                 protected override getCustomIdStrategy() {
-                    return new UICustomIdPlainStrategy();
+                    return new UICustomIdHashStrategy();
                 }
             }
 
@@ -343,7 +343,11 @@ export class UIService extends ServiceWithDependenciesBase<{
         // Each entity must be validated before it is registered.
         UIClass.validate();
 
-        const entities = ( UIClass.getComponent() as UIComponentTypeConstructor ).getEntities();
+        const component = UIClass.getComponent() as UIComponentTypeConstructor;
+        const entities = [
+            ...( ( UIClass as any ).getExcludedElementsInternal?.() || [] ),
+            ...component.getEntities()
+        ];
 
         // To have all hashes generated before the UI is created.
         for ( const entity of entities ) {

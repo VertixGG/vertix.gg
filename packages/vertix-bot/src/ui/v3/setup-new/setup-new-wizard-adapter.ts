@@ -16,6 +16,7 @@ import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
+import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup-elements/setup-max-master-channels-embed";
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
@@ -328,7 +329,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
         UIEmbedsGroupBase.createSingleGroup( SetupMaxMasterChannelsEmbed )
     ] )
-    .setExcludedElements( [ SetupMasterCreateV3Button ] )
+    .setExcludedElements( [ SetupMasterCreateV3Button, SetupMasterCreateSelectMenu ] )
     .setPermissions( new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS ) )
     .setChannelTypes( [ ChannelType.GuildVoice, ChannelType.GuildText ] )
     .setExecutionSteps( {
@@ -357,6 +358,23 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     } ) => {
         bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateV3Button",
+            onCreateMasterChannelClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-General/SetupNewWizardFlow",
+                        transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup",
+                        navigation: {
+                            targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
+                            executionStep: "VertixBot/UI-V3/SetupStep1Component"
+                        }
+                    }
+                ]
+            }
+        );
+
+        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
             onCreateMasterChannelClicked,
             {
                 flowTriggers: [

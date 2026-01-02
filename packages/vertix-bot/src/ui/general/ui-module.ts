@@ -1,8 +1,7 @@
 import { fileURLToPath } from "url";
 
 import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
-
-import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
 import { LanguageFlow } from "@vertix.gg/bot/src/ui/general/language/language-flow";
 
@@ -40,7 +39,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     protected getCustomIdStrategy() {
-        return new UICustomIdPlainStrategy();
+        return new UICustomIdHashStrategy();
     }
 }
 

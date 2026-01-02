@@ -10,6 +10,7 @@ import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-compon
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
 import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-button";
+import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
 
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup-elements/setup-max-master-channels-embed";
 
@@ -70,7 +71,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
     }
 
     protected static getExcludedElements() {
-        return [ SetupMasterCreateButton ];
+        return [ SetupMasterCreateButton, SetupMasterCreateSelectMenu ];
     }
 
     protected static getExecutionSteps() {
@@ -103,6 +104,11 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         // Create new master channel.
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateButton",
+            this.onCreateMasterChannelClicked
+        );
+
+        this.bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
             this.onCreateMasterChannelClicked
         );
 
@@ -233,7 +239,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         this.uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
     }
 
-    private async onCreateMasterChannelClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+    private async onCreateMasterChannelClicked( interaction: WizardInteractions ) {
         await this.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep1Component" );
     }
 

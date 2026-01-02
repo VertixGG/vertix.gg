@@ -3,8 +3,7 @@ import { fileURLToPath } from "url";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
-
-import { UICustomIdPlainStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-plain-strategy";
+import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -36,7 +35,7 @@ export class UIModuleV2 extends UIModuleBase {
     }
 
     protected getCustomIdStrategy() {
-        return new UICustomIdPlainStrategy();
+        return new UICustomIdHashStrategy();
     }
 
     protected async initialize() {

@@ -20,25 +20,13 @@ const routes = [
     },
     // ---
     {
-        path: "/features/dynamic-channels-showcase",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/features/features-dynamic-channels-showcase" ) ),
-    },
-    {
-        path: "/features-video",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/features/features-video" ) ),
-    },
-    {
-        path: "/features-images",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/features/features-images" ) ),
+        path: "/features/dynamic-channel-v2",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2" ) ),
     },
     // ---
     {
         path: "/changelog",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/changelog" ) ),
-    },
-    {
-        path: "/updates",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/updates" ) ),
     },
     {
         path: "/credits",
@@ -56,6 +44,11 @@ const routes = [
     {
         path: "/posts/how-to-setup-logs-channel",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/how-to-setup-logs-channel" ) ),
+    },
+    // ---
+    {
+        path: "/welcome",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/welcome" ) ),
     },
     // ---
     {

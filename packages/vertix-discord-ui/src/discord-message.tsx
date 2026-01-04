@@ -59,6 +59,12 @@ export const DiscordMessage: React.FC<DiscordMessageProps> = ( {
                     <div className="discord-message-body">
                         { children }
                     </div>
+                    { ephemeral && (
+                        <div className="discord-ephemeral-footer">
+                            <span className="ephemeral-icon">👁️</span>
+                            Only you can see this • <span className="ephemeral-dismiss">Dismiss message</span>
+                        </div>
+                    ) }
                 </div>
             </div>
         </div>

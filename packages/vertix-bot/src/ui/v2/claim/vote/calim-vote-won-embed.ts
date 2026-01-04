@@ -1,80 +1,48 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
-
+import { ElapsedEmbedBuilder } from "@vertix.gg/gui/src/builders/elapsed-embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { ClaimVoteResultsMarkdown } from "@vertix.gg/bot/src/ui/v2/claim/vote/claim-vote-results-markdown";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
-    private static vars: any = {
-        userWonId: uiUtilsWrapAsTemplate( "userWonId" ),
-        userWonDisplayName: uiUtilsWrapAsTemplate( "userWonDisplayName" ),
+const vars = {
+    userWonId: uiUtilsWrapAsTemplate( "userWonId" ),
+    userWonDisplayName: uiUtilsWrapAsTemplate( "userWonDisplayName" ),
 
-        previousOwnerId: uiUtilsWrapAsTemplate( "previousOwnerId" ),
-        previousOwnerDisplayName: uiUtilsWrapAsTemplate( "previousOwnerDisplayName" ),
+    previousOwnerId: uiUtilsWrapAsTemplate( "previousOwnerId" ),
+    previousOwnerDisplayName: uiUtilsWrapAsTemplate( "previousOwnerDisplayName" ),
 
-        candidatesCount: uiUtilsWrapAsTemplate( "candidatesCount" ),
+    candidatesCount: uiUtilsWrapAsTemplate( "candidatesCount" ),
 
-        wonMessage: uiUtilsWrapAsTemplate( "wonMessage" ),
-        wonSameOwner: uiUtilsWrapAsTemplate( "wonSameOwner" ),
-        wonSomeoneElse: uiUtilsWrapAsTemplate( "wonSomeoneElse" ),
+    wonMessage: uiUtilsWrapAsTemplate( "wonMessage" ),
+    wonSameOwner: uiUtilsWrapAsTemplate( "wonSameOwner" ),
+    wonSomeoneElse: uiUtilsWrapAsTemplate( "wonSomeoneElse" ),
 
-        results: uiUtilsWrapAsTemplate( "results" ),
-        resultsLink: uiUtilsWrapAsTemplate( "resultsLink" ),
-        resultsDefault: uiUtilsWrapAsTemplate( "resultsDefault" )
-    };
+    results: uiUtilsWrapAsTemplate( "results" ),
+    resultsLink: uiUtilsWrapAsTemplate( "resultsLink" ),
+    resultsDefault: uiUtilsWrapAsTemplate( "resultsDefault" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V2/ClaimVoteWonEmbed";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getEndTime( args: UIArgs ): Date {
-        return new Date( Date.now() + args.elapsedTime );
-    }
-
-    protected getTitle() {
-        return `👑  ${ ClaimVoteWonEmbed.vars.userWonDisplayName } has claimed the channel`;
-    }
-
-    protected getDescription() {
-        return ClaimVoteWonEmbed.vars.wonMessage;
-    }
-
-    protected getOptions() {
-        const {
-            userWonId,
-
-            previousOwnerDisplayName,
-
-            results,
-            resultsLink,
-            resultsDefault,
-
-            wonSameOwner,
-            wonSomeoneElse
-        } = ClaimVoteWonEmbed.vars;
-
-        return {
-            wonMessage: {
-                [ wonSomeoneElse ]: `<@${ userWonId }> has claimed ownership of this channel, superseding ~~${ previousOwnerDisplayName }~~ as the new owner!${ results }`,
-                [ wonSameOwner ]: `<@${ userWonId }> has claimed ownership of this channel, he was already the owner! 😊${ results }`
-            },
-
-            results: {
-                [ resultsDefault ]: "",
-                [ resultsLink ]: `\n\nFor more details click [here](${ resultsLink })`
-            }
-        };
-    }
-
-    protected getLogic( args: UIArgs ) {
+const ClaimVoteWonEmbed = new ElapsedEmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/ClaimVoteWonEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setEndTime( ( args ) => new Date( Date.now() + ( args.elapsedTime || 0 ) ) )
+    .setTitle( `👑  ${ vars.userWonDisplayName } has claimed the channel` )
+    .setDescription( vars.wonMessage )
+    .setOptions( {
+        wonMessage: {
+            [ vars.wonSomeoneElse ]: `<@${ vars.userWonId }> has claimed ownership of this channel, superseding ~~${ vars.previousOwnerDisplayName }~~ as the new owner!${ vars.results }`,
+            [ vars.wonSameOwner ]: `<@${ vars.userWonId }> has claimed ownership of this channel, he was already the owner! 😊${ vars.results }`
+        },
+        results: {
+            [ vars.resultsDefault ]: "",
+            [ vars.resultsLink ]: `\n\nFor more details click [here](${ vars.resultsLink })`
+        }
+    } )
+    .setLogic( ( args: UIArgs ) => {
         const result: any = {};
 
         result.userWonId = args.userWonId;
@@ -85,21 +53,31 @@ export class ClaimVoteWonEmbed extends UIEmbedElapsedTimeBase {
 
         result.candidatesCount = Object.keys( args.results || {} ).length;
 
-        const resultsLink = ClaimVoteResultsMarkdown.pullout( this.uiArgs?.markdownCode );
+        const resultsLink = ClaimVoteResultsMarkdown.pullout( args.markdownCode );
 
         if ( result.userWonId === result.previousOwnerId ) {
-            result.wonMessage = ClaimVoteWonEmbed.vars.wonSameOwner;
+            result.wonMessage = vars.wonSameOwner;
         } else {
-            result.wonMessage = ClaimVoteWonEmbed.vars.wonSomeoneElse;
+            result.wonMessage = vars.wonSomeoneElse;
         }
 
         if ( resultsLink ) {
             result.resultsLink = resultsLink;
-            result.results = ClaimVoteWonEmbed.vars.resultsLink;
+            result.results = vars.resultsLink;
         } else {
-            result.results = ClaimVoteWonEmbed.vars.resultsDefault;
+            result.results = vars.resultsDefault;
         }
 
         return result;
-    }
-}
+    } )
+    .setDefaultVars( () => ( {
+        userWonId: "123456789",
+        userWonDisplayName: "New Owner",
+        previousOwnerId: "987654321",
+        previousOwnerDisplayName: "Old Owner",
+        wonMessage: "wonSomeoneElse",
+        results: "resultsDefault"
+    } ) )
+    .build();
+
+export { ClaimVoteWonEmbed };

@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { DiscordMessage } from "./discord-message";
 import { DiscordUIComponentRenderer } from "./discord-ui-component-renderer";
 
@@ -14,7 +12,14 @@ export interface DiscordUIComponentMessageProps {
     variables?: Readonly<Record<string, string>>;
     elementOverrides?: Readonly<Record<string, UIElementOverride>>;
     embedOverrides?: Readonly<Record<string, UIEmbedOverride>>;
+    preferredEmbedsGroup?: string;
+    preferredElementsGroup?: string;
+    hideElements?: boolean;
     app?: boolean;
+    ephemeral?: boolean;
+    interactionUser?: string;
+    interactionUserAvatar?: string;
+    interactionCommand?: string;
 }
 
 export function DiscordUIComponentMessage( {
@@ -26,7 +31,14 @@ export function DiscordUIComponentMessage( {
     variables,
     elementOverrides,
     embedOverrides,
+    preferredEmbedsGroup,
+    preferredElementsGroup,
+    hideElements,
     app = true,
+    ephemeral = false,
+    interactionUser,
+    interactionUserAvatar,
+    interactionCommand,
 }: DiscordUIComponentMessageProps ) {
     return (
         <DiscordMessage
@@ -34,6 +46,10 @@ export function DiscordUIComponentMessage( {
             avatar={ avatar }
             app={ app }
             timestamp={ timestamp }
+            ephemeral={ ephemeral }
+            interactionUser={ interactionUser }
+            interactionUserAvatar={ interactionUserAvatar }
+            interactionCommand={ interactionCommand }
         >
             { mentionUsername && (
                 <span className="discord-mention-pill">@{ mentionUsername }</span>
@@ -44,6 +60,9 @@ export function DiscordUIComponentMessage( {
                 variables={ variables }
                 elementOverrides={ elementOverrides }
                 embedOverrides={ embedOverrides }
+                preferredEmbedsGroup={ preferredEmbedsGroup }
+                preferredElementsGroup={ preferredElementsGroup }
+                hideElements={ hideElements }
             />
         </DiscordMessage>
     );

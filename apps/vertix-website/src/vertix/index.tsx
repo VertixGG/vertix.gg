@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } from "@vertix.gg/website/src/utils/loading";
 
@@ -35,17 +35,13 @@ const RoutesComponent = () => {
     );
 };
 
-export default function Index() {
-    loadedPromise.then( () => {
-        allImagesLoadedPromise().then( () => {
-            document.querySelector( ".body-container" )?.classList.remove( "unload", "not-loaded" );
-            document.querySelector( ".body-container" )?.classList.add( "loaded" );
-        } );
-    } );
+const IndexContent = () => {
+    const location = useLocation();
+    const shouldHideHeader = location.pathname === "/welcome";
 
     return (
-        <div className="body-container not-loaded">
-            <Header/>
+        <>
+            { !shouldHideHeader && <Header/> }
 
             <section className="content">
                 <Suspense fallback={ LoadingContainer() }>
@@ -62,8 +58,6 @@ export default function Index() {
                             Policy</a></li>
                         <li className="nav-item"><a href="/terms-of-service" className="nav-link px-2 text-muted">Terms
                             Of Service</a></li>
-                        <li className="nav-item"><a href="/changelog" className="nav-link px-2 text-muted">Changelog</a>
-                        </li>
                         <li className="nav-item"><a href="/credits" className="nav-link px-2 text-muted">Credits</a>
                         </li>
                         <li className="nav-item">
@@ -81,6 +75,21 @@ export default function Index() {
                     <a href="https://vertix.gg" target="_blank" rel="noreferrer">channels</a>
                 </div>
             </div>
+        </>
+    );
+};
+
+export default function Index() {
+    loadedPromise.then( () => {
+        allImagesLoadedPromise().then( () => {
+            document.querySelector( ".body-container" )?.classList.remove( "unload", "not-loaded" );
+            document.querySelector( ".body-container" )?.classList.add( "loaded" );
+        } );
+    } );
+
+    return (
+        <div className="body-container not-loaded">
+            <IndexContent/>
         </div>
     );
 }

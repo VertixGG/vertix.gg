@@ -8,8 +8,8 @@ const ClaimResultVoteSelfEmbed = new EmbedBuilder(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
-    .setTitle( () => "🤷  You cannot vote for yourself" )
-    .setDescription( () => "It's great that you believe in yourself, but voting for yourself is not allowed in this election." )
+    .setTitle( "🤷  You cannot vote for yourself" )
+    .setDescription( "It's great that you believe in yourself, but voting for yourself is not allowed in this election." )
     .build();
 
 export { ClaimResultVoteSelfEmbed };

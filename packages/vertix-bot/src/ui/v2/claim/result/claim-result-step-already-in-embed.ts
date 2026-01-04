@@ -8,8 +8,8 @@ const ClaimResultStepAlreadyInEmbed = new EmbedBuilder(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
-    .setTitle( () => "🤷  You are already in" )
-    .setDescription( () => "Your intentions are clear - you've already nominated yourself as a potential owner of this channel." )
+    .setTitle( "🤷  You are already in" )
+    .setDescription( "Your intentions are clear - you've already nominated yourself as a potential owner of this channel." )
     .build();
 
 export { ClaimResultStepAlreadyInEmbed };

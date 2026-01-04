@@ -1,5 +1,27 @@
 import * as React from "react";
 
+import ChannelRenameEmoji from "@vertix.gg/assets/svg/ChannelRename.svg";
+
+import UserLimitEmoji from "@vertix.gg/assets/svg/UserLimit.svg";
+
+import ChannelPermissionsEmoji from "@vertix.gg/assets/svg/ChannelPermissions.svg";
+
+import ChannelPrivacyEmoji from "@vertix.gg/assets/svg/ChannelPrivacy.svg";
+
+import ChannelRegionEmoji from "@vertix.gg/assets/svg/ChannelRegion.svg";
+
+import EditChannelMessageEmoji from "@vertix.gg/assets/svg/EditChannelMessage.svg";
+
+import ClearChatEmoji from "@vertix.gg/assets/svg/ClearChat.svg";
+
+import ResetChannelEmoji from "@vertix.gg/assets/svg/ResetChannel.svg";
+
+import TransferChannelEmoji from "@vertix.gg/assets/svg/TransferChannel.svg";
+
+import ClaimChannelEmoji from "@vertix.gg/assets/svg/ClaimChannel.svg";
+
+import ChannelTemplatesEmoji from "@vertix.gg/assets/svg/ChannelTemplates.svg";
+
 import ArrowsClockwiseEmoji from "./assets/emojis/arrows-clockwise.svg";
 import BroomEmoji from "./assets/emojis/broom.svg";
 import BustsEmoji from "./assets/emojis/busts.svg";
@@ -13,23 +35,12 @@ import ShuffleEmoji from "./assets/emojis/shuffle.svg";
 import SmilingImpEmoji from "./assets/emojis/smiling-imp.svg";
 import ThumbsUpEmoji from "./assets/emojis/thumbsup.svg";
 
-import ChannelRenameEmoji from "@vertix.gg/assets/svg/ChannelRename.svg";
-import UserLimitEmoji from "@vertix.gg/assets/svg/UserLimit.svg";
-import ChannelPermissionsEmoji from "@vertix.gg/assets/svg/ChannelPermissions.svg";
-import ChannelPrivacyEmoji from "@vertix.gg/assets/svg/ChannelPrivacy.svg";
-import ChannelRegionEmoji from "@vertix.gg/assets/svg/ChannelRegion.svg";
-import EditChannelMessageEmoji from "@vertix.gg/assets/svg/EditChannelMessage.svg";
-import ClearChatEmoji from "@vertix.gg/assets/svg/ClearChat.svg";
-import ResetChannelEmoji from "@vertix.gg/assets/svg/ResetChannel.svg";
-import TransferChannelEmoji from "@vertix.gg/assets/svg/TransferChannel.svg";
-import ClaimChannelEmoji from "@vertix.gg/assets/svg/ClaimChannel.svg";
-import ChannelTemplatesEmoji from "@vertix.gg/assets/svg/ChannelTemplates.svg";
-
 export const DISCORD_EMOJI_ICON_SRC_BY_UNICODE: Readonly<Record<string, string>> = {
     "✏️": PencilEmoji,
     "✋": RaisedHandEmoji,
     "🧹": BroomEmoji,
     "🚫": NoEntryEmoji,
+    "🙈": MonkeyFaceEmoji,
     "🐵": MonkeyFaceEmoji,
     "👥": BustsEmoji,
     "🔃": ArrowsClockwiseEmoji,
@@ -90,7 +101,7 @@ export function replaceEmojisWithIcons( text: string, overrides?: Readonly<Recor
     }
 
     // Handle custom Discord emojis <:Name:ID>
-    result = result.replace( /<:([^:]+):(\d+)>/g, ( match, name, id ) => {
+    result = result.replace( /<:([^:]+):(\d+)>/g, ( match, name, _id ) => {
         const src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ] || ( overrides ? overrides[ match ] : undefined );
         if ( src ) {
             return `<img src="${ src }" alt="${ name }" class="emoji" draggable="false">`;

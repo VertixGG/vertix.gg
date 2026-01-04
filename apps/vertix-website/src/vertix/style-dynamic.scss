@@ -97,6 +97,17 @@ img.normalize {
     }
 }
 
+.documentation-page-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.documentation-page-header__robot {
+    width: clamp(96px, 10vw, 160px);
+    height: auto;
+}
+
 .border-box {
     margin: 15px;
     border: 2px solid #21272e;

@@ -10,9 +10,20 @@ export type UIInstanceType = "Static" | "Dynamic";
 
 export type UIComponentType = "component";
 
-export type UIElementType = "button" | "button-url" | "select-menu";
+export type UIElementType = "button" | "button-url" | "select-menu" | "user-select" | "channel-select" | "role-select";
 
 export type UIButtonStyle = "primary" | "secondary" | "success" | "danger" | "link";
+
+export function isUIButtonElementType( elementType: string ): elementType is UIButtonDefinition[ "elementType" ] {
+    return elementType === "button" || elementType === "button-url";
+}
+
+export function isUISelectElementType( elementType: string ): elementType is UISelectMenuDefinition[ "elementType" ] {
+    return elementType === "select-menu"
+        || elementType === "user-select"
+        || elementType === "channel-select"
+        || elementType === "role-select";
+}
 
 export interface UIElementDefinitionBase {
     name: string;
@@ -30,7 +41,7 @@ export interface UIButtonDefinition extends UIElementDefinitionBase {
 }
 
 export interface UISelectMenuDefinition extends UIElementDefinitionBase {
-    elementType: "select-menu";
+    elementType: "select-menu" | "user-select" | "channel-select" | "role-select";
     placeholder?: string;
 }
 
@@ -53,6 +64,7 @@ export interface UIEmbedDefinition {
     title?: string;
     description?: string;
     color?: number;
+    footer?: string;
 }
 
 export interface UIEmbedItem {
@@ -262,7 +274,7 @@ function parseElementDefinition( value: JsonObject ): UIElementDefinition | null
         return null;
     }
 
-    if ( elementType === "button" || elementType === "button-url" ) {
+    if ( isUIButtonElementType( elementType ) ) {
         const style = asString( value[ "style" ] );
         const label = asString( value[ "label" ] );
         const emoji = asString( value[ "emoji" ] );
@@ -281,7 +293,7 @@ function parseElementDefinition( value: JsonObject ): UIElementDefinition | null
         };
     }
 
-    if ( elementType === "select-menu" ) {
+    if ( isUISelectElementType( elementType ) ) {
         const placeholder = asString( value[ "placeholder" ] );
 
         return {
@@ -363,12 +375,14 @@ function parseEmbedDefinition( value: JsonObject ): UIEmbedDefinition {
     const description = asString( value[ "description" ] );
     const color = asNumber( value[ "color" ] );
     const instanceType = asString( value[ "instanceType" ] );
+    const footer = asString( value[ "footer" ] );
 
     return {
         title: title ?? undefined,
         description: description ?? undefined,
         color: color ?? undefined,
         instanceType: instanceType === "Static" || instanceType === "Dynamic" ? instanceType : undefined,
+        footer: footer ?? undefined,
     };
 }
 

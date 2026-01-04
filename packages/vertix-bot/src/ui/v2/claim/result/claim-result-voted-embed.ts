@@ -14,8 +14,8 @@ const ClaimResultVotedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     vars
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
-    .setTitle( () => `🗳️  You have voted for ${ vars.userDisplayName }` )
-    .setDescription( () => `Your vote has been cast in favor of <@${ vars.userId }> taking ownership of this channel.` )
+    .setTitle( `🗳️  You have voted for ${ vars.userDisplayName }` )
+    .setDescription( `Your vote has been cast in favor of <@${ vars.userId }> taking ownership of this channel.` )
     .setLogic( ( args: UIArgs ) => ( {
             userDisplayName: args.userDisplayName,
             userId: args.userId

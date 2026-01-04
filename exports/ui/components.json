@@ -751,7 +751,9 @@
                     {
                         "embed": "VertixBot/UI-V2/ClaimResultStepInEmbed",
                         "definition": {
-                            "instanceType": "Dynamic"
+                            "instanceType": "Dynamic",
+                            "title": "😈  Channel might be yours",
+                            "description": "You've put yourself forward as a potential owner of this channel.\nGood luck!\n"
                         }
                     }
                 ]
@@ -763,6 +765,8 @@
                         "embed": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
+                            "title": "🤷  You are already in",
+                            "description": "Your intentions are clear - you've already nominated yourself as a potential owner of this channel.",
                             "color": 16738560
                         }
                     }
@@ -775,6 +779,8 @@
                         "embed": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
+                            "title": "🤷  You cannot vote for yourself",
+                            "description": "It's great that you believe in yourself, but voting for yourself is not allowed in this election.",
                             "color": 16738560
                         }
                     }
@@ -924,7 +930,22 @@
                 "name": "VertixBot/UI-V2/ClaimVoteStepInEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimVoteStepInEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👑  {userInitiatorDisplayName} wish to claim this channel",
+                            "description": "Unless someone else steps up, <@{userInitiatorId}> will be the proud owner of this channel in just `{elapsedTimeFormatFraction}`.",
+                            "vars": {
+                                "userInitiatorId": "{userInitiatorId}",
+                                "userInitiatorDisplayName": "{userInitiatorDisplayName}",
+                                "elapsedTimeFormatFraction": "{elapsedTimeFormatFraction}"
+                            },
+                            "defaultVars": {
+                                "userInitiatorId": "123456789",
+                                "userInitiatorDisplayName": "User",
+                                "elapsedTimeFormatFraction": "1.0 minutes"
+                            }
+                        }
                     }
                 ]
             },
@@ -932,7 +953,47 @@
                 "name": "VertixBot/UI-V2/ClaimVoteEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimVoteEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimVoteEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👑  {candidatesCount} Candidates wish to claim this channel",
+                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}`, the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
+                            "options": {
+                                "candidatesState": {
+                                    "{candidates}": "🏅 {candidates}",
+                                    "{candidatesDefault}": "There are no candidates yet."
+                                }
+                            },
+                            "arrayOptions": {
+                                "candidates": {
+                                    "format": "{value}{separator}",
+                                    "separator": " - ",
+                                    "multiSeparator": "\n",
+                                    "options": {
+                                        "userId": "<@{userId}>",
+                                        "votes": "{votes} Votes"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "userInitiatorId": "{userInitiatorId}",
+                                "candidates": "{candidates}",
+                                "candidatesCount": "{candidatesCount}",
+                                "candidatesState": "{candidatesState}",
+                                "candidatesDefault": "{candidatesDefault}",
+                                "userId": "{userId}",
+                                "votes": "{votes}",
+                                "elapsedTimeFormatFraction": "{elapsedTimeFormatFraction}"
+                            },
+                            "defaultVars": {
+                                "candidatesCount": "2",
+                                "userInitiatorId": "123456789",
+                                "candidatesState": "🏅 <@123456789> - 1 Votes\n🏅 <@987654321> - 0 Votes",
+                                "elapsedTimeFormatFraction": "1.5 minutes"
+                            }
+                        }
                     }
                 ]
             },
@@ -940,7 +1001,43 @@
                 "name": "VertixBot/UI-V2/ClaimVoteWonEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/ClaimVoteWonEmbed"
+                        "embed": "VertixBot/UI-V2/ClaimVoteWonEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👑  {userWonDisplayName} has claimed the channel",
+                            "description": "{wonMessage}",
+                            "options": {
+                                "wonMessage": {
+                                    "{wonSomeoneElse}": "<@{userWonId}> has claimed ownership of this channel, superseding ~~{previousOwnerDisplayName}~~ as the new owner!{results}",
+                                    "{wonSameOwner}": "<@{userWonId}> has claimed ownership of this channel, he was already the owner! 😊{results}"
+                                },
+                                "results": {
+                                    "{resultsDefault}": "",
+                                    "{resultsLink}": "\n\nFor more details click [here]({resultsLink})"
+                                }
+                            },
+                            "vars": {
+                                "userWonId": "{userWonId}",
+                                "userWonDisplayName": "{userWonDisplayName}",
+                                "previousOwnerId": "{previousOwnerId}",
+                                "previousOwnerDisplayName": "{previousOwnerDisplayName}",
+                                "candidatesCount": "{candidatesCount}",
+                                "wonMessage": "{wonMessage}",
+                                "wonSameOwner": "{wonSameOwner}",
+                                "wonSomeoneElse": "{wonSomeoneElse}",
+                                "results": "{results}",
+                                "resultsLink": "{resultsLink}",
+                                "resultsDefault": "{resultsDefault}"
+                            },
+                            "defaultVars": {
+                                "userWonId": "123456789",
+                                "userWonDisplayName": "New Owner",
+                                "previousOwnerId": "987654321",
+                                "previousOwnerDisplayName": "Old Owner",
+                                "wonMessage": "wonSomeoneElse",
+                                "results": "resultsDefault"
+                            }
+                        }
                     }
                 ]
             }
@@ -954,8 +1051,8 @@
         "options": {
             "embedAudit": {
                 "total": 3,
-                "withDefinition": 0,
-                "missingDefinition": 3
+                "withDefinition": 3,
+                "missingDefinition": 0
             }
         }
     },
@@ -1997,7 +2094,86 @@
                 "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔃  Dynamic Channel has been reset to default settings! ",
+                            "description": "Settings has been reset to default:\n\n- Name: **{name}** {nameChanged}\n- User limit: ✋**{userLimit}** {userLimitChanged}\n- State: {state} {stateChanged}\n- Visibility State: {visibilityState} {visibilityStateChanged}\n- Allowed Users: {allowedUsers} {allowedUsersChanged}\n- Blocked Users: {blockedUsers} {blockedUsersChanged}{rateLimited}",
+                            "color": 8035517,
+                            "options": {
+                                "changedDisplay": "(__restored__)",
+                                "unchangedDisplay": "(__unchanged__)",
+                                "userLimit": {
+                                    "{userLimitValue}": "{userLimitValue}",
+                                    "{userLimitUnlimited}": "Unlimited"
+                                },
+                                "state": {
+                                    "{statePublic}": "🌐 **Public**",
+                                    "{statePrivate}": "🚫 **Private**"
+                                },
+                                "visibilityState": {
+                                    "{visibilityStateShown}": "🐵 **Shown**",
+                                    "{visibilityStateHidden}": "🙈 **Hidden**"
+                                },
+                                "rateLimited": {
+                                    "{rateLimitedNone}": "",
+                                    "{rateLimitedDisplay}": "\n\n⚠️ Renaming cannot be performed at the moment due to rate limit restrictions.\n\nPlease wait for {elapsedTimeFormatFraction} seconds or create a new channel instead."
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "<@{value}>{separator}",
+                                    "separator": ", "
+                                },
+                                "blockedUsers": {
+                                    "format": "<@{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "changedDisplay": "{changedDisplay}",
+                                "unchangedDisplay": "{unchangedDisplay}",
+                                "name": "{name}",
+                                "nameChanged": "{nameChanged}",
+                                "userLimit": "{userLimit}",
+                                "userLimitValue": "{userLimitValue}",
+                                "userLimitUnlimited": "{userLimitUnlimited}",
+                                "userLimitChanged": "{userLimitChanged}",
+                                "state": "{state}",
+                                "statePublic": "{statePublic}",
+                                "statePrivate": "{statePrivate}",
+                                "stateChanged": "{stateChanged}",
+                                "visibilityState": "{visibilityState}",
+                                "visibilityStateShown": "{visibilityStateShown}",
+                                "visibilityStateHidden": "{visibilityStateHidden}",
+                                "visibilityStateChanged": "{visibilityStateChanged}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersChanged": "{allowedUsersChanged}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersChanged": "{blockedUsersChanged}",
+                                "rateLimited": "{rateLimited}",
+                                "rateLimitedNone": "{rateLimitedNone}",
+                                "rateLimitedDisplay": "{rateLimitedDisplay}",
+                                "elapsedTimeFormatFraction": "{elapsedTimeFormatFraction}"
+                            },
+                            "defaultVars": {
+                                "name": "My Channel",
+                                "nameChanged": "(__unchanged__)",
+                                "userLimit": "Unlimited",
+                                "userLimitChanged": "(__unchanged__)",
+                                "state": "🌐 **Public**",
+                                "stateChanged": "(__unchanged__)",
+                                "visibilityState": "🐵 **Shown**",
+                                "visibilityStateChanged": "(__unchanged__)",
+                                "allowedUsers": "None",
+                                "allowedUsersChanged": "(__unchanged__)",
+                                "blockedUsers": "None",
+                                "blockedUsersChanged": "(__unchanged__)",
+                                "rateLimited": ""
+                            }
+                        }
                     }
                 ]
             },
@@ -2025,8 +2201,8 @@
         "options": {
             "embedAudit": {
                 "total": 2,
-                "withDefinition": 1,
-                "missingDefinition": 1
+                "withDefinition": 2,
+                "missingDefinition": 0
             }
         }
     },

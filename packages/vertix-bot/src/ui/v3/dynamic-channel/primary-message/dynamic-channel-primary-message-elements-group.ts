@@ -68,8 +68,8 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelClearChatButton,
             DynamicChannelResetChannelButton,
             DynamicChannelTransferOwnerButton,
+            DynamicChannelTemplatesButton,
             DynamicChannelClaimChannelButton,
-            DynamicChannelTemplatesButton
         ].sort( ( a, b ) => a.getSortId() - b.getSortId() );
     }
 

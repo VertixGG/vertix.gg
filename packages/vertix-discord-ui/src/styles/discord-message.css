@@ -102,8 +102,31 @@
 .discord-message-author {
     font-size: 1rem;
     font-weight: 500;
-    color: #3498db;
+    color: #f2f3f5;
     margin-right: 0.25rem;
+}
+
+.discord-ephemeral-footer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: #72767d;
+    user-select: none;
+}
+
+.ephemeral-icon {
+    font-size: 0.875rem;
+}
+
+.ephemeral-dismiss {
+    color: #00aff4;
+    cursor: pointer;
+}
+
+.ephemeral-dismiss:hover {
+    text-decoration: underline;
 }
 
 .discord-message-bot-tag {
@@ -168,7 +191,8 @@
 
 .discord-mention-pill {
     display: inline;
-    font-size: 1rem;
+    font-size: inherit;
+    line-height: inherit;
     font-weight: var(--discord-font-weight-medium);
     color: var(--discord-mention-foreground);
     background: var(--discord-mention-background);

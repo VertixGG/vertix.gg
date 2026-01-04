@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 import { replaceEmojisWithIcons } from "./discord-emojis";
+import { replaceMentionsWithPills } from "./discord-mentions";
 
 import "./styles/discord-embed.css";
 
@@ -215,13 +216,13 @@ export function DiscordEmbed( {
                                     ? (
                                         <a
                                             href={ url }
-                                            dangerouslySetInnerHTML={ { __html: replaceEmojisWithIcons( title, emojiIconSrcByUnicode ) } }
+                                            dangerouslySetInnerHTML={ { __html: replaceEmojisWithIcons( replaceMentionsWithPills( title ), emojiIconSrcByUnicode ) } }
                                         />
                                     )
                                     : <a href={ url }>{ title }</a>
                                 )
                                 : ( typeof title === "string"
-                                    ? <span dangerouslySetInnerHTML={ { __html: replaceEmojisWithIcons( title, emojiIconSrcByUnicode ) } } />
+                                    ? <span dangerouslySetInnerHTML={ { __html: replaceEmojisWithIcons( replaceMentionsWithPills( title ), emojiIconSrcByUnicode ) } } />
                                     : title
                                 )
                             }
@@ -236,7 +237,7 @@ export function DiscordEmbed( {
                                     remarkPlugins={ [ remarkGfm ] }
                                     rehypePlugins={ [ rehypeRaw ] as React.ComponentProps<typeof ReactMarkdown>[ "rehypePlugins" ] }
                                 >
-                                    { replaceEmojisWithIcons( description, emojiIconSrcByUnicode ) }
+                                    { replaceEmojisWithIcons( replaceMentionsWithPills( description ), emojiIconSrcByUnicode ) }
                                 </ReactMarkdown>
                             ) : description }
                         </div>

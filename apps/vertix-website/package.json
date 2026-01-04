@@ -42,7 +42,7 @@
 		"vertix-website:preview": "vite preview",
 		"vertix-website:serve": "vite build && vite preview",
 		"vertix-website:release": "vite build && bash ./scripts/release.sh",
-		"vertix-website:deploy": "bun run ./scripts/deploy.js"
+		"vertix-website:deploy": "bun --bun run ./scripts/deploy.js"
 	},
 	"eslintConfig": {
 		"extends": [

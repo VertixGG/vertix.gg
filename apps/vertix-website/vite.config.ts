@@ -1,11 +1,11 @@
 import path from "path";
 
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
 import fs from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { pipeline } from "node:stream/promises";
+
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 import type { Plugin, ResolvedConfig } from "vite";
 
@@ -20,7 +20,7 @@ function exportsAssetsPlugin(): Plugin {
         },
         configureServer( server ) {
             server.middlewares.use( "/exports", ( req, res, next ) => {
-                void ( async () => {
+                void ( async() => {
                     try {
                         const url = req.url ?? "";
                         const urlPath = url.split( "?" )[ 0 ]?.split( "#" )[ 0 ] ?? "";

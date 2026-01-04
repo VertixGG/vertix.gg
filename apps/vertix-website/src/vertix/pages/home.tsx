@@ -1,5 +1,10 @@
+import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+import VertixAvatar from "@vertix.gg/assets/brand/Robot.png";
+
 import DiscordDynamicChannelV2 from "../components/discord/discord-dynamic-channel-v2";
 import DiscordDynamicChannelV3 from "../components/discord/discord-dynamic-channel-v3";
+
+import "../components/discord/discord-chat-container.css";
 
 export default function Home() {
     return (
@@ -104,11 +109,26 @@ export default function Home() {
                 <br/>
 
                 <div className="d-none d-xl-block mb-5">
-                    <a href="/posts/how-to-setup">
-                        <img
-                            src="https://i.ibb.co/mNcTWQK/000.png"
-                            alt="Setup" className="normalize"/>
-                    </a>
+                    <div className="discord-chat-container border-box w-100 m-0">
+                        <DiscordUIComponentMessage
+                            author="Vertix Test"
+                            avatar={ VertixAvatar }
+                            timestamp="12:12"
+                            mentionUsername="iNewLegend"
+                            interactionUser="iNewLegend"
+                            interactionCommand="/setup"
+                            ephemeral={ true }
+                            componentName="VertixBot/UI-General/SetupComponent"
+                            variables={ {
+                                masterChannelMessage: "None",
+                                badwordsMessage: "`bla`"
+                            } }
+                            elementOverrides={ {
+                                "VertixBot/UI-General/SetupMasterEditSelectMenu": { hidden: true },
+                                "VertixBot/UI-General/SetupMasterCreateSelectMenu": { highlighted: false }
+                            } }
+                        />
+                    </div>
                     <br/>
                 </div>
 

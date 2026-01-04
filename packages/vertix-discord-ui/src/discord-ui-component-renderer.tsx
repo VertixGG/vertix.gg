@@ -40,6 +40,8 @@ interface ResolvedEmbedDefinition {
     title?: string;
     description?: string;
     color?: number | string;
+    image?: string;
+    thumbnail?: string;
     footer?: string;
 }
 
@@ -139,6 +141,8 @@ export function DiscordUIComponentRenderer( {
                     key={ `embed-${ index }` }
                     title={ embed.title }
                     description={ embed.description }
+                    thumbnail={ embed.thumbnail ? { url: embed.thumbnail } : undefined }
+                    image={ embed.image ? { url: embed.image } : undefined }
                     color={ embed.color }
                     footer={ embed.footer ? { text: embed.footer } : undefined }
                     emojiIconSrcByUnicode={ emojiIconSrcByUnicode }
@@ -196,6 +200,8 @@ function resolveEmbedDefinition(
     const title = override?.title ?? definition?.title;
     const description = override?.description ?? definition?.description;
     const color = override?.color ?? definition?.color;
+    const image = definition?.image;
+    const thumbnail = definition?.thumbnail;
     const footer = definition?.footer;
 
     const resolvedTitle = applyVariables( title, variables );
@@ -205,6 +211,8 @@ function resolveEmbedDefinition(
         title: resolvedTitle,
         description: resolvedDescription,
         color,
+        image,
+        thumbnail,
         footer,
     };
 }

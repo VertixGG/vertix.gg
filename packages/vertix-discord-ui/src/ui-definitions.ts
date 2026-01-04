@@ -64,6 +64,8 @@ export interface UIEmbedDefinition {
     title?: string;
     description?: string;
     color?: number;
+    image?: string;
+    thumbnail?: string;
     footer?: string;
 }
 
@@ -375,6 +377,8 @@ function parseEmbedDefinition( value: JsonObject ): UIEmbedDefinition {
     const description = asString( value[ "description" ] );
     const color = asNumber( value[ "color" ] );
     const instanceType = asString( value[ "instanceType" ] );
+    const image = asString( value[ "image" ] );
+    const thumbnail = asString( value[ "thumbnail" ] );
     const footer = asString( value[ "footer" ] );
 
     return {
@@ -382,6 +386,8 @@ function parseEmbedDefinition( value: JsonObject ): UIEmbedDefinition {
         description: description ?? undefined,
         color: color ?? undefined,
         instanceType: instanceType === "Static" || instanceType === "Dynamic" ? instanceType : undefined,
+        image: image ?? undefined,
+        thumbnail: thumbnail ?? undefined,
         footer: footer ?? undefined,
     };
 }

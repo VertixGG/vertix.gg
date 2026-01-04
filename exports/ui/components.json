@@ -302,13 +302,13 @@
                             "options": {
                                 "masterChannelMessage": {
                                     "{masterChannels}": "\n{masterChannels}",
-                                    "{masterChannelMessageDefault}": "**None**"
+                                    "{masterChannelMessageDefault}": "None"
                                 },
                                 "badwordsMessage": {
                                     "{badwords}": "`{badwords}`",
-                                    "{badwordsMessageDefault}": "**None**"
+                                    "{badwordsMessageDefault}": "None"
                                 },
-                                "none": "**None**"
+                                "none": "None"
                             },
                             "arrayOptions": {
                                 "masterChannels": {
@@ -957,7 +957,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👑  {candidatesCount} Candidates wish to claim this channel",
-                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}`, the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
+                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}` , the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
                             "options": {
                                 "candidatesState": {
                                     "{candidates}": "🏅 {candidates}",

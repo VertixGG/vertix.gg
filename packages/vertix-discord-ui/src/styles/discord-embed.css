@@ -261,6 +261,13 @@
     margin: 0 4px;
 }
 
+.discord-embed-subtext {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--discord-text-muted);
+}
+
 .discord-embed-description .emoji, 
 .discord-embed-description .discord-emoji, 
 .discord-embed-title .emoji,

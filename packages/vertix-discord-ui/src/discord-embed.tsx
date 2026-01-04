@@ -237,7 +237,7 @@ export function DiscordEmbed( {
                                     remarkPlugins={ [ remarkGfm ] }
                                     rehypePlugins={ [ rehypeRaw ] as React.ComponentProps<typeof ReactMarkdown>[ "rehypePlugins" ] }
                                 >
-                                    { replaceEmojisWithIcons( replaceMentionsWithPills( description ), emojiIconSrcByUnicode ) }
+                                    { replaceDiscordSubtext( replaceEmojisWithIcons( replaceMentionsWithPills( description ), emojiIconSrcByUnicode ) ) }
                                 </ReactMarkdown>
                             ) : description }
                         </div>
@@ -300,3 +300,10 @@ export function DiscordEmbed( {
 }
 
 export default DiscordEmbed;
+
+function replaceDiscordSubtext( text: string ): string {
+    return text
+        .split( "\n" )
+        .map( ( line ) => line.startsWith( "-# " ) ? `<div class="discord-embed-subtext">${ line.slice( 3 ) }</div>` : line )
+        .join( "\n" );
+}

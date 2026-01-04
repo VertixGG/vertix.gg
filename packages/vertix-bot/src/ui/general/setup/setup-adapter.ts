@@ -89,6 +89,10 @@ type SetupInteractions =
     | UIDefaultModalChannelTextInteraction
     | UIDefaultStringSelectMenuChannelTextInteraction;
 
+type SetupMessageComponentInteractions =
+    | UIDefaultButtonChannelTextInteraction
+    | UIDefaultStringSelectMenuChannelTextInteraction;
+
 async function onSelectEditMasterChannel(
     context: IAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
@@ -173,9 +177,9 @@ async function onSelectEditMasterChannel(
     context.deleteArgs( interaction );
 }
 
-async function onCreateMasterChannelClicked(
-    context: IAdapterContext<SetupInteractions, ISetupArgs>,
-    interaction: SetupInteractions,
+async function onCreateMasterChannelClicked<TInteraction extends SetupMessageComponentInteractions>(
+    context: IAdapterContext<TInteraction, ISetupArgs>,
+    interaction: TInteraction,
     version: TVersionType = VERSION_UI_V2
 ) {
     const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
@@ -217,9 +221,9 @@ async function onCreateMasterChannelClicked(
     context.deleteArgs( interaction );
 }
 
-async function onCreateScalingChannelClicked(
-    context: IAdapterContext<SetupInteractions, ISetupArgs>,
-    interaction: SetupInteractions
+async function onCreateScalingChannelClicked<TInteraction extends SetupMessageComponentInteractions>(
+    context: IAdapterContext<TInteraction, ISetupArgs>,
+    interaction: TInteraction
 ) {
     const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
         guildId = interaction.guild.id,

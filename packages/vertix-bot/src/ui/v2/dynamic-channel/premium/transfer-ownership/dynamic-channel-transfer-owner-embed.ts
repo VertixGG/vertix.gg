@@ -9,11 +9,11 @@ const DynamicChannelTransferOwnerEmbed = new EmbedBuilder(
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
-    .setTitle( () => "🔀  Transfer channel ownership" )
-    .setDescription( () => (
-            "Transfer channel ownership to another user.\n\n" +
+    .setTitle( "🔀  Transfer channel ownership" )
+    .setDescription(
+        "Transfer channel ownership to another user.\n\n" +
             "Select the user to whom you want to transfer the channel."
-    ) )
+    )
     .build();
 
 export { DynamicChannelTransferOwnerEmbed };

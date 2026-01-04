@@ -543,6 +543,118 @@
         }
     },
     {
+        "name": "VertixBot/UI-General/AIAgentComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/AIAgentComponent/ElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/AIAgentChannelSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/AIAgentChannelSelectMenu",
+                                "elementType": "channel-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "Select a channel"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/AIAgentSendButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/AIAgentSendButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Send",
+                                "style": "primary",
+                                "emoji": "📨"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/AIAgentConfirmSendButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/AIAgentConfirmSendButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Send to channel",
+                                "style": "success",
+                                "emoji": "✅"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/AIAgentCancelDraftButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Cancel",
+                                "style": "secondary",
+                                "emoji": "✖️"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/AIAgentComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/AIAgentEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "AI Agent",
+                            "description": "Select a channel, then press Send.\n\nSelected channel: {selectedChannelDisplay}\n\nAbout to send:\n{draftContentDisplay}\n",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "selectedChannelDisplay": "{selectedChannelDisplay}",
+                                "draftContentDisplay": "{draftContentDisplay}"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [
+            "VertixBot/UI-General/AIAgentSendModal"
+        ],
+        "modalDefinitions": [
+            {
+                "name": "VertixBot/UI-General/AIAgentSendModal",
+                "title": "Send message",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/AIAgentMessageInput",
+                        "label": "Message",
+                        "placeholder": "Type your message...",
+                        "style": "paragraph",
+                        "minLength": 1,
+                        "maxLength": 1900
+                    }
+                ]
+            }
+        ],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/ClaimResultComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -1978,6 +2090,8 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
+                            "title": "🔀  Transfer channel ownership",
+                            "description": "Transfer channel ownership to another user.\n\nSelect the user to whom you want to transfer the channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963
                         }
@@ -2012,6 +2126,8 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
+                            "title": "🔀  Transfer channel ownership succeeded!",
+                            "description": "You are no longer the owner of this channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963
                         }

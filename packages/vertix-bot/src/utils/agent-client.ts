@@ -15,7 +15,7 @@ const REPO_ROOT = path.resolve( __dirname, "../../../../" );
 const MAX_DISCORD_RESPONSE_LENGTH = 1900;
 const MAX_LOG_BUFFER_LENGTH = 8000;
 const HELP_TIMEOUT_MS = 3000;
-const CODEX_TIMEOUT_MS = 60000;
+const CODEX_TIMEOUT_MS = 600000;
 
 let codexBinaryPromise: Promise<string | null> | null = null;
 

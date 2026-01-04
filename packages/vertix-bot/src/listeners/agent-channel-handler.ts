@@ -4,20 +4,22 @@ import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
-import { runAgentChat } from "@vertix.gg/bot/src/utils/agent-client";
+import { runAgentChatWithLogs } from "@vertix.gg/bot/src/utils/agent-client";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
-import type { Client, Message } from "discord.js";
+import type { Client, Message, TextBasedChannel } from "discord.js";
 
 const TARGET_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
 const TARGET_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
 const HISTORY_LIMIT = Number( process.env.AI_CHAT_HISTORY_LIMIT || 20 );
 
-const SYSTEM_PROMPT = "You are Vertix, a helpful Discord assistant. You have full access to this repository and can answer complex questions about its codebase. Be concise, cite context if needed, and avoid mentioning hidden implementation details unless asked.";
+const SYSTEM_PROMPT = "You are Vertix, the Discord bot in this server. You can answer questions about this repository by exploring it with the local Codex CLI in read-only mode.\n\nIf the user asks what tools/commands you can use in Discord, list these:\n- !ai-start: starts an AI session and clears this channel\n- !ai-stop: stops the AI session\n- !ai-message: opens the AI message sender UI (draft -> preview -> confirm send)\n- During an active session, each reply includes a spoiler attachment named SPOILER_codex-*.log.txt with full Codex stdout/stderr\n\nDo not claim you lack Discord access or that you are only a chat model. Be concise.";
 
 const AI_START_COMMAND = "!ai-start";
 const AI_STOP_COMMAND = "!ai-stop";
 const AI_MESSAGE_COMMAND = "!ai-message";
+
+const DEFAULT_TYPING_INTERVAL_MS = 8000;
 
 let isAiSessionActive = false;
 let sessionConversation: string[] = [];
@@ -52,10 +54,27 @@ export function agentChannelHandler( client: Client ) {
             const trimmedContent = message.content?.trim() ?? "";
 
             if ( trimmedContent === AI_START_COMMAND ) {
-                isAiSessionActive = true;
-                sessionConversation = [];
+                sessionQueue = sessionQueue
+                    .then( async() => {
+                        isAiSessionActive = true;
+                        sessionConversation = [];
 
-                await message.reply( "AI session started." );
+                        const channel = await client.channels.fetch( message.channelId ).catch( () => null );
+
+                        if ( !channel || !( channel instanceof BaseGuildTextChannel ) || !channel.isSendable() ) {
+                            await message.reply( "Invalid channel." );
+                            return;
+                        }
+
+                        await clearTextChannelMessages( channel );
+
+                        await channel.send( "AI session started." );
+                    } )
+                    .catch( ( error ) => {
+                        GlobalLogger.$.error( agentChannelHandler, "Failed to start AI session", error );
+                    } );
+
+                await sessionQueue;
 
                 return;
             }
@@ -118,23 +137,31 @@ export function agentChannelHandler( client: Client ) {
 
                     GlobalLogger.$.log( agentChannelHandler, `Processing message from ${ message.author.username } in ${ message.channelId }` );
 
-                    await message.channel.sendTyping();
+                    const stopTyping = startTypingHeartbeat( message.channel );
 
-                    const fullPrompt = `${ SYSTEM_PROMPT }\n\nConversation:\n${ sessionConversation.join( "\n" ) }\n\nVertix:`;
+                    try {
+                        const fullPrompt = `${ SYSTEM_PROMPT }\n\nConversation:\n${ sessionConversation.join( "\n" ) }\n\nVertix:`;
 
-                    const response = await runAgentChat( fullPrompt );
+                        const { response, logs } = await runAgentChatWithLogs( fullPrompt );
 
-                    await message.reply( response );
+                        const files = logs.length > 0
+                            ? [ { attachment: logs, name: `SPOILER_codex-${ message.id }.log.txt` } ]
+                            : [];
 
-                    const assistantName = client.user?.username ?? "Assistant";
+                        await message.reply( { content: response, files } );
 
-                    sessionConversation.push( `Assistant (${ assistantName }): ${ response }` );
+                        const assistantName = client.user?.username ?? "Assistant";
 
-                    if ( sessionConversation.length > HISTORY_LIMIT ) {
-                        sessionConversation = sessionConversation.slice( -HISTORY_LIMIT );
+                        sessionConversation.push( `Assistant (${ assistantName }): ${ response }` );
+
+                        if ( sessionConversation.length > HISTORY_LIMIT ) {
+                            sessionConversation = sessionConversation.slice( -HISTORY_LIMIT );
+                        }
+
+                        GlobalLogger.$.log( agentChannelHandler, "Reply sent successfully." );
+                    } finally {
+                        stopTyping();
                     }
-
-                    GlobalLogger.$.log( agentChannelHandler, "Reply sent successfully." );
                 } )
                 .catch( ( error ) => {
                     GlobalLogger.$.error( agentChannelHandler, "Failed to process session Codex request", error );
@@ -165,4 +192,81 @@ function formatMessageForAgent( message: Message<boolean>, botId?: string ): str
     const role = message.author.id === botId ? "Assistant" : "User";
 
     return `${ role } (${ displayName }): ${ body }`;
+}
+
+async function clearTextChannelMessages( channel: BaseGuildTextChannel ) {
+    let before: string | undefined;
+
+    while ( true ) {
+        const messages = await channel.messages.fetch( before ? { limit: 100, before } : { limit: 100 } );
+
+        if ( messages.size === 0 ) {
+            return;
+        }
+
+        before = messages.lastKey();
+
+        const deletable = messages.filter( ( entry ) => entry.deletable );
+
+        if ( deletable.size === 0 ) {
+            return;
+        }
+
+        const bulkDeleted = await channel.bulkDelete( deletable, true ).catch( () => null );
+
+        if ( bulkDeleted ) {
+            const remaining = deletable.filter( ( entry ) => !bulkDeleted.has( entry.id ) );
+
+            for ( const entry of remaining.values() ) {
+                await entry.delete().catch( () => null );
+            }
+        } else {
+            for ( const entry of deletable.values() ) {
+                await entry.delete().catch( () => null );
+            }
+        }
+
+        if ( messages.size < 100 ) {
+            return;
+        }
+    }
+}
+
+function resolveTypingIntervalMs() {
+    const configured = process.env.AI_CHAT_TYPING_INTERVAL_MS;
+    const value = configured ? Number( configured ) : Number.NaN;
+
+    if ( Number.isFinite( value ) && value >= 1000 ) {
+        return value;
+    }
+
+    return DEFAULT_TYPING_INTERVAL_MS;
+}
+
+function startTypingHeartbeat( channel: TextBasedChannel ) {
+    if ( !isTypingCapableChannel( channel ) ) {
+        return () => undefined;
+    }
+
+    const intervalMs = resolveTypingIntervalMs();
+
+    void channel.sendTyping().catch( () => null );
+
+    const handle = setInterval( () => {
+        void channel.sendTyping().catch( () => null );
+    }, intervalMs );
+
+    return () => {
+        clearInterval( handle );
+    };
+}
+
+type TypingCapableChannel = TextBasedChannel & {
+    sendTyping(): Promise<void>;
+};
+
+function isTypingCapableChannel( channel: TextBasedChannel ): channel is TypingCapableChannel {
+    const candidate = channel as { sendTyping?: () => Promise<void> };
+
+    return typeof candidate.sendTyping === "function";
 }

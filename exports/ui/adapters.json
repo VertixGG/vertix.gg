@@ -361,6 +361,54 @@
         ]
     },
     {
+        "name": "VertixBot/UI-General/AIAgentAdapter",
+        "adapterKind": "base",
+        "component": "VertixBot/UI-General/AIAgentComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [],
+        "bindings": [
+            {
+                "entity": "VertixBot/UI-General/AIAgentChannelSelectMenu",
+                "handler": "VertixBot/UI-General/AIAgentAdapter/Bindings/StringSelect/VertixBot/UI-General/AIAgentChannelSelectMenu",
+                "kind": "string-select"
+            },
+            {
+                "entity": "VertixBot/UI-General/AIAgentSendButton::VertixBot/UI-General/AIAgentSendModal",
+                "handler": "VertixBot/UI-General/AIAgentAdapter/Bindings/ModalWithButton/VertixBot/UI-General/AIAgentSendButton",
+                "kind": "modal-button",
+                "options": {
+                    "button": "VertixBot/UI-General/AIAgentSendButton",
+                    "modal": "VertixBot/UI-General/AIAgentSendModal"
+                }
+            },
+            {
+                "entity": "VertixBot/UI-General/AIAgentConfirmSendButton",
+                "handler": "VertixBot/UI-General/AIAgentAdapter/Bindings/Button/VertixBot/UI-General/AIAgentConfirmSendButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-General/AIAgentCancelDraftButton",
+                "handler": "VertixBot/UI-General/AIAgentAdapter/Bindings/Button/VertixBot/UI-General/AIAgentCancelDraftButton",
+                "kind": "button"
+            }
+        ],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-General/AIAgentAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/AIAgentAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V2/ClaimResultAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/ClaimResultComponent",
@@ -3129,6 +3177,24 @@
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/Button/VertixBot/UI-General/SetupMasterCreateV3Button",
                         "sourceEntity": "VertixBot/UI-General/SetupMasterCreateV3Button",
                         "handlerKind": "button",
+                        "flowName": "VertixBot/UI-General/SetupNewWizardFlow",
+                        "transition": "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupNewWizardFlow/States/Step1NameTemplate",
+                            "executionStep": "VertixBot/UI-V3/SetupStep1Component"
+                        }
+                    }
+                ]
+            },
+            {
+                "entity": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                "kind": "string-select",
+                "flowTriggers": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                        "sourceEntity": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                        "handlerKind": "string-select",
                         "flowName": "VertixBot/UI-General/SetupNewWizardFlow",
                         "transition": "VertixBot/UI-General/SetupNewWizardFlow/Transitions/StartSetup",
                         "navigation": {

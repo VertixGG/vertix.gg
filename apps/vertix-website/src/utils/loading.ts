@@ -1,25 +1,33 @@
-export function wrapPromiseSuspendable( promise: Promise<any> ) {
-    let status = "pending";
-    let result: any;
-    let suspender = promise.then(
-        ( r ) => {
+type SuspendablePromiseStatus = "pending" | "success" | "error";
+type SuspendablePromiseError = Error | string | number | boolean | bigint | symbol | null | undefined | object;
+
+export function wrapPromiseSuspendable<TResult>( promise: Promise<TResult> ) {
+    let status: SuspendablePromiseStatus = "pending";
+    let result!: TResult;
+    let error!: SuspendablePromiseError;
+
+    const suspender = promise.then(
+        ( value ) => {
             status = "success";
-            result = r;
+            result = value;
         },
-        ( e ) => {
+        ( value: SuspendablePromiseError ) => {
             status = "error";
-            result = e;
+            error = value;
         }
     );
+
     return {
-        read() {
+        read(): TResult {
             if ( status === "pending" ) {
                 throw suspender;
-            } else if ( status === "error" ) {
-                throw result;
-            } else if ( status === "success" ) {
-                return result;
             }
+
+            if ( status === "error" ) {
+                throw error;
+            }
+
+            return result;
         }
     };
 }
@@ -32,24 +40,23 @@ export const allImagesLoadedPromise = () => {
         if ( allImages.length > 0 ) {
             let loadedImages = 0;
 
+            const onImageLoad = () => {
+                loadedImages++;
+
+                if ( loadedImages === allImages.length ) {
+                    resolve( true );
+                }
+            };
+
             for ( let i = 0 ; i < allImages.length ; i ++ ) {
                 const img = allImages[ i ];
 
                 if ( img.complete ) {
-                    loadedImages++;
+                    onImageLoad();
                 } else {
-                    img.addEventListener( "load", () => {
-                        loadedImages++;
-
-                        if ( loadedImages === allImages.length ) {
-                            resolve( true );
-                        }
-                    } );
+                    img.addEventListener( "load", onImageLoad, { once: true } );
+                    img.addEventListener( "error", onImageLoad, { once: true } );
                 }
-            }
-
-            if ( loadedImages === allImages.length ) {
-                resolve( true );
             }
 
             return;
@@ -60,15 +67,17 @@ export const allImagesLoadedPromise = () => {
 };
 
 export const windowLoadedPromise = () => {
-    return new Promise( ( resolve ) => {
-        if ( document.readyState === "complete" ) {
-            setTimeout( () => {
-                resolve( true );
-            } );
+    return new Promise<boolean>( ( resolve ) => {
+        if ( document.readyState === "complete" || document.readyState === "interactive" ) {
+            resolve( true );
+            return;
         }
 
-        window.addEventListener( "load", () => {
+        const onLoaded = () => {
             resolve( true );
-        } );
-    } ) as Promise<boolean>;
+        };
+
+        window.addEventListener( "load", onLoaded, { once: true } );
+        window.addEventListener( "DOMContentLoaded", onLoaded, { once: true } );
+    } );
 };

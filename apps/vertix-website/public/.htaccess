@@ -1,0 +1,6 @@
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|mjs|json)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>
+

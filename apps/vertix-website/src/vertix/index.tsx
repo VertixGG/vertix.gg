@@ -80,11 +80,19 @@ const IndexContent = () => {
 };
 
 export default function Index() {
+    const showPage = () => {
+        const container = document.querySelector( ".body-container" );
+
+        if ( !container ) {
+            return;
+        }
+
+        container.classList.remove( "unload", "not-loaded" );
+        container.classList.add( "loaded" );
+    };
+
     loadedPromise.then( () => {
-        allImagesLoadedPromise().then( () => {
-            document.querySelector( ".body-container" )?.classList.remove( "unload", "not-loaded" );
-            document.querySelector( ".body-container" )?.classList.add( "loaded" );
-        } );
+        allImagesLoadedPromise().then( showPage );
     } );
 
     return (

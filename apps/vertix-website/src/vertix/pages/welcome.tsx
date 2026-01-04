@@ -12,7 +12,7 @@ import "../components/discord/discord-chat-container.css";
 
 export default function Welcome() {
     return (
-        <div className="container py-5">
+        <div className="p-5">
             <div className="row justify-content-center">
                 <div className="col-12 col-xl-10">
                     <div className="documentation-page-header text-center mb-5">

@@ -23,6 +23,10 @@ const routes = [
         path: "/features/dynamic-channel-v2",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2" ) ),
     },
+    {
+        path: "/features/dynamic-channel-v3",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3" ) ),
+    },
     // ---
     {
         path: "/changelog",

@@ -1,12 +1,12 @@
 import RobotBrand from "@vertix.gg/assets/brand/Robot.png";
 
-import Terms from "./documentation-sections/terms";
-import TemporaryVoiceChannelsFeatures from "./documentation-sections/temporary-voice-channels-features";
-import SetupFeatures from "./documentation-sections/setup-features";
-import BotSetup from "./documentation-sections/bot-setup";
-import ButtonsInterface from "./documentation-sections/buttons-interface";
-import Suggestions from "./documentation-sections/suggestions";
-import NegativeReviews from "./documentation-sections/negative-reviews";
+import Terms from "./welcome-sections/terms";
+import TemporaryVoiceChannelsFeatures from "./welcome-sections/temporary-voice-channels-features";
+import SetupFeatures from "./welcome-sections/setup-features";
+import BotSetup from "./welcome-sections/bot-setup";
+import ButtonsInterface from "./welcome-sections/buttons-interface";
+import Suggestions from "./welcome-sections/suggestions";
+import NegativeReviews from "./welcome-sections/negative-reviews";
 
 import "../components/discord/discord-chat-container.css";
 

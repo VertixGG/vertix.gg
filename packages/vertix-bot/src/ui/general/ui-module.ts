@@ -10,6 +10,7 @@ import { WelcomeAdapter } from "@vertix.gg/bot/src/ui/general/welcome/welcome-ad
 import { FeedbackAdapter } from "@vertix.gg/bot/src/ui/general/feedback/feedback-adapter";
 import { LanguageAdapter } from "@vertix.gg/bot/src/ui/general/language/language-adapter";
 import { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/general/not-your-channel/not-your-channel-adapter";
+import { AIAgentAdapter } from "@vertix.gg/bot/src/ui/general/ai-agent/ai-agent-adapter";
 import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow";
 import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow";
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
@@ -27,7 +28,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getAdapters() {
-        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter ];
+        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter, AIAgentAdapter ];
     }
 
     public static getFlows() {

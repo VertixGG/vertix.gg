@@ -174,8 +174,15 @@ export default async function Main( { enableListeners }: {
 
         const handlerPromises = [];
 
+        const aiChatToken = process.env.AI_CHAT_DISCORD_TOKEN;
+
         for ( const handler of Object.values( handlers ) ) {
             if ( ! enableListeners && handler !== readyHandler ) {
+                continue;
+            }
+
+            // If AI_CHAT_DISCORD_TOKEN is set, agentChannelHandler will use its own client
+            if ( aiChatToken && handler === handlers.agentChannelHandler ) {
                 continue;
             }
 
@@ -186,6 +193,38 @@ export default async function Main( { enableListeners }: {
                     logger.log( onLogin, `Handler '${ handler.name }' registered` );
                 } )
             );
+        }
+
+        if ( aiChatToken ) {
+            logger.info( onLogin, "Starting separate AI Chat Bot client..." );
+
+            const aiClient = new Client( {
+                intents: [
+                    "Guilds",
+                    "GuildMessages",
+                    "MessageContent",
+                    "DirectMessages"
+                ],
+                partials: [ Partials.Channel ],
+                shards: "auto"
+            } );
+
+            debugDiscordApiEvents( logger, aiClient );
+
+            const onAiLogin = async() => {
+                assert( aiClient.user );
+                logger.info( onAiLogin, `AI Chat Bot: '${ aiClient.user.username }' is authenticated` );
+
+                logger.log( onAiLogin, "Registering agentChannelHandler on AI client..." );
+                await handlers.agentChannelHandler( aiClient as Client<true> );
+                logger.log( onAiLogin, "agentChannelHandler registered on AI client" );
+
+                logger.log( onAiLogin, "Registering interactionHandler on AI client..." );
+                await handlers.interactionHandler( aiClient as Client<true> );
+                logger.log( onAiLogin, "interactionHandler registered on AI client" );
+            };
+
+            await login( aiClient, onAiLogin, aiChatToken );
         }
 
         Promise.all( handlerPromises ).then( async() => {

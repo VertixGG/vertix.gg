@@ -53,7 +53,10 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         try {
             result = await this.prisma.guild.update( {
                 where: { guildId: guild.id },
-                data: { isInGuild }
+                data: {
+                    isInGuild,
+                    lastActiveAt: new Date()
+                }
             } );
         } catch( e: unknown ) {
             if ( e && typeof e === "object" && "code" in e && e.code === "P2025" ) {

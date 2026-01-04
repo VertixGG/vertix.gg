@@ -1,5 +1,6 @@
 import { Events } from "discord.js";
 
+import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import type { VoiceState, Client } from "discord.js";
@@ -10,6 +11,10 @@ export function channelHandler( client: Client ) {
     client.on( Events.VoiceStateUpdate, VoiceStateUpdate );
 
     async function VoiceStateUpdate( oldState: VoiceState, newState: VoiceState ) {
+        if ( newState.guild.id ) {
+            GuildModel.$.updateLastActive( newState.guild.id );
+        }
+
         const channelService = ServiceLocator.$.get<ChannelService>( "VertixBot/Services/Channel" );
 
         if ( !oldState.channelId && newState.channelId ) {
@@ -25,12 +30,20 @@ export function channelHandler( client: Client ) {
     }
 
     client.on( Events.ChannelDelete, async( channel ) => {
+        if ( "guild" in channel && channel.guild.id ) {
+            GuildModel.$.updateLastActive( channel.guild.id );
+        }
+
         const channelService = ServiceLocator.$.get<ChannelService>( "VertixBot/Services/Channel" );
 
         await channelService.onChannelDelete( channel );
     } );
 
     client.on( Events.ChannelUpdate, async( oldChannel, newChannel ) => {
+        if ( "guild" in newChannel && newChannel.guild.id ) {
+            GuildModel.$.updateLastActive( newChannel.guild.id );
+        }
+
         const channelService = ServiceLocator.$.get<ChannelService>( "VertixBot/Services/Channel" );
 
         await channelService.onChannelUpdate( oldChannel, newChannel );

@@ -343,9 +343,19 @@ export abstract class UIAdapterBase<
 
         if ( this.isDynamic() ) {
             const argsId = this.argsManager.getArgsId( interaction ),
-                args = await this.getArgsInternal( interaction as TInteraction, newArgs );
+                currentArgs = this.getArgsManager().getArgsById( this, argsId ),
+                shouldRefreshArgs = !currentArgs || newArgs,
+                resolvedArgs = shouldRefreshArgs
+                    ? await this.getArgsInternal( interaction as TInteraction, newArgs )
+                    : null;
 
-            this.getArgsManager().setInitialArgs( this, argsId, args );
+            if ( resolvedArgs ) {
+                if ( currentArgs ) {
+                    this.getArgsManager().setArgs( this, interaction, resolvedArgs );
+                } else {
+                    this.getArgsManager().setInitialArgs( this, argsId, resolvedArgs );
+                }
+            }
         }
 
         const args = this.argsManager.getArgs( this, interaction );

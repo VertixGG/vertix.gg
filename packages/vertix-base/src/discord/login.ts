@@ -2,10 +2,16 @@ import process from "process";
 
 export let gToken = "";
 
-export default async function( client: any, onLogin: Function ) {
-    if ( process.env.DISCORD_TEST_TOKEN ) {
-        gToken = process.env.DISCORD_TEST_TOKEN;
-        await client.login( gToken ).then( onLogin );
+export default async function( client: any, onLogin: Function, token?: string ) {
+    const loginToken = token || process.env.DISCORD_TEST_TOKEN || process.env.DISCORD_TOKEN;
+
+    if ( loginToken ) {
+        // Only set the global token if it's the primary bot login (no explicit token provided)
+        if ( ! token ) {
+            gToken = loginToken;
+        }
+
+        await client.login( loginToken ).then( () => onLogin() );
         return;
     }
 

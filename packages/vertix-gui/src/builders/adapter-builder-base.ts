@@ -13,6 +13,7 @@ import type {
     ButtonInteraction,
     MessageComponentInteraction,
     ModalSubmitInteraction,
+    Message,
     StringSelectMenuInteraction,
     UserSelectMenuInteraction,
     GuildMember
@@ -67,6 +68,11 @@ type ReplyArgsHandler<TContext, TInteraction, TArgs> = (
     interaction?: TInteraction,
     argsFromManager?: TArgs
 ) => Promise<TArgs>;
+type EditMessageArgsHandler<TContext, TArgs> = (
+    context: TContext,
+    message?: Message<true>,
+    argsFromManager?: TArgs
+) => Promise<TArgs>;
 type GenIdWithContext<TContext> = ( context: TContext, entity: UIEntitySchemaBase | UIModalSchema ) => string;
 type GetIdWithContext<TContext> = ( context: TContext, hash: string ) => string;
 
@@ -90,6 +96,7 @@ export class AdapterBuilderBase<
     protected getCustomIdForEntityHandler: GetCustomIdForEntityHandler<TInteraction, TArgs, TContext> | undefined;
     protected startArgsHandler: GetStartArgsHandler<TChannel, TInteraction, TArgs, TContext> | undefined;
     protected replyArgsHandler: GetReplyArgsHandler<TInteraction, TArgs, TContext> | undefined;
+    protected editMessageArgsHandler: EditMessageArgsHandler<TContext, UIArgs> | undefined;
     protected beforeBuildHandler: BeforeBuildHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeBuildRunHandler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeFinishHandler: BeforeFinishHandler<TInteraction, TArgs, TContext> | undefined;
@@ -169,6 +176,13 @@ export class AdapterBuilderBase<
 
     public getReplyArgs( handler: GetReplyArgsHandler<TInteraction, TArgs, TContext> ): this {
         this.replyArgsHandler = handler;
+        return this;
+    }
+
+    public getEditMessageArgs(
+        handler: ( context: TContext, message?: Message<true>, argsFromManager?: UIArgs ) => Promise<TArgs>
+    ): this {
+        this.editMessageArgsHandler = handler as unknown as EditMessageArgsHandler<TContext, UIArgs>;
         return this;
     }
 
@@ -339,6 +353,30 @@ export class AdapterBuilderBase<
                     }
 
                     return super.getReplyArgs( interaction, argsFromManager );
+                }
+
+                protected async getEditMessageArgs( message?: Message<true>, argsFromManager?: UIArgs ): Promise<UIArgs> {
+                    const dataArgs = await builder.resolveArgsFromDataSource( "edit", message, argsFromManager );
+
+                    if ( builder.editMessageArgsHandler ) {
+                        const handlerArgs = await builder.editMessageArgsHandler(
+                            this.getContext(),
+                            message,
+                            argsFromManager
+                        );
+
+                        if ( dataArgs ) {
+                            return { ...dataArgs, ...handlerArgs };
+                        }
+
+                        return handlerArgs;
+                    }
+
+                    if ( dataArgs ) {
+                        return dataArgs;
+                    }
+
+                    return super.getEditMessageArgs?.( message, argsFromManager );
                 }
 
                 protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, interaction?: TInteraction ) {

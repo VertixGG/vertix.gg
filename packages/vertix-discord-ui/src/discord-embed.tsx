@@ -150,10 +150,13 @@ export function DiscordEmbed( {
         }: CustomComponentProps ) => inline ? (
             <code
                 className="discord-embed-code"
+                dangerouslySetInnerHTML={ {
+                    __html: Array.isArray( codeChildren )
+                        ? codeChildren.join( "" )
+                        : String( codeChildren )
+                } }
                 { ...codeProps }
-            >
-                { codeChildren }
-            </code>
+            />
         ) : (
             <code className={ codeClassName } { ...codeProps }>
                 { codeChildren }

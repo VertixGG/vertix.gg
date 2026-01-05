@@ -14,7 +14,16 @@ export default function Privacy() {
                 <div className="col-12">
                     <div className="mb-4">
                         <div className="fs-5 text-secondary">
-                            <p className="fs-4"><b>(🚫 Privacy)</b> button lets you manage privacy and visibility state.</p>
+                            <p className="fs-4"><b>(🚫 Privacy)</b> controls who can see and who can join your channel.</p>
+
+                            <ul className="text-start">
+                                <li><b>🌐 Public</b>: everyone can see and join.</li>
+                                <li><b>🚫 Private</b>: everyone can see, only <b>Trusted Users</b> can join.</li>
+                                <li><b>🙈 Hidden</b>: only <b>Trusted Users</b> can see and join.</li>
+                                <li><b>Blocked Users</b>: cannot join in any state.</li>
+                            </ul>
+
+                            <p className="mb-0">Trusted and blocked users are managed via the <b>Permissions</b> feature.</p>
                         </div>
                     </div>
                     <div className="discord-chat-container border-box w-100 m-0">
@@ -40,5 +49,3 @@ export default function Privacy() {
         </div>
     );
 }
-
-

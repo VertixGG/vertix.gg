@@ -793,6 +793,9 @@ export async function entryPoint( options: {
     GlobalLogger.$.info( entryPoint, "Registering services..." );
     GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
 
+    // Disabled for security reasons, proven to be unsafe in long term.
+    await createCleanupWorker();
+
     const { default: botInitialize } = await import( "./vertix" );
     const client = await botInitialize( {
         enableListeners: options.enableListeners
@@ -819,9 +822,6 @@ export async function entryPoint( options: {
     await registerUIVersionStrategies();
 
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
-
-    // Disabled for security reasons, proven to be unsafe in long term.
-    await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 }

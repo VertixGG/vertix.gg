@@ -504,7 +504,6 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Version strategies are registered" );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function createCleanupWorker() {
     try {
         await initWorker();
@@ -822,7 +821,7 @@ export async function entryPoint( options: {
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 
     // Disabled for security reasons, proven to be unsafe in long term.
-    // await createCleanupWorker();
+    await createCleanupWorker();
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 }

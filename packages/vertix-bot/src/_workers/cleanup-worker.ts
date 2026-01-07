@@ -447,7 +447,7 @@ class CleanupWorker extends InitializeBase {
 
         await login( client, async() => {
             await this.handleChannels( client );
-            //await this.handleGuilds( client );
+            await this.handleGuilds( client );
         } );
 
         this.logger.info( this.handle, "Channels worker thread is finished." );

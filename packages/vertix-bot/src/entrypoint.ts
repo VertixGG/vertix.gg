@@ -772,6 +772,13 @@ export async function entryPoint( options: {
         }
     }
 
+    const cleanupArg = process.argv.find( arg => arg.startsWith( "--cleanup" ) );
+    if ( cleanupArg ) {
+        GlobalLogger.$.info( entryPoint, "Cleanup command detected" );
+        await createCleanupWorker();
+        process.exit( 0 );
+    }
+
     const testFlowArg = process.argv.find( arg => arg.startsWith( "--test-flow" ) );
     if ( testFlowArg ) {
         GlobalLogger.$.info( entryPoint, "Test flow command detected" );
@@ -792,9 +799,6 @@ export async function entryPoint( options: {
     GlobalLogger.$.info( entryPoint, "Database is connected" );
     GlobalLogger.$.info( entryPoint, "Registering services..." );
     GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
-
-    // Disabled for security reasons, proven to be unsafe in long term.
-    await createCleanupWorker();
 
     const { default: botInitialize } = await import( "./vertix" );
     const client = await botInitialize( {

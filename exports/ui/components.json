@@ -302,13 +302,13 @@
                             "options": {
                                 "masterChannelMessage": {
                                     "{masterChannels}": "\n{masterChannels}",
-                                    "{masterChannelMessageDefault}": "None"
+                                    "{masterChannelMessageDefault}": "**None**"
                                 },
                                 "badwordsMessage": {
                                     "{badwords}": "`{badwords}`",
-                                    "{badwordsMessageDefault}": "None"
+                                    "{badwordsMessageDefault}": "**None**"
                                 },
-                                "none": "None"
+                                "none": "**None**"
                             },
                             "arrayOptions": {
                                 "masterChannels": {
@@ -3415,17 +3415,6 @@
                             }
                         },
                         {
-                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "labelOmitted": true,
-                                "style": "secondary",
-                                "emoji": "<:ClaimChannel:1272450707542245386>"
-                            }
-                        },
-                        {
                             "element": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
@@ -3434,6 +3423,17 @@
                                 "labelOmitted": true,
                                 "style": "secondary",
                                 "emoji": "<:ChannelTemplates:1455093315862269963>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ClaimChannel:1272450707542245386>"
                             }
                         }
                     ]

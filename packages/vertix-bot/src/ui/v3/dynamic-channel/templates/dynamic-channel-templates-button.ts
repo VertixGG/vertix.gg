@@ -16,7 +16,7 @@ export class DynamicChannelTemplatesButton extends DynamicChannelButtonBase {
     }
 
     public static getSortId() {
-        return 9;
+        return 8;
     }
 
     public getId() {

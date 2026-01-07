@@ -20,7 +20,7 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     public static getSortId() {
-        return 8;
+        return 9;
     }
 
     public getId() {

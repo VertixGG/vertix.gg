@@ -6,6 +6,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { Commands } from "@vertix.gg/bot/src/commands";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
@@ -15,7 +16,11 @@ import type { Client, CommandInteraction, Interaction } from "discord.js";
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async( interaction: Interaction ) => {
         if ( interaction.guildId ) {
-            GuildModel.$.updateLastActive( interaction.guildId );
+            void GuildModel.$.updateLastActive( interaction.guildId ).then( ( updated ) => {
+                if ( !updated ) {
+                    void guildLeaveBecauseNotInDatabase( client, interaction.guildId );
+                }
+            } );
         }
 
         if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {

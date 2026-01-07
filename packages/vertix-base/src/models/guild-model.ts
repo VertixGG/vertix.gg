@@ -75,11 +75,23 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         } );
     }
 
-    public async updateLastActive( guildId: string ) {
-        return this.prisma.guild.update( {
-            where: { guildId },
-            data: { lastActiveAt: new Date() }
-        } );
+    public async updateLastActive( guildId: string ): Promise<boolean> {
+        try {
+            await this.prisma.guild.update( {
+                where: { guildId },
+                data: { lastActiveAt: new Date() }
+            } );
+
+            return true;
+        } catch( e ) {
+            if ( e && typeof e === "object" && "code" in e && e.code === "P2025" ) {
+                this.logger.warn( this.updateLastActive, `Guild id: '${ guildId }' - Not found in database` );
+
+                return false;
+            }
+
+            throw e;
+        }
     }
 
     protected getClient() {

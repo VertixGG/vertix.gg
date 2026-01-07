@@ -4,6 +4,7 @@ import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
 import { runAgentChatWithLogs } from "@vertix.gg/bot/src/utils/agent-client";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
@@ -41,8 +42,14 @@ export function agentChannelHandler( client: Client ) {
                 return;
             }
 
-            if ( message.guildId ) {
-                GuildModel.$.updateLastActive( message.guildId );
+            const guildId = message.guildId;
+
+            if ( guildId ) {
+                void GuildModel.$.updateLastActive( guildId ).then( ( updated ) => {
+                    if ( !updated ) {
+                        void guildLeaveBecauseNotInDatabase( client, guildId );
+                    }
+                } );
             }
 
             const botId = client.user?.id;

@@ -10,7 +10,7 @@ export default function TemporaryVoiceChannelsFeatures() {
         <div className="mb-5">
             <h4 id="temporary-voice-channels-features">Temporary Voice Channels V2 Features</h4>
             <div className="mb-4">
-                <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "300px" } }>
+                <div className="discord-chat-container m-0" style={ { minHeight: "300px" } }>
                     <DiscordUIComponentMessage
                         author="Vertix"
                         avatar={ VertixAvatar }
@@ -66,7 +66,7 @@ export default function TemporaryVoiceChannelsFeatures() {
 
             <div className="mb-4">
 
-                <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "300px" } }>
+                <div className="discord-chat-container m-0" style={ { minHeight: "300px" } }>
                     <DiscordUIComponentMessage
                         author="Vertix"
                         avatar={ VertixAvatar }

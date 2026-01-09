@@ -13,7 +13,7 @@ export default function ButtonsInterface() {
             <div className="row g-5 align-items-center">
                 <div className="col-12">
                     <div className="mb-4">
-                        <div className="discord-chat-container border-box w-100 m-0">
+                        <div className="discord-chat-container border-box m-0">
                             <DiscordUIComponentMessage
                                 author="Vertix"
                                 avatar={ VertixAvatar }

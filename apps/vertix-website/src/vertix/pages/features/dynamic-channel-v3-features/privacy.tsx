@@ -26,7 +26,7 @@ export default function Privacy() {
                             <p className="mb-0">Trusted and blocked users are managed via the <b>Permissions</b> feature.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

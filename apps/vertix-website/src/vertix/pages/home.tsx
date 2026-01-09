@@ -109,7 +109,7 @@ export default function Home() {
                 <br/>
 
                 <div className="d-none d-xl-block mb-5">
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix Test"
                             avatar={ VertixAvatar }

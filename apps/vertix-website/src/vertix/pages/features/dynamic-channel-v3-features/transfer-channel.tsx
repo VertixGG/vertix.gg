@@ -18,7 +18,7 @@ export default function TransferChannel() {
                         </div>
                     </div>
 
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -37,7 +37,7 @@ export default function TransferChannel() {
                             <p>Select the user you want to transfer the channel to.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -56,7 +56,7 @@ export default function TransferChannel() {
                             <p><span className="text-warning">⚠️</span> Are you sure?</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -78,7 +78,7 @@ export default function TransferChannel() {
                             <p>The previous owner will fully lose control over the transferred channel.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

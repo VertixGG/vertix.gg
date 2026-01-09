@@ -16,7 +16,7 @@ export default function ClaimChannel() {
                             <p>for more than X <code>default = 10</code> minutes. If the owner does not return, the claim button will be enabled.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -67,7 +67,7 @@ export default function ClaimChannel() {
                             <p>If the owner returns or clicks the <code>claim</code> button, ownership will return to them!</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -115,7 +115,7 @@ export default function ClaimChannel() {
                             <p>If they don't claim within that time or if someone else steps in, the whole vote process will begin!</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

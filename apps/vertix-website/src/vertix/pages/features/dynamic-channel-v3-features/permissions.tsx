@@ -28,7 +28,7 @@ export default function Permissions() {
                         </div>
                     </div>
 
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -53,7 +53,7 @@ export default function Permissions() {
                             <p><b>(👍 Grant Access)</b> menu gives a member access to join your channel even if restricted.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -79,7 +79,7 @@ export default function Permissions() {
                             <p><b>(👎 Remove Access)</b> menu removes a member from the trusted list.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -105,7 +105,7 @@ export default function Permissions() {
                             <p><b>(🫵 Block User Access)</b> menu blocks and kicks the user from the channel.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -131,7 +131,7 @@ export default function Permissions() {
                             <p><b>(🤙 Un-Block User Access)</b> menu removes a user from the blocked list.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -157,7 +157,7 @@ export default function Permissions() {
                             <p><b>(👢 Kick User)</b> menu kicks the user from the channel.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

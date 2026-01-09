@@ -15,7 +15,7 @@ export default function TransferChannel() {
                             <p><b>( 🔀 Transfer )</b> button allows you to transfer channel ownership</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "400px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "400px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -47,7 +47,7 @@ export default function TransferChannel() {
                             <p>Select the user you want to transfer the channel to</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "300px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "300px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -67,7 +67,7 @@ export default function TransferChannel() {
                             <p><span className="text-warning">⚠️</span> Are you sure?</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "350px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "350px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -90,7 +90,7 @@ export default function TransferChannel() {
                             <p>the previous owner will fully lose control over the transferred channel.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "200px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "200px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

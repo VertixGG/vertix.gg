@@ -18,7 +18,7 @@ export default function ClaimChannel() {
                         </div>
                     </div>
 
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -50,7 +50,7 @@ export default function ClaimChannel() {
                             <p>If nobody claims in time, the vote process begins.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -81,7 +81,7 @@ export default function ClaimChannel() {
                             <p>At the end of the vote, the new owner is announced.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

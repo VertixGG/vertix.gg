@@ -17,7 +17,7 @@ export default function ResetChannel() {
                             <p><b>( 🔃 Reset )</b> resets all settings to default.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0">
+                    <div className="discord-chat-container border-box m-0">
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

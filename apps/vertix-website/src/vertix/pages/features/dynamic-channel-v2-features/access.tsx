@@ -18,7 +18,7 @@ export default function Access() {
                             - <b>Blocked</b> Users
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -43,7 +43,7 @@ export default function Access() {
                             <p>Granted users will be able to <b>see / join</b> the channel even if its <b>private</b> or <b>hidden</b>.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -69,7 +69,7 @@ export default function Access() {
                             <p>User cannot enter or see the channel according to the state.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -95,7 +95,7 @@ export default function Access() {
                             <p>Blocked users will be restricted from viewing or connecting to the channel.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -121,7 +121,7 @@ export default function Access() {
                             <p>User can enter or see the channel according to the state.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }
@@ -146,7 +146,7 @@ export default function Access() {
                             <p><b>(👢 Kick User )</b> menu, simply kicks the user from the channel.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <DiscordUIComponentMessage
                             author="Vertix"
                             avatar={ VertixAvatar }

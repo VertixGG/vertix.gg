@@ -4,7 +4,7 @@
     border-radius: 4px;
     box-sizing: border-box;
     display: grid;
-    max-width: max-content;
+    max-width: 100%;
     overflow: visible;
     position: relative;
     width: max-content;
@@ -24,6 +24,7 @@
     color: var(--discord-text-default);
     margin-top: 4px;
     min-height: 0;
+    min-width: 0;
     font-family: var(--discord-font-primary);
     font-size: 0.875rem;
     line-height: 1.125rem;

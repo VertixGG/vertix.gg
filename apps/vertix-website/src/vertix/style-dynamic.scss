@@ -99,8 +99,14 @@ img.normalize {
 
 .documentation-page-header {
     display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 2rem;
     margin-bottom: 2rem;
+
+    @include bootstrap.media-breakpoint-down(md) {
+        flex-direction: column;
+    }
 }
 
 .documentation-page-header__robot {

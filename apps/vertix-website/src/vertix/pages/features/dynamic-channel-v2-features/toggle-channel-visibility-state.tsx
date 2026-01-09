@@ -16,7 +16,7 @@ export default function ToggleChannelVisibilityState() {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                        <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                             <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                                 <span style={ { background: "#36393f", padding: "0 8px" } }>June 25, 2023</span>
                             </div>
@@ -64,7 +64,7 @@ export default function ToggleChannelVisibilityState() {
                             <p><b>(🐵 Shown )</b> button, restore the permissions of <code>View Channel</code> back to default.<br/>Now everyone can see the channel</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
                         <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                             <span style={ { background: "#36393f", padding: "0 8px" } }>June 25, 2023</span>
                         </div>

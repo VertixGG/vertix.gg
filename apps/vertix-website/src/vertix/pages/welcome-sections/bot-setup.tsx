@@ -43,7 +43,7 @@ export default function BotSetup() {
             </div>
 
             <div className="mb-4 mt-4">
-                <div className="discord-chat-container border-box w-100 m-0" style={ { minHeight: "500px" } }>
+            <div className="discord-chat-container m-0" style={ { minHeight: "500px" } }>
 
                     <DiscordUIComponentMessage
                         author="Vertix"

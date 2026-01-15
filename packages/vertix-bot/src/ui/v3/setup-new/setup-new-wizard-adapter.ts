@@ -248,6 +248,7 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
                 "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
                 "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
                 "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
+                "templates": "<:Templates:1455157166615826432> ∙ **Templates**",
                 "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
             }
         }
